@@ -1,7 +1,7 @@
 # This file controls the release system.
 
 # The repo organization and name.
-repo: open-telemetry/opentelemetry-ruby
+repo: open-telemetry/opentelemetry-ruby-contrib
 # The main branch name. Releases must happen on this branch.
 main_branch: main
 # Time in seconds for release scripts to wait for CI to complete.
@@ -96,37 +96,6 @@ gems:
     directory: instrumentation/koala
     version_constant: [OpenTelemetry, Instrumentation, Koala, VERSION]
 
-  - name: opentelemetry-api
-    directory: api
-    version_rb_path: lib/opentelemetry/version.rb
-    version_constant: [OpenTelemetry, VERSION]
-
-  - name: opentelemetry-registry
-    directory: registry
-    version_rb_path: lib/opentelemetry/instrumentation/registry/version.rb
-    version_constant: [OpenTelemetry, Instrumentation, Registry, VERSION]
-
-  - name: opentelemetry-sdk
-    directory: sdk
-    version_constant: [OpenTelemetry, SDK, VERSION]
-
-  - name: opentelemetry-common
-    directory: common
-    version_rb_path: lib/opentelemetry/common/version.rb
-    version_constant: [OpenTelemetry, Common, VERSION]
-
-  - name: opentelemetry-exporter-jaeger
-    directory: exporter/jaeger
-    version_constant: [OpenTelemetry, Exporter, Jaeger, VERSION]
-
-  - name: opentelemetry-exporter-otlp
-    directory: exporter/otlp
-    version_constant: [OpenTelemetry, Exporter, OTLP, VERSION]
-
-  - name: opentelemetry-exporter-zipkin
-    directory: exporter/zipkin
-    version_constant: [OpenTelemetry, Exporter, Zipkin, VERSION]
-
   - name: opentelemetry-instrumentation-active_model_serializers
     directory: instrumentation/active_model_serializers
     version_constant: [OpenTelemetry, Instrumentation, ActiveModelSerializers, VERSION]
@@ -212,14 +181,6 @@ gems:
     directory: instrumentation/sinatra
     version_constant: [OpenTelemetry, Instrumentation, Sinatra, VERSION]
 
-  - name: opentelemetry-propagator-b3
-    directory: propagator/b3
-    version_constant: [OpenTelemetry, Propagator, B3, VERSION]
-
-  - name: opentelemetry-propagator-jaeger
-    directory: propagator/jaeger
-    version_constant: [OpenTelemetry, Propagator, Jaeger, VERSION]
-
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace
     version_constant: [OpenTelemetry, Propagator, OTTrace, VERSION]
@@ -232,13 +193,3 @@ gems:
     directory: resource_detectors
     version_rb_path: lib/opentelemetry/resource/detectors/version.rb
     version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
-
-  - name: opentelemetry-semantic_conventions
-    directory: semantic_conventions
-    version_rb_path: lib/opentelemetry/semantic_conventions/version.rb
-    version_constant: [OpenTelemetry, SemanticConventions, VERSION]
-
-  - name: opentelemetry-test-helpers
-    directory: test_helpers
-    version_rb_path: lib/opentelemetry/test_helpers/version.rb
-    version_constant: [OpenTelemetry, TestHelpers, VERSION]

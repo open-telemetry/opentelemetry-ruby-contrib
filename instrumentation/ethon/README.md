@@ -10,7 +10,7 @@ Install the gem using:
 gem install opentelemetry-instrumentation-ethon
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-ethon` to your `Gemfile`. 
+Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-ethon` to your `Gemfile`.
 
 ## Usage
 
@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage of faraday can be seen in the `./example/ethon.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/ethon/example/ethon.rb)
+Example usage of faraday can be seen in the `./example/ethon.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/main/instrumentation/ethon/example/ethon.rb)
 
 ## How can I get involved?
 
@@ -48,7 +48,7 @@ The `opentelemetry-instrumentation-all` gem is distributed under the Apache 2.0 
 [ethon-home]:https://github.com/typhoeus/ethon
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions

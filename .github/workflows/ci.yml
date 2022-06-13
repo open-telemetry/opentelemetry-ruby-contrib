@@ -15,14 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         gem:
-          - opentelemetry-api
-          - opentelemetry-common
-          - opentelemetry-metrics-api
-          - opentelemetry-registry
           - opentelemetry-resource_detectors
-          - opentelemetry-sdk
-          - opentelemetry-semantic_conventions
-          - opentelemetry-test-helpers
         os:
           - ubuntu-latest
           - macos-latest
@@ -110,8 +103,6 @@ jobs:
       fail-fast: false
       matrix:
         gem:
-          - opentelemetry-propagator-b3
-          - opentelemetry-propagator-jaeger
           - opentelemetry-propagator-ottrace
           - opentelemetry-propagator-xray
         os:

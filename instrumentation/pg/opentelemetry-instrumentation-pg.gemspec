@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.summary     = 'PG (PostgreSQL) instrumentation for the OpenTelemetry framework'
   spec.description = 'PG (PostgreSQL) instrumentation for the OpenTelemetry framework'
-  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
+  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-contrib'
   spec.license     = 'Apache-2.0'
 
   spec.files = ::Dir.glob('lib/**/*.rb') +
@@ -43,9 +43,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-pg/v#{OpenTelemetry::Instrumentation::PG::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation/pg'
-    spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-pg/v#{OpenTelemetry::Instrumentation::PG::VERSION}"
+    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-pg/v#{OpenTelemetry::Instrumentation::PG::VERSION}/file.CHANGELOG.html"
+    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/pg'
+    spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
+    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-pg/v#{OpenTelemetry::Instrumentation::PG::VERSION}"
   end
 end

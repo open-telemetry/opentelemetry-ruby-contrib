@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.summary     = 'Rails instrumentation for the OpenTelemetry framework'
   spec.description = 'Rails instrumentation for the OpenTelemetry framework'
-  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
+  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-contrib'
   spec.license     = 'Apache-2.0'
 
   spec.files = ::Dir.glob('lib/**/*.rb') +
@@ -46,5 +46,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
-  spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation/rails' if spec.respond_to?(:metadata)
+  spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/rails' if spec.respond_to?(:metadata)
 end

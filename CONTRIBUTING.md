@@ -36,25 +36,25 @@ Fork the project on GitHub by clicking the `Fork` button at the top of the
 repository and clone your fork locally:
 
 ```sh
-git clone git@github.com:YOUR_GITHUB_NAME/opentelemetry-ruby.git
+git clone git@github.com:YOUR_GITHUB_NAME/opentelemetry-ruby-contrib.git
 ```
 
 or
 ```sh
-git clone https://github.com/YOUR_GITHUB_NAME/opentelemetry-ruby.git
+git clone https://github.com/YOUR_GITHUB_NAME/opentelemetry-ruby-contrib.git
 ```
 
-It can be helpful to add the `open-telemetry/opentelemetry-ruby` repo as a
+It can be helpful to add the `open-telemetry/opentelemetry-ruby-contrib` repo as a
 remote so you can track changes (we're adding as `upstream` here):
 
 ```sh
-git remote add upstream git@github.com:open-telemetry/opentelemetry-ruby.git
+git remote add upstream git@github.com:open-telemetry/opentelemetry-ruby-contrib.git
 ```
 
 or
 
 ```sh
-git remote add upstream https://github.com/open-telemetry/opentelemetry-ruby.git
+git remote add upstream https://github.com/open-telemetry/opentelemetry-ruby-contrib.git
 ```
 
 For more detailed information on this workflow read the
@@ -90,15 +90,13 @@ configuration details.
 The services provided include:
 
  *  `app` - main container environment scoped to the `/app` directory. Used
-    primarily to build and tag the `opentelemetry/opentelemetry-ruby:latest` image.
- *  `api` - convenience environment scoped to the `api` gem in the `/app/api` directory.
- *  `sdk` - convenience environment scoped to the `sdk` gem in the `/app/sdk` directory.
+    primarily to build and tag the `opentelemetry/opentelemetry-ruby-contrib:latest` image.
 
 To test using Docker:
 
  1. Install Docker and Docker Compose for your operating system
  2. Get the latest code for the project
- 3. Build the `opentelemetry/opentelemetry-ruby` image
+ 3. Build the `opentelemetry/opentelemetry-ruby-contrib` image
     * `docker-compose build`
     * This makes the image available locally
  4. API:
@@ -170,7 +168,7 @@ You'll need to create a Pull Request once you've finished your work.
 The [Kubernetes GitHub Workflow][kube-github-workflow-pr] document has
 a significant section on PRs.
 
-Open the PR against the `open-telemetry/opentelemetry-ruby` repository.
+Open the PR against the `open-telemetry/opentelemetry-ruby-contrib` repository.
 
 Please put `[WIP]` in the title, or create it as a [`Draft`][github-draft] PR
 if the PR is not ready for review.
@@ -249,7 +247,7 @@ Releases are normally performed using GitHub Actions.
      *  For each gem, it will create a release tag and a GitHub release.
      *  It will build and push the gems to rubygems.
      *  It will build the docs and push them to
-        https://open-telemetry.github.io/opentelemetry-ruby
+        https://open-telemetry.github.io/opentelemetry-ruby-contrib
      *  If the releases succeed, the script will update the release pull
         request with the results and change its label to `release: complete`.
         If something went wrong, the script will, if possible, report the error
@@ -306,7 +304,7 @@ release, you can use the `Force release` workflow.
 
 It is possible to run the release scripts locally if GitHub Actions is having
 problems. You will need to install the `toys` gem first, and you will need the
-Rubygems API key for opentelemetry-ruby. These commands will succeed only if
+Rubygems API key for opentelemetry-ruby-contrib. These commands will succeed only if
 you have write access to the repository.
 
 To open a release pull request:

@@ -55,7 +55,7 @@ end
 
 ## Examples
 
-An example of usage can be seen in [`example/mysql2.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/mysql2/example/mysql2.rb).
+An example of usage can be seen in [`example/mysql2.rb`](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/main/instrumentation/mysql2/example/mysql2.rb).
 
 ## How can I get involved?
 
@@ -70,7 +70,7 @@ The `opentelemetry-instrumentation-mysql2` gem is distributed under the Apache 2
 [mysql2-home]: https://github.com/brianmario/mysql2
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby

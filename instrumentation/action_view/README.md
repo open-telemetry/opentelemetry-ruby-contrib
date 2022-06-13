@@ -34,7 +34,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_request_demonstration.ru` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/action_view/example/trace_request_demonstration.ru)
+Example usage can be seen in the `./example/trace_request_demonstration.ru` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/main/instrumentation/action_view/example/trace_request_demonstration.ru)
 
 ## Known issues
 
@@ -65,7 +65,7 @@ The `opentelemetry-instrumentation-action_view` gem is distributed under the Apa
 [rails-home]: https://github.com/rails/rails
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
