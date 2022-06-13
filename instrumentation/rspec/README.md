@@ -55,7 +55,7 @@ To avoid spans from being dropped, which will mean you lose insight into your sp
 
 ## Examples
 
-Example usage can be seen in the `/example` directory [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/main/instrumentation/rspec/example)
+Example usage can be seen in the `/example` directory [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/rspec/example)
 
 ## How can I get involved?
 
@@ -69,7 +69,7 @@ The `opentelemetry-instrumentation-rspec` gem is distributed under the Apache 2.
 
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/main/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions

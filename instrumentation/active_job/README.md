@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/active_job.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/main/instrumentation/active_job/example/active_job.rb)
+Example usage can be seen in the `./example/active_job.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/active_job/example/active_job.rb)
 
 ## How can I get involved?
 
@@ -47,7 +47,7 @@ The `opentelemetry-instrumentation-active_job` gem is distributed under the Apac
 [activejob-home]: https://guides.rubyonrails.org/active_job_basics.html
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/main/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
