@@ -37,7 +37,7 @@ By default we will set the rack span name to match the format "HTTP #{method}" (
 
 We surface a hook to easily retrieve the rack span within the context of a request so that you can add information to or rename your server span.
 
-This is how the rails controller instrumentation is able to rename the span names to match the controller and action that process the request. See https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/f6fb025bef69f839078748f56516ce38c7d51eb8/instrumentation/action_pack/lib/opentelemetry/instrumentation/action_pack/patches/action_controller/metal.rb#L15-L16 for an example.
+This is how the rails controller instrumentation is able to rename the span names to match the controller and action that process the request. See https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_pack/lib/opentelemetry/instrumentation/action_pack/patches/action_controller/metal.rb#L15-L16 for an example.
 
 ### High cardinality example
 
