@@ -50,7 +50,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
 
         version = ::OpenTelemetry::Instrumentation::RubyKafka::Instrumentation::MINIMUM_VERSION.version
         stub_const('Kafka::VERSION', version)
-        Gem.stub(:loaded_specs, 'ruby-kafka' => nil) do
+        Gem.stub(:loaded_specs, { 'ruby-kafka' => nil}) do
           _(instrumentation.compatible?).must_equal true
         end
       end
