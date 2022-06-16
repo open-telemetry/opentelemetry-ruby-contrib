@@ -5,7 +5,7 @@ ARG RUBY_VERSION=2.6.5
 FROM ruby:"${RUBY_VERSION}-alpine${ALPINE_VERSION}" as ruby
 
 # Metadata
-LABEL maintainer="open-telemetry/opentelemetry-ruby"
+LABEL maintainer="open-telemetry/opentelemetry-ruby-contrib"
 
 # User and Group for app isolation
 ARG APP_UID=1000

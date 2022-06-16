@@ -49,7 +49,7 @@ end
 
 ## Examples
 
-An example of usage can be seen in [`example/pg.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/pg/example/pg.rb).
+An example of usage can be seen in [`example/pg.rb`](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/pg/example/pg.rb).
 
 ## How can I get involved?
 
@@ -64,7 +64,7 @@ The `opentelemetry-instrumentation-pg` gem is distributed under the Apache 2.0 l
 [pg-home]: https://github.com/ged/ruby-pg
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby

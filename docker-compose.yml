@@ -3,7 +3,7 @@ version: "3.5"
 x-shared-config:
   base: &base
     command: /bin/bash
-    image: opentelemetry/opentelemetry-ruby
+    image: opentelemetry/opentelemetry-ruby-contrib
     stdin_open: true
     tmpfs:
       - /tmp
@@ -14,10 +14,6 @@ x-shared-config:
       - bundle:/bundle
 
 services:
-  api:
-    <<: *base
-    working_dir: /app/api
-
   app:
     <<: *base
     build:
@@ -208,10 +204,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
-
-  sdk:
-    <<: *base
-    working_dir: /app/sdk
 
 volumes:
   bundle:

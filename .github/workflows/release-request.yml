@@ -10,7 +10,7 @@ on:
 
 jobs:
   release-request:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     env:
       ruby_version: "2.7"
     runs-on: ubuntu-latest

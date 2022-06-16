@@ -13,7 +13,7 @@ require_relative '../../../../lib/opentelemetry/instrumentation/pg/patches/conne
 
 # This test suite requires a running postgres container and dedicated test container
 # To run tests:
-# 1. Build the opentelemetry/opentelemetry-ruby image
+# 1. Build the opentelemetry/opentelemetry-ruby-contrib image
 # - docker-compose build
 # 2. Bundle install
 # - docker-compose run ex-instrumentation-pg-test bundle install

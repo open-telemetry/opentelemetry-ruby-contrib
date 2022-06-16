@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.summary     = 'Mongo instrumentation for the OpenTelemetry framework'
   spec.description = 'Mongo instrumentation for the OpenTelemetry framework'
-  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
+  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-contrib'
   spec.license     = 'Apache-2.0'
 
   spec.files = ::Dir.glob('lib/**/*.rb') +
@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'mongo', '~> 2.5'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
+  spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
   spec.add_development_dependency 'rspec-mocks'
@@ -43,9 +44,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-mongo/v#{OpenTelemetry::Instrumentation::Mongo::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation/mongo'
-    spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-mongo/v#{OpenTelemetry::Instrumentation::Mongo::VERSION}"
+    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-mongo/v#{OpenTelemetry::Instrumentation::Mongo::VERSION}/file.CHANGELOG.html"
+    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/mongo'
+    spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
+    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-mongo/v#{OpenTelemetry::Instrumentation::Mongo::VERSION}"
   end
 end

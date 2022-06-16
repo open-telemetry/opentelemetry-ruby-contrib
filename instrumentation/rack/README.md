@@ -37,7 +37,7 @@ By default we will set the rack span name to match the format "HTTP #{method}" (
 
 We surface a hook to easily retrieve the rack span within the context of a request so that you can add information to or rename your server span.
 
-This is how the rails controller instrumentation is able to rename the span names to match the controller and action that process the request. See https://github.com/open-telemetry/opentelemetry-ruby/blob/f6fb025bef69f839078748f56516ce38c7d51eb8/instrumentation/action_pack/lib/opentelemetry/instrumentation/action_pack/patches/action_controller/metal.rb#L15-L16 for an example.
+This is how the rails controller instrumentation is able to rename the span names to match the controller and action that process the request. See https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_pack/lib/opentelemetry/instrumentation/action_pack/patches/action_controller/metal.rb#L15-L16 for an example.
 
 ### High cardinality example
 
@@ -51,7 +51,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/rack/example/trace_demonstration.rb)
+Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/rack/example/trace_demonstration.rb)
 
 ## How can I get involved?
 
@@ -66,7 +66,7 @@ The `opentelemetry-instrumentation-rack` gem is distributed under the Apache 2.0
 [rack-home]: https://github.com/rack/rack
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
