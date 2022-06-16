@@ -238,3 +238,5 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
     end
   end
 end
+
+# rubocop:enable Style/BracesAroundHashParameters

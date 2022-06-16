@@ -77,3 +77,5 @@ describe OpenTelemetry::Instrumentation::DelayedJob do
     end
   end
 end
+
+# rubocop:enable Style/BracesAroundHashParameters

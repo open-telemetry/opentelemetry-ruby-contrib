@@ -66,3 +66,5 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
     end
   end
 end
+
+# rubocop:enable Style/BracesAroundHashParameters
