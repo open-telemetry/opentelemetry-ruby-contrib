@@ -28,17 +28,17 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(instrumentation.compatible?).must_equal false
       end
 
-      Gem.stub(:loaded_specs, 'aws-sdk-core' => nil, 'aws-sdk' => Gem::Specification.new { |s| s.version = '1.0.0' }) do
+      Gem.stub(:loaded_specs, { 'aws-sdk-core' => nil, 'aws-sdk' => Gem::Specification.new { |s| s.version = '1.0.0' } }) do
         hide_const('::Aws::CORE_GEM_VERSION')
         _(instrumentation.compatible?).must_equal false
       end
 
-      Gem.stub(:loaded_specs, 'aws-sdk-core' => Gem::Specification.new { |s| s.version = '1.0.0' }, 'aws-sdk' => nil) do
+      Gem.stub(:loaded_specs, { 'aws-sdk-core' => Gem::Specification.new { |s| s.version = '1.0.0' }, 'aws-sdk' => nil }) do
         hide_const('::Aws::CORE_GEM_VERSION')
         _(instrumentation.compatible?).must_equal false
       end
 
-      Gem.stub(:loaded_specs, 'aws-sdk-core' => nil, 'aws-sdk' => nil) do
+      Gem.stub(:loaded_specs, { 'aws-sdk-core' => nil, 'aws-sdk' => nil }) do
         stub_const('::Aws::CORE_GEM_VERSION', '1.9.9')
         _(instrumentation.compatible?).must_equal false
       end
