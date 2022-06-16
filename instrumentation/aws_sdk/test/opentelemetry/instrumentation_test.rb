@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# rubocop:disable Style/BracesAroundHashParameters
+
 require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::AwsSdk do
