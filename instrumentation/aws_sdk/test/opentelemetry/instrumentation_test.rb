@@ -23,7 +23,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
   describe '#compatible' do
     it 'returns false for unsupported gem versions' do
-      Gem.stub(:loaded_specs, 'aws-sdk-core' => nil, 'aws-sdk' => nil) do
+      Gem.stub(:loaded_specs, { 'aws-sdk-core' => nil, 'aws-sdk' => nil }) do
         hide_const('::Aws::CORE_GEM_VERSION')
         _(instrumentation.compatible?).must_equal false
       end
