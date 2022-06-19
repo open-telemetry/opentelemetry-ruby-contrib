@@ -120,5 +120,11 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
 
       _(span.attributes['peer.service']).must_equal 'example:custom'
     end
+
+    it 'does not leak authentication credentials' do
+      client.run_request(:get, 'http://username:password@example.com/success', nil, {})
+
+      _(span.attributes['http.url']).must_equal 'http://example.com/success'
+    end
   end
 end
