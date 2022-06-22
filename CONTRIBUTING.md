@@ -66,17 +66,16 @@ _Setting up a running Ruby environment is outside the scope of this document._
 
 This repository contains multiple Ruby gems:
 
- *  `opentelemetry-api` located in the `api` directory
- *  `opentelemetry-sdk` located in the `sdk` directory
  *  Various instrumentation gems located in subdirectories of `instrumentation`
- *  Various exporter gems located in subdirectories of `exporter`
+ *  `opentelemetry-propagator-xray` located in the `propagator/xray` directory
+ *  `opentelemetry-propagator-ottrace` located in the `propagator/ottrace` directory
  *  `opentelemetry-resource_detectors` located in the `resource_detectors` directory
 
 Each of these gems has its configuration and tests.
 
-For example, to test `opentelemetry-api` you would:
+For example, to test `opentelemetry-resource_detectors` you would:
 
- 1. Change directory to `api`
+ 1. Change directory to `resource_detectors`
  2. Install the bundle with `bundle install`
  3. Run the tests with `bundle exec rake`
 
@@ -152,7 +151,7 @@ to ensure that your code complies before opening a pull request.
 We also use Yard to generate class documentation automatically. Among other
 things, this means:
 
- *  Methods and arguments should include the appropraite type annotations
+ *  Methods and arguments should include the appropriate type annotations
  *  You can use markdown formatting in your documentation comments
 
 You can generate the docs locally to see the results, by running:
