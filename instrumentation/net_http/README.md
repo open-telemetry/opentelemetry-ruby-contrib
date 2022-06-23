@@ -38,7 +38,7 @@ OpenTelemetry::SDK.configure do |c|
     request_hook: lambda { |span, request, request_body|
       # Extract custom attributes from request
     },
-    response_hook: lambda { |span, request|
+    response_hook: lambda { |span, response|
       # Extract custom attributes from response
     }
   }

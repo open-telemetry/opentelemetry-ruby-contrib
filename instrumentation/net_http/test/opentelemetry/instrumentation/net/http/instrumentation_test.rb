@@ -124,36 +124,38 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
     describe 'hooks' do
       let(:response_body) { 'abcd1234' }
+      let(:headers_attribute) { 'headers' }
+      let(:response_body_attribute) { 'response_body' }
 
       before do
         stub_request(:get, 'http://example.com/body').to_return(status: 200, body: response_body)
         instrumentation.instance_variable_set(:@installed, false)
         config = {
-          request_hook: lambda { |span, request, request_body|
+          request_hook: lambda do |span, request, _request_body|
             headers = {}
-            request.each_header { |k, v|
+            request.each_header do |k, v|
               headers[k] = v
-            }
-            span.set_attribute('headers', headers.to_json)
-          },
-          response_hook: lambda { |span, response|
-            span.set_attribute('response_body', response.body)
-          }
+            end
+            span.set_attribute(headers_attribute, headers.to_json)
+          end,
+          response_hook: lambda do |span, response|
+            span.set_attribute(response_body_attribute, response.body)
+          end
         }
 
         instrumentation.install(config)
       end
 
-      it 'collects data in request hook'  do
+      it 'collects data in request hook' do
         ::Net::HTTP.get('example.com', '/body')
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'HTTP GET'
         _(span.attributes['http.method']).must_equal 'GET'
-        headers = span.attributes['headers']
+        headers = span.attributes[headers_attribute]
         _(headers).wont_be_nil
         parsed_headers = JSON.parse(headers)
         _(parsed_headers['traceparent']).wont_be_nil
-        _(span.attributes['response_body']).must_equal response_body
+        _(span.attributes[response_body_attribute]).must_equal response_body
       end
     end
   end

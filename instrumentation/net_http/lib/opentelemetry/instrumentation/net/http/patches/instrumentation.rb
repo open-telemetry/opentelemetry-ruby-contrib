@@ -31,8 +31,7 @@ module OpenTelemetry
                 attributes: attributes,
                 kind: :client
               ) do |span|
-                OpenTelemetry.propagation.inject(req)
-                safe_execute_hook(instrumentation_config[:request_hook], span, req, body)
+                inject_context_and_extract_data(span, req, body)
 
                 super(req, body, &block).tap do |response|
                   annotate_span_with_response!(span, response)
@@ -46,12 +45,17 @@ module OpenTelemetry
               Net::HTTP::Instrumentation.instance.config
             end
 
+            def inject_context_and_extract_data(span, req, body)
+              OpenTelemetry.propagation.inject(req)
+              safe_execute_hook(instrumentation_config[:request_hook], span, req, body)
+            end
+
             def safe_execute_hook(hook, *args)
               return if hook.nil?
 
               hook.call(*args)
-            rescue
-              # Do nothing
+            rescue StandardError => e
+              OpenTelemetry.logger.debug(e.message)
             end
 
             def connect
