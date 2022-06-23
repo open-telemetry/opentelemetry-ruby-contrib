@@ -121,6 +121,41 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
+
+    describe 'hooks' do
+      let(:response_body) { 'abcd1234' }
+
+      before do
+        stub_request(:get, 'http://example.com/body').to_return(status: 200, body: response_body)
+        instrumentation.instance_variable_set(:@installed, false)
+        config = {
+          request_hook: lambda { |span, request, request_body|
+            headers = {}
+            request.each_header { |k, v|
+              headers[k] = v
+            }
+            span.set_attribute('headers', headers.to_json)
+          },
+          response_hook: lambda { |span, response|
+            span.set_attribute('response_body', response.body)
+          }
+        }
+
+        instrumentation.install(config)
+      end
+
+      it 'collects data in request hook'  do
+        ::Net::HTTP.get('example.com', '/body')
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        headers = span.attributes['headers']
+        _(headers).wont_be_nil
+        parsed_headers = JSON.parse(headers)
+        _(parsed_headers['traceparent']).wont_be_nil
+        _(span.attributes['response_body']).must_equal response_body
+      end
+    end
   end
 
   describe '#connect' do
