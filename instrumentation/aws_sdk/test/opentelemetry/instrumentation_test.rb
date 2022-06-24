@@ -172,6 +172,18 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['messaging.destination']).must_equal 'queue-name'
         _(last_span.attributes['messaging.url']).must_equal 'https://sqs.fake.amazonaws.com/1/queue-name'
       end
+
+      it 'should have messaging attributes for get_queue_url' do
+        sqs_client = Aws::SQS::Client.new(stub_responses: true)
+
+        sqs_client.get_queue_url queue_name: 'queue-name'
+
+        _(last_span.attributes['rpc.system']).must_equal 'aws-api'
+        _(last_span.attributes['messaging.system']).must_equal 'aws.sqs'
+        _(last_span.attributes['messaging.destination_kind']).must_equal 'queue'
+        _(last_span.attributes['messaging.destination']).must_equal 'unknown'
+        _(last_span.attributes).wont_include('messaging.url')
+      end
     end
 
     describe 'sns' do
