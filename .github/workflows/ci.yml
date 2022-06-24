@@ -293,7 +293,6 @@ jobs:
           echo "::set-output name=skip::false"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-que"        ]] && echo "::set-output name=skip::true"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-rdkafka"    ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-redis"      ]] && echo "::set-output name=skip::true"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-ruby_kafka" ]] && echo "::set-output name=skip::true"
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
