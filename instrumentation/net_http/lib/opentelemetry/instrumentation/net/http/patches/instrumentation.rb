@@ -17,6 +17,7 @@ module OpenTelemetry
             def request(req, body = nil, &block) # rubocop:disable Metrics/AbcSize
               # Do not trace recursive call for starting the connection
               return super(req, body, &block) unless started?
+              return super(req, body, &block) unless OpenTelemetry::Trace.current_span.recording?
 
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
@@ -54,6 +55,8 @@ module OpenTelemetry
             end
 
             def connect
+              return super unless OpenTelemetry::Trace.current_span.recording?
+
               if proxy?
                 conn_address = proxy_address
                 conn_port    = proxy_port

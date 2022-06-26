@@ -13,9 +13,9 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
+  let(:tracer) { OpenTelemetry.tracer_provider.tracer('test', '1.0') }
 
   before do
-    exporter.reset
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'https://example.com/timeout').to_timeout
@@ -25,6 +25,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
     OpenTelemetry.propagation = propagator
     instrumentation.install
+    exporter.reset
   end
 
   after do
@@ -61,6 +62,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       ::Net::HTTP.post(URI('http://example.com/failure'), 'q' => 'ruby')
 
       _(exporter.finished_spans.size).must_equal 1
+
       _(span.name).must_equal 'HTTP POST'
       _(span.attributes['http.method']).must_equal 'POST'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -225,6 +227,24 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         end
       end
     end
+
+    describe 'when executed in an untraced block' do
+      it 'does not record any spans' do
+        tracer.in_span('test') do
+          OpenTelemetry::Common::Utilities.untraced do
+            ::Net::HTTP.get('example.com', '/success')
+          end
+        end
+
+        _(exporter.finished_spans.map(&:name)).must_equal ['test']
+
+        refute_requested(
+          :get,
+          'http://example.com/success',
+          headers: { 'Traceparent' => /.*/ }
+        )
+      end
+    end
   end
 
   describe '#connect' do
@@ -266,6 +286,28 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span_event.attributes['exception.message']).must_match(/Failed to open TCP connection to localhost:99999/)
     ensure
       WebMock.disable_net_connect!
+    end
+
+    describe 'when executed in an untraced block' do
+      it 'does not record any spans' do
+        WebMock.allow_net_connect!
+        TCPServer.open('localhost', 0) do |server|
+          Thread.start { server.accept }
+          port = server.addr[1]
+
+          tracer.in_span('test') do
+            OpenTelemetry::Common::Utilities.untraced do
+              uri  = URI.parse("http://localhost:#{port}/example")
+              http = Net::HTTP.new(uri.host, uri.port)
+              http.read_timeout = 0
+              _(-> { http.request(Net::HTTP::Get.new(uri.request_uri)) }).must_raise(Net::ReadTimeout)
+            end
+          end
+        end
+        _(exporter.finished_spans.map(&:name)).must_equal ['test']
+      ensure
+        WebMock.disable_net_connect!
+      end
     end
   end
 end
