@@ -55,7 +55,7 @@ module OpenTelemetry
 
               hook.call(*args)
             rescue StandardError => e
-              OpenTelemetry.logger.debug(e.message)
+              OpenTelemetry.handle_error(exception: e)
             end
 
             def connect

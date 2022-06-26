@@ -129,33 +129,76 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
       before do
         stub_request(:get, 'http://example.com/body').to_return(status: 200, body: response_body)
-        instrumentation.instance_variable_set(:@installed, false)
-        config = {
-          request_hook: lambda do |span, request, _request_body|
-            headers = {}
-            request.each_header do |k, v|
-              headers[k] = v
-            end
-            span.set_attribute(headers_attribute, headers.to_json)
-          end,
-          response_hook: lambda do |span, response|
-            span.set_attribute(response_body_attribute, response.body)
-          end
-        }
-
-        instrumentation.install(config)
       end
 
-      it 'collects data in request hook' do
-        ::Net::HTTP.get('example.com', '/body')
-        _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'HTTP GET'
-        _(span.attributes['http.method']).must_equal 'GET'
-        headers = span.attributes[headers_attribute]
-        _(headers).wont_be_nil
-        parsed_headers = JSON.parse(headers)
-        _(parsed_headers['traceparent']).wont_be_nil
-        _(span.attributes[response_body_attribute]).must_equal response_body
+      describe 'valid hooks' do
+        before do
+          instrumentation.instance_variable_set(:@installed, false)
+          config = {
+            request_hook: lambda do |span, request, _request_body|
+              headers = {}
+              request.each_header do |k, v|
+                headers[k] = v
+              end
+              span.set_attribute(headers_attribute, headers.to_json)
+            end,
+            response_hook: lambda do |span, response|
+              span.set_attribute(response_body_attribute, response.body)
+            end
+          }
+
+          instrumentation.install(config)
+        end
+
+        it 'collects data in request hook' do
+          ::Net::HTTP.get('example.com', '/body')
+          _(exporter.finished_spans.size).must_equal 1
+          _(span.name).must_equal 'HTTP GET'
+          _(span.attributes['http.method']).must_equal 'GET'
+          headers = span.attributes[headers_attribute]
+          _(headers).wont_be_nil
+          parsed_headers = JSON.parse(headers)
+          _(parsed_headers['traceparent']).wont_be_nil
+          _(span.attributes[response_body_attribute]).must_equal response_body
+        end
+      end
+
+      describe 'invalid hook - wrong number of args' do
+        before do
+          instrumentation.instance_variable_set(:@installed, false)
+          config = {
+            request_hook: lambda { |_span| puts 1234 },
+            response_hook: lambda { |_span| puts 4321 },
+          }
+
+          instrumentation.install(config)
+        end
+
+        it 'should not fail the instrumentation' do
+          ::Net::HTTP.get('example.com', '/body')
+          _(exporter.finished_spans.size).must_equal 1
+          _(span.name).must_equal 'HTTP GET'
+          _(span.attributes['http.method']).must_equal 'GET'
+        end
+      end
+
+      describe 'invalid hooks - throws an error' do
+        before do
+          instrumentation.instance_variable_set(:@installed, false)
+          config = {
+            request_hook: lambda { |_span, _request, _request_body| raise StandardError.new('err1') },
+            response_hook: lambda { |_span, _response| StandardError.new('err2') },
+          }
+
+          instrumentation.install(config)
+        end
+
+        it 'should not fail the instrumentation' do
+          ::Net::HTTP.get('example.com', '/body')
+          _(exporter.finished_spans.size).must_equal 1
+          _(span.name).must_equal 'HTTP GET'
+          _(span.attributes['http.method']).must_equal 'GET'
+        end
       end
     end
   end
