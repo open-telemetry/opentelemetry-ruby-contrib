@@ -167,8 +167,8 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         before do
           instrumentation.instance_variable_set(:@installed, false)
           config = {
-            request_hook: lambda { |_span| puts 1234 },
-            response_hook: lambda { |_span| puts 4321 },
+            request_hook: lambda { |_span| nil },
+            response_hook: lambda { |_span| nil },
           }
 
           instrumentation.install(config)
@@ -186,8 +186,8 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         before do
           instrumentation.instance_variable_set(:@installed, false)
           config = {
-            request_hook: lambda { |_span, _request, _request_body| raise StandardError.new('err1') },
-            response_hook: lambda { |_span, _response| StandardError.new('err2') },
+            request_hook: lambda { |_span, _request, _request_body| raise StandardError, 'err1' },
+            response_hook: lambda { |_span, _response| raise StandardError, 'err2' },
           }
 
           instrumentation.install(config)
