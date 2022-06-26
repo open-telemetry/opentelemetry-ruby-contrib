@@ -167,37 +167,56 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         before do
           instrumentation.instance_variable_set(:@installed, false)
           config = {
-            request_hook: lambda { |_span| nil },
-            response_hook: lambda { |_span| nil },
+            request_hook: -> (_span) { nil },
+            response_hook: -> (_span) { nil }
           }
 
           instrumentation.install(config)
         end
 
+        after { OpenTelemetry::TestHelpers.reset_opentelemetry }
+
         it 'should not fail the instrumentation' do
+          received_exceptions = []
+          OpenTelemetry.error_handler = lambda do |exception: nil, message: nil|
+            received_exceptions << exception
+          end
           ::Net::HTTP.get('example.com', '/body')
           _(exporter.finished_spans.size).must_equal 1
           _(span.name).must_equal 'HTTP GET'
           _(span.attributes['http.method']).must_equal 'GET'
+          error_messages = received_exceptions.map { |e| e.message }
+          _(error_messages.all? { |em| em.start_with?('wrong number of arguments')}).must_equal true
         end
       end
 
       describe 'invalid hooks - throws an error' do
+        let(:error1) { 'err1' }
+        let(:error2) { 'err2' }
+
         before do
           instrumentation.instance_variable_set(:@installed, false)
           config = {
-            request_hook: lambda { |_span, _request, _request_body| raise StandardError, 'err1' },
-            response_hook: lambda { |_span, _response| raise StandardError, 'err2' },
+            request_hook: -> (_span, _request, _request_body) { raise StandardError, error1 },
+            response_hook: -> (_span, _response) { raise StandardError, error2 }
           }
 
           instrumentation.install(config)
         end
 
+        after { OpenTelemetry::TestHelpers.reset_opentelemetry }
+
         it 'should not fail the instrumentation' do
+          received_exceptions = []
+          OpenTelemetry.error_handler = lambda do |exception: nil, message: nil|
+            received_exceptions << exception
+          end
           ::Net::HTTP.get('example.com', '/body')
           _(exporter.finished_spans.size).must_equal 1
           _(span.name).must_equal 'HTTP GET'
           _(span.attributes['http.method']).must_equal 'GET'
+          error_messages = received_exceptions.map { |e| e.message }
+          _(error_messages).must_equal([error1, error2])
         end
       end
     end
