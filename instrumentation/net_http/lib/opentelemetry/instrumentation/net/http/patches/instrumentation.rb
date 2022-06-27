@@ -32,7 +32,8 @@ module OpenTelemetry
                 kind: :client
               ) do |span|
                 OpenTelemetry.propagation.inject(req)
-                safe_execute_hook(instrumentation_config[:request_hook], span, req, body)
+                request_hook = instrumentation_config[:request_hook]
+                safe_execute_hook(request_hook, span, req, body) unless request_hook.nil?
 
                 super(req, body, &block).tap do |response|
                   annotate_span_with_response!(span, response)
@@ -47,8 +48,6 @@ module OpenTelemetry
             end
 
             def safe_execute_hook(hook, *args)
-              return if hook.nil?
-
               hook.call(*args)
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
@@ -81,7 +80,8 @@ module OpenTelemetry
               span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code)
               span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(status_code.to_i)
 
-              safe_execute_hook(instrumentation_config[:response_hook], span, response)
+              response_hook = instrumentation_config[:response_hook]
+              safe_execute_hook(response_hook, span, response) unless response_hook.nil?
             end
 
             def tracer
