@@ -8,6 +8,7 @@ require 'opentelemetry/sdk'
 
 require 'minitest/autorun'
 require 'webmock/minitest'
+require 'rspec/mocks/minitest_integration'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
