@@ -14,7 +14,7 @@ module OpenTelemetry
             HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
             USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
-            def request(req, body = nil, &block)
+            def request(req, body = nil, &block) # rubocop:disable Metrics/AbcSize
               # Do not trace recursive call for starting the connection
               return super(req, body, &block) unless started?
 
@@ -31,7 +31,8 @@ module OpenTelemetry
                 attributes: attributes,
                 kind: :client
               ) do |span|
-                inject_context_and_extract_data(span, req, body)
+                OpenTelemetry.propagation.inject(req)
+                safe_execute_hook(instrumentation_config[:request_hook], span, req, body)
 
                 super(req, body, &block).tap do |response|
                   annotate_span_with_response!(span, response)
@@ -43,11 +44,6 @@ module OpenTelemetry
 
             def instrumentation_config
               Net::HTTP::Instrumentation.instance.config
-            end
-
-            def inject_context_and_extract_data(span, req, body)
-              OpenTelemetry.propagation.inject(req)
-              safe_execute_hook(instrumentation_config[:request_hook], span, req, body)
             end
 
             def safe_execute_hook(hook, *args)
