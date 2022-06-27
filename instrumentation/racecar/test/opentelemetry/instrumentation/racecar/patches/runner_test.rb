@@ -200,4 +200,100 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
       end
     end
   end
+
+  describe '#process_batch' do
+    let(:consumer_class) do
+      # a test class
+      class TestBatchConsumer < Racecar::Consumer
+        def self.messages_seen
+          @messages_seen ||= []
+        end
+
+        def process_batch(messages)
+          messages.each do |message|
+            produce(
+              'message seen',
+              topic: "ack-#{message.topic}"
+            )
+            TestBatchConsumer.messages_seen << message
+          end
+        end
+      end
+      TestBatchConsumer.subscribes_to(topic_name)
+      TestBatchConsumer
+    end
+
+    it 'traces the batch call' do
+      config = { "bootstrap.servers": "#{host}:#{port}" }
+      producer = Rdkafka::Config.new(config).producer
+      delivery_handles = []
+
+      delivery_handles << producer.produce(
+        topic: topic_name,
+        payload: 'never gonna',
+        key: 'Key 1'
+      )
+
+      delivery_handles << producer.produce(
+        topic: topic_name,
+        payload: 'give you up',
+        key: 'Key 2'
+      )
+
+      delivery_handles.each(&:wait)
+
+      producer.close
+
+      Thread.new do
+        racecar.run
+      end
+
+      Timeout.timeout(30) do
+        sleep 0.1 until consumer_class.messages_seen.size >= 2
+      end
+
+      batch_spans = spans.select { |s| s.name == 'batch process' }
+
+      racecar_send_spans = spans.select { |s| s.name == "ack-#{topic_name} send" }
+
+      _(spans.size).must_equal(5)
+
+      batch_span = batch_spans[0]
+      _(batch_span.name).must_equal('batch process')
+      _(batch_span.kind).must_equal(:consumer)
+      _(batch_span.attributes['messaging.kafka.message_count']).must_equal(2)
+
+      batch_span_link = batch_span.links[0]
+      linked_span_context = batch_span_link.span_context
+
+      linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+      _(linked_send_span.name).must_equal("#{topic_name} send")
+      _(linked_send_span.trace_id).wont_equal(batch_span.trace_id)
+      _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
+
+      batch_span_link = batch_span.links[1]
+      linked_span_context = batch_span_link.span_context
+
+      linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+      _(linked_send_span.name).must_equal("#{topic_name} send")
+      _(linked_send_span.trace_id).wont_equal(batch_span.trace_id)
+      _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
+
+      # first racecar ack span
+      first_send_span = racecar_send_spans[0]
+      _(first_send_span.name).must_equal("ack-#{topic_name} send")
+      _(first_send_span.kind).must_equal(:producer)
+      _(first_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Rdkafka')
+      _(first_send_span.parent_span_id).must_equal(batch_span.span_id)
+      _(first_send_span.trace_id).must_equal(batch_span.trace_id)
+
+      # second racecar ack span
+      second_send_span = racecar_send_spans[1]
+      _(second_send_span.name).must_equal("ack-#{topic_name} send")
+      _(second_send_span.kind).must_equal(:producer)
+      _(second_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Rdkafka')
+      _(second_send_span.parent_span_id).must_equal(batch_span.span_id)
+      _(second_send_span.trace_id).must_equal(batch_span.trace_id)
+    end
+  end
 end

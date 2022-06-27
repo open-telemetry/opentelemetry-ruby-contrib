@@ -12,7 +12,11 @@ module OpenTelemetry
         module Runner
           def initialize(*args, **kwargs)
             super
-            @processor.extend(Consumer)
+            if @processor.respond_to?(:process)
+              @processor.extend(Consumer)
+            elsif @processor.respond_to?(:process_batch)
+              @processor.extend(BatchConsumer)
+            end
           end
 
           # This module contains logic to patch Racecar::Consumer
@@ -35,6 +39,31 @@ module OpenTelemetry
                 tracer.in_span("#{message.topic} process", links: links, attributes: attributes, kind: :consumer) do
                   super message
                 end
+              end
+            end
+
+            def tracer
+              Racecar::Instrumentation.instance.tracer
+            end
+          end
+
+          # This module contains logic to patch Racecar::Consumer for batch operations
+          module BatchConsumer
+            def process_batch(messages)
+              attributes = {
+                'messaging.system' => 'kafka',
+                'messaging.destination_kind' => 'topic',
+                'messaging.kafka.message_count' => messages.size
+              }
+
+              links = messages.map do |message|
+                span_context = OpenTelemetry::Trace.current_span(OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)).context
+                OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
+              end
+              links.compact!
+
+              tracer.in_span('batch process', attributes: attributes, links: links, kind: :consumer) do
+                super messages
               end
             end
 
