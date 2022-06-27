@@ -20,7 +20,7 @@ instrumentation/active_record/db
 **/vendor/**/*
 
 # IDE Settings
-/.idea/
+**/.idea/
 
 # rbenv configuration
 .ruby-version
