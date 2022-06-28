@@ -13,6 +13,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
   let(:instrumentation) { OpenTelemetry::Instrumentation::Faraday::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
+  let(:response_body) { 'abcd1234' }
 
   let(:client) do
     ::Faraday.new('http://username:password@example.com') do |builder|
@@ -20,6 +21,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         stub.get('/success') { |_| [200, {}, 'OK'] }
         stub.get('/failure') { |_| [500, {}, 'OK'] }
         stub.get('/not_found') { |_| [404, {}, 'OK'] }
+        stub.get('/body') { |_| [200, {}, response_body] }
       end
     end
   end
@@ -125,6 +127,105 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       client.run_request(:get, 'http://username:password@example.com/success', nil, {})
 
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
+    end
+  end
+
+  describe 'hooks' do
+    let(:headers_attribute) { 'headers' }
+    let(:response_body_attribute) { 'response_body' }
+
+    describe 'valid hooks' do
+      before do
+        instrumentation.instance_variable_set(:@installed, false)
+        config = {
+          request_hook: lambda do |span, request|
+            headers = {}
+            request.request_headers.each do |k, v|
+              headers[k] = v
+            end
+            span.set_attribute(headers_attribute, headers.to_json)
+          end,
+          response_hook: lambda do |span, response|
+            span.set_attribute(response_body_attribute, response.body.to_s)
+          end
+        }
+
+        instrumentation.install(config)
+      end
+
+      it 'collects data in request hook' do
+        client.get('/body')
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        headers = span.attributes[headers_attribute]
+        _(headers).wont_be_nil
+        parsed_headers = JSON.parse(headers)
+        _(parsed_headers['traceparent']).wont_be_nil
+        _(span.attributes[response_body_attribute]).must_equal response_body
+      end
+    end
+
+    describe 'invalid hook - wrong number of args' do
+      let(:received_exceptions) { [] }
+
+      before do
+        instrumentation.instance_variable_set(:@installed, false)
+        config = {
+          request_hook: ->(_span) { nil },
+          response_hook: ->(_span) { nil }
+        }
+
+        instrumentation.install(config)
+        OpenTelemetry.error_handler = lambda do |exception: nil, message: nil| # rubocop:disable Lint/UnusedBlockArgument
+          received_exceptions << exception
+        end
+      end
+
+      after do
+        OpenTelemetry.error_handler = nil
+      end
+
+      it 'should not fail the instrumentation' do
+        client.get('/body')
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        error_messages = received_exceptions.map(&:message)
+        _(error_messages.all? { |em| em.start_with?('wrong number of arguments') }).must_equal true
+      end
+    end
+
+    describe 'invalid hooks - throws an error' do
+      let(:error1) { 'err1' }
+      let(:error2) { 'err2' }
+      let(:received_exceptions) { [] }
+
+      before do
+        instrumentation.instance_variable_set(:@installed, false)
+        config = {
+          request_hook: ->(_span, _request) { raise StandardError, error1 },
+          response_hook: ->(_span, _response) { raise StandardError, error2 }
+        }
+
+        instrumentation.install(config)
+        OpenTelemetry.error_handler = lambda do |exception: nil, message: nil| # rubocop:disable Lint/UnusedBlockArgument
+          received_exceptions << exception
+        end
+      end
+
+      after do
+        OpenTelemetry.error_handler = nil
+      end
+
+      it 'should not fail the instrumentation' do
+        client.get('/body')
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        error_messages = received_exceptions.map(&:message)
+        _(error_messages).must_equal([error1, error2])
+      end
     end
   end
 end
