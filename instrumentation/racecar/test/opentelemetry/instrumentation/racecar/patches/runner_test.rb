@@ -19,9 +19,38 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
   let(:host) { ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' } }
   let(:port) { (ENV.fetch('TEST_KAFKA_PORT') { 29_092 }) }
 
+  def produce(messages)
+    config = { "bootstrap.servers": "#{host}:#{port}" }
+    producer = Rdkafka::Config.new(config).producer
+
+    producer_messages.map { |msg| producer.produce(**msg) }.each(&:wait)
+
+    producer.close
+  end
+
   let(:racecar) do
     Racecar.config.brokers = ["#{host}:#{port}"]
-    Racecar::Cli.new([consumer_class.name.to_s])
+    Racecar.config.pause_timeout = 0 # fail fast and exit
+    Racecar.config.load_consumer_class(consumer_class)
+    Racecar::Runner.new(consumer_class.new, config: Racecar.config, logger: Logger.new(STDOUT))
+  end
+
+  def run_racecar(racecar)
+    Thread.new do
+      racecar.run
+    rescue RuntimeError => e
+      raise e unless e.message == 'oops'
+    end
+  end
+
+  def stop_racecar(racecar)
+    racecar.stop
+  end
+
+  def wait_for_messages_seen_by_consumer(count, timeout: 20)
+    Timeout.timeout(20) do
+      sleep 0.1 until consumer_class.messages_seen.size >= count
+    end
   end
 
   let(:topic_name) do
@@ -34,6 +63,14 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
     exporter.reset
 
     instrumentation.install
+
+    produce(producer_messages)
+
+    run_racecar(racecar)
+  end
+
+  after do
+    stop_racecar(racecar)
   end
 
   describe '#process' do
@@ -57,34 +94,20 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
         TestConsumer
       end
 
-      it 'traces each message and traces publishing' do
-        config = { "bootstrap.servers": "#{host}:#{port}" }
-        producer = Rdkafka::Config.new(config).producer
-        delivery_handles = []
-
-        delivery_handles << producer.produce(
+      let(:producer_messages) do
+        [{
           topic: topic_name,
           payload: 'never gonna',
           key: 'Key 1'
-        )
-
-        delivery_handles << producer.produce(
+        }, {
           topic: topic_name,
           payload: 'give you up',
           key: 'Key 2'
-        )
+        }]
+      end
 
-        delivery_handles.each(&:wait)
-
-        producer.close
-
-        Thread.new do
-          racecar.run
-        end
-
-        Timeout.timeout(30) do
-          sleep 0.1 until consumer_class.messages_seen.size >= 2
-        end
+      it 'traces each message and traces publishing' do
+        wait_for_messages_seen_by_consumer(2)
 
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
         racecar_send_spans = spans.select { |s| s.name == "ack-#{topic_name} send" }
@@ -154,25 +177,16 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
         ErrorConsumer
       end
 
-      it 'can consume and publish a message' do
-        config = { "bootstrap.servers": "#{host}:#{port}" }
-        producer = Rdkafka::Config.new(config).producer
-
-        producer.produce(
+      let(:producer_messages) do
+        [{
           topic: topic_name,
-          payload: 'gonna error',
+          payload: 'never gonna',
           key: 'Key 1'
-        )
+        }]
+      end
 
-        producer.close
-
-        Thread.new do
-          racecar.run
-        end
-
-        Timeout.timeout(30) do
-          sleep 0.1 until consumer_class.messages_seen.size >= 1
-        end
+      it 'can consume and publish a message' do
+        wait_for_messages_seen_by_consumer(1)
 
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
 
@@ -223,34 +237,20 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
       TestBatchConsumer
     end
 
-    it 'traces the batch call' do
-      config = { "bootstrap.servers": "#{host}:#{port}" }
-      producer = Rdkafka::Config.new(config).producer
-      delivery_handles = []
-
-      delivery_handles << producer.produce(
+    let(:producer_messages) do
+      [{
         topic: topic_name,
         payload: 'never gonna',
         key: 'Key 1'
-      )
-
-      delivery_handles << producer.produce(
+      }, {
         topic: topic_name,
         payload: 'give you up',
         key: 'Key 2'
-      )
+      }]
+    end
 
-      delivery_handles.each(&:wait)
-
-      producer.close
-
-      Thread.new do
-        racecar.run
-      end
-
-      Timeout.timeout(30) do
-        sleep 0.1 until consumer_class.messages_seen.size >= 2
-      end
+    it 'traces the batch call' do
+      wait_for_messages_seen_by_consumer(2)
 
       batch_spans = spans.select { |s| s.name == 'batch process' }
 
