@@ -1,6 +1,7 @@
 # OpenTelemetry Racecar Instrumentation
 
-Todo: Add a description.
+The Racecar instrumentation is a community-maintained instrumentation for [Racecar](https://github.com/zendesk/racecar), a client library for Apache Kafka.
+
 
 ## How do I get started?
 
@@ -32,7 +33,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/racecar/example/trace_demonstration.rb)
+Example usage can be seen in the `./example` directory [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/racecar/example). Run `./trace_demonstration.sh` to see its behaviour.
 
 ## How can I get involved?
 
