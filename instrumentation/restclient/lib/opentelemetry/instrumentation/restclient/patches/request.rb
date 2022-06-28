@@ -18,7 +18,17 @@ module OpenTelemetry
 
           private
 
-          def trace_request # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          def config
+            RestClient::Instrumentation.instance.config
+          end
+
+          def safe_execute_hook(hook, *args)
+            hook.call(*args)
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
+          end
+
+          def create_request_span # rubocop:disable Metrics/AbcSize
             http_method = method.upcase
             instrumentation_attrs = {
               'http.method' => http_method.to_s,
@@ -37,6 +47,13 @@ module OpenTelemetry
             OpenTelemetry::Trace.with_span(span) do
               OpenTelemetry.propagation.inject(processed_headers)
             end
+            safe_execute_hook(config[:request_hook], span, self) unless config[:request_hook].nil?
+
+            span
+          end
+
+          def trace_request # rubocop:disable Metrics/AbcSize
+            span = create_request_span
 
             yield(span).tap do |response|
               # Verify return value is a response.
@@ -44,6 +61,7 @@ module OpenTelemetry
               if response.is_a?(::RestClient::Response)
                 span.set_attribute('http.status_code', response.code)
                 span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response.code.to_i)
+                safe_execute_hook(config[:response_hook], span, response) unless config[:response_hook].nil?
               end
             end
           rescue ::RestClient::ExceptionWithResponse => e
