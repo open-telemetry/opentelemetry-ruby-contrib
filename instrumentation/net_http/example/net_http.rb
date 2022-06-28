@@ -12,3 +12,13 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 Net::HTTP.get(URI('http://example.com'))
+
+OpenTelemetry.tracer_provider.tracer.in_span('activate') do
+  Net::HTTP.get(URI('http://example.com'))
+end
+
+OpenTelemetry.tracer_provider.tracer.in_span('deactivate') do
+  OpenTelemetry::Common::Utilities.untraced do
+    Net::HTTP.get(URI('http://example.com'))
+  end
+end
