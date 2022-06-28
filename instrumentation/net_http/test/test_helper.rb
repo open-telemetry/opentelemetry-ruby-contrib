@@ -3,7 +3,6 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-ENV['OTEL_TRACES_SAMPLER'] = 'always_on'
 
 require 'net/http'
 require 'bundler/setup'
