@@ -240,6 +240,7 @@ jobs:
           - mysql2
           - pg
           - que
+          - racecar
           - rdkafka
           - redis
           - resque
