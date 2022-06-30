@@ -96,6 +96,8 @@ jobs:
             gem: opentelemetry-instrumentation-rails
           - os: macos-latest
             gem: opentelemetry-instrumentation-lmdb
+          - os: macos-latest
+            gem: opentelemetry-instrumentation-racecar
 
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
