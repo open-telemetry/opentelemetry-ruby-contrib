@@ -165,6 +165,7 @@ jobs:
           - opentelemetry-instrumentation-mysql2
           - opentelemetry-instrumentation-pg
           - opentelemetry-instrumentation-que
+          - opentelemetry-instrumentation-racecar
           - opentelemetry-instrumentation-rdkafka
           - opentelemetry-instrumentation-redis
           - opentelemetry-instrumentation-resque
