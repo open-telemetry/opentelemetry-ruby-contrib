@@ -25,12 +25,10 @@ module OpenTelemetry
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.headers)
-              request_hook = instrumentation_config[:request_hook]
-              safe_execute_hook(request_hook, span, req) unless request_hook.nil?
+              safe_execute_hook(instrumentation_config[:request_hook], span, req) unless instrumentation_config[:request_hook].nil?
               super.tap do |response|
                 annotate_span_with_response!(span, response)
-                response_hook = instrumentation_config[:response_hook]
-                safe_execute_hook(response_hook, span, response) unless response_hook.nil?
+                safe_execute_hook(instrumentation_config[:response_hook], span, response) unless instrumentation_config[:response_hook].nil?
               end
             end
           end

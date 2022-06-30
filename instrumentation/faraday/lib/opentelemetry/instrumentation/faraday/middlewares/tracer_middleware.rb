@@ -32,7 +32,7 @@ module OpenTelemetry
               "HTTP #{http_method}", attributes: attributes, kind: :client
             ) do |span|
               OpenTelemetry.propagation.inject(env.request_headers)
-              safe_execute_hook(config[:request_hook], span, env) unless config[:request_hook].nil?
+              safe_execute_hook(instrumentation_config[:request_hook], span, env) unless instrumentation_config[:request_hook].nil?
 
               app.call(env).on_complete { |resp| trace_response(span, resp) }
             end
@@ -42,7 +42,7 @@ module OpenTelemetry
 
           attr_reader :app
 
-          def config
+          def instrumentation_config
             Faraday::Instrumentation.instance.config
           end
 
@@ -72,7 +72,7 @@ module OpenTelemetry
           def trace_response(span, response)
             span.set_attribute('http.status_code', response.status)
             span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response.status.to_i)
-            safe_execute_hook(config[:response_hook], span, response) unless config[:response_hook].nil?
+            safe_execute_hook(instrumentation_config[:response_hook], span, response) unless instrumentation_config[:response_hook].nil?
           end
         end
       end

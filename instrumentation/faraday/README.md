@@ -35,7 +35,7 @@ end
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Faraday', {
-    request_hook: lambda { |span, request|
+    request_hook: lambda { |span, env|
       # Extract custom attributes from request
     },
     response_hook: lambda { |span, response|

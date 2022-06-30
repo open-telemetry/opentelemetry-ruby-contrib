@@ -34,8 +34,8 @@ module OpenTelemetry
               'http.method' => http_method.to_s,
               'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
             }
-            config = RestClient::Instrumentation.instance.config
-            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
+            instrumentation_config = RestClient::Instrumentation.instance.config
+            instrumentation_attrs['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
             span = tracer.start_span(
               "HTTP #{http_method}",
               attributes: instrumentation_attrs.merge(
@@ -47,7 +47,7 @@ module OpenTelemetry
             OpenTelemetry::Trace.with_span(span) do
               OpenTelemetry.propagation.inject(processed_headers)
             end
-            safe_execute_hook(config[:request_hook], span, self) unless config[:request_hook].nil?
+            safe_execute_hook(instrumentation_config[:request_hook], span, self) unless instrumentation_config[:request_hook].nil?
 
             span
           end

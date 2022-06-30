@@ -158,7 +158,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       end
     end
 
-    describe 'invalid hook - wrong number of args' do
+    describe 'when hooks are configured with incorrect number of args' do
       let(:received_exceptions) { [] }
 
       before do
@@ -188,7 +188,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       end
     end
 
-    describe 'invalid hooks - throws an error' do
+    describe 'when exceptions are thrown in hooks' do
       let(:error1) { 'err1' }
       let(:error2) { 'err2' }
       let(:received_exceptions) { [] }
