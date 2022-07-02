@@ -21,6 +21,8 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
+        option :request_hook, default: nil, validate: :callable
+        option :response_hook, default: nil, validate: :callable
 
         private
 

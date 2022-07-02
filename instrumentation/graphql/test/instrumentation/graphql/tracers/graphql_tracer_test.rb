@@ -65,9 +65,9 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
     it 'includes operation attributes for execute_query' do
       expected_attributes = {
-        'selected_operation_name' => 'SimpleQuery',
-        'selected_operation_type' => 'query',
-        'query_string' => 'query SimpleQuery{ simpleField }'
+        'graphql.operation.name' => 'SimpleQuery',
+        'graphql.operation.type' => 'query',
+        'graphql.document' => 'query SimpleQuery{ simpleField }'
       }
 
       SomeGraphQLAppSchema.execute('query SimpleQuery{ simpleField }')
@@ -79,8 +79,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
     it 'omits nil attributes for execute_query' do
       expected_attributes = {
-        'selected_operation_type' => 'query',
-        'query_string' => '{ simpleField }'
+        'graphql.operation.type' => 'query',
+        'graphql.document' => '{ simpleField }'
       }
 
       SomeGraphQLAppSchema.execute('{ simpleField }')

@@ -74,9 +74,9 @@ module OpenTelemetry
             attributes = {}
             case key
             when 'execute_query'
-              attributes['selected_operation_name'] = data[:query].selected_operation_name if data[:query].selected_operation_name
-              attributes['selected_operation_type'] = data[:query].selected_operation.operation_type
-              attributes['query_string'] = data[:query].query_string
+              attributes['graphql.operation.name'] = data[:query].selected_operation_name if data[:query].selected_operation_name
+              attributes['graphql.operation.type'] = data[:query].selected_operation.operation_type
+              attributes['graphql.document'] = data[:query].query_string
             end
             attributes
           end
