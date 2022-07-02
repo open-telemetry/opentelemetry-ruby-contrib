@@ -32,7 +32,7 @@ module OpenTelemetry
             attributes[SemanticConventions::Trace::MESSAGING_SYSTEM] = 'aws.sqs'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'queue'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = queue_name(context)
-            attributes[SemanticConventions::Trace::MESSAGING_URL] = context.params[:queue_url]
+            attributes[SemanticConventions::Trace::MESSAGING_URL] = context.params[:queue_url] if context.params[:queue_url]
 
             attributes[SemanticConventions::Trace::MESSAGING_OPERATION] = 'receive' if client_method == 'SQS.ReceiveMessage'
           end

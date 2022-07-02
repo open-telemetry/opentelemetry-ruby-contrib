@@ -50,6 +50,60 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
+      - name: "Test truffleruby"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "truffleruby"
+
+  propagators:
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - opentelemetry-propagator-ottrace
+          - opentelemetry-propagator-xray
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    name: ${{ matrix.gem }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Test Ruby 3.1"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.1"
+      - name: "Test Ruby 3.0"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.0"
+      - name: "Test Ruby 2.7"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "2.7"
+          yard: true
+          rubocop: true
+          build: true
+      - name: "Test JRuby"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "jruby"
+      - name: "Test truffleruby"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "truffleruby"
 
   instrumentation:
     strategy:
@@ -142,13 +196,31 @@ jobs:
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-rails"                    ]] && echo "::set-output name=skip::true"
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
-
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
+      - name: "Truffleruby Filter"
+        id: truffleruby_skip
+        shell: bash
+        run: |
+          echo "::set-output name=skip::false"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-action_pack"    ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-action_view"    ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-active_job"     ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-active_support" ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-lmdb"           ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-rails"          ]] && echo "::set-output name=skip::true"
+          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
+          true
+      - name: "Test Truffleruby"
+        if: "${{ matrix.os == 'ubuntu-latest' && steps.truffleruby_skip.outputs.skip == 'false' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "truffleruby"
 
   # These builds require sidecar services (postgres, redis, etc) in order to run their test suites.
   instrumentation_with_services:
@@ -208,13 +280,28 @@ jobs:
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-trilogy"    ]] && echo "::set-output name=skip::true"
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
-
       - name: "Test JRuby"
         if: "${{ steps.jruby_skip.outputs.skip == 'false' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
+      - name: "Truffleruby Filter"
+        id: truffleruby_skip
+        shell: bash
+        run: |
+          echo "::set-output name=skip::false"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-que"        ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-rdkafka"    ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-ruby_kafka" ]] && echo "::set-output name=skip::true"
+          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
+          true
+      - name: "Test Truffleruby"
+        if: "${{ steps.truffleruby_skip.outputs.skip == 'false' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "truffleruby"
     services:
       zookeeper:
         image: confluentinc/cp-zookeeper:latest
