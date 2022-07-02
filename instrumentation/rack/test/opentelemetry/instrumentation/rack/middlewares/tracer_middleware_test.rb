@@ -84,6 +84,91 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       end
     end
 
+    describe 'config[:request_hook] / config[:response_hook]' do
+      let(:query_string_attribute) { 'query_string' }
+      let(:response_body_attribute) { 'response_body' }
+      let(:query_string) { 'abcd=1234' }
+
+      describe 'when hooks are valid' do
+        let(:config) do
+          {
+            request_hook: lambda do |span, request|
+              span.set_attribute(query_string_attribute, request['QUERY_STRING'])
+            end,
+            response_hook: lambda do |span, response|
+              span.set_attribute(response_body_attribute, response[0])
+            end
+          }
+        end
+
+        it 'should collect data from hooks' do
+          Rack::MockRequest.new(rack_builder).post("/post?#{query_string}", env)
+          post_span = finished_spans.find { |s| s.attributes['http.target'] == "/post?#{query_string}" }
+          _(post_span).wont_be_nil
+          _(post_span.attributes[query_string_attribute]).must_equal(query_string)
+          _(post_span.attributes[response_body_attribute]).must_equal('OK')
+        end
+      end
+
+      describe 'when hooks are configured with incorrect number of args' do
+        let(:received_exceptions) { [] }
+        let(:config) do
+          {
+            request_hook: ->(_span) { nil },
+            response_hook: ->(_span) { nil }
+          }
+        end
+
+        before do
+          OpenTelemetry.error_handler = lambda do |exception: nil, message: nil| # rubocop:disable Lint/UnusedBlockArgument
+            received_exceptions << exception
+          end
+        end
+
+        after do
+          OpenTelemetry.error_handler = nil
+        end
+
+        it 'should not fail the instrumentation' do
+          Rack::MockRequest.new(rack_builder).post("/post?#{query_string}", env)
+          post_span = finished_spans.find { |s| s.attributes['http.target'] == "/post?#{query_string}" }
+          _(post_span).wont_be_nil
+          error_messages = received_exceptions.map(&:message)
+          _(error_messages.all? { |em| em.start_with?('wrong number of arguments') }).must_equal true
+        end
+      end
+
+      describe 'when exceptions are thrown in hooks' do
+        let(:error1) { 'err1' }
+        let(:error2) { 'err2' }
+        let(:received_exceptions) { [] }
+        let(:config) do
+          {
+            request_hook: ->(_span, _request) { raise StandardError, error1 },
+            response_hook: ->(_span, _response) { raise StandardError, error2 }
+          }
+        end
+
+        before do
+          OpenTelemetry.error_handler = lambda do |exception: nil, message: nil| # rubocop:disable Lint/UnusedBlockArgument
+            received_exceptions << exception
+          end
+        end
+
+        after do
+          OpenTelemetry.error_handler = nil
+        end
+
+        it 'should not fail despite wrong hook config' do
+          Rack::MockRequest.new(rack_builder).post("/post?#{query_string}", env)
+          post_span = finished_spans.find { |s| s.attributes['http.target'] == "/post?#{query_string}" }
+          _(post_span).wont_be_nil
+          error_messages = received_exceptions.map(&:message)
+          _(error_messages).must_equal([error1, error2])
+        end
+      end
+    end
+
     describe 'config[:untraced_endpoints]' do
       describe 'when an array is passed in' do
         let(:config) { { untraced_endpoints: ['/ping'] } }

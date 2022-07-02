@@ -49,6 +49,23 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Request/response hooks
+
+You can pass hooks to extract additional attributes from the requests/responses.
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Rack', {
+    request_hook: lambda { |span, env|
+      # Extract custom attributes from request
+    },
+    response_hook: lambda { |span, response|
+      # Extract custom attributes from response
+    }
+  }
+end
+```
+
 ## Examples
 
 Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/rack/example/trace_demonstration.rb)

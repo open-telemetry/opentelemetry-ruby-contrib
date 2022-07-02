@@ -30,6 +30,8 @@ module OpenTelemetry
         option :untraced_endpoints,       default: [],    validate: :array
         option :url_quantization,         default: nil,   validate: :callable
         option :untraced_requests,        default: nil,   validate: :callable
+        option :request_hook, default: nil, validate: :callable
+        option :response_hook, default: nil, validate: :callable
 
         private
 

@@ -79,6 +79,7 @@ module OpenTelemetry
               tracer.in_span(request_span_name,
                              attributes: request_span_attributes(env: env),
                              kind: request_span_kind) do |request_span|
+                safe_execute_hook(config[:request_hook], request_span, original_env) unless config[:request_hook].nil?
                 OpenTelemetry::Instrumentation::Rack.with_span(request_span) do
                   @app.call(env).tap do |status, headers, response|
                     set_attributes_after_request(request_span, status, headers, response)
@@ -91,6 +92,12 @@ module OpenTelemetry
           end
 
           private
+
+          def safe_execute_hook(hook, *args)
+            hook.call(*args)
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
+          end
 
           def untraced_request?(env)
             return true if @untraced_endpoints.include?(env['PATH_INFO'])
@@ -150,7 +157,7 @@ module OpenTelemetry
             end
           end
 
-          def set_attributes_after_request(span, status, headers, _response)
+          def set_attributes_after_request(span, status, headers, response)
             span.status = OpenTelemetry::Trace::Status.error unless (100..499).include?(status.to_i)
             span.set_attribute('http.status_code', status)
 
@@ -159,6 +166,7 @@ module OpenTelemetry
             # e.g., "/users/:userID?
 
             allowed_response_headers(headers).each { |k, v| span.set_attribute(k, v) }
+            safe_execute_hook(config[:response_hook], span, response) unless config[:response_hook].nil?
           end
 
           def allowed_request_headers(env)
