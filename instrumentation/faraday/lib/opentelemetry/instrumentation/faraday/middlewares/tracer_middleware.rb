@@ -23,7 +23,7 @@ module OpenTelemetry
             trace: 'TRACE'
           }.freeze
 
-          def call(env)
+          def call(env) # rubocop:disable Metrics/AbcSize
             http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
             attributes = span_creation_attributes(
               http_method: http_method, url: env.url
@@ -32,6 +32,7 @@ module OpenTelemetry
               "HTTP #{http_method}", attributes: attributes, kind: :client
             ) do |span|
               OpenTelemetry.propagation.inject(env.request_headers)
+              safe_execute_hook(instrumentation_config[:request_hook], span, env) unless instrumentation_config[:request_hook].nil?
 
               app.call(env).on_complete { |resp| trace_response(span, resp) }
             end
@@ -40,6 +41,16 @@ module OpenTelemetry
           private
 
           attr_reader :app
+
+          def instrumentation_config
+            Faraday::Instrumentation.instance.config
+          end
+
+          def safe_execute_hook(hook, *args)
+            hook.call(*args)
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
+          end
 
           def span_creation_attributes(http_method:, url:)
             instrumentation_attrs = {
@@ -61,6 +72,7 @@ module OpenTelemetry
           def trace_response(span, response)
             span.set_attribute('http.status_code', response.status)
             span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response.status.to_i)
+            safe_execute_hook(instrumentation_config[:response_hook], span, response) unless instrumentation_config[:response_hook].nil?
           end
         end
       end
