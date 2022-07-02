@@ -110,6 +110,15 @@ To test using Docker:
      2. Run the tests for the sdk
          *  `docker-compose run sdk bundle exec rake test`
 
+## OpenTelemetry Collector
+
+You may wish to test your changes against an [OpenTelemetry collector](https://github.com/open-telemetry/opentelemetry-collector). To facilitate this, we provide configuration in `docker-compose.yml` that should be sufficient.
+
+By default, docker-compose launches all services, including the collector - `docker-compose up` from the repository root is sufficient.
+However, if you only wish to launch the collector, run `docker-compose up jaeger otelcol` instead.
+
+The collector listens on the default HTTP and GRPC ports (`4318` and `4317`, respectively). You can visualize the traces from your work via the Jaeger trace UI by visiting `localhost:16686` in your browser.
+
 ## Make your modifications
 
 Some important tips to keep in mind when making your modifications.
