@@ -14,7 +14,7 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('2.0')
 
         compatible do
-          Gem.loaded_specs['racecar'].version >= MINIMUM_VERSION
+          gem_version >= MINIMUM_VERSION
         end
 
         install do |_config|
@@ -35,6 +35,11 @@ module OpenTelemetry
 
         def patch
           ::Racecar::Runner.prepend(Patches::Runner)
+        end
+
+        def gem_version
+          require 'racecar/version'
+          Gem::Version.new(::Racecar::VERSION)
         end
       end
     end
