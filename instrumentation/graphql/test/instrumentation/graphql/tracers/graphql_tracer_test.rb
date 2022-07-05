@@ -14,6 +14,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
   let(:instrumentation) { OpenTelemetry::Instrumentation::GraphQL::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
+  let(:span_names) { spans.map(&:name) }
   let(:config) { {} }
 
   let(:query_string) do
@@ -168,6 +169,84 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       _(event.attributes['message']).must_equal(
         "[{\"message\":\"Field 'nonExistentField' doesn't exist on type 'Query'\",\"locations\":[{\"line\":2,\"column\":13}],\"path\":[\"query\",\"nonExistentField\"],\"extensions\":{\"code\":\"undefinedField\",\"typeName\":\"Query\",\"fieldName\":\"nonExistentField\"}}]"
       )
+    end
+
+    describe 'tracing based on query execution context' do
+      let(:query) { GraphQL::Query.new(SomeGraphQLAppSchema, '{ vehicle { __typename } }') }
+
+      describe 'keys are enabled in config' do
+        let(:config) { { enable_platform_field: true, enable_platform_authorized: true, enable_platform_resolve_type: true } }
+
+        it 'captures the keys when tracing is enabled in config and in query execution context' do
+          query.context.namespace(:opentelemetry)[:enable_platform_field] = true
+          query.context.namespace(:opentelemetry)[:enable_platform_authorized] = true
+          query.context.namespace(:opentelemetry)[:enable_platform_resolve_type] = true
+          query.result
+
+          assert span_names.include?('Query.authorized')
+          assert span_names.include?('Query.vehicle')
+          assert span_names.include?('Vehicle.resolve_type')
+          assert span_names.include?('Car.authorized')
+        end
+
+        it 'does not capture the keys when tracing is disabled in query execution context' do
+          query.context.namespace(:opentelemetry)[:enable_platform_field] = false
+          query.context.namespace(:opentelemetry)[:enable_platform_authorized] = false
+          query.context.namespace(:opentelemetry)[:enable_platform_resolve_type] = false
+          query.result
+
+          refute span_names.include?('Query.authorized')
+          refute span_names.include?('Query.vehicle')
+          refute span_names.include?('Vehicle.resolve_type')
+          refute span_names.include?('Car.authorized')
+        end
+
+        it 'captures the keys when tracing config is not set in query execution context' do
+          query.result
+
+          assert span_names.include?('Query.authorized')
+          assert span_names.include?('Query.vehicle')
+          assert span_names.include?('Vehicle.resolve_type')
+          assert span_names.include?('Car.authorized')
+        end
+      end
+
+      describe 'keys are disabled in config' do
+        let(:config) { { enable_platform_field: false, enable_platform_authorized: false, enable_platform_resolve_type: false } }
+
+        it 'does not capture the keys when tracing is enabled in query execution context' do
+          query.context.namespace(:opentelemetry)[:enable_platform_field] = true
+          query.context.namespace(:opentelemetry)[:enable_platform_authorized] = true
+          query.context.namespace(:opentelemetry)[:enable_platform_resolve_type] = true
+          query.result
+
+          refute span_names.include?('Query.authorized')
+          refute span_names.include?('Query.vehicle')
+          refute span_names.include?('Vehicle.resolve_type')
+          refute span_names.include?('Car.authorized')
+        end
+
+        it 'does not capture the keys when tracing config is missing in query execution context' do
+          query.result
+
+          refute span_names.include?('Query.authorized')
+          refute span_names.include?('Query.vehicle')
+          refute span_names.include?('Vehicle.resolve_type')
+          refute span_names.include?('Car.authorized')
+        end
+
+        it 'does not capture the keys when tracing is disabled in query execution context' do
+          query.context.namespace(:opentelemetry)[:enable_platform_field] = false
+          query.context.namespace(:opentelemetry)[:enable_platform_authorized] = false
+          query.context.namespace(:opentelemetry)[:enable_platform_resolve_type] = false
+          query.result
+
+          refute span_names.include?('Query.authorized')
+          refute span_names.include?('Query.vehicle')
+          refute span_names.include?('Vehicle.resolve_type')
+          refute span_names.include?('Car.authorized')
+        end
+      end
     end
   end
 

@@ -13,6 +13,12 @@ module OpenTelemetry
         # GraphQLTracer contains the OpenTelemetry tracer implementation compatible with
         # the GraphQL tracer API
         class GraphQLTracer < ::GraphQL::Tracing::PlatformTracing
+          TRACE_PHASE_TO_TYPE = {
+            field: :enable_platform_field,
+            authorized: :enable_platform_authorized,
+            resolve_type: :enable_platform_resolve_type
+          }.freeze
+
           self.platform_keys = {
             'lex' => 'graphql.lex',
             'parse' => 'graphql.parse',
@@ -43,20 +49,14 @@ module OpenTelemetry
           end
 
           def platform_field_key(type, field)
-            return unless config[:enable_platform_field]
-
             "#{type.graphql_name}.#{field.graphql_name}"
           end
 
           def platform_authorized_key(type)
-            return unless config[:enable_platform_authorized]
-
             "#{type.graphql_name}.authorized"
           end
 
           def platform_resolve_type_key(type)
-            return unless config[:enable_platform_resolve_type]
-
             "#{type.graphql_name}.resolve_type"
           end
 
@@ -79,6 +79,28 @@ module OpenTelemetry
               attributes['graphql.document'] = data[:query].query_string
             end
             attributes
+          end
+
+          def cached_platform_key(ctx, key, trace_phase)
+            cache = ctx.namespace(self.class)[:platform_key_cache] ||= {}
+
+            cache.fetch(key) do
+              cache[key] = begin
+                return unless platform_key_enabled?(ctx, TRACE_PHASE_TO_TYPE.fetch(trace_phase))
+
+                yield
+              end
+            end
+          end
+
+          def platform_key_enabled?(ctx, key)
+            return false unless config[key]
+
+            ns = ctx.namespace(:opentelemetry)
+            return true if ns.empty? # restores original behavior so that keys are returned if tracing is not set in context.
+            return false unless ns.key?(key) && ns[key]
+
+            true
           end
         end
       end
