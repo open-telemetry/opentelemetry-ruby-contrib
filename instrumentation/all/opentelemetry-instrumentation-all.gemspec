@@ -52,6 +52,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.22.0'
+  spec.add_dependency 'opentelemetry-instrumentation-rake', '~> 0.0.0'
   spec.add_dependency 'opentelemetry-instrumentation-rdkafka', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.23.0'
   spec.add_dependency 'opentelemetry-instrumentation-resque', '~> 0.3.0'
