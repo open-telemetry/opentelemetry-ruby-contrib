@@ -87,7 +87,7 @@ module OpenTelemetry
 
         def add_map(payload, command, key)
           value = command[key]
-          return unless value&.is_a?(Hash) && !value.empty?
+          return unless value.is_a?(Hash) && !value.empty?
 
           payload[key] = mask(value)
         end
