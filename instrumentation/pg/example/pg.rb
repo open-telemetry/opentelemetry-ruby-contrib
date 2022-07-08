@@ -11,11 +11,11 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 conn = PG::Connection.open(
-  host: ENV.fetch('TEST_POSTGRES_HOST') { '127.0.0.1' },
-  port: ENV.fetch('TEST_POSTGRES_PORT') { '5432' },
-  user: ENV.fetch('TEST_POSTGRES_USER') { 'postgres' },
-  dbname: ENV.fetch('TEST_POSTGRES_DB') { 'postgres' },
-  password: ENV.fetch('TEST_POSTGRES_PASSWORD') { 'postgres' }
+  host: ENV.fetch('TEST_POSTGRES_HOST', '127.0.0.1'),
+  port: ENV.fetch('TEST_POSTGRES_PORT', '5432'),
+  user: ENV.fetch('TEST_POSTGRES_USER', 'postgres'),
+  dbname: ENV.fetch('TEST_POSTGRES_DB', 'postgres'),
+  password: ENV.fetch('TEST_POSTGRES_PASSWORD', 'postgres')
 )
 
 # Spans will be printed to your terminal when this statement executes:
