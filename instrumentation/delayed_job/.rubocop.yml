@@ -1,5 +1,7 @@
 inherit_from: ../.rubocop-examples.yml
 
+Metrics/AbcSize:
+  Enabled: false
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-instrumentation-delayed_job.rb"
