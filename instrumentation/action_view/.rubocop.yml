@@ -1,5 +1,1 @@
-inherit_from: ../.rubocop-examples.yml
-
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-instrumentation-action_view.rb"
+inherit_from: ../../.rubocop.yml
