@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# rubocop:disable Lint/SuppressedException
+
 require 'test_helper'
 require 'securerandom'
 require 'pry'
@@ -177,3 +179,5 @@ unless ENV['OMIT_SERVICES']
     end
   end
 end
+
+# rubocop:enable Lint/SuppressedException

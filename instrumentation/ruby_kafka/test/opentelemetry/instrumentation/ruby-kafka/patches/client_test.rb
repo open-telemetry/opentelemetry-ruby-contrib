@@ -37,7 +37,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
 
   it 'traces produce and consuming' do
     kafka.deliver_message('hello', topic: topic)
-    kafka.each_message(topic: topic) { |_msg| break }
+    kafka.each_message(topic: topic) { |_msg| break } # rubocop:disable Lint/UnreachableLoop
 
     _(spans.size).must_equal(2)
     _(spans[0].name).must_equal("#{topic} send")

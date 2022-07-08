@@ -53,7 +53,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
           counter += 1
           raise 'oops' if counter >= 2
         end
-      rescue StandardError
+      rescue StandardError # rubocop:disable Lint/SuppressedException
       end
 
       process_spans = spans.select { |s| s.name == "#{topic} process" }
@@ -125,8 +125,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       kafka.deliver_message('hello2', topic: topic)
 
       begin
-        consumer.each_batch { |_b| raise 'oops' }
-      rescue StandardError
+        consumer.each_batch { |_b| raise 'oops' } # rubocop:disable Lint/UnreachableLoop
+      rescue StandardError # rubocop:disable Lint/SuppressedException
       end
 
       span = spans.find { |s| s.name == "#{topic} process" }

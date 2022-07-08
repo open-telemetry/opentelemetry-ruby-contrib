@@ -1,6 +1,7 @@
 AllCops:
   TargetRubyVersion: '2.7.6'
   Exclude:
+    - Rakefile
     - "rakelib/**/*"
     - "**/example/*"
     - "bin/instrumentation_generator"
@@ -15,11 +16,17 @@ Metrics/MethodLength:
 Lint/ConstantDefinitionInBlock:
   Exclude:
     - "**/*test.rb"
+Lint/MixedRegexpCaptureTypes:
+  Exclude:
+    - propagator/xray/lib/opentelemetry/propagator/xray/text_map_propagator.rb
 Lint/UnusedMethodArgument:
   Enabled: false
 Naming/FileName:
   Exclude:
     - '**/opentelemetry-*'
+Naming/MethodParameterName:
+  Exclude:
+    - instrumentation/dalli/lib/opentelemetry/instrumentation/dalli/patches/server.rb
 Metrics/LineLength:
   Enabled: false
 Metrics/ParameterLists:
@@ -37,6 +44,9 @@ Style/Documentation:
 Style/FrozenStringLiteralComment:
   Exclude:
     - "**/gemfiles/*"
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - "instrumentation/graphql/lib/opentelemetry/instrumentation/graphql/tracers/graphql_tracer.rb"
 Style/ModuleFunction:
   Enabled: false
 Style/MultilineIfModifier:

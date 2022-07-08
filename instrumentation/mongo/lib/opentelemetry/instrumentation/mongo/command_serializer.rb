@@ -93,7 +93,7 @@ module OpenTelemetry
         end
 
         def mask(hash)
-          hash.each_with_object({}) do |(k, v), h|
+          hash.each_with_object({}) do |(k, v), h| # rubocop:disable Style/HashTransformValues
             h[k] = v.is_a?(Hash) ? mask(v) : MASK_VALUE
           end
         end

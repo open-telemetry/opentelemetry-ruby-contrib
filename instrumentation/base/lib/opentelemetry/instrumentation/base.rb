@@ -74,7 +74,7 @@ module OpenTelemetry
 
         private :new
 
-        def inherited(subclass)
+        def inherited(subclass) # rubocop:disable Lint/MissingSuper
           OpenTelemetry::Instrumentation.registry.register(subclass)
         end
 
