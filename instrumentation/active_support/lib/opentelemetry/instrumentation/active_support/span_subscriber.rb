@@ -108,9 +108,10 @@ module OpenTelemetry
 
         # We'll accept symbols as values, but stringify them; and we'll stringify symbols within an array.
         def sanitized_value(value)
-          if value.is_a?(Array)
+          case value
+          when Array
             value.map { |v| v.is_a?(Symbol) ? v.to_s : v }
-          elsif value.is_a?(Symbol)
+          when Symbol
             value.to_s
           else
             value
