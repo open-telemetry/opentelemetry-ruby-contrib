@@ -1,0 +1,8 @@
+Naming/FileName:
+  Exclude:
+    - "instrumentation/action_pack/lib/opentelemetry-instrumentation-action_pack.rb"
+
+Metrics/AbcSize:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
