@@ -5,6 +5,7 @@ AllCops:
     - "rakelib/**/*"
     - "**/example/*"
     - "bin/instrumentation_generator"
+    - "vendor/bundle/**/*"
 Bundler/OrderedGems:
   Enabled: false
 Gemspec/RequiredRubyVersion:
