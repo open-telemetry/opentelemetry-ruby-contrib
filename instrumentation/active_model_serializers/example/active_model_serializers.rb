@@ -13,11 +13,11 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::ActiveModelSerializers'
 end
 
-class TestModel < ActiveModelSerializers::Model #:nodoc:
+class TestModel < ActiveModelSerializers::Model # :nodoc:
   attr_accessor :name
 end
 
-class TestModelSerializer < ActiveModel::Serializer #:nodoc:
+class TestModelSerializer < ActiveModel::Serializer # :nodoc:
   attributes :name
 end
 
