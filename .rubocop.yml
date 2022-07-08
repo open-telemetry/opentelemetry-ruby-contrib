@@ -5,6 +5,8 @@ AllCops:
     - "rakelib/**/*"
     - "**/example/*"
     - "bin/instrumentation_generator"
+Bundler/OrderedGems:
+  Enabled: false
 Gemspec/RequiredRubyVersion:
   Enabled: false
 Metrics/AbcSize:
