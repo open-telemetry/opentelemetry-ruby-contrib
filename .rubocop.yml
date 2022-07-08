@@ -1,21 +1,54 @@
 AllCops:
-  TargetRubyVersion: '2.7.0'
-Lint/UnusedMethodArgument:
+  TargetRubyVersion: '2.7.6'
+  Exclude:
+    - "rakelib/**/*"
+    - "**/example/*"
+    - "bin/instrumentation_generator"
+Gemspec/RequiredRubyVersion:
   Enabled: false
 Metrics/AbcSize:
   Enabled: false
-Metrics/LineLength:
+Metrics/BlockLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 20
-Metrics/BlockLength:
+Lint/ConstantDefinitionInBlock:
   Exclude:
-    - '*test*'
-    - '*gemspec'
-Metrics/ParameterLists:
-  Enabled: false
-Style/ModuleFunction:
+    - "**/*test.rb"
+Lint/UnusedMethodArgument:
   Enabled: false
 Naming/FileName:
   Exclude:
-    - 'instrumentation/**/lib/opentelemetry-*'
+    - '**/opentelemetry-*'
+Metrics/LineLength:
+  Enabled: false
+Metrics/ParameterLists:
+  Enabled: false
+Naming/AsciiIdentifiers:
+  Exclude:
+    - 'instrumentation/sidekiq/**/*'
+Style/AsciiComments:
+  Exclude:
+    - 'instrumentation/sidekiq/**/*'
+Style/Documentation:
+  Exclude:
+    - "**/test/**/*"
+    - "**/*test*"
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - "**/gemfiles/*"
+Style/ModuleFunction:
+  Enabled: false
+Style/MultilineIfModifier:
+  Exclude:
+     - "**/test/**/*"
+Style/RedundantRegexpEscape:
+  Enabled: false
+Style/StringLiterals:
+  Exclude:
+    - "**/gemfiles/*"
+Style/SlicingWithRange:
+  Enabled: false
+Style/CaseLikeIf:
+  Enabled: false
+
