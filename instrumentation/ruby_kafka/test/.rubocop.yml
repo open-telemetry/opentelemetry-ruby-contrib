@@ -1,6 +1,1 @@
-inherit_from: ../.rubocop.yml
-
-Metrics/BlockLength:
-  Enabled: false
-Style/MultilineIfModifier:
-  Enabled: false
+inherit_from: ../../.rubocop.yml

@@ -1,11 +1,1 @@
-inherit_from: ../.rubocop-examples.yml
-
-Metrics/BlockLength:
-  Exclude:
-    - "Gemfile"
-    - "*.gemspec"
-
-
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-instrumentation-all.rb"
+inherit_from: ../../.rubocop.yml

@@ -1,6 +1,1 @@
-inherit_from: ../.rubocop.yml
-
-Metrics/BlockLength:
-  Enabled: false
-Style/BracesAroundHashParameters:
-  Enabled: false
+inherit_from: ../../.rubocop.yml

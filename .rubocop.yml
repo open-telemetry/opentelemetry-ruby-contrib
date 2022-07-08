@@ -1,0 +1,21 @@
+AllCops:
+  TargetRubyVersion: '2.7.0'
+Lint/UnusedMethodArgument:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Metrics/LineLength:
+  Enabled: false
+Metrics/MethodLength:
+  Max: 20
+Metrics/BlockLength:
+  Exclude:
+    - '*test*'
+    - '*gemspec'
+Metrics/ParameterLists:
+  Enabled: false
+Style/ModuleFunction:
+  Enabled: false
+Naming/FileName:
+  Exclude:
+    - 'instrumentation/**/lib/opentelemetry-*'
