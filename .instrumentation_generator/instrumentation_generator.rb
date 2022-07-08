@@ -15,7 +15,6 @@ class InstrumentationGenerator < Thor::Group
   argument :instrumentation_name
 
   def root_files
-    template('templates/rubocop.yml.tt', "#{instrumentation_path}/.rubocop.yml")
     template('templates/yardopts.tt', "#{instrumentation_path}/.yardopts")
     template('templates/Appraisals', "#{instrumentation_path}/Appraisals")
     template('templates/CHANGELOG.md.tt', "#{instrumentation_path}/CHANGELOG.md")
@@ -35,7 +34,6 @@ class InstrumentationGenerator < Thor::Group
   end
 
   def test_files
-    template('templates/test/.rubocop.yml', "#{instrumentation_path}/test/.rubocop.yml")
     template('templates/test/test_helper.rb', "#{instrumentation_path}/test/test_helper.rb")
     template('templates/test/instrumentation.rb', "#{instrumentation_path}/test/opentelemetry/#{instrumentation_path}/instrumentation_test.rb")
   end
