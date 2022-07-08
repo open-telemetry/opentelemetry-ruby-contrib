@@ -44,11 +44,11 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       )
     end
 
-    let(:host) { ENV.fetch('TEST_MYSQL_HOST') { '127.0.0.1' } }
-    let(:port) { ENV.fetch('TEST_MYSQL_PORT') { '3306' } }
-    let(:database) { ENV.fetch('TEST_MYSQL_DB') { 'mysql' } }
-    let(:username) { ENV.fetch('TEST_MYSQL_USER') { 'root' } }
-    let(:password) { ENV.fetch('TEST_MYSQL_PASSWORD') { 'root' } }
+    let(:host) { ENV.fetch('TEST_MYSQL_HOST', '127.0.0.1') }
+    let(:port) { ENV.fetch('TEST_MYSQL_PORT', '3306') }
+    let(:database) { ENV.fetch('TEST_MYSQL_DB', 'mysql') }
+    let(:username) { ENV.fetch('TEST_MYSQL_USER', 'root') }
+    let(:password) { ENV.fetch('TEST_MYSQL_PASSWORD', 'root') }
 
     before do
       instrumentation.install(config)
