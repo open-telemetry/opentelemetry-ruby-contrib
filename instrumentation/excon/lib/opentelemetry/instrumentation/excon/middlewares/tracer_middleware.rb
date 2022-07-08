@@ -70,7 +70,7 @@ module OpenTelemetry
 
           private
 
-          def handle_response(datum) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity:
+          def handle_response(datum) # rubocop:disable Metrics/AbcSize, :
             if datum.key?(:otel_span)
               datum[:otel_span].tap do |span|
                 return span if span.end_timestamp
