@@ -72,9 +72,9 @@ module OpenTelemetry
 
         private_constant :NAME_REGEX, :VALIDATORS
 
-        private :new # rubocop:disable Style/AccessModifierDeclarations
+        private :new
 
-        def inherited(subclass)
+        def inherited(subclass) # rubocop:disable Lint/MissingSuper
           OpenTelemetry::Instrumentation.registry.register(subclass)
         end
 
@@ -321,7 +321,7 @@ module OpenTelemetry
         ENV[var_name] != 'false'
       end
 
-      def config_overrides_from_env
+      def config_overrides_from_env # rubocop:disable Metrics/AbcSize
         var_name = name.dup.tap do |n|
           n.upcase!
           n.gsub!('::', '_')
