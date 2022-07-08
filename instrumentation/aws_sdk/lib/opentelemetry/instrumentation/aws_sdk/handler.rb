@@ -66,7 +66,7 @@ module OpenTelemetry
         end
 
         SEND_MESSAGE_CLIENT_METHODS = [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].freeze
-        def inject_context(context, client_method)
+        def inject_context(context, client_method) # rubocop:disable Metrics/AbcSize
           return unless SEND_MESSAGE_CLIENT_METHODS.include? client_method
           return unless instrumentation_config[:inject_messaging_context]
 
