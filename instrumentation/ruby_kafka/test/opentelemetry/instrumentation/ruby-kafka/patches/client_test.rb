@@ -51,12 +51,10 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
     invalid_utf8_key = String.new("\xAF\x0F\xEF", encoding: 'ASCII-8BIT')
     kafka.deliver_message('hello', key: invalid_utf8_key, topic: topic)
     kafka.deliver_message('hello2', key: 'foobarbaz', topic: topic)
-    begin
-      counter = 0
-      kafka.each_message(topic: topic) do |_msg|
-        counter += 1
-        break if counter >= 2
-      end
+    counter = 0
+    kafka.each_message(topic: topic) do |_msg|
+      counter += 1
+      break if counter >= 2
     end
 
     send_spans = spans.select { |s| s.name == "#{topic} send" }

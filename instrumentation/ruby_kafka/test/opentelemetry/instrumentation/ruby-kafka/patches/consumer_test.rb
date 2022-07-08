@@ -98,12 +98,10 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       kafka.deliver_message('hello', key: "\xAF\x0F\xEF", topic: topic)
       kafka.deliver_message('hello2', key: 'foobarbaz', topic: topic)
 
-      begin
-        counter = 0
-        consumer.each_message do |_msg|
-          counter += 1
-          break if counter >= 2
-        end
+      counter = 0
+      consumer.each_message do |_msg|
+        counter += 1
+        break if counter >= 2
       end
 
       process_spans = spans.select { |s| s.name == "#{topic} process" }
