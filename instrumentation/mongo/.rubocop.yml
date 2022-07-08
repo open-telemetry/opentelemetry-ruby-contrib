@@ -1,5 +1,14 @@
-inherit_from: ../.rubocop-examples.yml
+inherit_from:
+  - ../.rubocop-examples.yml
 
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-instrumentation-mongo.rb"
+Lint/ConstantDefinitionInBlock:
+  Enabled: false
+Lint/RedundantSafeNavigation:
+  Exclude:
+    - 'lib/opentelemetry/instrumentation/mongo/command_serializer.rb'
+Style/HashTransformValues:
+  Exclude:
+    - 'lib/opentelemetry/instrumentation/mongo/command_serializer.rb'
