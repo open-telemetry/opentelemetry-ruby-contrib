@@ -53,7 +53,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
           counter += 1
           raise 'oops' if counter >= 2
         end
-      rescue StandardError # rubocop:disable Lint/HandleExceptions
+      rescue StandardError
       end
 
       process_spans = spans.select { |s| s.name == "#{topic} process" }
@@ -126,7 +126,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
 
       begin
         consumer.each_batch { |_b| raise 'oops' }
-      rescue StandardError # rubocop:disable Lint/HandleExceptions
+      rescue StandardError
       end
 
       span = spans.find { |s| s.name == "#{topic} process" }

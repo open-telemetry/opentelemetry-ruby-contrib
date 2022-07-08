@@ -21,7 +21,7 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor SPAN_PROCESSOR
 end
 
-def wait_for(max_attempts: 10, retry_delay: 0.10, error_message:)
+def wait_for(error_message:, max_attempts: 10, retry_delay: 0.10)
   attempts = 0
   while attempts < max_attempts
     return if yield

@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # Module to prepend to HTTP::Client for instrumentation
         module Client
-          def perform(req, options) # rubocop:disable Metrics/AbcSize
+          def perform(req, options)
             uri = req.uri
             request_method = req.verb.to_s.upcase
 

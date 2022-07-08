@@ -12,7 +12,7 @@ require 'opentelemetry-test-helpers'
 require 'pry'
 require 'minitest/autorun'
 require 'rack/test'
-require 'test_helpers/app_config.rb'
+require 'test_helpers/app_config'
 
 require_relative '../../lib/opentelemetry/instrumentation'
 

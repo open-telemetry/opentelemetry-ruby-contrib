@@ -35,7 +35,7 @@ module OpenTelemetry
           build_pipeline
         end
 
-        def build_command # rubocop:disable Metrics/AbcSize
+        def build_command
           add_val(payload, command, 'key')
           add_map(payload, command, 'query')
           add_map(payload, command, 'filter')

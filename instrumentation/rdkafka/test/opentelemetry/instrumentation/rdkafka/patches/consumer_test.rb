@@ -70,7 +70,7 @@ unless ENV['OMIT_SERVICES']
             counter += 1
             raise 'oops' if counter >= 2
           end
-        rescue StandardError # rubocop:disable Lint/HandleExceptions
+        rescue StandardError
         end
 
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
@@ -150,7 +150,7 @@ unless ENV['OMIT_SERVICES']
           consumer.each_batch(max_items: 2) do |messages|
             raise 'oops' unless messages.empty?
           end
-        rescue StandardError # rubocop:disable Lint/HandleExceptions
+        rescue StandardError
         end
 
         span = spans.find { |s| s.name == 'batch process' }

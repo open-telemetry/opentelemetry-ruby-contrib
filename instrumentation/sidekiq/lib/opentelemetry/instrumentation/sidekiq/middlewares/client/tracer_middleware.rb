@@ -12,7 +12,7 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Sidekiq client
           # by way of its middleware system
           class TracerMiddleware
-            def call(_worker_class, job, _queue, _redis_pool) # rubocop:disable Metrics/AbcSize
+            def call(_worker_class, job, _queue, _redis_pool)
               attributes = {
                 'messaging.system' => 'sidekiq',
                 'messaging.sidekiq.job_class' => job['wrapped']&.to_s || job['class'],

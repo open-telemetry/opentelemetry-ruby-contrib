@@ -12,7 +12,7 @@ module OpenTelemetry
       module Patches
         # The Client module contains the instrumentation patch the Client#deliver_message and Client#each_message methods.
         module Client
-          def deliver_message(value, key: nil, headers: {}, topic:, partition: nil, partition_key: nil, retries: 1)
+          def deliver_message(value, topic:, key: nil, headers: {}, partition: nil, partition_key: nil, retries: 1)
             attributes = {
               'messaging.system' => 'kafka',
               'messaging.destination' => topic,
