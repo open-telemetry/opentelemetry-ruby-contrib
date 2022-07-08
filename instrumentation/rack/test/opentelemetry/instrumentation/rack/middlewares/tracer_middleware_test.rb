@@ -131,7 +131,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
     describe 'config[:untraced_requests]' do
       describe 'when a callable is passed in' do
         let(:untraced_callable) do
-          ->(env) { env['PATH_INFO'] =~ %r{^\/assets} }
+          ->(env) { env['PATH_INFO'] =~ %r{^/assets} }
         end
         let(:config) { default_config.merge(untraced_requests: untraced_callable) }
 
