@@ -9,6 +9,8 @@ module OpenTelemetry
     module Rake
       # The Instrumentation class contains logic to detect and install the Rake instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        MINIMUM_VERSION = Gem::Version.new('0.9.0')
+
         install do |_config|
           require_dependencies
           patch_rake
@@ -19,7 +21,15 @@ module OpenTelemetry
           defined?(::Rake::Task)
         end
 
+        compatible do
+          gem_version >= MINIMUM_VERSION
+        end
+
         private
+
+        def gem_version
+          Gem::Version.new(::Rake::VERSION)
+        end
 
         def require_dependencies
           require_relative './patches/task'
