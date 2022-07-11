@@ -15,7 +15,7 @@ module OpenTelemetry
 
           def execute(args = nil)
             attributes = { 'rake.task' => name }
-            tracer.in_span('rake.execute', attributes: attributes, kind: :client) do
+            tracer.in_span('rake.execute', attributes: attributes) do
               super
             end
           end
