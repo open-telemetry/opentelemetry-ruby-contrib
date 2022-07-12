@@ -109,7 +109,7 @@ To test using Docker:
      2. Run the tests for the sdk
          *  `docker-compose run sdk bundle exec rake test`
 
-## OpenTelemetry Collector
+## Processing and visualizing traces locally
 
 You may wish to test your changes against an [OpenTelemetry collector](https://github.com/open-telemetry/opentelemetry-collector). To facilitate this, we provide configuration in `docker-compose.yml` that should be sufficient.
 
