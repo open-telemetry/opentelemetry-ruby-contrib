@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.1.0 / 2022-07-12
+
+* Initial release.
+
 ### v0.20.0 / 2022-06-09
 
 * Upgrading Base dependency version
