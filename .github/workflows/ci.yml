@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      - 'releases/**'
+      - 'release/**'
   pull_request:
     branches:
       - main
