@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.21.0 / 2022-07-12
+
+* FIXED: Use semantic graphql attribute names 
+
 ### v0.20.0 / 2022-06-09
 
 * Upgrading Base dependency version

@@ -205,6 +205,22 @@ services:
     depends_on:
       - zookeeper
 
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      - "16686:16686"
+
+  otelcol:
+    image: otel/opentelemetry-collector:0.54.0
+    command: [ "--config=/etc/otelcol-config.yml" ]
+    volumes:
+      - ./otelcol-config.yml:/etc/otelcol-config.yml
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    depends_on:
+      - jaeger
+
 volumes:
   bundle:
   redis_data:
