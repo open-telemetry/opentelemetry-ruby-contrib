@@ -4,9 +4,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../api/lib/opentelemetry/version'
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'opentelemetry-api'
+  gem 'thor'
+end
+
 require_relative '../instrumentation/base/lib/opentelemetry/instrumentation/version'
-require 'thor'
 
 class InstrumentationGenerator < Thor::Group
   include Thor::Actions
