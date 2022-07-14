@@ -68,6 +68,28 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(span.attributes['peer.service']).must_equal 'readonly:postgres'
     end
 
+    describe '.attributes' do
+      let(:attributes) { { 'db.statement' => 'foobar' } }
+
+      it 'returns an empty hash by default' do
+        _(OpenTelemetry::Instrumentation::PG.attributes).must_equal({})
+      end
+
+      it 'returns the current attributes hash' do
+        OpenTelemetry::Instrumentation::PG.with_attributes(attributes) do
+          _(OpenTelemetry::Instrumentation::PG.attributes).must_equal(attributes)
+        end
+      end
+
+      it 'sets span attributes according to with_attributes hash' do
+        OpenTelemetry::Instrumentation::PG.with_attributes(attributes) do
+          client.query('SELECT 1')
+        end
+
+        _(span.attributes['db.statement']).must_equal 'foobar'
+      end
+    end
+
     %i[exec query sync_exec async_exec].each do |method|
       it "after request (with method: #{method})" do
         client.send(method, 'SELECT 1')

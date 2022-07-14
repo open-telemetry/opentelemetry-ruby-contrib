@@ -85,6 +85,7 @@ module OpenTelemetry
 
             attrs = { 'db.operation' => validated_operation(operation), 'db.postgresql.prepared_statement_name' => statement_name }
             attrs['db.statement'] = sql unless config[:db_statement] == :omit
+            attrs.merge!(OpenTelemetry::Instrumentation::PG.attributes)
             attrs.reject! { |_, v| v.nil? }
 
             [span_name(operation), client_attributes.merge(attrs)]

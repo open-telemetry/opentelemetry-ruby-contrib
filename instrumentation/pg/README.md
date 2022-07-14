@@ -30,6 +30,17 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+The `PG` instrumentation allows the user to supply additional attributes via the `with_attributes` method. This makes it possible to supply additional attributes on PG spans. Attributes supplied in `with_attributes` supersede those automatically generated within `PG`'s automatic instrumentation. If you supply a `db.statement` attribute in `with_attributes`, this library's `:db_statement` configuration will not be applied.
+
+```ruby
+require 'opentelemetry/instrumentation/pg'
+
+conn = PG::Connection.open(host: "localhost", user: "root", dbname: "postgres")
+OpenTelemetry::Instrumentation::PG.with_attributes('pizzatoppings' => 'mushrooms') do
+  conn.exec("SELECT 1")
+end
+```
+
 ### Configuration options
 
 ```ruby
