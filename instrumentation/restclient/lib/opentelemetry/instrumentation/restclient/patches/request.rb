@@ -28,7 +28,7 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e)
           end
 
-          def create_request_span # rubocop:disable Metrics/AbcSize
+          def create_request_span
             http_method = method.upcase
             instrumentation_attrs = {
               'http.method' => http_method.to_s,
@@ -52,7 +52,7 @@ module OpenTelemetry
             span
           end
 
-          def trace_request # rubocop:disable Metrics/AbcSize
+          def trace_request
             span = create_request_span
 
             yield(span).tap do |response|

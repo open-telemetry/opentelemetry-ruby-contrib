@@ -58,7 +58,7 @@ module OpenTelemetry
             @untraced_endpoints = config[:untraced_endpoints]
           end
 
-          def call(env) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          def call(env) # rubocop:disable Metrics/MethodLength
             if untraced_request?(env)
               OpenTelemetry::Common::Utilities.untraced do
                 return @app.call(env)

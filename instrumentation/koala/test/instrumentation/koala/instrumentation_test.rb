@@ -9,7 +9,7 @@ require 'pry'
 
 require_relative '../../../../net_http/lib/opentelemetry/instrumentation/net/http'
 
-describe OpenTelemetry::Instrumentation::Koala do # rubocop:disable Metrics/BlockLength
+describe OpenTelemetry::Instrumentation::Koala do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Koala::Instrumentation.instance }
   let(:http_instrumentation) { OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }

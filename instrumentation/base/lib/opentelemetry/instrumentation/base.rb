@@ -72,9 +72,9 @@ module OpenTelemetry
 
         private_constant :NAME_REGEX, :VALIDATORS
 
-        private :new # rubocop:disable Style/AccessModifierDeclarations
+        private :new
 
-        def inherited(subclass)
+        def inherited(subclass) # rubocop:disable Lint/MissingSuper
           OpenTelemetry::Instrumentation.registry.register(subclass)
         end
 
@@ -266,7 +266,7 @@ module OpenTelemetry
       # Invalid configuration values are logged, and replaced by the default.
       #
       # @param [Hash] user_config The user supplied configuration hash
-      def config_options(user_config) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      def config_options(user_config) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         @options ||= {}
         user_config ||= {}
         config_overrides = config_overrides_from_env

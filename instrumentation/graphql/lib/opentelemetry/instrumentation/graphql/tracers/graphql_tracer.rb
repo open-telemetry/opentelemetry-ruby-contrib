@@ -24,7 +24,7 @@ module OpenTelemetry
             'execute_multiplex' => 'graphql.execute_multiplex'
           }
 
-          def platform_trace(platform_key, key, data)
+          def platform_trace(platform_key, key, data) # rubocop:disable Metrics/CyclomaticComplexity
             return yield if platform_key.nil?
 
             tracer.in_span(platform_key, attributes: attributes_for(key, data)) do |span|

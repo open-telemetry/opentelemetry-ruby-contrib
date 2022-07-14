@@ -21,7 +21,7 @@ module OpenTelemetry
             def push(queue, item)
               # Check if the job is being wrapped by ActiveJob
               # before retrieving the job class name
-              job_class = if item[:class] == 'ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper' && item[:args][0]&.is_a?(Hash)
+              job_class = if item[:class] == 'ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper' && item[:args][0].is_a?(Hash)
                             item[:args][0]['job_class']
                           else
                             item[:class]

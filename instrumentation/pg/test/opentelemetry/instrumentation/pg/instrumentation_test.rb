@@ -46,11 +46,11 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       )
     end
 
-    let(:host) { ENV.fetch('TEST_POSTGRES_HOST') { '127.0.0.1' } }
-    let(:port) { ENV.fetch('TEST_POSTGRES_PORT') { '5432' } }
-    let(:user) { ENV.fetch('TEST_POSTGRES_USER') { 'postgres' } }
-    let(:dbname) { ENV.fetch('TEST_POSTGRES_DB') { 'postgres' } }
-    let(:password) { ENV.fetch('TEST_POSTGRES_PASSWORD') { 'postgres' } }
+    let(:host) { ENV.fetch('TEST_POSTGRES_HOST', '127.0.0.1') }
+    let(:port) { ENV.fetch('TEST_POSTGRES_PORT', '5432') }
+    let(:user) { ENV.fetch('TEST_POSTGRES_USER', 'postgres') }
+    let(:dbname) { ENV.fetch('TEST_POSTGRES_DB', 'postgres') }
+    let(:password) { ENV.fetch('TEST_POSTGRES_PASSWORD', 'postgres') }
 
     before do
       instrumentation.install(config)

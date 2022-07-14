@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # The Producer module contains the instrumentation patch the Producer#produce method
         module Producer
-          def produce(value, key: nil, headers: {}, topic:, partition: nil, partition_key: nil, create_time: Time.now)
+          def produce(value, topic:, key: nil, headers: {}, partition: nil, partition_key: nil, create_time: Time.now)
             attributes = {
               'messaging.system' => 'kafka',
               'messaging.destination' => topic,

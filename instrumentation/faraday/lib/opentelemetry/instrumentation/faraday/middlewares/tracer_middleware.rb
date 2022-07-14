@@ -23,7 +23,7 @@ module OpenTelemetry
             trace: 'TRACE'
           }.freeze
 
-          def call(env) # rubocop:disable Metrics/AbcSize
+          def call(env)
             http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
             attributes = span_creation_attributes(
               http_method: http_method, url: env.url
