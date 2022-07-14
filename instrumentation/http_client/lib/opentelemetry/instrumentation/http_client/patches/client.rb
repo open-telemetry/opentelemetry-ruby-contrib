@@ -22,7 +22,7 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e)
           end
 
-          def do_get_block(req, proxy, conn, &block) # rubocop:disable Metrics/AbcSize
+          def do_get_block(req, proxy, conn, &block)
             uri = req.header.request_uri
             url = "#{uri.scheme}://#{uri.host}"
             request_method = req.header.request_method

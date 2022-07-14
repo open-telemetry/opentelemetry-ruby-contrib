@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# rubocop:disable Lint/SuppressedException
+
 require 'test_helper'
 require 'securerandom'
 require 'pry'
@@ -17,8 +19,8 @@ unless ENV['OMIT_SERVICES']
     let(:exporter) { EXPORTER }
     let(:spans) { exporter.finished_spans }
 
-    let(:host) { ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' } }
-    let(:port) { (ENV.fetch('TEST_KAFKA_PORT') { 29_092 }) }
+    let(:host) { ENV.fetch('TEST_KAFKA_HOST', '127.0.0.1') }
+    let(:port) { ENV.fetch('TEST_KAFKA_PORT', 29_092) }
 
     before do
       # Clear spans
@@ -70,7 +72,7 @@ unless ENV['OMIT_SERVICES']
             counter += 1
             raise 'oops' if counter >= 2
           end
-        rescue StandardError # rubocop:disable Lint/HandleExceptions
+        rescue StandardError
         end
 
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
@@ -150,7 +152,7 @@ unless ENV['OMIT_SERVICES']
           consumer.each_batch(max_items: 2) do |messages|
             raise 'oops' unless messages.empty?
           end
-        rescue StandardError # rubocop:disable Lint/HandleExceptions
+        rescue StandardError
         end
 
         span = spans.find { |s| s.name == 'batch process' }
@@ -177,3 +179,5 @@ unless ENV['OMIT_SERVICES']
     end
   end
 end
+
+# rubocop:enable Lint/SuppressedException

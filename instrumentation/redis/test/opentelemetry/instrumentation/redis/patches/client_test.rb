@@ -24,8 +24,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
     redis_options[:password] = password
     redis_options[:host] = redis_host
     redis_options[:port] = redis_port
-    redis = ::Redis.new(redis_options)
-    redis
+    ::Redis.new(redis_options)
   end
 
   before do

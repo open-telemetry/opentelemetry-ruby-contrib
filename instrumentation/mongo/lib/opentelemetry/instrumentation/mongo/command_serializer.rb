@@ -35,7 +35,7 @@ module OpenTelemetry
           build_pipeline
         end
 
-        def build_command # rubocop:disable Metrics/AbcSize
+        def build_command
           add_val(payload, command, 'key')
           add_map(payload, command, 'query')
           add_map(payload, command, 'filter')
@@ -87,13 +87,13 @@ module OpenTelemetry
 
         def add_map(payload, command, key)
           value = command[key]
-          return unless value&.is_a?(Hash) && !value.empty?
+          return unless value.is_a?(Hash) && !value.empty?
 
           payload[key] = mask(value)
         end
 
         def mask(hash)
-          hash.each_with_object({}) do |(k, v), h|
+          hash.each_with_object({}) do |(k, v), h| # rubocop:disable Style/HashTransformValues
             h[k] = v.is_a?(Hash) ? mask(v) : MASK_VALUE
           end
         end

@@ -13,7 +13,7 @@ module OpenTelemetry
           MAX_STATEMENT_LENGTH = 500
           private_constant :MAX_STATEMENT_LENGTH
 
-          def process(commands) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+          def process(commands) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
             return super unless config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
 
             host = options[:host]
@@ -59,7 +59,7 @@ module OpenTelemetry
           # Redis#pipeline: [[:set, "v1", "0"], [:incr, "v1"], [:get, "v1"]]
           # Redis#hmset     [[:hmset, "hash", "f1", 1234567890.0987654]]
           # Redis#set       [[:set, "K", "x"]]
-          def parse_commands(commands) # rubocop:disable Metrics/AbcSize
+          def parse_commands(commands)
             commands.map do |command|
               # We are checking for the use of Redis#queue command, if we detect the
               # extra level of array nesting we return the first element so it

@@ -13,7 +13,7 @@ module OpenTelemetry
       module GoogleCloudPlatform
         extend self
 
-        def detect # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+        def detect # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           gcp_env = Google::Cloud::Env.new
           resource_attributes = {}
 

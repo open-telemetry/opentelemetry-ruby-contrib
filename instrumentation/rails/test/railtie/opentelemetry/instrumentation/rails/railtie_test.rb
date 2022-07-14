@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 require 'test_helper'
 
-class OpenTelemetry::Instrumentation::Rails::RailtieTest < ActiveSupport::TestCase
+class OpenTelemetry::Instrumentation::Rails::RailtieTest < ActiveSupport::TestCase # rubocop:disable Style/ClassAndModuleChildren
   include OpenTelemetry::SemanticConventions
 
   setup do
