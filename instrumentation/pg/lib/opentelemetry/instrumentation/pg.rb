@@ -27,16 +27,6 @@ module OpenTelemetry
         context.value(CURRENT_ATTRIBUTES_KEY) || {}
       end
 
-      # Returns a context containing the merged attributes hash, derived from the
-      # optional parent context, or the current context if one was not provided.
-      #
-      # @param [optional Context] context The context to use as the parent for
-      #   the returned context
-      def context_with_attributes(attributes_hash, parent_context: Context.current)
-        attributes_hash = attributes(parent_context).merge(attributes_hash)
-        parent_context.set_value(CURRENT_ATTRIBUTES_KEY, attributes_hash)
-      end
-
       # Activates/deactivates the merged attributes hash within the current Context,
       # which makes the "current attributes hash" available implicitly.
       #
