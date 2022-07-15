@@ -31,7 +31,7 @@ Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 
-Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-maintainers)):
+Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-maintainers)):
 
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Daniel Azuma](https://github.com/dazuma), Google
