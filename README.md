@@ -25,6 +25,12 @@ requests.
 The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 [community page][ruby-sig] repo for information on this and other language SIGs.
 
+Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-approvers)):
+
+- [Robb Kidd](https://github.com/robbkidd), Honeycomb
+
+*Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
+
 Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-maintainers)):
 
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
