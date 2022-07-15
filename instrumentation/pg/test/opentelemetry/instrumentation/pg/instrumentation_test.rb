@@ -69,7 +69,16 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
     end
 
     describe '.attributes' do
-      let(:attributes) { { 'db.statement' => 'foobar' } }
+      let(:attributes) do
+        {
+          'db.name' => 'pg',
+          'db.statement' => 'foobar',
+          'db.operation' => 'PREPARE FOR SELECT 1',
+          'db.postgresql.prepared_statement_name' => 'bar',
+          'net.peer.ip' => '192.168.0.1',
+          'peer.service' => 'example:custom'
+        }
+      end
 
       it 'returns an empty hash by default' do
         _(OpenTelemetry::Instrumentation::PG.attributes).must_equal({})
@@ -83,10 +92,15 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
 
       it 'sets span attributes according to with_attributes hash' do
         OpenTelemetry::Instrumentation::PG.with_attributes(attributes) do
-          client.query('SELECT 1')
+          client.prepare('foo', 'SELECT 1')
         end
 
+        _(span.attributes['db.name']).must_equal 'pg'
         _(span.attributes['db.statement']).must_equal 'foobar'
+        _(span.attributes['db.operation']).must_equal 'PREPARE FOR SELECT 1'
+        _(span.attributes['db.postgresql.prepared_statement_name']).must_equal 'bar'
+        _(span.attributes['net.peer.ip']).must_equal '192.168.0.1'
+        _(span.attributes['peer.service']).must_equal 'example:custom'
       end
     end
 
