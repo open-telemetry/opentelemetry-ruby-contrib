@@ -95,8 +95,8 @@ module OpenTelemetry
             end
 
             def untraced?
-              instrumentation_config[:untraced_hosts]&.each do |host|
-                return true if host === @address # rubocop:disable Style/CaseEquality
+              return true if instrumentation_config[:untraced_hosts]&.any? do |host|
+                host === @address # rubocop:disable Style/CaseEquality
               end
 
               false
