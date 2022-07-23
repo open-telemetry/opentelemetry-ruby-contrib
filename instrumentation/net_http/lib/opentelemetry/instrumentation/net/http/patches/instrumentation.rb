@@ -14,9 +14,15 @@ module OpenTelemetry
             HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
             USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
-            def request(req, body = nil, &block)
+            def request(req, body = nil, &block) # rubocop:disable Metrics/MethodLength
               # Do not trace recursive call for starting the connection
               return super(req, body, &block) unless started?
+
+              if untraced?
+                OpenTelemetry::Common::Utilities.untraced do
+                  return super(req, body, &block)
+                end
+              end
 
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
@@ -86,6 +92,14 @@ module OpenTelemetry
 
             def tracer
               Net::HTTP::Instrumentation.instance.tracer
+            end
+
+            def untraced?
+              instrumentation_config[:untraced_hosts]&.each do |host|
+                return true if host === @address # rubocop:disable Style/CaseEquality
+              end
+
+              false
             end
           end
         end

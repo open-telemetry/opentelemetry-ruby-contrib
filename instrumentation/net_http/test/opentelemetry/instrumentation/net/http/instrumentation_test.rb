@@ -227,6 +227,43 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     end
   end
 
+  describe 'untraced?' do
+    before do
+      stub_request(:get, 'http://example.com/body').to_return(status: 200)
+      stub_request(:get, 'http://foobar.com/body').to_return(status: 200)
+      stub_request(:get, 'http://bazqux.com/body').to_return(status: 200)
+    end
+
+    describe 'untraced_hosts option' do
+      before do
+        instrumentation.instance_variable_set(:@installed, false)
+        config = {
+          untraced_hosts: ['foobar.com', /bazqux\.com/]
+        }
+
+        instrumentation.install(config)
+      end
+
+      it 'does not create a span when request ignored using a string' do
+        ::Net::HTTP.get('foobar.com', '/body')
+        _(exporter.finished_spans.size).must_equal 0
+      end
+
+      it 'does not create a span when request ignored using a regexp' do
+        ::Net::HTTP.get('bazqux.com', '/body')
+        _(exporter.finished_spans.size).must_equal 0
+      end
+
+      it 'creates a span for a non-ignored request' do
+        ::Net::HTTP.get('example.com', '/body')
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['net.peer.name']).must_equal 'example.com'
+      end
+    end
+  end
+
   describe '#connect' do
     it 'emits span on connect' do
       WebMock.allow_net_connect!
