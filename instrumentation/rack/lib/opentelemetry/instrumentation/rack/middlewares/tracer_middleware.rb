@@ -94,7 +94,7 @@ module OpenTelemetry
 
           def untraced_request?(env)
             return true if @untraced_endpoints.any? do |endpoint|
-              endpoint === env['PATH_INFO'] # rubocop:disable Style/CaseEquality
+              endpoint.is_a?(Regexp) ? endpoint.match?(env['PATH_INFO']) : endpoint == env['PATH_INFO']
             end
             return true if config[:untraced_requests]&.call(env)
 
