@@ -83,11 +83,12 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
           end
 
           def process(message)
-            TestConsumer.messages_seen << message
             produce(
               'message seen',
               topic: "ack-#{message.topic}"
             )
+            deliver!
+            TestConsumer.messages_seen << message
           end
         end
         TestConsumer.subscribes_to(topic_name)
@@ -229,6 +230,7 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
               'message seen',
               topic: "ack-#{message.topic}"
             )
+            deliver!
             TestBatchConsumer.messages_seen << message
           end
         end
