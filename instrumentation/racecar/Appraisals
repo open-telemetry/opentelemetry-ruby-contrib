@@ -11,7 +11,3 @@ end
 appraise 'racecar-2.7' do
   gem 'racecar', '2.7.0'
 end
-
-appraise 'racecar-2' do
-  gem 'racecar', '2.0.0'
-end
