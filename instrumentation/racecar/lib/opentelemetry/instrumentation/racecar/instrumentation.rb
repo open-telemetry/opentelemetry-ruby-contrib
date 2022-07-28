@@ -11,7 +11,7 @@ module OpenTelemetry
     module Racecar
       # The Instrumentation class contains logic to detect and install the Racecar instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('2.0')
+        MINIMUM_VERSION = Gem::Version.new('2.7')
 
         compatible do
           gem_version >= MINIMUM_VERSION
