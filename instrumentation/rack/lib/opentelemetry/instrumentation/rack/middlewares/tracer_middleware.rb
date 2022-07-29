@@ -93,7 +93,9 @@ module OpenTelemetry
           private
 
           def untraced_request?(env)
-            return true if @untraced_endpoints.include?(env['PATH_INFO'])
+            return true if @untraced_endpoints.any? do |endpoint|
+              endpoint.is_a?(Regexp) ? endpoint.match?(env['PATH_INFO']) : endpoint == env['PATH_INFO']
+            end
             return true if config[:untraced_requests]&.call(env)
 
             false

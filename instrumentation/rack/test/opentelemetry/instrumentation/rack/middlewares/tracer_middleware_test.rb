@@ -113,6 +113,20 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         end
       end
 
+      describe 'when a regexp is passed in' do
+        let(:config) { { untraced_endpoints: %r{\A/ping/?} } }
+
+        it 'traces everything' do
+          Rack::MockRequest.new(rack_builder).get('/ping', env)
+
+          ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/ping' }
+          _(ping_span).wont_be_nil
+
+          root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
+          _(root_span).wont_be_nil
+        end
+      end
+
       describe 'when nil is passed in' do
         let(:config) { { untraced_endpoints: nil } }
 
