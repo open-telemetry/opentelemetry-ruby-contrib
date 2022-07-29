@@ -34,7 +34,7 @@ describe OpenTelemetry::Instrumentation::Rake::Patches::Task do
 
       _(spans.size).must_equal 1
 
-      _(execute_span.kind).must_equal :client
+      _(execute_span.kind).must_equal :internal
       _(execute_span.name).must_equal 'rake.execute'
       _(execute_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
     end
@@ -50,7 +50,7 @@ describe OpenTelemetry::Instrumentation::Rake::Patches::Task do
       _(invoke_span.name).must_equal 'rake.invoke'
       _(invoke_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
 
-      _(execute_span.kind).must_equal :client
+      _(execute_span.kind).must_equal :internal
       _(execute_span.name).must_equal 'rake.execute'
       _(execute_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
       _(execute_span.parent_span_id).must_equal(invoke_span.span_id)
@@ -76,12 +76,12 @@ describe OpenTelemetry::Instrumentation::Rake::Patches::Task do
         _(invoke_span.name).must_equal 'rake.invoke'
         _(invoke_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
 
-        _(execute_span.kind).must_equal :client
+        _(execute_span.kind).must_equal :internal
         _(execute_span.name).must_equal 'rake.execute'
         _(execute_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
         _(execute_span.parent_span_id).must_equal(invoke_span.span_id)
 
-        _(prerequisite_task_execute_span.kind).must_equal :client
+        _(prerequisite_task_execute_span.kind).must_equal :internal
         _(prerequisite_task_execute_span.name).must_equal 'rake.execute'
         _(prerequisite_task_execute_span.attributes['rake.task']).must_equal 'test_rake_instrumentation_prerequisite'
         _(prerequisite_task_execute_span.parent_span_id).must_equal(invoke_span.span_id)
