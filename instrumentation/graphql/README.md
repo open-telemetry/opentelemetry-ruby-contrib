@@ -53,6 +53,27 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+#### GraphQL context configuration
+
+Optionally, GraphQL execution context can include tracing option keys to control tracing behaviour independently per execution.
+
+An option's global configuration must be enabled for the associated context option to be respected. This is supported for `graphql-ruby` version `>= 1.13.13 < 2` or `>= 2.0.9`.
+
+| | Global Enabled | Global Disabled |
+|:---:|:---:|:---:|
+| **Context Unset** | ✅ | ❌ |
+| **Context Enabled** | ✅ | ❌ |
+| **Context Disabled** | ❌ | ❌ |
+
+```ruby
+query = GraphQL::Query.new(MyAppSchema, 'query { foo }')
+
+opentelemetry_context = query.context.namespace(:opentelemetry)
+opentelemetry_context[:enable_platform_field] = true
+opentelemetry_context[:enable_platform_authorized] = true
+opentelemetry_context[:enable_platform_resolve_type] = true
+```
+
 ## Examples
 
 An example of usage can be seen in [`example/graphql.rb`](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/graphql/example/graphql.rb).

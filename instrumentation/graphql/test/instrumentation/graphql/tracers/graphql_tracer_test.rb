@@ -14,6 +14,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
   let(:instrumentation) { OpenTelemetry::Instrumentation::GraphQL::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
+  let(:span_names) { spans.map(&:name) }
   let(:config) { {} }
 
   let(:query_string) do
@@ -169,9 +170,103 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         "[{\"message\":\"Field 'nonExistentField' doesn't exist on type 'Query'\",\"locations\":[{\"line\":2,\"column\":13}],\"path\":[\"query\",\"nonExistentField\"],\"extensions\":{\"code\":\"undefinedField\",\"typeName\":\"Query\",\"fieldName\":\"nonExistentField\"}}]"
       )
     end
+
+    describe 'tracing based on query execution context' do
+      let(:query) { GraphQL::Query.new(SomeGraphQLAppSchema, '{ vehicle { __typename } }') }
+
+      describe 'keys are enabled in config' do
+        let(:config) { { enable_platform_field: true, enable_platform_authorized: true, enable_platform_resolve_type: true } }
+
+        it 'captures the keys when tracing is enabled in config and in query execution context' do
+          query.context.namespace(:opentelemetry)[:enable_platform_field] = true
+          query.context.namespace(:opentelemetry)[:enable_platform_authorized] = true
+          query.context.namespace(:opentelemetry)[:enable_platform_resolve_type] = true
+          query.result
+
+          assert span_names.include?('Query.vehicle')
+          if supports_authorized_and_resolved_types?
+            assert span_names.include?('Query.authorized')
+            assert span_names.include?('Vehicle.resolve_type')
+            assert span_names.include?('Car.authorized')
+          end
+        end
+
+        it 'does not capture the keys when tracing is disabled in query execution context' do
+          if supports_query_execution_context_based_tracing?
+            query.context.namespace(:opentelemetry)[:enable_platform_field] = false
+            query.context.namespace(:opentelemetry)[:enable_platform_authorized] = false
+            query.context.namespace(:opentelemetry)[:enable_platform_resolve_type] = false
+            query.result
+
+            refute span_names.include?('Query.authorized')
+            refute span_names.include?('Query.vehicle')
+            refute span_names.include?('Vehicle.resolve_type')
+            refute span_names.include?('Car.authorized')
+          else
+            skip 'This test is only supported for GraphQL >= 1.13.13 or GraphQL >= 2.0.9.'
+          end
+        end
+
+        it 'captures the keys when tracing config is not set in query execution context' do
+          query.result
+
+          assert span_names.include?('Query.vehicle')
+          if supports_authorized_and_resolved_types?
+            assert span_names.include?('Query.authorized')
+            assert span_names.include?('Vehicle.resolve_type')
+            assert span_names.include?('Car.authorized')
+          end
+        end
+      end
+
+      describe 'keys are disabled in config' do
+        let(:config) { { enable_platform_field: false, enable_platform_authorized: false, enable_platform_resolve_type: false } }
+
+        it 'does not capture the keys when tracing is enabled in query execution context' do
+          query.context.namespace(:opentelemetry)[:enable_platform_field] = true
+          query.context.namespace(:opentelemetry)[:enable_platform_authorized] = true
+          query.context.namespace(:opentelemetry)[:enable_platform_resolve_type] = true
+          query.result
+
+          refute span_names.include?('Query.authorized')
+          refute span_names.include?('Query.vehicle')
+          refute span_names.include?('Vehicle.resolve_type')
+          refute span_names.include?('Car.authorized')
+        end
+
+        it 'does not capture the keys when tracing config is missing in query execution context' do
+          query.result
+
+          refute span_names.include?('Query.authorized')
+          refute span_names.include?('Query.vehicle')
+          refute span_names.include?('Vehicle.resolve_type')
+          refute span_names.include?('Car.authorized')
+        end
+
+        it 'does not capture the keys when tracing is disabled in query execution context' do
+          query.context.namespace(:opentelemetry)[:enable_platform_field] = false
+          query.context.namespace(:opentelemetry)[:enable_platform_authorized] = false
+          query.context.namespace(:opentelemetry)[:enable_platform_resolve_type] = false
+          query.result
+
+          refute span_names.include?('Query.authorized')
+          refute span_names.include?('Query.vehicle')
+          refute span_names.include?('Vehicle.resolve_type')
+          refute span_names.include?('Car.authorized')
+        end
+      end
+    end
   end
 
   private
+
+  # These fields are only supported as of version 1.13.13 and 2.0.9
+  # https://github.com/rmosolgo/graphql-ruby/blob/master/CHANGELOG.md#11313-31-may-2022
+  # https://github.com/rmosolgo/graphql-ruby/blob/master/CHANGELOG.md#209-31-may-2022
+  def supports_query_execution_context_based_tracing?
+    Gem.loaded_specs['graphql'].version >= Gem::Version.new('1.13.13') ||
+      Gem.loaded_specs['graphql'].version >= Gem::Version.new('2.0.9')
+  end
 
   # These fields are only supported as of version 1.10.0
   # https://github.com/rmosolgo/graphql-ruby/blob/v1.10.0/CHANGELOG.md#new-features-1

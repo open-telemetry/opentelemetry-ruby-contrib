@@ -13,6 +13,12 @@ module OpenTelemetry
         # GraphQLTracer contains the OpenTelemetry tracer implementation compatible with
         # the GraphQL tracer API
         class GraphQLTracer < ::GraphQL::Tracing::PlatformTracing
+          TRACE_PHASE_TO_TYPE = {
+            field: :enable_platform_field,
+            authorized: :enable_platform_authorized,
+            resolve_type: :enable_platform_resolve_type
+          }.freeze
+
           self.platform_keys = {
             'lex' => 'graphql.lex',
             'parse' => 'graphql.parse',
@@ -79,6 +85,26 @@ module OpenTelemetry
               attributes['graphql.document'] = data[:query].query_string
             end
             attributes
+          end
+
+          def cached_platform_key(ctx, key, trace_phase = nil)
+            cache = ctx.namespace(self.class)[:platform_key_cache] ||= {}
+            cache.fetch(key) do
+              cache[key] = if trace_phase.nil?
+                             # Backwards compatibility for graphql-ruby < 1.13.13 and >= 2 < 2.0.9
+                             # Relates to https://github.com/rmosolgo/graphql-ruby/pull/4077
+                             yield
+                           else
+                             ns = ctx.namespace(:opentelemetry)
+                             if ns.empty?
+                               # Execution context not provided so no request specific config to check
+                               yield
+                             else
+                               config_key = TRACE_PHASE_TO_TYPE.fetch(trace_phase)
+                               yield if ns.fetch(config_key, true)
+                             end
+                           end
+            end
           end
         end
       end
