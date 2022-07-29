@@ -7,15 +7,13 @@ module OpenTelemetry
         # Module to prepend to Rask::Task for instrumentation
         module Task
           def invoke(*args)
-            attributes = { 'rake.task' => name }
-            tracer.in_span('rake.invoke', attributes: attributes) do
+            tracer.in_span('rake.invoke', attributes: { 'rake.task' => name }) do
               super
             end
           end
 
           def execute(args = nil)
-            attributes = { 'rake.task' => name }
-            tracer.in_span('rake.execute', attributes: attributes) do
+            tracer.in_span('rake.execute', attributes: { 'rake.task' => name }) do
               super
             end
           end
