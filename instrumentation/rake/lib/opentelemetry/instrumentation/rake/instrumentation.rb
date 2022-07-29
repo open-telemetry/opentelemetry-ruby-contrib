@@ -14,7 +14,6 @@ module OpenTelemetry
         install do |_config|
           require_dependencies
           patch_rake
-          shutdown_at_exit
         end
 
         present do
@@ -37,12 +36,6 @@ module OpenTelemetry
 
         def patch_rake
           ::Rake::Task.prepend(Patches::Task)
-        end
-
-        def shutdown_at_exit
-          return unless defined?(::Rake) && !::Rake.application.top_level_tasks.empty?
-
-          at_exit { OpenTelemetry.tracer_provider.shutdown }
         end
       end
     end
