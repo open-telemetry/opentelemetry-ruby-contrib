@@ -14,5 +14,4 @@ gemspec
 
 group :development, :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
-  gem 'opentelemetry-instrumentation-rdkafka', path: '../rdkafka'
 end

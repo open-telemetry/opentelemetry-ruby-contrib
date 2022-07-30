@@ -10,20 +10,30 @@ require 'securerandom'
 require 'racecar'
 require 'racecar/cli'
 require_relative '../../../../../lib/opentelemetry/instrumentation/racecar'
-require_relative '../../../../../lib/opentelemetry/instrumentation/racecar/patches/runner'
 
-describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
+describe OpenTelemetry::Instrumentation::Racecar do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Racecar::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:host) { ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' } }
   let(:port) { (ENV.fetch('TEST_KAFKA_PORT') { 29_092 }) }
 
+  def tracer
+    OpenTelemetry.tracer_provider.tracer('test-tracer')
+  end
+
   def produce(messages)
     config = { "bootstrap.servers": "#{host}:#{port}" }
     producer = Rdkafka::Config.new(config).producer
+    producer.delivery_callback = ->(_) {}
 
-    producer_messages.map { |msg| producer.produce(**msg) }.each(&:wait)
+    producer_messages.map do |msg|
+      tracer.in_span("#{msg[:topic]} send", kind: :producer) do
+        msg[:headers] ||= {}
+        OpenTelemetry.propagation.inject(msg[:headers])
+        producer.produce(**msg)
+      end
+    end.each(&:wait)
 
     producer.close
   end
@@ -134,7 +144,7 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
         first_send_span = racecar_send_spans[0]
         _(first_send_span.name).must_equal("ack-#{topic_name} send")
         _(first_send_span.kind).must_equal(:producer)
-        _(first_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Rdkafka')
+        _(first_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Racecar')
         _(first_send_span.parent_span_id).must_equal(first_process_span.span_id)
         _(first_send_span.trace_id).must_equal(first_process_span.trace_id)
 
@@ -155,7 +165,7 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
         second_send_span = racecar_send_spans[1]
         _(second_send_span.name).must_equal("ack-#{topic_name} send")
         _(second_send_span.kind).must_equal(:producer)
-        _(second_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Rdkafka')
+        _(second_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Racecar')
         _(second_send_span.parent_span_id).must_equal(second_process_span.span_id)
         _(second_send_span.trace_id).must_equal(second_process_span.trace_id)
       end
@@ -285,7 +295,7 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
       first_send_span = racecar_send_spans[0]
       _(first_send_span.name).must_equal("ack-#{topic_name} send")
       _(first_send_span.kind).must_equal(:producer)
-      _(first_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Rdkafka')
+      _(first_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Racecar')
       _(first_send_span.parent_span_id).must_equal(batch_span.span_id)
       _(first_send_span.trace_id).must_equal(batch_span.trace_id)
 
@@ -293,7 +303,7 @@ describe OpenTelemetry::Instrumentation::Racecar::Patches::Runner do
       second_send_span = racecar_send_spans[1]
       _(second_send_span.name).must_equal("ack-#{topic_name} send")
       _(second_send_span.kind).must_equal(:producer)
-      _(second_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Rdkafka')
+      _(second_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Racecar')
       _(second_send_span.parent_span_id).must_equal(batch_span.span_id)
       _(second_send_span.trace_id).must_equal(batch_span.trace_id)
     end

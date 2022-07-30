@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-instrumentation-rdkafka'
-
 module OpenTelemetry
   module Instrumentation
     module Racecar
@@ -18,7 +16,6 @@ module OpenTelemetry
         end
 
         install do |_config|
-          OpenTelemetry::Instrumentation::Rdkafka::Instrumentation.instance.install({})
           require_patches
           patch
         end
@@ -31,10 +28,12 @@ module OpenTelemetry
 
         def require_patches
           require_relative 'patches/runner'
+          require_relative 'patches/consumer'
         end
 
         def patch
           ::Racecar::Runner.prepend(Patches::Runner)
+          ::Racecar::Consumer.prepend(Patches::Consumer)
         end
 
         def gem_version
