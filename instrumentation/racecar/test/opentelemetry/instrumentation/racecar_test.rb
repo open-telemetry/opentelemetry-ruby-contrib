@@ -59,8 +59,8 @@ describe OpenTelemetry::Instrumentation::Racecar do
     thread.join(60)
   end
 
-  def wait_for_messages_seen_by_consumer(count, timeout: 20)
-    Timeout.timeout(20) do
+  def wait_for_messages_seen_by_consumer(count)
+    Timeout.timeout(60) do
       sleep 0.1 until consumer_class.messages_seen.size >= count
     end
   end
