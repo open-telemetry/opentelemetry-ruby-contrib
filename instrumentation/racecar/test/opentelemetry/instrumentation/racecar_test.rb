@@ -9,7 +9,7 @@ require 'securerandom'
 
 require 'racecar'
 require 'racecar/cli'
-require_relative '../../../../../lib/opentelemetry/instrumentation/racecar'
+require_relative '../../../lib/opentelemetry/instrumentation/racecar'
 
 describe OpenTelemetry::Instrumentation::Racecar do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Racecar::Instrumentation.instance }
