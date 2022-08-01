@@ -4,10 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'racecar-2.8' do
-  gem 'racecar', '~> 2.8.2'
+appraise 'racecar-2.7' do
+  gem 'racecar', '~> 2.7.0'
 end
 
-appraise 'racecar-2.7' do
-  gem 'racecar', '2.7.0'
+appraise 'racecar-2.8' do
+  gem 'racecar', '~> 2.8.2'
 end
