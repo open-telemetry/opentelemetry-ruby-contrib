@@ -47,14 +47,16 @@ describe OpenTelemetry::Instrumentation::Racecar do
 
   def run_racecar(racecar)
     Thread.new do
+      Thread.current[:racecar] = racecar
       racecar.run
     rescue RuntimeError => e
       raise e unless e.message == 'oops'
     end
   end
 
-  def stop_racecar(racecar)
-    racecar.stop
+  def stop_racecar(thread)
+    thread[:racecar].stop
+    thread.join(60)
   end
 
   def wait_for_messages_seen_by_consumer(count, timeout: 20)
@@ -76,11 +78,11 @@ describe OpenTelemetry::Instrumentation::Racecar do
 
     produce(producer_messages)
 
-    run_racecar(racecar)
+    @racecar_thread = run_racecar(racecar)
   end
 
   after do
-    stop_racecar(racecar)
+    stop_racecar(@racecar_thread)
   end
 
   describe '#process' do
