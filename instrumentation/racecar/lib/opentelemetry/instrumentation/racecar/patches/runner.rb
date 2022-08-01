@@ -12,39 +12,7 @@ module OpenTelemetry
         module Runner
           def initialize(*args, **kwargs)
             super
-            if @processor.respond_to?(:process)
-              @processor.extend(Consumer)
-            elsif @processor.respond_to?(:process_batch)
-              @processor.extend(BatchConsumer)
-            end
-          end
-
-          # This module contains logic to patch Racecar::Consumer
-          module Consumer
-            def process(message)
-              attributes = {
-                'messaging.system' => 'kafka',
-                'messaging.destination' => message.topic,
-                'messaging.destination_kind' => 'topic',
-                'messaging.kafka.partition' => message.partition,
-                'messaging.kafka.offset' => message.offset
-              }
-
-              attributes['messaging.kafka.message_key'] = message.key if message.key
-              parent_context = OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)
-              span_context = OpenTelemetry::Trace.current_span(parent_context).context
-              links = [OpenTelemetry::Trace::Link.new(span_context)] if span_context.valid?
-
-              OpenTelemetry::Context.with_current(parent_context) do
-                tracer.in_span("#{message.topic} process", links: links, attributes: attributes, kind: :consumer) do
-                  super message
-                end
-              end
-            end
-
-            def tracer
-              Racecar::Instrumentation.instance.tracer
-            end
+            @processor.extend(BatchConsumer) if @processor.respond_to?(:process_batch)
           end
 
           # This module contains logic to patch Racecar::Consumer for batch operations

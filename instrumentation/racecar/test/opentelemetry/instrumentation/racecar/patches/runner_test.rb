@@ -42,7 +42,7 @@ describe OpenTelemetry::Instrumentation::Racecar do
     Racecar.config.brokers = ["#{host}:#{port}"]
     Racecar.config.pause_timeout = 0 # fail fast and exit
     Racecar.config.load_consumer_class(consumer_class)
-    Racecar::Runner.new(consumer_class.new, config: Racecar.config, logger: Logger.new(STDOUT))
+    Racecar::Runner.new(consumer_class.new, config: Racecar.config, logger: Logger.new(STDOUT), instrumenter: Racecar.instrumenter)
   end
 
   def run_racecar(racecar)

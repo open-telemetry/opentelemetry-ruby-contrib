@@ -18,6 +18,7 @@ module OpenTelemetry
         install do |_config|
           require_patches
           patch
+          add_subscribers
         end
 
         present do
@@ -27,8 +28,15 @@ module OpenTelemetry
         private
 
         def require_patches
-          require_relative 'patches/runner'
           require_relative 'patches/consumer'
+          require_relative 'patches/runner'
+        end
+
+        def add_subscribers
+          require 'active_support'
+          require_relative 'process_message_subscriber'
+          subscriber = ProcessMessageSubscriber.new
+          ::ActiveSupport::Notifications.subscribe('process_message.racecar', subscriber)
         end
 
         def patch
