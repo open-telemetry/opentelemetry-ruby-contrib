@@ -29,7 +29,6 @@ module OpenTelemetry
 
         def require_patches
           require_relative 'patches/consumer'
-          require_relative 'patches/runner'
         end
 
         def add_subscribers
@@ -40,7 +39,6 @@ module OpenTelemetry
         end
 
         def patch
-          ::Racecar::Runner.prepend(Patches::Runner)
           ::Racecar::Consumer.prepend(Patches::Consumer)
         end
 
