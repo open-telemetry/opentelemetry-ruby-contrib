@@ -151,6 +151,8 @@ jobs:
             gem: opentelemetry-instrumentation-rails
           - os: macos-latest
             gem: opentelemetry-instrumentation-lmdb
+          - os: macos-latest
+            gem: opentelemetry-instrumentation-racecar
 
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -236,6 +238,7 @@ jobs:
           - opentelemetry-instrumentation-mysql2
           - opentelemetry-instrumentation-pg
           - opentelemetry-instrumentation-que
+          - opentelemetry-instrumentation-racecar
           - opentelemetry-instrumentation-rdkafka
           - opentelemetry-instrumentation-redis
           - opentelemetry-instrumentation-resque
@@ -293,6 +296,7 @@ jobs:
         run: |
           echo "::set-output name=skip::false"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-que"        ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-racecar"    ]] && echo "::set-output name=skip::true"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-rdkafka"    ]] && echo "::set-output name=skip::true"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-ruby_kafka" ]] && echo "::set-output name=skip::true"
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.

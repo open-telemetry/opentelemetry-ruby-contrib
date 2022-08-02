@@ -4,8 +4,4 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-source 'https://rubygems.org'
-
-gemspec
-
-gem 'opentelemetry-instrumentation-racecar', path: '../racecar'
+require_relative './opentelemetry/instrumentation'
