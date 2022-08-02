@@ -20,6 +20,9 @@ module OpenTelemetry
             defined?(::Net::HTTP)
           end
 
+          option :request_hook, default: nil, validate: :callable
+          option :response_hook, default: nil, validate: :callable
+
           private
 
           def require_dependencies

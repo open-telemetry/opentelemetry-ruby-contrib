@@ -30,6 +30,21 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Configuration options
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Net::HTTP', {
+    request_hook: lambda { |span, request, request_body|
+      # Extract custom attributes from request
+    },
+    response_hook: lambda { |span, response|
+      # Extract custom attributes from response
+    }
+  }
+end
+```
+
 ## Example
 
 An example of usage can be seen in [`example/net_http.rb`](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/net_http/example/net_http.rb).
