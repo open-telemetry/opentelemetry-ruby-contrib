@@ -27,11 +27,11 @@ module OpenTelemetry
             private
 
             def add_rails_route(rack_span, request)
-              matching_routes = []
               ::Rails.application.routes.router.recognize(request) do |route, _params|
-                matching_routes << route.path.spec.to_s
+                rack_span.set_attribute('http.route', route.path.spec.to_s)
+                # Rails will match on the first route - see https://guides.rubyonrails.org/routing.html#crud-verbs-and-actions
+                break
               end
-              rack_span.set_attribute('http.route', matching_routes.max_by(&:length))
             end
 
             def instrumentation_config
