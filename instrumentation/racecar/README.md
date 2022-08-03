@@ -13,6 +13,10 @@ gem install opentelemetry-instrumentation-racecar
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-racecar` in your `Gemfile`.
 
+## Runtime requirements
+
+This instrumentation is built on top of Racecar's integration with `ActiveSupport::Notifications`. `ActiveSupport::Notification` will need to be loaded before the instrumentation is installed (as below) or the installation will cancel.
+
 ## Usage
 
 To use the instrumentation, call `use` with the name of the instrumentation:
