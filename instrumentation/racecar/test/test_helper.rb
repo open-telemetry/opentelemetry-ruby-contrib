@@ -17,3 +17,6 @@ span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPO
 OpenTelemetry::SDK.configure do |c|
   c.add_span_processor span_processor
 end
+
+require 'racecar'
+require 'active_support'

@@ -7,7 +7,6 @@
 require 'test_helper'
 require 'securerandom'
 
-require 'racecar'
 require 'racecar/cli'
 require_relative '../../../lib/opentelemetry/instrumentation/racecar'
 

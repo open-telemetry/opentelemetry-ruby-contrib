@@ -12,7 +12,7 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('2.7')
 
         compatible do
-          gem_version >= MINIMUM_VERSION
+          !defined?(::ActiveSupport::Notifications).nil? && gem_version >= MINIMUM_VERSION
         end
 
         install do |_config|
@@ -28,11 +28,10 @@ module OpenTelemetry
         private
 
         def require_patches
-          require_relative 'patches/consumer'
+          require_relative './patches/consumer'
         end
 
         def add_subscribers
-          require 'active_support'
           require_relative 'process_message_subscriber'
           subscriber = ProcessMessageSubscriber.new
           ::ActiveSupport::Notifications.subscribe('process_message.racecar', subscriber)

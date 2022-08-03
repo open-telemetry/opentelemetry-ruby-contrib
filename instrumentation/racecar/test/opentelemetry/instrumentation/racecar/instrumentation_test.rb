@@ -22,6 +22,7 @@ describe OpenTelemetry::Instrumentation::Racecar do
 
   describe '#install' do
     it 'accepts argument' do
+      _(instrumentation.compatible?).must_equal(true)
       _(instrumentation.install({})).must_equal(true)
       instrumentation.instance_variable_set(:@installed, false)
     end
