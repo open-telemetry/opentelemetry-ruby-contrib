@@ -51,12 +51,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-net_http', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-pg', '~> 0.22.0'
   spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.4.0'
-<<<<<<< HEAD
+  spec.add_dependency 'opentelemetry-instrumentation-racecar', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.21.1'
-=======
-  spec.add_dependency 'opentelemetry-instrumentation-racecar', '~> 0.0.0'
-  spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.21.0'
->>>>>>> 9fc36e3f (move declarations to keep rubocop happy)
   spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.22.0'
   spec.add_dependency 'opentelemetry-instrumentation-rdkafka', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.23.0'
