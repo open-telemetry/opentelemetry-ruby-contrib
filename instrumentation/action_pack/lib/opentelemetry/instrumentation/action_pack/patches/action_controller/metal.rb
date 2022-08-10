@@ -29,6 +29,8 @@ module OpenTelemetry
             def add_rails_route(rack_span, request)
               ::Rails.application.routes.router.recognize(request) do |route, _params|
                 rack_span.set_attribute('http.route', route.path.spec.to_s)
+                # Rails will match on the first route - see https://guides.rubyonrails.org/routing.html#crud-verbs-and-actions
+                break
               end
             end
 
