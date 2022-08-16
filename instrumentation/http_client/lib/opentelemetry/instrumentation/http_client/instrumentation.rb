@@ -20,9 +20,6 @@ module OpenTelemetry
           defined?(::HTTPClient)
         end
 
-        option :request_hook, default: nil, validate: :callable
-        option :response_hook, default: nil, validate: :callable
-
         private
 
         def patch

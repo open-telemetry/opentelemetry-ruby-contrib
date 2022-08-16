@@ -18,16 +18,6 @@ module OpenTelemetry
 
           private
 
-          def config
-            RestClient::Instrumentation.instance.config
-          end
-
-          def safe_execute_hook(hook, *args)
-            hook.call(*args)
-          rescue StandardError => e
-            OpenTelemetry.handle_error(exception: e)
-          end
-
           def create_request_span
             http_method = method.upcase
             instrumentation_attrs = {
@@ -47,7 +37,6 @@ module OpenTelemetry
             OpenTelemetry::Trace.with_span(span) do
               OpenTelemetry.propagation.inject(processed_headers)
             end
-            safe_execute_hook(instrumentation_config[:request_hook], span, self) unless instrumentation_config[:request_hook].nil?
 
             span
           end
@@ -61,7 +50,6 @@ module OpenTelemetry
               if response.is_a?(::RestClient::Response)
                 span.set_attribute('http.status_code', response.code)
                 span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response.code.to_i)
-                safe_execute_hook(config[:response_hook], span, response) unless config[:response_hook].nil?
               end
             end
           rescue ::RestClient::ExceptionWithResponse => e
