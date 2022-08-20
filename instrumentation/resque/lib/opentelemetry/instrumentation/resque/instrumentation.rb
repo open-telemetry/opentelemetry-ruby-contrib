@@ -18,6 +18,7 @@ module OpenTelemetry
           defined?(::Resque)
         end
 
+        option :force_flush,       default: false,  validate: :boolean
         option :span_naming,       default: :queue, validate: %I[job_class queue]
         option :propagation_style, default: :link,  validate: %i[link child none]
 
