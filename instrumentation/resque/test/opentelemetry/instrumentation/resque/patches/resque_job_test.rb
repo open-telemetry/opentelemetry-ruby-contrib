@@ -183,6 +183,43 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         _(ev[0].attributes['exception.stacktrace']).wont_be_nil
       end
     end
+
+    describe 'force_flush' do
+      let(:mock_tracer_provider) do
+        mock_tracer_provider = MiniTest::Mock.new
+        mock_tracer_provider.expect(:force_flush, true)
+
+        mock_tracer_provider
+      end
+
+      describe 'false - default' do
+        let(:config) { { force_flush: false } }
+
+        it 'does not forcibly flush the tracer' do
+          ::Resque.enqueue(DummyJob)
+
+          OpenTelemetry.stub(:tracer_provider, mock_tracer_provider) do
+            work_off_jobs
+          end
+
+          expect { mock_tracer_provider.verify }.must_raise MockExpectationError
+        end
+      end
+
+      describe 'true' do
+        let(:config) { { force_flush: true } }
+
+        it 'does forcibly flush the tracer' do
+          ::Resque.enqueue(DummyJob)
+
+          OpenTelemetry.stub(:tracer_provider, mock_tracer_provider) do
+            work_off_jobs
+          end
+
+          mock_tracer_provider.verify
+        end
+      end
+    end
   end unless ENV['OMIT_SERVICES']
 
   private
