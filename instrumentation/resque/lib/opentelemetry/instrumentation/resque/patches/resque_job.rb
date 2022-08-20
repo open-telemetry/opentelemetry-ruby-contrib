@@ -57,7 +57,7 @@ module OpenTelemetry
           ensure
             # A Resque worker parent will fork and kill child processes when performing a job.
             # We don't want to lose spans by not flushing any span processors, so we optionally force it here.
-            OpenTelemetry.tracer_provider.force_flush if otel_config[:force_flush]
+            OpenTelemetry.tracer_provider.force_flush if config[:force_flush]
           end
 
           private
