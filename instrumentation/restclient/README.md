@@ -30,21 +30,6 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-### Configuration options
-
-```ruby
-OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::RestClient', {
-    request_hook: lambda { |span, request|
-      # Extract custom attributes from request
-    },
-    response_hook: lambda { |span, response|
-      # Extract custom attributes from response
-    }
-  }
-end
-```
-
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-restclient` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
