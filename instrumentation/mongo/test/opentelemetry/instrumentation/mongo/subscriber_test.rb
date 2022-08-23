@@ -344,6 +344,28 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
     end
   end
 
+  describe 'db_statement explicit obfuscate option' do
+    let(:collection) { :people }
+    let(:config) { { db_statement: :obfuscate } }
+
+    before do
+      # insert a document
+      client[collection].insert_one(name: 'Steve', hobbies: ['hiking'])
+      exporter.reset
+
+      # do #find operation
+      result = client[collection].find(name: 'Steve').first[:hobbies]
+      _(result).must_equal ['hiking']
+    end
+
+    it 'obfuscates db.statement attribute' do
+      _(span.name).must_equal 'people.find'
+      _(span.attributes['db.operation']).must_equal 'find'
+      _(span.attributes['db.mongodb.collection']).must_equal 'people'
+      _(span.attributes['db.statement']).must_equal '{"filter":{"name":"?"}}'
+    end
+  end
+
   describe 'a failed query' do
     before { client[:artists].drop }
 
