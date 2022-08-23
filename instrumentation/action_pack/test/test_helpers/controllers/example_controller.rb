@@ -11,6 +11,14 @@ class ExampleController < ActionController::Base
     render plain: 'actually ok'
   end
 
+  def item
+    render plain: "this is item #{params[:id]}"
+  end
+
+  def new_item
+    render plain: 'created new item'
+  end
+
   def internal_server_error
     raise :internal_server_error
   end

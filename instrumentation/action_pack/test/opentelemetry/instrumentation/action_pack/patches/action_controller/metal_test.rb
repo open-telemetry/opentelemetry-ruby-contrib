@@ -79,10 +79,10 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     end
 
     it 'sets the span name to ControllerName#action' do
-      get '/ok'
-      _(last_response.body).must_equal 'actually ok'
+      get '/items/new'
+      _(last_response.body).must_equal 'created new item'
       _(last_response.ok?).must_equal true
-      _(span.name).must_equal 'ExampleController#ok'
+      _(span.name).must_equal 'ExampleController#new_item'
       _(span.kind).must_equal :server
       _(span.status.ok?).must_equal true
 
@@ -92,10 +92,10 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.org'
       _(span.attributes['http.scheme']).must_equal 'http'
-      _(span.attributes['http.target']).must_equal '/ok'
+      _(span.attributes['http.target']).must_equal '/items/new'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.user_agent']).must_be_nil
-      _(span.attributes['http.route']).must_equal '/ok(.:format)'
+      _(span.attributes['http.route']).must_equal '/items/new(.:format)'
     end
   end
 

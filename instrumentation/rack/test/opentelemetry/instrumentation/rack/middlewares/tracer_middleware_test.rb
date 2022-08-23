@@ -185,14 +185,14 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       end
 
       it 'defaults to nil' do
-        _(first_span.attributes['http.request.headers.foo_bar']).must_be_nil
+        _(first_span.attributes['http.request.header.foo_bar']).must_be_nil
       end
 
       describe 'when configured' do
         let(:config) { default_config.merge(allowed_request_headers: ['foo_BAR']) }
 
         it 'returns attribute' do
-          _(first_span.attributes['http.request.headers.foo_bar']).must_equal 'http foo bar value'
+          _(first_span.attributes['http.request.header.foo_bar']).must_equal 'http foo bar value'
         end
       end
 
@@ -200,7 +200,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         let(:config) { default_config.merge(allowed_request_headers: ['CONTENT_TYPE']) }
 
         it 'returns attribute' do
-          _(first_span.attributes['http.request.headers.content_type']).must_equal 'application/json'
+          _(first_span.attributes['http.request.header.content_type']).must_equal 'application/json'
         end
       end
 
@@ -208,7 +208,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         let(:config) { default_config.merge(allowed_request_headers: ['CONTENT_LENGTH']) }
 
         it 'returns attribute' do
-          _(first_span.attributes['http.request.headers.content_length']).must_equal '123'
+          _(first_span.attributes['http.request.header.content_length']).must_equal '123'
         end
       end
     end
@@ -219,21 +219,21 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       end
 
       it 'defaults to nil' do
-        _(first_span.attributes['http.response.headers.foo_bar']).must_be_nil
+        _(first_span.attributes['http.response.header.foo_bar']).must_be_nil
       end
 
       describe 'when configured' do
         let(:config) { default_config.merge(allowed_response_headers: ['Foo-Bar']) }
 
         it 'returns attribute' do
-          _(first_span.attributes['http.response.headers.foo_bar']).must_equal 'foo bar response header'
+          _(first_span.attributes['http.response.header.foo_bar']).must_equal 'foo bar response header'
         end
 
         describe 'case-sensitively' do
           let(:config) { default_config.merge(allowed_response_headers: ['fOO-bAR']) }
 
           it 'returns attribute' do
-            _(first_span.attributes['http.response.headers.foo_bar']).must_equal 'foo bar response header'
+            _(first_span.attributes['http.response.header.foo_bar']).must_equal 'foo bar response header'
           end
         end
       end
