@@ -21,8 +21,7 @@ module OpenTelemetry
         ## Supported configuration keys for the install config hash:
         #
         # force_flush: when `true`, all completed spans will be synchronously flushed
-        #   at the end of a job's execution (default: `false`). You will likely wish to
-        #   enable this option for job systems that fork worker processes such as Resque.
+        #   at the end of a job's execution (default: `false`).
         #
         # span_naming: when `:job_class`, the span names will be set to
         #   '<job class name> <operation>'. When `:queue`, the span names
