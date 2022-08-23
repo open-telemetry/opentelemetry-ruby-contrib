@@ -18,11 +18,7 @@ module OpenTelemetry
               # Do not trace recursive call for starting the connection
               return super(req, body, &block) unless started?
 
-              if untraced?
-                OpenTelemetry::Common::Utilities.untraced do
-                  return super(req, body, &block)
-                end
-              end
+              return super(req, body, &block) if untraced?
 
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
