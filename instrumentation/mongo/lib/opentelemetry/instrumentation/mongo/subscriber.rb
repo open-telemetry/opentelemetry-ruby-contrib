@@ -33,7 +33,9 @@ module OpenTelemetry
           config = Mongo::Instrumentation.instance.config
           attributes['peer.service'] = config[:peer_service] if config[:peer_service]
           # attributes['db.statement'] = CommandSerializer.new(event.command).serialize
-          attributes['db.statement'] = CommandSerializer.new(event.command).serialize if config[:db_statement] == :include
+          omit = config[:db_statement] == :omit
+          obfuscate = config[:db_statement] == :obfuscate
+          attributes['db.statement'] = CommandSerializer.new(event.command, obfuscate).serialize unless omit
           attributes['db.mongodb.collection'] = collection if collection
           attributes.compact!
 

@@ -14,10 +14,11 @@ module OpenTelemetry
 
         attr_reader :command, :command_name, :collection, :payload
 
-        def initialize(command)
+        def initialize(command, obfuscate)
           @command = command
           @command_name, @collection = command.first
-          @collection = MASK_VALUE unless @collection.is_a?(String) || @collection.is_a?(Integer)
+          @obfuscate = obfuscate
+          @collection = MASK_VALUE if @obfuscate && !(@collection.is_a?(String) || @collection.is_a?(Integer))
           @payload = {}
         end
 
@@ -93,8 +94,15 @@ module OpenTelemetry
         end
 
         def mask(hash)
-          hash.each_with_object({}) do |(k, v), h| # rubocop:disable Style/HashTransformValues
-            h[k] = v.is_a?(Hash) ? mask(v) : MASK_VALUE
+          hash.each_with_object({}) do |(k, v), h|
+            value = if v.is_a?(Hash)
+                      mask(v)
+                    elsif @obfuscate
+                      MASK_VALUE
+                    else
+                      v
+                    end
+            h[k] = value
           end
         end
       end
