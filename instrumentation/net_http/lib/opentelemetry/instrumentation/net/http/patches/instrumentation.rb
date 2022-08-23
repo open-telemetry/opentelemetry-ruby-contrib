@@ -76,7 +76,7 @@ module OpenTelemetry
             end
 
             def untraced?
-              return true if instrumentation_config[:untraced_hosts]&.any? do |host|
+              return true if Net::HTTP::Instrumentation.instance.config[:untraced_hosts]&.any? do |host|
                 host.is_a?(Regexp) ? host.match?(@address) : host == @address
               end
 
