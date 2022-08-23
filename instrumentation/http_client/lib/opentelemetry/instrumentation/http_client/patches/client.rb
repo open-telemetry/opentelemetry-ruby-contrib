@@ -12,16 +12,6 @@ module OpenTelemetry
         module Client
           private
 
-          def instrumentation_config
-            HttpClient::Instrumentation.instance.config
-          end
-
-          def safe_execute_hook(hook, *args)
-            hook.call(*args)
-          rescue StandardError => e
-            OpenTelemetry.handle_error(exception: e)
-          end
-
           def do_get_block(req, proxy, conn, &block)
             uri = req.header.request_uri
             url = "#{uri.scheme}://#{uri.host}"
@@ -38,7 +28,6 @@ module OpenTelemetry
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.header)
-              safe_execute_hook(instrumentation_config[:request_hook], span, req) unless instrumentation_config[:request_hook].nil?
               super.tap do
                 response = conn.pop
                 annotate_span_with_response!(span, response)
@@ -54,7 +43,6 @@ module OpenTelemetry
 
             span.set_attribute('http.status_code', status_code)
             span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(status_code.to_i)
-            safe_execute_hook(instrumentation_config[:response_hook], span, response) unless instrumentation_config[:response_hook].nil?
           end
 
           def tracer
