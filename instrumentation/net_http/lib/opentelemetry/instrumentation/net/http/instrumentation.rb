@@ -20,8 +20,6 @@ module OpenTelemetry
             defined?(::Net::HTTP)
           end
 
-          option :request_hook, default: nil, validate: :callable
-          option :response_hook, default: nil, validate: :callable
           option :untraced_hosts, default: [], validate: :array
 
           private
