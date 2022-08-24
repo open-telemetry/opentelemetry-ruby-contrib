@@ -20,7 +20,15 @@ module OpenTelemetry
 
         ## Supported configuration keys for the install config hash:
         #
-        # force_flush: when `true`, all completed spans will be synchronously flushed
+        # force_flush: controls if spans are forcibly flushed upon job completion
+        #   - :ask_the_job (default) - if `Resque::Worker#fork_per_job?` is set,
+        #     all completed spans will be synchronously flushed at the end of a
+        #     job's execution
+        #   - :always - all completed spans will be synchronously flushed at the
+        #     end of a job's execution
+        #   - :never - the job will not intervene with the processing of spans
+        #
+        # when `true`, all completed spans will be synchronously flushed
         #   at the end of a job's execution (default: `false`). You may wish to
         #   enable this option if `Resque::Worker#fork_per_job?` is enabled.
         #
@@ -39,9 +47,9 @@ module OpenTelemetry
         #   - :none - the job's execution will not be explicitly linked to the span that
         #     enqueued the job.
 
-        option :force_flush,       default: false,  validate: :boolean
-        option :span_naming,       default: :queue, validate: %I[job_class queue]
-        option :propagation_style, default: :link,  validate: %i[link child none]
+        option :force_flush,       default: :ask_the_job, validate: %I[ask_the_job always never]
+        option :span_naming,       default: :queue,       validate: %I[job_class queue]
+        option :propagation_style, default: :link,        validate: %i[link child none]
 
         private
 

@@ -185,10 +185,10 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
     end
 
     describe 'force_flush' do
-      describe 'false - default' do
-        let(:config) { { force_flush: false } }
+      describe 'ask_the_job - default' do
+        let(:config) { { force_flush: :ask_the_job } }
 
-        it 'does not forcibly flush the tracer' do
+        it 'asks the job and skips forcibly flushing the tracer' do
           mock_tracer_provider = Minitest::Mock.new
           mock_tracer_provider.expect(:force_flush, true)
 
@@ -201,8 +201,8 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         end
       end
 
-      describe 'true' do
-        let(:config) { { force_flush: true } }
+      describe 'always' do
+        let(:config) { { force_flush: :always } }
 
         it 'does forcibly flush the tracer' do
           mock_tracer_provider = Minitest::Mock.new
@@ -214,6 +214,22 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
           end
 
           mock_tracer_provider.verify
+        end
+      end
+
+      describe 'never' do
+        let(:config) { { force_flush: :never } }
+
+        it 'does not forcibly flush the tracer' do
+          mock_tracer_provider = Minitest::Mock.new
+          mock_tracer_provider.expect(:force_flush, true)
+
+          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
+            ::Resque.enqueue(DummyJob)
+            work_off_jobs
+          end
+
+          expect { mock_tracer_provider.verify }.must_raise MockExpectationError
         end
       end
     end
