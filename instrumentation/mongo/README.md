@@ -35,10 +35,10 @@ end
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Mongo', {
-    # The obfuscation of arguments in the db.statement attribute is enabled by default.
-    # To include the full query, set db_statement to :include.
-    # To obfuscate, set db_statement to :obfuscate.
-    # To omit the attribute, set db_statement to :omit.
+    # Sets how db_statement appears in your traces. The options are:
+    # :obfuscate - (default) query parameters are visible, but values are masked.
+    # :include - query parameters and values are both fully visible.
+    # :omit - db_statement is omitted entirely.
     db_statement: :include,
   }
 end
