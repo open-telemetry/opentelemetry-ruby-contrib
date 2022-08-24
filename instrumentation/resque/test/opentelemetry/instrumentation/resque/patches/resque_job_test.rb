@@ -185,20 +185,15 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
     end
 
     describe 'force_flush' do
-      let(:mock_tracer_provider) do
-        mock_tracer_provider = MiniTest::Mock.new
-        mock_tracer_provider.expect(:force_flush, true)
-
-        mock_tracer_provider
-      end
-
       describe 'false - default' do
         let(:config) { { force_flush: false } }
 
         it 'does not forcibly flush the tracer' do
-          ::Resque.enqueue(DummyJob)
+          mock_tracer_provider = Minitest::Mock.new
+          mock_tracer_provider.expect(:force_flush, true)
 
-          OpenTelemetry.stub(:tracer_provider, mock_tracer_provider) do
+          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
+            ::Resque.enqueue(DummyJob)
             work_off_jobs
           end
 
@@ -210,9 +205,11 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         let(:config) { { force_flush: true } }
 
         it 'does forcibly flush the tracer' do
-          ::Resque.enqueue(DummyJob)
+          mock_tracer_provider = Minitest::Mock.new
+          mock_tracer_provider.expect(:force_flush, true)
 
-          OpenTelemetry.stub(:tracer_provider, mock_tracer_provider) do
+          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
+            ::Resque.enqueue(DummyJob)
             work_off_jobs
           end
 
