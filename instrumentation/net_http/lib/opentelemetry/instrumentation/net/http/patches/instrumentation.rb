@@ -18,6 +18,8 @@ module OpenTelemetry
               # Do not trace recursive call for starting the connection
               return super(req, body, &block) unless started?
 
+              return super(req, body, &block) if untraced?
+
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
@@ -71,6 +73,14 @@ module OpenTelemetry
 
             def tracer
               Net::HTTP::Instrumentation.instance.tracer
+            end
+
+            def untraced?
+              return true if Net::HTTP::Instrumentation.instance.config[:untraced_hosts]&.any? do |host|
+                host.is_a?(Regexp) ? host.match?(@address) : host == @address
+              end
+
+              false
             end
           end
         end
