@@ -18,7 +18,6 @@ module OpenTelemetry
           @command = command
           @command_name, @collection = command.first
           @obfuscate = obfuscate
-          @collection = MASK_VALUE if @obfuscate && !(@collection.is_a?(String) || @collection.is_a?(Integer))
           @payload = {}
         end
 
