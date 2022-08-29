@@ -300,7 +300,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
     end
   end
 
-  describe 'db_statement option' do
+  describe 'db_statement omit option' do
     let(:collection) { :people }
     let(:config) { { db_statement: :omit } }
 
@@ -319,6 +319,50 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
       _(span.attributes['db.operation']).must_equal 'find'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes).wont_include 'db.statement'
+    end
+  end
+
+  describe 'db_statement include option' do
+    let(:collection) { :people }
+    let(:config) { { db_statement: :include } }
+
+    before do
+      # insert a document
+      client[collection].insert_one(name: 'Steve', hobbies: ['hiking'])
+      exporter.reset
+
+      # do #find operation
+      result = client[collection].find(name: 'Steve').first[:hobbies]
+      _(result).must_equal ['hiking']
+    end
+
+    it 'obfuscates db.statement attribute' do
+      _(span.name).must_equal 'people.find'
+      _(span.attributes['db.operation']).must_equal 'find'
+      _(span.attributes['db.mongodb.collection']).must_equal 'people'
+      _(span.attributes['db.statement']).must_equal '{"filter":{"name":"Steve"}}'
+    end
+  end
+
+  describe 'db_statement explicit obfuscate option' do
+    let(:collection) { :people }
+    let(:config) { { db_statement: :obfuscate } }
+
+    before do
+      # insert a document
+      client[collection].insert_one(name: 'Steve', hobbies: ['hiking'])
+      exporter.reset
+
+      # do #find operation
+      result = client[collection].find(name: 'Steve').first[:hobbies]
+      _(result).must_equal ['hiking']
+    end
+
+    it 'obfuscates db.statement attribute' do
+      _(span.name).must_equal 'people.find'
+      _(span.attributes['db.operation']).must_equal 'find'
+      _(span.attributes['db.mongodb.collection']).must_equal 'people'
+      _(span.attributes['db.statement']).must_equal '{"filter":{"name":"?"}}'
     end
   end
 
