@@ -7,7 +7,7 @@
 require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/redis'
-require_relative '../../../../lib/opentelemetry/instrumentation/redis/patches/client'
+require_relative '../../../../lib/opentelemetry/instrumentation/redis/patches/redis_v4_client'
 
 describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
