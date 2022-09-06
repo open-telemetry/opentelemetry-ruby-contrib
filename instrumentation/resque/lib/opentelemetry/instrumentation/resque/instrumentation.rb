@@ -28,17 +28,12 @@ module OpenTelemetry
         #     end of a job's execution
         #   - :never - the job will not intervene with the processing of spans
         #
-        # when `true`, all completed spans will be synchronously flushed
-        #   at the end of a job's execution (default: `false`). You may wish to
-        #   enable this option if `Resque::Worker#fork_per_job?` is enabled.
-        #
         # span_naming: when `:job_class`, the span names will be set to
         #   '<job class name> <operation>'. When `:queue`, the span names
         #   will be set to '<destination / queue name> <operation>'
         #
         # propagation_style: controls how the job's execution is traced and related
         #   to the trace where the job was enqueued. Can be one of:
-        #
         #   - :link (default) - the job will be executed in a separate trace. The
         #     initial span of the execution trace will be linked to the span that
         #     enqueued the job, via a Span Link.
