@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'redis'
+require 'redis-client'
 
 require 'opentelemetry/sdk'
 require 'opentelemetry-test-helpers'
