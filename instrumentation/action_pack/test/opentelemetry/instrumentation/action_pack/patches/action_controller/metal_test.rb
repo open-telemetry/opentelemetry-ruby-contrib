@@ -59,6 +59,40 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     _(span.name).must_equal 'HTTP GET'
   end
 
+  describe 'when the application has span_naming set with route' do
+    before do
+      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config[:span_naming] = :route
+    end
+
+    after do
+      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config[:span_naming] = nil
+    end
+
+    it 'sets the span name to the HTTP method and route' do
+      get '/ok'
+
+      _(span.name).must_equal 'GET /ok(.:format)'
+    end
+
+    it 'sets the span name when the controller raises an exception' do
+      get 'internal_server_error'
+
+      _(span.name).must_equal 'GET /internal_server_error(.:format)'
+    end
+
+    it 'does not set the span name when an exception is raised in middleware' do
+      get '/ok?raise_in_middleware'
+
+      _(span.name).must_equal 'HTTP GET'
+    end
+
+    it 'does not set the span name when the request is redirected in middleware' do
+      get '/ok?redirect_in_middleware'
+
+      _(span.name).must_equal 'HTTP GET'
+    end
+  end
+
   describe 'when the application has exceptions_app configured' do
     let(:rails_app) { AppConfig.initialize_app(use_exceptions_app: true) }
 
