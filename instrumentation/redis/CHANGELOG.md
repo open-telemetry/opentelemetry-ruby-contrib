@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.24.0 / 2022-09-14
+
+* ADDED: Redis-rb 5.0 and redis-client support 
+
 ### v0.23.0 / 2022-06-09
 
 * Upgrading Base dependency version
