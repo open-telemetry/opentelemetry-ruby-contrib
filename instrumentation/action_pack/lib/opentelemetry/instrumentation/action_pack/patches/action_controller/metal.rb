@@ -13,15 +13,16 @@ module OpenTelemetry
           module Metal
             def dispatch(name, request, response)
               rack_span = OpenTelemetry::Instrumentation::Rack.current_span
+              route = rails_route(request)
               if rack_span.recording?
                 unless request.env['action_dispatch.exception']
                   rack_span.name = case instrumentation_config[:span_naming]
-                                   when :route then "#{request.method} #{rails_route(request)}"
-                                   else "#{self.class.name}##{name}"
+                                   when :controller_action then "#{self.class.name}##{name}"
+                                   else "#{request.method} #{route}"
                                    end
                 end
 
-                add_rails_route(rack_span, request) if instrumentation_config[:enable_recognize_route]
+                rack_span.set_attribute('http.route', route) if instrumentation_config[:enable_recognize_route]
 
                 rack_span.set_attribute('http.target', request.filtered_path) if request.filtered_path != request.fullpath
               end
@@ -36,10 +37,6 @@ module OpenTelemetry
                 return route.path.spec.to_s
                 # Rails will match on the first route - see https://guides.rubyonrails.org/routing.html#crud-verbs-and-actions
               end
-            end
-
-            def add_rails_route(rack_span, request)
-              rack_span.set_attribute('http.route', rails_route(request))
             end
 
             def instrumentation_config

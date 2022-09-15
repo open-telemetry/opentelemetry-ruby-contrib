@@ -25,7 +25,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
 
     _(last_response.body).must_equal 'actually ok'
     _(last_response.ok?).must_equal true
-    _(span.name).must_equal 'ExampleController#ok'
+    _(span.name).must_equal 'GET /ok(.:format)'
     _(span.kind).must_equal :server
     _(span.status.ok?).must_equal true
 
@@ -44,7 +44,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
   it 'sets the span name when the controller raises an exception' do
     get 'internal_server_error'
 
-    _(span.name).must_equal 'ExampleController#internal_server_error'
+    _(span.name).must_equal 'GET /internal_server_error(.:format)'
   end
 
   it 'does not set the span name when an exception is raised in middleware' do
@@ -59,9 +59,9 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     _(span.name).must_equal 'HTTP GET'
   end
 
-  describe 'when the application has span_naming set with route' do
+  describe 'when the application has span_naming set with controller_action' do
     before do
-      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config[:span_naming] = :route
+      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config[:span_naming] = :controller_action
     end
 
     after do
@@ -71,13 +71,13 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     it 'sets the span name to the HTTP method and route' do
       get '/ok'
 
-      _(span.name).must_equal 'GET /ok(.:format)'
+      _(span.name).must_equal 'ExampleController#ok'
     end
 
     it 'sets the span name when the controller raises an exception' do
       get 'internal_server_error'
 
-      _(span.name).must_equal 'GET /internal_server_error(.:format)'
+      _(span.name).must_equal 'ExampleController#internal_server_error'
     end
 
     it 'does not set the span name when an exception is raised in middleware' do
@@ -99,7 +99,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     it 'does not overwrite the span name from the controller that raised' do
       get 'internal_server_error'
 
-      _(span.name).must_equal 'ExampleController#internal_server_error'
+      _(span.name).must_equal 'GET /internal_server_error(.:format)'
     end
   end
 
@@ -116,7 +116,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
       get '/items/new'
       _(last_response.body).must_equal 'created new item'
       _(last_response.ok?).must_equal true
-      _(span.name).must_equal 'ExampleController#new_item'
+      _(span.name).must_equal 'GET /items/new(.:format)'
       _(span.kind).must_equal :server
       _(span.status.ok?).must_equal true
 
