@@ -57,7 +57,7 @@ module OpenTelemetry
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port
               }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-              tracer.in_span('HTTP CONNECT', attributes: attributes) do
+              tracer.in_span('HTTP SESSION', attributes: attributes) do
                 super
               end
             end
