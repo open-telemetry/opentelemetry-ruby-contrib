@@ -13,8 +13,8 @@ module OpenTelemetry
           module Metal
             def dispatch(name, request, response)
               rack_span = OpenTelemetry::Instrumentation::Rack.current_span
-              route = rails_route(request)
               if rack_span.recording?
+                route = rails_route(request)
                 unless request.env['action_dispatch.exception']
                   rack_span.name = case instrumentation_config[:span_naming]
                                    when :controller_action then "#{self.class.name}##{name}"
