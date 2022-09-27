@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - 'release/**'
   pull_request:
     branches:
       - main
@@ -210,7 +211,9 @@ jobs:
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-action_pack"    ]] && echo "::set-output name=skip::true"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-action_view"    ]] && echo "::set-output name=skip::true"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-active_job"     ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-active_record"  ]] && echo "::set-output name=skip::true"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-active_support" ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-delayed_job"    ]] && echo "::set-output name=skip::true"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-lmdb"           ]] && echo "::set-output name=skip::true"
           [[ "${{ matrix.gem }}" == "opentelemetry-instrumentation-rails"          ]] && echo "::set-output name=skip::true"
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.

@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # Module to prepend to HTTP::Client for instrumentation
         module Client
-          def perform(req, options) # rubocop:disable Metrics/AbcSize
+          def perform(req, options)
             uri = req.uri
             request_method = req.verb.to_s.upcase
 
@@ -25,25 +25,13 @@ module OpenTelemetry
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.headers)
-              safe_execute_hook(instrumentation_config[:request_hook], span, req) unless instrumentation_config[:request_hook].nil?
               super.tap do |response|
                 annotate_span_with_response!(span, response)
-                safe_execute_hook(instrumentation_config[:response_hook], span, response) unless instrumentation_config[:response_hook].nil?
               end
             end
           end
 
           private
-
-          def instrumentation_config
-            HTTP::Instrumentation.instance.config
-          end
-
-          def safe_execute_hook(hook, *args)
-            hook.call(*args)
-          rescue StandardError => e
-            OpenTelemetry.handle_error(exception: e)
-          end
 
           def annotate_span_with_response!(span, response)
             return unless response&.status

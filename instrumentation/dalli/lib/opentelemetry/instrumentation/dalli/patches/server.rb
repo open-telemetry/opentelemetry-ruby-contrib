@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Dalli::Server (or Dalli::Protocol::Binary in 3.0+) for instrumentation
         module Server
-          def request(op, *args)
+          def request(op, *args) # rubocop:disable Naming/MethodParameterName
             operation = Utils.opname(op, multi?)
             attributes = {
               'db.system' => 'memcached',

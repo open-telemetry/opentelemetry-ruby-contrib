@@ -66,7 +66,7 @@ module OpenTelemetry
           # But, getting that metric in line would force us over the
           # module size limit! We can't win here unless we want to start
           # abstracting things into a million pieces.
-          def span_attrs(kind, *args) # rubocop:disable Metrics/AbcSize
+          def span_attrs(kind, *args)
             if kind == :query
               operation = extract_operation(args[0])
               sql = obfuscate_sql(args[0]).to_s
@@ -85,6 +85,7 @@ module OpenTelemetry
 
             attrs = { 'db.operation' => validated_operation(operation), 'db.postgresql.prepared_statement_name' => statement_name }
             attrs['db.statement'] = sql unless config[:db_statement] == :omit
+            attrs.merge!(OpenTelemetry::Instrumentation::PG.attributes)
             attrs.reject! { |_, v| v.nil? }
 
             [span_name(operation), client_attributes.merge(attrs)]

@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# rubocop:disable Style/BracesAroundHashParameters
-
 require_relative '../../test_helper'
 
 describe OpenTelemetry::Instrumentation::DelayedJob do
@@ -77,5 +75,3 @@ describe OpenTelemetry::Instrumentation::DelayedJob do
     end
   end
 end
-
-# rubocop:enable Style/BracesAroundHashParameters

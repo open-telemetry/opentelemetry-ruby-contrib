@@ -12,7 +12,7 @@ module OpenTelemetry
         module Launcher
           private
 
-          def ❤ # rubocop:disable Naming/MethodName
+          def ❤ # rubocop:disable Naming/MethodName, Naming/AsciiIdentifiers
             if instrumentation_config[:trace_launcher_heartbeat]
               attributes = {}
               attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]

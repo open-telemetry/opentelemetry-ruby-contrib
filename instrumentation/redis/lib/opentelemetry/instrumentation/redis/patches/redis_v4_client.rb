@@ -9,12 +9,12 @@ module OpenTelemetry
     module Redis
       module Patches
         # Module to prepend to Redis::Client for instrumentation
-        module Client
+        module RedisV4Client
           MAX_STATEMENT_LENGTH = 500
           private_constant :MAX_STATEMENT_LENGTH
 
-          def process(commands) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-            return super unless config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
+          def process(commands) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+            return super unless instrumentation_config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
 
             host = options[:host]
             port = options[:port]
@@ -26,10 +26,10 @@ module OpenTelemetry
             }
 
             attributes['db.redis.database_index'] = options[:db] unless options[:db].zero?
-            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+            attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
             attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
 
-            unless config[:db_statement] == :omit
+            unless instrumentation_config[:db_statement] == :omit
               parsed_commands = parse_commands(commands)
               parsed_commands = OpenTelemetry::Common::Utilities.truncate(parsed_commands, MAX_STATEMENT_LENGTH)
               parsed_commands = OpenTelemetry::Common::Utilities.utf8_encode(parsed_commands, binary: true)
@@ -42,7 +42,7 @@ module OpenTelemetry
                           'PIPELINED'
                         end
 
-            tracer.in_span(span_name, attributes: attributes, kind: :client) do |s|
+            instrumentation_tracer.in_span(span_name, attributes: attributes, kind: :client) do |s|
               super(commands).tap do |reply|
                 if reply.is_a?(::Redis::CommandError)
                   s.record_exception(reply)
@@ -59,7 +59,7 @@ module OpenTelemetry
           # Redis#pipeline: [[:set, "v1", "0"], [:incr, "v1"], [:get, "v1"]]
           # Redis#hmset     [[:hmset, "hash", "f1", 1234567890.0987654]]
           # Redis#set       [[:set, "K", "x"]]
-          def parse_commands(commands) # rubocop:disable Metrics/AbcSize
+          def parse_commands(commands)
             commands.map do |command|
               # We are checking for the use of Redis#queue command, if we detect the
               # extra level of array nesting we return the first element so it
@@ -71,7 +71,7 @@ module OpenTelemetry
               # and return the obfuscated command
               return 'AUTH ?' if command[0] == :auth
 
-              if config[:db_statement] == :obfuscate
+              if instrumentation_config[:db_statement] == :obfuscate
                 command[0].to_s.upcase + ' ?' * (command.size - 1)
               else
                 command_copy = command.dup
@@ -81,11 +81,11 @@ module OpenTelemetry
             end.join("\n")
           end
 
-          def tracer
+          def instrumentation_tracer
             Redis::Instrumentation.instance.tracer
           end
 
-          def config
+          def instrumentation_config
             Redis::Instrumentation.instance.config
           end
         end

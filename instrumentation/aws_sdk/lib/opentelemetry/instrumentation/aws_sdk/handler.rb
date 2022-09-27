@@ -14,7 +14,7 @@ module OpenTelemetry
         SQS_RECEIVE_MESSAGE = 'SQS.ReceiveMessage'
         SNS_PUBLISH = 'SNS.Publish'
 
-        def call(context) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def call(context) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           return super unless context
 
           service_name = service_name(context)
@@ -58,7 +58,7 @@ module OpenTelemetry
           AwsSdk::Instrumentation.instance.config
         end
 
-        def service_name(context) # rubocop:disable Metrics/AbcSize
+        def service_name(context)
           # Support aws-sdk v2.0.x, which 'metadata' has a setter method only
           return context.client.class.to_s.split('::')[1] if ::Seahorse::Model::Api.instance_method(:metadata).parameters.length.positive?
 

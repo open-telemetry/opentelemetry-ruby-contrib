@@ -63,7 +63,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
         it 'creates a span' do
           ::Ethon::Curl.stub(:easy_perform, 0) do
-            # Note: suppress call to #complete to isolate #perform functionality
+            # NOTE: suppress call to #complete to isolate #perform functionality
             easy.stub(:complete, nil) do
               easy.perform
 
@@ -80,7 +80,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
         def stub_response(options)
           easy.stub(:mirror, ::Ethon::Easy::Mirror.new(options)) do
             easy.otel_before_request
-            # Note: perform calls complete
+            # NOTE: perform calls complete
             easy.complete
 
             yield

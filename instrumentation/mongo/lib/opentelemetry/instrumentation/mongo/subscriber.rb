@@ -13,7 +13,7 @@ module OpenTelemetry
       class Subscriber
         THREAD_KEY = :__opentelemetry_mongo_spans__
 
-        def started(event) # rubocop:disable Metrics/AbcSize
+        def started(event)
           # start a trace and store it in the current thread; using the `operation_id`
           # is safe since it's a unique id used to link events together. Also only one
           # thread is involved in this execution so thread-local storage should be safe. Reference:
@@ -33,7 +33,9 @@ module OpenTelemetry
           config = Mongo::Instrumentation.instance.config
           attributes['peer.service'] = config[:peer_service] if config[:peer_service]
           # attributes['db.statement'] = CommandSerializer.new(event.command).serialize
-          attributes['db.statement'] = CommandSerializer.new(event.command).serialize if config[:db_statement] == :include
+          omit = config[:db_statement] == :omit
+          obfuscate = config[:db_statement] == :obfuscate
+          attributes['db.statement'] = CommandSerializer.new(event.command, obfuscate).serialize unless omit
           attributes['db.mongodb.collection'] = collection if collection
           attributes.compact!
 

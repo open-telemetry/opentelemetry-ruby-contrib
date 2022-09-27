@@ -21,17 +21,17 @@ module OpenTelemetry
                 key = header.to_s.upcase.gsub(/[-\s]/, '_')
                 case key
                 when 'CONTENT_TYPE', 'CONTENT_LENGTH'
-                  memo[key] = build_attribute_name('http.request.headers.', header)
+                  memo[key] = build_attribute_name('http.request.header.', header)
                 else
-                  memo["HTTP_#{key}"] = build_attribute_name('http.request.headers.', header)
+                  memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
                 end
               end
             end
 
             def allowed_response_headers
               @allowed_response_headers ||= Array(config[:allowed_response_headers]).each_with_object({}) do |header, memo|
-                memo[header] = build_attribute_name('http.response.headers.', header)
-                memo[header.to_s.upcase] = build_attribute_name('http.response.headers.', header)
+                memo[header] = build_attribute_name('http.response.header.', header)
+                memo[header.to_s.upcase] = build_attribute_name('http.response.header.', header)
               end
             end
 
@@ -58,7 +58,7 @@ module OpenTelemetry
             @untraced_endpoints = config[:untraced_endpoints]
           end
 
-          def call(env) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          def call(env) # rubocop:disable Metrics/MethodLength
             if untraced_request?(env)
               OpenTelemetry::Common::Utilities.untraced do
                 return @app.call(env)

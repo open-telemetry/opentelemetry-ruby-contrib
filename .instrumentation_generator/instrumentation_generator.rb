@@ -4,9 +4,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../api/lib/opentelemetry/version'
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'opentelemetry-api'
+  gem 'thor'
+end
+
 require_relative '../instrumentation/base/lib/opentelemetry/instrumentation/version'
-require 'thor'
 
 class InstrumentationGenerator < Thor::Group
   include Thor::Actions
@@ -35,7 +41,6 @@ class InstrumentationGenerator < Thor::Group
   end
 
   def test_files
-    template('templates/test/.rubocop.yml', "#{instrumentation_path}/test/.rubocop.yml")
     template('templates/test/test_helper.rb', "#{instrumentation_path}/test/test_helper.rb")
     template('templates/test/instrumentation.rb', "#{instrumentation_path}/test/opentelemetry/#{instrumentation_path}/instrumentation_test.rb")
   end

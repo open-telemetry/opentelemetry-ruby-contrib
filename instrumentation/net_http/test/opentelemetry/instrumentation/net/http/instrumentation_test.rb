@@ -121,108 +121,41 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
+  end
 
-    describe 'hooks' do
-      let(:response_body) { 'abcd1234' }
-      let(:headers_attribute) { 'headers' }
-      let(:response_body_attribute) { 'response_body' }
+  describe 'untraced?' do
+    before do
+      stub_request(:get, 'http://example.com/body').to_return(status: 200)
+      stub_request(:get, 'http://foobar.com/body').to_return(status: 200)
+      stub_request(:get, 'http://bazqux.com/body').to_return(status: 200)
+    end
 
+    describe 'untraced_hosts option' do
       before do
-        stub_request(:get, 'http://example.com/body').to_return(status: 200, body: response_body)
+        instrumentation.instance_variable_set(:@installed, false)
+        config = {
+          untraced_hosts: ['foobar.com', /bazqux\.com/]
+        }
+
+        instrumentation.install(config)
       end
 
-      describe 'valid hooks' do
-        before do
-          instrumentation.instance_variable_set(:@installed, false)
-          config = {
-            request_hook: lambda do |span, request, _request_body|
-              headers = {}
-              request.each_header do |k, v|
-                headers[k] = v
-              end
-              span.set_attribute(headers_attribute, headers.to_json)
-            end,
-            response_hook: lambda do |span, response|
-              span.set_attribute(response_body_attribute, response.body)
-            end
-          }
-
-          instrumentation.install(config)
-        end
-
-        it 'collects data in request hook' do
-          ::Net::HTTP.get('example.com', '/body')
-          _(exporter.finished_spans.size).must_equal 1
-          _(span.name).must_equal 'HTTP GET'
-          _(span.attributes['http.method']).must_equal 'GET'
-          headers = span.attributes[headers_attribute]
-          _(headers).wont_be_nil
-          parsed_headers = JSON.parse(headers)
-          _(parsed_headers['traceparent']).wont_be_nil
-          _(span.attributes[response_body_attribute]).must_equal response_body
-        end
+      it 'does not create a span when request ignored using a string' do
+        ::Net::HTTP.get('foobar.com', '/body')
+        _(exporter.finished_spans.size).must_equal 0
       end
 
-      describe 'invalid hook - wrong number of args' do
-        let(:received_exceptions) { [] }
-
-        before do
-          instrumentation.instance_variable_set(:@installed, false)
-          config = {
-            request_hook: ->(_span) { nil },
-            response_hook: ->(_span) { nil }
-          }
-
-          instrumentation.install(config)
-          OpenTelemetry.error_handler = lambda do |exception: nil, message: nil| # rubocop:disable Lint/UnusedBlockArgument
-            received_exceptions << exception
-          end
-        end
-
-        after do
-          OpenTelemetry.error_handler = nil
-        end
-
-        it 'should not fail the instrumentation' do
-          ::Net::HTTP.get('example.com', '/body')
-          _(exporter.finished_spans.size).must_equal 1
-          _(span.name).must_equal 'HTTP GET'
-          _(span.attributes['http.method']).must_equal 'GET'
-          error_messages = received_exceptions.map(&:message)
-          _(error_messages.all? { |em| em.start_with?('wrong number of arguments') }).must_equal true
-        end
+      it 'does not create a span when request ignored using a regexp' do
+        ::Net::HTTP.get('bazqux.com', '/body')
+        _(exporter.finished_spans.size).must_equal 0
       end
 
-      describe 'invalid hooks - throws an error' do
-        let(:error1) { 'err1' }
-        let(:error2) { 'err2' }
-        let(:received_exceptions) { [] }
-
-        before do
-          instrumentation.instance_variable_set(:@installed, false)
-          config = {
-            request_hook: ->(_span, _request, _request_body) { raise StandardError, error1 },
-            response_hook: ->(_span, _response) { raise StandardError, error2 }
-          }
-
-          instrumentation.install(config)
-          OpenTelemetry.error_handler = lambda do |exception: nil, message: nil| # rubocop:disable Lint/UnusedBlockArgument
-            received_exceptions << exception
-          end
-        end
-
-        after do
-          OpenTelemetry.error_handler = nil
-        end
-
-        it 'should not fail the instrumentation' do
-          ::Net::HTTP.get('example.com', '/body')
-          _(exporter.finished_spans.size).must_equal 1
-          _(span.name).must_equal 'HTTP GET'
-          _(span.attributes['http.method']).must_equal 'GET'
-          error_messages = received_exceptions.map(&:message)
-          _(error_messages).must_equal([error1, error2])
-        end
+      it 'creates a span for a non-ignored request' do
+        ::Net::HTTP.get('example.com', '/body')
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['net.peer.name']).must_equal 'example.com'
       end
     end
   end

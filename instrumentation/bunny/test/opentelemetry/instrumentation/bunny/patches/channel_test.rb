@@ -14,8 +14,8 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Channel do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Bunny::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
-  let(:host) { ENV.fetch('TEST_RABBITMQ_HOST') { 'localhost' } }
-  let(:port) { ENV.fetch('TEST_RABBITMQ_PORT') { '5672' } }
+  let(:host) { ENV.fetch('TEST_RABBITMQ_HOST', 'localhost') }
+  let(:port) { ENV.fetch('TEST_RABBITMQ_PORT', '5672') }
   let(:url) { ENV.fetch('TEST_RABBITMQ_URL') { "amqp://guest:guest@#{host}:#{port}" } }
   let(:bunny) { Bunny.new(url) }
   let(:topic) { "topic-#{SecureRandom.uuid}" }

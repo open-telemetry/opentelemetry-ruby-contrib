@@ -42,12 +42,13 @@ end
 class PositionalOnlyArgsJob < ::ActiveJob::Base
   def perform(arg1, arg2 = 'default'); end
 end
+
 class KeywordOnlyArgsJob < ::ActiveJob::Base
-  def perform(keyword1: 'default', keyword2:); end
+  def perform(keyword2:, keyword1: 'default'); end
 end
 
 class MixedArgsJob < ::ActiveJob::Base
-  def perform(arg1, arg2, keyword1: 'default', keyword2:); end
+  def perform(arg1, arg2, keyword2:, keyword1: 'default'); end
 end
 
 class CallbacksJob < TestJob

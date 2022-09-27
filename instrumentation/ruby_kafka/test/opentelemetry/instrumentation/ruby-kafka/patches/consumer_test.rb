@@ -14,8 +14,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
 
-  let(:host) { ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' } }
-  let(:port) { (ENV.fetch('TEST_KAFKA_PORT') { 29_092 }) }
+  let(:host) { ENV.fetch('TEST_KAFKA_HOST', '127.0.0.1') }
+  let(:port) { ENV.fetch('TEST_KAFKA_PORT', 29_092) }
 
   let(:kafka) { Kafka.new(["#{host}:#{port}"], client_id: 'opentelemetry-kafka-test') }
   let(:topic) { "topic-#{SecureRandom.uuid}" }
@@ -53,7 +53,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
           counter += 1
           raise 'oops' if counter >= 2
         end
-      rescue StandardError # rubocop:disable Lint/HandleExceptions
+      rescue StandardError # rubocop:disable Lint/SuppressedException
       end
 
       process_spans = spans.select { |s| s.name == "#{topic} process" }
@@ -98,12 +98,10 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       kafka.deliver_message('hello', key: "\xAF\x0F\xEF", topic: topic)
       kafka.deliver_message('hello2', key: 'foobarbaz', topic: topic)
 
-      begin
-        counter = 0
-        consumer.each_message do |_msg|
-          counter += 1
-          break if counter >= 2
-        end
+      counter = 0
+      consumer.each_message do |_msg|
+        counter += 1
+        break if counter >= 2
       end
 
       process_spans = spans.select { |s| s.name == "#{topic} process" }
@@ -125,8 +123,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       kafka.deliver_message('hello2', topic: topic)
 
       begin
-        consumer.each_batch { |_b| raise 'oops' }
-      rescue StandardError # rubocop:disable Lint/HandleExceptions
+        consumer.each_batch { |_b| raise 'oops' } # rubocop:disable Lint/UnreachableLoop
+      rescue StandardError # rubocop:disable Lint/SuppressedException
       end
 
       span = spans.find { |s| s.name == "#{topic} process" }

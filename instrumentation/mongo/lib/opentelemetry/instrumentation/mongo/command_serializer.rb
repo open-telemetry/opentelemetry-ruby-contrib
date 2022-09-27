@@ -14,10 +14,10 @@ module OpenTelemetry
 
         attr_reader :command, :command_name, :collection, :payload
 
-        def initialize(command)
+        def initialize(command, obfuscate)
           @command = command
           @command_name, @collection = command.first
-          @collection = MASK_VALUE unless @collection.is_a?(String) || @collection.is_a?(Integer)
+          @obfuscate = obfuscate
           @payload = {}
         end
 
@@ -35,7 +35,7 @@ module OpenTelemetry
           build_pipeline
         end
 
-        def build_command # rubocop:disable Metrics/AbcSize
+        def build_command
           add_val(payload, command, 'key')
           add_map(payload, command, 'query')
           add_map(payload, command, 'filter')
@@ -87,14 +87,21 @@ module OpenTelemetry
 
         def add_map(payload, command, key)
           value = command[key]
-          return unless value&.is_a?(Hash) && !value.empty?
+          return unless value.is_a?(Hash) && !value.empty?
 
           payload[key] = mask(value)
         end
 
         def mask(hash)
           hash.each_with_object({}) do |(k, v), h|
-            h[k] = v.is_a?(Hash) ? mask(v) : MASK_VALUE
+            value = if v.is_a?(Hash)
+                      mask(v)
+                    elsif @obfuscate
+                      MASK_VALUE
+                    else
+                      v
+                    end
+            h[k] = value
           end
         end
       end

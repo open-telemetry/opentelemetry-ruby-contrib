@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# rubocop:disable Style/BracesAroundHashParameters
-
 require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/ruby_kafka'
@@ -66,5 +64,3 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
     end
   end
 end
-
-# rubocop:enable Style/BracesAroundHashParameters

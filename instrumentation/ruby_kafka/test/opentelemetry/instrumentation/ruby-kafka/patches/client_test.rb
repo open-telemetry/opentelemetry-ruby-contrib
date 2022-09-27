@@ -13,8 +13,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
   let(:instrumentation) { OpenTelemetry::Instrumentation::RubyKafka::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
-  let(:host) { ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' } }
-  let(:port) { (ENV.fetch('TEST_KAFKA_PORT') { 29_092 }) }
+  let(:host) { ENV.fetch('TEST_KAFKA_HOST', '127.0.0.1') }
+  let(:port) { ENV.fetch('TEST_KAFKA_PORT', 29_092) }
   let(:kafka) { Kafka.new(["#{host}:#{port}"], client_id: 'opentelemetry-kafka-test') }
   let(:topic) { "topic-#{SecureRandom.uuid}" }
 
@@ -37,7 +37,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
 
   it 'traces produce and consuming' do
     kafka.deliver_message('hello', topic: topic)
-    kafka.each_message(topic: topic) { |_msg| break }
+    kafka.each_message(topic: topic) { |_msg| break } # rubocop:disable Lint/UnreachableLoop
 
     _(spans.size).must_equal(2)
     _(spans[0].name).must_equal("#{topic} send")
@@ -51,12 +51,10 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
     invalid_utf8_key = String.new("\xAF\x0F\xEF", encoding: 'ASCII-8BIT')
     kafka.deliver_message('hello', key: invalid_utf8_key, topic: topic)
     kafka.deliver_message('hello2', key: 'foobarbaz', topic: topic)
-    begin
-      counter = 0
-      kafka.each_message(topic: topic) do |_msg|
-        counter += 1
-        break if counter >= 2
-      end
+    counter = 0
+    kafka.each_message(topic: topic) do |_msg|
+      counter += 1
+      break if counter >= 2
     end
 
     send_spans = spans.select { |s| s.name == "#{topic} send" }

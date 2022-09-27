@@ -15,7 +15,7 @@ module OpenTelemetry
       # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber
       # gets invoked first
       #
-      def self.subscribe( # rubocop:disable Metrics/AbcSize
+      def self.subscribe(
         tracer,
         pattern,
         notification_payload_transform = nil,
@@ -64,7 +64,7 @@ module OpenTelemetry
           [span, token]
         end
 
-        def finish(name, id, payload) # rubocop:disable Metrics/AbcSize
+        def finish(name, id, payload)
           span = payload.delete(:__opentelemetry_span)
           token = payload.delete(:__opentelemetry_ctx_token)
           return unless span && token

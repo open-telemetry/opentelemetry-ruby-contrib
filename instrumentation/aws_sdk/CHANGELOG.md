@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.3.1 / 2022-07-19
+
+* FIXED: Suppress invalid span attribute value type warning in aws-sdk instrumentation 
+
 ### v0.3.0 / 2022-06-09
 
 * Upgrading Base dependency version
