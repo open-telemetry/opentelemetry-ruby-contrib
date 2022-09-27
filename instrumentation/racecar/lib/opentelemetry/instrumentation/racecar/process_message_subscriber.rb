@@ -2,7 +2,7 @@
 
 module OpenTelemetry
   module Instrumentation
-    # This class contains the ASN subsciber that instruments message processin
+    # This class contains the ASN subsciber that instruments message processing
     class ProcessMessageSubscriber
       def tracer
         Racecar::Instrumentation.instance.tracer
