@@ -174,7 +174,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'HTTP SESSION'
+      _(span.name).must_equal 'connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
     ensure
@@ -189,7 +189,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(-> { http.request(Net::HTTP::Get.new(uri.request_uri)) }).must_raise
 
       _(exporter.finished_spans.size).must_equal(1)
-      _(span.name).must_equal 'HTTP SESSION'
+      _(span.name).must_equal 'connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(99_999)
 
