@@ -57,13 +57,15 @@ module OpenTelemetry
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port
               }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-              span_name = if use_ssl? && proxy?
-                            'HTTP CONNECT'
-                          else
-                            'connect'
-                          end
+              if use_ssl? && proxy?
+                span_name = 'HTTP CONNECT'
+                span_kind = :client
+              else
+                span_name = 'connect'
+                span_kind = :internal
+              end
 
-              tracer.in_span(span_name, attributes: attributes) do
+              tracer.in_span(span_name, attributes: attributes, kind: span_kind) do
                 super
               end
             end

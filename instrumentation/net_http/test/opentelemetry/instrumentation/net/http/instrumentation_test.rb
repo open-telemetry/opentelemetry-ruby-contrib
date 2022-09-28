@@ -218,6 +218,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal(2)
       _(span.name).must_equal 'HTTP CONNECT'
+      _(span.kind).must_equal(:client)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
     ensure
@@ -241,6 +242,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal(2)
       _(span.name).must_equal 'connect'
+      _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
     ensure
