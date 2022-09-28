@@ -58,10 +58,10 @@ module OpenTelemetry
               }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
               span_name = if use_ssl? && proxy?
-                'HTTP CONNECT'
-              else
-                'connect'
-              end
+                            'HTTP CONNECT'
+                          else
+                            'connect'
+                          end
 
               tracer.in_span(span_name, attributes: attributes) do
                 super
