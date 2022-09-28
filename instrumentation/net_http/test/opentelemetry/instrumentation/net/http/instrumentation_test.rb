@@ -200,5 +200,28 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     ensure
       WebMock.disable_net_connect!
     end
+
+    it 'emits span on connect' do
+      WebMock.allow_net_connect!
+
+      uri = URI.parse('http://localhost')
+      proxy_uri = URI.parse('https://localhost')
+
+      # rubocop:disable Lint/SuppressedException
+      begin
+        Net::HTTP.start(uri.host, uri.port, proxy_uri.host, proxy_uri.port, 'proxy_user', 'proxy_pass', use_ssl: true) do |http|
+          http.get('/')
+        end
+      rescue StandardError
+      end
+      # rubocop:enable Lint/SuppressedException
+
+      _(exporter.finished_spans.size).must_equal(2)
+      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).must_equal(443)
+    ensure
+      WebMock.disable_net_connect!
+    end
   end
 end
