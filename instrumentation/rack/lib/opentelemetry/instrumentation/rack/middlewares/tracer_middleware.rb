@@ -66,10 +66,7 @@ module OpenTelemetry
             end
 
             original_env = env.dup
-            extracted_context = OpenTelemetry.propagation.extract(
-              env,
-              getter: OpenTelemetry::Common::Propagation.rack_env_getter
-            )
+            extracted_context, links = build_context(env)
             frontend_context = create_frontend_span(env, extracted_context)
 
             # restore extracted context in this process:
@@ -78,7 +75,8 @@ module OpenTelemetry
               request_span_kind = frontend_context.nil? ? :server : :internal
               tracer.in_span(request_span_name,
                              attributes: request_span_attributes(env: env),
-                             kind: request_span_kind) do |request_span|
+                             kind: request_span_kind,
+                             links: links) do |request_span|
                 OpenTelemetry::Instrumentation::Rack.with_span(request_span) do
                   @app.call(env).tap do |status, headers, response|
                     set_attributes_after_request(request_span, status, headers, response)
@@ -119,6 +117,22 @@ module OpenTelemetry
 
           def tracer
             OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.tracer
+          end
+
+          def build_context(env)
+            extracted_context = OpenTelemetry.propagation.extract(
+              env,
+              getter: OpenTelemetry::Common::Propagation.rack_env_getter
+            )
+
+            links = []
+            if config[:public_endpoint]&.call(env, extracted_context)
+              span_context = OpenTelemetry::Trace.current_span(extracted_context)&.context
+              links << OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
+              extracted_context = OpenTelemetry::Context.empty
+            end
+
+            [extracted_context, links]
           end
 
           def request_span_attributes(env:)

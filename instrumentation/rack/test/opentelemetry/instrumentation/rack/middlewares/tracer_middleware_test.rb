@@ -84,6 +84,20 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       end
     end
 
+    describe 'when span has a propagated parent' do
+      let(:span_context) { OpenTelemetry::Trace::SpanContext.new }
+
+      let(:env) do
+        {
+          'traceparent' => "00-#{span_context.trace_id.unpack1('H*')}-#{span_context.span_id.unpack1('H*')}-01"
+        }
+      end
+
+      it 'has a parent' do
+        _(first_span.parent_span_id).must_equal span_context.span_id
+      end
+    end
+
     describe 'config[:untraced_endpoints]' do
       describe 'when an array is passed in' do
         let(:config) { { untraced_endpoints: ['/ping'] } }
@@ -269,6 +283,36 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         _(first_span.attributes['http.status_code']).must_equal 404
         _(first_span.kind).must_equal :server
         _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
+      end
+    end
+
+    describe 'config[:public_endpoint]' do
+      let(:is_public)    { true }
+      let(:config)       { default_config.merge(public_endpoint: ->(_, _) { is_public }) }
+      let(:span_context) { OpenTelemetry::Trace::SpanContext.new }
+
+      let(:env) do
+        {
+          'traceparent' => "00-#{span_context.trace_id.unpack1('H*')}-#{span_context.span_id.unpack1('H*')}-01"
+        }
+      end
+
+      it 'records span as being root' do
+        _(exporter.finished_spans.size).must_equal 1
+        _(first_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+
+        _(first_span.links.length).must_equal 1
+        _(first_span.links[0].span_context.trace_id).must_equal span_context.trace_id
+        _(first_span.links[0].span_context.span_id).must_equal span_context.span_id
+      end
+
+      describe 'when endpoint is not public' do
+        let(:is_public) { false }
+
+        it 'has a parent' do
+          _(first_span.parent_span_id).must_equal span_context.span_id
+          _(first_span.links).must_be_empty
+        end
       end
     end
   end
