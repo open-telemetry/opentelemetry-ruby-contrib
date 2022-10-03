@@ -144,7 +144,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       )
     end
 
-    it 'does correctly name spans and add attributes when the app raises errors' do
+    it 'does correctly name spans and add attributes and exception events when the app raises errors' do
       get '/one/error'
 
       _(exporter.finished_spans.first.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
@@ -156,6 +156,8 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.scheme' => 'http',
         'http.target' => '/error'
       )
+      _(exporter.finished_spans.first.events.first.name).must_equal('exception')
+      _(exporter.finished_spans.first.events.first.attributes['exception.type']).must_equal('RuntimeError')
     end
   end
 end

@@ -27,6 +27,7 @@ module OpenTelemetry
 
             span.set_attribute('http.route', env['sinatra.route'].split.last) if env['sinatra.route']
             span.name = env['sinatra.route'] if env['sinatra.route']
+            span.record_exception(env['sinatra.error']) if env['sinatra.error']
           end
         end
       end
