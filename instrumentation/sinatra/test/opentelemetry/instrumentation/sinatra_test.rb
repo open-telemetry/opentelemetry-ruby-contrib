@@ -142,6 +142,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.status_code' => 404,
         'http.target' => '/missing_example/not_present'
       )
+      _(exporter.finished_spans.first.events).must_be_nil
     end
 
     it 'does correctly name spans and add attributes and exception events when the app raises errors' do
@@ -157,7 +158,6 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.target' => '/error'
       )
       _(exporter.finished_spans.first.events.first.name).must_equal('exception')
-      _(exporter.finished_spans.first.events.first.attributes['exception.type']).must_equal('RuntimeError')
     end
   end
 end

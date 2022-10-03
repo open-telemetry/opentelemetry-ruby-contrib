@@ -16,18 +16,24 @@ module OpenTelemetry
           end
 
           def call(env)
-            @app.call(env)
+            response = @app.call(env)
           ensure
-            trace_response(env)
+            trace_response(env, response)
           end
 
-          def trace_response(env)
+          def trace_response(env, response)
             span = OpenTelemetry::Instrumentation::Rack.current_span
             return unless span.recording?
 
             span.set_attribute('http.route', env['sinatra.route'].split.last) if env['sinatra.route']
             span.name = env['sinatra.route'] if env['sinatra.route']
-            span.record_exception(env['sinatra.error']) if env['sinatra.error']
+
+            #response looks like [HTTP code, headers, [response body]]
+            sinatra_response = ::Sinatra::Response.new([], response.first)
+            return unless sinatra_response.server_error?
+
+            span.record_exception(env['sinatra.error'])
+            span.status = OpenTelemetry::Trace::Status.error
           end
         end
       end
