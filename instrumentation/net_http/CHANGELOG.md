@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.21.0 / 2022-10-04
+
+* ADDED: Add net http instrumentation hooks config 
+* FIXED: Rename HTTP CONNECT for low level connection spans 
+
 ### v0.20.0 / 2022-06-09
 
 * Upgrading Base dependency version

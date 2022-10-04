@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.22.0 / 2022-10-04
+
+* ADDED: Add `with_attributes` context propagation for PG instrumentation 
+
 ### v0.21.0 / 2022-06-09
 
 * Upgrading Base dependency version
