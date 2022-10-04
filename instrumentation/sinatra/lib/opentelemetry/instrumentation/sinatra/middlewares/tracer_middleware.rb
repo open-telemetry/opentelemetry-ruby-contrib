@@ -28,7 +28,6 @@ module OpenTelemetry
             span.set_attribute('http.route', env['sinatra.route'].split.last) if env['sinatra.route']
             span.name = env['sinatra.route'] if env['sinatra.route']
 
-            #response looks like [HTTP code, headers, [response body]]
             sinatra_response = ::Sinatra::Response.new([], response.first)
             return unless sinatra_response.server_error?
 
