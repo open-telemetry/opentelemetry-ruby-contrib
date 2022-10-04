@@ -2,7 +2,7 @@
 
 ### v0.21.1 / 2022-10-04
 
-* FIXED: Bring http.request.header and http.response.header in line with … 
+* FIXED: Bring http.request.header and http.response.header in line with semconv
 
 ### v0.21.0 / 2022-06-09
 
