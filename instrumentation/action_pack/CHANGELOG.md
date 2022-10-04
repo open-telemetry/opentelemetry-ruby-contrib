@@ -2,7 +2,7 @@
 
 ### v0.2.1 / 2022-10-04
 
-* (No significant changes)
+* FIXED: Ensures the correct route is add to http.route span attribute 
 
 ### v0.2.0 / 2022-06-09
 
