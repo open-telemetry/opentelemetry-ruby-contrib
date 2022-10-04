@@ -157,7 +157,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.scheme' => 'http',
         'http.target' => '/error'
       )
-      _(exporter.finished_spans.first.events.first.name).must_equal('exception')
+      _(exporter.finished_spans.flat_map(&:events).map(&:name)).must_equal(['exception'])
     end
   end
 end
