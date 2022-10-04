@@ -142,7 +142,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.status_code' => 404,
         'http.target' => '/missing_example/not_present'
       )
-      _(exporter.finished_spans.flat_map(&:events).must_be_empty
+      _(exporter.finished_spans.flat_map(&:events)).must_equal([nil])
     end
 
     it 'does correctly name spans and add attributes and exception events when the app raises errors' do
