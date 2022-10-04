@@ -2,7 +2,7 @@
 
 ### v0.21.0 / 2022-10-04
 
-* ADDED: Add net http instrumentation hooks config 
+* ADDED: Add Net::HTTP :untraced_hosts option
 * FIXED: Rename HTTP CONNECT for low level connection spans 
 
 ### v0.20.0 / 2022-06-09
