@@ -7,3 +7,7 @@
 source 'https://rubygems.org'
 
 gemspec
+
+group :test do
+  gem 'nokogiri', force_ruby_platform: true
+end
