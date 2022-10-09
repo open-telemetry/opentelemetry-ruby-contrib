@@ -6,8 +6,6 @@
 
 source 'https://rubygems.org'
 
-gemspec
+gem 'nokogiri', force_ruby_platform: true
 
-group :test do
-  gem 'nokogiri', force_ruby_platform: true
-end
+gemspec
