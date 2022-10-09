@@ -6,9 +6,10 @@
 
 source 'https://rubygems.org'
 
+gem 'nokogiri', force_ruby_platform: true
+
 gemspec
 
 group :test do
-  gem 'nokogiri', force_ruby_platform: true
   gem 'opentelemetry-instrumentation-base', path: '../base'
 end

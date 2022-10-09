@@ -6,11 +6,12 @@
 
 source 'https://rubygems.org'
 
+gem 'sqlite3', platforms: [:ruby, :jruby, :x64_mingw]
+
 gemspec
 
 group :test do
   gem 'byebug'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'pry-byebug'
-  gem 'sqlite3', platforms: [:ruby, :jruby, :x64_mingw]
 end
