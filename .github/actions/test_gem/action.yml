@@ -61,6 +61,7 @@ runs:
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.dir }}"
+        bundler:  "2.3.22"
         bundler-cache: true
         cache-version: "v1-${{ steps.setup.outputs.cache_key }}"
 
@@ -70,6 +71,7 @@ runs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: "${{ inputs.ruby }}"
+        bundler:  "2.3.22"
     - name: Install dependencies and appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
