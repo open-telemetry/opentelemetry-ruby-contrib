@@ -16,31 +16,31 @@ jobs:
       fail-fast: false
       matrix:
         gem:
-          - opentelemetry-resource_detectors
+          - resource_detectors
         os:
           - ubuntu-latest
           - macos-latest
           - windows-latest
-    name: ${{ matrix.gem }} / ${{ matrix.os }}
+    name: "opentelemetry-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
-          gem: "${{ matrix.gem }}"
+          gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.1"
       - name: "Test Ruby 3.0"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
-          gem: "${{ matrix.gem }}"
+          gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.0"
       - name: "Test Ruby 2.7"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
-          gem: "${{ matrix.gem }}"
+          gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "2.7"
           yard: true
           rubocop: true
@@ -49,13 +49,13 @@ jobs:
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
-          gem: "${{ matrix.gem }}"
+          gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "jruby"
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
-          gem: "${{ matrix.gem }}"
+          gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "truffleruby"
 
   propagators:
@@ -63,32 +63,32 @@ jobs:
       fail-fast: false
       matrix:
         gem:
-          - opentelemetry-propagator-ottrace
-          - opentelemetry-propagator-xray
+          - ottrace
+          - propagator-xray
         os:
           - ubuntu-latest
           - macos-latest
           - windows-latest
-    name: ${{ matrix.gem }} / ${{ matrix.os }}
+    name: "propagator-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
-          gem: "${{ matrix.gem }}"
+          gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.1"
       - name: "Test Ruby 3.0"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
-          gem: "${{ matrix.gem }}"
+          gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.0"
       - name: "Test Ruby 2.7"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
-          gem: "${{ matrix.gem }}"
+          gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "2.7"
           yard: true
           rubocop: true
@@ -97,13 +97,13 @@ jobs:
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
-          gem: "${{ matrix.gem }}"
+          gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "jruby"
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
-          gem: "${{ matrix.gem }}"
+          gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "truffleruby"
 
   instrumentation:
