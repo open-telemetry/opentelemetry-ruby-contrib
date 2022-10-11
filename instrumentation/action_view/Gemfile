@@ -6,12 +6,13 @@
 
 source 'https://rubygems.org'
 
+gem 'nokogiri' #, platforms: [:ruby, :windows]
+
 gemspec
 
 group :test do
   gem 'opentelemetry-instrumentation-active_support', path: '../active_support'
   gem 'opentelemetry-instrumentation-base', path: '../base'
-  gem 'nokogiri', platforms: [:ruby, :windows]
   gem 'pry-byebug'
   gem 'sqlite3', platforms: [:ruby, :x64_mingw]
 end
