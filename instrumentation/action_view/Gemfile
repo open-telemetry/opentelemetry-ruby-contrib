@@ -11,7 +11,7 @@ gemspec
 group :test do
   gem 'opentelemetry-instrumentation-active_support', path: '../active_support'
   gem 'opentelemetry-instrumentation-base', path: '../base'
-  gem 'nokogiri', platforms: [:ruby, :x64_mingw_ucrt]
+  gem 'nokogiri', platforms: [:ruby, :x64_mingw]
   gem 'pry-byebug'
   gem 'sqlite3', platforms: [:ruby, :x64_mingw]
 end
