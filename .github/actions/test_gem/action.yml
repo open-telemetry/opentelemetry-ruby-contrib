@@ -9,21 +9,21 @@ inputs:
     description: Ruby version to use
     required: true
     type: string
-  yard:
-    description: Run YARD documentation
-    required: false
-    type: boolean
-    default: false
-  rubocop:
-    description: Run Rubocop
-    required: false
-    type: boolean
-    default: false
-  build:
-    description: Build gem
-    required: false
-    type: boolean
-    default: false
+  # yard:
+  #   description: Run YARD documentation
+  #   required: false
+  #   type: boolean
+  #   default: false
+  # rubocop:
+  #   description: Run Rubocop
+  #   required: false
+  #   type: boolean
+  #   default: false
+  # build:
+  #   description: Build gem
+  #   required: false
+  #   type: boolean
+  #   default: false
 
 runs:
   using: composite
@@ -62,8 +62,8 @@ runs:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.dir }}"
         bundler: "latest"
-        bundler-cache: true
-        cache-version: "v1-${{ steps.setup.outputs.cache_key }}"
+        # bundler-cache: true
+        # cache-version: "v1-${{ steps.setup.outputs.cache_key }}"
 
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
@@ -77,6 +77,7 @@ runs:
       shell: bash
       run: |
         cd "${{ steps.setup.outputs.dir }}"
+        ruby -e 'puts "Windows Gem Platform #{Gem::Platform.local.to_s}"'
         bundle install
         bundle exec appraisal install
 
@@ -112,23 +113,23 @@ runs:
         TEST_REDIS_HOST: localhost
         TEST_REDIS_PORT: 6379
 
-    - name: YARD
-      shell: bash
-      if: "${{ inputs.yard == 'true' }}"
-      run: |
-        cd "${{ steps.setup.outputs.dir }}"
-        bundle exec rake yard
+    # - name: YARD
+    #   shell: bash
+    #   if: "${{ inputs.yard == 'true' }}"
+    #   run: |
+    #     cd "${{ steps.setup.outputs.dir }}"
+    #     bundle exec rake yard
 
-    - name: Rubocop
-      shell: bash
-      if: "${{ inputs.rubocop == 'true' }}"
-      run: |
-        cd "${{ steps.setup.outputs.dir }}"
-        bundle exec rake rubocop
+    # - name: Rubocop
+    #   shell: bash
+    #   if: "${{ inputs.rubocop == 'true' }}"
+    #   run: |
+    #     cd "${{ steps.setup.outputs.dir }}"
+    #     bundle exec rake rubocop
 
-    - name: Build Gem
-      shell: bash
-      if: "${{ inputs.build == 'true' }}"
-      run: |
-        cd "${{ steps.setup.outputs.dir }}"
-        gem build ${{ inputs.gem }}.gemspec
+    # - name: Build Gem
+    #   shell: bash
+    #   if: "${{ inputs.build == 'true' }}"
+    #   run: |
+    #     cd "${{ steps.setup.outputs.dir }}"
+    #     gem build ${{ inputs.gem }}.gemspec

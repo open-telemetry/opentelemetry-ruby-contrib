@@ -140,17 +140,17 @@ jobs:
           # - ubuntu-latest
           # - macos-latest
           - windows-latest
-        exclude:
-          - os: windows-latest
-            gem: opentelemetry-instrumentation-ethon
-          - os: windows-latest
-            gem: opentelemetry-instrumentation-action_pack
-          - os: windows-latest
-            gem: opentelemetry-instrumentation-restclient
-          - os: windows-latest
-            gem: opentelemetry-instrumentation-rails
-          - os: macos-latest
-            gem: opentelemetry-instrumentation-lmdb
+        # exclude:
+        #   - os: windows-latest
+        #     gem: opentelemetry-instrumentation-ethon
+        #   - os: windows-latest
+        #     gem: opentelemetry-instrumentation-action_pack
+        #   - os: windows-latest
+        #     gem: opentelemetry-instrumentation-restclient
+        #   - os: windows-latest
+        #     gem: opentelemetry-instrumentation-rails
+        #   - os: macos-latest
+        #     gem: opentelemetry-instrumentation-lmdb
 
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
