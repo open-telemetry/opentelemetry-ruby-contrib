@@ -113,15 +113,15 @@ jobs:
         gem:
           # - opentelemetry-instrumentation-action_pack
           - opentelemetry-instrumentation-action_view
-          - opentelemetry-instrumentation-active_job
-          - opentelemetry-instrumentation-active_model_serializers
-          - opentelemetry-instrumentation-active_record
-          - opentelemetry-instrumentation-active_support
-          - opentelemetry-instrumentation-all
+          # - opentelemetry-instrumentation-active_job
+          # - opentelemetry-instrumentation-active_model_serializers
+          # - opentelemetry-instrumentation-active_record
+          # - opentelemetry-instrumentation-active_support
+          # - opentelemetry-instrumentation-all
           # - opentelemetry-instrumentation-aws_sdk
           # - opentelemetry-instrumentation-base
           # - opentelemetry-instrumentation-concurrent_ruby
-          - opentelemetry-instrumentation-delayed_job
+          # - opentelemetry-instrumentation-delayed_job
           # - opentelemetry-instrumentation-ethon
           # - opentelemetry-instrumentation-excon
           # - opentelemetry-instrumentation-faraday
