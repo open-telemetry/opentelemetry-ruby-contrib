@@ -244,7 +244,7 @@ jobs:
           - ruby_kafka
           - sidekiq
           - trilogy
-    name: ${{ matrix.gem }}
+    name: ${{ matrix.gem }} / ubuntu-latest / services
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
