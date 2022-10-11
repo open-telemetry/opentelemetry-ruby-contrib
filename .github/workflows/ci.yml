@@ -64,7 +64,7 @@ jobs:
       matrix:
         gem:
           - ottrace
-          - propagator-xray
+          - xray
         os:
           - ubuntu-latest
           - macos-latest
