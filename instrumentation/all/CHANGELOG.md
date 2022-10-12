@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.26.0 / 2022-10-12
+
+* ADDED: Upgrade min instrumentation versions 
+
 ### v0.25.0 / 2022-06-09
 
 * Bump all dependencies to use base 0.21.0
