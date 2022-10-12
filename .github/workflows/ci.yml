@@ -180,21 +180,21 @@ jobs:
         id: jruby_skip
         shell: bash
         run: |
-          echo "::set-output name=skip::false"
-          [[ "${{ matrix.gem }}" == "action_pack"              ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "action_view"              ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "active_model_serializers" ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "active_record"            ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "active_support"           ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "aws_sdk"                  ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "delayed_job"              ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "graphql"                  ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "http"                     ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "http_client"              ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "koala"                    ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "lmdb"                     ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "rack"                     ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "rails"                    ]] && echo "::set-output name=skip::true"
+          echo "skip=false" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "action_pack"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "action_view"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "active_model_serializers" ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "active_record"            ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "active_support"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "aws_sdk"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "delayed_job"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "graphql"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "http"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "http_client"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "koala"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "lmdb"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "rack"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "rails"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test JRuby"
@@ -207,15 +207,15 @@ jobs:
         id: truffleruby_skip
         shell: bash
         run: |
-          echo "::set-output name=skip::false"
-          [[ "${{ matrix.gem }}" == "action_pack"    ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "action_view"    ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "active_job"     ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "active_record"  ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "active_support" ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "delayed_job"    ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "lmdb"           ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "rails"          ]] && echo "::set-output name=skip::true"
+          echo "skip=false" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "action_pack"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "action_view"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "active_job"     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "active_record"  ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "active_support" ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "delayed_job"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "lmdb"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "rails"          ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test Truffleruby"
@@ -270,17 +270,17 @@ jobs:
         id: jruby_skip
         shell: bash
         run: |
-          echo "::set-output name=skip::false"
-          [[ "${{ matrix.gem }}" == "bunny"      ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "mysql2"     ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "pg"         ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "que"        ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "rdkafka"    ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "redis"      ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "resque"     ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "ruby_kafka" ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "sidekiq"    ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "trilogy"    ]] && echo "::set-output name=skip::true"
+          echo "skip=false" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "bunny"      ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "mysql2"     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "pg"         ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "que"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "rdkafka"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "redis"      ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "resque"     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "ruby_kafka" ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "sidekiq"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "trilogy"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test JRuby"
@@ -293,10 +293,10 @@ jobs:
         id: truffleruby_skip
         shell: bash
         run: |
-          echo "::set-output name=skip::false"
-          [[ "${{ matrix.gem }}" == "que"        ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "rdkafka"    ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "ruby_kafka" ]] && echo "::set-output name=skip::true"
+          echo "skip=false" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "que"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "rdkafka"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "ruby_kafka" ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test Truffleruby"
