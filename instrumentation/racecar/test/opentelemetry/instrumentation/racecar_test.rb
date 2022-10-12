@@ -14,10 +14,23 @@ describe OpenTelemetry::Instrumentation::Racecar do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Racecar::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
-  let(:host) { ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' } }
-  let(:port) { (ENV.fetch('TEST_KAFKA_PORT') { 29_092 }) }
+  let(:host) { ENV.fetch('TEST_KAFKA_HOST', '127.0.0.1') }
+  let(:port) { ENV.fetch('TEST_KAFKA_PORT', 29_092) }
 
-  def tracer
+  def wait_for_spans(count)
+    Timeout.timeout(60) do
+      sleep 0.1 while exporter.finished_spans.size < count
+    end
+  end
+
+  let(:consumer_class) do
+    klass = Class.new(Racecar::Consumer)
+    klass.define_method(:process, &process_method)
+    klass.subscribes_to(topic_name)
+    stub_const('TestConsumer', klass)
+  end
+
+  let(:tracer) do
     OpenTelemetry.tracer_provider.tracer('test-tracer')
   end
 
@@ -58,12 +71,6 @@ describe OpenTelemetry::Instrumentation::Racecar do
     thread.join(60)
   end
 
-  def wait_for_messages_seen_by_consumer(count)
-    Timeout.timeout(60) do
-      sleep 0.1 until consumer_class.messages_seen.size >= count
-    end
-  end
-
   let(:topic_name) do
     rand_hash = SecureRandom.hex(10)
     "consumer-patch-trace-#{rand_hash}"
@@ -78,6 +85,7 @@ describe OpenTelemetry::Instrumentation::Racecar do
     produce(producer_messages)
 
     @racecar_thread = run_racecar(racecar)
+    wait_for_spans(expected_spans)
   end
 
   after do
@@ -86,24 +94,14 @@ describe OpenTelemetry::Instrumentation::Racecar do
 
   describe '#process' do
     describe 'when the consumer runs and publishes acks' do
-      let(:consumer_class) do
-        # a test class
-        class TestConsumer < Racecar::Consumer
-          def self.messages_seen
-            @messages_seen ||= []
-          end
-
-          def process(message)
-            produce(
-              'message seen',
-              topic: "ack-#{message.topic}"
-            )
-            deliver!
-            TestConsumer.messages_seen << message
-          end
+      let(:process_method) do
+        lambda do |message|
+          produce(
+            'message seen',
+            topic: "ack-#{message.topic}"
+          )
+          deliver!
         end
-        TestConsumer.subscribes_to(topic_name)
-        TestConsumer
       end
 
       let(:producer_messages) do
@@ -118,13 +116,11 @@ describe OpenTelemetry::Instrumentation::Racecar do
         }]
       end
 
-      it 'traces each message and traces publishing' do
-        wait_for_messages_seen_by_consumer(2)
+      let(:expected_spans) { 6 }
 
+      it 'traces each message and traces publishing' do
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
         racecar_send_spans = spans.select { |s| s.name == "ack-#{topic_name} send" }
-
-        _(spans.size).must_equal(6)
 
         # First pair for send and process spans
         first_process_span = process_spans[0]
@@ -173,20 +169,10 @@ describe OpenTelemetry::Instrumentation::Racecar do
     end
 
     describe 'for an erroring consumer' do
-      let(:consumer_class) do
-        # a test class
-        class ErrorConsumer < Racecar::Consumer
-          def self.messages_seen
-            @messages_seen ||= []
-          end
-
-          def process(message)
-            ErrorConsumer.messages_seen << message
-            raise 'oops'
-          end
+      let(:process_method) do
+        lambda do |_message|
+          raise 'oops'
         end
-        ErrorConsumer.subscribes_to(topic_name)
-        ErrorConsumer
       end
 
       let(:producer_messages) do
@@ -197,12 +183,10 @@ describe OpenTelemetry::Instrumentation::Racecar do
         }]
       end
 
+      let(:expected_spans) { 2 }
+
       it 'can consume and publish a message' do
-        wait_for_messages_seen_by_consumer(1)
-
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
-
-        _(spans.size).must_equal(2)
 
         # First pair for send and process spans
         first_process_span = process_spans[0]
