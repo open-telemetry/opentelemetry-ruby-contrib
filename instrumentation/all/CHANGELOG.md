@@ -2,7 +2,7 @@
 
 ### v0.26.0 / 2022-10-12
 
-* ADDED: Upgrade min instrumentation versions 
+* ADDED: Upgrade min instrumentation versions See For Details https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/134
 
 ### v0.25.0 / 2022-06-09
 
