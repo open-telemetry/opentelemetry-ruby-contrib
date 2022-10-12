@@ -58,7 +58,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-restclient', '~> 0.20.0'
   spec.add_dependency 'opentelemetry-instrumentation-ruby_kafka', '~> 0.19.0'
   spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.22.0'
-  spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.20.0'
+  spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-trilogy', '~> 0.51.0'
 
   spec.add_development_dependency 'active_model_serializers'
