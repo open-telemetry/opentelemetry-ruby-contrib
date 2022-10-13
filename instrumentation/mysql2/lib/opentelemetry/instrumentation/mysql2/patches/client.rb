@@ -52,22 +52,30 @@ module OpenTelemetry
 
           def query(sql, options = {})
             attributes = client_attributes
-            case config[:db_statement]
-            when :include
-              attributes['db.statement'] = sql
-            when :obfuscate
-              attributes['db.statement'] = obfuscate_sql(sql)
-            end
+
             tracer.in_span(
               database_span_name(sql),
               attributes: attributes.merge!(OpenTelemetry::Instrumentation::Mysql2.attributes),
               kind: :client
-            ) do
+            ) do |span|
+              if OpenTelemetry::Trace.current_span.recording? && !OpenTelemetry::Instrumentation::Mysql2.attributes["db.statement"]
+                span.add_attributes({ 'db.statement' => make_db_statement_attr(sql) })
+              end
+
               super(sql, options)
             end
           end
 
           private
+
+          def make_db_statement_attr(sql)
+            case config[:db_statement]
+            when :include
+              sql
+            when :obfuscate
+              obfuscate_sql(sql)
+            end
+          end
 
           def obfuscate_sql(sql)
             if sql.size > 2000
