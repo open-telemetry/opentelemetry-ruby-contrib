@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-instrumentation-racecar'
 require 'opentelemetry-instrumentation-trilogy'
 require 'opentelemetry-instrumentation-active_support'
 require 'opentelemetry-instrumentation-action_pack'
@@ -30,6 +29,7 @@ require 'opentelemetry-instrumentation-mysql2'
 require 'opentelemetry-instrumentation-net_http'
 require 'opentelemetry-instrumentation-pg'
 require 'opentelemetry-instrumentation-que'
+require 'opentelemetry-instrumentation-racecar'
 require 'opentelemetry-instrumentation-rack'
 require 'opentelemetry-instrumentation-rails'
 require 'opentelemetry-instrumentation-rdkafka'
