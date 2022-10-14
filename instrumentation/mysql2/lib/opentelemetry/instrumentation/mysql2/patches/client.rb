@@ -59,10 +59,7 @@ module OpenTelemetry
             attributes['db.statement'] = sql if statement == :include
 
             tracer.in_span(database_span_name(sql), attributes: attributes, kind: :client) do |span|
-            ) do |span|
-              if OpenTelemetry::Trace.current_span.recording? && !OpenTelemetry::Instrumentation::Mysql2.attributes["db.statement"]
-                span.add_attributes({ 'db.statement' => make_db_statement_attr(sql) })
-              end
+              span['db.statement'] = obfuscate_sql(sql) if OpenTelemetry::Trace.current_span.recording? && statement == :obfuscate
 
               super(sql, options)
             end
