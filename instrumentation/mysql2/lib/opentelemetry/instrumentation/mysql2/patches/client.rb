@@ -51,12 +51,14 @@ module OpenTelemetry
           ].freeze
 
           def query(sql, options = {})
-            attributes = client_attributes
+            overrides = OpenTelemetry::Instrumentation::Mysql2.attributes
+            statement = config[:db_statement]
+            statement = :override if overrides.key?('db.statement')
 
-            tracer.in_span(
-              database_span_name(sql),
-              attributes: attributes.merge!(OpenTelemetry::Instrumentation::Mysql2.attributes),
-              kind: :client
+            attributes = client_attributes.merge!(overrides)
+            attributes['db.statement'] = sql if statement == :include
+
+            tracer.in_span(database_span_name(sql), attributes: attributes, kind: :client) do |span|
             ) do |span|
               if OpenTelemetry::Trace.current_span.recording? && !OpenTelemetry::Instrumentation::Mysql2.attributes["db.statement"]
                 span.add_attributes({ 'db.statement' => make_db_statement_attr(sql) })
@@ -67,15 +69,6 @@ module OpenTelemetry
           end
 
           private
-
-          def make_db_statement_attr(sql)
-            case config[:db_statement]
-            when :include
-              sql
-            when :obfuscate
-              obfuscate_sql(sql)
-            end
-          end
 
           def obfuscate_sql(sql)
             if sql.size > 2000
