@@ -4,8 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-source 'https://rubygems.org'
-
-gemspec
-
-gem 'opentelemetry-instrumentation-rake', path: '../rake'
+module OpenTelemetry
+  module Instrumentation
+    module Rake
+      VERSION = '0.0.0'
+    end
+  end
+end
