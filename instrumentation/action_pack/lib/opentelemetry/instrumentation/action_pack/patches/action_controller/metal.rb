@@ -21,9 +21,10 @@ module OpenTelemetry
                                    end
                 end
 
-                rack_span.set_attribute('http.route', rails_route(request)) if instrumentation_config[:enable_recognize_route]
-
-                rack_span.set_attribute('http.target', request.filtered_path) if request.filtered_path != request.fullpath
+                attributes_to_append = {}
+                attributes_to_append['http.route'] = rails_route(request) if instrumentation_config[:enable_recognize_route]
+                attributes_to_append['http.target'] = request.filtered_path if request.filtered_path != request.fullpath
+                rack_span.add_attributes(attributes_to_append) unless attributes_to_append.empty?
               end
 
               super(name, request, response)
