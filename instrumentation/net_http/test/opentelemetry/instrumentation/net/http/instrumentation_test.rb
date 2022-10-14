@@ -174,7 +174,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.name).must_equal 'connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
     ensure
@@ -189,7 +189,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(-> { http.request(Net::HTTP::Get.new(uri.request_uri)) }).must_raise
 
       _(exporter.finished_spans.size).must_equal(1)
-      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.name).must_equal 'connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(99_999)
 
@@ -197,6 +197,54 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span_event.name).must_equal 'exception'
       _(span_event.attributes['exception.type']).wont_be_nil
       _(span_event.attributes['exception.message']).must_match(/Failed to open TCP connection to localhost:99999/)
+    ensure
+      WebMock.disable_net_connect!
+    end
+
+    it 'emits an HTTP CONNECT span when connecting through an SSL proxy' do
+      WebMock.allow_net_connect!
+
+      uri = URI.parse('http://localhost')
+      proxy_uri = URI.parse('https://localhost')
+
+      # rubocop:disable Lint/SuppressedException
+      begin
+        Net::HTTP.start(uri.host, uri.port, proxy_uri.host, proxy_uri.port, 'proxy_user', 'proxy_pass', use_ssl: true) do |http|
+          http.get('/')
+        end
+      rescue StandardError
+      end
+      # rubocop:enable Lint/SuppressedException
+
+      _(exporter.finished_spans.size).must_equal(2)
+      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.kind).must_equal(:client)
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).must_equal(443)
+    ensure
+      WebMock.disable_net_connect!
+    end
+
+    it 'emits a "connect" span when connecting through an non-ssl proxy' do
+      WebMock.allow_net_connect!
+
+      uri = URI.parse('http://localhost')
+      proxy_uri = URI.parse('https://localhost')
+
+      # rubocop:disable Lint/SuppressedException
+      begin
+        Net::HTTP.start(uri.host, uri.port, proxy_uri.host, proxy_uri.port, 'proxy_user', 'proxy_pass', use_ssl: false) do |http|
+          http.get('/')
+        end
+      rescue StandardError
+      end
+      # rubocop:enable Lint/SuppressedException
+
+      _(exporter.finished_spans.size).must_equal(2)
+      _(span.name).must_equal 'connect'
+      _(span.kind).must_equal(:internal)
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).must_equal(443)
     ensure
       WebMock.disable_net_connect!
     end

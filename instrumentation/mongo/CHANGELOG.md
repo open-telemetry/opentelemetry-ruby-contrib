@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+### v0.21.0 / 2022-10-04
+
+* ADDED: Support mongodb db statement without obfuscation 
+
 ### v0.20.0 / 2022-06-09
 
 * Upgrading Base dependency version
