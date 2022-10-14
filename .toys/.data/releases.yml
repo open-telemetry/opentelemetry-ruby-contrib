@@ -7,8 +7,8 @@ main_branch: main
 # Time in seconds for release scripts to wait for CI to complete.
 required_checks_timeout: 1200
 # Git user attached to commits for release pull requests.
-git_user_name: Daniel Azuma
-git_user_email: dazuma@gmail.com
+git_user_name: Ariel Valentin
+git_user_email: ariel@arielvalentin.com
 # Toys tool that builds YARD reference docs
 docs_builder_tool: [yardoc]
 
