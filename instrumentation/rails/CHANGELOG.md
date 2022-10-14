@@ -2,7 +2,7 @@
 
 ### v0.23.0 / 2022-10-14
 
-* ADDED: Name ActionPack spans with the HTTP method and route 
+* ADDED: Name ActionPack spans with the HTTP method and route
 
 ### v0.22.0 / 2022-06-09
 
