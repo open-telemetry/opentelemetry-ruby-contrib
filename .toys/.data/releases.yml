@@ -35,6 +35,10 @@ gems:
     directory: instrumentation/racecar
     version_constant: [OpenTelemetry, Instrumentation, Racecar, VERSION]
 
+  - name: opentelemetry-instrumentation-rake
+    directory: instrumentation/rake
+    version_constant: [OpenTelemetry, Instrumentation, Rake, VERSION]
+
   - name: opentelemetry-instrumentation-rdkafka
     directory: instrumentation/rdkafka
     version_constant: [OpenTelemetry, Instrumentation, Rdkafka, VERSION]
