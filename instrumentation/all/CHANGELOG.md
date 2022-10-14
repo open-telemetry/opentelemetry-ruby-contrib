@@ -2,7 +2,8 @@
 
 ### v0.27.0 / 2022-10-14
 
-* ADDED: Add Rake instrumentation 
+* ADDED: Add Rake instrumentation
+* CHANGED: Updated Rails instrumentation
 
 ### v0.26.0 / 2022-10-12
 
@@ -18,18 +19,18 @@
 
 ### v0.24.0 / 2022-05-02
 
-* ADDED: Adds instrumentation for rdkafka 
-* FIXED: Add rdkafka to all 
+* ADDED: Adds instrumentation for rdkafka
+* FIXED: Add rdkafka to all
 
 ### v0.23.0 / 2022-01-26
 
-* ADDED: Add Trilogy Auto Instrumentation 
-* FIXED: `ActiveSupport` constant conflict in Active Model Serializers instrumentation 
+* ADDED: Add Trilogy Auto Instrumentation
+* FIXED: `ActiveSupport` constant conflict in Active Model Serializers instrumentation
 * FIXED: add missing require for aws_sdk instrumentation #1054
 
 ### v0.22.0 / 2021-12-01
 
-* ADDED: Move activesupport notification subsciber out of action_view gem 
+* ADDED: Move activesupport notification subsciber out of action_view gem
 
 ### v0.21.3 / 2021-10-07
 
