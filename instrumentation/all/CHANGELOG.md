@@ -2,7 +2,7 @@
 
 ### v0.27.0 / 2022-10-14
 
-* ADDED: Add Rake instrumentation 
+* CHANGED: Update Rails instrumentation
 
 ### v0.26.0 / 2022-10-12
 
