@@ -26,12 +26,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6.0'
 
-  spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.2.1'
-  spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_job', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.19.0'
-  spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.4.0'
-  spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.19.0'
   spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.20.0'
