@@ -12,7 +12,7 @@ module OpenTelemetry
     module PG
       module Patches
         # Module to prepend to PG::Connection for instrumentation
-        module Connection
+        module Connection # rubocop:disable Metrics/ModuleLength
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args|
               span_name, attrs = span_attrs(:query, *args)
@@ -127,12 +127,20 @@ module OpenTelemetry
             conninfo_hash[:dbname]&.to_s
           end
 
+          def first_in_list(item)
+            if (idx = item.index(','))
+              item[0...idx]
+            else
+              item
+            end
+          end
+
           def client_attributes
             attributes = {
               'db.system' => 'postgresql',
               'db.user' => conninfo_hash[:user]&.to_s,
               'db.name' => database_name,
-              'net.peer.name' => conninfo_hash[:host]&.to_s
+              'net.peer.name' => first_in_list(conninfo_hash[:host]&.to_s)
             }
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
@@ -146,7 +154,7 @@ module OpenTelemetry
               {
                 'net.transport' => 'IP.TCP',
                 'net.peer.ip' => conninfo_hash[:hostaddr]&.to_s,
-                'net.peer.port' => conninfo_hash[:port]&.to_s
+                'net.peer.port' => first_in_list(conninfo_hash[:port]&.to_s)
               }
             end
           end

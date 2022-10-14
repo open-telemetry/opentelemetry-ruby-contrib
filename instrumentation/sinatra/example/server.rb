@@ -38,5 +38,9 @@ class App < Sinatra::Base
     'Thing 1'
   end
 
+  get '/error' do
+    raise 'Panic!'
+  end
+
   run! if app_file == $PROGRAM_NAME
 end
