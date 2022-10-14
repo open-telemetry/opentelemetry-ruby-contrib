@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Instrumentation
-    module All
-      VERSION = '0.26.0'
+    module Rake
+      VERSION = '0.0.0'
     end
   end
 end
