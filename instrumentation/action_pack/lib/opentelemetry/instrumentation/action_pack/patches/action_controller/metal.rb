@@ -14,11 +14,17 @@ module OpenTelemetry
             def dispatch(name, request, response)
               rack_span = OpenTelemetry::Instrumentation::Rack.current_span
               if rack_span.recording?
-                rack_span.name = "#{self.class.name}##{name}" unless request.env['action_dispatch.exception']
+                unless request.env['action_dispatch.exception']
+                  rack_span.name = case instrumentation_config[:span_naming]
+                                   when :controller_action then "#{self.class.name}##{name}"
+                                   else "#{request.method} #{rails_route(request)}"
+                                   end
+                end
 
-                add_rails_route(rack_span, request) if instrumentation_config[:enable_recognize_route]
-
-                rack_span.set_attribute('http.target', request.filtered_path) if request.filtered_path != request.fullpath
+                attributes_to_append = {}
+                attributes_to_append['http.route'] = rails_route(request) if instrumentation_config[:enable_recognize_route]
+                attributes_to_append['http.target'] = request.filtered_path if request.filtered_path != request.fullpath
+                rack_span.add_attributes(attributes_to_append) unless attributes_to_append.empty?
               end
 
               super(name, request, response)
@@ -26,11 +32,10 @@ module OpenTelemetry
 
             private
 
-            def add_rails_route(rack_span, request)
-              ::Rails.application.routes.router.recognize(request) do |route, _params|
-                rack_span.set_attribute('http.route', route.path.spec.to_s)
+            def rails_route(request)
+              @rails_route ||= ::Rails.application.routes.router.recognize(request) do |route, _params|
+                return route.path.spec.to_s
                 # Rails will match on the first route - see https://guides.rubyonrails.org/routing.html#crud-verbs-and-actions
-                break
               end
             end
 

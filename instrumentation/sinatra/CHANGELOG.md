@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.21.0 / 2022-10-12
+
+* ADDED: Use rack middleware in sinatra middleware 
+* FIXED: Add exceptions to sinatra spans. 
+
 ### v0.20.0 / 2022-06-09
 
 * Upgrading Base dependency version

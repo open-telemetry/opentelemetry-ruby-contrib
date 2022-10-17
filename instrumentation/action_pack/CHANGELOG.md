@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.3.0 / 2022-10-14
+
+* ADDED: Name ActionPack spans with the HTTP method and route 
+
+### v0.2.1 / 2022-10-04
+
+* FIXED: Ensures the correct route is add to http.route span attribute 
+
 ### v0.2.0 / 2022-06-09
 
 * Upgrading Base dependency version
