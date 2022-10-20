@@ -115,6 +115,38 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     end
   end
 
+  describe 'when it is installed by OpenTelemetry::SDK' do
+    let(:config) { { span_naming: :controller_action, enable_recognize_route: true } }
+    let(:default_config) { { span_naming: :rails_route, enable_recognize_route: false } }
+
+    before(:each) do
+      # Clear the current instance, so we can call OpenTelemetry::SDK.configure to install a new instance
+      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance_variable_set('@instance', nil)
+    end
+    after(:each) do
+      # Restore the default instance
+      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance_variable_set('@instance', nil)
+      OpenTelemetry::SDK.configure do |c|
+        c.use 'OpenTelemetry::Instrumentation::ActionPack'
+      end
+    end
+
+    it 'sets span_naming and enable_recognize_route' do
+      OpenTelemetry::SDK.configure do |c|
+        c.use 'OpenTelemetry::Instrumentation::ActionPack', config
+      end
+
+      _(OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config).must_equal config
+    end
+
+    it 'uses default values for span_naming and enable_recognize_route' do
+      OpenTelemetry::SDK.configure do |c|
+        c.use 'OpenTelemetry::Instrumentation::ActionPack'
+      end
+      _(OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config).must_equal default_config
+    end
+  end
+
   describe 'when the application has exceptions_app configured' do
     let(:rails_app) { AppConfig.initialize_app(use_exceptions_app: true) }
 
