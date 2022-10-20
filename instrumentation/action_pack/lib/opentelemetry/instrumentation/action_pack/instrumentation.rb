@@ -26,6 +26,7 @@ module OpenTelemetry
         end
 
         option :enable_recognize_route, default: false, validate: :boolean
+        option :span_naming, default: :rails_route, validate: %i[controller_action rails_route]
 
         private
 
