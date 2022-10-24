@@ -9,7 +9,7 @@ module OpenTelemetry
     module Mysql2
       module Patches
         # Module to prepend to Mysql2::Client for instrumentation
-        module Client
+        module Client # rubocop:disable Metrics/ModuleLength
           QUERY_NAMES = [
             'set names',
             'select',
@@ -73,10 +73,13 @@ module OpenTelemetry
             if sql.size > 2000
               'SQL query too large to remove sensitive data ...'
             else
-              obfuscated = sql.gsub(generated_mysql_regex, '?')
+              obfuscated = OpenTelemetry::Common::Utilities.utf8_encode(sql)
+              obfuscated = obfuscated.gsub(generated_mysql_regex, '?')
               obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
               obfuscated
             end
+          rescue StandardError
+            'OpenTelemetry error: failed to obfuscate sql'
           end
 
           def generated_mysql_regex
