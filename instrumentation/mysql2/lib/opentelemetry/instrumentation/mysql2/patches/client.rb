@@ -73,7 +73,7 @@ module OpenTelemetry
             if sql.size > 2000
               'SQL query too large to remove sensitive data ...'
             else
-              obfuscated = OpenTelemetry::Common::Utilities.utf8_encode(sql)
+              obfuscated = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
               obfuscated = obfuscated.gsub(generated_mysql_regex, '?')
               obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
               obfuscated
