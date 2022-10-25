@@ -145,6 +145,7 @@ module OpenTelemetry
             QUERY_NAME_RE.match(sql) { |match| match[1].downcase } unless sql.nil?
           rescue StandardError => e
             OpenTelemetry.logger.debug("Error extracting sql statement type: #{e.message}")
+            nil
           end
         end
       end
