@@ -16,6 +16,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
   let(:spans) { exporter.finished_spans }
   let(:span) { exporter.finished_spans.last }
   let(:rails_app) { DEFAULT_RAILS_APP }
+  let(:uuid_v4_regex) { /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/ }
 
   # Clear captured spans
   before { exporter.reset }
@@ -41,6 +42,19 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     _(span.attributes['http.route']).must_equal '/ok(.:format)'
     _(span.attributes['code.namespace']).must_equal 'ExampleController'
     _(span.attributes['code.function']).must_equal 'ok'
+  end
+
+  it 'sets the request_id that ActionDispatch generates' do
+    get '/ok'
+
+    _(span.attributes['action_dispatch.request_id']).must_match(uuid_v4_regex)
+  end
+
+  it 'sets the request_id from headers when supplied' do
+    header 'X-Request-Id', 'custom-request-id'
+    get '/ok'
+
+    _(span.attributes['action_dispatch.request_id']).must_equal 'custom-request-id'
   end
 
   it 'does not memoize data across requests' do

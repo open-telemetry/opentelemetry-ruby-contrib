@@ -27,6 +27,7 @@ module OpenTelemetry
                 }
                 attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE] = rails_route(request) if instrumentation_config[:enable_recognize_route]
                 attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = request.filtered_path if request.filtered_path != request.fullpath
+                attributes_to_append['action_dispatch.request_id'] = request.request_id if request.request_id
                 rack_span.add_attributes(attributes_to_append)
               end
 
