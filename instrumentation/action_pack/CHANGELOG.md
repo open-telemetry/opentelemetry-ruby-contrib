@@ -2,7 +2,7 @@
 
 ### v0.3.1 / 2022-10-27
 
-* FIXED: Declare span_naming option in action_pack instrumentation 
+* FIXED: Declare span_naming option in action_pack instrumentation
 
 ### v0.3.0 / 2022-10-14
 
