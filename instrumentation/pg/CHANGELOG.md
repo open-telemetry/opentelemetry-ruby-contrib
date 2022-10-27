@@ -2,7 +2,7 @@
 
 ### v0.22.1 / 2022-10-27
 
-* FIXED: Only take the first item in a comma-separated list for pg attrs 
+* FIXED: Only take the first item in a comma-separated list for pg attrs
 
 ### v0.22.0 / 2022-10-04
 
