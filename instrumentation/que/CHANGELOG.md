@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.5.0 / 2022-10-28
+
+* ADDED: Add support for `job_options` argument 
+
 ### v0.4.0 / 2022-06-09
 
 * Upgrading Base dependency version
