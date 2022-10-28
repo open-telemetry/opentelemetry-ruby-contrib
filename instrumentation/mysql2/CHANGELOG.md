@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.21.1 / 2022-10-26
+
+* FIXED: Handle encoding errors in mysql obfuscation 
+
 ### v0.21.0 / 2022-06-09
 
 * Upgrading Base dependency version
