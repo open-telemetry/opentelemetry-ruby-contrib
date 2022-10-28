@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.27.1 / 2022-10-28
+
+* (No significant changes)
+
 ### v0.27.0 / 2022-10-14
 
 * CHANGED: Update Rails instrumentation
