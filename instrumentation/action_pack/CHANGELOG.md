@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.3.1 / 2022-10-27
+
+* FIXED: Declare span_naming option in action_pack instrumentation
+
 ### v0.3.0 / 2022-10-14
 
 * ADDED: Name ActionPack spans with the HTTP method and route 
