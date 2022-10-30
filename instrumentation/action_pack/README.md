@@ -32,11 +32,18 @@ end
 
 ### Configuration options
 
-The `http.route` attribute is disabled by default because we use [.recognize](https://github.com/rails/rails/blob/v6.1.3/actionpack/lib/action_dispatch/journey/router.rb#L65)
+| Name  | Default | Description |
+| ----- | ------- | ----------- |
+| `span_naming`  | `:rails_route`  | Configures the name for the Rack span. `:rails_route` is in the format of `HTTP_METHOD /rails/route(.:format)`, for example `GET /users/:id(.:format)`. `:controller_action` is in the format of `Controller#action`, for example `UsersController#show` |
+| `enable_recognize_route`  | `true`  | Enables or disables adding the `http.route` attribute. |
+
+The default configuration uses a [method from Rails to obtain the route for the request](https://github.com/rails/rails/blob/v6.1.3/actionpack/lib/action_dispatch/journey/router.rb#L65). The options above allow this behaviour to be opted out of if you have performance issues. If you wish to avoid using this method then set `span_naming: :controller_action, enable_recognize_route: false`.
+
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::ActionPack', {
-    enable_recognize_route: true
+    span_naming: :controller_action,
+    enable_recognize_route: false
   }
 end
 ```
