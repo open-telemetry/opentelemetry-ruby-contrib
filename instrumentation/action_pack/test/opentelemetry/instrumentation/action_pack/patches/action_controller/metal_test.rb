@@ -39,6 +39,8 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     _(span.attributes['http.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
     _(span.attributes['http.route']).must_be_nil
+    _(span.attributes['code.namespace']).must_equal 'ExampleController'
+    _(span.attributes['code.function']).must_equal 'ok'
   end
 
   it 'does not memoize data across requests' do
@@ -61,6 +63,8 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     _(span.attributes['http.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
     _(span.attributes['http.route']).must_be_nil
+    _(span.attributes['code.namespace']).must_equal 'ExampleController'
+    _(span.attributes['code.function']).must_equal 'new_item'
   end
 
   it 'sets the span name when the controller raises an exception' do
@@ -184,6 +188,8 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.user_agent']).must_be_nil
       _(span.attributes['http.route']).must_equal '/items/new(.:format)'
+      _(span.attributes['code.namespace']).must_equal 'ExampleController'
+      _(span.attributes['code.function']).must_equal 'new_item'
     end
   end
 
