@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.28.0 / 2022-10-31
+
+* ADDED: Bump minimum gem versions for opentelemetry-instrumentation-all 
+
 ### v0.27.0 / 2022-10-14
 
 * CHANGED: Update Rails instrumentation
