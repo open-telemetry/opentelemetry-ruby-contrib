@@ -21,10 +21,13 @@ module OpenTelemetry
                                    end
                 end
 
-                attributes_to_append = {}
-                attributes_to_append['http.route'] = rails_route(request) if instrumentation_config[:enable_recognize_route]
-                attributes_to_append['http.target'] = request.filtered_path if request.filtered_path != request.fullpath
-                rack_span.add_attributes(attributes_to_append) unless attributes_to_append.empty?
+                attributes_to_append = {
+                  OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => self.class.name,
+                  OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => name
+                }
+                attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE] = rails_route(request) if instrumentation_config[:enable_recognize_route]
+                attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = request.filtered_path if request.filtered_path != request.fullpath
+                rack_span.add_attributes(attributes_to_append)
               end
 
               super(name, request, response)
