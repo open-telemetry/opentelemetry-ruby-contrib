@@ -1,14 +1,9 @@
-name: CI Instrumentation
+name: CI Instrumentation - Canary
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - 'release/**'
-  pull_request:
-    branches:
-      - main
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   instrumentation:
@@ -43,6 +38,19 @@ jobs:
           - sinatra
         os:
           - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        exclude:
+          - os: windows-latest
+            gem: ethon
+          - os: windows-latest
+            gem: action_pack
+          - os: windows-latest
+            gem: restclient
+          - os: windows-latest
+            gem: rails
+          - os: macos-latest
+            gem: lmdb
 
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -95,3 +103,24 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "jruby"
+      - name: "Truffleruby Filter"
+        id: truffleruby_skip
+        shell: bash
+        run: |
+          echo "skip=false" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "action_pack"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "action_view"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "active_job"     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "active_record"  ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "active_support" ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "delayed_job"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "lmdb"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "rails"          ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
+          true
+      - name: "Test Truffleruby"
+        if: "${{ matrix.os == 'ubuntu-latest' && steps.truffleruby_skip.outputs.skip == 'false' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "truffleruby"
