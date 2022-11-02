@@ -17,7 +17,7 @@ describe OpenTelemetry::Instrumentation::Rails do
   # Clear captured spans
   before { exporter.reset }
 
-  it 'sets the span name to ControllerName#action' do
+  it 'sets the span name to the format: HTTP_METHOD /rails/route(.:format)' do
     get '/ok'
 
     _(last_response.body).must_equal 'actually ok'
@@ -35,7 +35,9 @@ describe OpenTelemetry::Instrumentation::Rails do
     _(span.attributes['http.target']).must_equal '/ok'
     _(span.attributes['http.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
-    _(span.attributes['http.route']).must_be_nil
+    _(span.attributes['http.route']).must_equal '/ok(.:format)'
+    _(span.attributes['code.namespace']).must_equal 'ExampleController'
+    _(span.attributes['code.function']).must_equal 'ok'
   end
 
   def app
