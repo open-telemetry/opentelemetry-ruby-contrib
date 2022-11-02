@@ -25,7 +25,8 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
-        option :enable_recognize_route, default: false, validate: :boolean
+        option :enable_recognize_route, default: true, validate: :boolean
+        option :span_naming, default: :rails_route, validate: %i[controller_action rails_route]
 
         private
 

@@ -20,7 +20,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
   # Clear captured spans
   before { exporter.reset }
 
-  it 'sets the span name to ControllerName#action' do
+  it 'sets the span name to the format: HTTP_METHOD /rails/route(.:format)' do
     get '/ok'
 
     _(last_response.body).must_equal 'actually ok'
@@ -38,7 +38,9 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     _(span.attributes['http.target']).must_equal '/ok'
     _(span.attributes['http.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
-    _(span.attributes['http.route']).must_be_nil
+    _(span.attributes['http.route']).must_equal '/ok(.:format)'
+    _(span.attributes['code.namespace']).must_equal 'ExampleController'
+    _(span.attributes['code.function']).must_equal 'ok'
   end
 
   it 'does not memoize data across requests' do
@@ -60,7 +62,9 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     _(span.attributes['http.target']).must_equal '/items/new'
     _(span.attributes['http.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
-    _(span.attributes['http.route']).must_be_nil
+    _(span.attributes['http.route']).must_equal '/items/new(.:format)'
+    _(span.attributes['code.namespace']).must_equal 'ExampleController'
+    _(span.attributes['code.function']).must_equal 'new_item'
   end
 
   it 'sets the span name when the controller raises an exception' do
@@ -96,6 +100,12 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
       _(span.name).must_equal 'ExampleController#ok'
     end
 
+    it 'sets the http.route attribute' do
+      get '/ok'
+
+      _(span.attributes['http.route']).must_equal '/ok(.:format)'
+    end
+
     it 'sets the span name when the controller raises an exception' do
       get 'internal_server_error'
 
@@ -115,6 +125,38 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     end
   end
 
+  describe 'when it is installed by OpenTelemetry::SDK' do
+    let(:config) { { span_naming: :controller_action, enable_recognize_route: false } }
+    let(:default_config) { { span_naming: :rails_route, enable_recognize_route: true } }
+
+    before(:each) do
+      # Clear the current instance, so we can call OpenTelemetry::SDK.configure to install a new instance
+      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance_variable_set('@instance', nil)
+    end
+    after(:each) do
+      # Restore the default instance
+      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance_variable_set('@instance', nil)
+      OpenTelemetry::SDK.configure do |c|
+        c.use 'OpenTelemetry::Instrumentation::ActionPack'
+      end
+    end
+
+    it 'sets span_naming and enable_recognize_route' do
+      OpenTelemetry::SDK.configure do |c|
+        c.use 'OpenTelemetry::Instrumentation::ActionPack', config
+      end
+
+      _(OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config).must_equal config
+    end
+
+    it 'uses default values for span_naming and enable_recognize_route' do
+      OpenTelemetry::SDK.configure do |c|
+        c.use 'OpenTelemetry::Instrumentation::ActionPack'
+      end
+      _(OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config).must_equal default_config
+    end
+  end
+
   describe 'when the application has exceptions_app configured' do
     let(:rails_app) { AppConfig.initialize_app(use_exceptions_app: true) }
 
@@ -125,16 +167,16 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     end
   end
 
-  describe 'when the application has enable_rails_route enabled' do
+  describe 'when the application has enable_recognize_route disabled' do
     before do
-      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config[:enable_recognize_route] = true
-    end
-
-    after do
       OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config[:enable_recognize_route] = false
     end
 
-    it 'sets the span name to ControllerName#action' do
+    after do
+      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config[:enable_recognize_route] = true
+    end
+
+    it 'sets uses the :rails_route span naming' do
       get '/items/new'
       _(last_response.body).must_equal 'created new item'
       _(last_response.ok?).must_equal true
@@ -151,7 +193,9 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
       _(span.attributes['http.target']).must_equal '/items/new'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.user_agent']).must_be_nil
-      _(span.attributes['http.route']).must_equal '/items/new(.:format)'
+      _(span.attributes['http.route']).must_be_nil
+      _(span.attributes['code.namespace']).must_equal 'ExampleController'
+      _(span.attributes['code.function']).must_equal 'new_item'
     end
   end
 
