@@ -24,6 +24,7 @@ jobs:
           - mysql2
           - pg
           - que
+          - racecar
           - rdkafka
           - redis
           - resque
@@ -61,6 +62,7 @@ jobs:
           [[ "${{ matrix.gem }}" == "mysql2"     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "pg"         ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "que"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "racecar"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "rdkafka"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "redis"      ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "resque"     ]] && echo "skip=true" >> $GITHUB_OUTPUT
