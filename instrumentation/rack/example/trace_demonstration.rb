@@ -11,7 +11,7 @@ Bundler.require
 
 ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Rack'
+  c.use 'OpenTelemetry::Instrumentation::Rack', { response_propagator: [OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new] }
 end
 
 # setup fake rack application:
@@ -25,4 +25,6 @@ builder = Rack::Builder.app do
 end
 
 # demonstrate tracing (span output to console):
-puts Rack::MockRequest.new(builder).get('/')
+res = Rack::MockRequest.new(builder).get('/')
+puts res
+puts res.headers

@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/trace/status'
+require 'pry'
 
 require_relative '../util/queue_time'
 
@@ -82,6 +83,7 @@ module OpenTelemetry
                 OpenTelemetry::Instrumentation::Rack.with_span(request_span) do
                   @app.call(env).tap do |status, headers, response|
                     set_attributes_after_request(request_span, status, headers, response)
+                    config[:response_propagator].each { |propagator| propagator.inject(headers) }
                   end
                 end
               end
