@@ -128,6 +128,8 @@ module OpenTelemetry
           end
 
           def first_in_list(item)
+            return unless item
+            
             if (idx = item.index(','))
               item[0...idx]
             else
