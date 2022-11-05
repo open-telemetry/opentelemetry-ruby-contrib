@@ -7,6 +7,24 @@
 require 'test_helper'
 
 describe OpenTelemetry::Resource::Detectors::Azure do
+  before do
+    WebMock.disable_net_connect!
+    stub_request(:get, 'http://169.254.169.254/metadata/instance/compute?api-version=2019-08-15')
+      .with(
+        headers: {
+          'Accept' => '*/*',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'Host' => '169.254.169.254',
+          'Metadata' => 'true',
+          'User-Agent' => 'Ruby'
+        }
+      ).to_raise(SocketError)
+  end
+
+  after do
+    WebMock.allow_net_connect!
+  end
+
   let(:detector) { OpenTelemetry::Resource::Detectors::Azure }
 
   describe '.detect' do
@@ -14,9 +32,11 @@ describe OpenTelemetry::Resource::Detectors::Azure do
     let(:detected_resource_attributes) { detected_resource.attribute_enumerator.to_h }
     let(:expected_resource_attributes) { {} }
 
-    it 'returns an empty resource' do
-      _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-      _(detected_resource_attributes).must_equal(expected_resource_attributes)
+    describe 'when NOT in an azure environment' do
+      it 'returns an empty resource' do
+        _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+        _(detected_resource_attributes).must_equal(expected_resource_attributes)
+      end
     end
 
     describe 'when in an azure VM environment' do
@@ -31,11 +51,30 @@ describe OpenTelemetry::Resource::Detectors::Azure do
           'storageProfile' => { 'imageReference' => { 'id' => '/subscriptions/12345678-abcd-1234-abcd-0123456789ab/resourceGroups/AKS-Ubuntu/providers/Microsoft.Compute/galleries/AKSUbuntu/images/1804gen2containerd/versions/2022.06.22' } },
           'vmSize' => 'Standard_D2s_v3',
           'name' => 'opentelemetry'
-        }
+        }.to_json
       end
 
       before do
-        detector.stub(:azure_metadata, azure_metadata) { detected_resource }
+        metadata = MiniTest::Mock.new
+        metadata.expect(:code, 200)
+        metadata.expect(:body, azure_metadata)
+        metadata.expect(:nil?, false)
+
+        WebMock.disable_net_connect!
+        stub_request(:get, 'http://169.254.169.254/metadata/instance/compute?api-version=2019-08-15')
+          .with(
+            headers: {
+              'Accept' => '*/*',
+              'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+              'Host' => '169.254.169.254',
+              'Metadata' => 'true',
+              'User-Agent' => 'Ruby'
+            }
+          ).to_return(status: 200, body: azure_metadata, headers: {})
+      end
+
+      after do
+        WebMock.allow_net_connect!
       end
 
       let(:expected_resource_attributes) do

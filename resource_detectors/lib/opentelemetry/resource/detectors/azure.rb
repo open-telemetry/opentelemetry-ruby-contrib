@@ -39,11 +39,19 @@ module OpenTelemetry
         private
 
         def azure_metadata
-          response = Net::HTTP.get(URI(AZURE_METADATA_URI).to_s, { 'Metadata' => 'true' })
+          uri = URI(AZURE_METADATA_URI)
+
+          req = Net::HTTP::Get.new(uri)
+          req['Metadata'] = 'true'
+
+          response = Net::HTTP.start(uri.hostname, uri.port, open_timeout: 2) do |http|
+            http.request(req)
+          end
+
           return unless response.code == '200'
 
           JSON.parse(response.body)
-        rescue StandardError
+        rescue Errno::EHOSTDOWN, Net::OpenTimeout, SocketError
           nil
         end
 
