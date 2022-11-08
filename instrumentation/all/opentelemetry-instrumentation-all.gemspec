@@ -46,6 +46,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-net_http', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-pg', '~> 0.22.1'
   spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.5.0'
+  spec.add_dependency 'opentelemetry-instrumentation-racecar', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.21.1'
   spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.23.0'
   spec.add_dependency 'opentelemetry-instrumentation-rake', '~> 0.1.0'
