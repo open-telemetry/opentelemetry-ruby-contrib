@@ -310,5 +310,25 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_be_nil
       end
     end
+
+    describe '#first_in_list' do
+      it 'returns complete item if passed a string' do
+        result = client.send(:first_in_list, 'one')
+
+        _(result).must_equal 'one'
+      end
+
+      it 'returns first item if passed a comma-separated string' do
+        result = client.send(:first_in_list, 'one,two')
+
+        _(result).must_equal 'one'
+      end
+
+      it 'returns nil if passed nil' do
+        result = client.send(:first_in_list, nil)
+
+        _(result).must_be_nil
+      end
+    end
   end unless ENV['OMIT_SERVICES']
 end
