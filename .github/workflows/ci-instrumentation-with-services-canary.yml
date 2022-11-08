@@ -1,14 +1,9 @@
-name: CI Intrumentation With Services
+name: CI Intrumentation With Services - Canary
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - 'release/**'
-  pull_request:
-    branches:
-      - main
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   # These builds require sidecar services (postgres, redis, etc) in order to run their test suites.
@@ -24,7 +19,6 @@ jobs:
           - mysql2
           - pg
           - que
-          - racecar
           - rdkafka
           - redis
           - resque
@@ -62,7 +56,6 @@ jobs:
           [[ "${{ matrix.gem }}" == "mysql2"     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "pg"         ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "que"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "racecar"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "rdkafka"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "redis"      ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "resque"     ]] && echo "skip=true" >> $GITHUB_OUTPUT
@@ -77,6 +70,22 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "jruby"
+      - name: "Truffleruby Filter"
+        id: truffleruby_skip
+        shell: bash
+        run: |
+          echo "skip=false" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "que"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "rdkafka"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "ruby_kafka" ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
+          true
+      - name: "Test Truffleruby"
+        if: "${{ steps.truffleruby_skip.outputs.skip == 'false' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "truffleruby"
     services:
       zookeeper:
         image: confluentinc/cp-zookeeper:latest

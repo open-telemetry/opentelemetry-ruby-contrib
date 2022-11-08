@@ -4,10 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Instrumentation
-    module ActionPack
-      VERSION = '0.3.1'
-    end
-  end
+appraise 'racecar-2.7' do
+  gem 'racecar', '~> 2.7.0'
+end
+
+appraise 'racecar-2.8' do
+  gem 'racecar', '~> 2.8.2'
 end
