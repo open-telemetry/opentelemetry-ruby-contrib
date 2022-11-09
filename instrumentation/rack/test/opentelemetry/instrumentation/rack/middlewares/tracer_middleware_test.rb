@@ -311,6 +311,17 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
     end
   end
 
+  describe 'config[:response_propagators]' do
+    describe 'with ResponseTextMapPropagator' do
+      let(:config) { default_config.merge(response_propagators: [OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new]) }
+
+      it 'injects the traceresponse header' do
+        res = Rack::MockRequest.new(rack_builder).get('/ping', env)
+        _(res.headers).must_include('traceresponse')
+      end
+    end
+  end
+
   describe '#call with error' do
     SimulatedError = Class.new(StandardError)
 
