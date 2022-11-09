@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/trace/status'
-require 'pry'
 
 require_relative '../util/queue_time'
 

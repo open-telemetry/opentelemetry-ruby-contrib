@@ -6,8 +6,6 @@
 
 source 'https://rubygems.org'
 
-gem 'opentelemetry-sdk-experimental', git: 'https://github.com/open-telemetry/opentelemetry-ruby.git', glob: 'sdk_experimental/*.gemspec', branch: 'main'
-
 gemspec
 group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
