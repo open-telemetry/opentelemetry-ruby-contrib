@@ -4,6 +4,7 @@
 
 * ADDED: Bump minimum gem versions for opentelemetry-instrumentation-all 
 * ADDED: Instrumentation for racecar 
+* CHANGED: Update rails instrumentation
 
 ### v0.27.0 / 2022-10-14
 
