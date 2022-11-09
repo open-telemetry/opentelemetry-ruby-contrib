@@ -101,6 +101,7 @@ services:
       - .:/app:cached
       - bundle:/bundle
       - postgres_socket:/tmp
+      - postgres_socket:/var/run/postgresql
 
   ex-instrumentation-net-http:
     <<: *base
