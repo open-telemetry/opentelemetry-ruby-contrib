@@ -12,7 +12,7 @@ Bundler.require
 ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
   # Uses the experimental ResponseTextMapPropagator option
-  c.use 'OpenTelemetry::Instrumentation::Rack', { response_propagator: [OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new] }
+  c.use 'OpenTelemetry::Instrumentation::Rack', { response_propagators: [OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new] }
 end
 
 # setup fake rack application:
