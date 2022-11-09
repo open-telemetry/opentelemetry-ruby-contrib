@@ -311,23 +311,15 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    describe '#first_in_list' do
-      it 'returns complete item if passed a string' do
-        result = client.send(:first_in_list, 'one')
+    describe 'when using a database socket' do
+      let(:host) { nil }
+      let(:port) { nil }
 
-        _(result).must_equal 'one'
-      end
+      it 'sets empty span attributes for host and port' do
+        client.query('SELECT 1')
 
-      it 'returns first item if passed a comma-separated string' do
-        result = client.send(:first_in_list, 'one,two')
-
-        _(result).must_equal 'one'
-      end
-
-      it 'returns nil if passed nil' do
-        result = client.send(:first_in_list, nil)
-
-        _(result).must_be_nil
+        _(span.attributes['net.peer.name']).must_equal ''
+        _(span.attributes['net.peer.port']).must_equal ''
       end
     end
   end unless ENV['OMIT_SERVICES']

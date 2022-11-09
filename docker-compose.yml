@@ -95,7 +95,12 @@ services:
       - TEST_POSTGRES_DB=postgres
     depends_on:
       - postgres
+    tmpfs: []
     working_dir: /app/instrumentation/pg/
+    volumes:
+      - .:/app:cached
+      - bundle:/bundle
+      - postgres_socket:/tmp
 
   ex-instrumentation-net-http:
     <<: *base
@@ -161,6 +166,8 @@ services:
       - "5432"
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_socket:/var/run/postgresql
 
   redis:
     image: bitnami/redis:6.2
@@ -224,3 +231,4 @@ services:
 volumes:
   bundle:
   redis_data:
+  postgres_socket:
