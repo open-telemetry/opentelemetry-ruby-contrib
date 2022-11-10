@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Instrumentation
-    module Rails
-      VERSION = '0.23.1'
+    module Racecar
+      VERSION = '0.1.0'
     end
   end
 end
