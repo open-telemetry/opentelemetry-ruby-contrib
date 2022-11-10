@@ -25,6 +25,4 @@ builder = Rack::Builder.app do
 end
 
 # demonstrate tracing (span output to console):
-res = Rack::MockRequest.new(builder).get('/')
-puts res
-puts res.headers
+puts Rack::MockRequest.new(builder).get('/')

@@ -4,14 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# This uses the response_propagators option. ResponseTextMapPropagator is from the opentelemetry-sdk-experimental gem
 require 'rubygems'
 require 'bundler/setup'
 
 Bundler.require
 
 ENV['OTEL_TRACES_EXPORTER'] = 'console'
-OpenTelemetry::SDK.configure do |c|
-  # Uses the experimental ResponseTextMapPropagator option
+OpenTelemetry::SDK.configure do |c
   c.use 'OpenTelemetry::Instrumentation::Rack', { response_propagators: [OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new] }
 end
 
