@@ -2,7 +2,7 @@
 
 ### v0.22.2 / 2022-11-10
 
-* FIXED: Safeguard against host being nil 
+* FIXED: Safeguard against host being nil
 
 ### v0.22.1 / 2022-10-27
 
