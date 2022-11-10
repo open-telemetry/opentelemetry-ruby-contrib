@@ -315,11 +315,33 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       let(:host) { nil }
       let(:port) { nil }
 
-      it 'sets empty span attributes for host and port' do
+      it 'sets attributes for the socket directory and family' do
         client.query('SELECT 1')
 
-        _(span.attributes['net.peer.name']).must_equal ''
-        _(span.attributes['net.peer.port']).must_equal ''
+        _(span.attributes['net.peer.name']).must_match %r{^/}
+        _(span.attributes['net.peer.port']).must_be_nil
+        _(span.attributes['net.sock.family']).must_equal 'unix'
+      end
+    end
+
+    describe 'when connection has multiple hosts' do
+      before { skip 'requires libpq >= 10.0' if ::PG.library_version < 10_00_00 } # rubocop:disable Style/NumericLiterals
+
+      let(:client) do
+        ::PG::Connection.open(
+          host: ['nowhere.', host].join(','),
+          port: ['20823', port].join(','),
+          user: user,
+          dbname: dbname,
+          password: password
+        )
+      end
+
+      it 'sets attributes of the active connection' do
+        client.query('SELECT 1')
+
+        _(span.attributes['net.peer.name']).must_equal host
+        _(span.attributes['net.peer.port']).must_equal port if ::PG.const_defined?('DEF_PORT')
       end
     end
   end unless ENV['OMIT_SERVICES']
