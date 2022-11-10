@@ -135,3 +135,5 @@ jobs:
         ports:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=5s --health-timeout=2s --health-retries=3
+        volumes:
+          - "/var/run/postgresql:/var/run/postgresql"
