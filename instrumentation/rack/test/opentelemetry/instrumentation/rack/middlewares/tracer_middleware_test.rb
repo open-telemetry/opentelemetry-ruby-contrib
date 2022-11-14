@@ -337,9 +337,10 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
 
       let(:config) { default_config.merge(response_propagators: [MockPropagator.new]) }
 
-      it 'handles the error gracefully' do
+      it 'leads to application errors when there are exceptions' do
         res = Rack::MockRequest.new(rack_builder).get('/ping', env)
         _(res.headers).wont_include('traceresponse')
+        _(res.status).must_equal(500)
       end
     end
   end
