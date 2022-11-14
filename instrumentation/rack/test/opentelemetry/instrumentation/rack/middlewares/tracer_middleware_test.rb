@@ -312,12 +312,34 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
   end
 
   describe 'config[:response_propagators]' do
+    describe 'with default options' do
+      it 'does not inject the traceresponse header' do
+        res = Rack::MockRequest.new(rack_builder).get('/ping', env)
+        _(res.headers).wont_include('traceresponse')
+      end
+    end
+
     describe 'with ResponseTextMapPropagator' do
       let(:config) { default_config.merge(response_propagators: [OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new]) }
 
       it 'injects the traceresponse header' do
         res = Rack::MockRequest.new(rack_builder).get('/ping', env)
         _(res.headers).must_include('traceresponse')
+      end
+    end
+
+    describe 'propagator throws' do
+      class MockPropagator < OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator
+        def inject(carrier)
+          raise 'Injection failed'
+        end
+      end
+
+      let(:config) { default_config.merge(response_propagators: [MockPropagator.new]) }
+
+      it 'handles the error gracefully' do
+        res = Rack::MockRequest.new(rack_builder).get('/ping', env)
+        _(res.headers).wont_include('traceresponse')
       end
     end
   end
