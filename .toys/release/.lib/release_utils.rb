@@ -326,7 +326,7 @@ class ReleaseUtils
       return ["Failed to obtain GitHub check results for #{ref}"] unless result.success?
       checks = ::JSON.parse(result.captured_out)["check_runs"]
       results << "No GitHub checks found for #{ref}" if checks.empty?
-      checks.each_with_index do |check|
+      checks.each do |check|
         name = check["name"]
         next if release_jobs_regexp.match(name) || !required_checks_regexp.match(name)
         if all_checks[name]
