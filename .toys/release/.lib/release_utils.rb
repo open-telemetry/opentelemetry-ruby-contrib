@@ -313,6 +313,8 @@ class ReleaseUtils
                   out: :capture, e: false)
     return ["Failed to obtain GitHub check results for #{ref}"] unless result.success?
     total_count = ::JSON.parse(result.captured_out)["total_count"]
+    # 30 is the default page size for github api call returns
+    # https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
     pages = (total_count / 30.0).ceil
     all_checks = {}
     results = []
