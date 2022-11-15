@@ -2,7 +2,7 @@
 
 ### v0.22.0 / 2022-11-15
 
-* ADDED: Add experimental traceresponse propagator to Rack instrumentation 
+* ADDED: Add experimental traceresponse propagator to Rack instrumentation
 
 ### v0.21.1 / 2022-10-04
 
