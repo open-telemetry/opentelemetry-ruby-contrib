@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.22.0 / 2022-11-16
+
+* ADDED: Add experimental traceresponse propagator to Rack instrumentation
+
 ### v0.21.1 / 2022-10-04
 
 * FIXED: Bring http.request.header and http.response.header in line with semconv
