@@ -134,6 +134,10 @@ services:
     command: ./start_server.sh
     working_dir: /app/instrumentation/sinatra/example
 
+  ex-instrumentation-hanami:
+    <<: *base
+    working_dir: /app/instrumentation/hanami/example
+
   mongo:
     image: mongo:4.4
     expose:

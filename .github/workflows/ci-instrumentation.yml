@@ -31,6 +31,7 @@ jobs:
           - excon
           - faraday
           - graphql
+          - hanami
           - http
           - http_client
           - koala

@@ -132,6 +132,10 @@ gems:
     directory: instrumentation/faraday
     version_constant: [OpenTelemetry, Instrumentation, Faraday, VERSION]
 
+  - name: opentelemetry-instrumentation-hanami
+    directory: instrumentation/hanami
+    version_constant: [OpenTelemetry, Instrumentation, Hanami, VERSION]
+
   - name: opentelemetry-instrumentation-mongo
     directory: instrumentation/mongo
     version_constant: [OpenTelemetry, Instrumentation, Mongo, VERSION]

@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'hanami-2.0.0.beta3' do
+  gem 'hanami', '2.0.0.beta3'
+end
