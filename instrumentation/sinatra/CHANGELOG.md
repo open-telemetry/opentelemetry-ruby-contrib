@@ -2,7 +2,7 @@
 
 ### v0.21.1 / 2022-11-16
 
-* (No significant changes)
+* FIXED: Loosen dependency on Rack
 
 ### v0.21.0 / 2022-10-12
 
