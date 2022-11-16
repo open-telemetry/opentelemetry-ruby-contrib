@@ -310,5 +310,17 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_be_nil
       end
     end
+
+    describe 'when using a database socket' do
+      let(:host) { nil }
+      let(:port) { nil }
+
+      it 'sets empty span attributes for host and port' do
+        client.query('SELECT 1')
+
+        _(span.attributes['net.peer.name']).must_equal ''
+        _(span.attributes['net.peer.port']).must_equal ''
+      end
+    end
   end unless ENV['OMIT_SERVICES']
 end
