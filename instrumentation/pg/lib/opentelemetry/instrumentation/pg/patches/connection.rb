@@ -166,12 +166,12 @@ module OpenTelemetry
           def transport_port
             # The port method can fail in older versions of the gem. It is
             # accurate and safe to use when the DEF_PGPORT constant is defined.
-            return port.to_s if defined?(::PG::DEF_PGPORT)
+            return port if defined?(::PG::DEF_PGPORT)
 
             # As a fallback, we can use the port of the parsed connection
             # string when there is exactly one.
             p = conninfo_hash[:port]
-            return p unless p.nil? || p.empty? || p.include?(',')
+            return p.to_i unless p.nil? || p.empty? || p.include?(',')
           end
         end
       end

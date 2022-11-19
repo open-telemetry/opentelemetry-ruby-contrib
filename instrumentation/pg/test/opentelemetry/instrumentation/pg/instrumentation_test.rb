@@ -114,7 +114,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_equal 'SELECT 1'
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -128,7 +128,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_equal 'SELECT $1 AS a'
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -143,7 +143,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.operation']).must_equal 'PREPARE'
         _(span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -159,7 +159,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(last_span.attributes['db.statement']).must_equal 'SELECT $1 AS a'
         _(last_span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo'
         _(last_span.attributes['net.peer.name']).must_equal host.to_s
-        _(last_span.attributes['net.peer.port']).must_equal port.to_s
+        _(last_span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -173,7 +173,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_equal 'SELECT 1'
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -189,7 +189,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(last_span.attributes['db.statement']).must_be_nil
       _(last_span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo0'
       _(last_span.attributes['net.peer.name']).must_equal host.to_s
-      _(last_span.attributes['net.peer.port']).must_equal port.to_s
+      _(last_span.attributes['net.peer.port']).must_equal port.to_i
     end
 
     it 'after error' do
@@ -203,7 +203,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(span.attributes['db.statement']).must_equal 'SELECT INVALID'
       _(span.attributes['db.operation']).must_equal 'SELECT'
       _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_i
 
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
@@ -226,7 +226,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(span.attributes['db.statement']).must_equal explain_sql
       _(span.attributes['db.operation']).must_equal 'EXPLAIN'
       _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_i
     end
 
     it 'uses database name as span.name fallback with invalid sql' do
@@ -240,7 +240,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(span.attributes['db.statement']).must_equal 'DESELECT 1'
       _(span.attributes['db.operation']).must_be_nil
       _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_i
 
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
@@ -267,7 +267,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_equal obfuscated_sql
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -285,7 +285,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.name).must_equal 'SELECT postgres'
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
 
         _(span.attributes['db.statement']).must_be_nil
       end
@@ -305,7 +305,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.name).must_equal 'SELECT postgres'
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
 
         _(span.attributes['db.statement']).must_be_nil
       end
@@ -341,7 +341,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         client.query('SELECT 1')
 
         _(span.attributes['net.peer.name']).must_equal host
-        _(span.attributes['net.peer.port']).must_equal port if ::PG.const_defined?('DEF_PORT')
+        _(span.attributes['net.peer.port']).must_equal port.to_i if ::PG.const_defined?('DEF_PORT')
       end
     end
   end unless ENV['OMIT_SERVICES']
