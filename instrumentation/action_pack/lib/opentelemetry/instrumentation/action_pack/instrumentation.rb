@@ -15,6 +15,7 @@ module OpenTelemetry
           require_railtie
           require_dependencies
           patch
+          register_event_handler
         end
 
         present do
@@ -38,8 +39,13 @@ module OpenTelemetry
           ::ActionController::Metal.prepend(Patches::ActionController::Metal)
         end
 
+        def register_event_handler
+          ActionControllerSubscriber.attach_to(:action_controller)
+        end
+
         def require_dependencies
           require_relative 'patches/action_controller/metal'
+          require_relative 'action_controller_subscriber'
         end
 
         def require_railtie

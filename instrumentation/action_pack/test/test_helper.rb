@@ -30,3 +30,11 @@ end
 # specifically testing behaviour with different initialization configs.
 DEFAULT_RAILS_APP = AppConfig.initialize_app
 ::Rails.application = DEFAULT_RAILS_APP
+
+def below_rails(version, &block)
+  block.call if Gem::Version.new(::Rails.version) < Gem::Version.new(version)
+end
+
+def equal_or_above_rails(version, &block)
+  block.call if Gem::Version.new(::Rails.version) >= Gem::Version.new(version)
+end

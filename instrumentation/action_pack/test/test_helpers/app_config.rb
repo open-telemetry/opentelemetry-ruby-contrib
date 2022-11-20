@@ -6,9 +6,21 @@
 
 class Application < Rails::Application; end
 require 'action_controller/railtie'
+require 'active_record'
+
+require 'active_record/railties/controller_runtime'
+ActiveSupport.on_load(:action_controller) do
+  include ActiveRecord::Railties::ControllerRuntime
+end
+
 require_relative 'middlewares'
 require_relative 'controllers'
 require_relative 'routes'
+
+ActiveRecord::Base.establish_connection(
+  adapter: 'sqlite3',
+  database: 'db/development.sqlite3'
+)
 
 module AppConfig
   extend self

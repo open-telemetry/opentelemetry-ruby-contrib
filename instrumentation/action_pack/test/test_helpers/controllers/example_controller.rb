@@ -19,6 +19,11 @@ class ExampleController < ActionController::Base
     render plain: 'created new item'
   end
 
+  def query
+    ActiveRecord::Base.connection.execute('select 1')
+    render plain: 'make query'
+  end
+
   def internal_server_error
     raise :internal_server_error
   end
