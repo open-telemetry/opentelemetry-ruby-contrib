@@ -20,12 +20,9 @@ To use the instrumentation, call `use` with the name of the instrumentation:
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Gruf', {
     peer_service: "Example",
-    grpc_ignore_methods: [],
-    log_requests_on_server: false,
-    log_requests_on_client: false,
-    span_name_server: proc { |_req, _peer_service| "Example" },
-    span_name_client: proc { |_context, _peer_service| "Example" },
-    exception_message: :full,
+    grpc_ignore_methods_on_client: [],
+    grpc_ignore_methods_on_server: [],
+    allowed_metadata_headers: [],
   }
 end
 ```

@@ -6,9 +6,6 @@
 
 require 'test_helper'
 
-require_relative '../../../../../lib/opentelemetry/instrumentation/gruf'
-require_relative '../../../../../lib/opentelemetry/instrumentation/gruf/interceptors/server'
-
 class TestServerInterceptor < OpenTelemetry::Instrumentation::Gruf::Interceptors::Server
   def initialize(request, error, options: {})
     super(request, error, options)
@@ -21,27 +18,11 @@ class TestServerInterceptor < OpenTelemetry::Instrumentation::Gruf::Interceptors
   end
 end
 
-class TestService
-  include GRPC::GenericService
-
-  self.service_name = 'rpc.TestService'
-end
-
 class RpcTestCall
   attr_reader :metadata
 
   def initialize(parent: nil)
     @metadata = parent ? { 'traceparent' => parent } : {}
-  end
-end
-
-Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message 'rpc.Thing' do
-    optional :id, :uint32, 1
-    optional :name, :string, 2
-  end
-  add_message 'rpc.GetThingResponse' do
-    optional :thing, :message, 1, 'rpc.Thing'
   end
 end
 
@@ -68,12 +49,11 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Server do
 
     let(:request) do
       ::Gruf::Controllers::Request.new(
-        method_key: :get_thing,
-        service: TestService,
+        method_key: :example,
+        service: ::Proto::Example::ExampleAPI::Service,
         rpc_desc: :description,
         active_call: active_call,
-        message: Google::Protobuf::DescriptorPool.generated_pool
-                                                 .lookup('rpc.GetThingResponse').msgclass.new
+        message: ::Proto::Example::ExampleRequest.new
       )
     end
 
@@ -81,14 +61,13 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Server do
       it do
         expect(server_call.call(&block)).must_equal('Test Server Call')
         expect(exporter.finished_spans.size).must_equal(1)
-        expect(span.attributes['component']).must_equal('gRPC')
-        expect(span.attributes['span.kind']).must_equal('server')
-        expect(span.attributes['grpc.method_type']).must_equal('request_response')
+        expect(span.attributes['rpc.system']).must_equal('grpc')
+        expect(span.kind).must_equal(:server)
       end
     end
 
     describe 'with grpc_ignore_methods' do
-      let(:config) { { grpc_ignore_methods: ['test_service.get_thing'] } }
+      let(:config) { { grpc_ignore_methods_on_server: ['proto.example.example_api.example'] } }
 
       it do
         expect(server_call.call(&block)).must_equal('Test Server Call')
@@ -104,19 +83,6 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Server do
           server_call.call(&block)
         end
         expect(exporter.finished_spans.size).must_equal(1)
-      end
-
-      describe 'with exception_message is :full' do
-        let(:config) { { exception_message: :full } }
-
-        it 'exception with stacktrace' do
-          assert_raises StandardError do
-            server_call.call(&block)
-          end
-          expect(exporter.finished_spans.size).must_equal(1)
-          expect(span.events.size).must_equal(2)
-          expect(span.events.last.attributes["exception.stacktrace"].nil?).must_equal(false)
-        end
       end
     end
 
@@ -135,26 +101,6 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Server do
         expect(server_call.call(&block)).must_equal('Test Server Call')
         expect(exporter.finished_spans.size).must_equal(2)
         expect(span.hex_trace_id).must_equal(parent_span.hex_trace_id)
-      end
-    end
-
-    describe 'when span_name_server is present' do
-      let(:config) { { span_name_server: proc { |request| request.method_key.to_s } } }
-
-      it 'span name by span_name_client' do
-        server_call.call(&block)
-
-        expect(span.name).must_equal('get_thing')
-      end
-    end
-
-    describe 'when log_requests_on_server is false' do
-      let(:config) { { log_requests_on_server: false } }
-
-      it 'logs is empty' do
-        server_call.call(&block)
-
-        assert_nil(span.events)
       end
     end
   end

@@ -6,8 +6,6 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/gruf'
-
 describe OpenTelemetry::Instrumentation::Gruf do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Gruf::Instrumentation.instance }
 

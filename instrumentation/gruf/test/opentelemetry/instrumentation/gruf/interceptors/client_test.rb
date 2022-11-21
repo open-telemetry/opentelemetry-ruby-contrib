@@ -6,19 +6,6 @@
 
 require 'test_helper'
 
-require_relative '../../../../../lib/opentelemetry/instrumentation/gruf'
-require_relative '../../../../../lib/opentelemetry/instrumentation/gruf/interceptors/client'
-
-Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message 'rpc.Request' do
-    optional :id, :uint32, 1
-    optional :name, :string, 2
-  end
-  add_message 'rpc.Response' do
-    optional :thing, :message, 1, 'rpc.Request'
-  end
-end
-
 describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Client do
   before do
     instrumentation.install(config)
@@ -34,18 +21,19 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Client do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Gruf::Instrumentation.instance }
   let(:span) { exporter.finished_spans.first }
   let(:requests) do
-    [::Google::Protobuf::DescriptorPool.generated_pool.lookup('rpc.Request').msgclass.new]
+    [::Proto::Example::ExampleRequest.new]
   end
   let(:request_context) do
     Gruf::Outbound::RequestContext.new(
       type: :request_response,
       requests: requests,
       call: proc { true },
-      method: '/rpc.Request',
+      method: '/proto.example.ExampleAPI/Example',
       metadata: { foo: 'bar' }
     )
   end
-  let(:block) { proc { 'test' } }
+  let(:response) { ::Proto::Example::ExampleResponse.new(response_name: "Done") }
+  let(:block) { proc { response } }
   let(:client_call) do
     OpenTelemetry::Instrumentation::Gruf::Interceptors::Client
       .new.call(request_context: request_context, &block)
@@ -53,14 +41,35 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Client do
 
   describe 'success request' do
     it 'gets response and finish span' do
-      expect(client_call).must_equal 'test'
+      expect(client_call).must_equal response
       expect(exporter.finished_spans.size).must_equal(1)
-      expect(span.attributes['component']).must_equal('gRPC')
-      expect(span.attributes['span.kind']).must_equal('client')
-      expect(span.attributes['grpc.method_type']).must_equal('request_response')
-      expect(span.events.size).must_equal(1)
+      expect(span.kind).must_equal(:client)
+      expect(span.attributes['rpc.system']).must_equal('grpc')
+      expect(span.attributes['rpc.type']).must_equal('request_response')
+    end
+
+    describe 'with grpc_ignore_methods' do
+      let(:config) { { grpc_ignore_methods_on_client: ['proto.example.example_api.example'] } }
+
+      it do
+        client_call
+
+        expect(exporter.finished_spans.size).must_equal(0)
+      end
+    end
+
+    describe 'with allowed_metadata_headers' do
+      let(:config) { { allowed_metadata_headers: [:foo] } }
+
+      it do
+        client_call
+
+        expect(exporter.finished_spans.size).must_equal(1)
+        expect(span.attributes['rpc.request.metadata.foo']).must_equal("bar")
+      end
     end
   end
+
   describe 'raise error' do
     let(:block) { proc { raise StandardError } }
 
@@ -69,43 +78,11 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Client do
         client_call
       end
       expect(exporter.finished_spans.size).must_equal(1)
-      expect(span.attributes['component']).must_equal('gRPC')
-      expect(span.attributes['span.kind']).must_equal('client')
-      expect(span.attributes['grpc.method_type']).must_equal('request_response')
-      expect(span.events.size).must_equal(2)
-    end
-
-    describe 'with exception_message is :full' do
-      let(:config) { { exception_message: :full } }
-
-      it 'exception with stacktrace' do
-        assert_raises StandardError do
-          client_call
-        end
-        expect(exporter.finished_spans.size).must_equal(1)
-        expect(span.events.size).must_equal(2)
-        expect(span.events.last.attributes["exception.stacktrace"].nil?).must_equal(false)
-      end
-    end
-  end
-
-  describe 'when span_name_client is present' do
-    let(:config) { { span_name_client: proc { |context| "#{context.method} + custom" } } }
-
-    it 'span name by span_name_client' do
-      client_call
-
-      expect(span.name).must_equal('/rpc.Request + custom')
-    end
-  end
-
-  describe 'when log_requests_on_client is false' do
-    let(:config) { { log_requests_on_client: false } }
-
-    it 'logs is empty' do
-      client_call
-
-      assert_nil(span.events)
+      expect(span.kind).must_equal(:client)
+      expect(span.attributes['rpc.system']).must_equal('grpc')
+      expect(span.attributes['rpc.type']).must_equal('request_response')
+      expect(span.events.size).must_equal(1)
+      expect(span.events.first.name).must_equal("exception")
     end
   end
 end

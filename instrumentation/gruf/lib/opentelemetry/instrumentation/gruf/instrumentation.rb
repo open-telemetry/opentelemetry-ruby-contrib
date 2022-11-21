@@ -14,12 +14,9 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
-        option :grpc_ignore_methods, default: [], validate: :array
-        option :log_requests_on_server, default: true, validate: :boolean
-        option :log_requests_on_client, default: true, validate: :boolean
-        option :span_name_server, default: nil, validate: :callable
-        option :span_name_client, default: nil, validate: :callable
-        option :exception_message, default: :short, validate: %i[short full]
+        option :grpc_ignore_methods_on_client, default: [], validate: :array
+        option :grpc_ignore_methods_on_server, default: [], validate: :array
+        option :allowed_metadata_headers, default: [], validate: :array
 
         present do
           defined?(::Gruf)

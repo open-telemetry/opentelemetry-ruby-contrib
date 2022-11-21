@@ -10,7 +10,12 @@ require_relative 'base'
 ENV['OTEL_TRACES_EXPORTER'] = 'console'
 # Configure OpenTelemetry::Instrumentation::Gruf
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Gruf'
+  c.use 'OpenTelemetry::Instrumentation::Gruf', {
+    peer_service: "Example",
+    grpc_ignore_methods_on_client: [],
+    grpc_ignore_methods_on_server: [],
+    allowed_metadata_headers: [],
+  }
 end
 
 # Configure Gruf::Server
@@ -28,7 +33,8 @@ Thread.new do
  client = Gruf::Client.new(
    service: Proto::Example::ExampleAPI, options: {}, client_options: client_options
  )
- client.call(:Example, { id: 1, name: "Example"})
+ metadata = { project_name: "Example project", authorization: "authorization_token" }
+ client.call(:Example, { id: 1, name: "Example"}, metadata)
 
  # Kill process after 3 seconds
  sleep 3

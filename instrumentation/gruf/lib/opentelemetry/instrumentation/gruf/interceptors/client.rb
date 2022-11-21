@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/trace/status'
 
 module OpenTelemetry
   module Instrumentation
@@ -13,34 +12,32 @@ module OpenTelemetry
         class Client < ::Gruf::Interceptors::ClientInterceptor
           # rubocop:disable Metrics/MethodLength
           def call(request_context:)
-            metadata = request_context.metadata
+            return yield if instrumentation_config.blank?
 
-            attributes = {
-              'component' => 'gRPC',
-              'span.kind' => 'client',
-              'grpc.method_type' => 'request_response',
-              'grpc.headers' => JSON.dump(metadata)
-            }
-            # rubocop:disable Style/IfUnlessModifier
-            if instrumentation_config[:peer_service]
-              attributes['peer.service'] = instrumentation_config[:peer_service]
+            service = request_context.method.split("/")[1]
+            method = request_context.method_name
+            method_name_with_service = [service.underscore, method].join(".").downcase
+
+            if instrumentation_config[:grpc_ignore_methods_on_client].include?(method_name_with_service)
+              return yield
             end
-            # rubocop:enable Style/IfUnlessModifier
 
-            in_span(
-              create_span_name(request_context, attributes['peer.service']),
-              attributes: attributes
-            ) do |span|
+            metadata = request_context.metadata
+            attributes = {
+              'rpc.system' => 'grpc',
+              'rpc.service' => service,
+              'rpc.method' => method,
+              'rpc.type' => request_context.type.to_s,
+              'peer.service' => instrumentation_config[:peer_service],
+            }.compact
+
+            attributes.merge!(allowed_metadata_headers(metadata))
+
+            instrumentation_tracer.in_span(request_context.method.to_s,
+              attributes: attributes,
+              kind: :client,
+            ) do
               OpenTelemetry.propagation.inject(metadata)
-              if instrumentation_config[:log_requests_on_client]
-                span.add_event(
-                  'request',
-                  attributes: {
-                    'data' => JSON.dump(request_context.requests.map(&:to_h))
-                  }
-                )
-              end
-
               yield
             end
           end
@@ -48,42 +45,15 @@ module OpenTelemetry
 
           private
 
-          def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, &block)
-            span = nil
-            span = instrumentation_tracer.start_span(
-              name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind
-            )
-            Trace.with_span(span, &block)
-          rescue Exception => e # rubocop:disable Lint/RescueException
-            record_exception(span, e)
-            span&.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
-            raise e
-          ensure
-            span&.finish
-          end
-
-          def record_exception(span, exception)
-            if instrumentation_config[:exception_message] == :full
-              span&.record_exception(exception)
-            else
-              event_attributes = {
-                'exception.type' => exception.class.to_s,
-                'exception.message' => exception.message,
-              }
-              span&.add_event('exception', attributes: event_attributes)
+          def allowed_metadata_headers(metadata)
+            build_key = -> (attribute) { "rpc.request.metadata.#{attribute}" }
+            metadata.each_with_object({}) do |(k, v), h|
+              h[build_key.call(k)] = v if instrumentation_config[:allowed_metadata_headers].include?(k.to_sym)
             end
           end
 
           def instrumentation_config
             Gruf::Instrumentation.instance.config
-          end
-
-          def create_span_name(request_context, peer_service)
-            if (implementation = instrumentation_config[:span_name_client])
-              implementation.call(request_context, peer_service)
-            else
-              request_context.method.to_s
-            end
           end
 
           def instrumentation_tracer
