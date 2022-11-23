@@ -68,6 +68,16 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(span.attributes['peer.service']).must_equal 'readonly:postgres'
     end
 
+    describe 'when trace_root_spans is false' do
+      let(:config) { { trace_root_spans: false } }
+
+      it 'does not create new span' do
+        client.query('SELECT 1')
+
+        _(exporter.finished_spans.size).must_equal 0
+      end
+    end
+
     describe '.attributes' do
       let(:attributes) do
         {

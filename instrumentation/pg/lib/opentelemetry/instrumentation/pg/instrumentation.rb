@@ -44,6 +44,7 @@ module OpenTelemetry
         option :enable_sql_obfuscation, default: false, validate: :boolean
         option :enable_statement_attribute, default: true, validate: :boolean
         option :db_statement, default: :include, validate: %I[omit include obfuscate]
+        option :trace_root_spans, default: true, validate: :boolean
 
         private
 

@@ -15,6 +15,8 @@ module OpenTelemetry
         module Connection # rubocop:disable Metrics/ModuleLength
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args|
+              return super(*args) unless config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
+
               span_name, attrs = span_attrs(:query, *args)
               tracer.in_span(span_name, attributes: attrs, kind: :client) do
                 super(*args)
@@ -24,6 +26,8 @@ module OpenTelemetry
 
           PG::Constants::PREPARE_ISH_METHODS.each do |method|
             define_method method do |*args|
+              return super(*args) unless config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
+
               span_name, attrs = span_attrs(:prepare, *args)
               tracer.in_span(span_name, attributes: attrs, kind: :client) do
                 super(*args)
@@ -33,6 +37,8 @@ module OpenTelemetry
 
           PG::Constants::EXEC_PREPARED_ISH_METHODS.each do |method|
             define_method method do |*args|
+              return super(*args) unless config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
+
               span_name, attrs = span_attrs(:execute, *args)
               tracer.in_span(span_name, attributes: attrs, kind: :client) do
                 super(*args)
