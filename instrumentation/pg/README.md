@@ -54,6 +54,7 @@ OpenTelemetry::SDK.configure do |c|
     # semantic attribute. Optionally, you may disable the inclusion of this attribute entirely by
     # setting this option to :omit or sanitize the attribute by setting to :obfuscate
     db_statement: :include,
+    trace_root_spans: false,
   }
 end
 ```
