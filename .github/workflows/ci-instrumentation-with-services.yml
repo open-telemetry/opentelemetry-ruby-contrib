@@ -76,7 +76,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby"
+          ruby: "jruby-9.3.9.0"
     services:
       zookeeper:
         image: confluentinc/cp-zookeeper:latest
