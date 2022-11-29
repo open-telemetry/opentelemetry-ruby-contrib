@@ -133,13 +133,6 @@ module OpenTelemetry
             conninfo_hash[:dbname]&.to_s
           end
 
-
-          # NOTE: caught a error: undefined local variable or method `conninfo_hash' for PG::Connection
-          # HACK for fix it
-          def conninfo_hash
-            super || {}
-          end
-
           def first_in_list(item)
             if (idx = item.index(','))
               item[0...idx]
