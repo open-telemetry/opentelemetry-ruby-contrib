@@ -97,7 +97,7 @@ module OpenTelemetry
           end
 
           def span_name(operation)
-            [validated_operation(operation), database_name].compact.join(' ')
+            [validated_operation(operation), db].compact.join(' ')
           end
 
           def validated_operation(operation)
@@ -123,42 +123,55 @@ module OpenTelemetry
             @generated_postgres_regex ||= Regexp.union(PG::Constants::POSTGRES_COMPONENTS.map { |component| PG::Constants::COMPONENTS_REGEX_MAP[component] })
           end
 
-          def database_name
-            conninfo_hash[:dbname]&.to_s
-          end
-
-          def first_in_list(item)
-            return unless item
-
-            if (idx = item.index(','))
-              item[0...idx]
-            else
-              item
-            end
-          end
-
           def client_attributes
             attributes = {
               'db.system' => 'postgresql',
-              'db.user' => conninfo_hash[:user]&.to_s,
-              'db.name' => database_name,
-              'net.peer.name' => first_in_list(conninfo_hash[:host]&.to_s)
+              'db.user' => user,
+              'db.name' => db
             }
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
             attributes.merge(transport_attrs).reject { |_, v| v.nil? }
           end
 
+          def transport_addr
+            # The hostaddr method is available when the gem is built against
+            # a recent version of libpq.
+            return hostaddr if defined?(hostaddr)
+
+            # As a fallback, we can use the hostaddr of the parsed connection
+            # string when there is only one. Some older versions of libpq allow
+            # multiple without any way to discern which is presently connected.
+            addr = conninfo_hash[:hostaddr]
+            return addr unless addr&.include?(',')
+          end
+
           def transport_attrs
-            if conninfo_hash[:host]&.start_with?('/')
-              { 'net.transport' => 'Unix' }
+            h = host
+            if h&.start_with?('/')
+              {
+                'net.sock.family' => 'unix',
+                'net.peer.name' => h
+              }
             else
               {
-                'net.transport' => 'IP.TCP',
-                'net.peer.ip' => conninfo_hash[:hostaddr]&.to_s,
-                'net.peer.port' => first_in_list(conninfo_hash[:port]&.to_s)
+                'net.transport' => 'ip_tcp',
+                'net.peer.name' => h,
+                'net.peer.ip' => transport_addr,
+                'net.peer.port' => transport_port
               }
             end
+          end
+
+          def transport_port
+            # The port method can fail in older versions of the gem. It is
+            # accurate and safe to use when the DEF_PGPORT constant is defined.
+            return port if defined?(::PG::DEF_PGPORT)
+
+            # As a fallback, we can use the port of the parsed connection
+            # string when there is exactly one.
+            p = conninfo_hash[:port]
+            return p.to_i unless p.nil? || p.empty? || p.include?(',')
           end
         end
       end
