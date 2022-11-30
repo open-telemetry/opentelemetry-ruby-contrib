@@ -150,6 +150,18 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         _(exporter.finished_spans.size).must_equal 0
       end
 
+      it 'does not create a span on connect when request ignored using a regexp' do
+        WebMock.allow_net_connect!
+
+        uri = URI.parse('http://bazqux.com')
+        Net::HTTP.start(uri.host, uri.port) do |http|
+          http.get('/')
+        end
+        _(exporter.finished_spans.size).must_equal 0
+      ensure
+        WebMock.disable_net_connect!
+      end
+
       it 'creates a span for a non-ignored request' do
         ::Net::HTTP.get('example.com', '/body')
         _(exporter.finished_spans.size).must_equal 1
