@@ -65,5 +65,5 @@ def database_name
 end
 
 def que_version
-  Gem.loaded_specs['que'].version
+  @que_version ||= Gem.loaded_specs['que'].version
 end
