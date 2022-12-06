@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.22.3 / 2022-12-06
+
+* FIXED: Use attributes from the active PG connection
+
 ### v0.22.2 / 2022-11-10
 
 * FIXED: Safeguard against host being nil
