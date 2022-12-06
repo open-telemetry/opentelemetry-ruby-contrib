@@ -4,7 +4,7 @@
 
 * BREAKING CHANGE: Remove enable_recognize_route and span_naming options 
 
-* FIXED: Remove enable_recognize_route and span_naming options 
+* FIXED: Remove enable_recognize_route and span_naming options
 
 ### v0.3.2 / 2022-11-16
 
