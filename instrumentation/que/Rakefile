@@ -26,15 +26,3 @@ if RUBY_ENGINE == 'truffleruby'
 else
   task default: %i[test rubocop yard]
 end
-
-task :install_test_deps do
-  sh 'bundle exec appraisal install'
-end
-
-task test_que1: :install_test_deps do
-  sh 'bundle exec appraisal que-1.2 rake test'
-end
-
-task test_que2: :install_test_deps do
-  sh 'bundle exec appraisal que-2.1 rake test'
-end
