@@ -22,7 +22,7 @@ describe OpenTelemetry::Instrumentation::Rails do
 
     _(last_response.body).must_equal 'actually ok'
     _(last_response.ok?).must_equal true
-    _(span.name).must_equal 'GET /ok(.:format)'
+    _(span.name).must_equal 'ExampleController#ok'
     _(span.kind).must_equal :server
     _(span.status.ok?).must_equal true
 
@@ -35,7 +35,6 @@ describe OpenTelemetry::Instrumentation::Rails do
     _(span.attributes['http.target']).must_equal '/ok'
     _(span.attributes['http.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
-    _(span.attributes['http.route']).must_equal '/ok(.:format)'
     _(span.attributes['code.namespace']).must_equal 'ExampleController'
     _(span.attributes['code.function']).must_equal 'ok'
   end
