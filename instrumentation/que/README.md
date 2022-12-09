@@ -65,6 +65,28 @@ The `opentelemetry-instrumentation-que` gem source is [on github][repo-github], 
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
+## Testing the gem locally
+
+To install test dependencies run:
+
+```
+bundle exec appraisal
+```
+
+To run tests on all appraised Que versions, run:
+
+```
+bundle exec appraisal rake test
+```
+
+To run tests with a specific Que version, run:
+
+```
+bundle exec appraisal [que-version] rake test
+```
+
+All appraised Que versions can be found in the [Appraisals][appraisal-file] file.
+
 ## License
 
 The `opentelemetry-instrumentation-que` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
@@ -76,3 +98,4 @@ The `opentelemetry-instrumentation-que` gem is distributed under the Apache 2.0 
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[appraisal-file]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/que/Appraisals
