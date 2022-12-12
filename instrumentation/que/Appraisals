@@ -9,6 +9,6 @@ appraise 'que-1.2' do
 end
 
 appraise 'que-2.1' do
-  ruby '~> 2.7'
+  ruby '>= 2.7'
   gem 'que', '2.1.0'
 end
