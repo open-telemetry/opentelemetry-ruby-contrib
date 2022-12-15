@@ -45,6 +45,8 @@ module OpenTelemetry
 
             # rubocop:disable Metrics/MethodLength
             def connect
+              return super if untraced?
+
               if proxy?
                 conn_address = proxy_address
                 conn_port    = proxy_port
