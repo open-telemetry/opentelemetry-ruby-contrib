@@ -42,6 +42,12 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     _(span.attributes['code.function']).must_equal 'ok'
   end
 
+  it 'handles action name as a symbol when setting code.function' do
+    get 'ok-symbol'
+
+    _(span.attributes['code.function']).must_equal 'ok'
+  end
+
   it 'does not memoize data across requests' do
     get '/ok'
     get '/items/new'

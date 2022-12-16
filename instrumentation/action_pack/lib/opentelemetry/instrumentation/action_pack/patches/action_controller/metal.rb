@@ -18,7 +18,7 @@ module OpenTelemetry
 
                 attributes_to_append = {
                   OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => self.class.name,
-                  OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => name
+                  OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(name)
                 }
                 attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = request.filtered_path if request.filtered_path != request.fullpath
                 rack_span.add_attributes(attributes_to_append)
