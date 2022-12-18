@@ -35,7 +35,7 @@ module OpenTelemetry
             resource_attributes[OpenTelemetry::SemanticConventions::Resource::K8S_POD_NAME] = ENV['HOSTNAME'] || safe_gethostname
             resource_attributes[OpenTelemetry::SemanticConventions::Resource::K8S_NODE_NAME] = gcp_env.lookup_metadata('instance', 'hostname')
 
-            resource_attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_NAME] = ENV['CONTAINER_NAME']
+            resource_attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_NAME] = ENV['CONTAINER_NAME'] if ENV['CONTAINER_NAME']
           end
 
           if gcp_env.knative?

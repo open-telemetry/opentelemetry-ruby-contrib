@@ -19,8 +19,8 @@ Gem::Specification.new do |spec|
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-contrib'
   spec.license     = 'Apache-2.0'
 
-  spec.files = ::Dir.glob('lib/**/*.rb') +
-               ::Dir.glob('*.md') +
+  spec.files = Dir.glob('lib/**/*.rb') +
+               Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6.0'
@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rubocop', '~> 1.3.0'
+  spec.add_development_dependency 'rubocop', '~> 1.41.1'
   spec.add_development_dependency 'simplecov', '~> 0.17'
   spec.add_development_dependency 'webmock', '~> 3.7.6'
   spec.add_development_dependency 'yard', '~> 0.9'
