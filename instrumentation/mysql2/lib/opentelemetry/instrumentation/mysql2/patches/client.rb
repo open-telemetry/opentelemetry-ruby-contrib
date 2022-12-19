@@ -95,7 +95,7 @@ module OpenTelemetry
             %r{'|"|\/\*|\*\/}.match(obfuscated)
           end
 
-          def database_span_name(sql)
+          def database_span_name(sql) # rubocop:disable Metrics/CyclomaticComplexity
             case config[:span_name]
             when :statement_type
               extract_statement_type(sql)
