@@ -139,7 +139,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         client.query('DESELECT 1')
       end.must_raise Mysql2::Error
 
-      _(span.name).must_equal 'mysql.mysql'
+      _(span.name).must_equal 'mysql'
       _(span.attributes['db.system']).must_equal 'mysql'
       _(span.attributes['db.name']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'DESELECT 1'
@@ -219,7 +219,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
           client.query(sql)
         end.must_raise Mysql2::Error
 
-        _(span.name).must_equal 'mysql.mysql'
+        _(span.name).must_equal 'mysql'
         _(span.attributes['db.statement']).must_equal obfuscated_sql
       end
     end
