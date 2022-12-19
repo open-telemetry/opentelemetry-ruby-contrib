@@ -309,6 +309,136 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
           end
         end
       end
+
+      describe 'when span_name is set as statement_type' do
+        it 'sets span name to statement type' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=statement_type') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            expect do
+              client.query(sql)
+            end.must_raise Mysql2::Error
+
+            _(span.name).must_equal 'select'
+          end
+        end
+
+        it 'sets span name to mysql when statement type is not recognized' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=statement_type') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = 'DESELECT 1'
+            expect do
+              client.query(sql)
+            end.must_raise Mysql2::Error
+
+            _(span.name).must_equal 'mysql'
+          end
+        end
+      end
+
+      describe 'when span_name is set as db_name' do
+        it 'sets span name to db name' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_name') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            expect do
+              client.query(sql)
+            end.must_raise Mysql2::Error
+
+            _(span.name).must_equal 'mysql' # TODO: change the db name so we can distinguish it from the default
+          end
+        end
+
+        describe 'when db name is nil' do
+          let(:database) { nil }
+
+          it 'sets span name to mysql' do
+            OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_name') do
+              instrumentation.instance_variable_set(:@installed, false)
+              instrumentation.install
+
+              sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+              expect do
+                client.query(sql)
+              end.must_raise Mysql2::Error
+
+              _(span.name).must_equal 'mysql'
+            end
+          end
+        end
+      end
+
+      describe 'when span_name is set as db_operation_and_name' do
+        it 'sets span name to db operation and name' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            OpenTelemetry::Instrumentation::Mysql2.with_attributes('db.operation' => 'foo') do
+              expect do
+                client.query(sql)
+              end.must_raise Mysql2::Error
+            end
+
+            _(span.name).must_equal 'foo mysql'
+          end
+        end
+
+        it 'sets span name to db name when db.operation is not set' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            expect do
+              client.query(sql)
+            end.must_raise Mysql2::Error
+
+            _(span.name).must_equal 'mysql'
+          end
+        end
+
+        describe 'when db name is nil' do
+          let(:database) { nil }
+
+          it 'sets span name to db operation' do
+            OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
+              instrumentation.instance_variable_set(:@installed, false)
+              instrumentation.install
+  
+              sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+              OpenTelemetry::Instrumentation::Mysql2.with_attributes('db.operation' => 'foo') do
+                expect do
+                  client.query(sql)
+                end.must_raise Mysql2::Error
+              end
+  
+              _(span.name).must_equal 'foo'
+            end
+          end
+
+          it 'sets span name to mysql when db.operation is not set' do
+            OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_name') do
+              instrumentation.instance_variable_set(:@installed, false)
+              instrumentation.install
+
+              sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+              expect do
+                client.query(sql)
+              end.must_raise Mysql2::Error
+
+              _(span.name).must_equal 'mysql'
+            end
+          end
+        end
+      end
     end
   end unless ENV['OMIT_SERVICES']
 end
