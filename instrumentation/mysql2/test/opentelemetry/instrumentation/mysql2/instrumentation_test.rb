@@ -412,14 +412,14 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
             OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
               instrumentation.instance_variable_set(:@installed, false)
               instrumentation.install
-  
+
               sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
               OpenTelemetry::Instrumentation::Mysql2.with_attributes('db.operation' => 'foo') do
                 expect do
                   client.query(sql)
                 end.must_raise Mysql2::Error
               end
-  
+
               _(span.name).must_equal 'foo'
             end
           end
