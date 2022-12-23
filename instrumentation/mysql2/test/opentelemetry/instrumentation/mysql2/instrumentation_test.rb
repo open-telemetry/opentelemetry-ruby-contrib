@@ -178,7 +178,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
         it 'truncates SQL using config limit' do
           sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-          obfuscated_sql = "SELECT * from users where users.id = \nSQL truncated (> #{config[:obfuscation_limit]} characters)"
+          obfuscated_sql = "SELECT * from users where users.id = ...\nSQL truncated (> 10 characters)"
           expect do
             client.query(sql)
           end.must_raise Mysql2::Error

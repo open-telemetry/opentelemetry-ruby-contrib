@@ -109,7 +109,7 @@ module OpenTelemetry
 
             if sql.size > config[:obfuscation_limit]
               truncated_sql = sql[..sql.index(generated_postgres_regex) - 1]
-              return truncated_sql + "\nSQL truncated (> #{config[:obfuscation_limit]} characters)"
+              return truncated_sql + "...\nSQL truncated (> #{config[:obfuscation_limit]} characters)"
             end
 
             # From:
