@@ -269,6 +269,20 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['net.peer.name']).must_equal host.to_s
         _(span.attributes['net.peer.port']).must_equal port.to_i
       end
+
+      describe 'with obfuscation_limit' do
+        let(:config) { { db_statement: :obfuscate, obfuscation_limit: 10 } }
+
+        it 'truncates SQL using config limit' do
+          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+          obfuscated_sql = "SELECT * from users where users.id = \nSQL truncated (> #{config[:obfuscation_limit]} characters)"
+          expect do
+            client.exec(sql)
+          end.must_raise PG::UndefinedTable
+
+          _(span.attributes['db.statement']).must_equal obfuscated_sql
+        end
+      end
     end
 
     describe 'when db_statement is omit' do

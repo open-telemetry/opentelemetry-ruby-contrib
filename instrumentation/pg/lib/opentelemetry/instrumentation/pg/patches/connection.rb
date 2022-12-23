@@ -107,8 +107,10 @@ module OpenTelemetry
           def obfuscate_sql(sql)
             return sql unless config[:db_statement] == :obfuscate
 
-            # Borrowed from opentelemetry-instrumentation-mysql2
-            return 'SQL query too large to remove sensitive data ...' if sql.size > 2000
+            if sql.size > config[:obfuscation_limit]
+              truncated_sql = sql[..sql.index(generated_postgres_regex) - 1]
+              return truncated_sql + "\nSQL truncated (> #{config[:obfuscation_limit]} characters)"
+            end
 
             # From:
             # https://github.com/newrelic/newrelic-ruby-agent/blob/9787095d4b5b2d8fcaf2fdbd964ed07c731a8b6b/lib/new_relic/agent/database/obfuscator.rb
