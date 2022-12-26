@@ -53,7 +53,7 @@ Gemspec/RequireMFA:
 Layout/LineLength:
   Enabled: false
 Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
+  Enabled: true
 Lint/DuplicateBranch:
   Enabled: false
 Lint/EmptyBlock:
