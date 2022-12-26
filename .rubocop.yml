@@ -64,7 +64,9 @@ Style/CollectionCompact:
   Enabled: false
 Style/FetchEnvVar:
   Enabled: false
-Style/HashConversion:
+Style/GlobalStdStream:
+  Enabled: false
+Style/QuotedSymbols:
   Enabled: false
 Style/RedundantConstantBase:
   Enabled: false
