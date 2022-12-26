@@ -86,7 +86,7 @@ module OpenTelemetry
             attrs = { 'db.operation' => validated_operation(operation), 'db.postgresql.prepared_statement_name' => statement_name }
             attrs['db.statement'] = sql unless config[:db_statement] == :omit
             attrs.merge!(OpenTelemetry::Instrumentation::PG.attributes)
-            attrs.reject! { |_, v| v.nil? }
+            attrs.compact!
 
             [span_name(operation), client_attributes.merge(attrs)]
           end
@@ -131,7 +131,7 @@ module OpenTelemetry
             }
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
-            attributes.merge(transport_attrs).reject { |_, v| v.nil? }
+            attributes.merge(transport_attrs).compact
           end
 
           def transport_addr
