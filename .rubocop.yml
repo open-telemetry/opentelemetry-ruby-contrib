@@ -68,5 +68,3 @@ Style/HashConversion:
   Enabled: false
 Style/RedundantConstantBase:
   Enabled: false
-Style/RedundantFetchBlock:
-  Enabled: false
