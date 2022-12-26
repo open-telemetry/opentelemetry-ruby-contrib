@@ -81,4 +81,4 @@ Style/RedundantConstantBase:
 Style/RedundantFetchBlock:
   Enabled: false
 Style/SymbolProc:
-  Enabled: false
+  Enabled: true
