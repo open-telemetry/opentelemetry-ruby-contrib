@@ -99,7 +99,7 @@ def run
   require "release_utils"
   require "release_performer"
 
-  ::Dir.chdir(context_directory)
+  Dir.chdir(context_directory)
   @utils = ReleaseUtils.new(self)
 
   [:rubygems_api_key].each do |key|

@@ -34,7 +34,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
 
   describe '#perform' do
     it 'traces a simple request' do
-      ::HTTP.get('http://example.com/success')
+      HTTP.get('http://example.com/success')
 
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'HTTP GET'
@@ -52,7 +52,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
     end
 
     it 'after request with failure code' do
-      ::HTTP.post('http://example.com/failure')
+      HTTP.post('http://example.com/failure')
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP POST'
@@ -71,7 +71,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
 
     it 'after request timeout' do
       expect do
-        ::HTTP.get('https://example.com/timeout')
+        HTTP.get('https://example.com/timeout')
       end.must_raise HTTP::TimeoutError
 
       _(exporter.finished_spans.size).must_equal 1
@@ -97,7 +97,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
 
     it 'merges http client attributes' do
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'foo') do
-        ::HTTP.get('http://example.com/success')
+        HTTP.get('http://example.com/success')
       end
 
       _(exporter.finished_spans.size).must_equal 1

@@ -11,7 +11,7 @@ describe OpenTelemetry::Instrumentation::Mongo do
 
   before do
     # Clear previous instrumentation subscribers between test runs
-    Mongo::Monitoring::Global.subscribers['Command'] = [] if defined?(::Mongo::Monitoring::Global)
+    Mongo::Monitoring::Global.subscribers['Command'] = [] if defined?(Mongo::Monitoring::Global)
     instrumentation.install
     exporter.reset
   end

@@ -24,7 +24,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
     }
   end
   let(:client) do
-    ::Trilogy.new(driver_options)
+    Trilogy.new(driver_options)
   end
 
   let(:host) { ENV.fetch('TEST_MYSQL_HOST', '127.0.0.1') }
@@ -57,7 +57,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       instrumentation.install(peer_service: 'readonly:mysql')
       client.query('SELECT 1')
 
-      _(span.attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE]).must_equal 'readonly:mysql'
+      _(span.attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE]).must_equal 'readonly:mysql'
     end
 
     it 'omits peer service by default' do
@@ -65,7 +65,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       instrumentation.install({})
       client.query('SELECT 1')
 
-      _(span.attributes.keys).wont_include(::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE)
+      _(span.attributes.keys).wont_include(OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE)
     end
   end
 
@@ -154,7 +154,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
     describe 'when quering using unix domain socket' do
       let(:client) do
-        ::Trilogy.new(
+        Trilogy.new(
           username: username,
           password: password,
           ssl: false

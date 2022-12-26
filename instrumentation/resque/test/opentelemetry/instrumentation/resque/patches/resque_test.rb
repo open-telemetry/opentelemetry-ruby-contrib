@@ -24,7 +24,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueModule do
 
   describe '#enqueue' do
     it 'traces' do
-      ::Resque.enqueue(DummyJob)
+      Resque.enqueue(DummyJob)
 
       _(enqueue_span.name).must_equal('super_urgent send')
       _(enqueue_span.attributes['messaging.system']).must_equal('resque')
@@ -46,7 +46,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueModule do
       let(:config) { { span_naming: :job_class } }
 
       it 'uses the job class name for the span name' do
-        ::Resque.enqueue(DummyJob)
+        Resque.enqueue(DummyJob)
 
         _(enqueue_span.name).must_equal('DummyJob send')
       end

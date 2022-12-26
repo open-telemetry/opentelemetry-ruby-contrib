@@ -24,7 +24,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
     redis_options[:password] = password
     redis_options[:host] = redis_host
     redis_options[:port] = redis_port
-    ::Redis.new(redis_options)
+    Redis.new(redis_options)
   end
 
   before do
@@ -45,7 +45,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
     it 'accepts peer service name from config' do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(peer_service: 'readonly:redis')
-      ::Redis.new(host: redis_host, port: redis_port).auth(password)
+      Redis.new(host: redis_host, port: redis_port).auth(password)
 
       _(last_span.attributes['peer.service']).must_equal 'readonly:redis'
     end
@@ -63,7 +63,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
     end
 
     it 'after authorization with Redis server' do
-      ::Redis.new(host: redis_host, port: redis_port).auth(password)
+      Redis.new(host: redis_host, port: redis_port).auth(password)
 
       _(last_span.name).must_equal 'AUTH'
       _(last_span.attributes['db.system']).must_equal 'redis'
@@ -157,7 +157,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
 
     it 'records net.peer.name and net.peer.port attributes' do
       expect do
-        ::Redis.new(host: 'example.com', port: 8321, timeout: 0.01).auth(password)
+        Redis.new(host: 'example.com', port: 8321, timeout: 0.01).auth(password)
       end.must_raise Redis::CannotConnectError
 
       _(last_span.name).must_equal 'AUTH'

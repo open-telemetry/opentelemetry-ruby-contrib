@@ -75,7 +75,7 @@ class RepoSettings
 
   def gem_cd(gem_name, &block)
     dir = gem_directory(gem_name, from: :absolute)
-    ::Dir.chdir(dir, &block)
+    Dir.chdir(dir, &block)
   end
 
   def gem_changelog_path(gem_name, from: :directory)

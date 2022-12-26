@@ -17,7 +17,7 @@ describe OpenTelemetry::Instrumentation::GraphQL do
     instrumentation.instance_variable_set(:@installed, false)
 
     # Remove added tracers
-    ::GraphQL::Schema.instance_variable_set(:@own_tracers, [])
+    GraphQL::Schema.instance_variable_set(:@own_tracers, [])
   end
 
   it 'has #name' do
@@ -32,7 +32,7 @@ describe OpenTelemetry::Instrumentation::GraphQL do
   describe '#install' do
     it 'installs the tracer' do
       instrumentation.install({})
-      _(::GraphQL::Schema.tracers[0]).must_be_instance_of(OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer)
+      _(GraphQL::Schema.tracers[0]).must_be_instance_of(OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer)
     end
 
     describe 'when a user supplies an invalid schema' do

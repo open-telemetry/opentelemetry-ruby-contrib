@@ -25,7 +25,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
 
   describe '#perform' do
     it 'traces' do
-      ::Resque.enqueue(DummyJob)
+      Resque.enqueue(DummyJob)
       work_off_jobs
 
       _(job_span.name).must_equal('super_urgent process')
@@ -47,7 +47,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
     end
 
     it 'defaults to using links to the enqueing span but does not continue the trace' do
-      ::Resque.enqueue(DummyJob)
+      Resque.enqueue(DummyJob)
       work_off_jobs
 
       enqueuer_span = finished_spans.first
@@ -62,7 +62,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       let(:config) { { span_naming: :job_class } }
 
       it 'uses the job class name for the span name' do
-        ::Resque.enqueue(DummyJob)
+        Resque.enqueue(DummyJob)
         work_off_jobs
 
         _(job_span.name).must_equal('DummyJob process')
@@ -80,7 +80,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       let(:config) { { propagation_style: :link } }
 
       it 'continues the enqueuer trace to the job process' do
-        ::Resque.enqueue(DummyJob)
+        Resque.enqueue(DummyJob)
         work_off_jobs
 
         enqueuer_span = finished_spans.first
@@ -96,7 +96,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       it 'propagates baggage' do
         ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
-          ::Resque.enqueue(BaggageTestingJob)
+          Resque.enqueue(BaggageTestingJob)
         end
 
         work_off_jobs
@@ -105,7 +105,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       end
 
       it 'records exceptions' do
-        ::Resque.enqueue(ExceptionTestingJob)
+        Resque.enqueue(ExceptionTestingJob)
         _(-> { work_off_jobs }).must_raise(RuntimeError)
 
         ev = job_span.events
@@ -119,7 +119,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       let(:config) { { propagation_style: :child } }
 
       it 'continues the enqueuer trace to the job process' do
-        ::Resque.enqueue(DummyJob)
+        Resque.enqueue(DummyJob)
         work_off_jobs
 
         enqueuer_span = finished_spans.first
@@ -130,7 +130,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       it 'propagates baggage' do
         ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
-          ::Resque.enqueue(BaggageTestingJob)
+          Resque.enqueue(BaggageTestingJob)
         end
 
         work_off_jobs
@@ -139,7 +139,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       end
 
       it 'records exceptions' do
-        ::Resque.enqueue(ExceptionTestingJob)
+        Resque.enqueue(ExceptionTestingJob)
         _(-> { work_off_jobs }).must_raise(RuntimeError)
 
         ev = job_span.events
@@ -153,7 +153,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       let(:config) { { propagation_style: :none } }
 
       it 'continues the enqueuer trace to the job process' do
-        ::Resque.enqueue(DummyJob)
+        Resque.enqueue(DummyJob)
         work_off_jobs
 
         enqueuer_span = finished_spans.first
@@ -165,7 +165,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       it 'propagates baggage' do
         ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
-          ::Resque.enqueue(BaggageTestingJob)
+          Resque.enqueue(BaggageTestingJob)
         end
 
         work_off_jobs
@@ -174,7 +174,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       end
 
       it 'records exceptions' do
-        ::Resque.enqueue(ExceptionTestingJob)
+        Resque.enqueue(ExceptionTestingJob)
         _(-> { work_off_jobs }).must_raise(RuntimeError)
 
         ev = job_span.events
@@ -188,7 +188,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
   private
 
   def work_off_jobs
-    while (job = ::Resque.reserve(:super_urgent))
+    while (job = Resque.reserve(:super_urgent))
       job.perform
     end
   end
