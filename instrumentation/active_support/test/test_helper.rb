@@ -7,10 +7,13 @@
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
+require 'active_support'
+require 'active_support/core_ext'
 require 'opentelemetry-instrumentation-active_support'
 
 require 'minitest/autorun'
 require 'webmock/minitest'
+
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
