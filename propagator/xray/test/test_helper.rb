@@ -6,3 +6,5 @@
 
 require 'minitest/autorun'
 require 'opentelemetry-propagator-xray'
+
+OpenTelemetry.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)

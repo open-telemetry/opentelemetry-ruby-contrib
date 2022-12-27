@@ -15,4 +15,4 @@ require 'minitest/autorun'
 require 'opentelemetry-api'
 require 'opentelemetry-propagator-ottrace'
 
-OpenTelemetry.logger = Logger.new(File::NULL)
+OpenTelemetry.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)

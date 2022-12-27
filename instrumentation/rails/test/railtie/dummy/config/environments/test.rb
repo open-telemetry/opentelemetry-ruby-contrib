@@ -45,8 +45,7 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   # config.action_mailer.delivery_method = :test
 
-  # Print deprecation notices to the stderr.
-  config.active_support.deprecation = :stderr
+  config.active_support.report_deprecations = false
 
   # Raise exceptions for disallowed deprecations.
   config.active_support.disallowed_deprecation = :raise
@@ -59,4 +58,9 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
+  level = ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym
+  logger           = ActiveSupport::Logger.new($stderr, level: level)
+  logger.formatter = config.log_formatter
+  config.logger    = ActiveSupport::TaggedLogging.new(logger)
+  config.log_level = level
 end
