@@ -10,6 +10,24 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
   let(:detector) { OpenTelemetry::Resource::Detectors::GoogleCloudPlatform }
 
   describe '.detect' do
+    before do
+      WebMock.disable_net_connect!
+      stub_request(:get, 'http://169.254.169.254/')
+        .with(
+          headers: {
+            'Accept' => '*/*',
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Metadata-Flavor' => 'Google',
+            'User-Agent' => 'Ruby'
+          }
+        )
+        .to_return(status: 200, body: '', headers: {})
+    end
+
+    after do
+      WebMock.allow_net_connect!
+    end
+
     let(:detected_resource) { detector.detect }
     let(:detected_resource_attributes) { detected_resource.attribute_enumerator.to_h }
     let(:expected_resource_attributes) { {} }
