@@ -17,7 +17,7 @@ module OpenTelemetry
       # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber
       # gets invoked first
       # Rails 6+ https://github.com/rails/rails/blob/0f0ec9908e25af36df2d937dc431f626a4102b3d/activesupport/lib/active_support/notifications/fanout.rb#L51
-      #
+      # Rails 5 https://github.com/rails/rails/blob/8030cff808657faa44828de001cd3b80364597de/activesupport/lib/active_support/notifications/fanout.rb#L16
       def self.subscribe(
         tracer,
         pattern,
@@ -32,20 +32,15 @@ module OpenTelemetry
         )
 
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
-        active_support_major_version = ::ActiveSupport.version.canonical_segments.first
 
         ::ActiveSupport::Notifications.notifier.synchronize do
-          if active_support_major_version >= NOTIFIER_MAJOR_VERSION_6
-            subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
-          else
-            subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers)
-          end
+          subscribers = find_subscribers(pattern)
 
           if subscribers.nil?
             OpenTelemetry.handle_error(
-              message: "Unable to move OTEL ActiveSupport Notifications subscriber to the front of the notifications list which may cause incomplete traces." +
-                        "Please report an issue here: " +
-                        "https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/new?labels=bug&template=bug_report.md&title=ActiveSupport%20Notifications%20subscribers%20list%20is%20nil"
+              message: 'Unable to move OTEL ActiveSupport Notifications subscriber to the front of the notifications list which may cause incomplete traces.' \
+                        'Please report an issue here: ' \
+                        'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/new?labels=bug&template=bug_report.md&title=ActiveSupport%20Notifications%20subscribers%20list%20is%20nil'
             )
           else
             subscribers.unshift(
@@ -54,6 +49,17 @@ module OpenTelemetry
           end
         end
         subscriber_object
+      end
+
+      def self.find_subscribers(pattern)
+        active_support_major_version = ::ActiveSupport.version.canonical_segments.first
+
+        # TODO: Drop support for Rails 5 since it is EOL since 2022-06-01
+        if active_support_major_version >= NOTIFIER_MAJOR_VERSION_6
+          ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
+        else
+          ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers)
+        end
       end
 
       class SpanSubscriber
