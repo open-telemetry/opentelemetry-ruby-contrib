@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.22.1 / 2022-11-28
+
+* FIXED: `format_command`'s terrible performance 
+
 ### v0.22.0 / 2022-06-09
 
 * Upgrading Base dependency version

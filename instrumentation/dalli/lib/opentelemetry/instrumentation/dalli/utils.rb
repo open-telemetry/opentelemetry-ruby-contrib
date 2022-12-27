@@ -53,7 +53,17 @@ module OpenTelemetry
 
       def format_command(operation, args)
         placeholder = "#{operation} BLOB (OMITTED)"
-        command = [operation, *args].join(' ').strip
+
+        command = +operation.to_s
+        args.flatten.each do |arg|
+          str = arg.to_s
+          if str.bytesize >= CMD_MAX_LEN
+            command << ' BLOB (OMITTED)'
+          elsif !str.empty?
+            command << ' ' << str
+          end
+        end
+
         command = OpenTelemetry::Common::Utilities.utf8_encode(command, binary: true, placeholder: placeholder)
         OpenTelemetry::Common::Utilities.truncate(command, CMD_MAX_LEN)
       rescue StandardError => e

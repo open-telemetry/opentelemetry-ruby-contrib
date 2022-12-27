@@ -150,12 +150,32 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         _(exporter.finished_spans.size).must_equal 0
       end
 
+      it 'does not create a span on connect when request ignored using a regexp' do
+        uri = URI.parse('http://bazqux.com')
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.send(:connect)
+        http.send(:do_finish)
+        _(exporter.finished_spans.size).must_equal 0
+      end
+
       it 'creates a span for a non-ignored request' do
         ::Net::HTTP.get('example.com', '/body')
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'HTTP GET'
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['net.peer.name']).must_equal 'example.com'
+      end
+
+      it 'creates a span on connect for a non-ignored request' do
+        uri = URI.parse('http://example.com')
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.send(:connect)
+        http.send(:do_finish)
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal('connect')
+        _(span.kind).must_equal(:internal)
+        _(span.attributes['net.peer.name']).must_equal('example.com')
+        _(span.attributes['net.peer.port']).must_equal(80)
       end
     end
   end
