@@ -12,6 +12,7 @@ module OpenTelemetry
         extend self
 
         DETECTORS = [
+          OpenTelemetry::Resource::Detectors::Azure,
           OpenTelemetry::Resource::Detectors::GoogleCloudPlatform
         ].freeze
 

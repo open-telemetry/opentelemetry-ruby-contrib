@@ -14,18 +14,12 @@ module OpenTelemetry
             def dispatch(name, request, response)
               rack_span = OpenTelemetry::Instrumentation::Rack.current_span
               if rack_span.recording?
-                unless request.env['action_dispatch.exception']
-                  rack_span.name = case instrumentation_config[:span_naming]
-                                   when :controller_action then "#{self.class.name}##{name}"
-                                   else "#{request.method} #{rails_route(request)}"
-                                   end
-                end
+                rack_span.name = "#{self.class.name}##{name}" unless request.env['action_dispatch.exception']
 
                 attributes_to_append = {
                   OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => self.class.name,
-                  OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => name
+                  OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(name)
                 }
-                attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE] = rails_route(request) if instrumentation_config[:enable_recognize_route]
                 attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = request.filtered_path if request.filtered_path != request.fullpath
                 rack_span.add_attributes(attributes_to_append)
               end
@@ -34,13 +28,6 @@ module OpenTelemetry
             end
 
             private
-
-            def rails_route(request)
-              @rails_route ||= ::Rails.application.routes.router.recognize(request) do |route, _params|
-                return route.path.spec.to_s
-                # Rails will match on the first route - see https://guides.rubyonrails.org/routing.html#crud-verbs-and-actions
-              end
-            end
 
             def instrumentation_config
               ActionPack::Instrumentation.instance.config

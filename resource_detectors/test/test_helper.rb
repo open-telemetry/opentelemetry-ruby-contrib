@@ -10,3 +10,4 @@ SimpleCov.start
 require 'opentelemetry/resource/detectors'
 require 'minitest/autorun'
 require 'pry'
+require 'webmock/minitest'

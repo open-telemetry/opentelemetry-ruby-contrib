@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.24.0 / 2022-12-06
+
+* BREAKING CHANGE: Remove enable_recognize_route and span_naming options 
+
+* FIXED: Remove enable_recognize_route and span_naming options 
+
+### v0.23.1 / 2022-11-08
+
+* FIXED: Bump rails instrumentation dependency on action_pack instrumentation 
+
 ### v0.23.0 / 2022-10-14
 
 * ADDED: Name ActionPack spans with the HTTP method and route

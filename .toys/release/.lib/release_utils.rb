@@ -4,6 +4,7 @@ require "forwardable"
 require "json"
 require "yaml"
 require "repo_settings"
+require "time"
 
 class ReleaseUtils
   class ReleaseError < ::StandardError
@@ -311,18 +312,43 @@ class ReleaseUtils
                    "-H", "Accept: application/vnd.github.antiope-preview+json"],
                   out: :capture, e: false)
     return ["Failed to obtain GitHub check results for #{ref}"] unless result.success?
-    checks = ::JSON.parse(result.captured_out)["check_runs"]
+    total_count = ::JSON.parse(result.captured_out)["total_count"]
+    # 30 is the default page size for github api call returns
+    # https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
+    pages = (total_count / 30.0).ceil
+    all_checks = {}
     results = []
-    results << "No GitHub checks found for #{ref}" if checks.empty?
-    checks.each do |check|
-      name = check["name"]
-      next if release_jobs_regexp.match(name) || !required_checks_regexp.match(name)
-      if check["status"] != "completed"
-        results << "GitHub check #{name.inspect} is not complete"
-      elsif check["conclusion"] != "success"
-        results << "GitHub check #{name.inspect} was not successful"
+
+    (1..pages).each do |idx|
+      result = exec(["gh", "api", "repos/#{repo_path}/commits/#{ref}/check-runs?page=#{idx}",
+        "-H", "Accept: application/vnd.github.antiope-preview+json"],
+       out: :capture, e: false)
+      return ["Failed to obtain GitHub check results for #{ref}"] unless result.success?
+      checks = ::JSON.parse(result.captured_out)["check_runs"]
+      results << "No GitHub checks found for #{ref}" if checks.empty?
+      checks.each do |check|
+        name = check["name"]
+        next if release_jobs_regexp.match(name) || !required_checks_regexp.match(name)
+        if all_checks[name]
+          all_checks[name] << check
+        else
+          all_checks[name] = [check]
+        end
       end
     end
+
+    all_checks.each do |name, checks|
+      checks.sort! do |a, b|
+        Time.parse(a["started_at"]) <=> Time.parse(b["started_at"])
+      end
+
+      if checks.first["status"] != "completed"
+        results << "Latest GitHub check #{name.inspect} is not complete."
+      elsif checks.first["conclusion"] != "success"
+        results << "Latest gitHub check #{name.inspect} was not successful."
+      end
+    end
+
     results
   end
 

@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.4.0 / 2022-12-06
+
+* BREAKING CHANGE: Remove enable_recognize_route and span_naming options 
+
+* FIXED: Remove enable_recognize_route and span_naming options 
+
+### v0.3.2 / 2022-11-16
+
+* * FIXED: Loosen dependency on Rack
+
 ### v0.3.1 / 2022-10-27
 
 * FIXED: Declare span_naming option in action_pack instrumentation
