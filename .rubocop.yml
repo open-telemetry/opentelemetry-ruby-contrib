@@ -59,7 +59,7 @@ Lint/DuplicateBranch:
 Lint/EmptyBlock:
   Enabled: false
 Lint/RedundantCopDisableDirective:
-  Enabled: false
+  Enabled: true
 Lint/RedundantRequireStatement:
   Enabled: false
 Lint/SymbolConversion:
