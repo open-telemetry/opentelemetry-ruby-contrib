@@ -4,15 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'sinatra'
-
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
 require 'rack/test'
 
-require_relative '../lib/opentelemetry-instrumentation-sinatra'
+require 'opentelemetry-instrumentation-sinatra'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

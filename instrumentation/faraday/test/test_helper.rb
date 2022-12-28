@@ -4,15 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'faraday'
-
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
 require 'webmock/minitest'
 
-require_relative '../lib/opentelemetry-instrumentation-faraday'
+require 'opentelemetry-instrumentation-faraday'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
