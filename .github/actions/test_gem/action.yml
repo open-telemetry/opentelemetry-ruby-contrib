@@ -75,22 +75,20 @@ runs:
     - name: Install dependencies and appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
-      with:
-        working_directory: "${{ steps.setup.outputs.gem_dir }}"
       run: |
         bundle install && \
         bundle exec appraisal install
+      working_directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Test Gem
       shell: bash
-      with:
-        working_directory: "${{ steps.setup.outputs.gem_dir }}"
       run: |
         if [[ -f "Appraisals" ]]; then
           bundle exec appraisal rake test
         else
           bundle exec rake test
         fi
+      working_directory: "${{ steps.setup.outputs.gem_dir }}"
       env:
         TEST_KAFKA_HOST: "127.0.0.1"
         TEST_KAFKA_PORT: 29092
