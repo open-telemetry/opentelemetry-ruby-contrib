@@ -75,14 +75,16 @@ runs:
     - name: Install dependencies and appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
-      working_directory: "${{ steps.setup.outputs.gem_dir }}"
+      with:
+        working_directory: "${{ steps.setup.outputs.gem_dir }}"
       run: |
         bundle install && \
         bundle exec appraisal install
 
     - name: Test Gem
       shell: bash
-      working_directory: "${{ steps.setup.outputs.gem_dir }}"
+      with:
+        working_directory: "${{ steps.setup.outputs.gem_dir }}"
       run: |
         if [[ -f "Appraisals" ]]; then
           bundle exec appraisal rake test
