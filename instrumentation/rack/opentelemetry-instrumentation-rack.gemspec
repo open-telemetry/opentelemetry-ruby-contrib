@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'rack', '~> 2.0.8'
   spec.add_development_dependency 'rack-test', '~> 1.1.0'
-  spec.add_development_dependency 'rake', '~> 12.3.3'
+  spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rubocop', '~> 1.41.1'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'webmock', '~> 3.7.6'

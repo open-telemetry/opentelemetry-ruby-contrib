@@ -72,6 +72,7 @@ runs:
       with:
         ruby-version: "${{ inputs.ruby }}"
         bundler:  "latest"
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
     - name: Install dependencies and appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
