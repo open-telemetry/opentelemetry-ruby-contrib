@@ -85,7 +85,9 @@ runs:
       shell: bash
       run: |
         if [[ -f "Appraisals" ]]; then
-          bundle exec appraisal rake test
+          for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
+            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test
+          done
         else
           bundle exec rake test
         fi
