@@ -7,6 +7,8 @@
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
+require 'concurrent'
+
 require 'minitest/autorun'
 
 # global opentelemetry-sdk setup:
