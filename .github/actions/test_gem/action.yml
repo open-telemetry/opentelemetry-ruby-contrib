@@ -78,7 +78,7 @@ runs:
       shell: bash
       run: |
         bundle install
-        bundle exec appraisal install
+        bundle exec appraisal generate
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Test Gem
@@ -86,6 +86,7 @@ runs:
       run: |
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
+            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test
           done
         else
