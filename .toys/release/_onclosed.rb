@@ -17,8 +17,7 @@ flag :enable_releases, "--enable-releases=VAL" do
     "If set to 'true', releases will be enabled. Any other value will" \
     " result in dry-run mode, meaning it will go through the motions," \
     " create a GitHub release, and update the release pull request if" \
-    " applicable, but will not actually push the gem to Rubygems or push" \
-    " the docs to gh-pages."
+    " applicable, but will not actually push the gem to Rubygems or push."
 end
 flag :event_path, "--event-path=VAL" do
   default ::ENV["GITHUB_EVENT_PATH"]
