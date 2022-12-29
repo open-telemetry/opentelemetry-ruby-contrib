@@ -237,14 +237,10 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
   class SomeOtherGraphQLAppSchema < ::GraphQL::Schema
     query(::OtherQueryType)
-    use GraphQL::Execution::Interpreter
-    use GraphQL::Analysis::AST
   end
 
   class SomeGraphQLAppSchema < ::GraphQL::Schema
     query(::QueryType)
-    use GraphQL::Execution::Interpreter
-    use GraphQL::Analysis::AST
     orphan_types Car
 
     def self.resolve_type(_type, _obj, _ctx)
