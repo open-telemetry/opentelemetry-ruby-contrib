@@ -58,7 +58,7 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
         gcp_env_mock.expect(:instance_zone, 'us-central1-a')
 
         Socket.stub(:gethostname, 'opentelemetry-test') do
-          old_hostname = ENV['HOSTNAME'] # rubocop:disable Style/FetchEnvVar
+          old_hostname = ENV['HOSTNAME']
           ENV['HOSTNAME'] = 'opentelemetry-host-name-1'
           begin
             Google::Cloud::Env.stub(:new, gcp_env_mock) { detected_resource }
