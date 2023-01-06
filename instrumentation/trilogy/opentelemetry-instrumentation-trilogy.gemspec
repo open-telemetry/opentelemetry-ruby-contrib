@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.summary     = 'Trilogy instrumentation for the OpenTelemetry framework'
   spec.description = 'Adds auto instrumentation that includes SQL metadata'
-  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-contrib'
+  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
   spec.files = ::Dir.glob('lib/**/*.rb') +
