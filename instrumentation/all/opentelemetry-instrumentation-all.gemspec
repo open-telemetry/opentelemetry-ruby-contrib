@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.summary     = 'All-in-one instrumentation bundle for the OpenTelemetry framework'
   spec.description = 'All-in-one instrumentation bundle for the OpenTelemetry framework'
-  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-contrib'
+  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
   spec.files = ::Dir.glob('lib/**/*.rb') +
