@@ -31,7 +31,7 @@ module OpenTelemetry
             sinatra_response = ::Sinatra::Response.new([], response.first)
             return unless sinatra_response.server_error?
 
-            span.record_exception(env['sinatra.error'])
+            span.record_exception(env['sinatra.error']) if env['sinatra.error']
             span.status = OpenTelemetry::Trace::Status.error
           end
         end
