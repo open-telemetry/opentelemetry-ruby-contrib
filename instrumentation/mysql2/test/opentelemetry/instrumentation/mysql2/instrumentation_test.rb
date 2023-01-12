@@ -192,57 +192,6 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       end
     end
 
-    describe 'when enable_sql_obfuscation is enabled' do
-      let(:config) { { enable_sql_obfuscation: true } }
-
-      it 'is compatible with legacy enable_sql_obfuscation option' do
-        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
-        expect do
-          client.query(sql)
-        end.must_raise Mysql2::Error
-
-        _(span.attributes['db.system']).must_equal 'mysql'
-        _(span.attributes['db.name']).must_equal 'mysql'
-        _(span.name).must_equal 'select'
-        _(span.attributes['db.statement']).must_equal obfuscated_sql
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
-      end
-
-      it 'encodes invalid byte sequences for db.statement' do
-        # \255 is off-limits https://en.wikipedia.org/wiki/UTF-8#Codepage_layout
-        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com\255'"
-        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
-
-        expect do
-          client.query(sql)
-        end.must_raise Mysql2::Error
-
-        _(span.name).must_equal 'mysql'
-        _(span.attributes['db.statement']).must_equal obfuscated_sql
-      end
-    end
-
-    describe 'when enable_sql_obfuscation is enabled with db_statement set' do
-      let(:config) { { enable_sql_obfuscation: true, db_statement: :omit } }
-
-      it 'respects enable_sql_obfuscation when enabled' do
-        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
-        expect do
-          client.query(sql)
-        end.must_raise Mysql2::Error
-
-        _(span.attributes['db.system']).must_equal 'mysql'
-        _(span.attributes['db.name']).must_equal 'mysql'
-        _(span.name).must_equal 'select'
-        _(span.attributes['db.statement']).must_equal obfuscated_sql
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
-      end
-    end
-
     describe 'when db_statement is configured via environment variable' do
       describe 'when db_statement set as omit' do
         it 'omits db.statement attribute' do
