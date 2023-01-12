@@ -176,7 +176,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
   # These fields are only supported as of version 1.10.0
   # https://github.com/rmosolgo/graphql-ruby/blob/v1.10.0/CHANGELOG.md#new-features-1
   def supports_authorized_and_resolved_types?
-    Gem.loaded_specs['graphql'].version >= Gem::Version.new('1.10.0')
+    Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('1.10.0')
   end
 
   module Old
@@ -237,18 +237,23 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
   class SomeOtherGraphQLAppSchema < ::GraphQL::Schema
     query(::OtherQueryType)
-    use GraphQL::Execution::Interpreter
-    use GraphQL::Analysis::AST
   end
 
   class SomeGraphQLAppSchema < ::GraphQL::Schema
     query(::QueryType)
-    use GraphQL::Execution::Interpreter
-    use GraphQL::Analysis::AST
     orphan_types Car
 
     def self.resolve_type(_type, _obj, _ctx)
       Car
+    end
+  end
+
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.10.0')
+    [SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each do |schema|
+      schema.class_eval do
+        use GraphQL::Execution::Interpreter
+        use GraphQL::Analysis::AST
+      end
     end
   end
 end
