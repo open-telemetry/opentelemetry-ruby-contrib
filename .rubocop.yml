@@ -1,5 +1,6 @@
 AllCops:
   TargetRubyVersion: '2.7.6'
+  NewCops: enable
   Exclude:
     - Rakefile
     - "rakelib/**/*"
@@ -10,24 +11,20 @@ Bundler/OrderedGems:
   Enabled: false
 Gemspec/RequiredRubyVersion:
   Enabled: false
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - "**/*test.rb"
+Lint/UnusedMethodArgument:
+  Enabled: false
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 20
-Lint/ConstantDefinitionInBlock:
-  Exclude:
-    - "**/*test.rb"
-Lint/UnusedMethodArgument:
-  Enabled: false
 Naming/FileName:
   Exclude:
     - '**/opentelemetry-*'
-Metrics/LineLength:
-  Enabled: false
-Metrics/ParameterLists:
-  Enabled: false
 Style/Documentation:
   Exclude:
     - "**/test/**/*"
@@ -49,4 +46,39 @@ Style/SlicingWithRange:
   Enabled: false
 Style/CaseLikeIf:
   Enabled: false
-
+## 1.41.1
+Gemspec/RequireMFA:
+  # We probably want to figure out how to set this up for the organization
+  Enabled: false
+Layout/LineLength:
+  Enabled: false
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+Lint/DuplicateBranch:
+  Enabled: false
+Lint/EmptyBlock:
+  Enabled: false
+Lint/RedundantCopDisableDirective:
+  Enabled: false
+Lint/RedundantRequireStatement:
+  Enabled: false
+Lint/SymbolConversion:
+  Enabled: false
+Metrics/ParameterLists:
+  Enabled: false
+Style/CollectionCompact:
+  Enabled: false
+Style/FetchEnvVar:
+  Enabled: false
+Style/GlobalStdStream:
+  Enabled: false
+Style/HashConversion:
+  Enabled: false
+Style/QuotedSymbols:
+  Enabled: false
+Style/RedundantConstantBase:
+  Enabled: false
+Style/RedundantFetchBlock:
+  Enabled: false
+Style/SymbolProc:
+  Enabled: false
