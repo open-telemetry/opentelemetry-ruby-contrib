@@ -64,8 +64,6 @@ Lint/RedundantRequireStatement:
   Enabled: false
 Lint/SymbolConversion:
   Enabled: false
-Metrics/ParameterLists:
-  Enabled: true
 Style/CollectionCompact:
   Enabled: false
 Style/FetchEnvVar:
