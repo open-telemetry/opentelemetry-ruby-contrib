@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
 
   spec.summary     = 'OTTrace Context Propagation Extension for the OpenTelemetry framework'
   spec.description = 'OTTrace Context Propagation Extension for the OpenTelemetry framework'
-  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-contrib'
+  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
   spec.files = ::Dir.glob('lib/**/*.rb') +
@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rubocop', '~> 1.3.0'
+  spec.add_development_dependency 'rubocop', '~> 1.41.1'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'

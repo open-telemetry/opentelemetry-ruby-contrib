@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.summary     = 'Trilogy instrumentation for the OpenTelemetry framework'
   spec.description = 'Adds auto instrumentation that includes SQL metadata'
-  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-contrib'
+  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
   spec.files = ::Dir.glob('lib/**/*.rb') +
@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
   spec.add_development_dependency 'rake', '~> 12.3.3'
   spec.add_development_dependency 'rspec-mocks'
-  spec.add_development_dependency 'rubocop', '~> 1.3.0'
+  spec.add_development_dependency 'rubocop', '~> 1.41.1'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'trilogy', '>= 2.0', '< 3.0'
   spec.add_development_dependency 'yard', '~> 0.9'
