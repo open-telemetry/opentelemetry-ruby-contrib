@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::Racecar do
   end
 
   def produce(messages)
-    config = { "bootstrap.servers": "#{host}:#{port}" }
+    config = { 'bootstrap.servers': "#{host}:#{port}" }
     producer = Rdkafka::Config.new(config).producer
     producer.delivery_callback = ->(_) {}
 
