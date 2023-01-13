@@ -4,14 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'resque'
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
-require 'pry'
+require 'active_job'
+
 require 'minitest/autorun'
 require 'webmock/minitest'
-require 'active_job'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

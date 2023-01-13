@@ -4,16 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'koala'
-
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
-require_relative '../lib/opentelemetry-instrumentation-koala'
+require 'opentelemetry-instrumentation-koala'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

@@ -38,7 +38,7 @@ unless ENV['OMIT_SERVICES']
       it 'traces each call' do
         rand_hash = SecureRandom.hex(10)
         topic_name = "consumer-patch-trace-#{rand_hash}"
-        config = { "bootstrap.servers": "#{host}:#{port}" }
+        config = { 'bootstrap.servers': "#{host}:#{port}" }
 
         producer = Rdkafka::Config.new(config).producer
         delivery_handles = []
@@ -60,8 +60,8 @@ unless ENV['OMIT_SERVICES']
         producer.close
 
         consumer_config = config.merge(
-          "group.id": 'me',
-          "auto.offset.reset": 'smallest' # https://stackoverflow.com/a/51081649
+          'group.id': 'me',
+          'auto.offset.reset': 'smallest' # https://stackoverflow.com/a/51081649
         )
         consumer = Rdkafka::Config.new(config.merge(consumer_config)).consumer
         consumer.subscribe(topic_name)
@@ -120,7 +120,7 @@ unless ENV['OMIT_SERVICES']
       it 'traces each_batch call' do
         rand_hash = SecureRandom.hex(10)
         topic_name = "consumer-patch-batch-trace-#{rand_hash}"
-        config = { "bootstrap.servers": "#{host}:#{port}" }
+        config = { 'bootstrap.servers': "#{host}:#{port}" }
 
         producer = Rdkafka::Config.new(config).producer
         delivery_handles = []
@@ -142,8 +142,8 @@ unless ENV['OMIT_SERVICES']
         producer.close
 
         consumer_config = config.merge(
-          "group.id": 'me',
-          "auto.offset.reset": 'smallest' # https://stackoverflow.com/a/51081649
+          'group.id': 'me',
+          'auto.offset.reset': 'smallest' # https://stackoverflow.com/a/51081649
         )
         consumer = Rdkafka::Config.new(config.merge(consumer_config)).consumer
         consumer.subscribe(topic_name)

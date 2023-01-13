@@ -33,7 +33,7 @@ unless ENV['OMIT_SERVICES']
     describe 'tracing' do
       it 'traces sync produce calls' do
         topic_name = 'producer-patch-trace'
-        config = { "bootstrap.servers": "#{host}:#{port}" }
+        config = { 'bootstrap.servers': "#{host}:#{port}" }
 
         producer = Rdkafka::Config.new(config).producer
         delivery_handles = []

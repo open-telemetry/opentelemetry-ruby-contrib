@@ -4,12 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'kafka'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
-
-require 'pry'
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 

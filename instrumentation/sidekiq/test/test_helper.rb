@@ -4,16 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'sidekiq'
-require 'sidekiq/testing'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'active_job'
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
-require 'active_job'
-require 'pry'
+require 'sidekiq/testing'
 
 # Sidekiq changed its loading mechanism in 6.5.0, but we still want to test the
 # older versions. We can eliminate the first part of this conditional when we no

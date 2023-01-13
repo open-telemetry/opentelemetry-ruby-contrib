@@ -33,9 +33,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Launcher do
     instrumentation.instance_variable_set(:@installed, false)
   end
 
-  # rubocop:disable Style/AsciiComments
   # The method being tested here is `❤`
-  # rubocop:enable Style/AsciiComments
   describe '#heartbeat' do
     it 'does not trace' do
       launcher.send(:❤)
