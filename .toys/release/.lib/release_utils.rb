@@ -35,7 +35,7 @@ class ReleaseUtils
                  :repo_path, :repo_owner, :main_branch, :default_gem,
                  :git_user_name, :git_user_email,
                  :required_checks_regexp, :release_jobs_regexp, :required_checks_timeout,
-                 :docs_builder_tool, :signoff_commits?, :enable_release_automation?,
+                 :signoff_commits?, :enable_release_automation?,
                  :coordinate_versions?
   def_delegators :@repo_settings,
                  :commit_lint_active?, :commit_lint_fail_checks?,
