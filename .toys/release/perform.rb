@@ -23,7 +23,6 @@ long_desc \
   "",
   "The tool then performs the necessary release tasks including:",
   "* Building the gem and pushing it to Rubygems",
-  "* Building the docs and pushing it to gh-phages (if applicable)",
   "* Creating a GitHub release and tag"
 
 required_arg :gem_name do
@@ -40,15 +39,7 @@ flag_group desc: "Flags" do
       "If set to 'true', releases will be enabled. Any other value will" \
       " result in dry-run mode, meaning it will go through the motions," \
       " create a GitHub release, and update the release pull request if" \
-      " applicable, but will not actually push the gem to Rubygems or push" \
-      " the docs to gh-pages."
-  end
-  flag :gh_pages_dir, "--gh-pages-dir=VAL" do
-    desc "The directory to use for the gh-pages branch"
-    long_desc \
-      "Set to the path of a directory to use as the gh-pages workspace when" \
-      " building and pushing gem documentation. If left unset, a temporary" \
-      " directory will be created (and removed when finished)."
+      " applicable, but will not actually push the gem to Rubygems or push." \
   end
   flag :git_remote, "--git-remote=VAL" do
     default "origin"
@@ -64,13 +55,12 @@ flag_group desc: "Flags" do
       " current HEAD."
   end
   flag :only, "--only=VAL" do
-    accept ["precheck", "gem", "docs", "github-release"]
+    accept ["precheck", "gem", "github-release"]
     desc "Run only one step of the release process."
     long_desc \
       "Cause only one step of the release process to run.",
       "* 'precheck' runs only the pre-release checks.",
       "* 'gem' builds and pushes the gem to Rubygems.",
-      "* 'docs' builds and pushes the docs to gh-pages.",
       "* 'github-release' tags and creates a GitHub release.",
       "",
       "Optional. If omitted, all steps are performed."
@@ -112,7 +102,7 @@ def run
   ::Dir.chdir(context_directory)
   @utils = ReleaseUtils.new(self)
 
-  [:gh_pages_dir, :rubygems_api_key].each do |key|
+  [:rubygems_api_key].each do |key|
     set(key, nil) if get(key).to_s.empty?
   end
   set(:release_sha, @utils.current_sha) if release_sha.to_s.empty?
@@ -138,7 +128,6 @@ def create_performer
                        skip_checks: skip_checks,
                        rubygems_api_key: rubygems_api_key,
                        git_remote: git_remote,
-                       gh_pages_dir: gh_pages_dir,
                        gh_token: ::ENV["GITHUB_TOKEN"],
                        pr_info: find_release_pr,
                        dry_run: dry_run
