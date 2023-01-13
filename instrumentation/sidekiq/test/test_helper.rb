@@ -29,6 +29,7 @@ EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
 
 OpenTelemetry::SDK.configure do |c|
+  c.error_handler = ->(exception:, message:) { raise(exception || message) }
   c.add_span_processor span_processor
 end
 
@@ -47,7 +48,7 @@ Sidekiq.configure_client do |config|
 end
 
 # Silence Actibe Job logging noise
-ActiveJob::Base.logger = Logger.new('/dev/null')
+ActiveJob::Base.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
 
 class SimpleJobWithActiveJob < ActiveJob::Base
   self.queue_adapter = :sidekiq

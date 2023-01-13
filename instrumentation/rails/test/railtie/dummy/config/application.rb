@@ -33,7 +33,7 @@ module Dummy
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-    config.logger = ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new(File::NULL))
+    config.logger = ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym))
     config.api_only = true
   end
 end
