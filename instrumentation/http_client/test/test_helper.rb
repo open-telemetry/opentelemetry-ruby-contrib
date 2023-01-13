@@ -3,12 +3,10 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-require 'httpclient'
 
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
-require 'pry'
 require 'minitest/autorun'
 require 'webmock/minitest'
 

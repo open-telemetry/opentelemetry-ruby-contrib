@@ -4,18 +4,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'active_support/core_ext/kernel/reporting'
-require 'delayed_job'
-require 'delayed_job_active_record'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'opentelemetry-instrumentation-delayed_job'
+require 'active_support/core_ext/kernel/reporting'
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
-
-require_relative '../lib/opentelemetry-instrumentation-delayed_job'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

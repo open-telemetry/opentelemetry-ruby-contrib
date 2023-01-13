@@ -72,7 +72,7 @@ module OpenTelemetry
               return 'AUTH ?' if command[0] == :auth
 
               if instrumentation_config[:db_statement] == :obfuscate
-                command[0].to_s.upcase + ' ?' * (command.size - 1)
+                command[0].to_s.upcase + (' ?' * (command.size - 1))
               else
                 command_copy = command.dup
                 command_copy[0] = command_copy[0].to_s.upcase

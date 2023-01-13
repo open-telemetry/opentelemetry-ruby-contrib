@@ -52,13 +52,9 @@ Gemspec/RequireMFA:
   Enabled: false
 Layout/LineLength:
   Enabled: false
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
 Lint/DuplicateBranch:
   Enabled: false
 Lint/EmptyBlock:
-  Enabled: false
-Lint/RedundantCopDisableDirective:
   Enabled: false
 Lint/RedundantRequireStatement:
   Enabled: false
@@ -77,6 +73,4 @@ Style/HashConversion:
 Style/RedundantConstantBase:
   Enabled: false
 Style/RedundantFetchBlock:
-  Enabled: false
-Style/SymbolProc:
   Enabled: false
