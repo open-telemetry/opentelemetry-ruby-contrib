@@ -19,6 +19,7 @@ span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPO
 OpenTelemetry.logger = Logger.new(File::NULL)
 
 OpenTelemetry::SDK.configure do |c|
+  c.error_handler = ->(exception:, message:) { raise(exception || message) }
   c.use 'OpenTelemetry::Instrumentation::AwsSdk'
   c.add_span_processor span_processor
 end
