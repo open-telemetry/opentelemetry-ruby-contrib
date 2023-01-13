@@ -84,9 +84,12 @@ module OpenTelemetry
 
           def span_creation_attributes(method)
             instrumentation_attrs = {
-              'http.method' => method,
-              'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
+              'http.method' => method
             }
+
+            http_url = OpenTelemetry::Common::Utilities.cleanse_url(url)
+            instrumentation_attrs['http.url'] = http_url if http_url
+
             config = Ethon::Instrumentation.instance.config
             instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
             instrumentation_attrs.merge!(
