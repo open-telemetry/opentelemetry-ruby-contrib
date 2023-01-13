@@ -9,8 +9,6 @@ required_checks_timeout: 1200
 # Git user attached to commits for release pull requests.
 git_user_name: Ariel Valentin
 git_user_email: ariel@arielvalentin.com
-# Toys tool that builds YARD reference docs
-docs_builder_tool: [yardoc]
 
 # Control the conventional commit linter.
 commit_lint:
