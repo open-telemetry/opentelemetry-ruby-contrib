@@ -193,6 +193,7 @@ module OpenTelemetry
 
       alias installed? installed
 
+      # rubocop:disable Metrics/ParameterLists
       def initialize(name, version, install_blk, present_blk,
                      compatible_blk, options)
         @name = name
@@ -205,6 +206,7 @@ module OpenTelemetry
         @options = options
         @tracer = OpenTelemetry::Trace::Tracer.new
       end
+      # rubocop:enable Metrics/ParameterLists
 
       # Install instrumentation with the given config. The present? and compatible?
       # will be run first, and install will return false if either fail. Will
