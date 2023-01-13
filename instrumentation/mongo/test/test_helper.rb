@@ -4,17 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'pry'
-require 'mongo'
-
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
-require_relative '../lib/opentelemetry-instrumentation-mongo'
+require 'opentelemetry-instrumentation-mongo'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
