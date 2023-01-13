@@ -71,13 +71,15 @@ class CallbacksJob < TestJob
 end
 
 ::ActiveJob::Base.queue_adapter = :inline
-::ActiveJob::Base.logger = Logger.new(File::NULL)
+::ActiveJob::Base.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
 
 OpenTelemetry::SDK.configure do |c|
+  c.error_handler = ->(exception:, message:) { raise(exception || message) }
+  c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
   c.use 'OpenTelemetry::Instrumentation::ActiveJob'
   c.add_span_processor span_processor
 end
