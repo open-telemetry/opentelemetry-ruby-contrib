@@ -1,6 +1,6 @@
 # Configuration for Ruby base image
-ARG ALPINE_VERSION=3.10
-ARG RUBY_VERSION=2.6.5
+ARG ALPINE_VERSION=3.17
+ARG RUBY_VERSION=3.1
 
 FROM ruby:"${RUBY_VERSION}-alpine${ALPINE_VERSION}" as ruby
 
@@ -13,9 +13,6 @@ ARG APP_USER=app
 ARG APP_GID=1000
 ARG APP_GROUP=app
 ARG APP_DIR=/app
-
-# Rubygems Bundler version
-ARG BUNDLER_VERSION=2.0.2
 
 ENV SHELL /bin/bash
 
@@ -59,7 +56,7 @@ ENV PATH "${APP_DIR}/bin:${BUNDLE_BIN}:${PATH}"
 
 # Upgrade RubyGems and install required Bundler version
 RUN gem update --system && \
-    gem install "bundler:${BUNDLER_VERSION}" && \
+    gem update bundler && \
     gem cleanup
 
 # Add custom app User and Group
