@@ -4,13 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
+
 require 'securerandom'
-require 'bunny'
 
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
-
-require 'pry'
 require 'minitest/autorun'
 
 # global opentelemetry-sdk setup:

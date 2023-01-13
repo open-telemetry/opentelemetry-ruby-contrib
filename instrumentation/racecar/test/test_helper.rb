@@ -4,7 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/sdk'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
+
+require 'active_support'
 
 require 'minitest/autorun'
 require 'webmock/minitest'
@@ -19,6 +22,3 @@ OpenTelemetry::SDK.configure do |c|
   c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
   c.add_span_processor span_processor
 end
-
-require 'racecar'
-require 'active_support'

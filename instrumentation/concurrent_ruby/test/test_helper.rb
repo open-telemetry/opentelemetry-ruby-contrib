@@ -4,10 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'concurrent'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'concurrent'
 
 require 'minitest/autorun'
 
