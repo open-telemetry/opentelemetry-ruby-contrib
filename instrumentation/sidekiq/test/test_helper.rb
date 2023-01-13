@@ -48,7 +48,7 @@ Sidekiq.configure_client do |config|
 end
 
 # Silence Actibe Job logging noise
-ActiveJob::Base.logger = Logger.new('/dev/null')
+ActiveJob::Base.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
 
 class SimpleJobWithActiveJob < ActiveJob::Base
   self.queue_adapter = :sidekiq

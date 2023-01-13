@@ -16,11 +16,17 @@ require 'pry'
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
 
+logger = ActiveSupport::Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
+
 OpenTelemetry::SDK.configure do |c|
   c.error_handler = ->(exception:, message:) { raise(exception || message) }
+  c.logger = logger
   c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
   c.add_span_processor span_processor
 end
+
+ActiveRecord::Base.logger = logger
+ActiveRecord::Migration.verbose = false
 
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',

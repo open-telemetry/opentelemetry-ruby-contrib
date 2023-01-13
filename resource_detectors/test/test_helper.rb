@@ -11,3 +11,5 @@ require 'opentelemetry/resource/detectors'
 require 'minitest/autorun'
 require 'pry'
 require 'webmock/minitest'
+
+OpenTelemetry.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
