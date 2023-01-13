@@ -52,13 +52,9 @@ Gemspec/RequireMFA:
   Enabled: false
 Layout/LineLength:
   Enabled: false
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
 Lint/DuplicateBranch:
   Enabled: false
 Lint/EmptyBlock:
-  Enabled: false
-Lint/RedundantCopDisableDirective:
   Enabled: false
 Lint/RedundantRequireStatement:
   Enabled: false
