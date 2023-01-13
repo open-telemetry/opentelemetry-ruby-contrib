@@ -5,15 +5,13 @@
 # SPDX-License-Identifier: Apache-2.0
 ENV['OTEL_LOG_LEVEL'] ||= 'fatal'
 
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
+
 require 'active_job'
 require 'opentelemetry-instrumentation-active_job'
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
-
 require 'minitest/autorun'
 require 'webmock/minitest'
-
-require 'pry'
 
 class TestJob < ::ActiveJob::Base
   def perform; end
