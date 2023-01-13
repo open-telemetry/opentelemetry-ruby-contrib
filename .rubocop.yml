@@ -74,8 +74,6 @@ Style/GlobalStdStream:
   Enabled: false
 Style/HashConversion:
   Enabled: false
-Style/QuotedSymbols:
-  Enabled: true
 Style/RedundantConstantBase:
   Enabled: false
 Style/RedundantFetchBlock:
