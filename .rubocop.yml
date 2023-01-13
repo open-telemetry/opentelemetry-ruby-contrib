@@ -70,8 +70,6 @@ Style/CollectionCompact:
   Enabled: false
 Style/FetchEnvVar:
   Enabled: false
-Style/GlobalStdStream:
-  Enabled: false
 Style/HashConversion:
   Enabled: false
 Style/QuotedSymbols:
