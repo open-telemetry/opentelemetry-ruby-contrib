@@ -76,5 +76,3 @@ Style/RedundantConstantBase:
   Enabled: false
 Style/RedundantFetchBlock:
   Enabled: false
-Style/SymbolProc:
-  Enabled: false
