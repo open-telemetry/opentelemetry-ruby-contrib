@@ -4,10 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'aws-sdk'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
+
 require 'opentelemetry-instrumentation-aws_sdk'
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
