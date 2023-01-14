@@ -57,9 +57,3 @@ Lint/RedundantRequireStatement:
   Enabled: false
 Style/CollectionCompact:
   Enabled: false
-Style/GlobalStdStream:
-  Enabled: false
-Style/GlobalStdStream:
-  Enabled: false
-Style/QuotedSymbols:
-  Enabled: false
