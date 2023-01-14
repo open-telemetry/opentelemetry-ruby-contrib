@@ -57,8 +57,6 @@ Lint/EmptyBlock:
   Enabled: false
 Lint/RedundantRequireStatement:
   Enabled: false
-Lint/SymbolConversion:
-  Enabled: false
 Style/CollectionCompact:
   Enabled: false
 Style/GlobalStdStream:

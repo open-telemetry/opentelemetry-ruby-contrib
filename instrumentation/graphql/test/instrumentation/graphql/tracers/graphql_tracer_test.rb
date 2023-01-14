@@ -47,7 +47,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
   describe '#platform_trace' do
     it 'traces platform keys' do
-      result = SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
+      result = SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
       graphql_tracer.platform_keys.each do |_key, value|
         span = spans.find { |s| s.name == value }
@@ -121,7 +121,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       let(:config) { { enable_platform_field: true } }
 
       it 'traces execute_field' do
-        SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
+        SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
         span = spans.find { |s| s.name == 'Query.resolvedField' }
         _(span).wont_be_nil
@@ -133,7 +133,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
       it 'traces .authorized' do
         skip unless supports_authorized_and_resolved_types?
-        SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
+        SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
         span = spans.find { |s| s.name == 'Query.authorized' }
         _(span).wont_be_nil
