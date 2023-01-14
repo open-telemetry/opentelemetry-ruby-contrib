@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber do
+describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveSupport::Instrumentation.instance }
   let(:tracer) { instrumentation.tracer }
   let(:exporter) { EXPORTER }

@@ -13,7 +13,7 @@ require_relative 'routes'
 module AppConfig
   extend self
 
-  def initialize_app(use_exceptions_app: false, remove_rack_tracer_middleware: false) # rubocop:disable Metrics/MethodLength
+  def initialize_app(use_exceptions_app: false, remove_rack_tracer_middleware: false)
     new_app = Application.new
     new_app.config.secret_key_base = 'secret_key_base'
 
