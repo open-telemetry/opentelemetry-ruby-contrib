@@ -14,7 +14,6 @@ require 'opentelemetry-instrumentation-active_support'
 require 'minitest/autorun'
 require 'webmock/minitest'
 
-
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
