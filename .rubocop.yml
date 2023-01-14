@@ -53,17 +53,15 @@ Gemspec/RequireMFA:
 Layout/LineLength:
   Enabled: true
   Max: 250
-Lint/EmptyBlock:
-  Enabled: false
 Lint/RedundantRequireStatement:
-  Enabled: false
-Lint/SymbolConversion:
   Enabled: false
 Style/CollectionCompact:
   Enabled: false
 Style/GlobalStdStream:
   Enabled: false
-Style/HashConversion:
+Style/GlobalStdStream:
+  Enabled: false
+Style/QuotedSymbols:
   Enabled: false
 Style/RedundantFetchBlock:
   Enabled: false
