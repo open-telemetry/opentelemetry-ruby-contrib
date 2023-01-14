@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.5.1 / 2023-01-14
+
+* FIXED: Remove `job_options` when using `bulk_enqueue` 
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.5.0 / 2022-10-28
 
 * ADDED: Add support for `job_options` argument

@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+### v0.21.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.21.0 / 2022-10-04
 
 * ADDED: Support mongodb db statement without obfuscation 

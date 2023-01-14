@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.21.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.21.0 / 2022-05-26
 
 * BREAKING CHANGE: This requires upgrading both the SDK and Instrumentation gem in tandem

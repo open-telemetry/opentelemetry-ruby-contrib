@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.24.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+
 ### v0.24.0 / 2022-12-06
 
 * BREAKING CHANGE: Remove enable_recognize_route and span_naming options 
