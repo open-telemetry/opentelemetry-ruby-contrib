@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.24.2 / 2023-01-14
+
+* (No significant changes)
+
 ### v0.24.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 
