@@ -55,5 +55,3 @@ Layout/LineLength:
   Max: 250
 Lint/RedundantRequireStatement:
   Enabled: false
-Style/CollectionCompact:
-  Enabled: false
