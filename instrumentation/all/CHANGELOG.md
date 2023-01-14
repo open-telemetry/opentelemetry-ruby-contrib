@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.29.0 / 2023-01-14
+
+* (No significant changes)
+
 ### v0.28.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 
