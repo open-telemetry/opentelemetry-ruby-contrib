@@ -131,7 +131,9 @@ module OpenTelemetry
             }
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
-            attributes.merge(transport_attrs).compact
+            attributes.merge!(transport_attrs)
+            attributes.compact!
+            attributes
           end
 
           def transport_addr
