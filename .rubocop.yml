@@ -61,7 +61,7 @@ Lint/SymbolConversion:
   Enabled: false
 Style/CollectionCompact:
   Enabled: false
-Style/FetchEnvVar:
+Style/GlobalStdStream:
   Enabled: false
 Style/HashConversion:
   Enabled: false
