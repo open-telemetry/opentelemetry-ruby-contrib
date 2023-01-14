@@ -51,9 +51,8 @@ Gemspec/RequireMFA:
   # We probably want to figure out how to set this up for the organization
   Enabled: false
 Layout/LineLength:
-  Enabled: false
-Lint/DuplicateBranch:
-  Enabled: false
+  Enabled: true
+  Max: 250
 Lint/EmptyBlock:
   Enabled: false
 Lint/RedundantRequireStatement:
