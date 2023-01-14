@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.21.2 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.21.1 / 2022-11-16
 
 * FIXED: Loosen dependency on Rack

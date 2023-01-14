@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.4.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.4.0 / 2022-12-06
 
 * BREAKING CHANGE: Remove enable_recognize_route and span_naming options 

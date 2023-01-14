@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.21.0 / 2023-01-14
+
+* ADDED: Add request/response hooks to more http clients 
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.20.0 / 2022-06-09
 
 * Upgrading Base dependency version

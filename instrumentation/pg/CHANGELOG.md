@@ -1,5 +1,14 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.23.0 / 2023-01-14
+
+* BREAKING CHANGE: Removed deprecated instrumentation options 
+
+* ADDED: Removed deprecated instrumentation options 
+* FIXED: Reduce Hash Allocations in PG Instrumentation 
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.22.3 / 2022-12-06
 
 * FIXED: Use attributes from the active PG connection

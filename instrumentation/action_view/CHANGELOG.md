@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.3.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.3.0 / 2022-06-09
 
 * Upgrading Base dependency version
