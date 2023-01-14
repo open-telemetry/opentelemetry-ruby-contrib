@@ -40,7 +40,7 @@ def run
     set(key, nil) if get(key).to_s.empty?
   end
 
-  ::Dir.chdir(context_directory)
+  Dir.chdir(context_directory)
   @utils = ReleaseUtils.new(self)
 
   @utils.error("GitHub event path missing") unless event_path

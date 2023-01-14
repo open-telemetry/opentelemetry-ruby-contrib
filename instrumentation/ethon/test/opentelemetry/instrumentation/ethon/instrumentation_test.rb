@@ -40,7 +40,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
     end
 
     describe 'easy' do
-      let(:easy) { ::Ethon::Easy.new(url: 'http://username:password@example.com/test') }
+      let(:easy) { Ethon::Easy.new(url: 'http://username:password@example.com/test') }
 
       describe '#http_request' do
         it 'preserves HTTP request method on easy instance' do
@@ -62,7 +62,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
         let(:span) { easy.instance_eval { @otel_span } }
 
         it 'creates a span' do
-          ::Ethon::Curl.stub(:easy_perform, 0) do
+          Ethon::Curl.stub(:easy_perform, 0) do
             # NOTE: suppress call to #complete to isolate #perform functionality
             easy.stub(:complete, nil) do
               easy.perform
@@ -78,7 +78,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
       describe '#complete' do
         def stub_response(options)
-          easy.stub(:mirror, ::Ethon::Easy::Mirror.new(options)) do
+          easy.stub(:mirror, Ethon::Easy::Mirror.new(options)) do
             easy.otel_before_request
             # NOTE: perform calls complete
             easy.complete
@@ -217,8 +217,8 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
     end
 
     describe 'multi' do
-      let(:easy) { ::Ethon::Easy.new }
-      let(:multi) { ::Ethon::Multi.new }
+      let(:easy) { Ethon::Easy.new }
+      let(:multi) { Ethon::Multi.new }
 
       describe '#perform' do
         describe 'with no easy added to multi' do
@@ -265,7 +265,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             multi.add(easy)
 
             # local variables for the closure
-            other = ::Ethon::Easy.new(url: 'test')
+            other = Ethon::Easy.new(url: 'test')
             m = multi
             easy.send(:define_singleton_method, :complete) do
               m.add(other)

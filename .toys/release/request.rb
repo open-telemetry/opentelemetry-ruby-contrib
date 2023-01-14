@@ -74,7 +74,7 @@ def run
   require "release_utils"
   require "release_requester"
 
-  ::Dir.chdir(context_directory)
+  Dir.chdir(context_directory)
   @utils = ReleaseUtils.new(self)
 
   [:release_ref].each do |key|

@@ -19,7 +19,7 @@ span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPO
 
 OpenTelemetry::SDK.configure do |c|
   c.error_handler = ->(exception:, message:) { raise(exception || message) }
-  c.logger = ::Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
+  c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
   c.use_all
   c.add_span_processor span_processor
 end
@@ -27,4 +27,4 @@ end
 # Create a globally available Rails app, this should be used in test unless
 # specifically testing behaviour with different initialization configs.
 DEFAULT_RAILS_APP = AppConfig.initialize_app
-::Rails.application = DEFAULT_RAILS_APP
+Rails.application = DEFAULT_RAILS_APP

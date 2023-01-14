@@ -40,7 +40,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     end
 
     it 'after request with success code' do
-      ::Net::HTTP.get('example.com', '/success')
+      Net::HTTP.get('example.com', '/success')
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
@@ -58,7 +58,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     end
 
     it 'after request with failure code' do
-      ::Net::HTTP.post(URI('http://example.com/failure'), 'q' => 'ruby')
+      Net::HTTP.post(URI('http://example.com/failure'), 'q' => 'ruby')
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP POST'
@@ -77,7 +77,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
     it 'after request timeout' do
       expect do
-        ::Net::HTTP.get(URI('https://example.com/timeout'))
+        Net::HTTP.get(URI('https://example.com/timeout'))
       end.must_raise Net::OpenTimeout
 
       _(exporter.finished_spans.size).must_equal 1
@@ -103,7 +103,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
     it 'merges http client attributes' do
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'foo', 'http.target' => 'REDACTED') do
-        ::Net::HTTP.get('example.com', '/success')
+        Net::HTTP.get('example.com', '/success')
       end
 
       _(exporter.finished_spans.size).must_equal 1
@@ -141,12 +141,12 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       end
 
       it 'does not create a span when request ignored using a string' do
-        ::Net::HTTP.get('foobar.com', '/body')
+        Net::HTTP.get('foobar.com', '/body')
         _(exporter.finished_spans.size).must_equal 0
       end
 
       it 'does not create a span when request ignored using a regexp' do
-        ::Net::HTTP.get('bazqux.com', '/body')
+        Net::HTTP.get('bazqux.com', '/body')
         _(exporter.finished_spans.size).must_equal 0
       end
 
@@ -159,7 +159,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       end
 
       it 'creates a span for a non-ignored request' do
-        ::Net::HTTP.get('example.com', '/body')
+        Net::HTTP.get('example.com', '/body')
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'HTTP GET'
         _(span.attributes['http.method']).must_equal 'GET'

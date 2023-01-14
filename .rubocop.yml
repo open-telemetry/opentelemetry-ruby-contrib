@@ -63,7 +63,5 @@ Style/GlobalStdStream:
   Enabled: false
 Style/QuotedSymbols:
   Enabled: false
-Style/RedundantConstantBase:
-  Enabled: false
 Style/RedundantFetchBlock:
   Enabled: false
