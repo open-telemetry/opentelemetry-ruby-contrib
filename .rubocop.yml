@@ -59,7 +59,9 @@ Style/CollectionCompact:
   Enabled: false
 Style/GlobalStdStream:
   Enabled: false
-Style/HashConversion:
+Style/GlobalStdStream:
+  Enabled: false
+Style/QuotedSymbols:
   Enabled: false
 Style/RedundantConstantBase:
   Enabled: false
