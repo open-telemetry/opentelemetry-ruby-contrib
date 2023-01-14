@@ -277,6 +277,7 @@ module OpenTelemetry
           config_value = user_config[option_name]
           config_override = coerce_env_var(config_overrides[option_name], option[:validation_type]) if config_overrides[option_name]
 
+          # rubocop:disable Lint/DuplicateBranch
           value = if config_value.nil? && config_override.nil?
                     option[:default]
                   elsif option[:validator].respond_to?(:include?) && option[:validator].include?(config_override)
@@ -294,6 +295,7 @@ module OpenTelemetry
                     )
                     option[:default]
                   end
+          # rubocop:enable Lint/DuplicateBranch
 
           h[option_name] = value
         rescue StandardError => e
