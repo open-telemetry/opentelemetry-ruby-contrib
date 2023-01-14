@@ -74,9 +74,7 @@ module OpenTelemetry
           # tags is an array looking something like ["tag1", "traceparent:..."]
           def self.extract_context_from_tags(tags)
             # Convert tags into Hash (ignoring elements that cannot be converted)
-            tags_hash = Hash[
-              tags.map { |value| value.split(':', 2) }.select { |value| value.size == 2 }
-            ]
+            tags_hash = tags.map { |value| value.split(':', 2) }.select { |value| value.size == 2 }.to_h
             OpenTelemetry.propagation.extract(tags_hash)
           end
 

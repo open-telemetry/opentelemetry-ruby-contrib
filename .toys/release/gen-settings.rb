@@ -36,7 +36,7 @@ def write_settings(file)
   file.puts("# Insert additional repo-level settings here.")
   file.puts
   file.puts("gems:")
-  ::Dir.glob("**/*.gemspec").each do |gemspec|
+  Dir.glob("**/*.gemspec").each do |gemspec|
     gem_name = ::File.basename(gemspec, ".gemspec")
     file.puts("  - name: #{gem_name}")
     dir = ::File.dirname(gemspec)

@@ -38,7 +38,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     instrumentation.instance_variable_set(:@installed, false)
 
     # Reset various instance variables to clear state between tests
-    ::GraphQL::Schema.instance_variable_set(:@own_tracers, [])
+    GraphQL::Schema.instance_variable_set(:@own_tracers, [])
 
     # Reseting @graphql_definition is needed for tests running against version `1.9.x`
     SomeOtherGraphQLAppSchema.remove_instance_variable(:@graphql_definition) if SomeOtherGraphQLAppSchema.instance_variable_defined?(:@graphql_definition)
@@ -47,7 +47,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
   describe '#platform_trace' do
     it 'traces platform keys' do
-      result = SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
+      result = SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
       graphql_tracer.platform_keys.each do |_key, value|
         span = spans.find { |s| s.name == value }
@@ -121,7 +121,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       let(:config) { { enable_platform_field: true } }
 
       it 'traces execute_field' do
-        SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
+        SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
         span = spans.find { |s| s.name == 'Query.resolvedField' }
         _(span).wont_be_nil
@@ -133,7 +133,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
       it 'traces .authorized' do
         skip unless supports_authorized_and_resolved_types?
-        SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
+        SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
         span = spans.find { |s| s.name == 'Query.authorized' }
         _(span).wont_be_nil
@@ -189,13 +189,13 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     include GraphQL::Schema::Interface
   end
 
-  class Car < ::GraphQL::Schema::Object
+  class Car < GraphQL::Schema::Object
     implements Vehicle
 
     field :price, Integer, null: true
   end
 
-  class SlightlyComplexType < ::GraphQL::Schema::Object
+  class SlightlyComplexType < GraphQL::Schema::Object
     field :uppercased_value, String, null: false
     field :original_value, String, null: false
 
@@ -204,7 +204,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     end
   end
 
-  class SimpleResolver < ::GraphQL::Schema::Resolver
+  class SimpleResolver < GraphQL::Schema::Resolver
     type SlightlyComplexType, null: false
 
     argument :id, Integer, required: true
@@ -214,7 +214,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     end
   end
 
-  class QueryType < ::GraphQL::Schema::Object
+  class QueryType < GraphQL::Schema::Object
     field :simple_field, String, null: false
     field :resolved_field, resolver: SimpleResolver
 
@@ -230,18 +230,18 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     end
   end
 
-  class OtherQueryType < ::GraphQL::Schema::Object
+  class OtherQueryType < GraphQL::Schema::Object
     field :simple_field, String, null: false
     def simple_field
       'Hello.'
     end
   end
 
-  class SomeOtherGraphQLAppSchema < ::GraphQL::Schema
+  class SomeOtherGraphQLAppSchema < GraphQL::Schema
     query(::OtherQueryType)
   end
 
-  class SomeGraphQLAppSchema < ::GraphQL::Schema
+  class SomeGraphQLAppSchema < GraphQL::Schema
     query(::QueryType)
     orphan_types Car
 
