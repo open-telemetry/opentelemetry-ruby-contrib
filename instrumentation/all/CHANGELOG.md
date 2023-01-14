@@ -2,7 +2,7 @@
 
 ### v0.29.0 / 2023-01-14
 
-* (No significant changes)
+* BREAKING CHANGE: includes minor version updates in [#271](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/271)
 
 ### v0.28.1 / 2023-01-14
 
