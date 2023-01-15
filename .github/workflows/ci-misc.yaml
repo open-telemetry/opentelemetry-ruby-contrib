@@ -1,0 +1,89 @@
+# Workflows for CI, Yardocs, etc...
+name: CI Misc
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  instrumentation:
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - opentelemetry-propagator-ottrace
+          - opentelemetry-propagator-xray
+          - opentelemetry-instrumentation-que
+          - opentelemetry-instrumentation-http_client
+          - opentelemetry-instrumentation-mysql2
+          - opentelemetry-instrumentation-sinatra
+          - opentelemetry-instrumentation-sidekiq
+          - opentelemetry-instrumentation-dalli
+          - opentelemetry-instrumentation-racecar
+          - opentelemetry-instrumentation-redis
+          - opentelemetry-instrumentation-ruby_kafka
+          - opentelemetry-instrumentation-concurrent_ruby
+          - opentelemetry-instrumentation-active_model_serializers
+          - opentelemetry-instrumentation-rake
+          - opentelemetry-instrumentation-action_view
+          - opentelemetry-instrumentation-bunny
+          - opentelemetry-instrumentation-all
+          - opentelemetry-instrumentation-aws_sdk
+          - opentelemetry-instrumentation-active_record
+          - opentelemetry-instrumentation-faraday
+          - opentelemetry-instrumentation-resque
+          - opentelemetry-instrumentation-rdkafka
+          - opentelemetry-instrumentation-pg
+          - opentelemetry-instrumentation-ethon
+          - opentelemetry-instrumentation-lmdb
+          - opentelemetry-instrumentation-active_support
+          - opentelemetry-instrumentation-http
+          - opentelemetry-instrumentation-graphql
+          - opentelemetry-instrumentation-trilogy
+          - opentelemetry-instrumentation-net_http
+          - opentelemetry-instrumentation-rack
+          - opentelemetry-instrumentation-action_pack
+          - opentelemetry-instrumentation-mongo
+          - opentelemetry-instrumentation-restclient
+          - opentelemetry-instrumentation-koala
+          - opentelemetry-instrumentation-active_job
+          - opentelemetry-instrumentation-excon
+          - opentelemetry-instrumentation-rspec
+          - opentelemetry-instrumentation-base
+          - opentelemetry-instrumentation-delayed_job
+          - opentelemetry-instrumentation-rails
+          - opentelemetry-resource_detectors
+        os:
+          - ubuntu-latest
+
+    name: ${{ matrix.gem }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Build and yarddoc"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  ${{ matrix.gem }}
+          ruby: "2.7"
+          yard: true
+          rubocop: false
+          build: true
+          test: false
+
+  linters:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.7"
+          bundler:  "latest"
+          bundler-cache: true
+      - name: "Rubocop"
+        run: |
+          bundle exec rubocop
