@@ -16,48 +16,48 @@ jobs:
       fail-fast: false
       matrix:
         gem:
-          - opentelemetry-propagator-ottrace
-          - opentelemetry-propagator-xray
-          - opentelemetry-instrumentation-que
-          - opentelemetry-instrumentation-http_client
-          - opentelemetry-instrumentation-mysql2
-          - opentelemetry-instrumentation-sinatra
-          - opentelemetry-instrumentation-sidekiq
-          - opentelemetry-instrumentation-dalli
-          - opentelemetry-instrumentation-racecar
-          - opentelemetry-instrumentation-redis
-          - opentelemetry-instrumentation-ruby_kafka
-          - opentelemetry-instrumentation-concurrent_ruby
-          - opentelemetry-instrumentation-active_model_serializers
-          - opentelemetry-instrumentation-rake
-          - opentelemetry-instrumentation-action_view
-          - opentelemetry-instrumentation-bunny
-          - opentelemetry-instrumentation-all
-          - opentelemetry-instrumentation-aws_sdk
-          - opentelemetry-instrumentation-active_record
-          - opentelemetry-instrumentation-faraday
-          - opentelemetry-instrumentation-resque
-          - opentelemetry-instrumentation-rdkafka
-          - opentelemetry-instrumentation-pg
-          - opentelemetry-instrumentation-ethon
-          - opentelemetry-instrumentation-lmdb
-          - opentelemetry-instrumentation-active_support
-          - opentelemetry-instrumentation-http
-          - opentelemetry-instrumentation-graphql
-          - opentelemetry-instrumentation-trilogy
-          - opentelemetry-instrumentation-net_http
-          - opentelemetry-instrumentation-rack
-          - opentelemetry-instrumentation-action_pack
-          - opentelemetry-instrumentation-mongo
-          - opentelemetry-instrumentation-restclient
-          - opentelemetry-instrumentation-koala
-          - opentelemetry-instrumentation-active_job
-          - opentelemetry-instrumentation-excon
-          - opentelemetry-instrumentation-rspec
-          - opentelemetry-instrumentation-base
-          - opentelemetry-instrumentation-delayed_job
-          - opentelemetry-instrumentation-rails
-          - opentelemetry-resource_detectors
+          - propagator-ottrace
+          - propagator-xray
+          - instrumentation-que
+          - instrumentation-http_client
+          - instrumentation-mysql2
+          - instrumentation-sinatra
+          - instrumentation-sidekiq
+          - instrumentation-dalli
+          - instrumentation-racecar
+          - instrumentation-redis
+          - instrumentation-ruby_kafka
+          - instrumentation-concurrent_ruby
+          - instrumentation-active_model_serializers
+          - instrumentation-rake
+          - instrumentation-action_view
+          - instrumentation-bunny
+          - instrumentation-all
+          - instrumentation-aws_sdk
+          - instrumentation-active_record
+          - instrumentation-faraday
+          - instrumentation-resque
+          - instrumentation-rdkafka
+          - instrumentation-pg
+          - instrumentation-ethon
+          - instrumentation-lmdb
+          - instrumentation-active_support
+          - instrumentation-http
+          - instrumentation-graphql
+          - instrumentation-trilogy
+          - instrumentation-net_http
+          - instrumentation-rack
+          - instrumentation-action_pack
+          - instrumentation-mongo
+          - instrumentation-restclient
+          - instrumentation-koala
+          - instrumentation-active_job
+          - instrumentation-excon
+          - instrumentation-rspec
+          - instrumentation-base
+          - instrumentation-delayed_job
+          - instrumentation-rails
+          - resource_detectors
         os:
           - ubuntu-latest
 
@@ -68,22 +68,9 @@ jobs:
       - name: "Build and yarddoc"
         uses: ./.github/actions/test_gem
         with:
-          gem:  ${{ matrix.gem }}
+          gem:  opentelemetry-${{ matrix.gem }}
           ruby: "2.7"
           yard: true
-          rubocop: false
+          rubocop: true
           build: true
           test: false
-
-  linters:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "2.7"
-          bundler:  "latest"
-          bundler-cache: true
-      - name: "Rubocop"
-        run: |
-          bundle exec rubocop
