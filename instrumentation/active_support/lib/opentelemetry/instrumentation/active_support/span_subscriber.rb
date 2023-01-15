@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'set'
+
 module OpenTelemetry
   module Instrumentation
     # rubocop:disable Style/Documentation
@@ -63,13 +65,14 @@ module OpenTelemetry
       end
 
       class SpanSubscriber
+        EXCEPTION_ATTRIBUTES = Set.new(%i[exception exception_object]).freeze
         ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
         def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
           @span_name = name.split('.')[0..1].reverse.join(' ').freeze
           @tracer = tracer
           @notification_payload_transform = notification_payload_transform
-          @disallowed_notification_payload_keys = disallowed_notification_payload_keys
+          @disallowed_notification_payload_keys = Set.new(disallowed_notification_payload_keys).freeze
         end
 
         def start(name, id, payload)
@@ -91,10 +94,10 @@ module OpenTelemetry
           return unless span && token
 
           payload = transform_payload(payload)
-          attrs = payload.map do |k, v|
-            [k.to_s, sanitized_value(v)] if valid_payload_key?(k) && valid_payload_value?(v)
+          attrs = payload.each_with_object({}) do |(k, v), result|
+            result[k.to_s] = sanitized_value(v) if valid_payload_key?(k) && valid_payload_value?(v)
           end
-          span.add_attributes(attrs.compact.to_h)
+          span.add_attributes(attrs)
 
           if (e = payload[:exception_object])
             span.record_exception(e)
@@ -114,14 +117,17 @@ module OpenTelemetry
         end
 
         def valid_payload_key?(key)
-          %i[exception exception_object].none?(key) && @disallowed_notification_payload_keys.none?(key)
+          !(EXCEPTION_ATTRIBUTES.include?(key) || @disallowed_notification_payload_keys.include?(key))
         end
 
         def valid_payload_value?(value)
           if value.is_a?(Array)
             return true if value.empty?
 
-            value.map(&:class).uniq.size == 1 && ALWAYS_VALID_PAYLOAD_TYPES.any? { |t| value.first.is_a?(t) }
+            types = value.map(&:class)
+            types.uniq!
+
+            types.size == 1 && ALWAYS_VALID_PAYLOAD_TYPES.any? { |t| value.first.is_a?(t) }
           else
             ALWAYS_VALID_PAYLOAD_TYPES.any? { |t| value.is_a?(t) }
           end
