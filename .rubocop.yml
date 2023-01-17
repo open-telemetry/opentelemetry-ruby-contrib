@@ -53,5 +53,3 @@ Gemspec/RequireMFA:
 Layout/LineLength:
   Enabled: true
   Max: 250
-Lint/RedundantRequireStatement:
-  Enabled: false
