@@ -43,6 +43,9 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "2.7"
+          yard: true
+          rubocop: true
+          build: true
       - name: "Test JRuby"
         uses: ./.github/actions/test_gem
         with:
@@ -91,6 +94,9 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "2.7"
+          yard: true
+          rubocop: true
+          build: true
     services:
       mysql:
         image: mysql:8.0.31
@@ -130,6 +136,9 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "2.7"
+          yard: true
+          rubocop: true
+          build: true
     services:
       zookeeper:
         image: confluentinc/cp-zookeeper:latest
@@ -185,6 +194,9 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "2.7"
+          yard: true
+          rubocop: true
+          build: true
     services:
       redis:
         image: bitnami/redis:6.2
@@ -231,6 +243,9 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "2.7"
+          yard: true
+          rubocop: true
+          build: true
     services:
       postgres:
         image: postgres:13
@@ -274,6 +289,9 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "2.7"
+          yard: true
+          rubocop: true
+          build: true
     services:
       rabbitmq:
         image: rabbitmq:3.8-alpine

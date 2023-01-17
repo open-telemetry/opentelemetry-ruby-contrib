@@ -24,11 +24,6 @@ inputs:
     required: false
     type: boolean
     default: false
-  test:
-    description: Test gem
-    required: false
-    type: boolean
-    default: true
 runs:
   using: composite
   steps:
@@ -86,7 +81,6 @@ runs:
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Test Gem
-      if: "${{ steps.setup.outputs.test == 'true' }}"
       shell: bash
       run: |
         if [[ -f "Appraisals" ]]; then
