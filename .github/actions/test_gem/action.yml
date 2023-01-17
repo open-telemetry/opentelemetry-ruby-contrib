@@ -24,6 +24,7 @@ inputs:
     required: false
     type: boolean
     default: false
+
 runs:
   using: composite
   steps:
