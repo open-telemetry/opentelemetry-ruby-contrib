@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+### v0.2.2 / 2023-01-14
+
+* FIXED: Drop Rails dependency for ActiveSupport Instrumentation 
+
 ### v0.2.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 

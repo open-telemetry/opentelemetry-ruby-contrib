@@ -21,7 +21,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Enabled: false
 Metrics/MethodLength:
-  Max: 20
+  Max: 25
 Naming/FileName:
   Exclude:
     - '**/opentelemetry-*'
