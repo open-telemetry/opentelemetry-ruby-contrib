@@ -43,9 +43,11 @@ module OpenTelemetry
           def span_attributes(redis_config)
             attributes = {
               'db.system' => 'redis',
-              'net.peer.name' => redis_config.host,
-              'net.peer.port' => redis_config.port
             }
+
+            redis_config.host.tap { attributes['net.peer.name'] = _1 if _1 }
+            redis_config.port.tap { attributes['net.peer.port'] = _1 if _1 }
+            redis_config.path.tap { attributes['net.peer.name'] = "unix://#{_1}" if _1 }
 
             attributes['db.redis.database_index'] = redis_config.db unless redis_config.db.zero?
             attributes['peer.service'] = instrumentation.config[:peer_service] if instrumentation.config[:peer_service]

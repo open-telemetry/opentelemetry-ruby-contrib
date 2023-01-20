@@ -16,14 +16,13 @@ module OpenTelemetry
           def process(commands) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
             return super unless instrumentation_config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
 
-            host = options[:host]
-            port = options[:port]
-
             attributes = {
               'db.system' => 'redis',
-              'net.peer.name' => host,
-              'net.peer.port' => port
             }
+
+            options[:host].tap { attributes['net.peer.name'] = _1 if _1 }
+            options[:port].tap { attributes['net.peer.port'] = _1 if _1 }
+            options[:path].tap { attributes['net.peer.name'] = "unix://#{_1}" if _1 }
 
             attributes['db.redis.database_index'] = options[:db] unless options[:db].zero?
             attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
