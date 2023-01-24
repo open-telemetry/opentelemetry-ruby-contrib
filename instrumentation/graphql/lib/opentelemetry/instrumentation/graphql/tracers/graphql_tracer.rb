@@ -45,19 +45,31 @@ module OpenTelemetry
           def platform_field_key(type, field)
             return unless config[:enable_platform_field]
 
-            "#{type.graphql_name}.#{field.graphql_name}"
+            if config[:legacy_platform_span_names]
+              "#{type.graphql_name}.#{field.graphql_name}"
+            else
+              'graphql.execute_field'
+            end
           end
 
           def platform_authorized_key(type)
             return unless config[:enable_platform_authorized]
 
-            "#{type.graphql_name}.authorized"
+            if config[:legacy_platform_span_names]
+              "#{type.graphql_name}.authorized"
+            else
+              'graphql.authorized'
+            end
           end
 
           def platform_resolve_type_key(type)
             return unless config[:enable_platform_resolve_type]
 
-            "#{type.graphql_name}.resolve_type"
+            if config[:legacy_platform_span_names]
+              "#{type.graphql_name}.resolve_type"
+            else
+              'graphql.resolve_type'
+            end
           end
 
           private
@@ -73,6 +85,16 @@ module OpenTelemetry
           def attributes_for(key, data)
             attributes = {}
             case key
+            when 'execute_field', 'execute_field_lazy'
+              attributes['graphql.field.parent'] = data[:owner].graphql_name # owner is the concrete type, not interface
+              attributes['graphql.field.name'] = data[:field].graphql_name
+              attributes['graphql.lazy'] = key == 'execute_field_lazy'
+            when 'authorized', 'authorized_lazy'
+              attributes['graphql.type.name'] = data.fetch(:type).graphql_name
+              attributes['graphql.lazy'] = key == 'authorized_lazy'
+            when 'resolve_type', 'resolve_type_lazy'
+              attributes['graphql.type.name'] = data.fetch(:type).graphql_name
+              attributes['graphql.lazy'] = key == 'resolve_type_lazy'
             when 'execute_query'
               attributes['graphql.operation.name'] = data[:query].selected_operation_name if data[:query].selected_operation_name
               attributes['graphql.operation.type'] = data[:query].selected_operation.operation_type

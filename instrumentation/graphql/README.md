@@ -41,6 +41,11 @@ OpenTelemetry::SDK.configure do |c|
     enable_platform_authorized: false,
     # enable_platform_resolve_type maps to the resolve_type and resolve_type_lazy keys
     enable_platform_resolve_type: false
+
+    # Controls if platform tracing (field/authorized/resolve_type)
+    # should use the legacy span names (e.g. "MyType.myField") or the
+    # new normalized span names (e.g. "graphql.execute_field").
+    legacy_platform_span_names: false
   }
 end
 ```
