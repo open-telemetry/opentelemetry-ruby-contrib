@@ -2,6 +2,7 @@
 
 ### v0.4.1 / 2023-01-14
 
+* FIXED: String-ify code.function Span attribute
 * DOCS: Fix gem homepage 
 * DOCS: More gem documentation fixes 
 
@@ -13,7 +14,7 @@
 
 ### v0.3.2 / 2022-11-16
 
-* * FIXED: Loosen dependency on Rack
+* FIXED: Loosen dependency on Rack
 
 ### v0.3.1 / 2022-10-27
 
