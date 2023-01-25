@@ -117,8 +117,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       end
     end
 
-    describe 'when platform_field is enabled' do
-      let(:config) { { enable_platform_field: true } }
+    describe 'when platform_field is enabled with legacy naming' do
+      let(:config) { { enable_platform_field: true, legacy_platform_span_names: true } }
 
       it 'traces execute_field' do
         SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
@@ -128,8 +128,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       end
     end
 
-    describe 'when platform_field is enabled without legacy naming' do
-      let(:config) { { enable_platform_field: true, legacy_platform_span_names: false } }
+    describe 'when platform_field is enabled' do
+      let(:config) { { enable_platform_field: true } }
 
       it 'traces execute_field' do
         SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
@@ -157,8 +157,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       end
     end
 
-    describe 'when platform_authorized is enabled' do
-      let(:config) { { enable_platform_authorized: true } }
+    describe 'when platform_authorized is enabled with legacy naming' do
+      let(:config) { { enable_platform_authorized: true, legacy_platform_span_names: true } }
 
       it 'traces .authorized' do
         skip unless supports_authorized_and_resolved_types?
@@ -172,7 +172,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       end
     end
 
-    describe 'when platform_authorized is enabled without legacy naming' do
+    describe 'when platform_authorized is enabled' do
       let(:config) { { enable_platform_authorized: true, legacy_platform_span_names: false } }
 
       it 'traces .authorized' do
@@ -207,8 +207,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       end
     end
 
-    describe 'when platform_resolve_type is enabled' do
-      let(:config) { { enable_platform_resolve_type: true } }
+    describe 'when platform_resolve_type is enabled with legacy naming' do
+      let(:config) { { enable_platform_resolve_type: true, legacy_platform_span_names: true } }
 
       it 'traces .resolve_type' do
         skip unless supports_authorized_and_resolved_types?
@@ -219,8 +219,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       end
     end
 
-    describe 'when platform_resolve_type is enabled without legacy naming' do
-      let(:config) { { enable_platform_resolve_type: true, legacy_platform_span_names: false } }
+    describe 'when platform_resolve_type is enabled' do
+      let(:config) { { enable_platform_resolve_type: true } }
 
       it 'traces .resolve_type' do
         skip unless supports_authorized_and_resolved_types?

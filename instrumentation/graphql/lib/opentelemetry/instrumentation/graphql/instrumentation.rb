@@ -47,7 +47,7 @@ module OpenTelemetry
         option :enable_platform_field,        default: false, validate: :boolean
         option :enable_platform_authorized,   default: false, validate: :boolean
         option :enable_platform_resolve_type, default: false, validate: :boolean
-        option :legacy_platform_span_names,   default: true,  validate: :boolean
+        option :legacy_platform_span_names,   default: false, validate: :boolean
 
         private
 

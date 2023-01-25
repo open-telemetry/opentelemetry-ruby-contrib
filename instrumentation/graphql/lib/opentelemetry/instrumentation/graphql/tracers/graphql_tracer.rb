@@ -86,14 +86,14 @@ module OpenTelemetry
             attributes = {}
             case key
             when 'execute_field', 'execute_field_lazy'
-              attributes['graphql.field.parent'] = data[:owner].graphql_name # owner is the concrete type, not interface
-              attributes['graphql.field.name'] = data[:field].graphql_name
+              attributes['graphql.field.parent'] = data[:owner]&.graphql_name # owner is the concrete type, not interface
+              attributes['graphql.field.name'] = data[:field]&.graphql_name
               attributes['graphql.lazy'] = key == 'execute_field_lazy'
             when 'authorized', 'authorized_lazy'
-              attributes['graphql.type.name'] = data.fetch(:type).graphql_name
+              attributes['graphql.type.name'] = data[:type]&.graphql_name
               attributes['graphql.lazy'] = key == 'authorized_lazy'
             when 'resolve_type', 'resolve_type_lazy'
-              attributes['graphql.type.name'] = data.fetch(:type).graphql_name
+              attributes['graphql.type.name'] = data[:type]&.graphql_name
               attributes['graphql.lazy'] = key == 'resolve_type_lazy'
             when 'execute_query'
               attributes['graphql.operation.name'] = data[:query].selected_operation_name if data[:query].selected_operation_name
