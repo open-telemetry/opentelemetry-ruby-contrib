@@ -29,6 +29,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.2"
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
@@ -69,7 +74,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.3.9.0"
+          ruby: "jruby-9.4.0.0"
       - name: "Truffleruby Filter"
         id: truffleruby_skip
         shell: bash
@@ -126,7 +131,7 @@ jobs:
         env:
           REDIS_PASSWORD: "passw0rd"
       mysql:
-        image: mysql:5.6
+        image: mysql:8.0.31
         env:
           MYSQL_DATABASE: mysql
           MYSQL_ROOT_PASSWORD: root

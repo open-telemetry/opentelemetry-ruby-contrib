@@ -12,13 +12,6 @@ required_arg :release_pr, accept: Integer do
   desc "Release pull request number. Required."
 end
 flag_group desc: "Flags" do
-  flag :gh_pages_dir, "--gh-pages-dir=VAL" do
-    desc "The directory to use for the gh-pages branch"
-    long_desc \
-      "Set to the path of a directory to use as the gh-pages workspace when" \
-      " building and pushing gem documentation. If left unset, a temporary" \
-      " directory will be created (and removed when finished)."
-  end
   flag :git_remote, "--git-remote=VAL" do
     default "origin"
     desc "The name of the git remote"
@@ -52,8 +45,7 @@ flag_group desc: "Flags" do
       "If set to 'true', releases will be enabled. Any other value will" \
       " result in dry-run mode, meaning it will go through the motions," \
       " create a GitHub release, and update the release pull request if" \
-      " applicable, but will not actually push the gem to Rubygems or push" \
-      " the docs to gh-pages."
+      " applicable, but will not actually push the gem to Rubygems or push."
   end
   flag :yes, "--yes", "-y" do
     desc "Automatically answer yes to all confirmations"
@@ -67,10 +59,10 @@ def run
   require "release_utils"
   require "release_performer"
 
-  ::Dir.chdir(context_directory)
+  Dir.chdir(context_directory)
   @utils = ReleaseUtils.new(self)
 
-  [:gh_pages_dir, :rubygems_api_key].each do |key|
+  [:rubygems_api_key].each do |key|
     set(key, nil) if get(key).to_s.empty?
   end
 
@@ -133,7 +125,6 @@ def create_performer
                        skip_checks: skip_checks,
                        rubygems_api_key: rubygems_api_key,
                        git_remote: git_remote,
-                       gh_pages_dir: gh_pages_dir,
                        gh_token: ::ENV["GITHUB_TOKEN"],
                        pr_info: @pr_info,
                        check_exists: true,

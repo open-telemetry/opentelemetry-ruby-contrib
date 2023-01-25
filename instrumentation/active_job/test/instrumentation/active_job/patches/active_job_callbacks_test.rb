@@ -23,17 +23,17 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     instrumentation.instance_variable_set(:@config, config)
     exporter.reset
 
-    ::ActiveJob::Base.queue_adapter = :async
-    ::ActiveJob::Base.queue_adapter.immediate = true
+    ActiveJob::Base.queue_adapter = :async
+    ActiveJob::Base.queue_adapter.immediate = true
   end
 
   after do
     begin
-      ::ActiveJob::Base.queue_adapter.shutdown
+      ActiveJob::Base.queue_adapter.shutdown
     rescue StandardError
       nil
     end
-    ::ActiveJob::Base.queue_adapter = :inline
+    ActiveJob::Base.queue_adapter = :inline
     instrumentation.instance_variable_set(:@config, config)
   end
 
@@ -87,11 +87,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
   describe 'span kind' do
     it 'sets correct span kinds for inline jobs' do
       begin
-        ::ActiveJob::Base.queue_adapter.shutdown
+        ActiveJob::Base.queue_adapter.shutdown
       rescue StandardError
         nil
       end
-      ::ActiveJob::Base.queue_adapter = :inline
+      ActiveJob::Base.queue_adapter = :inline
 
       TestJob.perform_later
 
@@ -175,12 +175,12 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     describe 'messaging.system' do
       it 'is set correctly for the inline adapter' do
         begin
-          ::ActiveJob::Base.queue_adapter.shutdown
+          ActiveJob::Base.queue_adapter.shutdown
         rescue StandardError
           nil
         end
 
-        ::ActiveJob::Base.queue_adapter = :inline
+        ActiveJob::Base.queue_adapter = :inline
         TestJob.perform_later
 
         [send_span, process_span].each do |span|

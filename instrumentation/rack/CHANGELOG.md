@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.22.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.22.0 / 2022-11-16
 
 * ADDED: Add experimental traceresponse propagator to Rack instrumentation

@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
   describe 'tracing' do
     let(:client) do
-      ::Mysql2::Client.new(
+      Mysql2::Client.new(
         host: host,
         port: port,
         database: database,

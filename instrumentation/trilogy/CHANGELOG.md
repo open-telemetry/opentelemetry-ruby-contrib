@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.51.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.51.0 / 2022-06-09
 
 * Upgrading Base dependency version

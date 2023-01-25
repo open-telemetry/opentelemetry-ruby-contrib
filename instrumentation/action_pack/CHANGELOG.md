@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.4.1 / 2023-01-14
+
+* FIXED: String-ify code.function Span attribute
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.4.0 / 2022-12-06
 
 * BREAKING CHANGE: Remove enable_recognize_route and span_naming options 
@@ -8,7 +14,7 @@
 
 ### v0.3.2 / 2022-11-16
 
-* * FIXED: Loosen dependency on Rack
+* FIXED: Loosen dependency on Rack
 
 ### v0.3.1 / 2022-10-27
 

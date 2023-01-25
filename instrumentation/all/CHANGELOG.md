@@ -1,5 +1,14 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.29.0 / 2023-01-14
+
+* BREAKING CHANGE: includes minor version updates in [#271](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/271)
+
+### v0.28.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.28.0 / 2022-11-09
 
 * ADDED: Bump minimum gem versions for opentelemetry-instrumentation-all 
