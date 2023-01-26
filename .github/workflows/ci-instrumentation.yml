@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - 'release/**'
   pull_request:
     branches:
       - main
@@ -70,9 +69,6 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "2.7"
-          yard: true
-          rubocop: true
-          build: true
       - name: "JRuby Filter"
         id: jruby_skip
         shell: bash
