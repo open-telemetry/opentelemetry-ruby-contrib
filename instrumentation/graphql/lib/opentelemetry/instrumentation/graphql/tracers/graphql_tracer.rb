@@ -82,7 +82,7 @@ module OpenTelemetry
             GraphQL::Instrumentation.instance.config
           end
 
-          def attributes_for(key, data)
+          def attributes_for(key, data) # rubocop:disable Metrics/CyclomaticComplexity
             attributes = {}
             case key
             when 'execute_field', 'execute_field_lazy'
