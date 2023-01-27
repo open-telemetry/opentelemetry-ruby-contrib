@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.22.0 / 2023-01-27
+
+* ADDED: Normalize GraphQL span names for easier aggregation analysis 
+
 ### v0.21.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 
