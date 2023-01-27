@@ -2,7 +2,7 @@
 
 ### v0.21.3 / 2023-01-27
 
-* (No significant changes)
+* fix: Check if env['sinatra.error'] exists before recording it
 
 ### v0.21.2 / 2023-01-14
 
