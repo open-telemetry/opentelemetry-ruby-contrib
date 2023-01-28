@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
   let(:config) { {} }
 
   before do
+    clear_job_queue
     instrumentation.install(config)
     exporter.reset
   end
@@ -190,6 +191,12 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
   def work_off_jobs
     while (job = Resque.reserve(:super_urgent))
       job.perform
+    end
+  end
+
+  def clear_job_queue
+    [ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper, DummyJob, BaggageTestingJob, ExceptionTestingJob].each do |jobtype|
+      Resque::Job.destroy(:super_urgent, jobtype)
     end
   end
 end
