@@ -2,9 +2,7 @@
 
 ### v0.30.0 / 2023-01-31
 
-* BREAKING CHANGE: Update Instrumentations 
-
-* ADDED: Update Instrumentations 
+* BREAKING CHANGE: Updates instrumentations https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/303
 
 ### v0.29.0 / 2023-01-14
 
