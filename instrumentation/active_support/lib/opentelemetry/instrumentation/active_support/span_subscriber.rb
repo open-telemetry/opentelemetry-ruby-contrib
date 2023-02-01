@@ -31,7 +31,7 @@ module OpenTelemetry
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
 
         ::ActiveSupport::Notifications.notifier.synchronize do
-          ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
+          subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
 
           if subscribers.nil?
             OpenTelemetry.handle_error(
