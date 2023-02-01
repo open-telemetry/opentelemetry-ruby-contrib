@@ -8,8 +8,6 @@ module OpenTelemetry
   module Instrumentation
     # rubocop:disable Style/Documentation
     module ActiveSupport
-      NOTIFIER_MAJOR_VERSION_6 = 6
-
       # The SpanSubscriber is a special ActiveSupport::Notification subscription
       # handler which turns notifications into generic spans, taking care to handle
       # context appropriately.
@@ -17,7 +15,6 @@ module OpenTelemetry
       # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber
       # gets invoked first
       # Rails 6+ https://github.com/rails/rails/blob/0f0ec9908e25af36df2d937dc431f626a4102b3d/activesupport/lib/active_support/notifications/fanout.rb#L51
-      # Rails 5 https://github.com/rails/rails/blob/8030cff808657faa44828de001cd3b80364597de/activesupport/lib/active_support/notifications/fanout.rb#L16
       def self.subscribe(
         tracer,
         pattern,
@@ -34,7 +31,7 @@ module OpenTelemetry
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
 
         ::ActiveSupport::Notifications.notifier.synchronize do
-          subscribers = find_subscribers(pattern)
+          subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
 
           if subscribers.nil?
             OpenTelemetry.handle_error(
@@ -49,17 +46,6 @@ module OpenTelemetry
           end
         end
         subscriber_object
-      end
-
-      def self.find_subscribers(pattern)
-        active_support_major_version = ::ActiveSupport.version.canonical_segments.first
-
-        # TODO: Drop support for Rails 5 since it is EOL since 2022-06-01
-        if active_support_major_version >= NOTIFIER_MAJOR_VERSION_6
-          ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
-        else
-          ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers)
-        end
       end
 
       class SpanSubscriber
