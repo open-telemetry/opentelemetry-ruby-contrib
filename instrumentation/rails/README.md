@@ -1,6 +1,6 @@
 # OpenTelemetry Rails Instrumentation
 
-The Rails instrumentation is a community-maintained instrumentation for the [Ruby on Rails][rails-home] web-application framework. 
+The Rails instrumentation is a community-maintained instrumentation for the [Ruby on Rails][rails-home] web-application framework.
 
 ## How do I get started?
 
