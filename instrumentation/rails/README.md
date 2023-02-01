@@ -6,13 +6,30 @@ The Rails instrumentation is a community-maintained instrumentation for the [Rub
 
 Install the gem using:
 
-```
+```console
 gem install opentelemetry-instrumentation-rails
 ```
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-rails` in your `Gemfile`.
 
+### Version Compatability
+
+EOL versions of Rails are not supported by the latest version of this instrumentation. If you are using an EOL version of Rails and need an earlier version of this instrumentation, then consider installing and pinning the compatible gem version, e.g.: 
+
+```console
+gem opentelemetry-instrumentation-rails, "<version>"
+```
+
+| Rails Version | Instrumentation Version |
+| --- | --- |
+| `5.2` | `= 0.24.1` |
+| `6.0` | `~> 0.24.1` |
+| `6.1` | `~> 0.24` |
+| `7.x` | `~> 0.24` |
+
 ## Usage
+
+### Recommended
 
 To use the Rails instrumentation, call `use_all` so it installs all the instrumentation gems.
 
@@ -20,6 +37,17 @@ To use the Rails instrumentation, call `use_all` so it installs all the instrume
 OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
+```
+
+### Experimental
+
+There is also an experimental Railtie available that will bootstrap the SDK:
+
+```ruby
+# Gemfile
+
+gem "opentelemetry-instrumentation-rails", require: "opentelemetry/instrumentation/rails/railtie"
+
 ```
 
 ### Configuration options
