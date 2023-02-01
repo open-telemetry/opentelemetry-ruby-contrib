@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.4.0 / 2023-02-01
+
+* BREAKING CHANGE: Drop Rails 5 Support 
+
+* ADDED: Drop Rails 5 Support 
+
 ### v0.3.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 

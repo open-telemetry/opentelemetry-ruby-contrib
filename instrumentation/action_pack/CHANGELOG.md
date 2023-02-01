@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.5.0 / 2023-02-01
+
+* BREAKING CHANGE: Drop Rails 5 Support 
+
+* ADDED: Drop Rails 5 Support 
+* FIXED: Drop Rails dependency for ActiveSupport Instrumentation 
+
 ### v0.4.1 / 2023-01-14
 
 * FIXED: String-ify code.function Span attribute
