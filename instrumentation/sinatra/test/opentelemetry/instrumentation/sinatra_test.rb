@@ -168,6 +168,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       get '/one/error'
 
       _(exporter.finished_spans.first.events[0].attributes['exception.type']).must_equal('CustomError')
+      _(exporter.finished_spans.first.events[0].attributes['exception.message']).must_equal('custom message')
     end
   end
 end
