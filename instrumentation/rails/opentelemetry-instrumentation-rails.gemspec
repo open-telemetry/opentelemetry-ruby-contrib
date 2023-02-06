@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_job', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.4.0'
-  spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.3.0'
+  spec.add_dependency 'opentelemetry-instrumentation-action_view', '>= 0.3', '< 0.5'
   spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.21.0'
