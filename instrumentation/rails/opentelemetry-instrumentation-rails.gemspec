@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.4.0'
-  spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.2.0'
+  spec.add_dependency 'opentelemetry-instrumentation-active_support', '>= 0.2', '< 0.4'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.21.0'
 
   spec.add_development_dependency 'appraisal', '~> 2.4.1'
