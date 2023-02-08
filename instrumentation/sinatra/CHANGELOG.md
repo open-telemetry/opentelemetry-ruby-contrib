@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.21.4 / 2023-02-08
+
+* CHANGED: incorrect error type being recorded when Sinatra route raises exception [#317](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/317)
+
 ### v0.21.3 / 2023-01-27
 
 * fix: Check if env['sinatra.error'] exists before recording it

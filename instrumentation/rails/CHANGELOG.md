@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.25.0 / 2023-02-08
+
+* BREAKING CHANGE: Update Instrumentations GraphQL, HttpClient, Rails [#303](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/303) 
+* BREAKING CHANGE: Drop Rails 5 Support [#315](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/315)
+
+* DOCS: Rails Instrumentation Compatibility 
+
 ### v0.24.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 
