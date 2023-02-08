@@ -1,5 +1,14 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.25.0 / 2023-02-08
+
+* BREAKING CHANGE: Update Instrumentations 
+* BREAKING CHANGE: Drop Rails 5 Support 
+
+* ADDED: Update Instrumentations 
+* ADDED: Drop Rails 5 Support 
+* DOCS: Rails Instrumentation Compatibility 
+
 ### v0.24.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 
