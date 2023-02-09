@@ -4,7 +4,6 @@
 
 * BREAKING CHANGE: Drop Rails 5 support 
 
-* ADDED: Drop Rails 5 support 
 
 ### v0.30.0 / 2023-01-31
 
