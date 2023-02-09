@@ -2,7 +2,7 @@
 
 ### v0.31.0 / 2023-02-09
 
-* BREAKING CHANGE: Drop Rails 5 support 
+* BREAKING CHANGE: Drop Rails 5 support [#324](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/324)
 
 
 ### v0.30.0 / 2023-01-31
