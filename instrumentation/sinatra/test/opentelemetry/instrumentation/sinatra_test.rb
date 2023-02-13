@@ -13,7 +13,6 @@ describe OpenTelemetry::Instrumentation::Sinatra do
   let(:exporter) { EXPORTER }
 
   class CustomError < StandardError
-
   end
 
   let(:app_one) do
