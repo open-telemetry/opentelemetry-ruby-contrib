@@ -12,7 +12,7 @@ gem install opentelemetry-instrumentation-rails
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-rails` in your `Gemfile`.
 
-### Version Compatability
+### Version Compatibility
 
 EOL versions of Rails are not supported by the latest version of this instrumentation. If you are using an EOL version of Rails and need an earlier version of this instrumentation, then consider installing and pinning the compatible gem version, e.g.: 
 
