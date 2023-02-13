@@ -2,7 +2,7 @@
 
 ### v0.21.5 / 2023-02-13
 
-* FIXED: Add exceptions to sinatra spans, ruboproof test. 
+* FIXED: Add exceptions to sinatra spans, ruboproof test.
 
 ### v0.21.4 / 2023-02-08
 
