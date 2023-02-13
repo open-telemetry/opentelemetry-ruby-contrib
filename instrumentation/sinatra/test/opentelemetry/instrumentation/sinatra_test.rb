@@ -12,8 +12,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Sinatra::Instrumentation.instance }
   let(:exporter) { EXPORTER }
 
-  class CustomError < StandardError
-  end
+  class CustomError < StandardError; end
 
   let(:app_one) do
     Class.new(Sinatra::Application) do
