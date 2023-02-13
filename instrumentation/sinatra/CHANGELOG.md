@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.21.5 / 2023-02-13
+
+* FIXED: Add exceptions to sinatra spans, ruboproof test. 
+
 ### v0.21.4 / 2023-02-08
 
 * CHANGED: incorrect error type being recorded when Sinatra route raises exception [#317](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/317)
