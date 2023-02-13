@@ -9,8 +9,6 @@ AllCops:
     - "**/**/vendor/bundle/**/*"
 Bundler/OrderedGems:
   Enabled: false
-Gemspec/DevelopmentDependencies:
-  Enabled: false
 Gemspec/RequiredRubyVersion:
   Enabled: false
 Lint/ConstantDefinitionInBlock:
