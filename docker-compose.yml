@@ -252,6 +252,17 @@ services:
     depends_on:
       - jaeger
 
+  elasticsearch:
+    image: elasticsearch:8.6.1
+    expose:
+      - "9200"
+    ports:
+      - "9200:9200"
+    environment:
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - discovery.type=single-node
+
 volumes:
   bundle:
   redis_data:
