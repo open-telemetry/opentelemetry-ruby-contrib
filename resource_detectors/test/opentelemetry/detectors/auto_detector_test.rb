@@ -21,6 +21,30 @@ describe OpenTelemetry::Resource::Detectors::AutoDetector do
         }
       ).to_raise(SocketError)
 
+    # Docker Containers stub
+    stub_request(:get, 'http://unix/containers/json')
+      .with(
+        headers: {
+          'Accept'=>'*/*',
+          'Content-Type'=>'text/plain',
+          'Host'=>'',
+          'User-Agent'=>'Swipely/Docker-API 2.2.0'
+        }
+      )
+      .to_return(status: 200, body: '', headers: {})
+
+    # Docker Images stub
+    stub_request(:get, 'http://unix/images/json')
+      .with(
+        headers: {
+          'Accept'=>'*/*',
+          'Content-Type'=>'text/plain',
+          'Host'=>'',
+          'User-Agent'=>'Swipely/Docker-API 2.2.0'
+        }
+      )
+      .to_return(status: 200, body: '', headers: {})
+
     # GCP stub
     stub_request(:get, 'http://169.254.169.254/')
       .with(
