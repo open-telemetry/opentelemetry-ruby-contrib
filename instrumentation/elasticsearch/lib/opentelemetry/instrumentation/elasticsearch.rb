@@ -16,4 +16,5 @@ module OpenTelemetry
 end
 
 require_relative './elasticsearch/instrumentation'
+require_relative './elasticsearch/wildcard_pattern'
 require_relative './elasticsearch/version'

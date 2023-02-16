@@ -206,6 +206,39 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
     end
   end
 
+  describe 'custom sanitization fields' do
+    let(:config) { { sanitize_field_names: ['abc*'] } }
+    it 'sanitizes certain fields' do
+      client.index(
+        index: 'users',
+        id: '1',
+        body: { name: 'Emily', abcde: 'top_secret' }
+      )
+
+      _(exporter.finished_spans.size).must_equal(1)
+      _(span.name).must_equal 'PUT users/_doc/1'
+      _(span.attributes['db.statement']).must_equal(
+        "{\"name\":\"Emily\",\"abcde\":\"?\"}"
+      )
+      _(span.attributes['db.system']).must_equal "elasticsearch"
+      _(span.attributes['db.operation']).must_equal "PUT"
+      _(span.attributes['elasticsearch.method']).must_equal 'PUT'
+      _(span.attributes['net.transport']).must_equal 'ip_tcp'
+
+      _(span.attributes['net.peer.name']).must_equal 'localhost'
+      _(span.attributes['net.peer.port']).must_equal 9200
+      #_(span.attributes['elasticsearch.url']).must_equal 'http://localhost:9200/_search?q=test'
+
+      _(span.attributes['elasticsearch.params']).must_equal '{}'
+      #_(span.attributes['elasticsearch.id']).must_equal # doc id
+      #_(span.attributes['elasticsearch.target']).must_equal '_search'
+      assert_requested(
+        :put,
+        'http://localhost:9200/users/_doc/1'
+      )
+    end
+  end
+
   describe '#perform_request with exception' do
     before do
       stub_request(:get, %r{http://localhost:9200/.*})

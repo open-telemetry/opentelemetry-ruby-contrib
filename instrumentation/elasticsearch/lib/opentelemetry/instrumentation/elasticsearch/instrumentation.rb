@@ -12,6 +12,7 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('8.0.0')
 
         install do |_config|
+          convert_config(_config)
           require_dependencies
           patch
         end
@@ -33,9 +34,15 @@ module OpenTelemetry
 
         option :peer_service, default: nil, validate: :string
         option :db_statement, default: :obfuscate, validate: %I[omit obfuscate include]
-        option :sanitize_field_names, default: [], validate: :array
+        option :sanitize_field_names, default: nil, validate: :array
 
         private
+
+        def convert_config(config)
+          if field_names = config[:sanitize_field_names]
+            config[:sanitize_field_names] = field_names.map { |p| WildcardPattern.new(p) }
+          end
+        end
 
         def gem_version
           Gem::Version.new(::Elastic::Transport::VERSION)
