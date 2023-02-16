@@ -38,8 +38,7 @@ module OpenTelemetry
             omit = config[:db_statement] == :omit
             obfuscate = config[:db_statement] == :obfuscate
             unless omit
-              # TODO cache Sanitizer instead of creating a new one each time
-              body = Sanitizer.new(config[:sanitize_field_names]).sanitize(body, obfuscate)
+              body = Sanitizer.sanitize(body, obfuscate, config[:sanitize_field_names])
               attributes['db.statement'] = body.to_json if body
             end
 
