@@ -9,6 +9,7 @@ module OpenTelemetry
     module Elasticsearch
       # The Instrumentation class contains logic to detect and install the Elasticsearch instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        MINIMUM_VERSION = Gem::Version.new('8.0.0')
 
         install do |_config|
           require_dependencies
@@ -17,6 +18,13 @@ module OpenTelemetry
 
         present do
           !defined?(::Elastic::Transport::Client).nil?
+        end
+
+        compatible do
+          # Versions < 8.0 of the elasticsearch client don't have the
+          # Elastic::Transport namespace so we have to check that it's
+          # present first.
+          present? && gem_version >= MINIMUM_VERSION
         end
 
         def patch
@@ -28,6 +36,10 @@ module OpenTelemetry
         option :sanitize_field_names, default: [], validate: :array
 
         private
+
+        def gem_version
+          Gem::Version.new(::Elastic::Transport::VERSION)
+        end
 
         def require_dependencies
           require_relative 'patches/client'

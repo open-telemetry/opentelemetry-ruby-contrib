@@ -31,6 +31,17 @@ describe OpenTelemetry::Instrumentation::Elasticsearch do
     end
   end
 
+  describe 'compatible' do
+    it 'when older gem version installed' do
+      stub_const('::Elastic::Transport::VERSION', '7.17.7')
+      _(instrumentation.compatible?).must_equal false
+    end
+
+    it 'when future gem version installed' do
+      _(instrumentation.compatible?).must_equal true
+    end
+  end
+
   describe '#install' do
     it 'accepts argument' do
       _(instrumentation.install({})).must_equal(true)
