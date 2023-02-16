@@ -29,6 +29,7 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
     instrumentation.install(config)
     stub_request(:get, %r{http://localhost:9200/.*}).to_return(status: 200)
     stub_request(:post, %r{http://localhost:9200/.*}).to_return(status: 200)
+    stub_request(:put, %r{http://localhost:9200/.*}).to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'https://example.com/timeout').to_timeout
   end
@@ -75,9 +76,9 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
 
     it 'omits the statement ' do
       client.bulk(
-        body: {
-          index: { _index: 'users', data: { name: 'Emily' } }
-        }
+        body: [{
+          index: { _index: 'users', data: { name: 'Fernando' } }
+        }]
       )
 
       _(exporter.finished_spans.size).must_equal(1)
@@ -111,15 +112,15 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
 
     it 'includes the entire statement ' do
       client.bulk(
-        body: {
+        body: [{
           index: { _index: 'users', data: { name: 'Emily', password: 'top_secret' } }
-        }
+        }]
       )
 
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'POST _bulk'
       _(span.attributes['db.statement']).must_equal(
-        "{\"index\":{\"_index\":\"users\",\"data\":{\"name\":\"Emily\",\"password\":\"top_secret\"}}}"
+        "{\"index\":{\"_index\":\"users\"}}\n{\"name\":\"Emily\",\"password\":\"top_secret\"}\n"
       )
       _(span.attributes['db.system']).must_equal "elasticsearch"
       _(span.attributes['db.operation']).must_equal "POST"
@@ -144,15 +145,15 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
     it 'captures the span attributes' do
       client.bulk(
         refresh: true,
-        body: {
-          index: { _index: 'users', data: { name: 'Emily' } }
-        }
+        body: [{
+          index: { _index: 'users', data: { name: 'Fernando' } }
+         }]
       )
 
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'POST _bulk'
       _(span.attributes['db.statement']).must_equal(
-        "{\"index\":{\"_index\":\"users\",\"data\":{\"name\":\"Emily\"}}}"
+        "{\"index\":{\"_index\":\"users\"}}\n{\"name\":\"Fernando\"}\n"
       )
       _(span.attributes['db.system']).must_equal "elasticsearch"
       _(span.attributes['db.operation']).must_equal "POST"
@@ -175,20 +176,20 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
 
   describe 'sanitize body' do
     it 'sanitizes certain fields' do
-      client.bulk(
-        body: {
-          index: { _index: 'users', data: { name: 'Emily', password: 'top_secret' } }
-        }
+      client.index(
+        index: 'users',
+        id: '1',
+        body: { name: 'Emily', password: 'top_secret' }
       )
 
       _(exporter.finished_spans.size).must_equal(1)
-      _(span.name).must_equal 'POST _bulk'
+      _(span.name).must_equal 'PUT users/_doc/1'
       _(span.attributes['db.statement']).must_equal(
-        "{\"index\":{\"_index\":\"users\",\"data\":{\"name\":\"Emily\",\"password\":\"?\"}}}"
+        "{\"name\":\"Emily\",\"password\":\"?\"}"
       )
       _(span.attributes['db.system']).must_equal "elasticsearch"
-      _(span.attributes['db.operation']).must_equal "POST"
-      _(span.attributes['elasticsearch.method']).must_equal 'POST'
+      _(span.attributes['db.operation']).must_equal "PUT"
+      _(span.attributes['elasticsearch.method']).must_equal 'PUT'
       _(span.attributes['net.transport']).must_equal 'ip_tcp'
 
       _(span.attributes['net.peer.name']).must_equal 'localhost'
@@ -199,12 +200,11 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
       #_(span.attributes['elasticsearch.id']).must_equal # doc id
       #_(span.attributes['elasticsearch.target']).must_equal '_search'
       assert_requested(
-        :post,
-        'http://localhost:9200/_bulk'
+        :put,
+        'http://localhost:9200/users/_doc/1'
       )
     end
   end
-
 
   describe '#perform_request with exception' do
     before do

@@ -27,7 +27,7 @@ module OpenTelemetry
             private
 
             def sanitize!(obj, key_patterns, obfuscate)
-              return unless obj.is_a?(Hash)
+              return obj unless obj.is_a?(Hash)
 
               obj.each_pair do |k, v|
                 case v

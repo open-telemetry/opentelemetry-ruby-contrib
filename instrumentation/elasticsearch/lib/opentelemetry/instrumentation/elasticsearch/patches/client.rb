@@ -39,7 +39,10 @@ module OpenTelemetry
             obfuscate = config[:db_statement] == :obfuscate
             unless omit
               body = Sanitizer.sanitize(body, obfuscate, config[:sanitize_field_names])
-              attributes['db.statement'] = body.to_json if body
+              if body && !body.is_a?(String)
+                body = body.to_json
+              end
+              attributes['db.statement'] = body
             end
 
             attributes.compact!
