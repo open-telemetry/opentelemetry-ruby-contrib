@@ -30,11 +30,12 @@ end
 
 client.search q: 'test'
 
-client.bulk(
-  body: [{
-    index: { _index: 'users', data: { name: 'Fernando' } }
-  }]
-)
+client.bulk(:body => [
+  { :index =>  { :_index => 'myindexA', :_id => '1', :data => { :title => 'Test' } } },
+  { :update => { :_index => 'myindexB', :_id => '2', :data => { :doc => { :title => 'Update' } } } },
+  { :delete => { :_index => 'myindexC', :_id => '3' } },
+  { :index =>  { :_index => 'myindexD', :_id => '1', :data => { :data => 'MYDATA' } } },
+])
 
 client.index(
   index: 'foo',
