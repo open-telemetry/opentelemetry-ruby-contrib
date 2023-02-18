@@ -9,6 +9,7 @@ Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
 require 'webmock/minitest'
+require 'rack/events'
 
 require 'opentelemetry-instrumentation-rack'
 
