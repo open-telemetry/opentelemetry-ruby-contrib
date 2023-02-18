@@ -16,43 +16,36 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   let(:finished_spans) { exporter.finished_spans }
   let(:first_span) { exporter.finished_spans.first }
   let(:uri) { '/' }
+  let(:handler) do
+    OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new(
+      untraced_endpoints: untraced_endpoints,
+      untraced_callable: untraced_callable,
+      allowed_request_headers: allowed_request_headers
+    )
+  end
+
   let(:service) do
     ->(_arg) { [200, { 'Content-Type' => 'text/plain' }, 'Hello World'] }
   end
+  let(:untraced_endpoints) { [] }
+  let(:untraced_callable) { nil }
+  let(:allowed_request_headers) { nil }
+  let(:headers) { Hash.new }
 
   let(:app) do
-    wtaf = service
-    Rack::Builder.new {
-      use Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new]
-      run wtaf
-    }
+    Rack::Builder.new.tap do |builder|
+      builder.use Rack::Events, [handler]
+      builder.run service
+    end
   end
 
   before do
-    # clear captured spans:
     exporter.reset
-
-    # simulate a fresh install:
-    # instrumentation.instance_variable_set('@installed', false)
-    # instrumentation.install(config)
-
-    # clear out cached config:
-    # described_class.send(:clear_cached_config)
-
-    # integrate tracer middleware:
-    # rack_builder.use Rack::Events, [described_class.new]
-    # rack_builder.run app
   end
-
-  # after do
-    # installation is 'global', so it should be reset:
-    # instrumentation.instance_variable_set('@installed', false)
-    # instrumentation.install(default_config)
-  # end
 
   describe '#call' do
     before do
-      get uri
+      get uri, {}, headers
     end
 
     it 'records attributes' do
@@ -81,13 +74,12 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
     end
 
-=begin
     describe 'config[:untraced_endpoints]' do
       describe 'when an array is passed in' do
-        let(:config) { { untraced_endpoints: ['/ping'] } }
+        let(:untraced_endpoints) { ['/ping'] }
 
         it 'does not trace paths listed in the array' do
-          Rack::MockRequest.new(rack_builder).get('/ping', env)
+          get '/ping'
 
           ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/ping' }
           _(ping_span).must_be_nil
@@ -98,13 +90,13 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
 
       describe 'when a string is passed in' do
-        let(:config) { { untraced_endpoints: '/ping' } }
+        let(:untraced_endpoints) { '/ping' }
 
-        it 'traces everything' do
-          Rack::MockRequest.new(rack_builder).get('/ping', env)
+        it 'does not trace path' do
+          get '/ping'
 
           ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/ping' }
-          _(ping_span).wont_be_nil
+          _(ping_span).must_be_nil
 
           root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
           _(root_span).wont_be_nil
@@ -115,7 +107,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
         let(:config) { { untraced_endpoints: nil } }
 
         it 'traces everything' do
-          Rack::MockRequest.new(rack_builder).get('/ping', env)
+          get '/ping'
 
           ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/ping' }
           _(ping_span).wont_be_nil
@@ -131,13 +123,12 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
         let(:untraced_callable) do
           ->(env) { env['PATH_INFO'] =~ %r{^\/assets} }
         end
-        let(:config) { default_config.merge(untraced_requests: untraced_callable) }
 
         it 'does not trace requests in which the callable returns true' do
-          Rack::MockRequest.new(rack_builder).get('/assets', env)
+          get '/assets'
 
-          ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/assets' }
-          _(ping_span).must_be_nil
+          assets_span = finished_spans.find { |s| s.attributes['http.target'] == '/assets' }
+          _(assets_span).must_be_nil
 
           root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
           _(root_span).wont_be_nil
@@ -148,21 +139,19 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
         let(:config) { { untraced_requests: nil } }
 
         it 'traces everything' do
-          Rack::MockRequest.new(rack_builder).get('/assets', env)
+          get '/assets'
 
-          ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/assets' }
-          _(ping_span).wont_be_nil
+          asset_span = finished_spans.find { |s| s.attributes['http.target'] == '/assets' }
+          _(asset_span).wont_be_nil
 
           root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
           _(root_span).wont_be_nil
         end
       end
     end
-=end
 
-=begin
     describe 'config[:allowed_request_headers]' do
-      let(:env) do
+      let(:headers) do
         Hash(
           'CONTENT_LENGTH' => '123',
           'CONTENT_TYPE' => 'application/json',
@@ -170,12 +159,15 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
         )
       end
 
+
       it 'defaults to nil' do
         _(first_span.attributes['http.request.header.foo_bar']).must_be_nil
       end
 
       describe 'when configured' do
-        let(:config) { default_config.merge(allowed_request_headers: ['foo_BAR']) }
+        let(:allowed_request_headers) do
+          ['foo_BAR']
+        end
 
         it 'returns attribute' do
           _(first_span.attributes['http.request.header.foo_bar']).must_equal 'http foo bar value'
@@ -183,7 +175,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
 
       describe 'when content-type' do
-        let(:config) { default_config.merge(allowed_request_headers: ['CONTENT_TYPE']) }
+        let(:allowed_request_headers) { ['CONTENT_TYPE'] }
 
         it 'returns attribute' do
           _(first_span.attributes['http.request.header.content_type']).must_equal 'application/json'
@@ -191,7 +183,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
 
       describe 'when content-length' do
-        let(:config) { default_config.merge(allowed_request_headers: ['CONTENT_LENGTH']) }
+        let(:allowed_request_headers) { ['CONTENT_LENGTH'] }
 
         it 'returns attribute' do
           _(first_span.attributes['http.request.header.content_length']).must_equal '123'
@@ -199,6 +191,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
     end
 
+=begin
     describe 'config[:allowed_response_headers]' do
       let(:app) do
         ->(_env) { [200, { 'Foo-Bar' => 'foo bar response header' }, ['OK']] }

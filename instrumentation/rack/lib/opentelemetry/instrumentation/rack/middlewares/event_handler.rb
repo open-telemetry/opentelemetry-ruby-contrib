@@ -44,8 +44,19 @@ module OpenTelemetry
           TOKENS_KEY = 'otel.context.tokens'
           GOOD_HTTP_STATUSES = (100..499).freeze
 
-          def initialize
+          def initialize(untraced_endpoints:, untraced_callable:, allowed_request_headers:)
             @tracer = OpenTelemetry.tracer_provider.tracer('rack', '1.0')
+            @untraced_endpoints = Array(untraced_endpoints).compact
+            @untraced_callable = untraced_callable
+            @allowed_request_headers = Array(allowed_request_headers).compact.each_with_object({}) do |header, memo|
+                                                                                                     key = header.to_s.upcase.gsub(/[-\s]/, '_')
+                                                                                                     case key
+                                                                                                     when 'CONTENT_TYPE', 'CONTENT_LENGTH'
+                                                                                                       memo[key] = build_attribute_name('http.request.header.', header)
+                                                                                                     else
+                                                                                                       memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
+                                                                                                     end
+                                                                                                   end
           end
 
           # Creates a server span for this current request using the incoming parent context
@@ -55,6 +66,8 @@ module OpenTelemetry
           # @param [Rack::Response] This is nil in practice
           # @return [void]
           def on_start(request, _)
+            return if untraced_request?(request.env)
+
             extracted_context = extract_remote_context(request)
             span = new_server_span(extracted_context, request)
             request.env[TOKENS_KEY] = register_current_span(span)
@@ -85,6 +98,22 @@ module OpenTelemetry
           end
 
           private
+
+          EMPTY_HASH = {}.freeze
+          def extract_request_headers(env)
+            return EMPTY_HASH if @allowed_request_headers.empty?
+
+            @allowed_request_headers.each_with_object({}) do |(key, value), result|
+              result[value] = env[key] if env.key?(key)
+            end
+          end
+
+          def untraced_request?(env)
+            return true if @untraced_endpoints.include?(env['PATH_INFO'])
+            return true if @untraced_callable&.call(env)
+
+            false
+          end
 
           def new_server_span(parent_context, request)
             @tracer.start_span(
@@ -136,8 +165,12 @@ module OpenTelemetry
             }
 
             attributes['http.user_agent'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
-            # attributes.merge!(allowed_request_headers(env))
+            attributes.merge!(extract_request_headers(env))
             attributes
+          end
+
+          def build_attribute_name(prefix, suffix)
+            prefix + suffix.to_s.downcase.gsub(/[-\s]/, '_')
           end
         end
       end
