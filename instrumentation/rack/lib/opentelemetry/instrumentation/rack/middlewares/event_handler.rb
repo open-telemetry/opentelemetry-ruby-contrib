@@ -45,25 +45,27 @@ module OpenTelemetry
           GOOD_HTTP_STATUSES = (100..499).freeze
 
           def initialize(untraced_endpoints:, untraced_callable:,
-                         allowed_request_headers:, allowed_response_headers:)
+                         allowed_request_headers:, allowed_response_headers:,
+                         url_quantization:)
             @tracer = OpenTelemetry.tracer_provider.tracer('rack', '1.0')
             @untraced_endpoints = Array(untraced_endpoints).compact
             @untraced_callable = untraced_callable
             @allowed_request_headers = Array(allowed_request_headers)
-                                        .compact
-                                        .each_with_object({}) do |header, memo|
-                                          key = header.to_s.upcase.gsub(/[-\s]/, '_')
-                                          case key
-                                          when 'CONTENT_TYPE', 'CONTENT_LENGTH'
-                                            memo[key] = build_attribute_name('http.request.header.', header)
-                                          else
-                                            memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
-                                          end
-                                        end
+              .compact
+              .each_with_object({}) do |header, memo|
+                key = header.to_s.upcase.gsub(/[-\s]/, '_')
+                case key
+                when 'CONTENT_TYPE', 'CONTENT_LENGTH'
+                  memo[key] = build_attribute_name('http.request.header.', header)
+                else
+                  memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
+                end
+              end
             @allowed_response_headers = Array(allowed_response_headers).each_with_object({}) do |header, memo|
               memo[header] = build_attribute_name('http.response.header.', header)
               memo[header.to_s.upcase] = build_attribute_name('http.response.header.', header)
             end
+            @url_quantization = url_quantization
           end
 
           # Creates a server span for this current request using the incoming parent context
@@ -148,11 +150,29 @@ module OpenTelemetry
 
           def new_server_span(parent_context, request)
             @tracer.start_span(
-              "HTTP #{request.request_method}",
+              create_request_span_name(request),
               with_parent: parent_context,
               kind: :server,
               attributes: request_span_attributes(request.env)
             )
+          end
+
+          # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
+          #
+          # recommendation: span.name(s) should be low-cardinality (e.g.,
+          # strip off query param value, keep param name)
+          #
+          # see http://github.com/open-telemetry/opentelemetry-specification/pull/416/files
+          def create_request_span_name(request)
+            # NOTE: dd-trace-rb has implemented 'quantization' (which lowers url cardinality)
+            #       see Datadog::Quantization::HTTP.url
+
+            if (implementation = @url_quantization)
+              request_uri_or_path_info = request.env['REQUEST_URI'] || request.path_info
+              implementation.call(request_uri_or_path_info, request.env)
+            else
+              "HTTP #{request.request_method}"
+            end
           end
 
           def extract_remote_context(request)

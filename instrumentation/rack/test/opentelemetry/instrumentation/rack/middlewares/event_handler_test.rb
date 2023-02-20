@@ -21,7 +21,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       untraced_endpoints: untraced_endpoints,
       untraced_callable: untraced_callable,
       allowed_request_headers: allowed_request_headers,
-      allowed_response_headers: allowed_response_headers
+      allowed_response_headers: allowed_response_headers,
+      url_quantization: url_quantization
     )
   end
 
@@ -32,6 +33,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   let(:untraced_callable) { nil }
   let(:allowed_request_headers) { nil }
   let(:allowed_response_headers) { nil }
+  let(:url_quantization) { nil }
   let(:headers) { {} }
   let(:app) do
     Rack::Builder.new.tap do |builder|
@@ -266,45 +268,87 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
     end
   end
 
-=begin
-  describe 'config[:quantization]' do
-    before do
-      Rack::MockRequest.new(rack_builder).get('/really_long_url', env)
-    end
+  describe 'url quantization' do
+    describe 'when using standard Rack environment variables' do
+      describe 'without quantization' do
+        it 'span.name defaults to low cardinality name HTTP method' do
+          get '/really_long_url'
 
-    describe 'without quantization' do
-      it 'span.name defaults to low cardinality name HTTP method' do
-        _(first_span.name).must_equal 'HTTP GET'
-        _(first_span.attributes['http.target']).must_equal '/really_long_url'
+          _(first_span.name).must_equal 'HTTP GET'
+          _(first_span.attributes['http.target']).must_equal '/really_long_url'
+        end
+      end
+
+      describe 'with simple quantization' do
+        let(:quantization_example) do
+          ->(url, _env) { url.to_s }
+        end
+
+        let(:url_quantization) { quantization_example }
+
+        it 'sets the span.name to the full path' do
+          get '/really_long_url'
+
+          _(first_span.name).must_equal '/really_long_url'
+          _(first_span.attributes['http.target']).must_equal '/really_long_url'
+        end
+      end
+
+      describe 'with quantization' do
+        let(:quantization_example) do
+          # demonstrate simple shortening of URL:
+          ->(url, _env) { url.to_s[0..5] }
+        end
+        let(:url_quantization) { quantization_example }
+
+        it 'mutates url according to url_quantization' do
+          get '/really_long_url'
+
+          _(first_span.name).must_equal '/reall'
+        end
       end
     end
 
-    describe 'with simple quantization' do
-      let(:quantization_example) do
-        ->(url, _env) { url.to_s }
+    describe 'when using Action Dispatch custom environment variables' do
+      describe 'without quantization' do
+        it 'span.name defaults to low cardinality name HTTP method' do
+          get '/really_long_url', {}, { 'REQUEST_URI' => '/action-dispatch-uri' }
+
+          _(first_span.name).must_equal 'HTTP GET'
+          _(first_span.attributes['http.target']).must_equal '/really_long_url'
+        end
       end
 
-      let(:config) { default_config.merge(url_quantization: quantization_example) }
+      describe 'with simple quantization' do
+        let(:quantization_example) do
+          ->(url, _env) { url.to_s }
+        end
 
-      it 'sets the span.name to the full path' do
-        _(first_span.name).must_equal '/really_long_url'
-        _(first_span.attributes['http.target']).must_equal '/really_long_url'
+        let(:url_quantization) { quantization_example }
+
+        it 'sets the span.name to the full path' do
+          get '/really_long_url', {}, { 'REQUEST_URI' => '/action-dispatch-uri' }
+
+          _(first_span.name).must_equal '/action-dispatch-uri'
+          _(first_span.attributes['http.target']).must_equal '/really_long_url'
+        end
       end
-    end
 
-    describe 'with quantization' do
-      let(:quantization_example) do
-        # demonstrate simple shortening of URL:
-        ->(url, _env) { url.to_s[0..5] }
-      end
-      let(:config) { default_config.merge(url_quantization: quantization_example) }
+      describe 'with quantization' do
+        let(:quantization_example) do
+          # demonstrate simple shortening of URL:
+          ->(url, _env) { url.to_s[0..5] }
+        end
+        let(:url_quantization) { quantization_example }
 
-      it 'mutates url according to url_quantization' do
-        _(first_span.name).must_equal '/reall'
+        it 'mutates url according to url_quantization' do
+          get '/really_long_url', {}, { 'REQUEST_URI' => '/action-dispatch-uri' }
+
+          _(first_span.name).must_equal '/actio'
+        end
       end
     end
   end
-=end
 
 =begin
   describe 'config[:response_propagators]' do
@@ -343,14 +387,14 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
 =end
 
   describe '#call with error' do
-    SimulatedError = Class.new(StandardError)
+    EventHandlerError = Class.new(StandardError)
 
     let(:service) do
-      ->(_env) { raise SimulatedError }
+      ->(_env) { raise EventHandlerError }
     end
 
     it 'records error in span and then re-raises' do
-      assert_raises SimulatedError do
+      assert_raises EventHandlerError do
         get '/'
       end
 
