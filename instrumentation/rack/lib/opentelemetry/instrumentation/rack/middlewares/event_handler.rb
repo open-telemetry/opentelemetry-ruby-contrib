@@ -46,7 +46,7 @@ module OpenTelemetry
 
           def initialize(untraced_endpoints:, untraced_callable:,
                          allowed_request_headers:, allowed_response_headers:,
-                         url_quantization:)
+                         url_quantization:, response_propagators:)
             @tracer = OpenTelemetry.tracer_provider.tracer('rack', '1.0')
             @untraced_endpoints = Array(untraced_endpoints).compact
             @untraced_callable = untraced_callable
@@ -66,6 +66,7 @@ module OpenTelemetry
               memo[header.to_s.upcase] = build_attribute_name('http.response.header.', header)
             end
             @url_quantization = url_quantization
+            @response_propagators = response_propagators
           end
 
           # Creates a server span for this current request using the incoming parent context
@@ -80,6 +81,22 @@ module OpenTelemetry
             extracted_context = extract_remote_context(request)
             span = new_server_span(extracted_context, request)
             request.env[TOKENS_KEY] = register_current_span(span)
+          end
+
+          # Optionally adds debugging response headers injected from {response_propagators}
+          #
+          # @param [Rack::Request] The current HTTP request
+          # @param [Rack::Response] This current HTTP response
+          # @return [void]
+          def on_commit(request, response)
+            span = OpenTelemetry::Instrumentation::Rack.current_span
+            return unless span.recording?
+
+            begin
+              @response_propagators&.each { |propagator| propagator.inject(response.headers) }
+            rescue StandardError => e
+              OpenTelemetry.handle_error(message: 'Unable to inject response propagation headers', exception: e)
+            end
           end
 
           # Records Unexpected Exceptions on the Rack span and set the Span Status to Error

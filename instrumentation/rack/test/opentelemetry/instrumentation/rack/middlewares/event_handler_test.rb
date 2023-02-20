@@ -22,7 +22,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       untraced_callable: untraced_callable,
       allowed_request_headers: allowed_request_headers,
       allowed_response_headers: allowed_response_headers,
-      url_quantization: url_quantization
+      url_quantization: url_quantization,
+      response_propagators: response_propagators
     )
   end
 
@@ -33,6 +34,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   let(:untraced_callable) { nil }
   let(:allowed_request_headers) { nil }
   let(:allowed_response_headers) { nil }
+  let(:response_propagators) { nil }
   let(:url_quantization) { nil }
   let(:headers) { {} }
   let(:app) do
@@ -350,21 +352,20 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
     end
   end
 
-=begin
-  describe 'config[:response_propagators]' do
+  describe 'response_propagators' do
     describe 'with default options' do
       it 'does not inject the traceresponse header' do
-        res = Rack::MockRequest.new(rack_builder).get('/ping', env)
-        _(res.headers).wont_include('traceresponse')
+        get '/ping'
+        _(last_response.headers).wont_include('traceresponse')
       end
     end
 
     describe 'with ResponseTextMapPropagator' do
-      let(:config) { default_config.merge(response_propagators: [OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new]) }
+      let(:response_propagators) { [OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new] }
 
       it 'injects the traceresponse header' do
-        res = Rack::MockRequest.new(rack_builder).get('/ping', env)
-        _(res.headers).must_include('traceresponse')
+        get '/ping'
+        _(last_response.headers).must_include('traceresponse')
       end
     end
 
@@ -375,16 +376,15 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
         end
       end
 
-      let(:config) { default_config.merge(response_propagators: [MockPropagator.new]) }
+      let(:response_propagators) { [MockPropagator.new] }
 
-      it 'leads to application errors when there are exceptions' do
-        assert_raises RuntimeError do
-          Rack::MockRequest.new(rack_builder).get('/ping', env)
-        end
+      it 'records errors' do
+        expect(OpenTelemetry).to receive(:handle_error).with(exception: instance_of(RuntimeError), message: /Unable/)
+
+        get '/ping'
       end
     end
   end
-=end
 
   describe '#call with error' do
     EventHandlerError = Class.new(StandardError)
