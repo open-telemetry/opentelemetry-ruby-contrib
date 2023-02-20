@@ -20,7 +20,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
     OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new(
       untraced_endpoints: untraced_endpoints,
       untraced_callable: untraced_callable,
-      allowed_request_headers: allowed_request_headers
+      allowed_request_headers: allowed_request_headers,
+      allowed_response_headers: allowed_response_headers
     )
   end
 
@@ -30,8 +31,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   let(:untraced_endpoints) { [] }
   let(:untraced_callable) { nil }
   let(:allowed_request_headers) { nil }
-  let(:headers) { Hash.new }
-
+  let(:allowed_response_headers) { nil }
+  let(:headers) { {} }
   let(:app) do
     Rack::Builder.new.tap do |builder|
       builder.use Rack::Events, [handler]
@@ -159,7 +160,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
         )
       end
 
-
       it 'defaults to nil' do
         _(first_span.attributes['http.request.header.foo_bar']).must_be_nil
       end
@@ -191,9 +191,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
     end
 
-=begin
     describe 'config[:allowed_response_headers]' do
-      let(:app) do
+      let(:service) do
         ->(_env) { [200, { 'Foo-Bar' => 'foo bar response header' }, ['OK']] }
       end
 
@@ -202,14 +201,14 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
 
       describe 'when configured' do
-        let(:config) { default_config.merge(allowed_response_headers: ['Foo-Bar']) }
+        let(:allowed_response_headers) { ['Foo-Bar'] }
 
         it 'returns attribute' do
           _(first_span.attributes['http.response.header.foo_bar']).must_equal 'foo bar response header'
         end
 
         describe 'case-sensitively' do
-          let(:config) { default_config.merge(allowed_response_headers: ['fOO-bAR']) }
+          let(:allowed_response_headers) { ['fOO-bAR'] }
 
           it 'returns attribute' do
             _(first_span.attributes['http.response.header.foo_bar']).must_equal 'foo bar response header'
@@ -218,6 +217,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
     end
 
+=begin
     describe 'config[:record_frontend_span]' do
       let(:request_span) { exporter.finished_spans.first }
 

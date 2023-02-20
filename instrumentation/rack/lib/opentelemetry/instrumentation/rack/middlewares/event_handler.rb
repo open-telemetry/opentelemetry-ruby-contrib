@@ -44,19 +44,26 @@ module OpenTelemetry
           TOKENS_KEY = 'otel.context.tokens'
           GOOD_HTTP_STATUSES = (100..499).freeze
 
-          def initialize(untraced_endpoints:, untraced_callable:, allowed_request_headers:)
+          def initialize(untraced_endpoints:, untraced_callable:,
+                         allowed_request_headers:, allowed_response_headers:)
             @tracer = OpenTelemetry.tracer_provider.tracer('rack', '1.0')
             @untraced_endpoints = Array(untraced_endpoints).compact
             @untraced_callable = untraced_callable
-            @allowed_request_headers = Array(allowed_request_headers).compact.each_with_object({}) do |header, memo|
-                                                                                                     key = header.to_s.upcase.gsub(/[-\s]/, '_')
-                                                                                                     case key
-                                                                                                     when 'CONTENT_TYPE', 'CONTENT_LENGTH'
-                                                                                                       memo[key] = build_attribute_name('http.request.header.', header)
-                                                                                                     else
-                                                                                                       memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
-                                                                                                     end
-                                                                                                   end
+            @allowed_request_headers = Array(allowed_request_headers)
+                                        .compact
+                                        .each_with_object({}) do |header, memo|
+                                          key = header.to_s.upcase.gsub(/[-\s]/, '_')
+                                          case key
+                                          when 'CONTENT_TYPE', 'CONTENT_LENGTH'
+                                            memo[key] = build_attribute_name('http.request.header.', header)
+                                          else
+                                            memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
+                                          end
+                                        end
+            @allowed_response_headers = Array(allowed_response_headers).each_with_object({}) do |header, memo|
+              memo[header] = build_attribute_name('http.response.header.', header)
+              memo[header.to_s.upcase] = build_attribute_name('http.response.header.', header)
+            end
           end
 
           # Creates a server span for this current request using the incoming parent context
@@ -108,6 +115,30 @@ module OpenTelemetry
             end
           end
 
+          def extract_response_attributes(response)
+            attributes = { 'http.status_code' => response.status.to_i }
+            attributes.merge!(extract_response_headers(response.headers))
+            attributes
+          end
+
+          def extract_response_headers(headers)
+            return EMPTY_HASH if @allowed_response_headers.empty?
+
+            @allowed_response_headers.each_with_object({}) do |(key, value), result|
+              if headers.key?(key)
+                result[value] = headers[key]
+              else
+                # do case-insensitive match:
+                headers.each do |k, v|
+                  if k.upcase == key
+                    result[value] = v
+                    break
+                  end
+                end
+              end
+            end
+          end
+
           def untraced_request?(env)
             return true if @untraced_endpoints.include?(env['PATH_INFO'])
             return true if @untraced_callable&.call(env)
@@ -143,7 +174,8 @@ module OpenTelemetry
 
             if response
               span.status = OpenTelemetry::Trace::Status.error unless GOOD_HTTP_STATUSES.include?(response.status.to_i)
-              span.set_attribute('http.status_code', response.status.to_i)
+              attributes = extract_response_attributes(response)
+              span.add_attributes(attributes)
             end
             span.finish
           end
