@@ -12,12 +12,12 @@ require_relative '../../../../../lib/opentelemetry/instrumentation/rack/middlewa
 describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   include Rack::Test::Methods
 
-  let(:exporter) { EXPORTER }
-  let(:finished_spans) { exporter.finished_spans }
-  let(:first_span) { exporter.finished_spans.first }
-  let(:uri) { '/' }
-  let(:handler) do
-    OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new(
+  let(:instrumentation_module) { OpenTelemetry::Instrumentation::Rack }
+  let(:instrumentation_class) { instrumentation_module::Instrumentation }
+  let(:instrumentation) { instrumentation_class.instance }
+
+  let(:config) do
+    {
       untraced_endpoints: untraced_endpoints,
       untraced_callable: untraced_callable,
       allowed_request_headers: allowed_request_headers,
@@ -25,6 +25,22 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       url_quantization: url_quantization,
       response_propagators: response_propagators,
       record_frontend_span: record_frontend_span
+    }
+  end
+
+  let(:exporter) { EXPORTER }
+  let(:finished_spans) { exporter.finished_spans }
+  let(:first_span) { exporter.finished_spans.first }
+  let(:uri) { '/' }
+  let(:handler) do
+    OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new(
+      untraced_endpoints: config[:untraced_endpoints],
+      untraced_callable: config[:untraced_callable],
+      allowed_request_headers: config[:allowed_request_headers],
+      allowed_response_headers: config[:allowed_response_headers],
+      url_quantization: config[:url_quantization],
+      response_propagators: config[:response_propagators],
+      record_frontend_span: config[:record_frontend_span]
     )
   end
 
@@ -48,6 +64,10 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
 
   before do
     exporter.reset
+
+    # simulate a fresh install:
+    instrumentation.instance_variable_set('@installed', false)
+    instrumentation.install(config)
   end
 
   describe '#call' do
