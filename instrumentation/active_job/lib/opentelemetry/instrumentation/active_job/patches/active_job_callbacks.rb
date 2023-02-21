@@ -71,10 +71,10 @@ module OpenTelemetry
               'messaging.system' => job.class.queue_adapter_name,
               'messaging.destination' => job.queue_name,
               'messaging.message_id' => job.job_id,
+              'messaging.active_job.provider_job_id' => job.provider_job_id,
               'messaging.active_job.scheduled_at' => job.scheduled_at,
               'messaging.active_job.priority' => job.priority
             }
-
             otel_attributes['net.transport'] = 'inproc' if %w[async inline].include?(job.class.queue_adapter_name)
 
             otel_attributes.compact
