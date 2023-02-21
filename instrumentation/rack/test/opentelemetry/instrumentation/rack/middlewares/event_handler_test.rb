@@ -23,7 +23,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       allowed_request_headers: allowed_request_headers,
       allowed_response_headers: allowed_response_headers,
       url_quantization: url_quantization,
-      response_propagators: response_propagators
+      response_propagators: response_propagators,
+      record_frontend_span: record_frontend_span
     )
   end
 
@@ -34,6 +35,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   let(:untraced_callable) { nil }
   let(:allowed_request_headers) { nil }
   let(:allowed_response_headers) { nil }
+  let(:record_frontend_span) { false }
   let(:response_propagators) { nil }
   let(:url_quantization) { nil }
   let(:headers) { {} }
@@ -221,8 +223,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
     end
 
-=begin
-    describe 'config[:record_frontend_span]' do
+    describe 'record_frontend_span' do
       let(:request_span) { exporter.finished_spans.first }
 
       describe 'default' do
@@ -236,8 +237,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
 
       describe 'when recordable' do
-        let(:config) { default_config.merge(record_frontend_span: true) }
-        let(:env) { Hash('HTTP_X_REQUEST_START' => Time.now.to_i) }
+        let(:record_frontend_span) { true }
+        let(:headers) { Hash('HTTP_X_REQUEST_START' => Time.now.to_i) }
         let(:frontend_span) { exporter.finished_spans[1] }
         let(:request_span) { exporter.finished_spans[0] }
 
@@ -256,7 +257,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
         end
       end
     end
-=end
+
     describe '#called with 400 level http status code' do
       let(:service) do
         ->(_env) { [404, { 'Foo-Bar' => 'foo bar response header' }, ['Not Found']] }
@@ -370,13 +371,13 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
     end
 
     describe 'propagator throws' do
-      class MockPropagator < OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator
+      class EventMockPropagator < OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator
         def inject(carrier)
           raise 'Injection failed'
         end
       end
 
-      let(:response_propagators) { [MockPropagator.new] }
+      let(:response_propagators) { [EventMockPropagator.new] }
 
       it 'records errors' do
         expect(OpenTelemetry).to receive(:handle_error).with(exception: instance_of(RuntimeError), message: /Unable/)

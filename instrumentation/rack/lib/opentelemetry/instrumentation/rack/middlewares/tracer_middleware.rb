@@ -6,8 +6,6 @@
 
 require 'opentelemetry/trace/status'
 
-require_relative '../util/queue_time'
-
 module OpenTelemetry
   module Instrumentation
     module Rack

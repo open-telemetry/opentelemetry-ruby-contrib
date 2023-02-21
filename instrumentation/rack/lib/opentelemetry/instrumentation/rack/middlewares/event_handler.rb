@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../util'
 require 'opentelemetry/trace/status'
 
 module OpenTelemetry
@@ -46,13 +47,14 @@ module OpenTelemetry
 
           def initialize(untraced_endpoints:, untraced_callable:,
                          allowed_request_headers:, allowed_response_headers:,
-                         url_quantization:, response_propagators:)
+                         url_quantization:, response_propagators:,
+                         record_frontend_span:)
             @tracer = OpenTelemetry.tracer_provider.tracer('rack', '1.0')
             @untraced_endpoints = Array(untraced_endpoints).compact
             @untraced_callable = untraced_callable
             @allowed_request_headers = Array(allowed_request_headers)
               .compact
-              .each_with_object({}) do |header, memo|
+              .each_with_object({}) { |header, memo|
                 key = header.to_s.upcase.gsub(/[-\s]/, '_')
                 case key
                 when 'CONTENT_TYPE', 'CONTENT_LENGTH'
@@ -60,13 +62,14 @@ module OpenTelemetry
                 else
                   memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
                 end
-              end
+              }
             @allowed_response_headers = Array(allowed_response_headers).each_with_object({}) do |header, memo|
               memo[header] = build_attribute_name('http.response.header.', header)
               memo[header.to_s.upcase] = build_attribute_name('http.response.header.', header)
             end
             @url_quantization = url_quantization
             @response_propagators = response_propagators
+            @record_frontend_span = record_frontend_span == true
           end
 
           # Creates a server span for this current request using the incoming parent context
@@ -79,8 +82,36 @@ module OpenTelemetry
             return if untraced_request?(request.env)
 
             extracted_context = extract_remote_context(request)
-            span = new_server_span(extracted_context, request)
-            request.env[TOKENS_KEY] = register_current_span(span)
+            if @record_frontend_span
+              request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
+              unless request_start_time.nil?
+                frontend_span = @tracer.start_span(
+                  'http_server.proxy',
+                  with_parent: extracted_context,
+                  start_timestamp: request_start_time,
+                  kind: :server
+                )
+
+                frontend_context = OpenTelemetry::Trace.context_with_span(frontend_span, parent_context: extracted_context)
+              end
+            end
+            parent_context = frontend_context || extracted_context
+
+            span = @tracer.start_span(
+              create_request_span_name(request),
+              with_parent: parent_context,
+              kind: frontend_context.nil? ? :server : :internal,
+              attributes: request_span_attributes(request.env)
+            )
+            ctx = OpenTelemetry::Trace.context_with_span(span)
+            rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: ctx)
+
+            contexts = [frontend_context, ctx, rack_ctx]
+            contexts.compact!
+
+            tokens = contexts.map { |context| OpenTelemetry::Context.attach(context) }
+
+            request.env[TOKENS_KEY] = tokens
           end
 
           # Optionally adds debugging response headers injected from {response_propagators}
@@ -119,8 +150,19 @@ module OpenTelemetry
           # @param [Rack::Request] The current HTTP request
           # @param [Rack::Response] The current HTTP response
           def on_finish(request, response)
-            finish_rack_span(response)
-            remove_contexts(request)
+            span = OpenTelemetry::Instrumentation::Rack.current_span
+            return unless span.recording?
+
+            if response
+              span.status = OpenTelemetry::Trace::Status.error unless GOOD_HTTP_STATUSES.include?(response.status.to_i)
+              attributes = extract_response_attributes(response)
+              span.add_attributes(attributes)
+            end
+
+            request.env[TOKENS_KEY]&.reverse&.each do |token|
+              OpenTelemetry::Context.detach(token)
+              OpenTelemetry::Trace.current_span.finish
+            end
           end
 
           private
@@ -165,15 +207,6 @@ module OpenTelemetry
             false
           end
 
-          def new_server_span(parent_context, request)
-            @tracer.start_span(
-              create_request_span_name(request),
-              with_parent: parent_context,
-              kind: :server,
-              attributes: request_span_attributes(request.env)
-            )
-          end
-
           # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
           #
           # recommendation: span.name(s) should be low-cardinality (e.g.,
@@ -197,32 +230,6 @@ module OpenTelemetry
               request.env,
               getter: OpenTelemetry::Common::Propagation.rack_env_getter
             )
-          end
-
-          def register_current_span(span)
-            ctx = OpenTelemetry::Trace.context_with_span(span)
-            rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: ctx)
-            [OpenTelemetry::Context.attach(ctx), OpenTelemetry::Context.attach(rack_ctx)]
-          end
-
-          def finish_rack_span(response)
-            span = OpenTelemetry::Instrumentation::Rack.current_span
-            return unless span.recording?
-
-            if response
-              span.status = OpenTelemetry::Trace::Status.error unless GOOD_HTTP_STATUSES.include?(response.status.to_i)
-              attributes = extract_response_attributes(response)
-              span.add_attributes(attributes)
-            end
-            span.finish
-          end
-
-          def remove_contexts(request)
-            request.env[TOKENS_KEY]&.reverse&.each do |token|
-              OpenTelemetry::Context.detach(token)
-            rescue StandardError => e
-              OpenTelemetry.handle_error(message: 'Unable to detach Rack Context', exception: e)
-            end
           end
 
           def request_span_attributes(env)
