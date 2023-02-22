@@ -45,33 +45,6 @@ module OpenTelemetry
           TOKENS_KEY = 'otel.context.tokens'
           GOOD_HTTP_STATUSES = (100..499).freeze
 
-          def initialize(untraced_endpoints:, untraced_callable:,
-                         allowed_request_headers:, allowed_response_headers:,
-                         url_quantization:, response_propagators:,
-                         record_frontend_span:)
-            @tracer = OpenTelemetry.tracer_provider.tracer('rack', '1.0')
-            @untraced_endpoints = Array(untraced_endpoints).compact
-            @untraced_callable = untraced_callable
-            @allowed_request_headers = Array(allowed_request_headers)
-              .compact
-              .each_with_object({}) { |header, memo|
-                key = header.to_s.upcase.gsub(/[-\s]/, '_')
-                case key
-                when 'CONTENT_TYPE', 'CONTENT_LENGTH'
-                  memo[key] = build_attribute_name('http.request.header.', header)
-                else
-                  memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
-                end
-              }
-            @allowed_response_headers = Array(allowed_response_headers).each_with_object({}) do |header, memo|
-              memo[header] = build_attribute_name('http.response.header.', header)
-              memo[header.to_s.upcase] = build_attribute_name('http.response.header.', header)
-            end
-            @url_quantization = url_quantization
-            @response_propagators = response_propagators
-            @record_frontend_span = record_frontend_span == true
-          end
-
           # Creates a server span for this current request using the incoming parent context
           # and registers them as the {current_span}
           #
@@ -82,10 +55,10 @@ module OpenTelemetry
             return if untraced_request?(request.env)
 
             extracted_context = extract_remote_context(request)
-            if @record_frontend_span
+            if record_frontend_span?
               request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
               unless request_start_time.nil?
-                frontend_span = @tracer.start_span(
+                frontend_span = tracer.start_span(
                   'http_server.proxy',
                   with_parent: extracted_context,
                   start_timestamp: request_start_time,
@@ -97,7 +70,7 @@ module OpenTelemetry
             end
             parent_context = frontend_context || extracted_context
 
-            span = @tracer.start_span(
+            span = tracer.start_span(
               create_request_span_name(request),
               with_parent: parent_context,
               kind: frontend_context.nil? ? :server : :internal,
@@ -124,7 +97,7 @@ module OpenTelemetry
             return unless span.recording?
 
             begin
-              @response_propagators&.each { |propagator| propagator.inject(response.headers) }
+              response_propagators&.each { |propagator| propagator.inject(response.headers) }
             rescue StandardError => e
               OpenTelemetry.handle_error(message: 'Unable to inject response propagation headers', exception: e)
             end
@@ -183,9 +156,9 @@ module OpenTelemetry
           end
 
           def extract_response_headers(headers)
-            return EMPTY_HASH if @allowed_response_headers.empty?
+            return EMPTY_HASH if allowed_response_headers.empty?
 
-            @allowed_response_headers.each_with_object({}) do |(key, value), result|
+            allowed_response_headers.each_with_object({}) do |(key, value), result|
               if headers.key?(key)
                 result[value] = headers[key]
               else
@@ -201,8 +174,8 @@ module OpenTelemetry
           end
 
           def untraced_request?(env)
-            return true if @untraced_endpoints.include?(env['PATH_INFO'])
-            return true if @untraced_callable&.call(env)
+            return true if untraced_endpoints.include?(env['PATH_INFO'])
+            return true if untraced_requests&.call(env)
 
             false
           end
@@ -217,7 +190,7 @@ module OpenTelemetry
             # NOTE: dd-trace-rb has implemented 'quantization' (which lowers url cardinality)
             #       see Datadog::Quantization::HTTP.url
 
-            if (implementation = @url_quantization)
+            if (implementation = url_quantization)
               request_uri_or_path_info = request.env['REQUEST_URI'] || request.path_info
               implementation.call(request_uri_or_path_info, request.env)
             else
@@ -247,6 +220,55 @@ module OpenTelemetry
 
           def build_attribute_name(prefix, suffix)
             prefix + suffix.to_s.downcase.gsub(/[-\s]/, '_')
+          end
+
+          def record_frontend_span?
+            config[:record_frontend_span] == true
+          end
+
+          def untraced_endpoints
+            config[:untraced_endpoints].compact
+          end
+
+          def untraced_requests
+            config[:untraced_requests]
+          end
+
+          def url_quantization
+            config[:url_quantization]
+          end
+
+          def response_propagators
+            config[:response_propagators]
+          end
+
+          def allowed_request_headers
+            config[:allowed_request_headers]
+              .compact
+              .each_with_object({}) do |header, memo|
+                key = header.to_s.upcase.gsub(/[-\s]/, '_')
+                case key
+                when 'CONTENT_TYPE', 'CONTENT_LENGTH'
+                  memo[key] = build_attribute_name('http.request.header.', header)
+                else
+                  memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
+                end
+              end
+          end
+
+          def allowed_response_headers
+            config[:allowed_response_headers].each_with_object({}) do |header, memo|
+              memo[header] = build_attribute_name('http.response.header.', header)
+              memo[header.to_s.upcase] = build_attribute_name('http.response.header.', header)
+            end
+          end
+
+          def tracer
+            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.tracer
+          end
+
+          def config
+            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.config
           end
         end
       end

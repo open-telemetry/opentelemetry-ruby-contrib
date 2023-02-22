@@ -19,7 +19,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   let(:config) do
     {
       untraced_endpoints: untraced_endpoints,
-      untraced_callable: untraced_callable,
+      untraced_requests: untraced_requests,
       allowed_request_headers: allowed_request_headers,
       allowed_response_headers: allowed_response_headers,
       url_quantization: url_quantization,
@@ -33,22 +33,14 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   let(:first_span) { exporter.finished_spans.first }
   let(:uri) { '/' }
   let(:handler) do
-    OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new(
-      untraced_endpoints: config[:untraced_endpoints],
-      untraced_callable: config[:untraced_callable],
-      allowed_request_headers: config[:allowed_request_headers],
-      allowed_response_headers: config[:allowed_response_headers],
-      url_quantization: config[:url_quantization],
-      response_propagators: config[:response_propagators],
-      record_frontend_span: config[:record_frontend_span]
-    )
+    OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new
   end
 
   let(:service) do
     ->(_arg) { [200, { 'Content-Type' => 'text/plain' }, 'Hello World'] }
   end
   let(:untraced_endpoints) { [] }
-  let(:untraced_callable) { nil }
+  let(:untraced_requests) { nil }
   let(:allowed_request_headers) { nil }
   let(:allowed_response_headers) { nil }
   let(:record_frontend_span) { false }
@@ -116,20 +108,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
         end
       end
 
-      describe 'when a string is passed in' do
-        let(:untraced_endpoints) { '/ping' }
-
-        it 'does not trace path' do
-          get '/ping'
-
-          ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/ping' }
-          _(ping_span).must_be_nil
-
-          root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
-          _(root_span).wont_be_nil
-        end
-      end
-
       describe 'when nil is passed in' do
         let(:config) { { untraced_endpoints: nil } }
 
@@ -147,7 +125,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
 
     describe 'config[:untraced_requests]' do
       describe 'when a callable is passed in' do
-        let(:untraced_callable) do
+        let(:untraced_requests) do
           ->(env) { env['PATH_INFO'] =~ %r{^\/assets} }
         end
 

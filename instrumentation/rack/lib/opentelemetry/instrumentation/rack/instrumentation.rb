@@ -32,22 +32,10 @@ module OpenTelemetry
         option :untraced_requests,        default: nil,   validate: :callable
         option :response_propagators,     default: [],    validate: :array
 
-        def new_rack_events_handler
-          OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new(
-            untraced_endpoints: config[:untraced_endpoints],
-            untraced_callable: config[:untraced_callable],
-            allowed_request_headers: config[:allowed_request_headers],
-            allowed_response_headers: config[:allowed_response_headers],
-            url_quantization: config[:url_quantization],
-            response_propagators: config[:response_propagators],
-            record_frontend_span: config[:record_frontend_span]
-          )
-        end
-
         private
 
         def require_dependencies
-          require_relative 'middlewares/event_handler'
+          require_relative 'middlewares/event_handler' if defined?(Rack::Events)
           require_relative 'middlewares/tracer_middleware'
         end
 
