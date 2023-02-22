@@ -56,6 +56,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.2"
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
@@ -102,7 +107,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.3.9.0"
+          ruby: "jruby-9.4.0.0"
       - name: "Truffleruby Filter"
         id: truffleruby_skip
         shell: bash

@@ -45,7 +45,8 @@ module OpenTelemetry
                 }
 
                 links = messages.map do |message|
-                  span_context = OpenTelemetry::Trace.current_span(OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)).context
+                  trace_context = OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)
+                  span_context = OpenTelemetry::Trace.current_span(trace_context).context
                   OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
                 end
                 links.compact!

@@ -29,8 +29,8 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
         Thread.start { server.accept }
         port = server.addr[1]
 
-        assert_raises(::HTTP::TimeoutError) do
-          ::HTTP.timeout(connect: 0.1, write: 0.1, read: 0.1).get("http://localhost:#{port}/example")
+        assert_raises(HTTP::TimeoutError) do
+          HTTP.timeout(connect: 0.1, write: 0.1, read: 0.1).get("http://localhost:#{port}/example")
         end
       end
 

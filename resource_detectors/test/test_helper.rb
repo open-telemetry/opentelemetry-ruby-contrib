@@ -4,9 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'simplecov'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
+
 SimpleCov.start
 
-require 'opentelemetry/resource/detectors'
+require 'opentelemetry-resource_detectors'
 require 'minitest/autorun'
-require 'pry'
+require 'webmock/minitest'
+
+OpenTelemetry.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)

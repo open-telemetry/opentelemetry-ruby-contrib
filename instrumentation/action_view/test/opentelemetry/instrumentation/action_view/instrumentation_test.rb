@@ -6,8 +6,6 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/action_view'
-
 describe OpenTelemetry::Instrumentation::ActionView do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActionView::Instrumentation.instance }
 

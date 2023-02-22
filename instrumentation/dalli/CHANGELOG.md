@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.22.2 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.22.1 / 2022-11-28
 
 * FIXED: `format_command`'s terrible performance 

@@ -43,7 +43,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
     end
 
     it 'after request with success code' do
-      ::Excon.get('http://example.com/success')
+      Excon.get('http://example.com/success')
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
@@ -60,14 +60,13 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
     end
 
     specify 'after request with capital-letters HTTP method' do
-      ::Excon.new('http://example.com/success')
-             .request(method: 'GET')
+      Excon.new('http://example.com/success').request(method: 'GET')
 
       _(span.attributes['http.method']).must_equal 'GET'
     end
 
     it 'after request with failure code' do
-      ::Excon.get('http://example.com/failure')
+      Excon.get('http://example.com/failure')
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
@@ -85,7 +84,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
     it 'after request timeout' do
       expect do
-        ::Excon.get('http://example.com/timeout')
+        Excon.get('http://example.com/timeout')
       end.must_raise Excon::Error::Timeout
 
       _(exporter.finished_spans.size).must_equal 1
@@ -112,7 +111,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
         'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE'
       }
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
-        ::Excon.get('http://example.com/success')
+        Excon.get('http://example.com/success')
       end
 
       _(exporter.finished_spans.size).must_equal 1
@@ -134,7 +133,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(peer_service: 'example:faraday')
 
-      ::Excon.get('http://example.com/success')
+      Excon.get('http://example.com/success')
 
       _(span.attributes['peer.service']).must_equal 'example:faraday'
     end
@@ -145,7 +144,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       client_context_attrs = { 'peer.service' => 'example:custom' }
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
-        ::Excon.get('http://example.com/success')
+        Excon.get('http://example.com/success')
       end
 
       _(span.attributes['peer.service']).must_equal 'example:custom'

@@ -7,7 +7,7 @@ Bundler.require
 
 ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::PG', db_statement: :obfuscate
+  c.use 'OpenTelemetry::Instrumentation::PG'
 end
 
 conn = PG::Connection.open(

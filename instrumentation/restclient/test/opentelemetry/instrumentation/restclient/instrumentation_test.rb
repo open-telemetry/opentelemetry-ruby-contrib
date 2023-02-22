@@ -42,7 +42,7 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
     end
 
     it 'after request with success code' do
-      ::RestClient.get('http://username:password@example.com/success')
+      RestClient.get('http://username:password@example.com/success')
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
@@ -58,7 +58,7 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
 
     it 'after request with failure code' do
       expect do
-        ::RestClient.get('http://username:password@example.com/failure')
+        RestClient.get('http://username:password@example.com/failure')
       end.must_raise RestClient::InternalServerError
 
       _(exporter.finished_spans.size).must_equal 1
@@ -78,7 +78,7 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
         'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE'
       }
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
-        ::RestClient.get('http://username:password@example.com/success')
+        RestClient.get('http://username:password@example.com/success')
       end
 
       _(span.attributes['http.method']).must_equal 'OVERRIDE'
@@ -90,7 +90,7 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(peer_service: 'example:faraday')
 
-      ::RestClient.get('http://example.com/success')
+      RestClient.get('http://example.com/success')
       _(span.attributes['peer.service']).must_equal 'example:faraday'
     end
 
@@ -100,13 +100,13 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
 
       client_context_attrs = { 'peer.service' => 'example:custom' }
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
-        ::RestClient.get('http://example.com/success')
+        RestClient.get('http://example.com/success')
       end
       _(span.attributes['peer.service']).must_equal 'example:custom'
     end
 
     it 'creates valid http method span attribute when method is a Symbol' do
-      ::RestClient::Request.execute(method: :get, url: 'http://username:password@example.com/success')
+      RestClient::Request.execute(method: :get, url: 'http://username:password@example.com/success')
 
       _(span.attributes['http.method']).must_equal 'GET'
     end
