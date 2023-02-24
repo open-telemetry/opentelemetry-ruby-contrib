@@ -231,6 +231,19 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.name).must_equal 'select'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal obfuscated_sql
       end
+
+      it 'encodes invalid byte sequences for db.statement' do
+        # \255 is off-limits https://en.wikipedia.org/wiki/UTF-8#Codepage_layout
+        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com\255'"
+        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
+
+        expect do
+          client.query(sql)
+        end.must_raise Trilogy::Error
+
+        _(span.name).must_equal 'mysql'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal obfuscated_sql
+      end
     end
 
     describe 'when db_statement is set to omit' do
