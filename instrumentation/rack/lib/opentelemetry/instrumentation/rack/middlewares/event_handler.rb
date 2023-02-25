@@ -142,9 +142,9 @@ module OpenTelemetry
 
           EMPTY_HASH = {}.freeze
           def extract_request_headers(env)
-            return EMPTY_HASH if @allowed_request_headers.empty?
+            return EMPTY_HASH if allowed_request_headers.empty?
 
-            @allowed_request_headers.each_with_object({}) do |(key, value), result|
+            allowed_request_headers.each_with_object({}) do |(key, value), result|
               result[value] = env[key] if env.key?(key)
             end
           end
