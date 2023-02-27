@@ -24,21 +24,27 @@ module OpenTelemetry
 
             metadata = request_context.metadata
             attributes = {
-              'rpc.system' => 'grpc',
-              'rpc.service' => service,
-              'rpc.method' => method,
+              OpenTelemetry::SemanticConventions::Trace::RPC_SYSTEM => 'grpc',
+              OpenTelemetry::SemanticConventions::Trace::RPC_SERVICE => service,
+              OpenTelemetry::SemanticConventions::Trace::RPC_METHOD => method,
+              OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE => instrumentation_config[:peer_service],
               'rpc.type' => request_context.type.to_s,
-              'peer.service' => instrumentation_config[:peer_service],
+              'net.sock.peer.addr' => request_context.call.instance_variable_get(:@wrapped)&.peer
             }.compact
 
-            attributes.merge!(allowed_metadata_headers(metadata))
+            attributes.merge!(allowed_metadata_headers(metadata.stringify_keys))
 
             instrumentation_tracer.in_span(request_context.method.to_s,
               attributes: attributes,
-              kind: :client,
-            ) do
+              kind: OpenTelemetry::Trace::SpanKind::CLIENT,
+            ) do |span|
               OpenTelemetry.propagation.inject(metadata)
-              yield
+              yield.tap do
+                span&.set_attribute(OpenTelemetry::SemanticConventions::Trace::RPC_GRPC_STATUS_CODE, 0)
+              end
+            rescue Exception => e
+              span&.set_attribute(OpenTelemetry::SemanticConventions::Trace::RPC_GRPC_STATUS_CODE, e.code)
+              raise e
             end
           end
           # rubocop:enable Metrics/MethodLength
@@ -46,9 +52,10 @@ module OpenTelemetry
           private
 
           def allowed_metadata_headers(metadata)
-            build_key = -> (attribute) { "rpc.request.metadata.#{attribute}" }
-            metadata.each_with_object({}) do |(k, v), h|
-              h[build_key.call(k)] = v if instrumentation_config[:allowed_metadata_headers].include?(k.to_sym)
+            instrumentation_config[:allowed_metadata_headers].each_with_object({}) do |k, h|
+              if v = metadata[k.to_s]
+                h["rpc.request.metadata.#{k}"] = v
+              end
             end
           end
 

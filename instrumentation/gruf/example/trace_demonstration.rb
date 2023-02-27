@@ -12,8 +12,8 @@ ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Gruf', {
     peer_service: "Example",
-    grpc_ignore_methods_on_client: [],
-    grpc_ignore_methods_on_server: [],
+    grpc_ignore_methods_on_client: [], # ["proto.example.example_api.example"]
+    grpc_ignore_methods_on_server: [], # ["proto.example.example_api.example"]
     allowed_metadata_headers: [],
   }
 end
