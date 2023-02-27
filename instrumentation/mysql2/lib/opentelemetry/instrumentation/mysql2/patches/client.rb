@@ -78,7 +78,8 @@ module OpenTelemetry
               obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
               obfuscated
             end
-          rescue StandardError
+          rescue StandardError => e
+            OpenTelemetry.handle_error(message: 'Failed to obfuscate SQL', exception: e)
             'OpenTelemetry error: failed to obfuscate sql'
           end
 
