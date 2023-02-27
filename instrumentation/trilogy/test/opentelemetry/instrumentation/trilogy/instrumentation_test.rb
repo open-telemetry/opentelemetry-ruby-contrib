@@ -101,6 +101,28 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       instrumentation.install(config)
     end
 
+    describe '.attributes' do
+      let(:attributes) { { 'db.statement' => 'foobar' } }
+
+      it 'returns an empty hash by default' do
+        _(OpenTelemetry::Instrumentation::Trilogy.attributes).must_equal({})
+      end
+
+      it 'returns the current attributes hash' do
+        OpenTelemetry::Instrumentation::Trilogy.with_attributes(attributes) do
+          _(OpenTelemetry::Instrumentation::Trilogy.attributes).must_equal(attributes)
+        end
+      end
+
+      it 'sets span attributes according to with_attributes hash' do
+        OpenTelemetry::Instrumentation::Trilogy.with_attributes(attributes) do
+          client.query('SELECT 1')
+        end
+
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'foobar'
+      end
+    end
+
     describe 'with default options' do
       it 'obfuscates sql' do
         client.query('SELECT 1')
