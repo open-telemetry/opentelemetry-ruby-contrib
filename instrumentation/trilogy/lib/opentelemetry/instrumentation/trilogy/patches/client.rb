@@ -87,10 +87,14 @@ module OpenTelemetry
             if sql.size > 2000
               'SQL query too large to remove sensitive data ...'
             else
-              obfuscated = sql.gsub(FULL_SQL_REGEXP, '?')
+              obfuscated = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
+              obfuscated = obfuscated.gsub(FULL_SQL_REGEXP, '?')
               obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
               obfuscated
             end
+          rescue StandardError => e
+            OpenTelemetry.handle_error(message: 'Failed to obfuscate SQL', exception: e)
+            'OpenTelemetry error: failed to obfuscate sql'
           end
 
           def detect_unmatched_pairs(obfuscated)
@@ -140,6 +144,7 @@ module OpenTelemetry
             QUERY_NAME_RE.match(sql) { |match| match[1].downcase } unless sql.nil?
           rescue StandardError => e
             OpenTelemetry.logger.error("Error extracting sql statement type: #{e.message}")
+            nil
           end
         end
       end
