@@ -13,7 +13,6 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer do
   let(:sanitizer) { OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer }
 
   describe '#sanitize with default key patterns' do
-    let(:obfuscate) { true }
     let(:obj) {
       {
         query: 'a query',
@@ -22,7 +21,7 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer do
     }
 
     it 'sanitizes default key patterns' do
-      _(sanitizer.sanitize(obj, obfuscate)).must_equal(
+      _(sanitizer.sanitize(obj)).must_equal(
         {
           query: 'a query',
           password: '?'
@@ -32,7 +31,6 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer do
   end
 
   describe '#sanitize with custom key patterns' do
-    let(:obfuscate) { true }
     let(:key_patterns) { [/.*sensitive.*/] }
 
     let(:obj) {
@@ -43,7 +41,7 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer do
     }
 
     it 'sanitizes custom key patterns' do
-      _(sanitizer.sanitize(obj, obfuscate, key_patterns)).must_equal(
+      _(sanitizer.sanitize(obj, key_patterns)).must_equal(
         {
           query: 'a query',
           some_sensitive_field: '?'
@@ -53,7 +51,6 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer do
   end
 
   describe '#sanitize with no matching key patterns' do
-    let(:obfuscate) { true }
     let(:key_patterns) { [/.*sensitive.*/] }
 
     let(:obj) {
@@ -64,29 +61,10 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer do
     }
 
     it 'does not sanitize fields' do
-      _(sanitizer.sanitize(obj, obfuscate, key_patterns)).must_equal(
+      _(sanitizer.sanitize(obj, key_patterns)).must_equal(
         {
           query: 'a query',
           a_normal_field: 'normal data'
-        }
-      )
-    end
-  end
-
-  describe '#sanitize with obfuscate set to false' do
-    let(:obfuscate) { false }
-    let(:obj) {
-      {
-        query: 'a query',
-        password: 'top secret'
-      }
-    }
-
-    it 'does not obfuscate values' do
-      _(sanitizer.sanitize(obj, obfuscate)).must_equal(
-        {
-          query: 'a query',
-          password: 'top secret'
         }
       )
     end

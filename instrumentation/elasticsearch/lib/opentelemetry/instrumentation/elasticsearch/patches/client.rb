@@ -23,6 +23,7 @@ module OpenTelemetry
               # TODO is this true for all elasticsearch client requests?
               'net.transport' => IP_TCP,
               'elasticsearch.method' => method
+              # TODO set other elasticsearch custom attributes, based on spec
             }
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
             attributes['elasticsearch.params'] = args&.[](0).to_json if args&.[](0)
@@ -38,7 +39,7 @@ module OpenTelemetry
             omit = config[:db_statement] == :omit
             obfuscate = config[:db_statement] == :obfuscate
             unless omit
-              body = Sanitizer.sanitize(body, obfuscate, config[:sanitize_field_names])
+              body = Sanitizer.sanitize(body, config[:sanitize_field_names]) if obfuscate
               if body && !body.is_a?(String)
                 body = body.to_json
               end

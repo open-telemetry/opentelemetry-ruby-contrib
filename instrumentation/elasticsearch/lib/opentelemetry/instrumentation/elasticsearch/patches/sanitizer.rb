@@ -18,23 +18,22 @@ module OpenTelemetry
                 Regexp.new(p.gsub('*', '.*'))
               end
 
-            def sanitize(query, obfuscate, key_patterns = [])
+            def sanitize(query, key_patterns = [])
               patterns = DEFAULT_KEY_PATTERNS
               patterns += key_patterns if key_patterns
-              sanitize!(DeepDup.dup(query), patterns, obfuscate)
+              sanitize!(DeepDup.dup(query), patterns)
             end
 
             private
 
-            def sanitize!(obj, key_patterns, obfuscate)
+            def sanitize!(obj, key_patterns)
               return obj unless obj.is_a?(Hash)
 
               obj.each_pair do |k, v|
                 case v
                 when Hash
-                  sanitize!(v, key_patterns, obfuscate)
+                  sanitize!(v, key_patterns)
                 else
-                  next unless obfuscate
                   next unless filter_key?(key_patterns, k)
 
                   obj[k] = FILTERED
