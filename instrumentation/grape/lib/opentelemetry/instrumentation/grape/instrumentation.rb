@@ -13,6 +13,7 @@ module OpenTelemetry
 
         install do |_config|
           require_dependencies
+          subscribe
         end
 
         present do
@@ -40,7 +41,11 @@ module OpenTelemetry
         end
 
         def require_dependencies
-          # TODO: Include instrumentation dependencies
+          require_relative 'subscriber'
+        end
+
+        def subscribe
+          Handler.subscribe
         end
       end
     end
