@@ -253,7 +253,7 @@ services:
       - jaeger
 
   elasticsearch:
-    image: elasticsearch:8.6.1
+    image: elasticsearch:8.6.2
     expose:
       - "9200"
     ports:
