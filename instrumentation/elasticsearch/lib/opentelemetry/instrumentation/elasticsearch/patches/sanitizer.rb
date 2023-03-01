@@ -8,10 +8,9 @@ module OpenTelemetry
   module Instrumentation
     module Elasticsearch
       module Patches
+        # Replaces values in a hash, given a set of keys to match on.
         class Sanitizer
-
           class << self
-
             FILTERED = '?'
             DEFAULT_KEY_PATTERNS =
               %w[password passwd pwd secret *key *token* *session* *credit* *card* *auth* set-cookie].map! do |p|

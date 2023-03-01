@@ -8,8 +8,6 @@ module OpenTelemetry
   module Instrumentation
     module Elasticsearch
       module Patches
-        # @api private
-        #
         # Makes a deep copy of an Array or Hash
         # NB: Not guaranteed to work well with complex objects, only simple Hash,
         # Array, String, Number, etc.

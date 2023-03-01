@@ -1,8 +1,8 @@
-# # frozen_string_literal: true
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
 #
-# # Copyright The OpenTelemetry Authors
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
 

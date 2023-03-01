@@ -7,6 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Elasticsearch
+      # Object representing a user-supplied key pattern that behaves as a regex
       class WildcardPattern
         def initialize(str)
           @pattern = convert(str)
@@ -18,7 +19,7 @@ module OpenTelemetry
           !!@pattern.match(other)
         end
 
-        alias :match :match?
+        alias match match?
 
         private
 
@@ -36,7 +37,7 @@ module OpenTelemetry
             end
 
           Regexp.new(
-            '\A' + parts.join + '\Z',
+            '\A' + parts.join + '\Z', # rubocop:disable Style/StringConcatenation
             case_sensitive ? nil : Regexp::IGNORECASE
           )
         end
@@ -44,4 +45,3 @@ module OpenTelemetry
     end
   end
 end
-

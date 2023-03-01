@@ -13,12 +13,12 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer do
   let(:sanitizer) { OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer }
 
   describe '#sanitize with default key patterns' do
-    let(:obj) {
+    let(:obj) do
       {
         query: 'a query',
         password: 'top secret'
       }
-    }
+    end
 
     it 'sanitizes default key patterns' do
       _(sanitizer.sanitize(obj)).must_equal(
@@ -33,12 +33,12 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer do
   describe '#sanitize with custom key patterns' do
     let(:key_patterns) { [/.*sensitive.*/] }
 
-    let(:obj) {
+    let(:obj) do
       {
         query: 'a query',
         some_sensitive_field: 'sensitive data'
       }
-    }
+    end
 
     it 'sanitizes custom key patterns' do
       _(sanitizer.sanitize(obj, key_patterns)).must_equal(
@@ -53,12 +53,12 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Sanitizer do
   describe '#sanitize with no matching key patterns' do
     let(:key_patterns) { [/.*sensitive.*/] }
 
-    let(:obj) {
+    let(:obj) do
       {
         query: 'a query',
         a_normal_field: 'normal data'
       }
-    }
+    end
 
     it 'does not sanitize fields' do
       _(sanitizer.sanitize(obj, key_patterns)).must_equal(

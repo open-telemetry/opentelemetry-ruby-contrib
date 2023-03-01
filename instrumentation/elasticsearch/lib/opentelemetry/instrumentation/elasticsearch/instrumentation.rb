@@ -11,8 +11,8 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('8.0.0')
 
-        install do |_config|
-          convert_config(_config)
+        install do |config|
+          convert_config(config)
           require_dependencies
           patch
         end
@@ -39,9 +39,9 @@ module OpenTelemetry
         private
 
         def convert_config(config)
-          if field_names = config[:sanitize_field_names]
-            config[:sanitize_field_names] = field_names.map { |p| WildcardPattern.new(p) }
-          end
+          return unless (field_names = config[:sanitize_field_names])
+
+          config[:sanitize_field_names] = field_names.map { |p| WildcardPattern.new(p) }
         end
 
         def gem_version

@@ -17,7 +17,7 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
   let(:config) { {} }
   let(:client) do
     Elasticsearch::Client.new(log: false).tap do |client|
-      client.instance_variable_set(:"@verified", true)
+      client.instance_variable_set(:@verified, true)
     end
   end
 
@@ -48,18 +48,15 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'GET _search'
       _(span.attributes['db.statement']).must_be_nil
-      _(span.attributes['db.system']).must_equal "elasticsearch"
-      _(span.attributes['db.operation']).must_equal "GET"
+      _(span.attributes['db.system']).must_equal 'elasticsearch'
+      _(span.attributes['db.operation']).must_equal 'GET'
       _(span.attributes['elasticsearch.method']).must_equal 'GET'
       _(span.attributes['net.transport']).must_equal 'ip_tcp'
 
       _(span.attributes['net.peer.name']).must_equal 'localhost'
       _(span.attributes['net.peer.port']).must_equal 9200
-      #_(span.attributes['elasticsearch.url']).must_equal 'http://localhost:9200/_search?q=test'
 
-      _(span.attributes['elasticsearch.params']).must_equal "{\"q\":\"test\"}"
-      #_(span.attributes['elasticsearch.id']).must_equal # doc id
-      #_(span.attributes['elasticsearch.target']).must_equal '_search'
+      _(span.attributes['elasticsearch.params']).must_equal "{\"q\":\"test\"}" # rubocop:disable Style/StringLiterals
       assert_requested(
         :get,
         'http://localhost:9200/_search?q=test'
@@ -84,18 +81,15 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'POST _bulk'
       _(span.attributes['db.statement']).must_be_nil
-      _(span.attributes['db.system']).must_equal "elasticsearch"
-      _(span.attributes['db.operation']).must_equal "POST"
+      _(span.attributes['db.system']).must_equal 'elasticsearch'
+      _(span.attributes['db.operation']).must_equal 'POST'
       _(span.attributes['elasticsearch.method']).must_equal 'POST'
       _(span.attributes['net.transport']).must_equal 'ip_tcp'
 
       _(span.attributes['net.peer.name']).must_equal 'localhost'
       _(span.attributes['net.peer.port']).must_equal 9200
-      #_(span.attributes['elasticsearch.url']).must_equal 'http://localhost:9200/_search?q=test'
 
       _(span.attributes['elasticsearch.params']).must_equal '{}'
-      #_(span.attributes['elasticsearch.id']).must_equal # doc id
-      #_(span.attributes['elasticsearch.target']).must_equal '_search'
       assert_requested(
         :post,
         'http://localhost:9200/_bulk'
@@ -122,18 +116,15 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
       _(span.attributes['db.statement']).must_equal(
         "{\"index\":{\"_index\":\"users\"}}\n{\"name\":\"Emily\",\"password\":\"top_secret\"}\n"
       )
-      _(span.attributes['db.system']).must_equal "elasticsearch"
-      _(span.attributes['db.operation']).must_equal "POST"
+      _(span.attributes['db.system']).must_equal 'elasticsearch'
+      _(span.attributes['db.operation']).must_equal 'POST'
       _(span.attributes['elasticsearch.method']).must_equal 'POST'
       _(span.attributes['net.transport']).must_equal 'ip_tcp'
 
       _(span.attributes['net.peer.name']).must_equal 'localhost'
       _(span.attributes['net.peer.port']).must_equal 9200
-      #_(span.attributes['elasticsearch.url']).must_equal 'http://localhost:9200/_search?q=test'
 
       _(span.attributes['elasticsearch.params']).must_equal '{}'
-      #_(span.attributes['elasticsearch.id']).must_equal # doc id
-      #_(span.attributes['elasticsearch.target']).must_equal '_search'
       assert_requested(
         :post,
         'http://localhost:9200/_bulk'
@@ -145,9 +136,7 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
     it 'captures the span attributes' do
       client.bulk(
         refresh: true,
-        body: [{
-          index: { _index: 'users', data: { name: 'Fernando' } }
-         }]
+        body: [{ index: { _index: 'users', data: { name: 'Fernando' } } }]
       )
 
       _(exporter.finished_spans.size).must_equal(1)
@@ -155,18 +144,15 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
       _(span.attributes['db.statement']).must_equal(
         "{\"index\":{\"_index\":\"users\"}}\n{\"name\":\"Fernando\"}\n"
       )
-      _(span.attributes['db.system']).must_equal "elasticsearch"
-      _(span.attributes['db.operation']).must_equal "POST"
+      _(span.attributes['db.system']).must_equal 'elasticsearch'
+      _(span.attributes['db.operation']).must_equal 'POST'
       _(span.attributes['elasticsearch.method']).must_equal 'POST'
       _(span.attributes['net.transport']).must_equal 'ip_tcp'
 
       _(span.attributes['net.peer.name']).must_equal 'localhost'
       _(span.attributes['net.peer.port']).must_equal 9200
-      #_(span.attributes['elasticsearch.url']).must_equal 'http://localhost:9200/_search?q=test'
 
-      _(span.attributes['elasticsearch.params']).must_equal "{\"refresh\":true}"
-      #_(span.attributes['elasticsearch.id']).must_equal # doc id
-      #_(span.attributes['elasticsearch.target']).must_equal '_search'
+      _(span.attributes['elasticsearch.params']).must_equal "{\"refresh\":true}" # rubocop:disable Style/StringLiterals
       assert_requested(
         :post,
         'http://localhost:9200/_bulk?refresh=true'
@@ -185,20 +171,17 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'PUT users/_doc/1'
       _(span.attributes['db.statement']).must_equal(
-        "{\"name\":\"Emily\",\"password\":\"?\"}"
+        "{\"name\":\"Emily\",\"password\":\"?\"}" # rubocop:disable Style/StringLiterals
       )
-      _(span.attributes['db.system']).must_equal "elasticsearch"
-      _(span.attributes['db.operation']).must_equal "PUT"
+      _(span.attributes['db.system']).must_equal 'elasticsearch'
+      _(span.attributes['db.operation']).must_equal 'PUT'
       _(span.attributes['elasticsearch.method']).must_equal 'PUT'
       _(span.attributes['net.transport']).must_equal 'ip_tcp'
 
       _(span.attributes['net.peer.name']).must_equal 'localhost'
       _(span.attributes['net.peer.port']).must_equal 9200
-      #_(span.attributes['elasticsearch.url']).must_equal 'http://localhost:9200/_search?q=test'
 
       _(span.attributes['elasticsearch.params']).must_equal '{}'
-      #_(span.attributes['elasticsearch.id']).must_equal # doc id
-      #_(span.attributes['elasticsearch.target']).must_equal '_search'
       assert_requested(
         :put,
         'http://localhost:9200/users/_doc/1'
@@ -218,20 +201,17 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'PUT users/_doc/1'
       _(span.attributes['db.statement']).must_equal(
-        "{\"name\":\"Emily\",\"abcde\":\"?\"}"
+        "{\"name\":\"Emily\",\"abcde\":\"?\"}" # rubocop:disable Style/StringLiterals
       )
-      _(span.attributes['db.system']).must_equal "elasticsearch"
-      _(span.attributes['db.operation']).must_equal "PUT"
+      _(span.attributes['db.system']).must_equal 'elasticsearch'
+      _(span.attributes['db.operation']).must_equal 'PUT'
       _(span.attributes['elasticsearch.method']).must_equal 'PUT'
       _(span.attributes['net.transport']).must_equal 'ip_tcp'
 
       _(span.attributes['net.peer.name']).must_equal 'localhost'
       _(span.attributes['net.peer.port']).must_equal 9200
-      #_(span.attributes['elasticsearch.url']).must_equal 'http://localhost:9200/_search?q=test'
 
       _(span.attributes['elasticsearch.params']).must_equal '{}'
-      #_(span.attributes['elasticsearch.id']).must_equal # doc id
-      #_(span.attributes['elasticsearch.target']).must_equal '_search'
       assert_requested(
         :put,
         'http://localhost:9200/users/_doc/1'
@@ -248,24 +228,21 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
     it 'adds an error event to the span' do
       begin
         client.search q: 'test'
-      rescue
+      rescue StandardError # rubocop:disable Lint/SuppressedException
       end
 
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'GET _search'
       _(span.attributes['db.statement']).must_be_nil
-      _(span.attributes['db.system']).must_equal "elasticsearch"
-      _(span.attributes['db.operation']).must_equal "GET"
+      _(span.attributes['db.system']).must_equal 'elasticsearch'
+      _(span.attributes['db.operation']).must_equal 'GET'
       _(span.attributes['elasticsearch.method']).must_equal 'GET'
       _(span.attributes['net.transport']).must_equal 'ip_tcp'
 
       _(span.attributes['net.peer.name']).must_equal 'localhost'
       _(span.attributes['net.peer.port']).must_equal 9200
-      #_(span.attributes['elasticsearch.url']).must_equal 'http://localhost:9200/_search?q=test'
 
-      _(span.attributes['elasticsearch.params']).must_equal "{\"q\":\"test\"}"
-      #_(span.attributes['elasticsearch.id']).must_equal # doc id
-      #_(span.attributes['elasticsearch.target']).must_equal '_search'
+      _(span.attributes['elasticsearch.params']).must_equal "{\"q\":\"test\"}" # rubocop:disable Style/StringLiterals
 
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
