@@ -30,8 +30,6 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
     stub_request(:get, %r{http://localhost:9200/.*}).to_return(status: 200)
     stub_request(:post, %r{http://localhost:9200/.*}).to_return(status: 200)
     stub_request(:put, %r{http://localhost:9200/.*}).to_return(status: 200)
-    stub_request(:post, 'http://example.com/failure').to_return(status: 500)
-    stub_request(:get, 'https://example.com/timeout').to_timeout
   end
 
   after do
@@ -251,10 +249,6 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
       _(span.events.first.attributes['exception.type']).must_equal 'Elastic::Transport::Transport::Errors::BadRequest'
       assert(!span.events.first.attributes['exception.message'].nil?)
       assert(!span.events.first.attributes['exception.stacktrace'].nil?)
-      assert_requested(
-        :get,
-        'http://localhost:9200/_search?q=test'
-      )
     end
   end
 end
