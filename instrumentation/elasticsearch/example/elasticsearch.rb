@@ -9,14 +9,13 @@ gemfile(true) do
   gem 'opentelemetry-instrumentation-elasticsearch'
   gem 'opentelemetry-sdk'
   gem 'elasticsearch'
-  gem 'pry-nav'
 end
 
 require 'opentelemetry-api'
 require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-elasticsearch'
 require 'elasticsearch'
-require 'pry-nav'
+
 # Export traces to console by default
 ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
 
