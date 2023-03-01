@@ -10,7 +10,7 @@ require 'yard'
 require 'rubocop/rake_task'
 
 RuboCop::RakeTask.new
-require 'pry-nav'
+
 Rake::TestTask.new :test do |t|
   t.libs << 'test'
   t.libs << 'lib'

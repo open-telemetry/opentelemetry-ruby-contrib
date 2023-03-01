@@ -22,7 +22,7 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-Alternatively, you can also call `use_all` to install all the available instrumentation.
+Alternatively, you can also call `use_all` to install all the available instrumentations.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
