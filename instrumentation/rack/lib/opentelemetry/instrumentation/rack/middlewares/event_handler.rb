@@ -57,6 +57,8 @@ module OpenTelemetry
             parent_context = extract_remote_context(request)
             span = create_span(parent_context, request)
             request.env[TOKENS_KEY] = register_current_span(span)
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
           end
 
           # Optionally adds debugging response headers injected from {response_propagators}
@@ -73,6 +75,9 @@ module OpenTelemetry
             rescue StandardError => e
               OpenTelemetry.handle_error(message: 'Unable to inject response propagation headers', exception: e)
             end
+
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
           end
 
           # Records Unexpected Exceptions on the Rack span and set the Span Status to Error
@@ -87,6 +92,8 @@ module OpenTelemetry
 
             span.record_exception(error)
             span.status = OpenTelemetry::Trace::Status.error
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
           end
 
           # Finishes the span making it eligible to be exported and cleans up existing contexts
@@ -98,16 +105,10 @@ module OpenTelemetry
             span = OpenTelemetry::Instrumentation::Rack.current_span
             return unless span.recording?
 
-            if response
-              span.status = OpenTelemetry::Trace::Status.error unless GOOD_HTTP_STATUSES.include?(response.status.to_i)
-              attributes = extract_response_attributes(response)
-              span.add_attributes(attributes)
-            end
-
-            request.env[TOKENS_KEY]&.reverse&.each do |token|
-              OpenTelemetry::Context.detach(token)
-              OpenTelemetry::Trace.current_span.finish
-            end
+            add_response_attributes(span, response) if response
+            detach_contexts(request)
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
           end
 
           private
@@ -188,6 +189,19 @@ module OpenTelemetry
             attributes['http.user_agent'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
             attributes.merge!(extract_request_headers(env))
             attributes
+          end
+
+          def detach_contexts(request)
+            request.env[TOKENS_KEY]&.reverse&.each do |token|
+              OpenTelemetry::Context.detach(token)
+              OpenTelemetry::Trace.current_span.finish
+            end
+          end
+
+          def add_response_attributes(span, response)
+            span.status = OpenTelemetry::Trace::Status.error unless GOOD_HTTP_STATUSES.include?(response.status.to_i)
+            attributes = extract_response_attributes(response)
+            span.add_attributes(attributes)
           end
 
           def record_frontend_span?
