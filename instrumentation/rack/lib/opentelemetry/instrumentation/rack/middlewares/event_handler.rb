@@ -54,32 +54,21 @@ module OpenTelemetry
           def on_start(request, _)
             return if untraced_request?(request.env)
 
-            extracted_context = extract_remote_context(request)
-            if record_frontend_span?
-              request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
-              unless request_start_time.nil?
-                frontend_span = tracer.start_span(
-                  'http_server.proxy',
-                  with_parent: extracted_context,
-                  start_timestamp: request_start_time,
-                  kind: :server
-                )
-
-                frontend_context = OpenTelemetry::Trace.context_with_span(frontend_span, parent_context: extracted_context)
-              end
-            end
-            parent_context = frontend_context || extracted_context
+            parent_context = extract_remote_context(request)
 
             span = tracer.start_span(
               create_request_span_name(request),
               with_parent: parent_context,
-              kind: frontend_context.nil? ? :server : :internal,
+              kind: :server,
               attributes: request_span_attributes(request.env)
             )
+            request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
+            span.add_event('http.proxy.request.started', timestamp: request_start_time) unless request_start_time.nil?
+
             ctx = OpenTelemetry::Trace.context_with_span(span)
             rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: ctx)
 
-            contexts = [frontend_context, ctx, rack_ctx]
+            contexts = [ctx, rack_ctx]
             contexts.compact!
 
             tokens = contexts.map { |context| OpenTelemetry::Context.attach(context) }
