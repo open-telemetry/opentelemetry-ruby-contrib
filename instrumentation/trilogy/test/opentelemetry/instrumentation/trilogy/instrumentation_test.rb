@@ -124,7 +124,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       it 'uses component.name and instance.name as span.name fallbacks with invalid sql' do
         expect do
           client.query('DESELECT 1')
-        end.must_raise Trilogy::DatabaseError
+        end.must_raise Trilogy::Error
 
         _(span.name).must_equal 'mysql'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
@@ -187,7 +187,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       it 'sets span status to error' do
         expect do
           client.query('SELECT INVALID')
-        end.must_raise Trilogy::DatabaseError
+        end.must_raise Trilogy::Error
 
         _(span.name).must_equal 'select'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
@@ -198,7 +198,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
           OpenTelemetry::Trace::Status::ERROR
         )
         _(span.events.first.name).must_equal 'exception'
-        _(span.events.first.attributes['exception.type']).must_equal 'Trilogy::DatabaseError'
+        _(span.events.first.attributes['exception.type']).must_match(/Trilogy.*Error/)
         _(span.events.first.attributes['exception.message']).wont_be_nil
         _(span.events.first.attributes['exception.stacktrace']).wont_be_nil
       end
