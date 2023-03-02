@@ -68,8 +68,8 @@ module OpenTelemetry
             span = OpenTelemetry::Instrumentation::Rack.current_span
             return unless span.recording?
 
-            begin
-              response_propagators&.each { |propagator| propagator.inject(response.headers) }
+            response_propagators&.each do |propagator|
+              propagator.inject(response.headers)
             rescue StandardError => e
               OpenTelemetry.handle_error(message: 'Unable to inject response propagation headers', exception: e)
             end

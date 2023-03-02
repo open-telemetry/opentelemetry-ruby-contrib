@@ -338,19 +338,21 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
     end
 
-    describe 'propagator throws' do
+    describe 'response propagators that raise errors' do
       class EventMockPropagator < OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator
+        CustomError = Class.new(StandardError)
         def inject(carrier)
-          raise 'Injection failed'
+          raise CustomError, 'Injection failed'
         end
       end
 
-      let(:response_propagators) { [EventMockPropagator.new] }
+      let(:response_propagators) { [EventMockPropagator.new, OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new] }
 
-      it 'records errors' do
-        expect(OpenTelemetry).to receive(:handle_error).with(exception: instance_of(RuntimeError), message: /Unable/)
+      it 'is fault tolerant' do
+        expect(OpenTelemetry).to receive(:handle_error).with(exception: instance_of(EventMockPropagator::CustomError), message: /Unable/)
 
         get '/ping'
+        _(last_response.headers).must_include('traceresponse')
       end
     end
   end
