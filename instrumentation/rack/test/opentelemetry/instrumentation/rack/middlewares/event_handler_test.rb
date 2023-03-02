@@ -15,6 +15,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   let(:instrumentation_module) { OpenTelemetry::Instrumentation::Rack }
   let(:instrumentation_class) { instrumentation_module::Instrumentation }
   let(:instrumentation) { instrumentation_class.instance }
+  let(:instrumentation_enabled) { true }
 
   let(:config) do
     {
@@ -24,7 +25,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       allowed_response_headers: allowed_response_headers,
       url_quantization: url_quantization,
       response_propagators: response_propagators,
-      record_frontend_span: record_frontend_span
+      enabled: instrumentation_enabled
     }
   end
 
@@ -44,7 +45,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   let(:untraced_requests) { nil }
   let(:allowed_request_headers) { nil }
   let(:allowed_response_headers) { nil }
-  let(:record_frontend_span) { false }
   let(:response_propagators) { nil }
   let(:url_quantization) { nil }
   let(:headers) { {} }
@@ -368,6 +368,14 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       end
 
       _(rack_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+    end
+  end
+
+  describe 'when the instrumentation is disabled' do
+    let(:instrumenation_enabled) { false }
+
+    it 'does nothing' do
+      _(rack_span).must_be_nil
     end
   end
 end
