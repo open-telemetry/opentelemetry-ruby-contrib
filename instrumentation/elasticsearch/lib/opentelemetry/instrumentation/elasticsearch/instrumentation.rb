@@ -34,13 +34,14 @@ module OpenTelemetry
 
         option :peer_service, default: nil, validate: :string
         option :db_statement, default: :obfuscate, validate: %I[omit obfuscate include]
-        option :sanitize_field_names, default: nil, validate: :array
+        option :sanitize_field_names, default: nil, validate: ->(v) { v.is_a?(String) || v.is_a?(Array) }
 
         private
 
         def convert_config(config)
           return unless (field_names = config[:sanitize_field_names])
 
+          field_names = field_names.is_a?(String) ? field_names.split(',') : Array(field_names)
           config[:sanitize_field_names] = field_names.map { |p| WildcardPattern.new(p) }
         end
 

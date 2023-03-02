@@ -45,6 +45,19 @@ describe OpenTelemetry::Instrumentation::Elasticsearch do
     end
   end
 
+  describe 'sanitize_field_names as a string' do
+    let(:config) { { sanitize_field_names: 'foor.*,*.bar' } }
+    it 'converts to regexes' do
+      instrumentation.install(config)
+      _(instrumentation.config[:sanitize_field_names].collect(&:pattern)).must_equal(
+        [
+          /\Afoor\..*\Z/i,
+          /\A.*\.bar\Z/i
+        ]
+      )
+    end
+  end
+
   describe 'compatible' do
     it 'when older gem version installed' do
       stub_const('::Elastic::Transport::VERSION', '7.17.7')
