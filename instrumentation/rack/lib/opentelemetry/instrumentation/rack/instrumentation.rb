@@ -12,10 +12,8 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Rack
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        install do |config|
+        install do |_config|
           require_dependencies
-
-          retain_middleware_names if config[:retain_middleware_names]
           configure_defaults
         end
 
@@ -27,7 +25,6 @@ module OpenTelemetry
         option :allowed_response_headers, default: [],    validate: :array
         option :application,              default: nil,   validate: :callable
         option :record_frontend_span,     default: false, validate: :boolean
-        option :retain_middleware_names,  default: false, validate: :boolean
         option :untraced_endpoints,       default: [],    validate: :array
         option :url_quantization,         default: nil,   validate: :callable
         option :untraced_requests,        default: nil,   validate: :callable
@@ -38,30 +35,6 @@ module OpenTelemetry
         def require_dependencies
           require_relative 'middlewares/event_handler' if defined?(Rack::Events)
           require_relative 'middlewares/tracer_middleware'
-        end
-
-        MissingApplicationError = Class.new(StandardError)
-
-        # intercept all middleware-compatible calls, retain class name
-        def retain_middleware_names
-          next_middleware = config[:application]
-          raise MissingApplicationError unless next_middleware
-
-          while next_middleware
-            if next_middleware.respond_to?(:call)
-              next_middleware.singleton_class.class_eval do
-                alias_method :__call, :call
-
-                def call(env)
-                  env['RESPONSE_MIDDLEWARE'] = self.class.to_s
-                  __call(env)
-                end
-              end
-            end
-
-            next_middleware = next_middleware.instance_variable_defined?('@app') &&
-                              next_middleware.instance_variable_get('@app')
-          end
         end
 
         def configure_defaults

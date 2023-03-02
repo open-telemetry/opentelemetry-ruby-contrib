@@ -10,6 +10,7 @@ require 'rack/events'
 require 'opentelemetry-instrumentation-rack'
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 require 'rspec/mocks/minitest_integration'
 
