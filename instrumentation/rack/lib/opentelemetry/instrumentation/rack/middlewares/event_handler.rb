@@ -75,7 +75,6 @@ module OpenTelemetry
             rescue StandardError => e
               OpenTelemetry.handle_error(message: 'Unable to inject response propagation headers', exception: e)
             end
-
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
