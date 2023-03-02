@@ -16,6 +16,7 @@ module OpenTelemetry
           require_dependencies
 
           retain_middleware_names if config[:retain_middleware_names]
+          configure_defaults
         end
 
         present do
@@ -61,6 +62,29 @@ module OpenTelemetry
             next_middleware = next_middleware.instance_variable_defined?('@app') &&
                               next_middleware.instance_variable_get('@app')
           end
+        end
+
+        def configure_defaults
+          config[:allowed_rack_request_headers] = config[:allowed_request_headers].compact.each_with_object({}) do |header, memo|
+            key = header.to_s.upcase.gsub(/[-\s]/, '_')
+            case key
+            when 'CONTENT_TYPE', 'CONTENT_LENGTH'
+              memo[key] = build_attribute_name('http.request.header.', header)
+            else
+              memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
+            end
+          end
+
+          config[:allowed_rack_response_headers] = config[:allowed_response_headers].each_with_object({}) do |header, memo|
+            memo[header] = build_attribute_name('http.response.header.', header)
+            memo[header.to_s.upcase] = build_attribute_name('http.response.header.', header)
+          end
+
+          config[:untraced_endpoints]&.compact!
+        end
+
+        def build_attribute_name(prefix, suffix)
+          prefix + suffix.to_s.downcase.gsub(/[-\s]/, '_')
         end
       end
     end

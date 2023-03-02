@@ -55,25 +55,8 @@ module OpenTelemetry
             return if untraced_request?(request.env)
 
             parent_context = extract_remote_context(request)
-
-            span = tracer.start_span(
-              create_request_span_name(request),
-              with_parent: parent_context,
-              kind: :server,
-              attributes: request_span_attributes(request.env)
-            )
-            request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
-            span.add_event('http.proxy.request.started', timestamp: request_start_time) unless request_start_time.nil?
-
-            ctx = OpenTelemetry::Trace.context_with_span(span)
-            rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: ctx)
-
-            contexts = [ctx, rack_ctx]
-            contexts.compact!
-
-            tokens = contexts.map { |context| OpenTelemetry::Context.attach(context) }
-
-            request.env[TOKENS_KEY] = tokens
+            span = create_span(parent_context, request)
+            request.env[TOKENS_KEY] = register_current_span(span)
           end
 
           # Optionally adds debugging response headers injected from {response_propagators}
@@ -207,16 +190,12 @@ module OpenTelemetry
             attributes
           end
 
-          def build_attribute_name(prefix, suffix)
-            prefix + suffix.to_s.downcase.gsub(/[-\s]/, '_')
-          end
-
           def record_frontend_span?
             config[:record_frontend_span] == true
           end
 
           def untraced_endpoints
-            config[:untraced_endpoints].compact
+            config[:untraced_endpoints]
           end
 
           def untraced_requests
@@ -232,24 +211,11 @@ module OpenTelemetry
           end
 
           def allowed_request_headers
-            config[:allowed_request_headers]
-              .compact
-              .each_with_object({}) do |header, memo|
-                key = header.to_s.upcase.gsub(/[-\s]/, '_')
-                case key
-                when 'CONTENT_TYPE', 'CONTENT_LENGTH'
-                  memo[key] = build_attribute_name('http.request.header.', header)
-                else
-                  memo["HTTP_#{key}"] = build_attribute_name('http.request.header.', header)
-                end
-              end
+            config[:allowed_rack_request_headers]
           end
 
           def allowed_response_headers
-            config[:allowed_response_headers].each_with_object({}) do |header, memo|
-              memo[header] = build_attribute_name('http.response.header.', header)
-              memo[header.to_s.upcase] = build_attribute_name('http.response.header.', header)
-            end
+            config[:allowed_rack_response_headers]
           end
 
           def tracer
@@ -258,6 +224,27 @@ module OpenTelemetry
 
           def config
             OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.config
+          end
+
+          def register_current_span(span)
+            ctx = OpenTelemetry::Trace.context_with_span(span)
+            rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: ctx)
+
+            contexts = [ctx, rack_ctx]
+            contexts.compact!
+            contexts.map { |context| OpenTelemetry::Context.attach(context) }
+          end
+
+          def create_span(parent_context, request)
+            span = tracer.start_span(
+              create_request_span_name(request),
+              with_parent: parent_context,
+              kind: :server,
+              attributes: request_span_attributes(request.env)
+            )
+            request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
+            span.add_event('http.proxy.request.started', timestamp: request_start_time) unless request_start_time.nil?
+            span
           end
         end
       end
