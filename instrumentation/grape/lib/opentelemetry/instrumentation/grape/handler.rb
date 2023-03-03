@@ -10,18 +10,18 @@ module OpenTelemetry
       # This class subscribes to the generated ActiveSupport notifications and generates spans based on them.
       class Handler
         SUBSCRIPTIONS = {
-          'endpoint_run.grape' => endpoint_run,
-          'endpoint_render.grape' => endpoint_render,
-          'endpoint_run_filters.grape' => endpoint_run_filters,
-          'endpoint_run_validators.grape' => endpoint_run_validators,
-          'format_response.grape' => format_response
-        }.freeze
+          'endpoint_run.grape' => :endpoint_run,
+          'endpoint_render.grape' => :endpoint_render,
+          'endpoint_run_filters.grape' => :endpoint_run_filters,
+          'endpoint_run_validators.grape' => :endpoint_run_validators,
+          'format_response.grape' => :format_response
+        }
 
         class << self
           def subscribe
-            SUBSCRIPTIONS.each do |event, _subscriber|
+            SUBSCRIPTIONS.each do |event, subscriber_method|
               ::ActiveSupport::Notifications.subscribe(event) do |*args|
-                subscriber(*args)
+                method(subscriber_method).call(*args)
               end
             end
           end

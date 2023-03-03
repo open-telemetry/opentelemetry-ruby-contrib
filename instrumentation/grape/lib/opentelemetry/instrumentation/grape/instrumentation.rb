@@ -41,7 +41,7 @@ module OpenTelemetry
         end
 
         def require_dependencies
-          require_relative 'subscriber'
+          require_relative 'handler'
         end
 
         def subscribe
