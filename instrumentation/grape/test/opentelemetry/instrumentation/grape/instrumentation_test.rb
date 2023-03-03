@@ -26,4 +26,16 @@ describe OpenTelemetry::Instrumentation::Grape do
       instrumentation.instance_variable_set(:@installed, false)
     end
   end
+
+  describe '#compatible' do
+    it 'returns false for older gem versions' do
+      stub_const('::Grape::VERSION', '0.12.0')
+      _(instrumentation.compatible?).must_equal false
+    end
+
+    it 'returns true for newer gem versions' do
+      stub_const('::Grape::VERSION', '1.7.0')
+      _(instrumentation.compatible?).must_equal true
+    end
+  end
 end
