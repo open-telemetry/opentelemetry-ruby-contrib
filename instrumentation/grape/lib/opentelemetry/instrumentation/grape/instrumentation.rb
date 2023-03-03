@@ -9,7 +9,7 @@ module OpenTelemetry
     module Grape
       # The Instrumentation class contains logic to detect and install the Grape instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('1.1.0')
+        MINIMUM_VERSION = Gem::Version.new('1.2.0')
 
         install do |_config|
           require_dependencies
