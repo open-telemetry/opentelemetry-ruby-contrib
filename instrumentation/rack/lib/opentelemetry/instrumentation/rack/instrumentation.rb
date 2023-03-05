@@ -14,7 +14,6 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
           require_dependencies
-          configure_defaults
         end
 
         present do
@@ -39,7 +38,7 @@ module OpenTelemetry
         #   end
         # @return [Array] consisting of a middleware and arguments used in rack builders
         def middleware_args
-          if config.fetch(:use_rack_events, false) == true
+          if config.fetch(:use_rack_events, false) == true && defined?(::Rack::Events)
             [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new]]
           else
             [OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware]
@@ -49,11 +48,12 @@ module OpenTelemetry
         private
 
         def require_dependencies
-          require_relative 'middlewares/event_handler'
+          require_relative 'middlewares/event_handler' if defined?(Rack::Events)
           require_relative 'middlewares/tracer_middleware'
         end
 
-        def configure_defaults
+        def config_options(user_config)
+          config = super(user_config)
           config[:allowed_rack_request_headers] = config[:allowed_request_headers].compact.each_with_object({}) do |header, memo|
             key = header.to_s.upcase.gsub(/[-\s]/, '_')
             case key
@@ -70,6 +70,7 @@ module OpenTelemetry
           end
 
           config[:untraced_endpoints]&.compact!
+          config
         end
 
         def build_attribute_name(prefix, suffix)
