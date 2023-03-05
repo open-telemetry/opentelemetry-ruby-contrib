@@ -18,7 +18,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::Rack) && defined?(::Rack::Events)
+          defined?(::Rack)
         end
 
         option :allowed_request_headers,  default: [],    validate: :array
