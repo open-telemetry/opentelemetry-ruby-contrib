@@ -25,7 +25,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       allowed_response_headers: allowed_response_headers,
       url_quantization: url_quantization,
       response_propagators: response_propagators,
-      enabled: instrumentation_enabled
+      enabled: instrumentation_enabled,
+      use_rack_events: true
     }
   end
 

@@ -29,6 +29,22 @@ module OpenTelemetry
         option :url_quantization,         default: nil,   validate: :callable
         option :untraced_requests,        default: nil,   validate: :callable
         option :response_propagators,     default: [],    validate: :array
+        option :use_rack_events,          default: false, validate: :boolean
+
+        # Temporary Helper for Sinatra and ActionPack middleware to use during installation
+        # @example Default usage
+        #   Rack::Builder.new do
+        #     use *OpenTelemetry::Instrumentation::Rack::Instrumenation.instance.middleware_args
+        #     run lambda { |_arg| [200, { 'Content-Type' => 'text/plain' }, body] }
+        #   end
+        # @return [Array] consisting of a middleware and arguments used in rack builders
+        def middleware_args
+          if config.fetch(:use_rack_events, false) == true
+            [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new]]
+          else
+            [OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware]
+          end
+        end
 
         private
 
