@@ -18,7 +18,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::Rack)
+          defined?(::Rack) && defined?(::Rack::Events)
         end
 
         option :allowed_request_headers,  default: [],    validate: :array
@@ -49,7 +49,7 @@ module OpenTelemetry
         private
 
         def require_dependencies
-          require_relative 'middlewares/event_handler' if defined?(Rack::Events)
+          require_relative 'middlewares/event_handler'
           require_relative 'middlewares/tracer_middleware'
         end
 
