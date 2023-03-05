@@ -105,9 +105,10 @@ module OpenTelemetry
             return unless span.recording?
 
             add_response_attributes(span, response) if response
-            detach_contexts(request)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
+          ensure
+            detach_contexts(request)
           end
 
           private
@@ -195,12 +196,16 @@ module OpenTelemetry
               OpenTelemetry::Context.detach(token)
               OpenTelemetry::Trace.current_span.finish
             end
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
           end
 
           def add_response_attributes(span, response)
             span.status = OpenTelemetry::Trace::Status.error unless GOOD_HTTP_STATUSES.include?(response.status.to_i)
             attributes = extract_response_attributes(response)
             span.add_attributes(attributes)
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
           end
 
           def record_frontend_span?
