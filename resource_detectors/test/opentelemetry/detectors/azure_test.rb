@@ -48,7 +48,11 @@ describe OpenTelemetry::Resource::Detectors::Azure do
           'location' => 'westeurope',
           'zone' => '2',
           'vmId' => '012345671234-abcd-1234-0123456789ab',
-          'storageProfile' => { 'imageReference' => { 'id' => '/subscriptions/12345678-abcd-1234-abcd-0123456789ab/resourceGroups/AKS-Ubuntu/providers/Microsoft.Compute/galleries/AKSUbuntu/images/1804gen2containerd/versions/2022.06.22' } },
+          'storageProfile' => {
+            'imageReference' => {
+              'id' => '/subscriptions/12345678-abcd-1234-abcd-0123456789ab/resourceGroups/AKS-Ubuntu/providers/Microsoft.Compute/galleries/AKSUbuntu/images/1804gen2containerd/versions/2022.06.22'
+            }
+          },
           'vmSize' => 'Standard_D2s_v3',
           'name' => 'opentelemetry'
         }.to_json

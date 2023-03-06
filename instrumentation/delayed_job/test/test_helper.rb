@@ -4,26 +4,27 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'active_support/core_ext/kernel/reporting'
-require 'delayed_job'
-require 'delayed_job_active_record'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'opentelemetry-instrumentation-delayed_job'
+require 'active_support/core_ext/kernel/reporting'
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
-
-require_relative '../lib/opentelemetry-instrumentation-delayed_job'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
 
 OpenTelemetry::SDK.configure do |c|
+  c.error_handler = ->(exception:, message:) { raise(exception || message) }
+  c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
   c.add_span_processor span_processor
 end
+
+ActiveRecord::Migration.verbose = false
 
 module TestHelper
   extend self

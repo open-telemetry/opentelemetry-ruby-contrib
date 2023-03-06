@@ -13,7 +13,6 @@ class ReleasePerformer
       @gem_version = gem_version
       @utils = parent.utils
       @include_gem = ["all", "gem"].include?(step)
-      @include_docs = !@parent.docs_builder.nil? && ["all", "docs"].include?(step)
       @include_github_release = ["all", "github-release"].include?(step)
       @result = nil
     end
@@ -58,17 +57,11 @@ class ReleasePerformer
 
       check_release_exists
       check_gem_exists
-      check_docs_exists
 
       build_gem if @include_gem
-      if @include_docs
-        build_docs
-        set_default_docs_version if @gem_version =~ /^\d+\.\d+\.\d+$/
-      end
 
       create_github_release(@changelog_content) if @include_github_release
       push_gem if @include_gem
-      push_docs if @include_docs
     end
 
     def check_gem_exists
@@ -79,17 +72,6 @@ class ReleasePerformer
           @utils.logger.warn("Gem already pushed for #{@gem_name} #{@gem_version}. Skipping.")
           @include_gem = false
         end
-      end
-    end
-
-    def check_docs_exists
-      return if !@parent.check_exists? || !@include_docs
-      base_path = ::File.expand_path(@utils.gem_info(@gem_name, "gh_pages_directory"),
-                                     @parent.gh_pages_dir)
-      versioned_path = ::File.expand_path("v#{@gem_version}", base_path)
-      if File.directory?(versioned_path)
-        @utils.logger.warn("Docs already pushed for #{@gem_name} #{@gem_version}. Skipping.")
-        @include_docs = false
       end
     end
 
@@ -152,51 +134,6 @@ class ReleasePerformer
       end
       self
     end
-
-    def build_docs
-      @utils.error("Cannot build docs") unless @parent.docs_builder
-      @utils.log("Building #{@gem_name} #{@gem_version} docs...")
-      @utils.gem_cd(@gem_name) do
-        ::FileUtils.rm_rf(".yardoc")
-        ::FileUtils.rm_rf("doc")
-        @parent.docs_builder.call
-        base_path = ::File.expand_path(@utils.gem_info(@gem_name, "gh_pages_directory"),
-                                       @parent.gh_pages_dir)
-        versioned_path = ::File.expand_path("v#{@gem_version}", base_path)
-        ::FileUtils.rm_rf(versioned_path)
-        ::FileUtils.mkdir_p(base_path)
-        ::FileUtils.cp_r("doc", versioned_path)
-      end
-      @utils.log("Built docs")
-      self
-    end
-
-    def set_default_docs_version
-      @utils.error("Cannot set default #{@gem_name} docs version") unless @parent.docs_builder
-      @utils.log("Changing default #{@gem_name} docs version to #{@gem_version}...")
-      path = "#{@parent.gh_pages_dir}/404.html"
-      content = ::IO.read(path)
-      var_name = @utils.gem_info(@gem_name, "gh_pages_version_var")
-      content.sub!(/#{var_name} = "[\w\.]+";/, "#{var_name} = \"#{@gem_version}\";")
-      ::File.open(path, "w") do |file|
-        file.write(content)
-      end
-      @utils.log("Updated redirects.")
-      self
-    end
-
-    def push_docs
-      @utils.log("Pushing #{@gem_name} docs to gh-pages ...")
-      ::Dir.chdir(@parent.gh_pages_dir) do
-        @utils.exec(["git", "add", "."])
-        commit_cmd = ["git", "commit", "-m", "Generate yardocs for #{@gem_name} #{@gem_version}"]
-        commit_cmd << "--signoff" if @utils.signoff_commits?
-        @utils.exec(commit_cmd)
-        @utils.exec(["git", "push", @parent.git_remote, "gh-pages"])
-      end
-      @utils.log("Docs pushed to gh-pages")
-      self
-    end
   end
 
   def initialize(utils,
@@ -204,7 +141,6 @@ class ReleasePerformer
                  skip_checks: false,
                  rubygems_api_key: nil,
                  git_remote: nil,
-                 gh_pages_dir: nil,
                  gh_token: nil,
                  pr_info: nil,
                  check_exists: false,
@@ -216,10 +152,8 @@ class ReleasePerformer
     @git_remote = git_remote || "origin"
     @dry_run = dry_run
     @check_exists = check_exists
-    @gh_pages_dir = gh_pages_dir
     @gh_token = gh_token
     @pr_info = pr_info
-    @docs_builder = create_docs_builder
     @instances = []
     @extra_errors = []
     @result = nil
@@ -229,8 +163,6 @@ class ReleasePerformer
   attr_reader :utils
   attr_reader :release_sha
   attr_reader :rubygems_api_key
-  attr_reader :gh_pages_dir
-  attr_reader :docs_builder
   attr_reader :git_remote
   attr_reader :result
 
@@ -284,51 +216,12 @@ class ReleasePerformer
       @utils.verify_repo_identity(git_remote: @git_remote)
       @utils.verify_github_checks(ref: @release_sha)
     end
-    if @docs_builder
-      setup_gh_pages
-    else
-      @gh_pages_dir = nil
-    end
     setup_rubygems_api_key
     @initial_setup_result = true
     @utils.log("Initial setup succeeded.")
   end
 
   private
-
-  def create_docs_builder
-    docs_builder_tool = Array(@utils.docs_builder_tool)
-    return nil if docs_builder_tool.empty?
-    tool_context = @utils.tool_context
-    proc { tool_context.exec_separate_tool(docs_builder_tool) }
-  end
-
-  def setup_gh_pages
-    if @gh_pages_dir
-      ::FileUtils.remove_entry(@gh_pages_dir, true)
-      ::FileUtils.mkdir_p(@gh_pages_dir)
-    else
-      @gh_pages_dir = dir = ::Dir.mktmpdir
-      at_exit { ::FileUtils.remove_entry(dir, true) }
-    end
-    remote_url = @utils.git_remote_url(@git_remote)
-    ::Dir.chdir(@gh_pages_dir) do
-      @utils.exec(["git", "init"])
-      @utils.git_set_user_info
-      if remote_url.start_with?("https://github.com/") && @gh_token
-        encoded_token = ::Base64.strict_encode64("x-access-token:#{@gh_token}")
-        log_cmd = '["git", "config", "--local", "http.https://github.com/.extraheader", "****"]'
-        @utils.exec(["git", "config", "--local", "http.https://github.com/.extraheader",
-                     "Authorization: Basic #{encoded_token}"],
-                    log_cmd: log_cmd)
-      end
-      @utils.exec(["git", "remote", "add", @git_remote, remote_url])
-      @utils.exec(["git", "fetch", "--no-tags", "--depth=1", "--no-recurse-submodules",
-                   @git_remote, "gh-pages"])
-      @utils.exec(["git", "branch", "gh-pages", "#{@git_remote}/gh-pages"])
-      @utils.exec(["git", "checkout", "gh-pages"])
-    end
-  end
 
   def setup_rubygems_api_key
     home_dir = ::ENV["HOME"]

@@ -151,9 +151,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
             id: 'Message2',
             message_body: 'This is the second message.',
             message_attributes: {
-              "attr1": {
-                "data_type": 'String',
-                "string_value": 'value1'
+              attr1: {
+                data_type: 'String',
+                string_value: 'value1'
               }
             }
           }

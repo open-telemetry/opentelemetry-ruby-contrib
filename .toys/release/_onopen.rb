@@ -18,7 +18,7 @@ include :terminal, styled: true
 def run
   require "release_utils"
 
-  ::Dir.chdir(context_directory)
+  Dir.chdir(context_directory)
   @utils = ReleaseUtils.new(self)
 
   @utils.error("GitHub event path missing") unless event_path

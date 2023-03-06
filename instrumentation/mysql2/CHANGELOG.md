@@ -1,5 +1,14 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.22.0 / 2023-01-14
+
+* BREAKING CHANGE: Removed deprecated instrumentation options 
+
+* ADDED: Add option to configure span name 
+* ADDED: Removed deprecated instrumentation options 
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.21.1 / 2022-10-26
 
 * FIXED: Handle encoding errors in mysql obfuscation 

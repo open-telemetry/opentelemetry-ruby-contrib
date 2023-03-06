@@ -37,7 +37,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
 
   describe 'tracing' do
     let(:client) do
-      ::PG::Connection.open(
+      PG::Connection.open(
         host: host,
         port: port,
         user: user,
@@ -291,26 +291,6 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    describe 'when enable_statement_attribute is false' do
-      let(:config) { { enable_statement_attribute: false } }
-
-      it 'does not include SQL statement as db.statement attribute' do
-        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-        expect do
-          client.exec(sql)
-        end.must_raise PG::UndefinedTable
-
-        _(span.attributes['db.system']).must_equal 'postgresql'
-        _(span.attributes['db.name']).must_equal 'postgres'
-        _(span.name).must_equal 'SELECT postgres'
-        _(span.attributes['db.operation']).must_equal 'SELECT'
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_i
-
-        _(span.attributes['db.statement']).must_be_nil
-      end
-    end
-
     describe 'when using a database socket' do
       let(:host) { nil }
       let(:port) { nil }
@@ -325,10 +305,10 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
     end
 
     describe 'when connection has multiple hosts' do
-      before { skip 'requires libpq >= 10.0' if ::PG.library_version < 10_00_00 } # rubocop:disable Style/NumericLiterals
+      before { skip 'requires libpq >= 10.0' if PG.library_version < 10_00_00 } # rubocop:disable Style/NumericLiterals
 
       let(:client) do
-        ::PG::Connection.open(
+        PG::Connection.open(
           host: ['nowhere.', host].join(','),
           port: ['20823', port].join(','),
           user: user,
@@ -341,7 +321,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         client.query('SELECT 1')
 
         _(span.attributes['net.peer.name']).must_equal host
-        _(span.attributes['net.peer.port']).must_equal port.to_i if ::PG.const_defined?('DEF_PORT')
+        _(span.attributes['net.peer.port']).must_equal port.to_i if PG.const_defined?('DEF_PORT')
       end
     end
   end unless ENV['OMIT_SERVICES']

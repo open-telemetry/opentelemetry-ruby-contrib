@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.21.1 / 2023-01-14
+
+* FIXED: Add untraced check to the Net::HTTP connect instrumentation 
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.21.0 / 2022-10-04
 
 * ADDED: Add Net::HTTP :untraced_hosts option

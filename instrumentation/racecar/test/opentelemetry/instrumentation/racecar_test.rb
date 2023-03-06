@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::Racecar do
   end
 
   def produce(messages)
-    config = { "bootstrap.servers": "#{host}:#{port}" }
+    config = { 'bootstrap.servers': "#{host}:#{port}" }
     producer = Rdkafka::Config.new(config).producer
     producer.delivery_callback = ->(_) {}
 
@@ -54,7 +54,7 @@ describe OpenTelemetry::Instrumentation::Racecar do
     Racecar.config.brokers = ["#{host}:#{port}"]
     Racecar.config.pause_timeout = 0 # fail fast and exit
     Racecar.config.load_consumer_class(consumer_class)
-    Racecar::Runner.new(consumer_class.new, config: Racecar.config, logger: Logger.new(STDOUT), instrumenter: Racecar.instrumenter)
+    Racecar::Runner.new(consumer_class.new, config: Racecar.config, logger: Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym), instrumenter: Racecar.instrumenter)
   end
 
   def run_racecar(racecar)

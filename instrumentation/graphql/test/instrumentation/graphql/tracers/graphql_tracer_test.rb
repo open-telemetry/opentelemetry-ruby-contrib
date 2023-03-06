@@ -38,7 +38,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     instrumentation.instance_variable_set(:@installed, false)
 
     # Reset various instance variables to clear state between tests
-    ::GraphQL::Schema.instance_variable_set(:@own_tracers, [])
+    GraphQL::Schema.instance_variable_set(:@own_tracers, [])
 
     # Reseting @graphql_definition is needed for tests running against version `1.9.x`
     SomeOtherGraphQLAppSchema.remove_instance_variable(:@graphql_definition) if SomeOtherGraphQLAppSchema.instance_variable_defined?(:@graphql_definition)
@@ -47,7 +47,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
   describe '#platform_trace' do
     it 'traces platform keys' do
-      result = SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
+      result = SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
       graphql_tracer.platform_keys.each do |_key, value|
         span = spans.find { |s| s.name == value }
@@ -117,28 +117,104 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       end
     end
 
-    describe 'when platform_field is enabled' do
-      let(:config) { { enable_platform_field: true } }
+    describe 'when platform_field is enabled with legacy naming' do
+      let(:config) { { enable_platform_field: true, legacy_platform_span_names: true } }
 
       it 'traces execute_field' do
-        SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
+        SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
         span = spans.find { |s| s.name == 'Query.resolvedField' }
         _(span).wont_be_nil
       end
     end
 
-    describe 'when platform_authorized is enabled' do
-      let(:config) { { enable_platform_authorized: true } }
+    describe 'when platform_field is enabled' do
+      let(:config) { { enable_platform_field: true } }
+
+      it 'traces execute_field' do
+        SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
+
+        span = spans.find do |s|
+          s.name == 'graphql.execute_field' &&
+            s.attributes['graphql.field.parent'] == 'Query' &&
+            s.attributes['graphql.field.name'] == 'resolvedField'
+        end
+        _(span).wont_be_nil
+      end
+
+      it 'includes attributes' do
+        expected_attributes = {
+          'graphql.field.parent' => 'Car', # type name, not interface
+          'graphql.field.name' => 'model',
+          'graphql.lazy' => false
+        }
+
+        SomeGraphQLAppSchema.execute('{ vehicle { model } }')
+
+        span = spans.find { |s| s.name == 'graphql.execute_field' && s.attributes['graphql.field.name'] == 'model' }
+        _(span).wont_be_nil
+        _(span.attributes.to_h).must_equal(expected_attributes)
+      end
+    end
+
+    describe 'when platform_authorized is enabled with legacy naming' do
+      let(:config) { { enable_platform_authorized: true, legacy_platform_span_names: true } }
 
       it 'traces .authorized' do
         skip unless supports_authorized_and_resolved_types?
-        SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
+        SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
         span = spans.find { |s| s.name == 'Query.authorized' }
         _(span).wont_be_nil
 
         span = spans.find { |s| s.name == 'SlightlyComplex.authorized' }
+        _(span).wont_be_nil
+      end
+    end
+
+    describe 'when platform_authorized is enabled' do
+      let(:config) { { enable_platform_authorized: true, legacy_platform_span_names: false } }
+
+      it 'traces .authorized' do
+        skip unless supports_authorized_and_resolved_types?
+        SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
+
+        span = spans.find do |s|
+          s.name == 'graphql.authorized' &&
+            s.attributes['graphql.type.name'] == 'Query'
+        end
+        _(span).wont_be_nil
+
+        span = spans.find do |s|
+          s.name == 'graphql.authorized' &&
+            s.attributes['graphql.type.name'] == 'SlightlyComplex'
+        end
+        _(span).wont_be_nil
+      end
+
+      it 'includes attributes' do
+        skip unless supports_authorized_and_resolved_types?
+        expected_attributes = {
+          'graphql.type.name' => 'OtherQuery',
+          'graphql.lazy' => false
+        }
+
+        SomeOtherGraphQLAppSchema.execute('{ simpleField }')
+
+        span = spans.find { |s| s.name == 'graphql.authorized' }
+        _(span).wont_be_nil
+        _(span.attributes.to_h).must_equal(expected_attributes)
+      end
+    end
+
+    describe 'when platform_resolve_type is enabled with legacy naming' do
+      let(:config) { { enable_platform_resolve_type: true, legacy_platform_span_names: true } }
+
+      it 'traces .resolve_type' do
+        skip unless supports_authorized_and_resolved_types?
+        SomeGraphQLAppSchema.execute('{ vehicle { __typename } }')
+
+        span = spans.find { |s| s.name == 'Vehicle.resolve_type' }
         _(span).wont_be_nil
       end
     end
@@ -150,8 +226,22 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         skip unless supports_authorized_and_resolved_types?
         SomeGraphQLAppSchema.execute('{ vehicle { __typename } }')
 
-        span = spans.find { |s| s.name == 'Vehicle.resolve_type' }
+        span = spans.find { |s| s.name == 'graphql.resolve_type' && s.attributes['graphql.type.name'] == 'Vehicle' }
         _(span).wont_be_nil
+      end
+
+      it 'includes attributes' do
+        skip unless supports_authorized_and_resolved_types?
+        expected_attributes = {
+          'graphql.type.name' => 'Vehicle',
+          'graphql.lazy' => false
+        }
+
+        SomeGraphQLAppSchema.execute('{ vehicle { __typename } }')
+
+        span = spans.find { |s| s.name == 'graphql.resolve_type' }
+        _(span).wont_be_nil
+        _(span.attributes.to_h).must_equal(expected_attributes)
       end
     end
 
@@ -165,9 +255,11 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       )
       span = spans.find { |s| s.name == 'graphql.validate' }
       event = span.events.find { |e| e.name == 'graphql.validation.error' }
+      # rubocop:disable Layout/LineLength
       _(event.attributes['message']).must_equal(
         "[{\"message\":\"Field 'nonExistentField' doesn't exist on type 'Query'\",\"locations\":[{\"line\":2,\"column\":13}],\"path\":[\"query\",\"nonExistentField\"],\"extensions\":{\"code\":\"undefinedField\",\"typeName\":\"Query\",\"fieldName\":\"nonExistentField\"}}]"
       )
+      # rubocop:enable Layout/LineLength
     end
   end
 
@@ -176,24 +268,26 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
   # These fields are only supported as of version 1.10.0
   # https://github.com/rmosolgo/graphql-ruby/blob/v1.10.0/CHANGELOG.md#new-features-1
   def supports_authorized_and_resolved_types?
-    Gem.loaded_specs['graphql'].version >= Gem::Version.new('1.10.0')
+    Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('1.10.0')
   end
 
   module Old
-    Truck = Struct.new(:price)
+    Truck = Struct.new(:price, :model)
   end
 
   module Vehicle
     include GraphQL::Schema::Interface
+
+    field :model, String, null: true, trace: true # Allow for this scalar to be traced
   end
 
-  class Car < ::GraphQL::Schema::Object
+  class Car < GraphQL::Schema::Object
     implements Vehicle
 
     field :price, Integer, null: true
   end
 
-  class SlightlyComplexType < ::GraphQL::Schema::Object
+  class SlightlyComplexType < GraphQL::Schema::Object
     field :uppercased_value, String, null: false
     field :original_value, String, null: false
 
@@ -202,7 +296,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     end
   end
 
-  class SimpleResolver < ::GraphQL::Schema::Resolver
+  class SimpleResolver < GraphQL::Schema::Resolver
     type SlightlyComplexType, null: false
 
     argument :id, Integer, required: true
@@ -212,7 +306,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     end
   end
 
-  class QueryType < ::GraphQL::Schema::Object
+  class QueryType < GraphQL::Schema::Object
     field :simple_field, String, null: false
     field :resolved_field, resolver: SimpleResolver
 
@@ -220,7 +314,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     field :vehicle, Vehicle, null: true
 
     def vehicle
-      Old::Truck.new(50)
+      Old::Truck.new(50, 'Model T')
     end
 
     def simple_field
@@ -228,27 +322,32 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     end
   end
 
-  class OtherQueryType < ::GraphQL::Schema::Object
+  class OtherQueryType < GraphQL::Schema::Object
     field :simple_field, String, null: false
     def simple_field
       'Hello.'
     end
   end
 
-  class SomeOtherGraphQLAppSchema < ::GraphQL::Schema
+  class SomeOtherGraphQLAppSchema < GraphQL::Schema
     query(::OtherQueryType)
-    use GraphQL::Execution::Interpreter
-    use GraphQL::Analysis::AST
   end
 
-  class SomeGraphQLAppSchema < ::GraphQL::Schema
+  class SomeGraphQLAppSchema < GraphQL::Schema
     query(::QueryType)
-    use GraphQL::Execution::Interpreter
-    use GraphQL::Analysis::AST
     orphan_types Car
 
     def self.resolve_type(_type, _obj, _ctx)
       Car
+    end
+  end
+
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.10.0')
+    [SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each do |schema|
+      schema.class_eval do
+        use GraphQL::Execution::Interpreter
+        use GraphQL::Analysis::AST
+      end
     end
   end
 end
