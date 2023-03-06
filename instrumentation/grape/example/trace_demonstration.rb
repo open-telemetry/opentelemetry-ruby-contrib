@@ -1,15 +1,8 @@
 # frozen_string_literal: true
 
-require 'bundler/inline'
+require 'bundler/setup'
 
-gemfile(true) do
-  source 'https://rubygems.org'
-  gem 'opentelemetry-api'
-  gem 'opentelemetry-instrumentation-base'
-  gem 'opentelemetry-instrumentation-grape'
-  gem 'opentelemetry-sdk'
-  gem 'grape'
-end
+Bundler.require
 
 require 'opentelemetry-api'
 require 'opentelemetry-sdk'
@@ -24,3 +17,36 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 # A basic Grape endpoint example
+require 'grape'
+
+class ExampleAPI < Grape::API
+  format :json
+
+  desc 'Return a greeting message'
+  get :hello do
+    { message: 'Hello, world!' }
+  end
+
+  desc 'Return information about a user'
+  # Filters
+  before do
+    sleep(0.01)
+  end
+  after do
+    sleep(0.01)
+  end
+  params do
+    requires :id, type: Integer, desc: 'User ID'
+  end
+  get 'users/:id' do
+    { id: params[:id], name: 'John Doe', email: 'johndoe@example.com' }
+  end
+end
+
+# Set up fake Rack application
+builder = Rack::Builder.app do
+  run ExampleAPI
+end
+
+Rack::MockRequest.new(builder).get('/hello')
+Rack::MockRequest.new(builder).get('/users/1')
