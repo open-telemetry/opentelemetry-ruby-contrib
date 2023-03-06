@@ -56,7 +56,7 @@ module OpenTelemetry
           def query(sql)
             tracer.in_span(
               database_span_name(sql),
-              attributes: client_attributes(sql),
+              attributes: client_attributes(sql).merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
               kind: :client
             ) do
               super(sql)
