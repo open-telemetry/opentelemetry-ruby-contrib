@@ -40,6 +40,17 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+The `trilogy` instrumentation allows the user to supply additional attributes via the `with_attributes` method. This makes it possible to supply additional attributes on trilogy spans. Attributes supplied in `with_attributes` supersede those automatically generated within `trilogy`'s automatic instrumentation. If you supply a `db.statement` attribute in `with_attributes`, this library's `:db_statement` configuration will not be applied.
+
+```ruby
+require 'opentelemetry-instrumentation-trilogy'
+
+client = Trilogy.new(:host => 'localhost', :username => 'root')
+OpenTelemetry::Instrumentation::Trilogy.with_attributes('pizzatoppings' => 'mushrooms') do
+  client.query('SELECT 1')
+end
+```
+
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-trilogy` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
