@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 appraise 'rack-3.0' do
-  gem 'rack', '~> 2.1.2'
+  gem 'rack', '~> 3.0.0'
 end
 
 appraise 'rack-2.1' do
