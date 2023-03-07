@@ -101,6 +101,28 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       instrumentation.install(config)
     end
 
+    describe '.attributes' do
+      let(:attributes) { { 'db.statement' => 'foobar' } }
+
+      it 'returns an empty hash by default' do
+        _(OpenTelemetry::Instrumentation::Trilogy.attributes).must_equal({})
+      end
+
+      it 'returns the current attributes hash' do
+        OpenTelemetry::Instrumentation::Trilogy.with_attributes(attributes) do
+          _(OpenTelemetry::Instrumentation::Trilogy.attributes).must_equal(attributes)
+        end
+      end
+
+      it 'sets span attributes according to with_attributes hash' do
+        OpenTelemetry::Instrumentation::Trilogy.with_attributes(attributes) do
+          client.query('SELECT 1')
+        end
+
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'foobar'
+      end
+    end
+
     describe 'with default options' do
       it 'obfuscates sql' do
         client.query('SELECT 1')
@@ -314,6 +336,136 @@ describe OpenTelemetry::Instrumentation::Trilogy do
             _(span.attributes['db.system']).must_equal 'mysql'
             _(span.name).must_equal 'select'
             _(span.attributes['db.statement']).must_equal obfuscated_sql
+          end
+        end
+      end
+    end
+
+    describe 'when span_name is set as statement_type' do
+      it 'sets span name to statement type' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'span_name=statement_type') do
+          instrumentation.instance_variable_set(:@installed, false)
+          instrumentation.install
+
+          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+          expect do
+            client.query(sql)
+          end.must_raise Trilogy::Error
+
+          _(span.name).must_equal 'select'
+        end
+      end
+
+      it 'sets span name to mysql when statement type is not recognized' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'span_name=statement_type') do
+          instrumentation.instance_variable_set(:@installed, false)
+          instrumentation.install
+
+          sql = 'DESELECT 1'
+          expect do
+            client.query(sql)
+          end.must_raise Trilogy::Error
+
+          _(span.name).must_equal 'mysql'
+        end
+      end
+    end
+
+    describe 'when span_name is set as db_name' do
+      it 'sets span name to db name' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'span_name=db_name') do
+          instrumentation.instance_variable_set(:@installed, false)
+          instrumentation.install
+
+          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+          expect do
+            client.query(sql)
+          end.must_raise Trilogy::Error
+
+          _(span.name).must_equal 'mysql'
+        end
+      end
+
+      describe 'when db name is nil' do
+        let(:database) { nil }
+
+        it 'sets span name to mysql' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'span_name=db_name') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            expect do
+              client.query(sql)
+            end.must_raise Trilogy::Error
+
+            _(span.name).must_equal 'mysql'
+          end
+        end
+      end
+    end
+
+    describe 'when span_name is set as db_operation_and_name' do
+      it 'sets span name to db operation and name' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
+          instrumentation.instance_variable_set(:@installed, false)
+          instrumentation.install
+
+          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+          OpenTelemetry::Instrumentation::Trilogy.with_attributes('db.operation' => 'foo') do
+            expect do
+              client.query(sql)
+            end.must_raise Trilogy::Error
+          end
+
+          _(span.name).must_equal 'foo mysql'
+        end
+      end
+
+      it 'sets span name to db name when db.operation is not set' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
+          instrumentation.instance_variable_set(:@installed, false)
+          instrumentation.install
+
+          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+          expect do
+            client.query(sql)
+          end.must_raise Trilogy::Error
+
+          _(span.name).must_equal 'mysql'
+        end
+      end
+
+      describe 'when db name is nil' do
+        let(:database) { nil }
+
+        it 'sets span name to db operation' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            OpenTelemetry::Instrumentation::Trilogy.with_attributes('db.operation' => 'foo') do
+              expect do
+                client.query(sql)
+              end.must_raise Trilogy::Error
+            end
+
+            _(span.name).must_equal 'foo'
+          end
+        end
+
+        it 'sets span name to mysql when db.operation is not set' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            expect do
+              client.query(sql)
+            end.must_raise Trilogy::Error
+
+            _(span.name).must_equal 'mysql'
           end
         end
       end
