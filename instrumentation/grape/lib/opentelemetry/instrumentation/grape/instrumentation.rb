@@ -13,6 +13,7 @@ module OpenTelemetry
 
         install do |_config|
           require_dependencies
+          patch
           subscribe
         end
 
@@ -42,6 +43,11 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'handler'
+          require_relative 'patches/endpoint'
+        end
+
+        def patch
+          ::Grape::Endpoint.include(Patches::Endpoint)
         end
 
         def subscribe

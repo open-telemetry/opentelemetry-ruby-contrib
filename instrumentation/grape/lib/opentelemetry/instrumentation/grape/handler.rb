@@ -10,7 +10,9 @@ module OpenTelemetry
       # This class subscribes to the generated ActiveSupport notifications and generates spans based on them.
       class Handler
         SUBSCRIPTIONS = {
+          endpoint_run_start: 'endpoint_run.grape.start_process',
           endpoint_run: 'endpoint_run.grape',
+          endpoint_render_start: 'endpoint_render.grape.start_render',
           endpoint_render: 'endpoint_render.grape',
           endpoint_run_filters: 'endpoint_run_filters.grape'
         }.freeze
@@ -26,6 +28,10 @@ module OpenTelemetry
 
           private
 
+          def endpoint_run_start(name, start, finish, id, payload)
+            puts 'TEST RUN START'
+          end
+
           def endpoint_run(name, start, finish, id, payload)
             # TODO: check span.name and span.type, and set service.name
             env = payload.fetch(:env)
@@ -38,6 +44,10 @@ module OpenTelemetry
             OpenTelemetry::Context.with_current(extracted_context) do
               tracer.in_span(name, attributes: build_run_attributes(payload), kind: :server) {}
             end
+          end
+
+          def endpoint_render_start(name, start, finish, id, payload)
+            puts 'TEST RENDER START'
           end
 
           def endpoint_render(name, start, finish, id, payload)
