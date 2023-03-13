@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.31.1 / 2023-03-13
+
+* (No significant changes)
+
 ### v0.31.0 / 2023-02-09
 
 * BREAKING CHANGE: Drop Rails 5 support [#324](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/324)
