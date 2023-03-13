@@ -2,9 +2,9 @@
 
 ### v0.23.0 / 2023-03-13
 
-* BREAKING CHANGE: Lock graphql max version to 2.0.17 
+* BREAKING CHANGE: Lock graphql max version to 2.0.17
 
-* FIXED: Lock graphql max version to 2.0.17 
+* FIXED: Lock graphql max version to 2.0.17
 
 ### v0.22.0 / 2023-01-27
 
