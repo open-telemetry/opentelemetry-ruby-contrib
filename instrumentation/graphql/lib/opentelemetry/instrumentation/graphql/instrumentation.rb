@@ -12,7 +12,7 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the GraphQL instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         compatible do
-          gem_version <= Gem::Version.new('2.0.17')
+          gem_version <= Gem::Version.new('2.0.18')
         end
 
         install do |config|
@@ -57,6 +57,7 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'tracers/graphql_tracer'
+          require_relative 'patches'
         end
 
         def install_tracer(config = {})
