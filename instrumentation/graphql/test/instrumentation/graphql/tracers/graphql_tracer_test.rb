@@ -142,9 +142,25 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         _(span).wont_be_nil
       end
 
-      it 'includes attributes' do
+      it 'includes attributes using platform types' do
+        skip if uses_platform_interfaces?
         expected_attributes = {
           'graphql.field.parent' => 'Car', # type name, not interface
+          'graphql.field.name' => 'model',
+          'graphql.lazy' => false
+        }
+
+        SomeGraphQLAppSchema.execute('{ vehicle { model } }')
+
+        span = spans.find { |s| s.name == 'graphql.execute_field' && s.attributes['graphql.field.name'] == 'model' }
+        _(span).wont_be_nil
+        _(span.attributes.to_h).must_equal(expected_attributes)
+      end
+
+      it 'includes attributes using platform interfaces' do
+        skip unless uses_platform_interfaces?
+        expected_attributes = {
+          'graphql.field.parent' => 'Vehicle', # interface name, not type
           'graphql.field.name' => 'model',
           'graphql.lazy' => false
         }
@@ -349,5 +365,10 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         use GraphQL::Analysis::AST
       end
     end
+  end
+
+  # https://github.com/rmosolgo/graphql-ruby/issues/4292 changes the behavior of the platform tracer to use interface keys instead of the concrete types
+  def uses_platform_interfaces?
+    Gem::Requirement.new('>= 2.0.19').satisfied_by?(Gem::Version.new(GraphQL::VERSION))
   end
 end
