@@ -57,7 +57,6 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'tracers/graphql_tracer'
-          require_relative 'patches'
         end
 
         def install_tracer(config = {})
