@@ -29,8 +29,13 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
   end
 
   before do
-    exporter.reset
+    # Reset various instance variables to clear state between tests
+    [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
+
+    instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(config)
+
+    exporter.reset
   end
 
   after do
@@ -38,11 +43,9 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     instrumentation.instance_variable_set(:@installed, false)
 
     # Reset various instance variables to clear state between tests
-    GraphQL::Schema.instance_variable_set(:@own_tracers, [])
+    [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
 
-    # Reseting @graphql_definition is needed for tests running against version `1.9.x`
-    SomeOtherGraphQLAppSchema.remove_instance_variable(:@graphql_definition) if SomeOtherGraphQLAppSchema.instance_variable_defined?(:@graphql_definition)
-    SomeGraphQLAppSchema.remove_instance_variable(:@graphql_definition) if SomeGraphQLAppSchema.instance_variable_defined?(:@graphql_definition)
+    exporter.reset
   end
 
   describe '#platform_trace' do
