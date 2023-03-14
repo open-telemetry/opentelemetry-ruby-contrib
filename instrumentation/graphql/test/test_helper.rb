@@ -22,12 +22,13 @@ end
 
 # Hack that allows us to reset the internal state of the tracer to test installation
 module SchemaTestPatches
+
+  # Reseting @graphql_definition is needed for tests running against version `1.9.x`
+  # Other variables are used by ~> 2.0.19
   def _reset_tracer_for_testing
-    remove_instance_variable(:@own_tracers) if instance_variable_defined?(:@own_tracers)
-    remove_instance_variable(:@trace_class) if instance_variable_defined?(:@trace_class)
-    remove_instance_variable(:@tracers) if instance_variable_defined?(:@tracers)
-    # Reseting @graphql_definition is needed for tests running against version `1.9.x`
-    remove_instance_variable(:@graphql_definition) if instance_variable_defined?(:@graphql_definition)
+    %w[own_tracers trace_class tracers graphql_definition].each do |ivar|
+      remove_instance_variable("@#{ivar}") if instance_variable_defined?("@#{ivar}")
+    end
   end
 end
 
