@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.32.1 / 2023-03-15
+
+* (No significant changes)
+
 ### v0.32.0 / 2023-03-13
 
 * BREAKING CHANGE: Lock graphql max version to 2.0.17
