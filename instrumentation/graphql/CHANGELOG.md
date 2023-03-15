@@ -2,9 +2,9 @@
 
 ### v0.24.0 / 2023-03-15
 
-* BREAKING CHANGE: Add support for GraphQL 2.0.19 
+* BREAKING CHANGE: Add support for GraphQL 2.0.19
 
-* FIXED: Add support for GraphQL 2.0.19 
+* FIXED: Add support for GraphQL 2.0.19
 
 ### v0.23.0 / 2023-03-13
 
