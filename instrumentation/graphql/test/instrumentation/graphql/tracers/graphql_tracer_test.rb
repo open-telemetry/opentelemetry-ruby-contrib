@@ -29,8 +29,13 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
   end
 
   before do
-    exporter.reset
+    # Reset various instance variables to clear state between tests
+    [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
+
+    instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(config)
+
+    exporter.reset
   end
 
   after do
@@ -38,11 +43,9 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     instrumentation.instance_variable_set(:@installed, false)
 
     # Reset various instance variables to clear state between tests
-    GraphQL::Schema.instance_variable_set(:@own_tracers, [])
+    [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
 
-    # Reseting @graphql_definition is needed for tests running against version `1.9.x`
-    SomeOtherGraphQLAppSchema.remove_instance_variable(:@graphql_definition) if SomeOtherGraphQLAppSchema.instance_variable_defined?(:@graphql_definition)
-    SomeGraphQLAppSchema.remove_instance_variable(:@graphql_definition) if SomeGraphQLAppSchema.instance_variable_defined?(:@graphql_definition)
+    exporter.reset
   end
 
   describe '#platform_trace' do
@@ -142,9 +145,25 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         _(span).wont_be_nil
       end
 
-      it 'includes attributes' do
+      it 'includes attributes using platform types' do
+        skip if uses_platform_interfaces?
         expected_attributes = {
           'graphql.field.parent' => 'Car', # type name, not interface
+          'graphql.field.name' => 'model',
+          'graphql.lazy' => false
+        }
+
+        SomeGraphQLAppSchema.execute('{ vehicle { model } }')
+
+        span = spans.find { |s| s.name == 'graphql.execute_field' && s.attributes['graphql.field.name'] == 'model' }
+        _(span).wont_be_nil
+        _(span.attributes.to_h).must_equal(expected_attributes)
+      end
+
+      it 'includes attributes using platform interfaces' do
+        skip unless uses_platform_interfaces?
+        expected_attributes = {
+          'graphql.field.parent' => 'Vehicle', # interface name, not type
           'graphql.field.name' => 'model',
           'graphql.lazy' => false
         }
@@ -349,5 +368,10 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         use GraphQL::Analysis::AST
       end
     end
+  end
+
+  # https://github.com/rmosolgo/graphql-ruby/issues/4292 changes the behavior of the platform tracer to use interface keys instead of the concrete types
+  def uses_platform_interfaces?
+    Gem::Requirement.new('>= 2.0.19').satisfied_by?(Gem::Version.new(GraphQL::VERSION))
   end
 end
