@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.33.0 / 2023-03-15
+
+* BREAKING CHANGE: Add support for GraphQL 2.0.19
+
+* FIXED: Add support for GraphQL 2.0.19
+
 ### v0.32.0 / 2023-03-13
 
 * BREAKING CHANGE: Lock graphql max version to 2.0.17
