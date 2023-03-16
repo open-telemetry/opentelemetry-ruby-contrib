@@ -37,7 +37,7 @@
 
 * BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.
 
-  [Check the propagator documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for the new usage.
+  [Check the propagator documentation](https://www.rubydoc.info/gems/opentelemetry-propagator-ottrace) for the new usage.
 
 * FIXED: Refactor propagators to add #fields
 
