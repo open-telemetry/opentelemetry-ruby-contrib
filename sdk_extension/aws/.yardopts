@@ -1,0 +1,9 @@
+--no-private
+--title=OpenTelemetry SDK Extension AWS
+--markup=markdown
+--main=README.md
+./lib/opentelemetry/sdk/extension/aws/**/*.rb
+./lib/opentelemetry/sdk/extension/aws.rb
+-
+README.md
+CHANGELOG.md
