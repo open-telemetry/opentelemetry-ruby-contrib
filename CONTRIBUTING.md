@@ -254,8 +254,6 @@ Releases are normally performed using GitHub Actions.
     gem(s) once CI has completed. This includes:
      *  For each gem, it will create a release tag and a GitHub release.
      *  It will build and push the gems to rubygems.
-     *  It will build the docs and push them to
-        https://open-telemetry.github.io/opentelemetry-ruby-contrib
      *  If the releases succeed, the script will update the release pull
         request with the results and change its label to `release: complete`.
         If something went wrong, the script will, if possible, report the error
