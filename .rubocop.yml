@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: '2.7.6'
+  TargetRubyVersion: '3.0'
   NewCops: enable
   Exclude:
     - Rakefile
@@ -8,6 +8,8 @@ AllCops:
     - "bin/instrumentation_generator"
     - "**/**/vendor/bundle/**/*"
 Bundler/OrderedGems:
+  Enabled: false
+Gemspec/DevelopmentDependencies:
   Enabled: false
 Gemspec/RequiredRubyVersion:
   Enabled: false

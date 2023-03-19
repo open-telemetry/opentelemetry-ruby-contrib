@@ -39,12 +39,6 @@ jobs:
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.0"
-      - name: "Test Ruby 2.7"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "2.7"
           yard: true
           rubocop: true
           build: true
@@ -53,7 +47,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "jruby-9.4.0.0"
+          ruby: "jruby-9.4.2.0"
 
   resource-detectors:
     strategy:
@@ -82,19 +76,13 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "3.0"
-      - name: "Test Ruby 2.7"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "2.7"
           yard: true
           rubocop: true
           build: true
+          ruby: "3.0"
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "jruby-9.4.0.0"
+          ruby: "jruby-9.4.2.0"
