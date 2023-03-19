@@ -40,7 +40,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   end
 
   let(:service) do
-    ->(_arg) { [200, { 'Content-Type' => 'text/plain' }, 'Hello World'] }
+    ->(_arg) { [200, { 'Content-Type' => 'text/plain' }, ['Hello World']] }
   end
   let(:untraced_endpoints) { [] }
   let(:untraced_requests) { nil }
