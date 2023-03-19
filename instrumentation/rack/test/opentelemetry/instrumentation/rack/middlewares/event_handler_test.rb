@@ -39,8 +39,11 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
     OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new
   end
 
+  let(:after_close) { nil }
+  let(:response_body) { Rack::BodyProxy.new(['Hello World']) { after_close&.call } }
+
   let(:service) do
-    ->(_arg) { [200, { 'Content-Type' => 'text/plain' }, ['Hello World']] }
+    ->(_arg) { [200, { 'Content-Type' => 'text/plain' }, response_body] }
   end
   let(:untraced_endpoints) { [] }
   let(:untraced_requests) { nil }
@@ -379,6 +382,32 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
 
     it 'does nothing' do
       _(rack_span).must_be_nil
+    end
+  end
+
+  describe 'when response body is called' do
+    let(:after_close) { -> { OpenTelemetry::Instrumentation::Rack.current_span.add_event('after-response-called') } }
+
+    it 'has access to a Rack read/write span' do
+      get '/'
+      _(rack_span.events.map(&:name)).must_include('after-response-called')
+    end
+  end
+
+  describe 'when response body is called' do
+    let(:response_body) { ['Simple, Hello World!'] }
+
+    it 'has access to a Rack read/write span' do
+      get '/'
+      _(rack_span.attributes['http.method']).must_equal 'GET'
+      _(rack_span.attributes['http.status_code']).must_equal 200
+      _(rack_span.attributes['http.target']).must_equal '/'
+      _(rack_span.attributes['http.url']).must_be_nil
+      _(rack_span.name).must_equal 'HTTP GET'
+      _(rack_span.kind).must_equal :server
+      _(rack_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
+      _(rack_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+      _(proxy_event).must_be_nil
     end
   end
 end
