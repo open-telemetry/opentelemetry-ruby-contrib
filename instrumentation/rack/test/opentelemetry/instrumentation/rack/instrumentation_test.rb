@@ -44,6 +44,7 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
 
     it 'skips installation' do
       _(instrumentation).wont_be :installed?
+    end
   end
 
   describe '#middleware_args' do
