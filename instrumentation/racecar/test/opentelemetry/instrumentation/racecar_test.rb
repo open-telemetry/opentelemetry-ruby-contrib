@@ -166,6 +166,30 @@ describe OpenTelemetry::Instrumentation::Racecar do
         _(second_send_span.parent_span_id).must_equal(second_process_span.span_id)
         _(second_send_span.trace_id).must_equal(second_process_span.trace_id)
       end
+
+      describe 'when message keys are encoded differently' do
+        let(:producer_messages) do
+          [{
+            topic: topic_name,
+            payload: 'never gonna',
+            key: 'Key 1'
+          }, {
+            topic: topic_name,
+            payload: 'give you up',
+            key: "\xAF\x0F\xEF"
+          }]
+        end
+
+        it 'traces each message and tracks utf8 keys only' do
+          process_spans = spans.select { |s| s.name == "#{topic_name} process" }
+
+          first_process_span = process_spans[0]
+          _(first_process_span.attributes['messaging.kafka.message_key']).must_equal('Key 1')
+
+          second_process_span = process_spans[1]
+          _(second_process_span.attributes).wont_include('messaging.kafka.message_key')
+        end
+      end
     end
 
     describe 'for an erroring consumer' do
