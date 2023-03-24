@@ -35,7 +35,9 @@ module OpenTelemetry
           'messaging.kafka.offset' => payload[:offset]
         }
 
-        attributes['messaging.kafka.message_key'] = payload[:key] if payload[:key]
+        message_key = extract_message_key(payload[:key])
+        attributes['messaging.kafka.message_key'] = message_key if message_key
+
         attributes
       end
 
@@ -53,6 +55,15 @@ module OpenTelemetry
         span.finish
         OpenTelemetry::Context.detach(token)
         OpenTelemetry::Context.detach(parent_token)
+      end
+
+      def extract_message_key(key)
+        # skip encode if already valid utf8
+        return key if key.nil? || (key.encoding == Encoding::UTF_8 && key.valid_encoding?)
+
+        key.encode(Encoding::UTF_8)
+      rescue Encoding::UndefinedConversionError
+        nil
       end
     end
   end
