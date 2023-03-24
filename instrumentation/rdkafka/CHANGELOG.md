@@ -2,7 +2,7 @@
 
 ### v0.2.3 / 2023-03-24
 
-* FIXED: Skip recording non-utf8 kafka keys in racecar and rdkafka 
+* FIXED: Skip recording non-utf8 kafka keys in racecar and rdkafka
 
 ### v0.2.2 / 2023-01-14
 
