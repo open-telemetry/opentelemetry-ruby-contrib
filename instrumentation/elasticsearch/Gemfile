@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-group :test do
+group :development, :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'pry-nav'
 end
