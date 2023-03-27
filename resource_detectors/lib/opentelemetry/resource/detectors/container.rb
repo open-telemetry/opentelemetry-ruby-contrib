@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'docker'
-
 module OpenTelemetry
   module Resource
     module Detectors
@@ -23,18 +21,7 @@ module OpenTelemetry
           id = container_id
           resource_attributes = {}
 
-          unless id.nil?
-            resource_attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_ID] = id
-
-            case container_runtime
-            when 'docker'
-              resource_attributes = docker_resource_attributes(resource_attributes, id)
-            when nil
-              nil
-            else
-              OpenTelemetry.handle_error(message: 'Unsupported Container Runtime')
-            end
-          end
+          resource_attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_ID] = id unless id.nil?
           resource_attributes.delete_if { |_key, value| value.nil? || value.empty? }
           OpenTelemetry::SDK::Resources::Resource.create(resource_attributes)
         end
@@ -57,50 +44,6 @@ module OpenTelemetry
             end
           end
           nil
-        end
-
-        def container_runtime
-          'docker' unless Docker.version.nil?
-        rescue Errno::ENOENT
-          # docker socket is not mounted, we don't want to spam the logs
-          nil
-        rescue Errno::EACCES, Excon::Error::Socket => e
-          OpenTelemetry.handle_error(exception: e, message: 'The docker socket is available, but not readable by the current user. Additional container resource attributes are unavailable.')
-          nil
-        end
-
-        def docker_resource_attributes(resource_attributes, id)
-          current_container = docker_containers.select { |c| c.id.eql? id }.first
-          image, tag = docker_container_image(current_container, docker_images)
-
-          resource_attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_NAME] = docker_container_name(current_container)
-          resource_attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_RUNTIME] = 'docker'
-          resource_attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_IMAGE_NAME] = image
-          resource_attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_IMAGE_TAG] = tag
-          resource_attributes
-        end
-
-        def docker_containers
-          Docker::Container.all
-        rescue Errno::EACCES, Errno::ENOENT
-          nil
-        end
-
-        def docker_images
-          Docker::Image.all
-        rescue Errno::EACCES, Errno::ENOENT
-          nil
-        end
-
-        def docker_container_name(current_container)
-          current_container.info['Names'].first.to_s
-        end
-
-        def docker_container_image(current_container, all_images)
-          image_id = current_container.info['ImageID']
-          image = all_images.select { |i| i.id.eql? image_id }.first
-          image_name, image_tag = image.info['RepoTags'].first.split(':')
-          [image_name.to_s, image_tag.to_s]
         end
       end
     end
