@@ -28,9 +28,11 @@ module OpenTelemetry
 
             case container_runtime
             when 'docker'
-              resource_attributes = add_docker_resource_attributes(resource_attributes, id)
+              resource_attributes = docker_resource_attributes(resource_attributes, id)
+            when nil
+              nil
             else
-              puts 'Unsupported Container Runtime'
+              OpenTelemetry.handle_error(message: 'Unsupported Container Runtime')
             end
           end
           resource_attributes.delete_if { |_key, value| value.nil? || value.empty? }
@@ -57,7 +59,17 @@ module OpenTelemetry
           nil
         end
 
-        def add_docker_resource_attributes(resource_attributes, id)
+        def container_runtime
+          'docker' unless Docker.version.nil?
+        rescue Errno::ENOENT
+          # docker socket is not mounted, we don't want to spam the logs
+          nil
+        rescue Errno::EACCES, Excon::Error::Socket => e
+          OpenTelemetry.handle_error(exception: e, message: 'The docker socket is available, but not readable by the current user. Additional container resource attributes are unavailable.')
+          nil
+        end
+
+        def docker_resource_attributes(resource_attributes, id)
           current_container = docker_containers.select { |c| c.id.eql? id }.first
           image, tag = docker_container_image(current_container, docker_images)
 
@@ -82,13 +94,6 @@ module OpenTelemetry
 
         def docker_container_name(current_container)
           current_container.info['Names'].first.to_s
-        end
-
-        def container_runtime
-          'docker' unless Docker.version.nil?
-        rescue Errno::EACCES, Errno::ENOENT, Excon::Error::Socket
-          puts 'Could not determine container runtime'
-          nil
         end
 
         def docker_container_image(current_container, all_images)

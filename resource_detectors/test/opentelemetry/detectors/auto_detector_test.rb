@@ -25,10 +25,10 @@ describe OpenTelemetry::Resource::Detectors::AutoDetector do
     stub_request(:get, 'http://unix/containers/json')
       .with(
         headers: {
-          'Accept'=>'*/*',
-          'Content-Type'=>'text/plain',
-          'Host'=>'',
-          'User-Agent'=>'Swipely/Docker-API 2.2.0'
+          'Accept' => '*/*',
+          'Content-Type' => 'text/plain',
+          'Host' => '',
+          'User-Agent' => 'Swipely/Docker-API 2.2.0'
         }
       )
       .to_return(status: 200, body: '', headers: {})
@@ -37,10 +37,10 @@ describe OpenTelemetry::Resource::Detectors::AutoDetector do
     stub_request(:get, 'http://unix/images/json')
       .with(
         headers: {
-          'Accept'=>'*/*',
-          'Content-Type'=>'text/plain',
-          'Host'=>'',
-          'User-Agent'=>'Swipely/Docker-API 2.2.0'
+          'Accept' => '*/*',
+          'Content-Type' => 'text/plain',
+          'Host' => '',
+          'User-Agent' => 'Swipely/Docker-API 2.2.0'
         }
       )
       .to_return(status: 200, body: '', headers: {})
