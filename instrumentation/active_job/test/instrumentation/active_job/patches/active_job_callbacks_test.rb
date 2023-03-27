@@ -215,6 +215,18 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
     end
 
+    describe 'messaging.active_job.provider_job_id' do
+      it 'is empty for a job that do not sets provider_job_id' do
+        TestJob.perform_now
+        _(process_span.attributes['messaging.active_job.provider_job_id']).must_be_nil
+      end
+
+      it 'sets the correct value if provider_job_id is provided' do
+        job = TestJob.perform_later
+        _(process_span.attributes['messaging.active_job.provider_job_id']).must_equal(job.provider_job_id)
+      end
+    end
+
     it 'generally sets other attributes as expected' do
       job = TestJob.perform_later
 

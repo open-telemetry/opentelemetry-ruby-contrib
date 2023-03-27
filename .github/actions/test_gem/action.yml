@@ -57,7 +57,7 @@ runs:
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@v1.139.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
@@ -68,7 +68,7 @@ runs:
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@v1.139.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         bundler:  "latest"
@@ -86,7 +86,9 @@ runs:
       run: |
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
+            echo "Appraisal install and test ${i}"
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
+            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test
           done
         else

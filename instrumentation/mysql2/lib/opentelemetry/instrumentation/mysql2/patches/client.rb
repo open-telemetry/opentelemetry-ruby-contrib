@@ -54,9 +54,9 @@ module OpenTelemetry
             attributes = client_attributes
             case config[:db_statement]
             when :include
-              attributes['db.statement'] = sql
+              attributes[SemanticConventions::Trace::DB_STATEMENT] = sql
             when :obfuscate
-              attributes['db.statement'] = obfuscate_sql(sql)
+              attributes[SemanticConventions::Trace::DB_STATEMENT] = obfuscate_sql(sql)
             end
             tracer.in_span(
               database_span_name(sql),
@@ -78,7 +78,8 @@ module OpenTelemetry
               obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
               obfuscated
             end
-          rescue StandardError
+          rescue StandardError => e
+            OpenTelemetry.handle_error(message: 'Failed to obfuscate SQL', exception: e)
             'OpenTelemetry error: failed to obfuscate sql'
           end
 
@@ -102,7 +103,7 @@ module OpenTelemetry
             when :db_name
               database_name
             when :db_operation_and_name
-              op = OpenTelemetry::Instrumentation::Mysql2.attributes['db.operation']
+              op = OpenTelemetry::Instrumentation::Mysql2.attributes[SemanticConventions::Trace::DB_OPERATION]
               name = database_name
               if op && name
                 "#{op} #{name}"
@@ -127,12 +128,12 @@ module OpenTelemetry
             port = query_options[:port].to_s
 
             attributes = {
-              'db.system' => 'mysql',
-              'net.peer.name' => host,
-              'net.peer.port' => port
+              SemanticConventions::Trace::DB_SYSTEM => 'mysql',
+              SemanticConventions::Trace::NET_PEER_NAME => host,
+              SemanticConventions::Trace::NET_PEER_PORT => port
             }
-            attributes['db.name'] = database_name if database_name
-            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+            attributes[SemanticConventions::Trace::DB_NAME] = database_name if database_name
+            attributes[SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
             attributes
           end
 
