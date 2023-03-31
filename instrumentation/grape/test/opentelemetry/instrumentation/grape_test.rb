@@ -49,7 +49,7 @@ describe OpenTelemetry::Instrumentation::Grape do
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
         _(span.attributes['grape.operation']).must_equal 'endpoint_run'
-        _(span.attributes['grape.route.endpoint']).must_equal 'BasicAPI'
+        _(span.attributes['code.namespace']).must_equal 'BasicAPI'
         _(span.attributes['http.route']).must_equal '/hello'
         _(span.attributes['http.method']).must_equal 'GET'
       end

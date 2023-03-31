@@ -89,7 +89,7 @@ module OpenTelemetry
             path = path(endpoint)
             {
               'grape.operation' => 'endpoint_run',
-              'grape.route.endpoint' => endpoint.options[:for]&.base.to_s,
+              'code.namespace' => endpoint.options[:for]&.base.to_s,
               OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => request_method(endpoint),
               OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE => path
             }
