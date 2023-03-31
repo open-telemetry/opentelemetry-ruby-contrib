@@ -22,7 +22,7 @@ module OpenTelemetry
         end
 
         compatible do
-          gem_version >= MINIMUM_VERSION
+          !defined?(::ActiveSupport::Notifications).nil? && gem_version >= MINIMUM_VERSION
         end
 
         option :ignored_events, default: [], validate: :array
