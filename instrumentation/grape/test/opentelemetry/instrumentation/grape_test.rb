@@ -48,12 +48,9 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
-        _(span.attributes['component']).must_equal 'web'
         _(span.attributes['operation']).must_equal 'endpoint_run'
         _(span.attributes['grape.route.endpoint']).must_equal 'BasicAPI'
-        _(span.attributes['grape.route.path']).must_equal '/hello'
         _(span.attributes['http.route']).must_equal '/hello'
-        _(span.attributes['grape.route.method']).must_equal 'GET'
         _(span.attributes['http.method']).must_equal 'GET'
       end
 
@@ -65,7 +62,6 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
-        _(span.attributes['component']).must_equal 'template'
         _(span.attributes['operation']).must_equal 'endpoint_render'
 
         _(span.parent_span_id).must_equal parent_span.span_id
@@ -83,7 +79,6 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
-        _(span.attributes['component']).must_equal 'template'
         _(span.attributes['operation']).must_equal 'format_response'
         _(span.attributes['grape.formatter.type']).must_equal 'json'
       end
@@ -111,7 +106,6 @@ describe OpenTelemetry::Instrumentation::Grape do
         span = run_spans.first
 
         _(span.name).must_equal expected_span_name
-        _(span.attributes['grape.route.path']).must_equal expected_path
         _(span.attributes['http.route']).must_equal expected_path
       end
     end
@@ -136,7 +130,6 @@ describe OpenTelemetry::Instrumentation::Grape do
         span = run_spans.first
 
         _(span.name).must_equal expected_span_name
-        _(span.attributes['grape.route.path']).must_equal expected_path
         _(span.attributes['http.route']).must_equal expected_path
       end
     end
@@ -164,7 +157,6 @@ describe OpenTelemetry::Instrumentation::Grape do
         span = run_spans.first
 
         _(span.name).must_equal expected_span_name
-        _(span.attributes['grape.route.path']).must_equal expected_path
         _(span.attributes['http.route']).must_equal expected_path
       end
     end
@@ -203,7 +195,6 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
-        _(span.attributes['component']).must_equal 'web'
         _(span.attributes['operation']).must_equal 'endpoint_run_filters'
         _(span.attributes['grape.filter.type']).must_equal 'before'
 
@@ -217,7 +208,6 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
-        _(span.attributes['component']).must_equal 'web'
         _(span.attributes['operation']).must_equal 'endpoint_run_filters'
         _(span.attributes['grape.filter.type']).must_equal 'after'
 
