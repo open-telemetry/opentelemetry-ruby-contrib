@@ -36,7 +36,7 @@ module OpenTelemetry
           def endpoint_render(_name, start, _finish, _id, payload)
             name = span_name(payload[:endpoint])
             attributes = {
-              'operation' => 'endpoint_render'
+              'grape.operation' => 'endpoint_render'
             }
             tracer.in_span(name, attributes: attributes, start_timestamp: start, kind: :server) do |span|
               handle_payload_exception(span, payload[:exception_object]) if payload[:exception_object]
@@ -53,7 +53,7 @@ module OpenTelemetry
 
             name = span_name(payload[:endpoint])
             attributes = {
-              'operation' => 'endpoint_run_filters',
+              'grape.operation' => 'endpoint_run_filters',
               'grape.filter.type' => type.to_s
             }
             tracer.in_span(name, attributes: attributes, start_timestamp: start, kind: :server) do |span|
@@ -66,7 +66,7 @@ module OpenTelemetry
             endpoint = payload[:env]['api.endpoint']
             name = span_name(endpoint)
             attributes = {
-              'operation' => 'format_response',
+              'grape.operation' => 'format_response',
               'grape.formatter.type' => formatter_type(payload[:formatter])
             }
             tracer.in_span(name, attributes: attributes, start_timestamp: start, kind: :server) do |span|
@@ -88,7 +88,7 @@ module OpenTelemetry
             endpoint = payload[:endpoint]
             path = path(endpoint)
             {
-              'operation' => 'endpoint_run',
+              'grape.operation' => 'endpoint_run',
               'grape.route.endpoint' => endpoint.options[:for]&.base.to_s,
               OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => request_method(endpoint),
               OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE => path

@@ -39,5 +39,5 @@ def unsubscribe
 end
 
 def spans_per_operation(operation)
-  spans.select { |s| s.attributes['operation'] == operation }
+  spans.select { |s| s.attributes['grape.operation'] == operation }
 end

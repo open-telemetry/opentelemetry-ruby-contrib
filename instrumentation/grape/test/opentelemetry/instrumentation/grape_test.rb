@@ -48,7 +48,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
-        _(span.attributes['operation']).must_equal 'endpoint_run'
+        _(span.attributes['grape.operation']).must_equal 'endpoint_run'
         _(span.attributes['grape.route.endpoint']).must_equal 'BasicAPI'
         _(span.attributes['http.route']).must_equal '/hello'
         _(span.attributes['http.method']).must_equal 'GET'
@@ -62,7 +62,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
-        _(span.attributes['operation']).must_equal 'endpoint_render'
+        _(span.attributes['grape.operation']).must_equal 'endpoint_render'
 
         _(span.parent_span_id).must_equal parent_span.span_id
         _(span.trace_id).must_equal parent_span.trace_id
@@ -79,7 +79,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
-        _(span.attributes['operation']).must_equal 'format_response'
+        _(span.attributes['grape.operation']).must_equal 'format_response'
         _(span.attributes['grape.formatter.type']).must_equal 'json'
       end
     end
@@ -195,7 +195,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
-        _(span.attributes['operation']).must_equal 'endpoint_run_filters'
+        _(span.attributes['grape.operation']).must_equal 'endpoint_run_filters'
         _(span.attributes['grape.filter.type']).must_equal 'before'
 
         _(span.parent_span_id).must_equal parent_span.span_id
@@ -208,7 +208,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
-        _(span.attributes['operation']).must_equal 'endpoint_run_filters'
+        _(span.attributes['grape.operation']).must_equal 'endpoint_run_filters'
         _(span.attributes['grape.filter.type']).must_equal 'after'
 
         _(span.parent_span_id).must_equal parent_span.span_id
