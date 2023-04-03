@@ -61,7 +61,7 @@ module OpenTelemetry
     # For example: OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED = false.
     class Base # rubocop:disable Metrics/ClassLength
       class << self
-        NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
+        NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/
         VALIDATORS = {
           array: ->(v) { v.is_a?(Array) },
           boolean: ->(v) { v == true || v == false }, # rubocop:disable Style/MultipleComparison

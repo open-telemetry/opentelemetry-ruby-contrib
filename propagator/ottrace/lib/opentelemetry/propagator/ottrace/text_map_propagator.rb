@@ -18,8 +18,8 @@ module OpenTelemetry
       # Propagates context using OTTrace header format
       class TextMapPropagator
         PADDING = '0' * 16
-        VALID_TRACE_ID_REGEX = /^[0-9a-f]{32}$/i.freeze
-        VALID_SPAN_ID_REGEX = /^[0-9a-f]{16}$/i.freeze
+        VALID_TRACE_ID_REGEX = /^[0-9a-f]{32}$/i
+        VALID_SPAN_ID_REGEX = /^[0-9a-f]{16}$/i
         TRACE_ID_64_BIT_WIDTH = 64 / 4
         TRACE_ID_HEADER = 'ot-tracer-traceid'
         SPAN_ID_HEADER = 'ot-tracer-spanid'
@@ -28,8 +28,8 @@ module OpenTelemetry
         FIELDS = [TRACE_ID_HEADER, SPAN_ID_HEADER, SAMPLED_HEADER].freeze
 
         # https://github.com/open-telemetry/opentelemetry-specification/blob/14d123c121b6caa53bffd011292c42a181c9ca26/specification/context/api-propagators.md#textmap-propagator0
-        VALID_BAGGAGE_HEADER_NAME_CHARS = /^[\^_`a-zA-Z\-0-9!#$%&'*+.|~]+$/.freeze
-        INVALID_BAGGAGE_HEADER_VALUE_CHARS = /[^\t\u0020-\u007E\u0080-\u00FF]/.freeze
+        VALID_BAGGAGE_HEADER_NAME_CHARS = /^[\^_`a-zA-Z\-0-9!#$%&'*+.|~]+$/
+        INVALID_BAGGAGE_HEADER_VALUE_CHARS = /[^\t\u0020-\u007E\u0080-\u00FF]/
 
         private_constant :PADDING, :VALID_TRACE_ID_REGEX, :VALID_SPAN_ID_REGEX, :TRACE_ID_64_BIT_WIDTH, :TRACE_ID_HEADER,
                          :SPAN_ID_HEADER, :SAMPLED_HEADER, :BAGGAGE_HEADER_PREFIX, :FIELDS, :VALID_BAGGAGE_HEADER_NAME_CHARS,
