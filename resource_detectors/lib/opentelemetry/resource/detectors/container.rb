@@ -32,17 +32,36 @@ module OpenTelemetry
           [CGROUP_V2_PATH, CGROUP_V1_PATH].each do |cgroup|
             next unless File.readable?(cgroup)
 
-            File.readlines(cgroup, chomp: true).each do |line|
-              next unless line.include?(Socket.gethostname)
-
-              parts = line.split('/')
-              parts.shift
-
-              parts.each do |part|
-                return part if part.match?(CONTAINER_REGEX)
-              end
+            case cgroup
+            when CGROUP_V1_PATH
+              return container_id_v1
+            when CGROUP_V2_PATH
+              return container_id_v2
             end
           end
+
+          nil
+        end
+
+        def container_id_v1
+          File.readlines(CGROUP_V1_PATH, chomp: true).each do |line|
+            parts = line.split('/')
+            return parts.last if parts.last.match?(CONTAINER_REGEX)
+          end
+
+          nil
+        end
+
+        def container_id_v2
+          File.readlines(CGROUP_V2_PATH, chomp: true).each do |line|
+            parts = line.split('/')
+            parts.shift
+
+            parts.each do |part|
+              return part if part.match?(CONTAINER_REGEX)
+            end
+          end
+
           nil
         end
       end

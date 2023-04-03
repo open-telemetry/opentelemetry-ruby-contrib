@@ -24,6 +24,27 @@ describe OpenTelemetry::Resource::Detectors::Container do
     describe 'when in a container environment' do
       let(:container_id) { '35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427' }
 
+      let(:cgroup_v1_path) { '/proc/self/cgroup' }
+      let(:cgroup_v2_path) { '/proc/self/mountinfo' }
+      let(:cgroup_v1) do
+        [
+          '14:name=systemd:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '13:rdma:/',
+          '12:pids:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '11:hugetlb:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '10:net_prio:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '9:perf_event:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '8:net_cls:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '7:freezer:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '6:devices:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '5:memory:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '4:blkio:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '3:cpuacct:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '2:cpu:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '1:cpuset:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427'
+        ]
+      end
+
       let(:cgroup_v2) do
         [
           '794 793 0:198 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw',
@@ -50,19 +71,27 @@ describe OpenTelemetry::Resource::Detectors::Container do
           '617 797 0:204 / /sys/firmware ro,relatime - tmpfs tmpfs ro'
         ]
       end
+
       let(:expected_resource_attributes) do
         {
           'container.id' => container_id
         }
       end
 
-      it 'returns a resource with container id' do
-        Socket.stub(:gethostname, container_id) do
-          File.stub(:readable?, true) do
-            File.stub(:readlines, cgroup_v2) do
-              _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-              _(detected_resource_attributes).must_equal(expected_resource_attributes)
-            end
+      it 'returns a resource with container id for cgroup v1' do
+        File.stub :readable?, proc { |arg| arg == cgroup_v1_path } do
+          File.stub(:readlines, cgroup_v1) do
+            _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+            _(detected_resource_attributes).must_equal(expected_resource_attributes)
+          end
+        end
+      end
+
+      it 'returns a resource with container id for cgroup v2' do
+        File.stub :readable?, proc { |arg| arg == cgroup_v2_path } do
+          File.stub(:readlines, cgroup_v2) do
+            _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+            _(detected_resource_attributes).must_equal(expected_resource_attributes)
           end
         end
       end
