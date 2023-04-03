@@ -13,7 +13,7 @@ module OpenTelemetry
 
         UUID_PATTERN = '[0-9a-f]{8}[-_]?[0-9a-f]{4}[-_]?[0-9a-f]{4}[-_]?[0-9a-f]{4}[-_]?[0-9a-f]{12}'
         CONTAINER_PATTERN = '[0-9a-f]{64}'
-        CONTAINER_REGEX = /(?<container>#{UUID_PATTERN}|#{CONTAINER_PATTERN})(?:.scope)?$/.freeze
+        CONTAINER_REGEX = /(?<container>#{UUID_PATTERN}|#{CONTAINER_PATTERN})(?:.scope)?$/
         CGROUP_V1_PATH = '/proc/self/cgroup'
         CGROUP_V2_PATH = '/proc/self/mountinfo'
 
