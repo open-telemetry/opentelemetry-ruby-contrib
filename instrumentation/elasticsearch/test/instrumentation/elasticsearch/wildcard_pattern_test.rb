@@ -11,7 +11,7 @@ require_relative '../../../lib/opentelemetry/instrumentation/elasticsearch'
 describe OpenTelemetry::Instrumentation::Elasticsearch::WildcardPattern do
   let(:wildcard_obj) { OpenTelemetry::Instrumentation::Elasticsearch::WildcardPattern.new(pattern) }
   JSON.parse(
-    File.read("test/fixtures/wildcard_matcher_tests.json", :encoding => 'utf-8')
+    File.read('test/fixtures/wildcard_matcher_tests.json', encoding: 'utf-8')
   ).each do |category, group|
     describe(category) do
       group.each do |pattern_from_json, examples|
