@@ -122,7 +122,7 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
   end
 
   describe 'set config to include entire db statement' do
-    let(:config) { { db_statement: :include } }
+    let(:config) { { db_statement: :raw } }
 
     it 'includes the entire statement ' do
       client.bulk(

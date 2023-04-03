@@ -33,8 +33,8 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
-        option :db_statement, default: :obfuscate, validate: %I[omit obfuscate include]
-        option :sanitize_field_names, default: nil, validate: ->(v) { v.is_a?(String) || v.is_a?(Array) }
+        option :db_statement, default: :sanitize, validate: %I[omit sanitize raw]
+        option :sanitize_field_names, default: nil, validate: :array
         option :capture_es_spans, default: true, validate: :boolean
 
         private
@@ -42,7 +42,7 @@ module OpenTelemetry
         def convert_config(config)
           return unless (field_names = config[:sanitize_field_names])
 
-          field_names = field_names.is_a?(String) ? field_names.split(',') : Array(field_names)
+          field_names = Array(field_names)
           config[:sanitize_field_names] = field_names.map { |p| WildcardPattern.new(p) }
         end
 
