@@ -46,8 +46,15 @@ module OpenTelemetry
             end
 
             attributes.compact!
-            tracer.in_span(format(NAME_FORMAT, method, path), attributes: attributes, kind: :client) do
-              super
+
+            if config[:capture_es_spans]
+              tracer.in_span(format(NAME_FORMAT, method, path), attributes: attributes, kind: :client) do
+                super
+              end
+            else
+              OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do
+                super
+              end
             end
           end
           # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

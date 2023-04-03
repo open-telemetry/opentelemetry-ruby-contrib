@@ -11,6 +11,7 @@ require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 require 'pry-nav'
+require_relative '../../faraday/lib/opentelemetry-instrumentation-faraday'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

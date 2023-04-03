@@ -35,6 +35,7 @@ module OpenTelemetry
         option :peer_service, default: nil, validate: :string
         option :db_statement, default: :obfuscate, validate: %I[omit obfuscate include]
         option :sanitize_field_names, default: nil, validate: ->(v) { v.is_a?(String) || v.is_a?(Array) }
+        option :capture_es_spans, default: true, validate: :boolean
 
         private
 
