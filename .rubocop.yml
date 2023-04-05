@@ -22,6 +22,8 @@ Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
   Enabled: false
+Metrics/ClassLength:
+  Enabled: false
 Metrics/MethodLength:
   Max: 25
 Naming/FileName:
