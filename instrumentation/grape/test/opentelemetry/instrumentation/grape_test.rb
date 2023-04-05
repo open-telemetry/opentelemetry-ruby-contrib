@@ -15,9 +15,9 @@ describe OpenTelemetry::Instrumentation::Grape do
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:run_spans) { spans_per_operation('endpoint_run') }
-  let(:render_spans) { spans_per_operation('endpoint_render') }
-  let(:filter_spans) { spans_per_operation('endpoint_run_filters') }
+  let(:span) { run_spans.first }
   let(:format_spans) { spans_per_operation('format_response') }
+  let(:format_span) { format_spans.first }
   let(:config) { {} }
 
   before do
@@ -44,8 +44,6 @@ describe OpenTelemetry::Instrumentation::Grape do
       it 'produces an endpoint_run span with the expected attributes' do
         _(run_spans.length).must_equal 1
 
-        span = run_spans.first
-
         _(span.name).must_equal expected_span_name
         _(span.kind).must_equal :server
         _(span.attributes['grape.operation']).must_equal 'endpoint_run'
@@ -54,33 +52,26 @@ describe OpenTelemetry::Instrumentation::Grape do
         _(span.attributes['http.method']).must_equal 'GET'
       end
 
-      it 'produces a child endpoint_render span with the expected attributes' do
-        _(render_spans.length).must_equal 1
+      it 'adds an endpoint_render span event with the expected attributes' do
+        render_events = events_per_name('endpoint_render')
 
-        span = render_spans.first
-        parent_span = run_spans.first
-
-        _(span.name).must_equal expected_span_name
-        _(span.kind).must_equal :server
-        _(span.attributes['grape.operation']).must_equal 'endpoint_render'
-
-        _(span.parent_span_id).must_equal parent_span.span_id
-        _(span.trace_id).must_equal parent_span.trace_id
+        _(render_events.length).must_equal 1
+        _(render_events.first.name).must_equal 'endpoint_render'
+        _(render_events.first.attributes).must_be_empty
       end
 
-      it 'does not produce a child endpoint_run_filters span' do
-        _(filter_spans.length).must_equal 0
+      it 'does not add an endpoint_run_filters span' do
+        filter_events = events_per_name('endpoint_run_filters')
+
+        _(filter_events.length).must_equal 0
       end
 
       it 'produces a format_response span with the expected attributes' do
         _(format_spans.length).must_equal 1
-
-        span = format_spans.first
-
-        _(span.name).must_equal expected_span_name
-        _(span.kind).must_equal :server
-        _(span.attributes['grape.operation']).must_equal 'format_response'
-        _(span.attributes['grape.formatter.type']).must_equal 'json'
+        _(format_span.name).must_equal expected_span_name
+        _(format_span.kind).must_equal :server
+        _(format_span.attributes['grape.operation']).must_equal 'format_response'
+        _(format_span.attributes['grape.formatter.type']).must_equal 'json'
       end
     end
 
@@ -103,8 +94,6 @@ describe OpenTelemetry::Instrumentation::Grape do
       before { get request_path }
 
       it 'produces an endpoint_run span with the correct path attributes' do
-        span = run_spans.first
-
         _(span.name).must_equal expected_span_name
         _(span.attributes['http.route']).must_equal expected_path
       end
@@ -127,8 +116,6 @@ describe OpenTelemetry::Instrumentation::Grape do
       before { get request_path }
 
       it 'produces an endpoint_run span with the correct path attributes' do
-        span = run_spans.first
-
         _(span.name).must_equal expected_span_name
         _(span.attributes['http.route']).must_equal expected_path
       end
@@ -154,8 +141,6 @@ describe OpenTelemetry::Instrumentation::Grape do
       before { get request_path }
 
       it 'produces an endpoint_run span with the correct path attributes' do
-        span = run_spans.first
-
         _(span.name).must_equal expected_span_name
         _(span.attributes['http.route']).must_equal expected_path
       end
@@ -176,43 +161,31 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       before { get request_path }
 
-      it 'produces an endpoint_run and an endpoint_render span' do
+      it 'produces an endpoint_run span' do
         _(run_spans.length).must_equal 1
-        _(render_spans.length).must_equal 1
-
-        (run_spans + render_spans).each do |span|
-          _(span.name).must_equal expected_span_name
-        end
+        _(run_spans.first.name).must_equal expected_span_name
       end
 
-      it 'produces two endpoint_run_filters spans for before and after filters' do
-        _(filter_spans.length).must_equal 2
+      it 'adds two endpoint_run_filters events for before and after filters' do
+        filter_events = events_per_name('endpoint_run_filters')
+
+        _(filter_events.length).must_equal 2
       end
 
-      it 'produces the before filter span with the expected attributes and parent span' do
-        span = filter_spans.first
-        parent_span = run_spans.first
+      it 'adds the before filter event with the expected attributes' do
+        event = events_per_name('endpoint_run_filters').first
+        expected_attributes = { 'grape.filter.type' => 'before' }
 
-        _(span.name).must_equal expected_span_name
-        _(span.kind).must_equal :server
-        _(span.attributes['grape.operation']).must_equal 'endpoint_run_filters'
-        _(span.attributes['grape.filter.type']).must_equal 'before'
-
-        _(span.parent_span_id).must_equal parent_span.span_id
-        _(span.trace_id).must_equal parent_span.trace_id
+        _(event.name).must_equal 'endpoint_run_filters'
+        _(event.attributes).must_equal expected_attributes
       end
 
-      it 'produces the after filter span with the expected attributes and parent span' do
-        span = filter_spans.last
-        parent_span = run_spans.first
+      it 'adds the after filter event with the expected attributes' do
+        event = events_per_name('endpoint_run_filters').last
+        expected_attributes = { 'grape.filter.type' => 'after' }
 
-        _(span.name).must_equal expected_span_name
-        _(span.kind).must_equal :server
-        _(span.attributes['grape.operation']).must_equal 'endpoint_run_filters'
-        _(span.attributes['grape.filter.type']).must_equal 'after'
-
-        _(span.parent_span_id).must_equal parent_span.span_id
-        _(span.trace_id).must_equal parent_span.trace_id
+        _(event.name).must_equal 'endpoint_run_filters'
+        _(event.attributes).must_equal expected_attributes
       end
     end
 
@@ -234,26 +207,24 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       before { post request_path, headers: headers, params: {} }
 
-      it 'sets span status to error in endpoint_render and endpoint_run spans' do
-        (run_spans + render_spans).each do |span|
-          _(span.name).must_equal expected_span_name
-          _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-          _(span.status.description).must_equal "Unhandled exception of type: #{expected_error_type}"
-        end
+      it 'sets endpoint_run span status to error' do
+        _(span.name).must_equal expected_span_name
+        _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(span.status.description).must_equal "Unhandled exception of type: #{expected_error_type}"
       end
 
-      it 'records the exception in endpoint_render and endpoint_run spans' do
-        (run_spans + render_spans).each do |span|
-          _(span.events.first.name).must_equal 'exception'
-          _(span.events.first.attributes['exception.type']).must_equal expected_error_type
-          _(span.events.first.attributes['exception.message']).must_equal 'name is missing'
-        end
+      it 'records the exception event' do
+        exception_events = events_per_name('exception')
+
+        _(exception_events.length).must_equal 1
+        _(exception_events.first.attributes['exception.type']).must_equal expected_error_type
+        _(exception_events.first.attributes['exception.message']).must_equal 'name is missing'
       end
 
-      it 'does not set span status to error in endpoint_run_filter spans' do
-        filter_spans.each do |span|
-          _(span.status.code).wont_equal OpenTelemetry::Trace::Status::ERROR
-        end
+      it 'also records the filter event' do
+        filter_events = events_per_name('endpoint_run_filters')
+
+        _(filter_events.length).must_equal 1
       end
     end
 
@@ -274,27 +245,23 @@ describe OpenTelemetry::Instrumentation::Grape do
         expect { get request_path }.must_raise StandardError
       end
 
-      it 'sets span status to error in endpoint_render and endpoint_run spans' do
-        (run_spans + render_spans).each do |span|
-          _(span.name).must_equal expected_span_name
-          _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-          _(span.status.description).must_equal "Unhandled exception of type: #{expected_error_type}"
-        end
+      it 'sets endpoint_run span status to error' do
+        _(span.name).must_equal expected_span_name
+        _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(span.status.description).must_equal "Unhandled exception of type: #{expected_error_type}"
       end
 
-      it 'records the exception in endpoint_render and endpoint_run spans' do
-        (run_spans + render_spans).each do |span|
-          _(span.events.first.name).must_equal 'exception'
-          _(span.events.first.attributes['exception.type']).must_equal expected_error_type
-          _(span.events.first.attributes['exception.message']).must_equal 'Oops!'
-        end
+      it 'records the exception event' do
+        exception_events = events_per_name('exception')
+
+        _(exception_events.length).must_equal 1
+        _(exception_events.first.attributes['exception.type']).must_equal expected_error_type
+        _(exception_events.first.attributes['exception.message']).must_equal 'Oops!'
       end
 
-      it 'does not set span status to error in endpoint_run_filters spans' do
-        filter_spans.each do |span|
-          _(span.name).must_equal expected_span_name
-          _(span.status.code).wont_equal OpenTelemetry::Trace::Status::ERROR
-        end
+      it 'records all the events apart from the exceptions' do
+        _(events_per_name('endpoint_run_filters').length).must_equal 1
+        _(events_per_name('endpoint_render').length).must_equal 1
       end
     end
 
@@ -315,29 +282,24 @@ describe OpenTelemetry::Instrumentation::Grape do
         expect { get request_path }.must_raise StandardError
       end
 
-      it 'sets span status to error in endpoint_run_filters spans' do
-        filter_spans.each do |span|
-          _(span.name).must_equal expected_span_name
-          _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-          _(span.status.description).must_equal "Unhandled exception of type: #{expected_error_type}"
-        end
+      it 'records the filter event' do
+        filter_events = events_per_name('endpoint_run_filters')
+
+        _(filter_events.length).must_equal 1
       end
 
-      it 'records the exception in endpoint_run_filters spans' do
-        (run_spans + render_spans).each do |span|
-          _(span.events.first.name).must_equal 'exception'
-          _(span.events.first.attributes['exception.type']).must_equal expected_error_type
-          _(span.events.first.attributes['exception.message']).must_equal 'Oops!'
-        end
-      end
-
-      it 'produces a span for endpoint_run (with error) despite the exception in filters' do
-        _(run_spans.size).must_equal 1
-
-        span = run_spans.first
-
+      it 'sets endpoint_run span status to error' do
         _(span.name).must_equal expected_span_name
         _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(span.status.description).must_equal "Unhandled exception of type: #{expected_error_type}"
+      end
+
+      it 'records the exception event' do
+        exception_events = events_per_name('exception')
+
+        _(exception_events.length).must_equal 1
+        _(exception_events.first.attributes['exception.type']).must_equal expected_error_type
+        _(exception_events.first.attributes['exception.message']).must_equal 'Oops!'
       end
     end
 
@@ -358,30 +320,21 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       it 'sets format_response span status to error' do
         _(format_spans.size).must_equal 1
-
-        span = format_spans.first
-
-        _(span.name).must_equal expected_span_name
-        _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-        _(span.status.description).must_equal "Unhandled exception of type: #{expected_error_type}"
+        _(format_span.name).must_equal expected_span_name
+        _(format_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(format_span.status.description).must_equal "Unhandled exception of type: #{expected_error_type}"
       end
 
       it 'records the exception in format_response spans' do
-        span = format_spans.first
-
-        _(span.events.first.name).must_equal 'exception'
-        _(span.events.first.attributes['exception.type']).must_equal expected_error_type
-        _(span.events.first.attributes['exception.message']).must_equal 'cannot convert String to xml'
+        _(format_span.events.first.name).must_equal 'exception'
+        _(format_span.events.first.attributes['exception.type']).must_equal expected_error_type
+        _(format_span.events.first.attributes['exception.message']).must_equal 'cannot convert String to xml'
       end
 
-      it 'produces spans for endpoint_run and endpoint_render without errors despite the exception in formatter' do
+      it 'produces endpoint_run span without errors despite the exception in formatter' do
         _(run_spans.size).must_equal 1
-        _(render_spans.size).must_equal 1
-
-        (run_spans + render_spans).each do |span|
-          _(span.name).must_equal expected_span_name
-          _(span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
-        end
+        _(span.name).must_equal expected_span_name
+        _(span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
     end
 
@@ -422,14 +375,11 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       it 'produces an endpoint_run span' do
         _(run_spans.length).must_equal 1
-
-        span = run_spans.first
-
         _(span.name).must_equal expected_span_name
       end
 
-      it 'does not produce a endpoint_render span' do
-        _(render_spans.length).must_equal 0
+      it 'does not add the endpoint_render event to the span' do
+        _(events_per_name('endpoint_render').length).must_equal 0
       end
     end
   end

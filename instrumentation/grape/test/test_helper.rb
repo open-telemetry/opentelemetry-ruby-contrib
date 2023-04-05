@@ -41,3 +41,10 @@ end
 def spans_per_operation(operation)
   spans.select { |s| s.attributes['grape.operation'] == operation }
 end
+
+def events_per_name(operation)
+  events = run_spans.first.events
+  return [] if events.nil?
+
+  events.select { |e| e.name == operation }
+end

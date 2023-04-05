@@ -34,13 +34,8 @@ module OpenTelemetry
 
           # Handles the endpoint_render.grape event
           def endpoint_render(_name, start, _finish, _id, payload)
-            name = span_name(payload[:endpoint])
-            attributes = {
-              'grape.operation' => 'endpoint_render'
-            }
-            tracer.in_span(name, attributes: attributes, start_timestamp: start, kind: :server) do |span|
-              handle_payload_exception(span, payload[:exception_object]) if payload[:exception_object]
-            end
+            span = OpenTelemetry::Trace.current_span
+            span.add_event('endpoint_render', attributes: {}, timestamp: start)
           end
 
           # Handles the endpoint_run_filters.grape events
@@ -51,14 +46,10 @@ module OpenTelemetry
             # Prevent submitting empty filters
             return if (!filters || filters.empty?) || !type || (finish - start).zero?
 
-            name = span_name(payload[:endpoint])
-            attributes = {
-              'grape.operation' => 'endpoint_run_filters',
-              'grape.filter.type' => type.to_s
-            }
-            tracer.in_span(name, attributes: attributes, start_timestamp: start, kind: :server) do |span|
-              handle_payload_exception(span, payload[:exception_object]) if payload[:exception_object]
-            end
+            attributes = { 'grape.filter.type' => type.to_s }
+            span = OpenTelemetry::Trace.current_span
+
+            span.add_event('endpoint_run_filters', attributes: attributes, timestamp: start)
           end
 
           # Handles the format_response.grape event
