@@ -63,12 +63,9 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.0"
-      - name: "Test Ruby 2.7"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "2.7"
+          yard: true
+          rubocop: true
+          build: true
       - name: "JRuby Filter"
         id: jruby_skip
         shell: bash
@@ -95,4 +92,4 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.0.0"
+          ruby: "jruby-9.4.2.0"
