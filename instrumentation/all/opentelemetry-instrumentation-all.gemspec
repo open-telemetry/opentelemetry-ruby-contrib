@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.6.0'
+  spec.required_ruby_version = '>= 3.0'
 
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.19.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.3.0'
@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-ethon', '~> 0.20.0'
   spec.add_dependency 'opentelemetry-instrumentation-excon', '~> 0.20.0'
   spec.add_dependency 'opentelemetry-instrumentation-faraday', '~> 0.22.0'
-  spec.add_dependency 'opentelemetry-instrumentation-graphql', '~> 0.22.0'
+  spec.add_dependency 'opentelemetry-instrumentation-graphql', '~> 0.24.0'
   spec.add_dependency 'opentelemetry-instrumentation-http', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-http_client', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-koala', '~> 0.19.0'
@@ -56,14 +56,14 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-ruby_kafka', '~> 0.19.0'
   spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.22.0'
   spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.21.0'
-  spec.add_dependency 'opentelemetry-instrumentation-trilogy', '~> 0.51.0'
+  spec.add_dependency 'opentelemetry-instrumentation-trilogy', '~> 0.52.0'
 
   spec.add_development_dependency 'active_model_serializers'
   spec.add_development_dependency 'activesupport'
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rubocop', '~> 1.41.1'
+  spec.add_development_dependency 'rubocop', '~> 1.48.1'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'

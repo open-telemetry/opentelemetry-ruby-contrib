@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.6.0'
+  spec.required_ruby_version = '>= 3.0'
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.5.0'
@@ -37,11 +37,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
-  spec.add_development_dependency 'opentelemetry-test-helpers'
-  spec.add_development_dependency 'rack-test', '~> 2.0.2'
-  spec.add_development_dependency 'rails'
+  spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
+  spec.add_development_dependency 'rack-test', '~> 2.1.0'
+  spec.add_development_dependency 'rails', '>= 6'
   spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rubocop', '~> 1.46.0'
+  spec.add_development_dependency 'rubocop', '~> 1.49.0'
   spec.add_development_dependency 'simplecov', '~> 0.22.0'
   spec.add_development_dependency 'webmock', '~> 3.18.1'
   spec.add_development_dependency 'yard', '~> 0.9'
