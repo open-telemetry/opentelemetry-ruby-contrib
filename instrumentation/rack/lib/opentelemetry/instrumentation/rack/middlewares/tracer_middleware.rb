@@ -12,7 +12,7 @@ module OpenTelemetry
       module Middlewares
         # TracerMiddleware propagates context and instruments Rack requests
         # by way of its middleware system
-        class TracerMiddleware # rubocop:disable Metrics/ClassLength
+        class TracerMiddleware
           class << self
             def allowed_rack_request_headers
               @allowed_rack_request_headers ||= Array(config[:allowed_request_headers]).each_with_object({}) do |header, memo|

@@ -43,7 +43,7 @@ module OpenTelemetry
           include ::Rack::Events::Abstract
 
           TOKENS_KEY = 'otel.context.tokens'
-          GOOD_HTTP_STATUSES = (100..499).freeze
+          GOOD_HTTP_STATUSES = (100..499)
 
           # Creates a server span for this current request using the incoming parent context
           # and registers them as the {current_span}

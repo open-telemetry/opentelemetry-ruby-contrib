@@ -59,7 +59,7 @@ module OpenTelemetry
     # convention for environment variable name is the library name, upcased with
     # '::' replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG}, and '_ENABLED' appended.
     # For example: OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED = false.
-    class Base # rubocop:disable Metrics/ClassLength
+    class Base
       class << self
         NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/
         VALIDATORS = {
