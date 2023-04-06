@@ -14,7 +14,6 @@ module OpenTelemetry
       extend self
 
       CURRENT_SPAN_KEY = Context.create_key('current-span')
-
       private_constant :CURRENT_SPAN_KEY
 
       # Returns the current span from the current or provided context
@@ -50,4 +49,5 @@ module OpenTelemetry
 end
 
 require_relative './rack/instrumentation'
+require_relative './rack/util'
 require_relative './rack/version'

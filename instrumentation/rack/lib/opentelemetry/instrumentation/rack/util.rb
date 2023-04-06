@@ -6,8 +6,11 @@
 
 module OpenTelemetry
   module Instrumentation
-    module Racecar
-      VERSION = '0.1.2'
+    module Rack
+      # Provides utilities methods for creating Rack spans
+      module Util
+        require_relative 'util/queue_time'
+      end
     end
   end
 end
