@@ -22,26 +22,27 @@ describe OpenTelemetry::Resource::Detectors::Container do
     end
 
     describe 'when in a container environment' do
-      let(:container_id) { '35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427' }
-
+      let(:container_id_v1) { '35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421' }
+      let(:container_id_v2) { '35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6422' }
       let(:cgroup_v1_path) { '/proc/self/cgroup' }
       let(:cgroup_v2_path) { '/proc/self/mountinfo' }
+
       let(:cgroup_v1) do
         [
-          '14:name=systemd:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
+          '14:name=systemd:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
           '13:rdma:/',
-          '12:pids:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '11:hugetlb:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '10:net_prio:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '9:perf_event:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '8:net_cls:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '7:freezer:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '6:devices:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '5:memory:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '4:blkio:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '3:cpuacct:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '2:cpu:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427',
-          '1:cpuset:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427'
+          '12:pids:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '11:hugetlb:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '10:net_prio:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '9:perf_event:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '8:net_cls:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '7:freezer:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '6:devices:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '5:memory:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '4:blkio:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '3:cpuacct:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '2:cpu:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
+          '1:cpuset:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421'
         ]
       end
 
@@ -55,9 +56,9 @@ describe OpenTelemetry::Resource::Detectors::Container do
           '799 795 0:197 / /dev/mqueue rw,nosuid,nodev,noexec,relatime - mqueue mqueue rw',
           '800 795 0:202 / /dev/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k',
           '802 793 254:1 /docker/volumes/opentelemetry-ruby-contrib_bundle/_data /bundle rw,relatime master:29 - ext4 /dev/vda1 rw',
-          '804 793 254:1 /docker/containers/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427/resolv.conf /etc/resolv.conf rw,relatime - ext4 /dev/vda1 rw',
-          '805 793 254:1 /docker/containers/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427/hostname /etc/hostname rw,relatime - ext4 /dev/vda1 rw',
-          '806 793 254:1 /docker/containers/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6427/hosts /etc/hosts rw,relatime - ext4 /dev/vda1 rw',
+          '804 793 254:1 /docker/containers/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6422/resolv.conf /etc/resolv.conf rw,relatime - ext4 /dev/vda1 rw',
+          '805 793 254:1 /docker/containers/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6422/hostname /etc/hostname rw,relatime - ext4 /dev/vda1 rw',
+          '806 793 254:1 /docker/containers/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6422/hosts /etc/hosts rw,relatime - ext4 /dev/vda1 rw',
           '809 793 0:23 /host-services/docker.proxy.sock /run/docker.sock ro,relatime - tmpfs tmpfs rw,size=803996k,mode=755',
           '573 795 0:200 /0 /dev/console rw,nosuid,noexec,relatime - devpts devpts rw,gid=5,mode=620,ptmxmode=666',
           '609 794 0:198 /bus /proc/bus ro,nosuid,nodev,noexec,relatime - proc proc rw',
@@ -72,9 +73,15 @@ describe OpenTelemetry::Resource::Detectors::Container do
         ]
       end
 
-      let(:expected_resource_attributes) do
+      let(:expected_resource_attributes_v1) do
         {
-          'container.id' => container_id
+          'container.id' => container_id_v1
+        }
+      end
+
+      let(:expected_resource_attributes_v2) do
+        {
+          'container.id' => container_id_v2
         }
       end
 
@@ -82,7 +89,7 @@ describe OpenTelemetry::Resource::Detectors::Container do
         File.stub :readable?, proc { |arg| arg == cgroup_v1_path } do
           File.stub(:readlines, cgroup_v1) do
             _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-            _(detected_resource_attributes).must_equal(expected_resource_attributes)
+            _(detected_resource_attributes).must_equal(expected_resource_attributes_v1)
           end
         end
       end
@@ -91,7 +98,7 @@ describe OpenTelemetry::Resource::Detectors::Container do
         File.stub :readable?, proc { |arg| arg == cgroup_v2_path } do
           File.stub(:readlines, cgroup_v2) do
             _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-            _(detected_resource_attributes).must_equal(expected_resource_attributes)
+            _(detected_resource_attributes).must_equal(expected_resource_attributes_v2)
           end
         end
       end
