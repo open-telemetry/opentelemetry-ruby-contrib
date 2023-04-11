@@ -55,8 +55,8 @@ module OpenTelemetry
               end
             end
           ensure
-            if config[:force_flush] == :ask_the_job && worker&.fork_per_job? ||
-               config[:force_flush] == :always
+            if (config[:force_flush] == :ask_the_job && worker&.fork_per_job?) ||
+                config[:force_flush] == :always
               OpenTelemetry.tracer_provider.force_flush
             end
           end

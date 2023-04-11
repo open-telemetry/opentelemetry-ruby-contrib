@@ -194,7 +194,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
           mock_tracer_provider.expect(:force_flush, true)
 
           OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
-            ::Resque.enqueue(DummyJob)
+            Resque.enqueue(DummyJob)
             work_off_jobs
           end
 
@@ -210,7 +210,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
           mock_tracer_provider.expect(:force_flush, true)
 
           OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
-            ::Resque.enqueue(DummyJob)
+            Resque.enqueue(DummyJob)
             work_off_jobs
           end
 
@@ -226,7 +226,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
           mock_tracer_provider.expect(:force_flush, true)
 
           OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
-            ::Resque.enqueue(DummyJob)
+            Resque.enqueue(DummyJob)
             work_off_jobs
           end
 
