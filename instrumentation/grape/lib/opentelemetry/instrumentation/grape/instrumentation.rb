@@ -13,6 +13,7 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('1.2.0')
 
         install do |_config|
+          install_rack_instrumentation
           require_dependencies
           subscribe
         end
@@ -31,6 +32,10 @@ module OpenTelemetry
 
         def gem_version
           Gem::Version.new(::Grape::VERSION)
+        end
+
+        def install_rack_instrumentation
+          OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install({})
         end
 
         def require_dependencies

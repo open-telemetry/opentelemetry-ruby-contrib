@@ -38,13 +38,17 @@ def unsubscribe
   subscriptions.each { |e| ActiveSupport::Notifications.unsubscribe(e) }
 end
 
-def spans_per_operation(operation)
-  spans.select { |s| s.attributes['grape.operation'] == operation }
+def build_rack_app(api_class)
+  builder = Rack::Builder.app do
+    use OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
+    run api_class
+  end
+  Rack::MockRequest.new(builder)
 end
 
-def events_per_name(operation)
-  events = run_spans.first.events
+def events_per_name(name)
+  events = span.events
   return [] if events.nil?
 
-  events.select { |e| e.name == operation }
+  events.select { |e| e.name == name }
 end

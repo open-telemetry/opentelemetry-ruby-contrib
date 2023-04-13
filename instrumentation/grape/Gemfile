@@ -14,4 +14,5 @@ gemspec
 
 group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
+  gem 'opentelemetry-instrumentation-rack', path: '../rack'
 end

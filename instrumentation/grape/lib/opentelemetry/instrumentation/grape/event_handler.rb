@@ -11,35 +11,34 @@ module OpenTelemetry
       # These handlers contain all the logic needed to create and connect spans.
       class EventHandler
         class << self
-          # Handles the start of the endpoint_run.grape event (the parent event), where the context is attached
-          def endpoint_run_start(_name, _id, payload)
-            name = span_name(payload[:endpoint])
-            span = tracer.start_span(name, attributes: run_attributes(payload), kind: :server)
-            token = OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))
+          # Handles the start of the endpoint_run event, modifying the parent Rack span
+          # and recording it as a span event
+          def endpoint_run(_name, start, _finish, _id, payload)
+            span = OpenTelemetry::Instrumentation::Rack.current_span
+            return unless span.recording?
 
-            payload.merge!(__opentelemetry_span: span, __opentelemetry_ctx_token: token)
-          end
+            endpoint = payload[:endpoint]
+            span.name = span_name(endpoint)
+            span.set_attribute('code.namespace', endpoint.options[:for]&.base.to_s)
+            span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE, path(endpoint))
 
-          # Handles the end of the endpoint_run.grape event (the parent event), where the context is detached
-          def endpoint_run_finish(_name, _id, payload)
-            span = payload.delete(:__opentelemetry_span)
-            token = payload.delete(:__opentelemetry_ctx_token)
-            return unless span && token
-
+            span.add_event('grape.endpoint_run', timestamp: start)
             handle_payload_exception(span, payload[:exception_object]) if payload[:exception_object]
-
-            span.finish
-            OpenTelemetry::Context.detach(token)
           end
 
-          # Handles the endpoint_render.grape event
+          # Handles the endpoint_render event, recording it as a span event
           def endpoint_render(_name, start, _finish, _id, payload)
-            span = OpenTelemetry::Trace.current_span
-            span.add_event('endpoint_render', attributes: {}, timestamp: start)
+            span = OpenTelemetry::Instrumentation::Rack.current_span
+            return unless span.recording?
+
+            span.add_event('grape.endpoint_render', timestamp: start)
           end
 
-          # Handles the endpoint_run_filters.grape events
+          # Handles the endpoint_run_filters events, recording them as a span event
           def endpoint_run_filters(_name, start, finish, _id, payload)
+            span = OpenTelemetry::Instrumentation::Rack.current_span
+            return unless span.recording?
+
             filters = payload[:filters]
             type = payload[:type]
 
@@ -47,22 +46,19 @@ module OpenTelemetry
             return if (!filters || filters.empty?) || !type || (finish - start).zero?
 
             attributes = { 'grape.filter.type' => type.to_s }
-            span = OpenTelemetry::Trace.current_span
-
-            span.add_event('endpoint_run_filters', attributes: attributes, timestamp: start)
+            span.add_event('grape.endpoint_run_filters', attributes: attributes, timestamp: start)
           end
 
-          # Handles the format_response.grape event
+          # Handles the format_response event, recording it as a span event
           def format_response(_name, start, _finish, _id, payload)
-            endpoint = payload[:env]['api.endpoint']
-            name = span_name(endpoint)
+            span = OpenTelemetry::Instrumentation::Rack.current_span
+            return unless span.recording?
+
             attributes = {
-              'grape.operation' => 'format_response',
               'grape.formatter.type' => formatter_type(payload[:formatter])
             }
-            tracer.in_span(name, attributes: attributes, start_timestamp: start, kind: :server) do |span|
-              handle_payload_exception(span, payload[:exception_object]) if payload[:exception_object]
-            end
+            span.add_event('grape.format_response', attributes: attributes, timestamp: start)
+            handle_payload_exception(span, payload[:exception_object]) if payload[:exception_object]
           end
 
           private
@@ -72,24 +68,17 @@ module OpenTelemetry
           end
 
           def span_name(endpoint)
-            "#{request_method(endpoint)} #{path(endpoint)}"
-          end
-
-          def run_attributes(payload)
-            endpoint = payload[:endpoint]
-            path = path(endpoint)
-            {
-              'grape.operation' => 'endpoint_run',
-              'code.namespace' => endpoint.options[:for]&.base.to_s,
-              OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => request_method(endpoint),
-              OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE => path
-            }
+            "HTTP #{request_method(endpoint)} #{path(endpoint)}"
           end
 
           # ActiveSupport::Notifications will attach a `:exception_object` to the payload if there was
           # an error raised during the execution of the &block associated to the Notification.
-          # This can be safely added to the span for tracing.
           def handle_payload_exception(span, exception)
+            # Only record exceptions if they were not raised (i.e. do not have a status code in Grape)
+            # or do not have a 5xx status code. These exceptions are recorded by Rack.
+            # See instrumentation/rack/lib/opentelemetry/instrumentation/rack/middlewares/tracer_middleware.rb#L155
+            return unless exception.respond_to?('status') && exception.status.to_i < 500
+
             span.record_exception(exception)
             span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{exception.class}")
           end

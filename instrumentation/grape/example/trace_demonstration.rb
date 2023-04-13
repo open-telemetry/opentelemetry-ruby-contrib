@@ -7,6 +7,7 @@ Bundler.require
 require 'opentelemetry-api'
 require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-grape'
+require 'opentelemetry-instrumentation-rack'
 require 'grape'
 
 # Export traces to console
@@ -39,7 +40,12 @@ class ExampleAPI < Grape::API
 end
 
 # Set up fake Rack application
-builder = Rack::Builder.app { run ExampleAPI }
+builder = Rack::Builder.app do
+  # Integration is automatic in web frameworks but plain Rack applications require this line.
+  # Enable it in your config.ru.
+  use OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
+  run ExampleAPI
+end
 app = Rack::MockRequest.new(builder)
 
 app.get('/hello')
