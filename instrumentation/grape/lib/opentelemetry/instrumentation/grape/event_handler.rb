@@ -19,8 +19,7 @@ module OpenTelemetry
 
             endpoint = payload[:endpoint]
             span.name = span_name(endpoint)
-            span.set_attribute('code.namespace', endpoint.options[:for]&.base.to_s)
-            span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE, path(endpoint))
+            span.add_attributes(attributes_from_grape_endpoint(endpoint))
 
             span.add_event('grape.endpoint_run', timestamp: start)
             handle_payload_exception(span, payload[:exception_object]) if payload[:exception_object]
@@ -63,12 +62,15 @@ module OpenTelemetry
 
           private
 
-          def tracer
-            Grape::Instrumentation.instance.tracer
-          end
-
           def span_name(endpoint)
             "HTTP #{request_method(endpoint)} #{path(endpoint)}"
+          end
+
+          def attributes_from_grape_endpoint(endpoint)
+            {
+              OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => endpoint.options[:for]&.base.to_s,
+              OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE => path(endpoint)
+            }
           end
 
           # ActiveSupport::Notifications will attach a `:exception_object` to the payload if there was
@@ -88,6 +90,8 @@ module OpenTelemetry
           end
 
           def path(endpoint)
+            return '' unless endpoint.routes
+
             namespace = endpoint.routes.first.namespace
             version = endpoint.routes.first.options[:version] || ''
             prefix = endpoint.routes.first.options[:prefix]&.to_s || ''
