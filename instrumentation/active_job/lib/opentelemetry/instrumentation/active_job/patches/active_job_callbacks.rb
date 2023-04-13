@@ -36,6 +36,7 @@ module OpenTelemetry
                 otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
                   span.set_attribute('messaging.active_job.executions', executions_count)
                   super
+                  span.add_attributes(job_finished_attributes)
                 end
               else
                 span_links = []
@@ -53,6 +54,7 @@ module OpenTelemetry
                   span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
                   raise e
                 ensure
+                  span.add_attributes(job_finished_attributes)
                   root_span.finish
                 end
               end
@@ -72,6 +74,8 @@ module OpenTelemetry
               'messaging.destination' => job.queue_name,
               'messaging.message_id' => job.job_id,
               'messaging.active_job.provider_job_id' => job.provider_job_id,
+              'messaging.active_job.enqueued_at' => job.enqueued_at,
+              'messaging.active_job.enqueued_duration_ms' => milliseconds_since_enqueued(job),
               'messaging.active_job.scheduled_at' => job.scheduled_at,
               'messaging.active_job.priority' => job.priority
             }
@@ -79,6 +83,16 @@ module OpenTelemetry
             otel_attributes['net.transport'] = 'inproc' if %w[async inline].include?(job.class.queue_adapter_name)
 
             otel_attributes.compact
+          end
+
+          def job_finished_attributes
+            {
+              'messaging.active_job.enqueued_to_finished_duration_ms' => milliseconds_since_enqueued(self)
+            }.compact
+          end
+
+          def milliseconds_since_enqueued(job)
+            (Time.now - Time.iso8601(job.enqueued_at)) * 1000 if job.enqueued_at.present?
           end
 
           def otel_tracer
