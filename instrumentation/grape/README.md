@@ -2,7 +2,7 @@
 
 The Grape instrumentation is a community-maintained instrumentation for [Grape][grape], a REST-like API framework for Ruby.
 
-It relies on the Grape built-in support for `ActiveSupport::Notifications` (more info [here](https://github.com/ruby-grape/grape#active-support-instrumentation)).
+It relies on the Grape built-in support for `ActiveSupport::Notifications` (more info [here](https://github.com/ruby-grape/grape#active-support-instrumentation)) and the [OpenTelemetry Rack instrumentation](opentelemetry-rack-instrumentation).
 
 It currently supports the following events:
 
@@ -31,7 +31,7 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-Since Grape is "designed to run on Rack or complement existing web application frameworks such as Rails and Sinatra", it is recommended to use this instrumentation along with the Rack, Rails and/or Sinatra instrumentations.
+Grape is "designed to run on Rack or complement existing web application frameworks such as Rails and Sinatra". As a result, this instrumentation uses the Rack instrumentation and modifies the Rack spans, modifying the span name and adding Grape attributes and events. It is recommended to use it along with Rails and/or Sinatra instrumentations, if any of these frameworks are being used.
 
 Alternatively, you can also call `use_all` to install all the available instrumentation.
 
@@ -88,3 +88,4 @@ The `opentelemetry-instrumentation-grape` gem is distributed under the Apache 2.
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [grape]: https://github.com/ruby-grape/grape
+[opentelemetry-rack-instrumentation]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/rack
