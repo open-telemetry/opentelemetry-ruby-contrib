@@ -26,7 +26,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.0'
 
-  spec.add_dependency 'opentelemetry-instrumentation-grape', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.19.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.19.0'
@@ -36,6 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-ethon', '~> 0.20.0'
   spec.add_dependency 'opentelemetry-instrumentation-excon', '~> 0.20.0'
   spec.add_dependency 'opentelemetry-instrumentation-faraday', '~> 0.22.0'
+  spec.add_dependency 'opentelemetry-instrumentation-grape', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-graphql', '~> 0.24.0'
   spec.add_dependency 'opentelemetry-instrumentation-http', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-http_client', '~> 0.21.0'
