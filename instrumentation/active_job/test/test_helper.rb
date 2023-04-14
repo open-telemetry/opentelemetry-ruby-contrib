@@ -25,6 +25,15 @@ class RetryJob < ActiveJob::Base
   end
 end
 
+class RetryWithWaitJob < ActiveJob::Base
+  retry_on StandardError, wait: 0, attempts: 2
+
+  def perform
+    sleep(0.01)
+    raise StandardError
+  end
+end
+
 class ExceptionJob < ActiveJob::Base
   def perform
     raise StandardError, 'This job raises an exception'

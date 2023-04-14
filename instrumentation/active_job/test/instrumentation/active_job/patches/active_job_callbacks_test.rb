@@ -193,6 +193,81 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
     end
 
+    describe 'messaging.active_job.first_enqueued_at' do
+      it "is set for inline jobs" do
+        begin
+          ActiveJob::Base.queue_adapter.shutdown
+        rescue StandardError
+          nil
+        end
+
+        ActiveJob::Base.queue_adapter = :inline
+        TestJob.perform_later
+        [send_span, process_span].each do |span|
+          assert(span.attributes['messaging.active_job.first_enqueued_at'])
+        end
+      end
+
+      it "is set for async jobs" do
+        TestJob.perform_later
+        [send_span, process_span].each do |span|
+          assert(span.attributes['messaging.active_job.first_enqueued_at'])
+        end
+      end
+
+      it "the value carries over between retries" do
+        begin
+          RetryWithWaitJob.perform_later
+        rescue StandardError
+          nil
+        end
+
+        first_enqueued_at_values = spans.filter { |s| s.kind == :consumer }.map { |s| s.attributes['messaging.active_job.first_enqueued_at'] }
+        _(first_enqueued_at_values.size).must_equal(2)
+        assert(first_enqueued_at_values.first)
+        assert_same(first_enqueued_at_values.first, first_enqueued_at_values.last)
+      end
+    end
+
+    describe 'messaging.active_job.enqueued_and_retry_duration_ms' do
+      it "is set for inline jobs" do
+        begin
+          ActiveJob::Base.queue_adapter.shutdown
+        rescue StandardError
+          nil
+        end
+
+        ActiveJob::Base.queue_adapter = :inline
+        TestJob.perform_later
+        [send_span, process_span].each do |span|
+          assert(span.attributes['messaging.active_job.enqueued_and_retry_duration_ms'])
+        end
+      end
+
+      it "is set for async jobs" do
+        TestJob.perform_later
+        [send_span, process_span].each do |span|
+          assert(span.attributes['messaging.active_job.enqueued_and_retry_duration_ms'])
+        end
+      end
+
+      it "the value grows between retries" do
+        begin
+          RetryWithWaitJob.perform_later
+        rescue StandardError
+          nil
+        end
+
+        values = spans.filter { |s| s.kind == :consumer }
+                      .sort_by { |s| s.attributes['messaging.active_job.executions'] }
+                      .map { |s| s.attributes['messaging.active_job.enqueued_and_retry_duration_ms'] }
+
+        _(values.size).must_equal(2)
+        assert(values.first)
+        assert(values.last > values.first)
+      end
+    end
+
     describe 'messaging.active_job.enqueued_to_finish_duration_ms' do
       it "is set when processing inline jobs" do
         begin

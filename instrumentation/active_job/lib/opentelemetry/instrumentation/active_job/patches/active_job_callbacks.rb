@@ -13,6 +13,7 @@ module OpenTelemetry
           def self.prepended(base)
             base.class_eval do
               around_enqueue do |job, block|
+                job.first_enqueued_at ||= Time.now.utc.iso8601(9)
                 span_kind = job.class.queue_adapter_name == 'inline' ? :client : :producer
                 span_name = "#{otel_config[:span_naming] == :job_class ? job.class : job.queue_name} send"
                 span_attributes = job_attributes(job)
@@ -75,7 +76,9 @@ module OpenTelemetry
               'messaging.message_id' => job.job_id,
               'messaging.active_job.provider_job_id' => job.provider_job_id,
               'messaging.active_job.enqueued_at' => job.enqueued_at,
-              'messaging.active_job.enqueued_duration_ms' => milliseconds_since_enqueued(job),
+              'messaging.active_job.enqueued_duration_ms' => milliseconds_since(job.enqueued_at),
+              'messaging.active_job.first_enqueued_at' => job.first_enqueued_at,
+              'messaging.active_job.enqueued_and_retry_duration_ms' => milliseconds_since(job.first_enqueued_at),
               'messaging.active_job.scheduled_at' => job.scheduled_at,
               'messaging.active_job.priority' => job.priority
             }
@@ -87,12 +90,13 @@ module OpenTelemetry
 
           def job_finished_attributes
             {
-              'messaging.active_job.enqueued_to_finished_duration_ms' => milliseconds_since_enqueued(self)
+              'messaging.active_job.first_enqueued_to_finished_duration_ms' => milliseconds_since(first_enqueued_at),
+              'messaging.active_job.enqueued_to_finished_duration_ms' => milliseconds_since(enqueued_at)
             }.compact
           end
 
-          def milliseconds_since_enqueued(job)
-            (Time.now - Time.iso8601(job.enqueued_at)) * 1000 if job.enqueued_at.present?
+          def milliseconds_since(timestamp)
+            (Time.now - Time.iso8601(timestamp)) * 1000 if timestamp.present?
           end
 
           def otel_tracer

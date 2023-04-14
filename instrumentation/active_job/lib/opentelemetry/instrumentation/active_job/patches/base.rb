@@ -12,6 +12,7 @@ module OpenTelemetry
         module Base
           def self.prepended(base)
             base.class_eval do
+              attr_accessor :first_enqueued_at
               attr_accessor :metadata
             end
           end
@@ -23,10 +24,14 @@ module OpenTelemetry
           ruby2_keywords(:initialize) if respond_to?(:ruby2_keywords, true)
 
           def serialize
-            super.merge('metadata' => serialize_arguments(metadata))
+            super.merge(
+              'first_enqueued_at' => first_enqueued_at,
+              'metadata' => serialize_arguments(metadata)
+            )
           end
 
           def deserialize(job_data)
+            self.first_enqueued_at = job_data["first_enqueued_at"]
             self.metadata = deserialize_arguments(job_data['metadata'] || []).to_h
             super
           end
