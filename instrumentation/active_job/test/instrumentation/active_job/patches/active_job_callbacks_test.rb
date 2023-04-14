@@ -268,27 +268,6 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
     end
 
-    describe 'messaging.active_job.enqueued_to_finish_duration_ms' do
-      it "is set when processing inline jobs" do
-        begin
-          ActiveJob::Base.queue_adapter.shutdown
-        rescue StandardError
-          nil
-        end
-
-        ActiveJob::Base.queue_adapter = :inline
-        TestJob.perform_later
-        _(send_span.attributes['messaging.active_job.enqueued_to_finished_duration_ms']).must_be_nil
-        assert(process_span.attributes['messaging.active_job.enqueued_to_finished_duration_ms'])
-      end
-
-      it "is set when processing async jobs" do
-        TestJob.perform_later
-        _(send_span.attributes['messaging.active_job.enqueued_to_finished_duration_ms']).must_be_nil
-        assert(process_span.attributes['messaging.active_job.enqueued_to_finished_duration_ms'])
-      end
-    end
-
     describe 'messaging.active_job.scheduled_at' do
       it 'is unset for jobs that do not specify a wait time' do
         TestJob.perform_later

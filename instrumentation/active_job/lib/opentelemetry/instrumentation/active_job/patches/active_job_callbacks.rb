@@ -37,7 +37,6 @@ module OpenTelemetry
                 otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
                   span.set_attribute('messaging.active_job.executions', executions_count)
                   super
-                  span.add_attributes(job_finished_attributes)
                 end
               else
                 span_links = []
@@ -55,7 +54,6 @@ module OpenTelemetry
                   span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
                   raise e
                 ensure
-                  span.add_attributes(job_finished_attributes)
                   root_span.finish
                 end
               end
@@ -86,13 +84,6 @@ module OpenTelemetry
             otel_attributes['net.transport'] = 'inproc' if %w[async inline].include?(job.class.queue_adapter_name)
 
             otel_attributes.compact
-          end
-
-          def job_finished_attributes
-            {
-              'messaging.active_job.first_enqueued_to_finished_duration_ms' => milliseconds_since(first_enqueued_at),
-              'messaging.active_job.enqueued_to_finished_duration_ms' => milliseconds_since(enqueued_at)
-            }.compact
           end
 
           def milliseconds_since(timestamp)
