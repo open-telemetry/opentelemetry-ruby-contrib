@@ -2,7 +2,7 @@
 
 ### v0.22.0 / 2023-04-16
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
 * ADDED: Drop support for EoL Ruby 2.7 
 
