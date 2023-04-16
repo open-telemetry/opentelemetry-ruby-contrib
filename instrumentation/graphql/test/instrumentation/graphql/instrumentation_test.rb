@@ -15,14 +15,15 @@ describe OpenTelemetry::Instrumentation::GraphQL do
   before do
     # Remove added tracers
     GraphQL::Schema._reset_tracer_for_testing
+    instrumentation.instance_variable_set(:@installed, false)
   end
 
   after do
-    # Force re-install of instrumentation
-    instrumentation.instance_variable_set(:@installed, false)
-
     # Remove added tracers
     GraphQL::Schema._reset_tracer_for_testing
+
+    # Force re-install of instrumentation
+    instrumentation.instance_variable_set(:@installed, false)
   end
 
   it 'has #name' do
