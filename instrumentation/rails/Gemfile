@@ -10,4 +10,5 @@ gemspec
 
 group :test, :development do
   gem 'pry-byebug'
+  gem 'opentelemetry-instrumentation-base', path: '../base'
 end
