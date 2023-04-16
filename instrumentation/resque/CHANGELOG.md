@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-resque
 
+### v0.4.0 / 2023-04-16
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Add :force_flush option to Resque instrumentation 
+* FIXED: Fix flaky tests for resque. 
+
 ### v0.3.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 

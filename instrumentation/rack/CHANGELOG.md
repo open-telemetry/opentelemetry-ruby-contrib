@@ -1,5 +1,14 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.23.0 / 2023-04-16
+
+* BREAKING CHANGE: Remove retain_middleware_names Rack Option 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Remove retain_middleware_names Rack Option 
+* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Use Rack::Events for instrumentation 
+
 ### v0.22.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 
