@@ -2,7 +2,7 @@
 
 ### v0.23.0 / 2023-04-16
 
-* BREAKING CHANGE: Remove retain_middleware_names Rack Option 
+* BREAKING CHANGE: Remove retain_middleware_names Rack Option
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 
 
 * ADDED: Remove retain_middleware_names Rack Option 
