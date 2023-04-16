@@ -16,4 +16,5 @@ group :test, :development do
   gem 'opentelemetry-instrumentation-active_job', path: '../active_job'
   gem 'opentelemetry-instrumentation-active_record', path: '../active_record'
   gem 'opentelemetry-instrumentation-active_support', path: '../active_support'
+  gem 'opentelemetry-instrumentation-rack', path: '../rack'
 end
