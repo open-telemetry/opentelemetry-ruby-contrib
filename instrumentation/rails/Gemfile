@@ -11,5 +11,9 @@ gemspec
 group :test, :development do
   gem 'pry-byebug'
   gem 'opentelemetry-instrumentation-base', path: '../base'
+  gem 'opentelemetry-instrumentation-action_pack', path: '../action_pack'
+  gem 'opentelemetry-instrumentation-action_view', path: '../action_view'
+  gem 'opentelemetry-instrumentation-active_job', path: '../active_job'
+  gem 'opentelemetry-instrumentation-active_record', path: '../active_record'
   gem 'opentelemetry-instrumentation-active_support', path: '../active_support'
 end
