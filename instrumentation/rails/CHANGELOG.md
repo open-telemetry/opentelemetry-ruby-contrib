@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.26.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
 ### v0.25.0 / 2023-02-08
 
 * BREAKING CHANGE: Update Instrumentations GraphQL, HttpClient, Rails [#303](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/303) 
