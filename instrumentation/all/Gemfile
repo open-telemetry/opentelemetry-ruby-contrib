@@ -8,6 +8,10 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'opentelemetry-instrumentation-grape', path: '../grape'
-gem 'opentelemetry-instrumentation-racecar', path: '../racecar'
-gem 'opentelemetry-instrumentation-rake', path: '../rake'
+group :test do
+  Dir.entries('../')
+     .select { |entry| File.directory?(File.join('../', entry)) }
+     .reject { |entry| %w[. .. all grape].include?(entry) }
+     .sort
+     .each { |dir| gem "opentelemetry-instrumentation-#{dir}", path: "../#{dir}" }
+end
