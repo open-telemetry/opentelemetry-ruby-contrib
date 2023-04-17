@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.34.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Add Grape instrumentation 
+
 ### v0.33.0 / 2023-03-15
 
 * BREAKING CHANGE: Add support for GraphQL 2.0.19
