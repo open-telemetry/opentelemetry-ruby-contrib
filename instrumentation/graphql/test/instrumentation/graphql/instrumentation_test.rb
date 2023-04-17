@@ -18,14 +18,6 @@ describe OpenTelemetry::Instrumentation::GraphQL do
     instrumentation.instance_variable_set(:@installed, false)
   end
 
-  after do
-    # Remove added tracers
-    GraphQL::Schema._reset_tracer_for_testing
-
-    # Force re-install of instrumentation
-    instrumentation.instance_variable_set(:@installed, false)
-  end
-
   it 'has #name' do
     _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::GraphQL'
   end
