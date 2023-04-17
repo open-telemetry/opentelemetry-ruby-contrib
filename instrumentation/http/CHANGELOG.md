@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.22.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
 ### v0.21.0 / 2023-01-14
 
 * ADDED: Add request/response hooks to more http clients 
