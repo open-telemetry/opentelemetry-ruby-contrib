@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.22.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+* FIXED: Drop Rails dependency for ActiveSupport Instrumentation 
+
 ### v0.21.1 / 2023-01-14
 
 * FIXED: Add untraced check to the Net::HTTP connect instrumentation 
