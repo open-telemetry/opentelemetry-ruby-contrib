@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-rspec
 
+### v0.3.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+* DOCS: Fix typo in rspec example 
+
 ### v0.2.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 

@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.4.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
 ### v0.3.2 / 2023-01-14
 
 * DOCS: Fix gem homepage 

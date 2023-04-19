@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-common', '~> 0.19.3'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.21.0'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.0'
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
   spec.add_development_dependency 'bundler', '~> 2.4'
@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
   spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rdkafka'
+  spec.add_development_dependency 'rdkafka', '>= 0.12'
   spec.add_development_dependency 'rubocop', '~> 1.48.1'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'webmock', '~> 3.7.6'
