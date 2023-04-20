@@ -39,7 +39,10 @@ module OpenTelemetry
         #   May be nil.
         def container_id
           [CGROUP_V2_PATH, CGROUP_V1_PATH].each do |cgroup|
-            next unless File.readable?(cgroup)
+            unless File.readable?(cgroup)
+              OpenTelemetry.handle_error(message: "Container resource detector - #{cgroup} could not be read.")
+              next
+            end
 
             File.readlines(cgroup, chomp: true).each do |line|
               parts = line.split('/')

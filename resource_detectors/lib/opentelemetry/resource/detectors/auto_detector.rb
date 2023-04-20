@@ -13,7 +13,6 @@ module OpenTelemetry
 
         DETECTORS = [
           OpenTelemetry::Resource::Detectors::Azure,
-          OpenTelemetry::Resource::Detectors::Container,
           OpenTelemetry::Resource::Detectors::GoogleCloudPlatform
         ].freeze
 
