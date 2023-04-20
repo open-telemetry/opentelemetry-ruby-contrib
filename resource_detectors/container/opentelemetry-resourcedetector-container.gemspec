@@ -6,7 +6,7 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/resource/detectors/version'
+require 'opentelemetry/resource/detectors/container/version'
 
 Gem::Specification.new do |spec|
   spec.name        = 'opentelemetry-resourcedetector-container'

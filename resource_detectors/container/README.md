@@ -1,6 +1,6 @@
 # Opentelemetry::Resource::Detectors::Container
 
-The `opentelemetry-resource_detectors-container` gem provides a container resource detector for OpenTelemetry.
+The `opentelemetry-resourcedetector-container` gem provides a container resource detector for OpenTelemetry.
 
 ## What is OpenTelemetry?
 
@@ -10,7 +10,7 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 ## How does this gem fit in?
 
-The `opentelemetry-resource-detectors-container` gem provides a means of retrieving a resource for supported environments following the resource semantic conventions.
+The `opentelemetry-resourcedetector-container` gem provides a means of retrieving a resource for supported environments following the resource semantic conventions.
 
 ## How do I get started?
 
@@ -18,7 +18,7 @@ Install the gem using:
 
 ```
 gem install opentelemetry-sdk
-gem install opentelemetry-resource_detectors-container
+gem install opentelemetry-resourcedetector-container
 ```
 
 Or, if you use Bundler, include `opentelemetry-sdk` and `opentelemetry-resourcedetector-container` in your `Gemfile`.
@@ -34,12 +34,12 @@ end
 
 ## How can I get involved?
 
-The `opentelemetry-resource_detectors-container` gem source is on github, along with related gems.
+The `opentelemetry-resourcedetector-container` gem source is on github, along with related gems.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the meeting calendar for dates and times. For more information on this and other language SIGs, see the OpenTelemetry community page.
 
 ## License
 
-The `opentelemetry-resource_detectors-container` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
+The `opentelemetry-resourcedetector-container` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
 
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/discussions
