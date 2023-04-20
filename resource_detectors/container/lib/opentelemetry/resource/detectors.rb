@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/sdk'
-require 'opentelemetry/resource/detectors/version'
 require 'opentelemetry/resource/detectors/container'
+require 'opentelemetry/resource/detectors/container/version'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
