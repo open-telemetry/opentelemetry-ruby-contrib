@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.35.0 / 2023-04-21
+
+* ADDED: Re-add Grape instrumentation to opentelemetry-instrumentation-all
+
 ### v0.34.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
