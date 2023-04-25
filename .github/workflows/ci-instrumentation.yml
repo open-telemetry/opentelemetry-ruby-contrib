@@ -29,6 +29,7 @@ jobs:
           - ethon
           - excon
           - faraday
+          - grape
           - graphql
           - http
           - http_client

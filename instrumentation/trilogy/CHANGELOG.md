@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.53.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
 ### v0.52.0 / 2023-03-06
 
 * ADDED: Add with_attributes context propagation to Trilogy instrumentation 

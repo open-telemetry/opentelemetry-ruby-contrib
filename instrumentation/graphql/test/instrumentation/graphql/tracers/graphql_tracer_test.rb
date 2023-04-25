@@ -38,16 +38,6 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     exporter.reset
   end
 
-  after do
-    # Force re-install of instrumentation
-    instrumentation.instance_variable_set(:@installed, false)
-
-    # Reset various instance variables to clear state between tests
-    [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
-
-    exporter.reset
-  end
-
   describe '#platform_trace' do
     it 'traces platform keys' do
       result = SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })

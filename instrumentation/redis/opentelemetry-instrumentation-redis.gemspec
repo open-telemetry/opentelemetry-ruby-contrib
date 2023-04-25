@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-common', '~> 0.19.3'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.21.0'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.0'
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
   spec.add_development_dependency 'bundler', '~> 2.4'
@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
   spec.add_development_dependency 'redis', '~> 4.1.0'
   spec.add_development_dependency 'redis-client', '~> 0.7'
-  spec.add_development_dependency 'rubocop', '~> 1.48.1'
+  spec.add_development_dependency 'rubocop', '~> 1.50.2'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
