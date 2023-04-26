@@ -40,7 +40,7 @@ end
 
 def build_rack_app(api_class)
   builder = Rack::Builder.app do
-    use OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
+    use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args)
     run api_class
   end
   Rack::MockRequest.new(builder)
