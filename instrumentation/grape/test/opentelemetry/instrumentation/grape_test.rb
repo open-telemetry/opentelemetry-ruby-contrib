@@ -184,6 +184,35 @@ describe OpenTelemetry::Instrumentation::Grape do
       end
     end
 
+    describe 'when an API endpoint uses a custom formatter' do
+      class CustomFormatterAPI < Grape::API
+        format :txt
+        formatter :txt, ->(object, _) { object.to_s }
+
+        get :hello do
+          { message: 'Hello, world!' }
+        end
+      end
+
+      let(:app) { build_rack_app(CustomFormatterAPI) }
+      let(:request_path) { '/hello' }
+      let(:expected_span_name) { 'HTTP GET /hello' }
+
+      before { app.get request_path }
+
+      it 'produces a Rack span with the expected name' do
+        _(spans.length).must_equal 1
+        _(span.name).must_equal expected_span_name
+      end
+
+      it 'adds a format_response span event with the formatter type attribute set to custom' do
+        format_events = events_per_name('grape.format_response')
+
+        _(format_events.length).must_equal 1
+        _(format_events.first.attributes['grape.formatter.type']).must_equal 'custom'
+      end
+    end
+
     describe 'when an API endpoint receives params that raise a validation error' do
       class ValidationErrorAPI < Grape::API
         format :json

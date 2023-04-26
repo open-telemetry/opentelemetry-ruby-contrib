@@ -100,9 +100,15 @@ module OpenTelemetry
           end
 
           def formatter_type(formatter)
+            return 'custom' unless built_in_grape_formatter?(formatter)
+
             basename = formatter.name.split('::').last
             # Convert from CamelCase to snake_case
             basename.gsub(/([a-z\d])([A-Z])/, '\1_\2').downcase
+          end
+
+          def built_in_grape_formatter?(formatter)
+            formatter.respond_to?('name') && formatter.name.include?('Grape::Formatter')
           end
         end
       end
