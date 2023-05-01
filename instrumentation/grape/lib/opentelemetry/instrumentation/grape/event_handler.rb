@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'rack'
+
 module OpenTelemetry
   module Instrumentation
     module Grape
@@ -79,7 +81,7 @@ module OpenTelemetry
             # Only record exceptions if they were not raised (i.e. do not have a status code in Grape)
             # or do not have a 5xx status code. These exceptions are recorded by Rack.
             # See instrumentation/rack/lib/opentelemetry/instrumentation/rack/middlewares/tracer_middleware.rb#L155
-            return unless exception.respond_to?('status') && exception.status.to_i < 500
+            return unless exception.respond_to?('status') && ::Rack::Utils.status_code(exception.status) < 500
 
             span.record_exception(exception)
             span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{exception.class}")

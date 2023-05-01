@@ -376,6 +376,25 @@ describe OpenTelemetry::Instrumentation::Grape do
       end
     end
 
+    describe 'when an API endpoint returns an error with the status as a symbol' do
+      class ErrorResponseAPI < Grape::API
+        get :error_response do
+          error!('Not found', :not_found)
+        end
+      end
+
+      let(:app) { build_rack_app(ErrorResponseAPI) }
+      let(:request_path) { '/error_response' }
+      let(:expected_span_name) { 'HTTP GET /error_response' }
+
+      before { app.get request_path }
+
+      it 'does not set span status to error' do
+        _(span.name).must_equal expected_span_name
+        _(span.status.code).wont_equal OpenTelemetry::Trace::Status::ERROR
+      end
+    end
+
     describe 'when an API endpoint receives a request and some events are ignored in the configs' do
       class IgnoredEventAPI < Grape::API
         get :success do
