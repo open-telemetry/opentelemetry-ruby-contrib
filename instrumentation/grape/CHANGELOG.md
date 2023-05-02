@@ -2,7 +2,7 @@
 
 ### v0.1.2 / 2023-05-02
 
-* FIXED: Grape Instrumentation handle status code symbol 
+* FIXED: Grape Instrumentation handle status code symbol
 
 ### v0.1.1 / 2023-04-26
 
