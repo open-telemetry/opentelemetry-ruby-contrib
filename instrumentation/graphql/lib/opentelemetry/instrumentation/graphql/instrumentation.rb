@@ -12,17 +12,29 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the GraphQL instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         compatible do
-          Gem::Requirement.new('<= 2.0.17').satisfied_by?(gem_version) ||
-            Gem::Requirement.new('~> 2.0.19').satisfied_by?(gem_version)
+          if config[:legacy_tracing]
+            Gem::Requirement.new('<= 2.0.17').satisfied_by?(gem_version) || Gem::Requirement.new('~> 2.0.19').satisfied_by?(gem_version)
+          else
+            new_tracing_api_gem_requirement.satisfied_by?(gem_version) && Gem::Requirement.new('< 3.0.0').satisfied_by?(gem_version)
+          end
         end
 
         install do |config|
-          require_dependencies
-          install_tracer(config)
+          if config[:legacy_tracing]
+            require_relative 'tracers/graphql_tracer'
+            install_tracer(config)
+          else
+            require_relative 'tracers/graphql_trace'
+            install_new_tracer(config)
+          end
         end
 
         present do
           defined?(::GraphQL)
+        end
+
+        def use_new_tracing_api?
+          new_tracing_api_gem_requirement.satisfied_by?(gem_version)
         end
 
         ## Supported configuration keys for the install config hash:
@@ -49,6 +61,7 @@ module OpenTelemetry
         option :enable_platform_authorized,   default: false, validate: :boolean
         option :enable_platform_resolve_type, default: false, validate: :boolean
         option :legacy_platform_span_names,   default: false, validate: :boolean
+        option :legacy_tracing,               default: false, validate: :boolean
 
         private
 
@@ -56,8 +69,8 @@ module OpenTelemetry
           Gem::Version.new(::GraphQL::VERSION)
         end
 
-        def require_dependencies
-          require_relative 'tracers/graphql_tracer'
+        def new_tracing_api_gem_requirement
+          Gem::Requirement.new('>= 2.0.18')
         end
 
         def install_tracer(config = {})
@@ -66,6 +79,18 @@ module OpenTelemetry
           else
             config[:schemas].each do |schema|
               schema.use(Tracers::GraphQLTracer)
+            rescue StandardError => e
+              OpenTelemetry.logger.error("Unable to patch schema #{schema}: #{e.message}")
+            end
+          end
+        end
+
+        def install_new_tracer(config = {})
+          if config[:schemas].empty?
+            ::GraphQL::Schema.trace_with(Tracers::GraphQLTrace)
+          else
+            config[:schemas].each do |schema|
+              schema.trace_with(Tracers::GraphQLTrace)
             rescue StandardError => e
               OpenTelemetry.logger.error("Unable to patch schema #{schema}: #{e.message}")
             end

@@ -7,10 +7,8 @@
 require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/graphql'
-require_relative '../../../../lib/opentelemetry/instrumentation/graphql/tracers/graphql_tracer'
 
-describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
-  let(:graphql_tracer) { OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer }
+describe 'GraphQL Tracing' do
   let(:instrumentation) { OpenTelemetry::Instrumentation::GraphQL::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
@@ -33,6 +31,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
 
     instrumentation.instance_variable_set(:@installed, false)
+    config[:legacy_tracing] = use_legacy_tracing?
     instrumentation.install(config)
 
     exporter.reset
@@ -42,18 +41,9 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     it 'traces platform keys' do
       result = SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
-      graphql_tracer.platform_keys.each do |_key, value|
-        span = spans.find { |s| s.name == value }
-        _(span).wont_be_nil
-      end
+      _(spans.size).must_equal(8)
 
       _(result.to_h['data']).must_equal('simpleField' => 'Hello.', 'resolvedField' => { 'originalValue' => 'testing=1', 'uppercasedValue' => 'TESTING=1' })
-    end
-
-    it 'only traces known platform keys' do
-      graphql_tracer.new.trace('unknown_execute_key', nil) {}
-
-      _(spans).must_be(:empty?)
     end
 
     it 'includes operation attributes for execute_query' do
@@ -94,11 +84,6 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
       it 'traces the provided schemas' do
         SomeOtherGraphQLAppSchema.execute('query SimpleQuery{ __typename }')
-
-        graphql_tracer.platform_keys.each do |_key, value|
-          span = spans.find { |s| s.name == value }
-          _(span).wont_be_nil
-        end
 
         _(spans.size).must_equal(8)
       end
@@ -362,6 +347,14 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
   # https://github.com/rmosolgo/graphql-ruby/issues/4292 changes the behavior of the platform tracer to use interface keys instead of the concrete types
   def uses_platform_interfaces?
-    Gem::Requirement.new('>= 2.0.19').satisfied_by?(Gem::Version.new(GraphQL::VERSION))
+    Gem::Requirement.new('>= 2.0.19').satisfied_by?(gem_version)
+  end
+
+  def gem_version
+    Gem::Version.new(GraphQL::VERSION)
+  end
+
+  def use_legacy_tracing?
+    Gem::Requirement.new('<= 2.0.17').satisfied_by?(gem_version) || Gem::Requirement.new('~> 2.0.19').satisfied_by?(gem_version)
   end
 end
