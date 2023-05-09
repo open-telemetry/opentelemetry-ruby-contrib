@@ -30,6 +30,16 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Enriching http spans
+
+We surface a hook to easily retrieve the http span within the context of a request so that you can add information to or rename your span.
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::HTTP', { span_preprocessor: ->(span) { span.name = "#{span.name}: #{span.attributes['http.target']}" }}
+end
+```
+
 ## Examples
 
 Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/http/example/trace_demonstration.rb)
