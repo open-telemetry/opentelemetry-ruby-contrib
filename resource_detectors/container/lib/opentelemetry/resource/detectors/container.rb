@@ -37,7 +37,7 @@ module OpenTelemetry
         #
         # @return [String] container.id
         #   May be nil.
-        def container_id
+        def container_id # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           [CGROUP_V2_PATH, CGROUP_V1_PATH].each do |cgroup|
             unless File.readable?(cgroup)
               OpenTelemetry.handle_error(message: "Container resource detector - #{cgroup} could not be read.")
@@ -45,6 +45,8 @@ module OpenTelemetry
             end
 
             File.readlines(cgroup, chomp: true).each do |line|
+              next if cgroup == CGROUP_V2_PATH && !(line.include?('/docker/containers/') || line.include?('/containers/overlay-containers/'))
+
               parts = line.split('/')
               parts.shift
 

@@ -27,6 +27,7 @@ describe OpenTelemetry::Resource::Detectors::Container do
       let(:cgroup_v1_path) { '/proc/self/cgroup' }
       let(:cgroup_v2_path) { '/proc/self/mountinfo' }
 
+      # rubocop:disable Layout/LineLength
       let(:cgroup_v1) do
         [
           '14:name=systemd:/docker/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6421',
@@ -48,6 +49,7 @@ describe OpenTelemetry::Resource::Detectors::Container do
 
       let(:cgroup_v2) do
         [
+          '945 859 0:229 / / rw,relatime master:267 - overlay overlay rw,lowerdir=/var/lib/docker/overlay2/l/3QOOYAPADIUJJO4Y73KN47Y242:/var/lib/docker/overlay2/l/HPE5OQGRE2YQRGVSQRWUXA4RTU:/var/lib/docker/overlay2/l/BVD3Y2X4YSPTAJVRCRLWKDFWWD:/var/lib/docker/overlay2/l/XL5N554MN7ZAVX32NDWAZXNTR3:/var/lib/docker/overlay2/l/NLSD37CU5H67XFIU7YI3KZAKBJ:/var/lib/docker/overlay2/l/ZL2CW7PWHHQB5E5TTEGFACJ3NT:/var/lib/docker/overlay2/l/KMGUCNAWVRNRTDJC5LLVYEWYR2:/var/lib/docker/overlay2/l/NRJZZABF55K4XT422COYZ4LSUH:/var/lib/docker/overlay2/l/HORYSY7WXPEIGRSRVMC6D5TEJV:/var/lib/docker/overlay2/l/HQEC3GPJJ2M3UASHWSGUOZ6ZZ7:/var/lib/docker/overlay2/l/P752BFBFEI6QIO23BXLTB6YZH7,upperdir=/var/lib/docker/overlay2/61bd889143e5c67cb22aa79240757562a2bf735ca84d33c712b59b82406a2fbf/diff,workdir=/var/lib/docker/overlay2/61bd889143e5c67cb22aa79240757562a2bf735ca84d33c712b59b82406a2fbf/work',
           '794 793 0:198 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw',
           '795 793 0:199 / /dev rw,nosuid - tmpfs tmpfs rw,size=65536k,mode=755',
           '796 795 0:200 / /dev/pts rw,nosuid,noexec,relatime - devpts devpts rw,gid=5,mode=620,ptmxmode=666',
@@ -73,6 +75,29 @@ describe OpenTelemetry::Resource::Detectors::Container do
         ]
       end
 
+      let(:cgroup_v2_podman) do
+        [
+          '961 812 0:58 / / ro,relatime - overlay overlay rw,lowerdir=/home/dracula/.local/share/containers/storage/overlay/l/4NB35A5Z4YGWDHXYEUZU4FN6BU,upperdir=/home/dracula/.local/share/containers/storage/overlay/a73044caca1b918335d1db6f0052d21d35045136f3aa86976dbad1ec96e2fdde/diff,workdir=/home/dracula/.local/share/containers/storage/overlay/a73044caca1b918335d1db6f0052d21d35045136f3aa86976dbad1ec96e2fdde/work,userxattr',
+          '962 961 0:63 / /sys ro,nosuid,nodev,noexec,relatime - sysfs sysfs rw',
+          '963 961 0:64 / /run rw,nosuid,nodev,relatime - tmpfs tmpfs rw,uid=2024,gid=2024,inode64',
+          '973 961 0:65 / /tmp rw,nosuid,nodev,relatime - tmpfs tmpfs rw,uid=2024,gid=2024,inode64',
+          '974 961 0:66 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw',
+          '975 961 0:67 / /dev rw,nosuid - tmpfs tmpfs rw,size=65536k,mode=755,uid=2024,gid=2024,inode64',
+          '976 961 0:68 / /var/tmp rw,nosuid,nodev,relatime - tmpfs tmpfs rw,uid=2024,gid=2024,inode64',
+          '977 975 0:62 / /dev/mqueue rw,nosuid,nodev,noexec,relatime - mqueue mqueue rw',
+          '978 975 0:69 / /dev/pts rw,nosuid,noexec,relatime - devpts devpts rw,gid=427684,mode=620,ptmxmode=666',
+          '979 975 0:57 / /dev/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=64000k,uid=2024,gid=2024,inode64',
+          '980 963 0:56 /containers/overlay-containers/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6422/userdata/.containerenv /run/.containerenv ro,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,size=783888k,nr_inodes=195972,mode=700,uid=2024,gid=2024,inode64',
+          '981 961 0:56 /containers/overlay-containers/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6422/userdata/resolv.conf /etc/resolv.conf ro,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,size=783888k,nr_inodes=195972,mode=700,uid=2024,gid=2024,inode64',
+          '982 961 0:56 /containers/overlay-containers/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6422/userdata/hosts /etc/hosts ro,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,size=783888k,nr_inodes=195972,mode=700,uid=2024,gid=2024,inode64',
+          '983 961 0:56 /containers/overlay-containers/35d6ec5d6d56dec8fb31725b6c201ac20d775b71e8ec47786cb949621b3d6422/userdata/hostname /etc/hostname ro,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,size=783888k,nr_inodes=195972,mode=700,uid=2024,gid=2024,inode64',
+          '984 962 0:70 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime - tmpfs cgroup rw,size=1024k,uid=2024,gid=2024,inode64',
+          '985 984 0:44 / /sys/fs/cgroup/misc ro,nosuid,nodev,noexec,relatime - cgroup cgroup rw,misc',
+          '986 984 0:43 / /sys/fs/cgroup/freezer ro,nosuid,nodev,noexec,relatime - cgroup cgroup rw,freezer'
+        ]
+      end
+      # rubocop:enable Layout/LineLength
+
       let(:expected_resource_attributes_v1) do
         {
           'container.id' => container_id_v1
@@ -94,9 +119,18 @@ describe OpenTelemetry::Resource::Detectors::Container do
         end
       end
 
-      it 'returns a resource with container id for cgroup v2' do
+      it 'returns a resource with container id for cgroup v2 using docker' do
         File.stub :readable?, proc { |arg| arg == cgroup_v2_path } do
           File.stub(:readlines, cgroup_v2) do
+            _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+            _(detected_resource_attributes).must_equal(expected_resource_attributes_v2)
+          end
+        end
+      end
+
+      it 'returns a resource with container id for cgroup v2 using podman' do
+        File.stub :readable?, proc { |arg| arg == cgroup_v2_path } do
+          File.stub(:readlines, cgroup_v2_podman) do
             _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
             _(detected_resource_attributes).must_equal(expected_resource_attributes_v2)
           end
