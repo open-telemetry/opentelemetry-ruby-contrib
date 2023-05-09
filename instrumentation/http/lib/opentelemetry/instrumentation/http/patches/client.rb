@@ -25,6 +25,7 @@ module OpenTelemetry
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.headers)
+              span_preprocessor&.call(span)
               super.tap do |response|
                 annotate_span_with_response!(span, response)
               end
@@ -32,6 +33,14 @@ module OpenTelemetry
           end
 
           private
+
+          def config
+            OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance.config
+          end
+
+          def span_preprocessor
+            config[:span_preprocessor]
+          end
 
           def annotate_span_with_response!(span, response)
             return unless response&.status
