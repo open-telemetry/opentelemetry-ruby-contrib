@@ -13,9 +13,9 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         compatible do
           if config[:legacy_tracing]
-            Gem::Requirement.new('<= 2.0.17').satisfied_by?(gem_version) || Gem::Requirement.new('~> 2.0.19').satisfied_by?(gem_version)
+            legacy_tracing_requirement_satisfied?
           else
-            new_tracing_api_gem_requirement.satisfied_by?(gem_version) && Gem::Requirement.new('< 3.0.0').satisfied_by?(gem_version)
+            Gem::Requirement.new('>= 2.0.18', '< 3.0.0').satisfied_by?(gem_version)
           end
         end
 
@@ -33,8 +33,8 @@ module OpenTelemetry
           defined?(::GraphQL)
         end
 
-        def use_new_tracing_api?
-          new_tracing_api_gem_requirement.satisfied_by?(gem_version)
+        def legacy_tracing_requirement_satisfied?
+          Gem::Requirement.new('<= 2.0.17').satisfied_by?(gem_version) || Gem::Requirement.new('~> 2.0.19').satisfied_by?(gem_version)
         end
 
         ## Supported configuration keys for the install config hash:
@@ -67,10 +67,6 @@ module OpenTelemetry
 
         def gem_version
           Gem::Version.new(::GraphQL::VERSION)
-        end
-
-        def new_tracing_api_gem_requirement
-          Gem::Requirement.new('>= 2.0.18')
         end
 
         def install_tracer(config = {})

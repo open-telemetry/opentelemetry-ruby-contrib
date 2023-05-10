@@ -28,7 +28,7 @@ describe OpenTelemetry::Instrumentation::GraphQL do
 
   describe '#install' do
     describe 'when a user supplies an invalid schema' do
-      let(:config) { { schemas: [Old::Truck], legacy_tracing: !instrumentation.use_new_tracing_api? } }
+      let(:config) { { schemas: [Old::Truck], legacy_tracing: instrumentation.legacy_tracing_requirement_satisfied? } }
 
       it 'fails gracefully and logs the error' do
         mock_logger = Minitest::Mock.new

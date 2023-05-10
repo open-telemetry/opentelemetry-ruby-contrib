@@ -31,7 +31,7 @@ describe 'GraphQL Tracing' do
     [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
 
     instrumentation.instance_variable_set(:@installed, false)
-    config[:legacy_tracing] = use_legacy_tracing?
+    config[:legacy_tracing] = instrumentation.legacy_tracing_requirement_satisfied?
     instrumentation.install(config)
 
     exporter.reset
@@ -352,9 +352,5 @@ describe 'GraphQL Tracing' do
 
   def gem_version
     Gem::Version.new(GraphQL::VERSION)
-  end
-
-  def use_legacy_tracing?
-    Gem::Requirement.new('<= 2.0.17').satisfied_by?(gem_version) || Gem::Requirement.new('~> 2.0.19').satisfied_by?(gem_version)
   end
 end
