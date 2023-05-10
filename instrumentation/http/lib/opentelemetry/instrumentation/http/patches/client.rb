@@ -10,6 +10,7 @@ module OpenTelemetry
       module Patches
         # Module to prepend to HTTP::Client for instrumentation
         module Client
+          ALLOWED_ATTRIBUTES = %w[http.method http.scheme http.target http.url net.peer.name net.peer.port].freeze
           def perform(req, options)
             uri = req.uri
             request_method = req.verb.to_s.upcase
@@ -25,7 +26,7 @@ module OpenTelemetry
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.headers)
-              span_preprocessor&.call(span)
+              span.name = http_span_name_enricher.call(span.attributes.select { |key, _value| ALLOWED_ATTRIBUTES.include?(key) }) unless http_span_name_enricher.nil?
               super.tap do |response|
                 annotate_span_with_response!(span, response)
               end
@@ -38,8 +39,8 @@ module OpenTelemetry
             OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance.config
           end
 
-          def span_preprocessor
-            config[:span_preprocessor]
+          def http_span_name_enricher
+            config[:http_span_name_enricher]
           end
 
           def annotate_span_with_response!(span, response)
