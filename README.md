@@ -35,7 +35,7 @@ Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/
 
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Daniel Azuma](https://github.com/dazuma), Google
-- [Eric Mustin](https://github.com/ericmustin), Shopify
+- [Eric Mustin](https://github.com/ericmustin)
 - [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Matthew Wear](https://github.com/mwear), Lightstep
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
