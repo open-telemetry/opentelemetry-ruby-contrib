@@ -10,10 +10,10 @@ module OpenTelemetry
       module Patches
         # Module to prepend to HTTP::Client for instrumentation
         module Client
-          ALLOWED_ATTRIBUTES = %w[http.method http.scheme http.target http.url net.peer.name net.peer.port].freeze
           def perform(req, options)
             uri = req.uri
             request_method = req.verb.to_s.upcase
+            span_name = create_request_span_name(request_method, uri.path)
 
             attributes = {
               'http.method' => request_method,
@@ -24,9 +24,8 @@ module OpenTelemetry
               'net.peer.port' => uri.port
             }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-            tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
+            tracer.in_span(span_name, attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.headers)
-              span.name = http_span_name_enricher.call(span.attributes.select { |key, _value| ALLOWED_ATTRIBUTES.include?(key) }) unless http_span_name_enricher.nil?
               super.tap do |response|
                 annotate_span_with_response!(span, response)
               end
@@ -39,16 +38,20 @@ module OpenTelemetry
             OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance.config
           end
 
-          def http_span_name_enricher
-            config[:http_span_name_enricher]
-          end
-
           def annotate_span_with_response!(span, response)
             return unless response&.status
 
             status_code = response.status.to_i
             span.set_attribute('http.status_code', status_code)
             span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(status_code.to_i)
+          end
+
+          def create_request_span_name(request_method, request_path)
+            if (implementation = config[:path_quantization])
+              implementation.call(request_method, request_path)
+            else
+              "HTTP #{request_method}"
+            end
           end
 
           def tracer

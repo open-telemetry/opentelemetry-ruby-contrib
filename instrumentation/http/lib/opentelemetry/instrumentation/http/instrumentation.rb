@@ -18,7 +18,8 @@ module OpenTelemetry
           !(defined?(::HTTP::Client).nil? || defined?(::HTTP::Connection).nil?)
         end
 
-        option :http_span_name_enricher, default: nil, validate: :callable
+        option :path_quantization, default: nil, validate: :callable
+
 
         def patch
           ::HTTP::Client.prepend(Patches::Client)

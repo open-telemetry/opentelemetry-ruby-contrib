@@ -30,13 +30,15 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-### Enriching http span names
+## Enriching http span names
 
 We surface a hook to easily rename your span.
 
+The lambda accepts as arguments (request_method, request_path) and returns a string that is set as the span name.
+
 ```ruby
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::HTTP', { http_span_name_enricher: ->(allowed_attributes) { return "#{allowed_attributes["http.scheme"]} #{allowed_attributes["http.method"]} #{allowed_attributes["http.url"]}" }}
+  c.use 'OpenTelemetry::Instrumentation::Rack', { path_quantization: ->(request_method, request_path) { "HTTP #{request_method} #{request_path}" }
 end
 ```
 

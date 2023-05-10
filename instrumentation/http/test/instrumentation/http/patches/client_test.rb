@@ -15,10 +15,10 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
   let(:span) { exporter.finished_spans.first }
   let(:config) do
     {
-      http_span_name_enricher: http_span_name_enricher
+      path_quantization: path_quantization
     }
   end
-  let(:http_span_name_enricher) { nil }
+  let(:path_quantization) { nil }
 
   before do
     exporter.reset
@@ -124,11 +124,11 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       )
     end
 
-    describe 'when http_span_name_enricher specified' do
-      let(:http_span_name_enricher) do
-        # demonstrate simple shortening of URL:
-        lambda { |allowed_attributes|
-          return "#{allowed_attributes['http.scheme']} #{allowed_attributes['http.method']} #{allowed_attributes['http.url']}"
+    describe 'when path_quantization specified' do
+      let(:path_quantization) do
+        # demonstrate simple addition of path and string to span name:
+        lambda { |request_method, request_path|
+          return "HTTP #{request_method} #{request_path} miniswan"
         }
       end
 
@@ -138,7 +138,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
         end
 
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'http GET http://example.com'
+        _(span.name).must_equal 'http GET /success miniswan'
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.scheme']).must_equal 'http'
         _(span.attributes['http.status_code']).must_equal 200
