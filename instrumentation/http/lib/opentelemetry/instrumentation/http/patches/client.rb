@@ -47,15 +47,11 @@ module OpenTelemetry
           end
 
           def create_request_span_name(request_method, request_path)
-            if (implementation = config[:path_quantization])
+            if (implementation = config[:path_quantization]) # rubocop:disable Style/GuardClause
               updated_span_name = implementation.call(request_method, request_path)
-              if updated_span_name.is_a?(String)
-                return updated_span_name
-              else
-                return "HTTP #{request_method}"
-              end
+              updated_span_name.is_a?(String) ? updated_span_name : "HTTP #{request_method}"
             else
-              return "HTTP #{request_method}"
+              "HTTP #{request_method}"
             end
           end
 
