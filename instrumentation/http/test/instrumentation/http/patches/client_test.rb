@@ -138,7 +138,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
         end
 
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'http GET /success miniswan'
+        _(span.name).must_equal 'HTTP GET /success miniswan'
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.scheme']).must_equal 'http'
         _(span.attributes['http.status_code']).must_equal 200
