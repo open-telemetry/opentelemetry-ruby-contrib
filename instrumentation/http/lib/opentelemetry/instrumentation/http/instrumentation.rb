@@ -20,7 +20,6 @@ module OpenTelemetry
 
         option :path_quantization, default: nil, validate: :callable
 
-
         def patch
           ::HTTP::Client.prepend(Patches::Client)
           ::HTTP::Connection.prepend(Patches::Connection)
