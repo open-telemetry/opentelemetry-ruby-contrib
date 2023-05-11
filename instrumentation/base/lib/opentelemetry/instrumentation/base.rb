@@ -296,9 +296,7 @@ module OpenTelemetry
                     option[:default]
                   end
           # rubocop:enable Lint/DuplicateBranch
-          if option[:validation_type] == :callable && value != nil && value.respond_to?(:call)
-            value = wrap_lambda_in_error_handler(value, option[:name])
-          end
+          value = wrap_lambda_in_error_handler(value, option[:name]) if option[:validation_type] == :callable && !value.nil? && value.respond_to?(:call)
           h[option_name] = value
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: "Instrumentation #{name} unexpected configuration error")
@@ -372,14 +370,13 @@ module OpenTelemetry
 
       def wrap_lambda_in_error_handler(lambda_block, option_name)
         wrapped_lambda = lambda do |*args|
-          begin
             lambda_block.call(*args)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: "Failed to call callable configuration option #{option_name}")
           end
         end
 
-        return wrapped_lambda
+        wrapped_lambda
       end
     end
   end
