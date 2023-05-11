@@ -50,6 +50,7 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span.name).must_equal 'set'
       _(span.attributes['db.system']).must_equal 'memcached'
       _(span.attributes['db.statement']).must_equal 'set foo bar 0 0'
+      _(span.attributes['db.operation']).must_equal 'set'
       _(span.attributes['net.peer.name']).must_equal host
       _(span.attributes['net.peer.port']).must_equal port
     end
@@ -61,6 +62,7 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span.name).must_equal 'get'
       _(span.attributes['db.system']).must_equal 'memcached'
       _(span.attributes['db.statement']).must_equal 'get foo'
+      _(span.attributes['db.operation']).must_equal 'get'
       _(span.attributes['net.peer.name']).must_equal host
       _(span.attributes['net.peer.port']).must_equal port
     end
@@ -72,6 +74,7 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span.name).must_equal 'getkq'
       _(span.attributes['db.system']).must_equal 'memcached'
       _(span.attributes['db.statement']).must_equal 'getkq foo bar'
+      _(span.attributes['db.operation']).must_equal 'getkq'
       _(span.attributes['net.peer.name']).must_equal host
       _(span.attributes['net.peer.port']).must_equal port
     end
@@ -93,6 +96,7 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span.name).must_equal 'getkq'
       _(span.attributes['db.system']).must_equal 'memcached'
       _(span.attributes['db.statement']).must_equal 'getkq foo bar'
+      _(span.attributes['db.operation']).must_equal 'getkq'
       _(span.attributes['net.peer.name']).must_equal host
       _(span.attributes['net.peer.port']).must_equal port
 
