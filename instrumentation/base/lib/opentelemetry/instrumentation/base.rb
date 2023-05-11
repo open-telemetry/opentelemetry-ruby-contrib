@@ -374,7 +374,6 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: "Failed to call callable configuration option #{option_name}")
           end
-        end
 
         wrapped_lambda
       end
