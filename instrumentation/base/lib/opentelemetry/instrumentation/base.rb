@@ -296,7 +296,7 @@ module OpenTelemetry
                     option[:default]
                   end
           # rubocop:enable Lint/DuplicateBranch
-          if option[:validation_type] == :callable && value != nil
+          if option[:validation_type] == :callable && value != nil && value.respond_to?(:call)
             value = wrap_lambda_in_error_handler(value, option[:name])
           end
           h[option_name] = value
