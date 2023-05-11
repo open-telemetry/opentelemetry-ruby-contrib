@@ -369,13 +369,11 @@ module OpenTelemetry
       end
 
       def wrap_lambda_in_error_handler(lambda_block, option_name)
-        wrapped_lambda = lambda do |*args|
-            lambda_block.call(*args)
-          rescue StandardError => e
-            OpenTelemetry.handle_error(exception: e, message: "Failed to call callable configuration option #{option_name}")
-          end
-
-        wrapped_lambda
+        lambda do |*args|
+          lambda_block.call(*args)
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: "Failed to call callable configuration option #{option_name}")
+        end
       end
     end
   end
