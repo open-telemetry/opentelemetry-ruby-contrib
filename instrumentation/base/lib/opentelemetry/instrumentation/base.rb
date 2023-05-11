@@ -285,9 +285,9 @@ module OpenTelemetry
                   elsif option[:validator].respond_to?(:include?) && option[:validator].include?(config_value)
                     config_value
                   elsif option[:validator].respond_to?(:call) && option[:validator].call(config_override)
-                    wrap_lambda_in_error_handler(config_override, option[:name])
+                    config_override
                   elsif option[:validator].respond_to?(:call) && option[:validator].call(config_value)
-                    wrap_lambda_in_error_handler(config_value, option[:name])
+                    config_value
                   else
                     OpenTelemetry.logger.warn(
                       "Instrumentation #{name} configuration option #{option_name} value=#{config_value} " \
@@ -295,6 +295,10 @@ module OpenTelemetry
                     )
                     option[:default]
                   end
+
+          if option[:validation_type] == :callable
+            value = wrap_lambda_in_error_handler(value, option[:name])
+          end
           # rubocop:enable Lint/DuplicateBranch
           h[option_name] = value
         rescue StandardError => e
