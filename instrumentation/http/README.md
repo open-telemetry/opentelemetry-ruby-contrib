@@ -38,7 +38,7 @@ The lambda accepts as arguments (request_method, request_path) and returns a str
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Rack', { path_quantization: ->(request_method, request_path) { "HTTP #{request_method} #{request_path}" }
+  c.use 'OpenTelemetry::Instrumentation::Rack', { span_name_formatter: ->(request_method, request_path) { "HTTP #{request_method} #{request_path}" }
 end
 ```
 

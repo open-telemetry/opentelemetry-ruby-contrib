@@ -15,10 +15,10 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
   let(:span) { exporter.finished_spans.first }
   let(:config) do
     {
-      path_quantization: path_quantization
+      span_name_formatter: span_name_formatter
     }
   end
-  let(:path_quantization) { nil }
+  let(:span_name_formatter) { nil }
 
   before do
     exporter.reset
@@ -124,8 +124,8 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       )
     end
 
-    describe 'when path_quantization specified' do
-      let(:path_quantization) do
+    describe 'when span_name_formatter specified' do
+      let(:span_name_formatter) do
         # demonstrate simple addition of path and string to span name:
         lambda { |request_method, request_path|
           return "HTTP #{request_method} #{request_path} miniswan"

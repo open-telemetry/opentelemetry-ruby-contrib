@@ -47,7 +47,7 @@ module OpenTelemetry
           end
 
           def create_request_span_name(request_method, request_path)
-            if (implementation = config[:path_quantization])
+            if (implementation = config[:span_name_formatter])
               updated_span_name = implementation.call(request_method, request_path)
               updated_span_name.is_a?(String) ? updated_span_name : "HTTP #{request_method}"
             else
