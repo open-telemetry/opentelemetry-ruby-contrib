@@ -53,6 +53,8 @@ module OpenTelemetry
             else
               "HTTP #{request_method}"
             end
+          rescue StandardError
+            "HTTP #{request_method}"
           end
 
           def tracer

@@ -153,5 +153,34 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
         )
       end
     end
+    describe 'when span_formatter specified and it errors' do
+      let(:span_name_formatter) do
+        # demonstrate simple addition of path and string to span name:
+        lambda { |_request_method, _request_path|
+          raise 'Something Bad'
+        }
+      end
+
+      it 'provides a sane default' do
+        OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'foo') do
+          HTTP.get('http://example.com/success')
+        end
+
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['http.scheme']).must_equal 'http'
+        _(span.attributes['http.status_code']).must_equal 200
+        _(span.attributes['http.target']).must_equal '/success'
+        _(span.attributes['net.peer.name']).must_equal 'example.com'
+        _(span.attributes['net.peer.port']).must_equal 80
+        _(span.attributes['peer.service']).must_equal 'foo'
+        assert_requested(
+          :get,
+          'http://example.com/success',
+          headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+        )
+      end
+    end
   end
 end
