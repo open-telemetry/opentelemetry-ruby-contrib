@@ -14,6 +14,7 @@ module OpenTelemetry
             operation = Utils.opname(op, multi?)
             attributes = {
               'db.system' => 'memcached',
+              'db.operation' => operation,
               'net.peer.name' => hostname,
               'net.peer.port' => port
             }
