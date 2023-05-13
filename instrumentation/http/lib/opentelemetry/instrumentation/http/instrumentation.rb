@@ -18,6 +18,8 @@ module OpenTelemetry
           !(defined?(::HTTP::Client).nil? || defined?(::HTTP::Connection).nil?)
         end
 
+        option :span_name_formatter, default: nil, validate: :callable
+
         def patch
           ::HTTP::Client.prepend(Patches::Client)
           ::HTTP::Connection.prepend(Patches::Connection)
