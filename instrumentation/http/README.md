@@ -30,6 +30,18 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+## Enriching http span names
+
+We surface a hook to easily rename your span.
+
+The lambda accepts as arguments (request_method, request_path) and returns a string that is set as the span name.
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Rack', { span_name_formatter: ->(request_method, request_path) { "HTTP #{request_method} #{request_path}" }
+end
+```
+
 ## Examples
 
 Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/http/example/trace_demonstration.rb)
