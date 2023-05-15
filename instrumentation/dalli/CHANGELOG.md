@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.24.0 / 2023-05-15
+
+* ADDED: Add db.operation attribute for dalli 
+
 ### v0.23.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 
