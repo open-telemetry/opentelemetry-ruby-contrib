@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.23.0 / 2023-05-15
+
+* ADDED: Add span_preprocessor hook 
+
 ### v0.22.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 
