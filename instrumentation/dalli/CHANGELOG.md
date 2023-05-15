@@ -2,7 +2,7 @@
 
 ### v0.24.0 / 2023-05-15
 
-* ADDED: Add db.operation attribute for dalli 
+* ADDED: Add db.operation attribute for dalli
 
 ### v0.23.0 / 2023-04-17
 
