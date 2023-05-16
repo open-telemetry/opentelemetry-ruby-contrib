@@ -92,7 +92,7 @@ module OpenTelemetry
           private
 
           def untraced_request?(env)
-            return true if @untraced_endpoints.include?(env['PATH_INFO'])
+            return true if Array(@untraced_endpoints).include?(env['PATH_INFO'])
             return true if config[:untraced_requests]&.call(env)
 
             false
