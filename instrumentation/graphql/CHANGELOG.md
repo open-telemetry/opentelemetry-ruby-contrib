@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.26.0 / 2023-05-17
+
+* BREAKING CHANGE: GraphQL instrumentation: support new tracing API 
+
+* ADDED: GraphQL instrumentation: support new tracing API
+
 ### v0.25.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 
