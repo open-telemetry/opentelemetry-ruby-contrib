@@ -4,7 +4,7 @@
 
 * BREAKING CHANGE: GraphQL instrumentation: support new tracing API 
 
-* ADDED: GraphQL instrumentation: support new tracing API 
+* ADDED: GraphQL instrumentation: support new tracing API
 
 ### v0.25.0 / 2023-04-17
 
