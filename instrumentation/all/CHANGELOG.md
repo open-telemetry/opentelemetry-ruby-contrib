@@ -2,7 +2,9 @@
 
 ### v0.36.0 / 2023-05-18
 
-* (No significant changes)
+* ADDED: GraphQL instrumentation: support new tracing API (#453)
+* ADDED: Add span_preprocessor hook (#456)
+* ADDED: add db.operation attribute for dalli (#458)
 
 ### v0.35.0 / 2023-04-21
 
