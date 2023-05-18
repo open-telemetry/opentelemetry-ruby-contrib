@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.36.0 / 2023-05-18
+
+* (No significant changes)
+
 ### v0.35.0 / 2023-04-21
 
 * ADDED: Re-add Grape instrumentation to opentelemetry-instrumentation-all
