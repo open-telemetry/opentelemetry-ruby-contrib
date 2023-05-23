@@ -19,7 +19,7 @@ module OpenTelemetry
         end
 
         compatible do
-          gem_version >= MINIMUM_VERSION
+          gem_version >= MINIMUM_VERSION && defined?(::Rails)
         end
 
         option :disallowed_notification_payload_keys, default: [],  validate: :array
