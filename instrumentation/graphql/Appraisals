@@ -8,6 +8,10 @@ appraise 'graphql-1.13' do
   gem 'graphql', '~> 1.13'
 end
 
+appraise 'graphql-2.0.17' do
+  gem 'graphql', '~> 2.0.17'
+end
+
 appraise 'graphql-2.x' do
-  gem 'graphql', '~> 2', '< 3.0.0'
+  gem 'graphql', '>= 2.0.18', '< 3.0.0'
 end

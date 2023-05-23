@@ -215,9 +215,10 @@ module OpenTelemetry
       # @param [Hash] config The config for this instrumentation
       def install(config = {})
         return true if installed?
-        return false unless installable?(config)
 
         @config = config_options(config)
+        return false unless installable?(config)
+
         instance_exec(@config, &@install_blk)
         @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true
