@@ -11,6 +11,7 @@ module OpenTelemetry
         render_template.action_view
         render_partial.action_view
         render_collection.action_view
+        render_layout.action_view
       ].freeze
 
       # This Railtie sets up subscriptions to relevant ActionView notifications
