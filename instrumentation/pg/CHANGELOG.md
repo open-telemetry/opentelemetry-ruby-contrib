@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.25.0 / 2023-05-25
+
+* ADDED: Add config[:obfuscation_limit] to pg and mysql2 
+
 ### v0.24.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 

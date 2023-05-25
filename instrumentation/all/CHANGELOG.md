@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.36.1 / 2023-05-25
+
+* (No significant changes)
+
 ### v0.36.0 / 2023-05-18
 
 * ADDED: GraphQL instrumentation: support new tracing API (#453)

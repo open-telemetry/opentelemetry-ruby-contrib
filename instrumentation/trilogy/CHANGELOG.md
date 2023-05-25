@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.54.0 / 2023-05-25
+
+* ADDED: Add Obfuscation Limit Option to Trilogy 
+
 ### v0.53.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 
