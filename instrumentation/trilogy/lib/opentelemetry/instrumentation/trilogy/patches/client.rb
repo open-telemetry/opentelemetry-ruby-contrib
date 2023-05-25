@@ -56,7 +56,7 @@ module OpenTelemetry
           def query(sql)
             tracer.in_span(
               database_span_name(sql),
-              attributes: client_attributes(sql),
+              attributes: client_attributes(sql).merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
               kind: :client
             ) do
               super(sql)
@@ -87,10 +87,14 @@ module OpenTelemetry
             if sql.size > 2000
               'SQL query too large to remove sensitive data ...'
             else
-              obfuscated = sql.gsub(FULL_SQL_REGEXP, '?')
+              obfuscated = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
+              obfuscated = obfuscated.gsub(FULL_SQL_REGEXP, '?')
               obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
               obfuscated
             end
+          rescue StandardError => e
+            OpenTelemetry.handle_error(message: 'Failed to obfuscate SQL', exception: e)
+            'OpenTelemetry error: failed to obfuscate sql'
           end
 
           def detect_unmatched_pairs(obfuscated)
@@ -102,20 +106,27 @@ module OpenTelemetry
             %r{'|"|\/\*|\*\/}.match(obfuscated)
           end
 
-          def database_span_name(sql)
-            # Setting span name to the SQL query without obfuscation would
-            # result in PII + cardinality issues.
-            # First attempt to infer the statement type then fallback to
-            # current Otel approach {database.component_name}.{database_instance_name}
-            # https://github.com/open-telemetry/opentelemetry-python/blob/39fa078312e6f41c403aa8cad1868264011f7546/ext/opentelemetry-ext-dbapi/tests/test_dbapi_integration.py#L53
-            # This creates span names like mysql.default, mysql.replica, postgresql.staging etc.
+          def database_span_name(sql) # rubocop:disable Metrics/CyclomaticComplexity
+            case config[:span_name]
+            when :statement_type
+              extract_statement_type(sql)
+            when :db_name
+              database_name
+            when :db_operation_and_name
+              op = OpenTelemetry::Instrumentation::Trilogy.attributes['db.operation']
+              name = database_name
+              if op && name
+                "#{op} #{name}"
+              elsif op
+                op
+              elsif name
+                name
+              end
+            end || 'mysql'
+          end
 
-            statement_type = extract_statement_type(sql)
-
-            return statement_type unless statement_type.nil?
-
-            # fallback
-            'mysql'
+          def database_name
+            connection_options[:database]
           end
 
           def net_peer_name
@@ -140,6 +151,7 @@ module OpenTelemetry
             QUERY_NAME_RE.match(sql) { |match| match[1].downcase } unless sql.nil?
           rescue StandardError => e
             OpenTelemetry.logger.error("Error extracting sql statement type: #{e.message}")
+            nil
           end
         end
       end

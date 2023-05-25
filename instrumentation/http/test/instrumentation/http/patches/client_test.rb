@@ -13,13 +13,21 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
+  let(:config) do
+    {
+      span_name_formatter: span_name_formatter
+    }
+  end
+  let(:span_name_formatter) { nil }
 
   before do
     exporter.reset
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
     OpenTelemetry.propagation = propagator
-    instrumentation.install({})
+    # simulate a fresh install:
+    instrumentation.instance_variable_set('@installed', false)
+    instrumentation.install(config)
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'https://example.com/timeout').to_timeout
@@ -114,6 +122,65 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
         'http://example.com/success',
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
+    end
+
+    describe 'when span_name_formatter specified' do
+      let(:span_name_formatter) do
+        # demonstrate simple addition of path and string to span name:
+        lambda { |request_method, request_path|
+          return "HTTP #{request_method} #{request_path} miniswan"
+        }
+      end
+
+      it 'enriches the span' do
+        OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'foo') do
+          HTTP.get('http://example.com/success')
+        end
+
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET /success miniswan'
+        _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['http.scheme']).must_equal 'http'
+        _(span.attributes['http.status_code']).must_equal 200
+        _(span.attributes['http.target']).must_equal '/success'
+        _(span.attributes['net.peer.name']).must_equal 'example.com'
+        _(span.attributes['net.peer.port']).must_equal 80
+        _(span.attributes['peer.service']).must_equal 'foo'
+        assert_requested(
+          :get,
+          'http://example.com/success',
+          headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+        )
+      end
+    end
+    describe 'when span_formatter specified and it errors' do
+      let(:span_name_formatter) do
+        # demonstrate simple addition of path and string to span name:
+        lambda { |_request_method, _request_path|
+          raise 'Something Bad'
+        }
+      end
+
+      it 'provides a sane default' do
+        OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'foo') do
+          HTTP.get('http://example.com/success')
+        end
+
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['http.scheme']).must_equal 'http'
+        _(span.attributes['http.status_code']).must_equal 200
+        _(span.attributes['http.target']).must_equal '/success'
+        _(span.attributes['net.peer.name']).must_equal 'example.com'
+        _(span.attributes['net.peer.port']).must_equal 80
+        _(span.attributes['peer.service']).must_equal 'foo'
+        assert_requested(
+          :get,
+          'http://example.com/success',
+          headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+        )
+      end
     end
   end
 end

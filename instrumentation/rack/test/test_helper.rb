@@ -6,11 +6,12 @@
 
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
+require 'rack/events'
+require 'opentelemetry-instrumentation-rack'
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
-
-require 'opentelemetry-instrumentation-rack'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

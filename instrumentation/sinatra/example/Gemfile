@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 source 'https://rubygems.org'
-
+gem 'puma'
 gem 'opentelemetry-api'
 gem 'opentelemetry-common'
 gem 'opentelemetry-instrumentation-sinatra'

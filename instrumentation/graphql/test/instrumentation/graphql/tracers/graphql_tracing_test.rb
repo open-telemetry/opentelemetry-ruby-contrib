@@ -7,10 +7,8 @@
 require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/graphql'
-require_relative '../../../../lib/opentelemetry/instrumentation/graphql/tracers/graphql_tracer'
 
-describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
-  let(:graphql_tracer) { OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer }
+describe 'GraphQL Tracing' do
   let(:instrumentation) { OpenTelemetry::Instrumentation::GraphQL::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
@@ -29,38 +27,23 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
   end
 
   before do
-    exporter.reset
-    instrumentation.install(config)
-  end
-
-  after do
-    # Force re-install of instrumentation
-    instrumentation.instance_variable_set(:@installed, false)
-
     # Reset various instance variables to clear state between tests
-    GraphQL::Schema.instance_variable_set(:@own_tracers, [])
+    [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
 
-    # Reseting @graphql_definition is needed for tests running against version `1.9.x`
-    SomeOtherGraphQLAppSchema.remove_instance_variable(:@graphql_definition) if SomeOtherGraphQLAppSchema.instance_variable_defined?(:@graphql_definition)
-    SomeGraphQLAppSchema.remove_instance_variable(:@graphql_definition) if SomeGraphQLAppSchema.instance_variable_defined?(:@graphql_definition)
+    instrumentation.instance_variable_set(:@installed, false)
+    config[:legacy_tracing] = instrumentation.legacy_tracing_requirement_satisfied?
+    instrumentation.install(config)
+
+    exporter.reset
   end
 
   describe '#platform_trace' do
     it 'traces platform keys' do
       result = SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
-      graphql_tracer.platform_keys.each do |_key, value|
-        span = spans.find { |s| s.name == value }
-        _(span).wont_be_nil
-      end
+      _(spans.size).must_equal(8)
 
       _(result.to_h['data']).must_equal('simpleField' => 'Hello.', 'resolvedField' => { 'originalValue' => 'testing=1', 'uppercasedValue' => 'TESTING=1' })
-    end
-
-    it 'only traces known platform keys' do
-      graphql_tracer.new.trace('unknown_execute_key', nil) {}
-
-      _(spans).must_be(:empty?)
     end
 
     it 'includes operation attributes for execute_query' do
@@ -102,11 +85,6 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       it 'traces the provided schemas' do
         SomeOtherGraphQLAppSchema.execute('query SimpleQuery{ __typename }')
 
-        graphql_tracer.platform_keys.each do |_key, value|
-          span = spans.find { |s| s.name == value }
-          _(span).wont_be_nil
-        end
-
         _(spans.size).must_equal(8)
       end
 
@@ -142,9 +120,25 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         _(span).wont_be_nil
       end
 
-      it 'includes attributes' do
+      it 'includes attributes using platform types' do
+        skip if uses_platform_interfaces?
         expected_attributes = {
           'graphql.field.parent' => 'Car', # type name, not interface
+          'graphql.field.name' => 'model',
+          'graphql.lazy' => false
+        }
+
+        SomeGraphQLAppSchema.execute('{ vehicle { model } }')
+
+        span = spans.find { |s| s.name == 'graphql.execute_field' && s.attributes['graphql.field.name'] == 'model' }
+        _(span).wont_be_nil
+        _(span.attributes.to_h).must_equal(expected_attributes)
+      end
+
+      it 'includes attributes using platform interfaces' do
+        skip unless uses_platform_interfaces?
+        expected_attributes = {
+          'graphql.field.parent' => 'Vehicle', # interface name, not type
           'graphql.field.name' => 'model',
           'graphql.lazy' => false
         }
@@ -349,5 +343,14 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         use GraphQL::Analysis::AST
       end
     end
+  end
+
+  # https://github.com/rmosolgo/graphql-ruby/issues/4292 changes the behavior of the platform tracer to use interface keys instead of the concrete types
+  def uses_platform_interfaces?
+    Gem::Requirement.new('>= 2.0.19').satisfied_by?(gem_version)
+  end
+
+  def gem_version
+    Gem::Version.new(GraphQL::VERSION)
   end
 end

@@ -1,5 +1,36 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.36.0 / 2023-05-18
+
+* ADDED: GraphQL instrumentation: support new tracing API (#453)
+* ADDED: Add span_preprocessor hook (#456)
+* ADDED: add db.operation attribute for dalli (#458)
+
+### v0.35.0 / 2023-04-21
+
+* ADDED: Re-add Grape instrumentation to opentelemetry-instrumentation-all
+
+### v0.34.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+
+* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Add Grape instrumentation 
+
+### v0.33.0 / 2023-03-15
+
+* BREAKING CHANGE: Add support for GraphQL 2.0.19
+
+* FIXED: Add support for GraphQL 2.0.19
+
+### v0.32.0 / 2023-03-13
+
+* BREAKING CHANGE: Lock graphql max version to 2.0.17
+* FIXED: Lock graphql max version to 2.0.17
+* ADDED: Add with_attributes context propagation to Trilogy instrumentation
+* ADDED: Add option to configure span name for trilogy
+* FIXED: Ensure encoding errors handled during SQL obfuscation for Trilogy
+
 ### v0.31.0 / 2023-02-09
 
 * BREAKING CHANGE: Drop Rails 5 support [#324](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/324)
@@ -15,13 +46,13 @@
 
 ### v0.28.1 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.28.0 / 2022-11-09
 
-* ADDED: Bump minimum gem versions for opentelemetry-instrumentation-all 
-* ADDED: Instrumentation for racecar 
+* ADDED: Bump minimum gem versions for opentelemetry-instrumentation-all
+* ADDED: Instrumentation for racecar
 * CHANGED: Update rails instrumentation
 
 ### v0.27.0 / 2022-10-14
@@ -42,18 +73,18 @@
 
 ### v0.24.0 / 2022-05-02
 
-* ADDED: Adds instrumentation for rdkafka 
-* FIXED: Add rdkafka to all 
+* ADDED: Adds instrumentation for rdkafka
+* FIXED: Add rdkafka to all
 
 ### v0.23.0 / 2022-01-26
 
-* ADDED: Add Trilogy Auto Instrumentation 
-* FIXED: `ActiveSupport` constant conflict in Active Model Serializers instrumentation 
+* ADDED: Add Trilogy Auto Instrumentation
+* FIXED: `ActiveSupport` constant conflict in Active Model Serializers instrumentation
 * FIXED: add missing require for aws_sdk instrumentation #1054
 
 ### v0.22.0 / 2021-12-01
 
-* ADDED: Move activesupport notification subsciber out of action_view gem 
+* ADDED: Move activesupport notification subsciber out of action_view gem
 
 ### v0.21.3 / 2021-10-07
 
@@ -69,7 +100,7 @@
 
 ### v0.21.0 / 2021-09-15
 
-* ADDED: Add Que instrumentation 
+* ADDED: Add Que instrumentation
 
 ### v0.20.2 / 2021-09-09
 
@@ -77,19 +108,19 @@
 
 ### v0.20.1 / 2021-08-18
 
-* FIXED: Instrumentation all sidekiq 
+* FIXED: Instrumentation all sidekiq
 
 ### v0.20.0 / 2021-08-12
 
-* ADDED: Instrument active record 
-* ADDED: Add ActionView instrumentation via ActiveSupport::Notifications 
+* ADDED: Instrument active record
+* ADDED: Add ActionView instrumentation via ActiveSupport::Notifications
 
 ### v0.19.0 / 2021-06-25
 
 * ADDED: Add resque instrumentation
 * ADDED: Add ActiveJob instrumentation
 * ADDED: Configuration option to enable or disable redis root spans [#777](https://github.com/open-telemetry/opentelemetry-ruby/pull/777)
-* FIXED: Broken instrumentation all release 
+* FIXED: Broken instrumentation all release
 
 ### v0.18.0 / 2021-05-21
 

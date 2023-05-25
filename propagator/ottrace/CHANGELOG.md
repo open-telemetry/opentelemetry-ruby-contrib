@@ -1,5 +1,12 @@
 # Release History: opentelemetry-propagator-ottrace
 
+### v0.21.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+
+* ADDED: Drop support for EoL Ruby 2.7 
+* DOCS: Update URLs to rubydocs 
+
 ### v0.20.1 / 2023-01-14
 
 * DOCS: Fix gem homepage 
@@ -37,7 +44,7 @@
 
 * BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.
 
-  [Check the propagator documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for the new usage.
+  [Check the propagator documentation](https://www.rubydoc.info/gems/opentelemetry-propagator-ottrace) for the new usage.
 
 * FIXED: Refactor propagators to add #fields
 
