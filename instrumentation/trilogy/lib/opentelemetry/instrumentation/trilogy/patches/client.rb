@@ -84,8 +84,9 @@ module OpenTelemetry
           end
 
           def obfuscate_sql(sql)
-            if sql.size > 2000
-              'SQL query too large to remove sensitive data ...'
+            if sql.size > config[:obfuscation_limit]
+              truncated_sql = sql[..sql.index(generated_mysql_regex) - 1]
+              truncated_sql + "...\nSQL truncated (> #{config[:obfuscation_limit]} characters)"
             else
               obfuscated = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
               obfuscated = obfuscated.gsub(FULL_SQL_REGEXP, '?')
