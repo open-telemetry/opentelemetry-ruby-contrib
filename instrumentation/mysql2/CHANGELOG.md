@@ -2,33 +2,32 @@
 
 ### v0.24.0 / 2023-05-25
 
-* ADDED: Add config[:obfuscation_limit] to pg and mysql2 
-* ADDED: Add Obfuscation Limit Option to Trilogy 
+* ADDED: Add config[:obfuscation_limit] to pg and mysql2
 
 ### v0.23.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
-* FIXED: Ensure encoding errors handled during SQL obfuscation for Trilogy 
+* ADDED: Drop support for EoL Ruby 2.7
+* FIXED: Ensure encoding errors handled during SQL obfuscation for Trilogy
 
 ### v0.22.0 / 2023-01-14
 
-* BREAKING CHANGE: Removed deprecated instrumentation options 
+* BREAKING CHANGE: Removed deprecated instrumentation options
 
-* ADDED: Add option to configure span name 
-* ADDED: Removed deprecated instrumentation options 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* ADDED: Add option to configure span name
+* ADDED: Removed deprecated instrumentation options
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.21.1 / 2022-10-26
 
-* FIXED: Handle encoding errors in mysql obfuscation 
+* FIXED: Handle encoding errors in mysql obfuscation
 
 ### v0.21.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.20.1 / 2022-05-03
 
@@ -36,7 +35,7 @@
 
 ### v0.20.0 / 2021-12-01
 
-* ADDED: Add default options config helper + env var config option support 
+* ADDED: Add default options config helper + env var config option support
 
 ### v0.19.1 / 2021-09-29
 
@@ -44,11 +43,11 @@
 
 ### v0.19.0 / 2021-08-12
 
-* BREAKING CHANGE: Add option for db.statement 
+* BREAKING CHANGE: Add option for db.statement
 
-* ADDED: Add option for db.statement 
-* DOCS: Update docs to rely more on environment variable configuration 
-* DOCS: Move to using new db_statement 
+* ADDED: Add option for db.statement
+* DOCS: Update docs to rely more on environment variable configuration
+* DOCS: Move to using new db_statement
 
 ### v0.18.1 / 2021-06-23
 

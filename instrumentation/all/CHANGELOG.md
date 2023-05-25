@@ -1,8 +1,10 @@
 # Release History: opentelemetry-instrumentation-all
 
-### v0.36.1 / 2023-05-25
+### v0.37.0 / 2023-05-25
 
-* (No significant changes)
+* ADDED: Add config[:obfuscation_limit] to pg and mysql2
+* ADDED: Add Obfuscation Limit Option to Trilogy
+
 
 ### v0.36.0 / 2023-05-18
 
@@ -18,8 +20,8 @@
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
-* ADDED: Add Grape instrumentation 
+* ADDED: Drop support for EoL Ruby 2.7
+* ADDED: Add Grape instrumentation
 
 ### v0.33.0 / 2023-03-15
 
