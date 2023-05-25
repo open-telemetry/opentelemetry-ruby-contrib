@@ -266,6 +266,20 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.name).must_equal 'mysql'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal obfuscated_sql
       end
+
+      describe 'with obfuscation_limit' do
+        let(:config) { { db_statement: :obfuscate, obfuscation_limit: 10 } }
+
+        it 'truncates SQL using config limit' do
+          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+          obfuscated_sql = "SELECT * from users where users.id = ...\nSQL truncated (> 10 characters)"
+          expect do
+            client.query(sql)
+          end.must_raise Trilogy::Error
+
+          _(span.attributes['db.statement']).must_equal obfuscated_sql
+        end
+      end
     end
 
     describe 'when db_statement is set to omit' do
