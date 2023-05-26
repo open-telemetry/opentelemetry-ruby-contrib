@@ -1,0 +1,59 @@
+# frozen_string_literal: true
+
+module OpenTelemetry
+  module Instrumentation
+    module Shoryuken
+      module Middlewares
+        module Server
+          # TracerMiddleware propagates context and instruments Shoryuken requests
+          # by way of its middleware system
+          class TracerMiddleware
+            def call(worker_instance, queue, sqs_msg, _body) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+              attributes = {
+                OpenTelemetry::SemanticConventions::Trace::MESSAGING_SYSTEM => 'shoryuken',
+                'messaging.shoryuken.job_class' => worker_instance.class.name,
+                OpenTelemetry::SemanticConventions::Trace::MESSAGING_MESSAGE_ID => sqs_msg.message_id,
+                OpenTelemetry::SemanticConventions::Trace::MESSAGING_DESTINATION => queue,
+                OpenTelemetry::SemanticConventions::Trace::MESSAGING_DESTINATION_KIND => 'queue',
+                OpenTelemetry::SemanticConventions::Trace::MESSAGING_OPERATION => 'process',
+              }
+              if sqs_msg.respond_to?(:attributes)
+                sqs_msg.attributes.each do |k, v|
+                  attributes["messaging.attributes.#{k}"] = v
+                end
+              end
+              span_name = "#{worker_instance.class.name} process"
+
+              extracted_context = OpenTelemetry.propagation.extract(sqs_msg)
+              OpenTelemetry::Context.with_current(extracted_context) do
+                links = []
+                span_context = OpenTelemetry::Trace.current_span(extracted_context).context
+                links << OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
+                span = tracer.start_root_span(span_name, attributes: attributes, links: links, kind: :consumer)
+                OpenTelemetry::Trace.with_span(span) do
+                  yield
+                rescue Exception => e # rubocop:disable Lint/RescueException
+                  span.record_exception(e)
+                  span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
+                  raise e
+                ensure
+                  span.finish
+                end
+              end
+            end
+
+            private
+
+            def instrumentation_config
+              Shoryuken::Instrumentation.instance.config
+            end
+
+            def tracer
+              Shoryuken::Instrumentation.instance.tracer
+            end
+          end
+        end
+      end
+    end
+  end
+end

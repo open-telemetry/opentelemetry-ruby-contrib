@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'opentelemetry-api'
+gem 'opentelemetry-common'
+gem 'opentelemetry-instrumentation-base'
+gem 'opentelemetry-instrumentation-shoryuken'
+gem 'opentelemetry-sdk'
+
+gem 'shoryuken'
