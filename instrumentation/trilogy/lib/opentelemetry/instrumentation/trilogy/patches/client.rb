@@ -71,6 +71,7 @@ module OpenTelemetry
               ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => net_peer_name
             }
 
+            attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
             attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
 
             case config[:db_statement]
