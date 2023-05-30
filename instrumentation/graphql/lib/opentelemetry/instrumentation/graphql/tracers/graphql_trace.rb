@@ -66,30 +66,30 @@ module OpenTelemetry
             tracer.in_span('graphql.execute_query', attributes: attributes, &block)
           end
 
-          def execute_query_lazy(query:, &block)
+          def execute_query_lazy(query:, multiplex:, &block)
             tracer.in_span('graphql.execute_query_lazy', &block)
           end
 
           def execute_field(field:, query:, ast_node:, arguments:, object:, &block)
-            platform_key = platform_execute_field_key(field)
+            platform_key = platform_execute_field_key(field: field)
             return super unless platform_key
 
             attributes = {}
             attributes['graphql.field.parent'] = field.owner&.graphql_name
             attributes['graphql.field.name'] = field.graphql_name
-            attributes['graphql.field.lazy'] = false
+            attributes['graphql.lazy'] = false
 
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
 
           def execute_field_lazy(field:, query:, ast_node:, arguments:, object:, &block)
-            platform_key = platform_execute_field_key(field)
+            platform_key = platform_execute_field_key(field: field)
             return super unless platform_key
 
             attributes = {}
             attributes['graphql.field.parent'] = field.owner&.graphql_name
             attributes['graphql.field.name'] = field.graphql_name
-            attributes['graphql.field.lazy'] = true
+            attributes['graphql.lazy'] = true
 
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
@@ -116,7 +116,7 @@ module OpenTelemetry
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
 
-          def resolve_type(query:, type:, object:)
+          def resolve_type(query:, type:, object:, &block)
             platform_key = @platform_resolve_type_key_cache[type]
 
             attributes = {}
@@ -139,8 +139,9 @@ module OpenTelemetry
           private
 
           def platform_execute_field_key(field:, &block)
-            platform_key = @platform_field_key_cache[field] if trace_field?(field)
-            platform_key if !platform_key.nil? && trace_field
+            trace_field = trace_field?(field)
+            platform_key = @platform_field_key_cache[field] if trace_field
+            platform_key if platform_key && trace_field
           end
 
           def trace_field?(field)
