@@ -19,7 +19,7 @@ module OpenTelemetry
         end
 
         compatible do
-          Gem::Requirement.create('>= 2.0', '< 3.0').satisfied_by?(Gem::Version.new(::Trilogy::VERSION))
+          Gem::Requirement.create('>= 2.3', '< 3.0').satisfied_by?(Gem::Version.new(::Trilogy::VERSION))
         end
 
         option :peer_service, default: nil, validate: :string
