@@ -12,6 +12,4 @@ appraise 'sinatra-2.x' do
   gem 'sinatra', '~> 2.1'
 end
 
-appraise 'sinatra-1.x' do
-  gem 'sinatra', '~> 1.4'
-end
+
