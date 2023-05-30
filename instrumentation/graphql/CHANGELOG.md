@@ -2,7 +2,7 @@
 
 ### v0.26.1 / 2023-05-30
 
-* FIXED: GraphQL tracing 
+* FIXED: GraphQL tracing
 
 ### v0.26.0 / 2023-05-17
 
