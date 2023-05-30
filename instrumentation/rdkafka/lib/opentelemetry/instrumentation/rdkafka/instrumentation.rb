@@ -11,8 +11,11 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('0.10.0')
 
+        GEM_VARIANTS = %w[rdkafka karafka-rdkafka]
+        
         compatible do
-          Gem.loaded_specs['rdkafka'].version >= MINIMUM_VERSION
+          variant = GEM_VARIANTS.find { |variant| !Gem.loaded_specs[variant].nil? }
+          variant.version >= MINIMUM_VERSION
         end
 
         install do |_config|
