@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.55.0 / 2023-05-31
+
+* BREAKING CHANGE: Add database name for trilogy traces 
+
+* ADDED: Add database name for trilogy traces 
+
 ### v0.54.0 / 2023-05-25
 
 * ADDED: Add Obfuscation Limit Option to Trilogy 
