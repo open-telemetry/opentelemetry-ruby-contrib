@@ -63,7 +63,7 @@ module OpenTelemetry
           def client_attributes(sql)
             attributes = {
               ::OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM => 'mysql',
-              ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => connection_options.fetch(:host, 'unknown sock'),
+              ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => connection_options.fetch(:host, 'unknown sock')
             }
 
             attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
