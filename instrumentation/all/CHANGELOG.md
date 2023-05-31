@@ -1,8 +1,10 @@
 # Release History: opentelemetry-instrumentation-all
 
-### v0.37.1 / 2023-05-31
+### v0.38.0 / 2023-05-31
 
-* (No significant changes)
+* BREAKING CHANGE: Add database name for trilogy traces
+
+* ADDED: Add database name for trilogy traces
 
 ### v0.37.0 / 2023-05-25
 
