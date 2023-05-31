@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.37.1 / 2023-05-31
+
+* (No significant changes)
+
 ### v0.37.0 / 2023-05-25
 
 * ADDED: Add config[:obfuscation_limit] to pg and mysql2
