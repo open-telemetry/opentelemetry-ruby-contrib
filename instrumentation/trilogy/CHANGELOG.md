@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.55.1 / 2023-06-01
+
+* FIXED: Regex non-match with obfuscation limit (issue #486) 
+
 ### v0.55.0 / 2023-05-31
 
 * BREAKING CHANGE: Add database name for trilogy traces 
