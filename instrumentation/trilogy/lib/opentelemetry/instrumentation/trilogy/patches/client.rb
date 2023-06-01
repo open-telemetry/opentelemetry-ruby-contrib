@@ -68,7 +68,7 @@ module OpenTelemetry
 
             attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
             attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
-            attributes['db.mysql.instance.host.name'] = @connected_host if defined?(@connected_host)
+            attributes['db.mysql.instance.address'] = @connected_host if defined?(@connected_host)
 
             case config[:db_statement]
             when :obfuscate
