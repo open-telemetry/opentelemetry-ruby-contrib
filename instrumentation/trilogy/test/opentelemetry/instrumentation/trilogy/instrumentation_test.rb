@@ -293,6 +293,17 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
           _(span.attributes['db.statement']).must_equal obfuscated_sql
         end
+
+        it 'handles regex non-matches' do
+          sql = 'ALTER TABLE my_table DISABLE TRIGGER ALL;'
+          obfuscated_sql = 'SQL truncated (> 10 characters)'
+
+          expect do
+            client.query(sql)
+          end.must_raise Trilogy::Error
+
+          _(span.attributes['db.statement']).must_equal obfuscated_sql
+        end
       end
     end
 
