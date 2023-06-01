@@ -2,7 +2,7 @@
 
 ### v0.24.1 / 2023-06-01
 
-* FIXED: Regex non-match with obfuscation limit (issue #486) 
+* FIXED: Regex non-match with obfuscation limit (issue #486)
 
 ### v0.24.0 / 2023-05-25
 
