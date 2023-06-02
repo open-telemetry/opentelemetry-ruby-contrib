@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.39.0 / 2023-06-02
+
+* BREAKING CHANGE: Separate logical MySQL host from connected host 
+* ADDED: Separate logical MySQL host from connected host 
+
 ### v0.38.0 / 2023-05-31
 
 * BREAKING CHANGE: Add database name for trilogy traces

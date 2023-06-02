@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Trilogy
-      VERSION = '0.55.1'
+      VERSION = '0.56.0'
     end
   end
 end
