@@ -2,7 +2,8 @@
 
 ### v0.39.0 / 2023-06-02
 
-* (No significant changes)
+* BREAKING CHANGE: Separate logical MySQL host from connected host 
+* ADDED: Separate logical MySQL host from connected host 
 
 ### v0.38.0 / 2023-05-31
 
