@@ -45,3 +45,7 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
+
+### v0.22.1 / 2023-06-02
+
+* feat: make config available to compatible blocks #453
