@@ -13,6 +13,8 @@ require 'shoryuken/extensions/active_job_adapter'
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 
+require 'helpers/mock_loader'
+
 # OpenTelemetry SDK config for testing
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
@@ -40,20 +42,23 @@ end
 # Test jobs
 class SimpleEnqueueingJob
   include Shoryuken::Worker
+  shoryuken_options body_parser: JSON, queue: 'default', auto_delete: true
 
-  def perform
+  def perform(sqs_msg, payload)
     SimpleJob.perform_async
   end
 end
 
 class SimpleJob
   include Shoryuken::Worker
+  shoryuken_options body_parser: JSON, queue: 'default', auto_delete: true
 
-  def perform; end
+  def perform(sqs_msg, payload); end
 end
 
 class BaggageTestingJob
   include Shoryuken::Worker
+  shoryuken_options body_parser: JSON, queue: 'default', auto_delete: true
 
   def perform(*args)
     OpenTelemetry::Trace.current_span['success'] = true if OpenTelemetry::Baggage.value('testing_baggage') == 'it_worked'
@@ -62,6 +67,7 @@ end
 
 class ExceptionTestingJob
   include Shoryuken::Worker
+  shoryuken_options body_parser: JSON, queue: 'default', auto_delete: true
 
   def perform(*args)
     raise 'a little hell'
