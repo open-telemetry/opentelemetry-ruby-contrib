@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.56.0 / 2023-06-02
+
+* BREAKING CHANGE: Separate logical MySQL host from connected host 
+
+* ADDED: Separate logical MySQL host from connected host 
+
 ### v0.55.1 / 2023-06-01
 
 * FIXED: Regex non-match with obfuscation limit (issue #486) 
