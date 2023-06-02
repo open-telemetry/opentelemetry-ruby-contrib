@@ -48,6 +48,4 @@
 
 ### v0.22.1 / 2023-06-02
 
-* BREAKING CHANGE: GraphQL instrumentation: support new tracing API 
-
-* ADDED: GraphQL instrumentation: support new tracing API 
+* feat: make config available to compatible blocks #453
