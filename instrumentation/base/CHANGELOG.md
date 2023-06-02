@@ -45,3 +45,9 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
+
+### v0.23.0 / 2023-06-02
+
+* BREAKING CHANGE: GraphQL instrumentation: support new tracing API 
+
+* ADDED: GraphQL instrumentation: support new tracing API 
