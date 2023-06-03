@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.22.1 / 2023-06-02
+
+* feat: make config available to compatible blocks #453
+
 ### v0.22.0 / 2023-04-16
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
@@ -45,7 +49,3 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
-
-### v0.22.1 / 2023-06-02
-
-* feat: make config available to compatible blocks #453
