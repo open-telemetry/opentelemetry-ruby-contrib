@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.27.0 / 2023-06-05
+
+* FIXED: Base config options
+* FIXED: Upgrade ActionPack and ActionView min versions
+
 ### v0.26.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
