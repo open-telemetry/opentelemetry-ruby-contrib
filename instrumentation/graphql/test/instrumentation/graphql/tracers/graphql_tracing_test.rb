@@ -224,6 +224,19 @@ describe 'GraphQL Tracing' do
         _(span).wont_be_nil
       end
 
+      it 'traces .resolve_type_lazy' do
+        skip unless supports_authorized_and_resolved_types?
+        SomeGraphQLAppSchema.execute('{ vehicle { __typename } }', context: { lazy_type_resolve: true })
+
+        span = spans.find do |s|
+          s.name == 'graphql.resolve_type' &&
+            s.attributes['graphql.type.name'] == 'Vehicle' &&
+            s.attributes['graphql.lazy'] == true
+        end
+
+        _(span).wont_be_nil
+      end
+
       it 'includes attributes' do
         skip unless supports_authorized_and_resolved_types?
         expected_attributes = {
@@ -316,6 +329,8 @@ describe 'GraphQL Tracing' do
     end
   end
 
+  LazyBox = Struct.new(:value)
+
   class OtherQueryType < GraphQL::Schema::Object
     field :simple_field, String, null: false
     def simple_field
@@ -330,9 +345,14 @@ describe 'GraphQL Tracing' do
   class SomeGraphQLAppSchema < GraphQL::Schema
     query(::QueryType)
     orphan_types Car
+    lazy_resolve(LazyBox, :value)
 
-    def self.resolve_type(_type, _obj, _ctx)
-      Car
+    def self.resolve_type(_type, _obj, ctx)
+      if ctx[:lazy_type_resolve]
+        LazyBox.new(Car)
+      else
+        Car
+      end
     end
   end
 

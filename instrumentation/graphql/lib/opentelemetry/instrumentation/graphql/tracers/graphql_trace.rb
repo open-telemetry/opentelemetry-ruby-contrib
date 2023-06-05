@@ -126,7 +126,7 @@ module OpenTelemetry
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
 
-          def resolve_type_lazy(query:, type:, object:)
+          def resolve_type_lazy(query:, type:, object:, &block)
             platform_key = @platform_resolve_type_key_cache[type]
 
             attributes = {}
