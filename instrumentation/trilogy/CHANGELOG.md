@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.56.1 / 2023-06-05
+
+* FIXED: Base config options 
+
 ### v0.56.0 / 2023-06-02
 
 * BREAKING CHANGE: Separate logical MySQL host from connected host 
