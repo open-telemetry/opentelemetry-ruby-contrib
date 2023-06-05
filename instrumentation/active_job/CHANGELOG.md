@@ -2,7 +2,7 @@
 
 ### v0.5.1 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.5.0 / 2023-04-17
 
