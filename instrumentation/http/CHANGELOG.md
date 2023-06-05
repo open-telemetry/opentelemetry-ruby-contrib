@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.23.1 / 2023-06-05
+
+* FIXED: Base config options 
+
 ### v0.23.0 / 2023-05-15
 
 * ADDED: Add span_preprocessor hook 

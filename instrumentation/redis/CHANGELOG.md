@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.25.1 / 2023-06-05
+
+* FIXED: Base config options 
+
 ### v0.25.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 

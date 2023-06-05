@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.24.1 / 2023-06-05
+
+* FIXED: Base config options 
+
 ### v0.24.0 / 2023-05-15
 
 * ADDED: Add db.operation attribute for dalli
