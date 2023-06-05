@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.26.2 / 2023-06-05
+
+* FIXED: Base config options 
+
 ### v0.26.1 / 2023-05-30
 
 * FIXED: GraphQL tracing
