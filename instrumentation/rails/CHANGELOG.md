@@ -2,7 +2,7 @@
 
 ### v0.27.1 / 2023-06-05
 
-* (No significant changes)
+* FIXED: Use latest bug fix version for all dependencies
 
 ### v0.27.0 / 2023-06-05
 
@@ -13,28 +13,28 @@
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.25.0 / 2023-02-08
 
-* BREAKING CHANGE: Update Instrumentations GraphQL, HttpClient, Rails [#303](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/303) 
+* BREAKING CHANGE: Update Instrumentations GraphQL, HttpClient, Rails [#303](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/303)
 * BREAKING CHANGE: Drop Rails 5 Support [#315](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/315)
 
-* DOCS: Rails Instrumentation Compatibility 
+* DOCS: Rails Instrumentation Compatibility
 
 ### v0.24.1 / 2023-01-14
 
-* DOCS: Fix gem homepage 
+* DOCS: Fix gem homepage
 
 ### v0.24.0 / 2022-12-06
 
-* BREAKING CHANGE: Remove enable_recognize_route and span_naming options 
+* BREAKING CHANGE: Remove enable_recognize_route and span_naming options
 
-* FIXED: Remove enable_recognize_route and span_naming options 
+* FIXED: Remove enable_recognize_route and span_naming options
 
 ### v0.23.1 / 2022-11-08
 
-* FIXED: Bump rails instrumentation dependency on action_pack instrumentation 
+* FIXED: Bump rails instrumentation dependency on action_pack instrumentation
 
 ### v0.23.0 / 2022-10-14
 
@@ -43,17 +43,17 @@
 ### v0.22.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.21.0 / 2022-05-02
 
-* ADDED: OTel Railtie 
-* FIXED: RubyGems Fallback 
+* ADDED: OTel Railtie
+* FIXED: RubyGems Fallback
 
 ### v0.20.0 / 2021-12-01
 
-* ADDED: Move activesupport notification subsciber out of action_view gem 
-* FIXED: Instrumentation of Rails 7 
+* ADDED: Move activesupport notification subsciber out of action_view gem
+* FIXED: Instrumentation of Rails 7
 
 ### v0.19.4 / 2021-10-06
 
@@ -84,7 +84,7 @@
 
 ### v0.18.1 / 2021-06-23
 
-* FIXED: Updated rack middleware position to zero 
+* FIXED: Updated rack middleware position to zero
 
 ### v0.18.0 / 2021-05-21
 
