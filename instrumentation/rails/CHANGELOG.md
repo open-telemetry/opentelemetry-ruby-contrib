@@ -2,7 +2,8 @@
 
 ### v0.27.0 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
+* FIXED: Upgrade ActionPack and ActionView min versions
 
 ### v0.26.0 / 2023-04-17
 
