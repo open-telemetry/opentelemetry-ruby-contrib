@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.23.0 / 2023-06-05
+
+* ADDED: Use Rack Middleware Helper
+* FIXED: Base config options 
+
 ### v0.22.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 
