@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.27.1 / 2023-06-05
+
+* (No significant changes)
+
 ### v0.27.0 / 2023-06-05
 
 * FIXED: Base config options
