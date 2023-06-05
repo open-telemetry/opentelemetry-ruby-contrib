@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ruby_kafka
 
+### v0.20.1 / 2023-06-05
+
+* FIXED: Base config options 
+
 ### v0.20.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 
