@@ -2,7 +2,7 @@
 
 ### v0.7.0 / 2023-06-05
 
-* ADDED: Use Rack Middleware Helper 
+* ADDED: Use Rack Middleware Helper
 * FIXED: Base config options 
 
 ### v0.6.0 / 2023-04-17
