@@ -7,8 +7,8 @@ The `opentelemetry-propagator-ottrace` gem contains injectors and extractors for
 
 | Header Name         | Description                                                                                                                            | Required              |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| `ot-tracer-traceid` | uint64 encoded as a string of 16 hex characters                                                                                        | yes                   |
-| `ot-tracer-spanid`  | uint64 encoded as a string of 16 hex characters                                                                                        | yes                   |
+| `ot-tracer-traceid` | 64-bit; 16 hex digits or 128-bit; 32 hex digits                                                          | yes                   |
+| `ot-tracer-spanid`  | 64-bit; 16 hex digits                                                                                    | yes                   |
 | `ot-tracer-sampled` | boolean or bit encoded as a string with the values `'true'`,`'false'`, `'1'`, or `'0'`                                                 | no                    |
 | `ot-baggage-*`      | repeated string to string key-value baggage items; keys are prefixed with `ot-baggage-` and the corresponding value is the raw string. | if baggage is present |
 
@@ -24,11 +24,15 @@ This issue was [fixed](https://github.com/open-telemetry/opentelemetry-go-contri
 
 ### Interop and trace ids
 
-The OT trace propagation format expects trace ids to be 64-bits. In order to
-interop with OpenTelemetry, trace ids need to be truncated to 64-bits before
-sending them on the wire. When truncating, the least significant (right-most)
-bits MUST be retained. For example, a trace id of
-`3c3039f4d78d5c02ee8e3e41b17ce105` would be truncated to `ee8e3e41b17ce105`.
+OTTrace was changed to be interoperable with other format so it is supposed to 8 or 16 byte array values for the trace-id.
+
+In order to do that Lightstep released a version of the OTTrace propagators in OpenTracing SDKs that left padded 8 byte headers to 16 bytes using an additional 8 bytes of 0s.
+
+The reality of the world is not every application upgraded to support 16 byte array propagation format, but this propagator must still convert legacy 8 byte trace ids to match the W3C Trace Context Trace ID 16 byte array.
+
+In addition to that it must be interoperable with legacy OTTracers, which expect 8 byte headers so this propagator truncates the value from a 16 byte array to an 8 byte array value before inject it into the carrier.
+
+This propagator is compatible with 8 or 16 byte trace ids which it normalizes to 16 bytes but only emits 8 byte trace ids.
 
 ### Baggage Notes
 
