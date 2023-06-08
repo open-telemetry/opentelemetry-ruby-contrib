@@ -40,7 +40,7 @@ module OpenTelemetry
         #   end
         # @return [Array] consisting of a middleware and arguments used in rack builders
         def middleware_args
-          if config.fetch(:use_rack_events, false) == true && defined?(::Rack::Events)
+          if config.fetch(:use_rack_events, false) == true && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler)
             [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new]]
           else
             [OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware]
@@ -50,7 +50,7 @@ module OpenTelemetry
         private
 
         def require_dependencies
-          require_relative 'middlewares/event_handler' if defined?(Rack::Events)
+          require_relative 'middlewares/event_handler' if defined?(::Rack::Events)
           require_relative 'middlewares/tracer_middleware'
         end
 
