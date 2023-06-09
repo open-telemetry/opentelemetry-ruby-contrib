@@ -46,7 +46,7 @@ describe OpenTelemetry::Instrumentation::Shoryuken::Patches::Processor do
   describe '#process' do
     it 'does not trace' do
       allow(worker_class).to receive_message_chain(:server_middleware, :invoke)
-      Shoryuken::Processor.send(:process, queue_name, sqs_msg)
+      Shoryuken::Processor.process(queue_name, sqs_msg)
       _(spans.size).must_equal(0)
     end
   end
