@@ -5,36 +5,29 @@ on:
   push:
     branches:
       - main
-      - 'release/**'
   pull_request:
     branches:
       - main
 
 jobs:
-  # These builds require sidecar services (postgres, redis, etc) in order to run their test suites.
   instrumentation_with_services:
     strategy:
       fail-fast: false
-      # We don't run on macos and windows since service containers aren't supported there.
       matrix:
         gem:
-          - bunny
           - dalli
           - mongo
-          - mysql2
-          - pg
-          - que
-          - racecar
-          - rdkafka
-          - redis
-          - resque
-          - ruby_kafka
-          - sidekiq
-          - trilogy
-    name: ${{ matrix.gem }} / ubuntu-latest / services
-    runs-on: ubuntu-latest
+        os:
+          - ubuntu-latest
+    name: other / ${{ matrix.gem }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.2"
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
@@ -45,38 +38,92 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.0"
-      - name: "Test Ruby 2.7"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "2.7"
           yard: true
           rubocop: true
           build: true
-      - name: "JRuby Filter"
-        id: jruby_skip
-        shell: bash
-        run: |
-          echo "skip=false" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "bunny"      ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "mysql2"     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "pg"         ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "que"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "racecar"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "rdkafka"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "redis"      ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "resque"     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "ruby_kafka" ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "sidekiq"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "trilogy"    ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
-          true
       - name: "Test JRuby"
-        if: "${{ steps.jruby_skip.outputs.skip == 'false' }}"
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby"
+          ruby: "jruby-9.4.2.0"
+    services:
+      memcached:
+        image: memcached:alpine
+        ports:
+          - 11211:11211
+      mongodb:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
+
+  instrumentation_mysql:
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - mysql2
+          - trilogy
+        os:
+          - ubuntu-latest
+    name: mysql / ${{ matrix.gem }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.2"
+      - name: "Test Ruby 3.1"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.1"
+      - name: "Test Ruby 3.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.0"
+          yard: true
+          rubocop: true
+          build: true
+    services:
+      mysql:
+        image: mysql:8.0.31
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3 -e MYSQL_DATABASE=mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_PASSWORD=mysql -e MYSQL_USER=mysql -p 3306:3306 --entrypoint sh mysql:8.0.31 -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
+
+  instrumentation_kafka:
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - racecar
+          - rdkafka
+          - ruby_kafka
+        os:
+          - ubuntu-latest
+    name: kafka / ${{ matrix.gem }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.2"
+      - name: "Test Ruby 3.1"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.1"
+      - name: "Test Ruby 3.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.0"
+          yard: true
+          rubocop: true
+          build: true
     services:
       zookeeper:
         image: confluentinc/cp-zookeeper:latest
@@ -97,14 +144,40 @@ jobs:
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
           KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      memcached:
-        image: memcached:alpine
-        ports:
-          - 11211:11211
-      mongodb:
-        image: mongo:4.4
-        ports:
-          - 27017:27017
+
+  instrumentation_redis:
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - redis
+          - resque
+          - sidekiq
+        os:
+          - ubuntu-latest
+    name: redis / ${{ matrix.gem }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.2"
+      - name: "Test Ruby 3.1"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.1"
+      - name: "Test Ruby 3.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.0"
+          yard: true
+          rubocop: true
+          build: true
+    services:
       redis:
         image: bitnami/redis:6.2
         ports:
@@ -116,20 +189,39 @@ jobs:
           --health-retries 5
         env:
           REDIS_PASSWORD: "passw0rd"
-      mysql:
-        image: mysql:5.6
-        env:
-          MYSQL_DATABASE: mysql
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_PASSWORD: mysql
-          MYSQL_USER: mysql
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
-      rabbitmq:
-        image: rabbitmq:3.8-alpine
-        ports:
-          - "5672:5672"
+
+  instrumentation_postgresql:
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - pg
+          - que
+        os:
+          - ubuntu-latest
+    name: postgresql / ${{ matrix.gem }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.2"
+      - name: "Test Ruby 3.1"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.1"
+      - name: "Test Ruby 3.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.0"
+          yard: true
+          rubocop: true
+          build: true
+    services:
       postgres:
         image: postgres:13
         env:
@@ -137,3 +229,41 @@ jobs:
         ports:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=5s --health-timeout=2s --health-retries=3
+        volumes:
+          - "/var/run/postgresql:/var/run/postgresql"
+
+  instrumentation_rabbitmq:
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - bunny
+        os:
+          - ubuntu-latest
+    name: rabbitmq / ${{ matrix.gem }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.2"
+      - name: "Test Ruby 3.1"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.1"
+      - name: "Test Ruby 3.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.0"
+          yard: true
+          rubocop: true
+          build: true
+    services:
+      rabbitmq:
+        image: rabbitmq:3.8-alpine
+        ports:
+          - "5672:5672"

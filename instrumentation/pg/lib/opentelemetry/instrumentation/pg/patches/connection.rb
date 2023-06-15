@@ -86,7 +86,7 @@ module OpenTelemetry
             attrs = { 'db.operation' => validated_operation(operation), 'db.postgresql.prepared_statement_name' => statement_name }
             attrs['db.statement'] = sql unless config[:db_statement] == :omit
             attrs.merge!(OpenTelemetry::Instrumentation::PG.attributes)
-            attrs.reject! { |_, v| v.nil? }
+            attrs.compact!
 
             [span_name(operation), client_attributes.merge(attrs)]
           end
@@ -97,7 +97,7 @@ module OpenTelemetry
           end
 
           def span_name(operation)
-            [validated_operation(operation), database_name].compact.join(' ')
+            [validated_operation(operation), db].compact.join(' ')
           end
 
           def validated_operation(operation)
@@ -107,8 +107,14 @@ module OpenTelemetry
           def obfuscate_sql(sql)
             return sql unless config[:db_statement] == :obfuscate
 
-            # Borrowed from opentelemetry-instrumentation-mysql2
-            return 'SQL query too large to remove sensitive data ...' if sql.size > 2000
+            if sql.size > config[:obfuscation_limit]
+              first_match_index = sql.index(generated_postgres_regex)
+              truncation_message = "SQL truncated (> #{config[:obfuscation_limit]} characters)"
+              return truncation_message unless first_match_index
+
+              truncated_sql = sql[..first_match_index - 1]
+              return "#{truncated_sql}...\n#{truncation_message}"
+            end
 
             # From:
             # https://github.com/newrelic/newrelic-ruby-agent/blob/9787095d4b5b2d8fcaf2fdbd964ed07c731a8b6b/lib/new_relic/agent/database/obfuscator.rb
@@ -117,46 +123,66 @@ module OpenTelemetry
             obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if PG::Constants::UNMATCHED_PAIRS_REGEX.match(obfuscated)
 
             obfuscated
+          rescue StandardError => e
+            OpenTelemetry.handle_error(message: 'Failed to obfuscate SQL', exception: e)
+            'OpenTelemetry error: failed to obfuscate sql'
           end
 
           def generated_postgres_regex
             @generated_postgres_regex ||= Regexp.union(PG::Constants::POSTGRES_COMPONENTS.map { |component| PG::Constants::COMPONENTS_REGEX_MAP[component] })
           end
 
-          def database_name
-            conninfo_hash[:dbname]&.to_s
-          end
-
-          def first_in_list(item)
-            if (idx = item.index(','))
-              item[0...idx]
-            else
-              item
-            end
-          end
-
           def client_attributes
             attributes = {
               'db.system' => 'postgresql',
-              'db.user' => conninfo_hash[:user]&.to_s,
-              'db.name' => database_name,
-              'net.peer.name' => first_in_list(conninfo_hash[:host]&.to_s)
+              'db.user' => user,
+              'db.name' => db
             }
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
-            attributes.merge(transport_attrs).reject { |_, v| v.nil? }
+            attributes.merge!(transport_attrs)
+            attributes.compact!
+            attributes
+          end
+
+          def transport_addr
+            # The hostaddr method is available when the gem is built against
+            # a recent version of libpq.
+            return hostaddr if defined?(hostaddr)
+
+            # As a fallback, we can use the hostaddr of the parsed connection
+            # string when there is only one. Some older versions of libpq allow
+            # multiple without any way to discern which is presently connected.
+            addr = conninfo_hash[:hostaddr]
+            return addr unless addr&.include?(',')
           end
 
           def transport_attrs
-            if conninfo_hash[:host]&.start_with?('/')
-              { 'net.transport' => 'Unix' }
+            h = host
+            if h&.start_with?('/')
+              {
+                'net.sock.family' => 'unix',
+                'net.peer.name' => h
+              }
             else
               {
-                'net.transport' => 'IP.TCP',
-                'net.peer.ip' => conninfo_hash[:hostaddr]&.to_s,
-                'net.peer.port' => first_in_list(conninfo_hash[:port]&.to_s)
+                'net.transport' => 'ip_tcp',
+                'net.peer.name' => h,
+                'net.peer.ip' => transport_addr,
+                'net.peer.port' => transport_port
               }
             end
+          end
+
+          def transport_port
+            # The port method can fail in older versions of the gem. It is
+            # accurate and safe to use when the DEF_PGPORT constant is defined.
+            return port if defined?(::PG::DEF_PGPORT)
+
+            # As a fallback, we can use the port of the parsed connection
+            # string when there is exactly one.
+            p = conninfo_hash[:port]
+            return p.to_i unless p.nil? || p.empty? || p.include?(',')
           end
         end
       end

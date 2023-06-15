@@ -9,8 +9,6 @@ required_checks_timeout: 1200
 # Git user attached to commits for release pull requests.
 git_user_name: Ariel Valentin
 git_user_email: ariel@arielvalentin.com
-# Toys tool that builds YARD reference docs
-docs_builder_tool: [yardoc]
 
 # Control the conventional commit linter.
 commit_lint:
@@ -34,6 +32,10 @@ gems:
   - name: opentelemetry-instrumentation-gruf
     directory: instrumentation/gruf
     version_constant: [OpenTelemetry, Instrumentation, Gruf, VERSION]
+
+  - name: opentelemetry-instrumentation-grape
+    directory: instrumentation/grape
+    version_constant: [OpenTelemetry, Instrumentation, Grape, VERSION]
 
   - name: opentelemetry-instrumentation-racecar
     directory: instrumentation/racecar

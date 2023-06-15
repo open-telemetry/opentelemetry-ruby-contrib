@@ -4,12 +4,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
+
+require 'opentelemetry-instrumentation-que'
 
 require 'minitest/autorun'
-
-require_relative '../lib/opentelemetry-instrumentation-que'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
@@ -31,6 +31,8 @@ class JobThatFails < Que::Job
 end
 
 OpenTelemetry::SDK.configure do |c|
+  c.error_handler = ->(exception:, message:) { raise(exception || message) }
+  c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
   c.add_span_processor span_processor
 end
 
@@ -45,13 +47,25 @@ def prepare_que
     password: ENV.fetch('TEST_POSTGRES_PASSWORD', 'postgres')
   )
 
-  Que.connection = ActiveRecord
-  Que.migrate!(version: 4)
+  # Que 1.2 and 2.2 use different migration versions and in order to
+  # run both tests in the same database, we need to clean up previous
+  # tables and functions. Easiest way is to drop and recreate public schema.
+  ActiveRecord::Base.connection.execute('DROP SCHEMA public CASCADE')
+  ActiveRecord::Base.connection.execute('CREATE SCHEMA public')
 
-  # Make sure the que_jobs table is empty before running tests.
-  ActiveRecord::Base.connection.execute('TRUNCATE que_jobs')
+  Que.connection = ActiveRecord
+
+  if que_version >= Gem::Version.new('2.1.0')
+    Que.migrate!(version: 7)
+  else
+    Que.migrate!(version: 4)
+  end
 end
 
 def database_name
   ENV.fetch('TEST_POSTGRES_DB', 'postgres')
+end
+
+def que_version
+  @que_version ||= Gem.loaded_specs['que'].version
 end

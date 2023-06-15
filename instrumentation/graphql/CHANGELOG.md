@@ -1,5 +1,47 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.26.2 / 2023-06-05
+
+* FIXED: Base config options 
+* FIXED: GraphQL resolve_type_lazy 
+
+### v0.26.1 / 2023-05-30
+
+* FIXED: GraphQL tracing
+
+### v0.26.0 / 2023-05-17
+
+* BREAKING CHANGE: GraphQL instrumentation: support new tracing API 
+
+* ADDED: GraphQL instrumentation: support new tracing API
+
+### v0.25.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
+### v0.24.0 / 2023-03-15
+
+* BREAKING CHANGE: Add support for GraphQL 2.0.19
+
+* FIXED: Add support for GraphQL 2.0.19
+
+### v0.23.0 / 2023-03-13
+
+* BREAKING CHANGE: Lock graphql max version to 2.0.17
+
+* FIXED: Lock graphql max version to 2.0.17
+
+### v0.22.0 / 2023-01-27
+
+* ADDED: Normalize GraphQL span names for easier aggregation analysis 
+
+### v0.21.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.21.0 / 2022-07-12
 
 * FIXED: Use semantic graphql attribute names 

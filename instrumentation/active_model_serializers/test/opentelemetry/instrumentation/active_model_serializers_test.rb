@@ -39,7 +39,7 @@ describe OpenTelemetry::Instrumentation::ActiveModelSerializers do
 
   describe 'install' do
     it 'subscribes to ActiveSupport::Notifications' do
-      subscriptions = ActiveSupport::Notifications.notifier.instance_variable_get(:'@string_subscribers')
+      subscriptions = ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)
       subscriptions = subscriptions['render.active_model_serializers']
       assert(subscriptions.detect { |s| s.is_a?(ActiveSupport::Notifications::Fanout::Subscribers::Timed) })
     end

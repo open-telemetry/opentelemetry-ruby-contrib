@@ -12,6 +12,8 @@ describe OpenTelemetry::Instrumentation::Sinatra do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Sinatra::Instrumentation.instance }
   let(:exporter) { EXPORTER }
 
+  class CustomError < StandardError; end
+
   let(:app_one) do
     Class.new(Sinatra::Application) do
       get '/endpoint' do
@@ -19,7 +21,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       end
 
       get '/error' do
-        raise
+        raise CustomError, 'custom message'
       end
 
       template :foo_template do
@@ -158,6 +160,13 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.target' => '/error'
       )
       _(exporter.finished_spans.flat_map(&:events).map(&:name)).must_equal(['exception'])
+    end
+
+    it 'adds exception type to events when the app raises errors' do
+      get '/one/error'
+
+      _(exporter.finished_spans.first.events[0].attributes['exception.type']).must_equal('CustomError')
+      _(exporter.finished_spans.first.events[0].attributes['exception.message']).must_equal('custom message')
     end
   end
 end

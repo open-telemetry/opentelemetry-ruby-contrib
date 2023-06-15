@@ -1,5 +1,41 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.23.1 / 2023-06-05
+
+* (No significant changes)
+
+### v0.23.0 / 2023-06-05
+
+* ADDED: Use Rack Middleware Helper
+* FIXED: Base config options 
+
+### v0.22.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
+### v0.21.5 / 2023-02-13
+
+* FIXED: Add exceptions to sinatra spans, ruboproof test.
+
+### v0.21.4 / 2023-02-08
+
+* CHANGED: incorrect error type being recorded when Sinatra route raises exception [#317](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/317)
+
+### v0.21.3 / 2023-01-27
+
+* fix: Check if env['sinatra.error'] exists before recording it
+
+### v0.21.2 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
+### v0.21.1 / 2022-11-16
+
+* FIXED: Loosen dependency on Rack
+
 ### v0.21.0 / 2022-10-12
 
 * ADDED: Use rack middleware in sinatra middleware 

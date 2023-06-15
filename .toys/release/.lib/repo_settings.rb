@@ -25,8 +25,6 @@ class RepoSettings
   attr_reader :release_jobs_regexp
   attr_reader :required_checks_timeout
 
-  attr_reader :docs_builder_tool
-
   attr_reader :commit_lint_merge
   attr_reader :commit_lint_allowed_types
 
@@ -77,7 +75,7 @@ class RepoSettings
 
   def gem_cd(gem_name, &block)
     dir = gem_directory(gem_name, from: :absolute)
-    ::Dir.chdir(dir, &block)
+    Dir.chdir(dir, &block)
   end
 
   def gem_changelog_path(gem_name, from: :directory)
@@ -157,7 +155,6 @@ class RepoSettings
     @repo_path = info["repo"]
     @signoff_commits = info["signoff_commits"] ? true : false
     @coordinate_versions = info["coordinate_versions"] ? true : false
-    @docs_builder_tool = info["docs_builder_tool"]
     @enable_release_automation = info["enable_release_automation"] != false
     required_checks = info["required_checks"]
     @required_checks_regexp = required_checks == false ? nil : ::Regexp.new(required_checks.to_s)
@@ -203,9 +200,6 @@ class RepoSettings
     gem_info["version_rb_path"] ||= "lib/#{name_path}/version.rb"
     gem_info["changelog_path"] ||= "CHANGELOG.md"
     gem_info["version_constant"] ||= segments.map { |seg| camelize(seg) } + ["VERSION"]
-    gem_info["gh_pages_directory"] ||= has_multiple_gems ? name : "."
-    gem_info["gh_pages_version_var"] ||=
-      has_multiple_gems ? "version_#{name}".tr("-", "_") : "version"
   end
 
   def check_global_info

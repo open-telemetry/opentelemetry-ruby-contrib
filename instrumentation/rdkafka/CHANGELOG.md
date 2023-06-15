@@ -1,9 +1,32 @@
 # Release History: opentelemetry-instrumentation-rdkafka
 
+### v0.3.1 / 2023-06-05
+
+* FIXED: Base config options 
+
+### v0.3.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
+### v0.2.3 / 2023-03-24
+
+* FIXED: Skip recording non-utf8 kafka keys in racecar and rdkafka
+
+### v0.2.2 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
+### v0.2.1 / 2022-11-14
+
+* Loosen dependency on opentelemetry-api
+
 ### v0.2.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.1.0 / 2022-05-02
 

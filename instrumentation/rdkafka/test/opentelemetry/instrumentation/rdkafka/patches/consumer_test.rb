@@ -38,7 +38,7 @@ unless ENV['OMIT_SERVICES']
       it 'traces each call' do
         rand_hash = SecureRandom.hex(10)
         topic_name = "consumer-patch-trace-#{rand_hash}"
-        config = { "bootstrap.servers": "#{host}:#{port}" }
+        config = { 'bootstrap.servers': "#{host}:#{port}" }
 
         producer = Rdkafka::Config.new(config).producer
         delivery_handles = []
@@ -60,8 +60,8 @@ unless ENV['OMIT_SERVICES']
         producer.close
 
         consumer_config = config.merge(
-          "group.id": 'me',
-          "auto.offset.reset": 'smallest' # https://stackoverflow.com/a/51081649
+          'group.id': 'me',
+          'auto.offset.reset': 'smallest' # https://stackoverflow.com/a/51081649
         )
         consumer = Rdkafka::Config.new(config.merge(consumer_config)).consumer
         consumer.subscribe(topic_name)
@@ -114,13 +114,62 @@ unless ENV['OMIT_SERVICES']
 
         consumer.close
       end
+
+      it 'encodes messages keys depending on input format' do
+        rand_hash = SecureRandom.hex(10)
+        topic_name = "consumer-patch-trace-#{rand_hash}"
+        config = { 'bootstrap.servers': "#{host}:#{port}" }
+
+        producer = Rdkafka::Config.new(config).producer
+        delivery_handles = []
+
+        delivery_handles << producer.produce(
+          payload: 'hello', key: "\xAF\x0F\xEF", topic: topic_name
+        )
+
+        delivery_handles << producer.produce(
+          payload: 'hello', key: 'foobarbaz', topic: topic_name
+        )
+
+        delivery_handles.each(&:wait)
+
+        producer.close
+
+        consumer_config = config.merge(
+          'group.id': 'me',
+          'auto.offset.reset': 'smallest' # https://stackoverflow.com/a/51081649
+        )
+        consumer = Rdkafka::Config.new(config.merge(consumer_config)).consumer
+        consumer.subscribe(topic_name)
+
+        counter = 0
+        begin
+          consumer.each do |_msg|
+            counter += 1
+            raise 'oops' if counter >= 2
+          end
+        rescue StandardError
+        end
+
+        _(spans.size).must_equal(4)
+        process_spans = spans.select { |s| s.name == "#{topic_name} process" }
+
+        # First pair for send and process spans
+        first_process_span = process_spans[0]
+        _(first_process_span.attributes).wont_include('messaging.kafka.message_key')
+
+        second_process_span = process_spans[1]
+        _(second_process_span.attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
+
+        _(spans.size).must_equal(4)
+      end
     end
 
     describe '#each_batch' do
       it 'traces each_batch call' do
         rand_hash = SecureRandom.hex(10)
         topic_name = "consumer-patch-batch-trace-#{rand_hash}"
-        config = { "bootstrap.servers": "#{host}:#{port}" }
+        config = { 'bootstrap.servers': "#{host}:#{port}" }
 
         producer = Rdkafka::Config.new(config).producer
         delivery_handles = []
@@ -142,8 +191,8 @@ unless ENV['OMIT_SERVICES']
         producer.close
 
         consumer_config = config.merge(
-          "group.id": 'me',
-          "auto.offset.reset": 'smallest' # https://stackoverflow.com/a/51081649
+          'group.id': 'me',
+          'auto.offset.reset': 'smallest' # https://stackoverflow.com/a/51081649
         )
         consumer = Rdkafka::Config.new(config.merge(consumer_config)).consumer
         consumer.subscribe(topic_name)

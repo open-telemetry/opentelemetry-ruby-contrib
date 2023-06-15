@@ -1,5 +1,17 @@
 # Release History: opentelemetry-resource_detectors
 
+### v0.23.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
+### v0.22.0 / 2023-01-14
+
+* ADDED: Add azure resource detector. 
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.21.0 / 2022-06-09
 
 * BREAKING CHANGE: This requires upgrading both the SDK and Instrumentation gem in tandem

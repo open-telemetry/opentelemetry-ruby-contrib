@@ -1,5 +1,31 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.23.2 / 2023-06-08
+
+* FIXED: Ensure Rack Events Handler Exists
+
+### v0.23.1 / 2023-06-05
+
+* FIXED: Base config options 
+
+### v0.23.0 / 2023-04-17
+
+* BREAKING CHANGE: Remove retain_middleware_names Rack Option 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Remove retain_middleware_names Rack Option 
+* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Use Rack::Events for instrumentation 
+
+### v0.22.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
+### v0.22.0 / 2022-11-16
+
+* ADDED: Add experimental traceresponse propagator to Rack instrumentation
+
 ### v0.21.1 / 2022-10-04
 
 * FIXED: Bring http.request.header and http.response.header in line with semconv

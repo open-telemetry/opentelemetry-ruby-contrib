@@ -13,7 +13,7 @@ include :terminal, styled: true
 def run
   require "release_utils"
 
-  ::Dir.chdir(context_directory)
+  Dir.chdir(context_directory)
   @utils = ReleaseUtils.new(self)
 
   pr_info = @utils.find_release_prs(merge_sha: @utils.current_sha)

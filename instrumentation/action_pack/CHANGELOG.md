@@ -1,5 +1,39 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.7.0 / 2023-06-05
+
+* ADDED: Use Rack Middleware Helper
+* FIXED: Base config options 
+
+### v0.6.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
+### v0.5.0 / 2023-02-01
+
+* BREAKING CHANGE: Drop Rails 5 Support 
+
+* ADDED: Drop Rails 5 Support 
+* FIXED: Drop Rails dependency for ActiveSupport Instrumentation 
+
+### v0.4.1 / 2023-01-14
+
+* FIXED: String-ify code.function Span attribute
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
+### v0.4.0 / 2022-12-06
+
+* BREAKING CHANGE: Remove enable_recognize_route and span_naming options 
+
+* FIXED: Remove enable_recognize_route and span_naming options 
+
+### v0.3.2 / 2022-11-16
+
+* FIXED: Loosen dependency on Rack
+
 ### v0.3.1 / 2022-10-27
 
 * FIXED: Declare span_naming option in action_pack instrumentation

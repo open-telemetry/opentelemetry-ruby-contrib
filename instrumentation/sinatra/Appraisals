@@ -4,10 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'sinatra-2.1' do
-  gem 'sinatra', '2.1.0'
+appraise 'sinatra-3.0.x' do
+  gem 'sinatra', '~> 3.0.0'
 end
 
-appraise 'sinatra-1.4' do
-  gem 'sinatra', '1.4.8'
+appraise 'sinatra-2.x' do
+  gem 'sinatra', '~> 2.1'
+end
+
+appraise 'sinatra-1.x' do
+  gem 'sinatra', '~> 1.4'
 end

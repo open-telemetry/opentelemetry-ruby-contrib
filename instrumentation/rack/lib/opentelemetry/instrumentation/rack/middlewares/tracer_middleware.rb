@@ -6,15 +6,13 @@
 
 require 'opentelemetry/trace/status'
 
-require_relative '../util/queue_time'
-
 module OpenTelemetry
   module Instrumentation
     module Rack
       module Middlewares
         # TracerMiddleware propagates context and instruments Rack requests
         # by way of its middleware system
-        class TracerMiddleware # rubocop:disable Metrics/ClassLength
+        class TracerMiddleware
           class << self
             def allowed_rack_request_headers
               @allowed_rack_request_headers ||= Array(config[:allowed_request_headers]).each_with_object({}) do |header, memo|
@@ -82,6 +80,7 @@ module OpenTelemetry
                 OpenTelemetry::Instrumentation::Rack.with_span(request_span) do
                   @app.call(env).tap do |status, headers, response|
                     set_attributes_after_request(request_span, status, headers, response)
+                    config[:response_propagators].each { |propagator| propagator.inject(headers) }
                   end
                 end
               end

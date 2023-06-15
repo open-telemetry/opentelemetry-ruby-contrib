@@ -16,38 +16,38 @@ Gem::Specification.new do |spec|
 
   spec.summary     = 'Trilogy instrumentation for the OpenTelemetry framework'
   spec.description = 'Adds auto instrumentation that includes SQL metadata'
-  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-contrib'
+  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
-  spec.files = ::Dir.glob('lib/**/*.rb') +
-               ::Dir.glob('*.md') +
+  spec.files = Dir.glob('lib/**/*.rb') +
+               Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.6.0')
+  spec.required_ruby_version = '>= 3.0'
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.21.0'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.1'
   spec.add_dependency 'opentelemetry-semantic_conventions', '>= 1.8.0'
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
-  spec.add_development_dependency 'bundler', '>= 1.17'
+  spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
-  spec.add_development_dependency 'opentelemetry-test-helpers'
+  spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
-  spec.add_development_dependency 'rake', '~> 12.3.3'
+  spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec-mocks'
-  spec.add_development_dependency 'rubocop', '~> 1.3.0'
+  spec.add_development_dependency 'rubocop', '~> 1.50.2'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'trilogy', '>= 2.0', '< 3.0'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-trilogy/v#{OpenTelemetry::Instrumentation::Trilogy::VERSION}/file.CHANGELOG.html"
+    spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/trilogy'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-trilogy/v#{OpenTelemetry::Instrumentation::Trilogy::VERSION}"
+    spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
 end

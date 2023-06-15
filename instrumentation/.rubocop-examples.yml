@@ -1,5 +1,4 @@
-AllCops:
-  TargetRubyVersion: "2.6.0"
+inherit_from: ../.rubocop.yml
 
 Bundler/OrderedGems:
   Exclude:
@@ -10,8 +9,6 @@ Metrics/AbcSize:
   Max: 18
   Exclude:
     - "**/test/**/*"
-Metrics/LineLength:
-  Enabled: false
 Metrics/MethodLength:
   Max: 20
   Exclude:

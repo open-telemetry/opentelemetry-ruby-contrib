@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::Racecar do
   end
 
   def produce(messages)
-    config = { "bootstrap.servers": "#{host}:#{port}" }
+    config = { 'bootstrap.servers': "#{host}:#{port}" }
     producer = Rdkafka::Config.new(config).producer
     producer.delivery_callback = ->(_) {}
 
@@ -54,7 +54,7 @@ describe OpenTelemetry::Instrumentation::Racecar do
     Racecar.config.brokers = ["#{host}:#{port}"]
     Racecar.config.pause_timeout = 0 # fail fast and exit
     Racecar.config.load_consumer_class(consumer_class)
-    Racecar::Runner.new(consumer_class.new, config: Racecar.config, logger: Logger.new(STDOUT), instrumenter: Racecar.instrumenter)
+    Racecar::Runner.new(consumer_class.new, config: Racecar.config, logger: Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym), instrumenter: Racecar.instrumenter)
   end
 
   def run_racecar(racecar)
@@ -165,6 +165,30 @@ describe OpenTelemetry::Instrumentation::Racecar do
         _(second_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Racecar')
         _(second_send_span.parent_span_id).must_equal(second_process_span.span_id)
         _(second_send_span.trace_id).must_equal(second_process_span.trace_id)
+      end
+
+      describe 'when message keys are encoded differently' do
+        let(:producer_messages) do
+          [{
+            topic: topic_name,
+            payload: 'never gonna',
+            key: 'Key 1'
+          }, {
+            topic: topic_name,
+            payload: 'give you up',
+            key: "\xAF\x0F\xEF"
+          }]
+        end
+
+        it 'traces each message and tracks utf8 keys only' do
+          process_spans = spans.select { |s| s.name == "#{topic_name} process" }
+
+          first_process_span = process_spans[0]
+          _(first_process_span.attributes['messaging.kafka.message_key']).must_equal('Key 1')
+
+          second_process_span = process_spans[1]
+          _(second_process_span.attributes).wont_include('messaging.kafka.message_key')
+        end
       end
     end
 

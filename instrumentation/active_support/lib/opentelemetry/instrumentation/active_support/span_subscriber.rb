@@ -14,7 +14,7 @@ module OpenTelemetry
 
       # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber
       # gets invoked first
-      #
+      # Rails 6+ https://github.com/rails/rails/blob/0f0ec9908e25af36df2d937dc431f626a4102b3d/activesupport/lib/active_support/notifications/fanout.rb#L51
       def self.subscribe(
         tracer,
         pattern,
@@ -29,13 +29,20 @@ module OpenTelemetry
         )
 
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
+
         ::ActiveSupport::Notifications.notifier.synchronize do
-          if ::Rails::VERSION::MAJOR >= 6
-            s = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].pop
-            ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].unshift(s)
+          subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
+
+          if subscribers.nil?
+            OpenTelemetry.handle_error(
+              message: 'Unable to move OTEL ActiveSupport Notifications subscriber to the front of the notifications list which may cause incomplete traces.' \
+                       'Please report an issue here: ' \
+                       'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/new?labels=bug&template=bug_report.md&title=ActiveSupport%20Notifications%20subscribers%20list%20is%20nil'
+            )
           else
-            s = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers).pop
-            ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers).unshift(s)
+            subscribers.unshift(
+              subscribers.delete(subscriber_object)
+            )
           end
         end
         subscriber_object

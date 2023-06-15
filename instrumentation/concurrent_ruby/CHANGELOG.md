@@ -1,5 +1,20 @@
 # Release History: opentelemetry-instrumentation-concurrent_ruby
 
+### v0.21.1 / 2023-06-05
+
+* FIXED: Base config options 
+
+### v0.21.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
+### v0.20.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.20.0 / 2022-06-09
 
 * Upgrading Base dependency version

@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# 0.10.0 is the current version at the time of instrumentation creation
-appraise 'rdkafka-0.10.0' do
-  gem 'rdkafka', '0.10.0'
+appraise 'rdkafka-0.12.x' do
+  gem 'rdkafka', '~> 0.12.0'
 end

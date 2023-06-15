@@ -1,5 +1,20 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.25.1 / 2023-06-05
+
+* FIXED: Base config options 
+
+### v0.25.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
+### v0.24.1 / 2023-01-14
+
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
 ### v0.24.0 / 2022-09-14
 
 * ADDED: Redis-rb 5.0 and redis-client support 

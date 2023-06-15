@@ -25,7 +25,7 @@ describe OpenTelemetry::Instrumentation::Faraday do
     end
 
     it 'after request' do
-      ::Faraday.new('http://example.com').get('/')
+      Faraday.new('http://example.com').get('/')
 
       _(exporter.finished_spans.size).must_equal 1
     end

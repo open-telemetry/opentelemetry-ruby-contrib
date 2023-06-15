@@ -7,17 +7,14 @@
 require 'test_helper'
 
 require_relative '../../../lib/opentelemetry/instrumentation/graphql'
-require_relative '../../../lib/opentelemetry/instrumentation/graphql/tracers/graphql_tracer'
 
 describe OpenTelemetry::Instrumentation::GraphQL do
   let(:instrumentation) { OpenTelemetry::Instrumentation::GraphQL::Instrumentation.instance }
 
-  after do
-    # Force re-install of instrumentation
-    instrumentation.instance_variable_set(:@installed, false)
-
+  before do
     # Remove added tracers
-    ::GraphQL::Schema.instance_variable_set(:@own_tracers, [])
+    GraphQL::Schema._reset_tracer_for_testing
+    instrumentation.instance_variable_set(:@installed, false)
   end
 
   it 'has #name' do
@@ -30,13 +27,8 @@ describe OpenTelemetry::Instrumentation::GraphQL do
   end
 
   describe '#install' do
-    it 'installs the tracer' do
-      instrumentation.install({})
-      _(::GraphQL::Schema.tracers[0]).must_be_instance_of(OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer)
-    end
-
     describe 'when a user supplies an invalid schema' do
-      let(:config) { { schemas: [Old::Truck] } }
+      let(:config) { { schemas: [Old::Truck], legacy_tracing: instrumentation.legacy_tracing_requirement_satisfied? } }
 
       it 'fails gracefully and logs the error' do
         mock_logger = Minitest::Mock.new

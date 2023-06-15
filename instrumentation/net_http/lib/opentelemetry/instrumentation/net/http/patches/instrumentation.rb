@@ -43,8 +43,9 @@ module OpenTelemetry
 
             private
 
-            # rubocop:disable Metrics/MethodLength
             def connect
+              return super if untraced?
+
               if proxy?
                 conn_address = proxy_address
                 conn_port    = proxy_port
@@ -70,7 +71,6 @@ module OpenTelemetry
                 super
               end
             end
-            # rubocop:enable Metrics/MethodLength
 
             def annotate_span_with_response!(span, response)
               return unless response&.code
