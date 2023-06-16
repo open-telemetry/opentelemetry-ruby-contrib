@@ -67,7 +67,6 @@ describe OpenTelemetry::Instrumentation::Shoryuken::Middlewares::Server::TracerM
       let(:worker_class) { ExceptionTestingJob }
 
       it 'records exceptions' do
-
         _(-> { Shoryuken::Processor.process(queue_name, sqs_msg) }).must_raise(RuntimeError)
 
         ev = job_span.events
