@@ -56,14 +56,14 @@ end
 #   end
 # end
 
-# class ExceptionTestingJob
-#   include Shoryuken::Worker
-#   shoryuken_options body_parser: JSON, queue: 'default', auto_delete: true
+class ExceptionTestingJob
+  include Shoryuken::Worker
+  shoryuken_options body_parser: JSON, queue: 'default', auto_delete: true
 
-#   def perform(*args)
-#     raise 'a little hell'
-#   end
-# end
+  def perform(*args)
+    raise 'a little hell'
+  end
+end
 
 module Shoryuken
   module CLI

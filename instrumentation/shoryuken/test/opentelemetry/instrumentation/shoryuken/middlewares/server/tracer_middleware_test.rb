@@ -62,5 +62,19 @@ describe OpenTelemetry::Instrumentation::Shoryuken::Middlewares::Server::TracerM
       _(job_span.attributes['messaging.destination_kind']).must_equal 'queue'
       _(job_span.attributes['messaging.operation']).must_equal 'process'
     end
+
+    describe 'when worker raises exception' do
+      let(:worker_class) { ExceptionTestingJob }
+
+      it 'records exceptions' do
+
+        _(-> { Shoryuken::Processor.process(queue_name, sqs_msg) }).must_raise(RuntimeError)
+
+        ev = job_span.events
+        _(ev[0].attributes['exception.type']).must_equal('RuntimeError')
+        _(ev[0].attributes['exception.message']).must_equal('a little hell')
+        _(ev[0].attributes['exception.stacktrace']).wont_be_nil
+      end
+    end
   end
 end
