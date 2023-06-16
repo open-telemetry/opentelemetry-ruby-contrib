@@ -22,7 +22,10 @@ module OpenTelemetry
                   attributes["messaging.attributes.#{k}"] = v
                 end
               end
-              span_name = "#{worker_instance.class.name} process"
+              span_name = case instrumentation_config[:span_naming]
+                          when :job_class then "#{worker_instance.class.name} process"
+                          else "#{queue} process"
+                          end
 
               extracted_context = OpenTelemetry.propagation.extract(sqs_msg)
               OpenTelemetry::Context.with_current(extracted_context) do

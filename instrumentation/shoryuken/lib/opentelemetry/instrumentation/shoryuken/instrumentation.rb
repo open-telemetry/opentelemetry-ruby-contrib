@@ -22,6 +22,8 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
+        option :span_naming, default: :queue, validate: %I[job_class queue]
+
         private
 
         def gem_version

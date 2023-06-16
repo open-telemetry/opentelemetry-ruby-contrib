@@ -53,7 +53,7 @@ describe OpenTelemetry::Instrumentation::Shoryuken::Middlewares::Server::TracerM
 
       _(exporter.finished_spans.size).must_equal 1
 
-      _(job_span.name).must_equal "#{worker_class} process"
+      _(job_span.name).must_equal "#{queue_name} process"
       _(job_span.kind).must_equal :consumer
       _(job_span.attributes['messaging.system']).must_equal 'shoryuken'
       _(job_span.attributes['messaging.shoryuken.job_class']).must_equal worker_class.name
@@ -61,6 +61,16 @@ describe OpenTelemetry::Instrumentation::Shoryuken::Middlewares::Server::TracerM
       _(job_span.attributes['messaging.destination']).must_equal 'default'
       _(job_span.attributes['messaging.destination_kind']).must_equal 'queue'
       _(job_span.attributes['messaging.operation']).must_equal 'process'
+    end
+
+    describe 'when span_naming is job_class' do
+      let(:config) { { span_naming: :job_class } }
+
+      it 'uses the job class name for the span name' do
+        Shoryuken::Processor.process(queue_name, sqs_msg)
+
+        _(job_span.name).must_equal("#{worker_class} process")
+      end
     end
 
     describe 'when worker raises exception' do
