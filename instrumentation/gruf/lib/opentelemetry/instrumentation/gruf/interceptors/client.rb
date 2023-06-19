@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-
 module OpenTelemetry
   module Instrumentation
     module Gruf
@@ -14,13 +13,11 @@ module OpenTelemetry
           def call(request_context:)
             return yield if instrumentation_config.blank?
 
-            service = request_context.method.split("/")[1]
+            service = request_context.method.split('/')[1]
             method = request_context.method_name
-            method_name_with_service = [service.underscore, method].join(".").downcase
+            method_name_with_service = [service.underscore, method].join('.').downcase
 
-            if instrumentation_config[:grpc_ignore_methods_on_client].include?(method_name_with_service)
-              return yield
-            end
+            return yield if instrumentation_config[:grpc_ignore_methods_on_client].include?(method_name_with_service)
 
             metadata = request_context.metadata
             attributes = {
@@ -34,15 +31,16 @@ module OpenTelemetry
 
             attributes.merge!(allowed_metadata_headers(metadata.stringify_keys))
 
-            instrumentation_tracer.in_span(request_context.method.to_s,
+            instrumentation_tracer.in_span(
+              request_context.method.to_s,
               attributes: attributes,
-              kind: OpenTelemetry::Trace::SpanKind::CLIENT,
+              kind: OpenTelemetry::Trace::SpanKind::CLIENT
             ) do |span|
               OpenTelemetry.propagation.inject(metadata)
               yield.tap do
                 span&.set_attribute(OpenTelemetry::SemanticConventions::Trace::RPC_GRPC_STATUS_CODE, 0)
               end
-            rescue Exception => e
+            rescue StandardError => e
               span&.set_attribute(OpenTelemetry::SemanticConventions::Trace::RPC_GRPC_STATUS_CODE, e.code)
               raise e
             end
@@ -53,7 +51,7 @@ module OpenTelemetry
 
           def allowed_metadata_headers(metadata)
             instrumentation_config[:allowed_metadata_headers].each_with_object({}) do |k, h|
-              if v = metadata[k.to_s]
+              if (v = metadata[k.to_s])
                 h["rpc.request.metadata.#{k}"] = v
               end
             end

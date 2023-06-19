@@ -15,9 +15,7 @@ module OpenTelemetry
 
             method = request.method_name
 
-            if instrumentation_config[:grpc_ignore_methods_on_server].include?(method)
-              return yield
-            end
+            return yield if instrumentation_config[:grpc_ignore_methods_on_server].include?(method)
 
             service_name = request.service.service_name.to_s
             method_name = request.method_key.to_s
@@ -49,7 +47,7 @@ module OpenTelemetry
 
           def allowed_metadata_headers(metadata)
             instrumentation_config[:allowed_metadata_headers].each_with_object({}) do |k, h|
-              if v = metadata[k.to_s]
+              if (v = metadata[k.to_s])
                 h["rpc.request.metadata.#{k}"] = v
               end
             end
