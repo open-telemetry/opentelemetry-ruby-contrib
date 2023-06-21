@@ -53,6 +53,13 @@ gems, including Rails, Rack, Sinatra, and others, so you can start
 using OpenTelemetry with minimal changes to your application. See the
 [instrumentation README](instrumentation/) for more details.
 
+## Helpers
+
+This repository also contains libraries that hold code shared among
+multiple instrumentation libraries.
+
+- [MySQL](helpers/mysql/)
+- [SQL Obfuscation](helpers/sql-obfuscation/)
 ## Additional Libraries
 
 This repository also contains libraries to aid with interoperablity with vendor specific tracing solutions:

@@ -316,7 +316,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
           client.query(sql)
         end.must_raise Trilogy::Error
 
-        _(span.name).must_equal 'mysql'
+        _(span.name).must_equal 'select'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal obfuscated_sql
       end
 

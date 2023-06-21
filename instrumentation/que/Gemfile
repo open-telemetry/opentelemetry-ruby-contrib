@@ -9,7 +9,8 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
+  gem 'opentelemetry-helpers-sql-obfuscation', path: '../../helpers/sql-obfuscation'
   gem 'opentelemetry-instrumentation-base', path: '../base'
-  gem 'opentelemetry-instrumentation-pg', path: '../../instrumentation/pg'
+  gem 'opentelemetry-instrumentation-pg', path: '../pg'
   gem 'appraisal'
 end
