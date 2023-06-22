@@ -34,7 +34,7 @@ module OpenTelemetry
         end
 
         def legacy_tracing_requirement_satisfied?
-          Gem::Requirement.new('<= 2.0.17').satisfied_by?(gem_version) || Gem::Requirement.new('~> 2.0.19').satisfied_by?(gem_version)
+          Gem::Requirement.new('<= 2.0.17').satisfied_by?(gem_version) || Gem::Requirement.new('2.0.19').satisfied_by?(gem_version)
         end
 
         ## Supported configuration keys for the install config hash:

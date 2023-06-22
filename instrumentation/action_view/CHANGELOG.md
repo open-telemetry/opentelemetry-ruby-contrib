@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.6.0 / 2023-06-05
+
+* ADDED: Render layout for action view 
+* FIXED: Base config options 
+
 ### v0.5.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 

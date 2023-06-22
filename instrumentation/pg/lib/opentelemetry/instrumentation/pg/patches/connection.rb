@@ -107,8 +107,14 @@ module OpenTelemetry
           def obfuscate_sql(sql)
             return sql unless config[:db_statement] == :obfuscate
 
-            # Borrowed from opentelemetry-instrumentation-mysql2
-            return 'SQL query too large to remove sensitive data ...' if sql.size > 2000
+            if sql.size > config[:obfuscation_limit]
+              first_match_index = sql.index(generated_postgres_regex)
+              truncation_message = "SQL truncated (> #{config[:obfuscation_limit]} characters)"
+              return truncation_message unless first_match_index
+
+              truncated_sql = sql[..first_match_index - 1]
+              return "#{truncated_sql}...\n#{truncation_message}"
+            end
 
             # From:
             # https://github.com/newrelic/newrelic-ruby-agent/blob/9787095d4b5b2d8fcaf2fdbd964ed07c731a8b6b/lib/new_relic/agent/database/obfuscator.rb
@@ -117,6 +123,9 @@ module OpenTelemetry
             obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if PG::Constants::UNMATCHED_PAIRS_REGEX.match(obfuscated)
 
             obfuscated
+          rescue StandardError => e
+            OpenTelemetry.handle_error(message: 'Failed to obfuscate SQL', exception: e)
+            'OpenTelemetry error: failed to obfuscate sql'
           end
 
           def generated_postgres_regex

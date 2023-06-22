@@ -90,6 +90,7 @@ The services provided include:
 
  *  `app` - main container environment scoped to the `/app` directory. Used
     primarily to build and tag the `opentelemetry/opentelemetry-ruby-contrib:latest` image.
+ *  `x-instrumentation-<library_name>` - container environment scoped to a specific instrumentation library. See `docker-compose.yml` for available services.
 
 To test using Docker:
 
@@ -98,16 +99,10 @@ To test using Docker:
  3. Build the `opentelemetry/opentelemetry-ruby-contrib` image
     * `docker-compose build`
     * This makes the image available locally
- 4. API:
-     1. Install dependencies
-         *  `docker-compose run api bundle install`
-     2. Run the tests
-         *  `docker-compose run api bundle exec rake test`
- 5. SDK:
-     1. Install dependencies
-         *  `docker-compose run sdk bundle install`
-     2. Run the tests for the sdk
-         *  `docker-compose run sdk bundle exec rake test`
+ 4. Install dependencies for the service you want to interact with
+    *  `docker-compose run <service-name> bundle install`
+ 5. Run the tests
+    *  `docker-compose run <service-name> bundle exec rake test`
 
 ## Processing and visualizing traces locally
 
