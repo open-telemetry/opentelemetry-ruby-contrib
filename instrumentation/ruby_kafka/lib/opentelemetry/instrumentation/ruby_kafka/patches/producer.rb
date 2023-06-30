@@ -17,9 +17,14 @@ module OpenTelemetry
               'messaging.destination_kind' => 'topic'
             }
 
-            tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
-              OpenTelemetry.propagation.inject(headers)
-              super
+
+            # Check for header injected by async producer
+            ctx = OpenTelemetry.propagation.extract(headers)
+            OpenTelemetry::Context.with_current(ctx) do
+              tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
+                OpenTelemetry.propagation.inject(headers)
+                super
+              end
             end
           end
 
