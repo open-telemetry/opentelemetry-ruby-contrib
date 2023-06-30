@@ -63,6 +63,21 @@ describe OpenTelemetry::Instrumentation::Shoryuken::Middlewares::Server::TracerM
       _(job_span.attributes['messaging.operation']).must_equal 'process'
     end
 
+    describe 'when enqueued with Active Job' do
+      let(:worker_class) { SimpleJobWithActiveJob }
+
+      it 'traces when enqueued with Active Job' do
+        Shoryuken::Processor.process(queue_name, sqs_msg)
+
+        _(job_span.attributes['messaging.system']).must_equal 'shoryuken'
+        _(job_span.attributes['messaging.shoryuken.job_class']).must_equal worker_class.name
+        _(job_span.attributes['messaging.message_id']).must_equal sqs_msg.message_id
+        _(job_span.attributes['messaging.destination']).must_equal 'default'
+        _(job_span.attributes['messaging.destination_kind']).must_equal 'queue'
+        _(job_span.attributes['messaging.operation']).must_equal 'process'
+      end
+    end
+
     describe 'when span_naming is job_class' do
       let(:config) { { span_naming: :job_class } }
 
