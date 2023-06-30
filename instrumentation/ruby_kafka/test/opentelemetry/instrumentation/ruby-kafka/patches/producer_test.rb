@@ -13,6 +13,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
   let(:instrumentation) { OpenTelemetry::Instrumentation::RubyKafka::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
+  let(:tracer) { OpenTelemetry.tracer_provider.tracer('test-tracer') }
 
   let(:host) { ENV.fetch('TEST_KAFKA_HOST', '127.0.0.1') }
   let(:port) { ENV.fetch('TEST_KAFKA_PORT', 29_092) }
@@ -70,6 +71,29 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
 
       _(spans.first.attributes['messaging.system']).must_equal('kafka')
       _(spans.first.attributes['messaging.destination']).must_equal(async_topic)
+    end
+
+    it 'ignores headers when context is set' do
+      span_id = "b7ad6b7169203331"
+      tracer.in_span("wat") do |sp|
+        producer.produce('hello', topic: topic, headers: { "traceparent" => "00-0af7651916cd43dd8448eb211c80319c-#{span_id}-01" } )
+        producer.deliver_messages
+
+        _(spans.first.parent_span_id).must_equal(sp.context.span_id)
+      end
+    end
+
+
+    it 'propagates context when tracing async produce calls' do
+      tracer.in_span("wat") do |sp|
+        async_producer.produce('hello async', topic: async_topic)
+        async_producer.deliver_messages
+
+        # Wait for the async calls to produce spans
+        wait_for(error_message: 'Max wait time exceeded for async producer') { EXPORTER.finished_spans.size.positive? }
+
+        _(spans.first.parent_span_id).must_equal(sp.context.span_id)
+      end
     end
   end
 end unless ENV['OMIT_SERVICES']
