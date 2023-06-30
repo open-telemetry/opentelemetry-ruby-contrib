@@ -29,13 +29,18 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+
+Note that span names can be configured to be based on either the queue name or the job class with the `span_naming` config option, as shown below. Valid values are `:queue` and `:job_class`, `:queue` being the default.
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Shoryuken', span_naming: :queue
+end
+```
+
 ## Examples
 
-Example usage can be seen in the `./example/shoryuken.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/sidekiq/example/shoryuken.rb)
-
-## Development
-
-TODO
+Example usage can be seen in the `./example/shoryuken.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/shoryuken/example/shoryuken.rb)
 
 ## How can I get involved?
 
