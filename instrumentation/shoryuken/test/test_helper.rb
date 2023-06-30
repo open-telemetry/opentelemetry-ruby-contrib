@@ -53,7 +53,7 @@ end
 
 module Shoryuken
   module CLI
-  # Hack to signal to shoryuken it's running in a server context
-  # see https://github.com/ruby-shoryuken/shoryuken/blob/f24db5422ef6869c4a556c134a27b4259027e7b8/lib/shoryuken/options.rb#L151
+    # Hack to signal to shoryuken it's running in a server context
+    # see https://github.com/ruby-shoryuken/shoryuken/blob/f24db5422ef6869c4a556c134a27b4259027e7b8/lib/shoryuken/options.rb#L151
   end
 end
