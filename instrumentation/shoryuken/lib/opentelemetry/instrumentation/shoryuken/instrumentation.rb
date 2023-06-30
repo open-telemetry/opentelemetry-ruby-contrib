@@ -3,7 +3,7 @@
 module OpenTelemetry
   module Instrumentation
     module Shoryuken
-      # The Instrumentation class contains logic to detect and install the Sidekiq
+      # The Instrumentation class contains logic to detect and install the Shoryuken
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('5.3.0')

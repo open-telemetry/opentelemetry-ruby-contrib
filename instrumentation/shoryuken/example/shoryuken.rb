@@ -12,7 +12,7 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Shoryuken'
 end
 
-# A basic Sidekiq job worker example
+# A basic Shoryuken job worker example
 class SimpleJob
   include Shoryuken::Worker
 

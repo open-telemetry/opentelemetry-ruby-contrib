@@ -1,1 +1,1 @@
-# Release History: opentelemetry-instrumentation-sidekiq
+# Release History: opentelemetry-instrumentation-shoryuken
