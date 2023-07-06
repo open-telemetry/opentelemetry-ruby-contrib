@@ -4,20 +4,12 @@ appraise 'sidekiq-7.0' do
   gem 'sidekiq', '~> 7.0'
 end
 
-appraise 'sidekiq-6.4' do
-  gem 'sidekiq', '~> 6.4'
-end
-
-appraise 'sidekiq-6.3' do
-  gem 'sidekiq', '~> 6.3'
-end
-
-appraise 'sidekiq-6.1' do
-  gem 'sidekiq', '~> 6.1'
+appraise 'sidekiq-6.5' do
+  gem 'sidekiq', '>= 6.5', '< 7.0'
 end
 
 appraise 'sidekiq-6.0' do
-  gem 'sidekiq', '~> 6.0'
+  gem 'sidekiq', '>= 6.0', '< 6.5'
 end
 
 appraise 'sidekiq-5.2' do
