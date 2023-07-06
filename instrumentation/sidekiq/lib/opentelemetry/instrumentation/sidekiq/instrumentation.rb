@@ -32,7 +32,6 @@ module OpenTelemetry
         option :trace_launcher_heartbeat,    default: false, validate: :boolean
         option :trace_poller_enqueue,        default: false, validate: :boolean
         option :trace_poller_wait,           default: false, validate: :boolean
-        option :trace_processor_process_one, default: false, validate: :boolean
         option :peer_service,                default: nil,   validate: :string
 
         private
@@ -45,7 +44,6 @@ module OpenTelemetry
           require_relative 'middlewares/client/tracer_middleware'
           require_relative 'middlewares/server/tracer_middleware'
 
-          require_relative 'patches/processor'
           require_relative 'patches/launcher'
           require_relative 'patches/poller'
         end
@@ -53,7 +51,6 @@ module OpenTelemetry
         def patch_on_startup
           ::Sidekiq.configure_server do |config|
             config.on(:startup) do
-              ::Sidekiq::Processor.prepend(Patches::Processor)
               ::Sidekiq::Launcher.prepend(Patches::Launcher)
               ::Sidekiq::Scheduled::Poller.prepend(Patches::Poller)
             end
