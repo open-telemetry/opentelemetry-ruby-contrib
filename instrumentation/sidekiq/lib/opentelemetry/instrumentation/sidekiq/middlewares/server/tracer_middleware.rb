@@ -12,6 +12,8 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Sidekiq requests
           # by way of its middleware system
           class TracerMiddleware
+            include ::Sidekiq::ServerMiddleware if defined?(::Sidekiq::ServerMiddleware)
+
             def call(_worker, msg, _queue) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
               attributes = {
                 SemanticConventions::Trace::MESSAGING_SYSTEM => 'sidekiq',
