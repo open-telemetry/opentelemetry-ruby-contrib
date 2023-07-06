@@ -17,13 +17,12 @@ module OpenTelemetry
               'messaging.destination_kind' => 'topic'
             }
 
-
             # If context is unset, try to inject headers injected by async producer
-            if OpenTelemetry::Trace.current_span == OpenTelemetry::Trace::Span::INVALID
-              ctx = OpenTelemetry.propagation.extract(headers)
-            else
-              ctx = OpenTelemetry::Context.current
-            end
+            ctx = if OpenTelemetry::Trace.current_span == OpenTelemetry::Trace::Span::INVALID
+                    OpenTelemetry.propagation.extract(headers)
+                  else
+                    OpenTelemetry::Context.current
+                  end
 
             OpenTelemetry::Context.with_current(ctx) do
               tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
