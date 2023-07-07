@@ -80,6 +80,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
         producer.deliver_messages
 
         _(spans.first.parent_span_id).must_equal(sp.context.span_id)
+        _(spans.first.trace_id).must_equal(sp.context.trace_id)
       end
     end
 
@@ -92,6 +93,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
         wait_for(error_message: 'Max wait time exceeded for async producer') { EXPORTER.finished_spans.size.positive? }
 
         _(spans.first.parent_span_id).must_equal(sp.context.span_id)
+        _(spans.first.trace_id).must_equal(sp.context.trace_id)
       end
     end
   end
