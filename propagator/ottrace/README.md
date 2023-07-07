@@ -7,7 +7,7 @@ The `opentelemetry-propagator-ottrace` gem contains injectors and extractors for
 
 | Header Name         | Description                                                                                                                            | Required              |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| `ot-tracer-traceid` | 64-bit; 16 hex digits                                              | yes                   |
+| `ot-tracer-traceid` | 64-bit; 16 hex digits (extract and inject) or 128-bit; 32 hex digits (extract)                                             | yes                   |
 | `ot-tracer-spanid`  | 64-bit; 16 hex digits                                                                                    | yes                   |
 | `ot-tracer-sampled` | boolean or bit encoded as a string with the values `'true'`,`'false'`, `'1'`, or `'0'`                                                 | no                    |
 | `ot-baggage-*`      | repeated string to string key-value baggage items; keys are prefixed with `ot-baggage-` and the corresponding value is the raw string. | if baggage is present |
@@ -30,9 +30,9 @@ In order to do that Lightstep released a version of the OTTrace propagators in O
 
 The reality of the world is not every application upgraded to support 16 byte array propagation format, but this propagator must still convert legacy 8 byte trace ids to match the W3C Trace Context Trace ID 16 byte array.
 
-In addition to that it must be interoperable with legacy OTTracers, which expect 8 byte headers so this propagator truncates the value from a 16 byte array to an 8 byte array value before inject it into the carrier.
+In addition to that it must be interoperable with legacy OTTracers, which expect 64-bit headers so this propagator truncates the value from a 128-bit to a 64-bit value before inject it into the carrier.
 
-This propagator is compatible with 8 or 16 byte trace ids which it normalizes to 16 bytes but only emits 8 byte trace ids.
+This propagator is compatible with 64-bit or 128-bit trace ids when extracting the parent context, however it truncates the trace ids down to 64-bit trace ids when injecting the context.
 
 ### Baggage Notes
 
