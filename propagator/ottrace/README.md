@@ -26,7 +26,7 @@ This issue was [fixed](https://github.com/open-telemetry/opentelemetry-go-contri
 
 OTTrace was changed to be interoperable with other format so it is supposed to 8 or 16 byte array values for the trace-id.
 
-In order to do that Lightstep released a version of the OTTrace propagators in OpenTracing SDKs that left padded 8 byte headers to 16 bytes using an additional 8 bytes of 0s.
+In order to do that Lightstep released a version of the OTTrace propagators in OpenTracing SDKs that left padded 64-bit headers to 128-bits using an additional 64-bit of 0s.
 
 The reality of the world is not every application upgraded to support 16 byte array propagation format, but this propagator must still convert legacy 8 byte trace ids to match the W3C Trace Context Trace ID 16 byte array.
 
