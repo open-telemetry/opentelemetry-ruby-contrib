@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.25.2 / 2023-06-05
+
+* FIXED: Base config options 
+
+### v0.25.1 / 2023-06-01
+
+* FIXED: Regex non-match with obfuscation limit (issue #486) 
+
 ### v0.25.0 / 2023-05-25
 
 * ADDED: Add config[:obfuscation_limit] to pg and mysql2 

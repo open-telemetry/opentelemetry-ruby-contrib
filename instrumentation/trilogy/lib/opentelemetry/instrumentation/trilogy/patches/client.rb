@@ -48,11 +48,6 @@ module OpenTelemetry
 
           FULL_SQL_REGEXP = Regexp.union(MYSQL_COMPONENTS.map { |component| COMPONENTS_REGEX_MAP[component] })
 
-          def initialize(args)
-            @_otel_net_peer_name = args[:host]
-            super
-          end
-
           def query(sql)
             tracer.in_span(
               database_span_name(sql),
@@ -68,10 +63,12 @@ module OpenTelemetry
           def client_attributes(sql)
             attributes = {
               ::OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM => 'mysql',
-              ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => net_peer_name
+              ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => connection_options.fetch(:host, 'unknown sock')
             }
 
+            attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
             attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
+            attributes['db.mysql.instance.address'] = @connected_host if defined?(@connected_host)
 
             case config[:db_statement]
             when :obfuscate
@@ -85,8 +82,12 @@ module OpenTelemetry
 
           def obfuscate_sql(sql)
             if sql.size > config[:obfuscation_limit]
-              truncated_sql = sql[..sql.index(FULL_SQL_REGEXP) - 1]
-              truncated_sql + "...\nSQL truncated (> #{config[:obfuscation_limit]} characters)"
+              first_match_index = sql.index(FULL_SQL_REGEXP)
+              truncation_message = "SQL truncated (> #{config[:obfuscation_limit]} characters)"
+              return truncation_message unless first_match_index
+
+              truncated_sql = sql[..first_match_index - 1]
+              "#{truncated_sql}...\n#{truncation_message}"
             else
               obfuscated = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
               obfuscated = obfuscated.gsub(FULL_SQL_REGEXP, '?')
@@ -128,16 +129,6 @@ module OpenTelemetry
 
           def database_name
             connection_options[:database]
-          end
-
-          def net_peer_name
-            if defined?(@connected_host)
-              @connected_host
-            elsif @_otel_net_peer_name
-              @_otel_net_peer_name
-            else
-              'unknown sock'
-            end
           end
 
           def tracer

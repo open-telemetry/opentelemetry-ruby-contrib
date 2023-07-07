@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.23.2 / 2023-06-08
+
+* FIXED: Ensure Rack Events Handler Exists
+
+### v0.23.1 / 2023-06-05
+
+* FIXED: Base config options 
+
 ### v0.23.0 / 2023-04-17
 
 * BREAKING CHANGE: Remove retain_middleware_names Rack Option 
