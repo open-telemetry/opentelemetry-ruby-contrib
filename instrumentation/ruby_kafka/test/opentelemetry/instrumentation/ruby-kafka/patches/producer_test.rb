@@ -92,8 +92,17 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
         # Wait for the async calls to produce spans
         wait_for(error_message: 'Max wait time exceeded for async producer') { EXPORTER.finished_spans.size.positive? }
 
-        _(spans.first.parent_span_id).must_equal(sp.context.span_id)
         _(spans.first.trace_id).must_equal(sp.context.trace_id)
+        _(spans.first.parent_span_id).must_equal(sp.context.span_id)
+      end
+    end
+
+    it 'does propagate context for nonrecording spans' do
+      sp = OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext::INVALID)
+      OpenTelemetry::Trace.with_span(sp) do
+        async_producer.produce('hello async', topic: async_topic)
+        async_producer.deliver_messages
+        _(EXPORTER.finished_spans.size).must_equal(0)
       end
     end
   end

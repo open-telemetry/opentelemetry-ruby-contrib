@@ -17,11 +17,12 @@ module OpenTelemetry
               'messaging.destination_kind' => 'topic'
             }
 
-            # If context is unset, try to inject headers injected by async producer
-            ctx = if OpenTelemetry::Trace.current_span == OpenTelemetry::Trace::Span::INVALID
-                    OpenTelemetry.propagation.extract(headers)
-                  else
+            # If current span is recording, we use that context. Otherwise, we
+            # extract context from headers.
+            ctx = if OpenTelemetry::Trace.current_span.recording?
                     OpenTelemetry::Context.current
+                  else
+                    OpenTelemetry.propagation.extract(headers)
                   end
 
             OpenTelemetry::Context.with_current(ctx) do
