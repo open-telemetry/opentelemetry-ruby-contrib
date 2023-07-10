@@ -11,9 +11,9 @@ require_relative '../../../../../lib/opentelemetry/instrumentation/ruby_kafka/pa
 
 describe OpenTelemetry::Instrumentation::RubyKafka::Patches::AsyncProducer do
   let(:instrumentation) { OpenTelemetry::Instrumentation::RubyKafka::Instrumentation.instance }
-  let(:kafka) { Kafka.new(["abc:123"]) }
+  let(:kafka) { Kafka.new(['abc:123']) }
   let(:topic) { "topic-#{SecureRandom.uuid}" }
-  let(:producer) { double("producer", shutdown: true, produce: nil) }
+  let(:producer) { double('producer', shutdown: true, produce: nil) }
   let(:tracer) { OpenTelemetry.tracer_provider.tracer('test-tracer') }
 
   before(:each) do
@@ -33,24 +33,25 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::AsyncProducer do
         async_producer = kafka.async_producer(delivery_threshold: 1000)
         create_time = Time.now
         async_producer.produce('hello',
-          key: "wat",
-          headers: { "foo" => "bar" },
-          partition: 1,
-          partition_key: "ok",
-          topic: topic,
-          create_time: create_time)
+                               key: 'wat',
+                               headers: { 'foo' => 'bar' },
+                               partition: 1,
+                               partition_key: 'ok',
+                               topic: topic,
+                               create_time: create_time)
         async_producer.deliver_messages
         expect(producer).to have_received(:produce).with(
           'hello',
-          key: "wat",
+          key: 'wat',
           partition: 1,
-          partition_key: "ok",
+          partition_key: 'ok',
           create_time: create_time,
           topic: topic,
           headers: {
-            "foo" => "bar",
-            "traceparent" => "00-#{span.context.hex_trace_id}-#{span.context.hex_span_id}-01"
-          })
+            'foo' => 'bar',
+            'traceparent' => "00-#{span.context.hex_trace_id}-#{span.context.hex_span_id}-01"
+          }
+        )
       end
     end
   end
