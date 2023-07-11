@@ -28,7 +28,7 @@ module OpenTelemetry
         private
 
         def require_patches
-          require_relative './patches/consumer'
+          require_relative 'patches/consumer'
         end
 
         def add_subscribers

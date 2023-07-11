@@ -16,4 +16,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './instrumentation/rake'
+require_relative 'instrumentation/rake'

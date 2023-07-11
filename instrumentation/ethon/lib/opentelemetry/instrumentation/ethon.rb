@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './ethon/instrumentation'
-require_relative './ethon/version'
+require_relative 'ethon/instrumentation'
+require_relative 'ethon/version'

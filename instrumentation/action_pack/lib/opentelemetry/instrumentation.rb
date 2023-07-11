@@ -16,4 +16,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './instrumentation/action_pack'
+require_relative 'instrumentation/action_pack'

@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './excon/instrumentation'
-require_relative './excon/version'
+require_relative 'excon/instrumentation'
+require_relative 'excon/version'

@@ -15,6 +15,6 @@ module OpenTelemetry
   end
 end
 
-require_relative './sidekiq/instrumentation'
-require_relative './sidekiq/version'
+require_relative 'sidekiq/instrumentation'
+require_relative 'sidekiq/version'
 require 'opentelemetry/common'

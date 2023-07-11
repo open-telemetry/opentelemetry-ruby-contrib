@@ -16,4 +16,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './instrumentation/active_support'
+require_relative 'instrumentation/active_support'
