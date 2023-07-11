@@ -5,4 +5,4 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry-semantic_conventions'
-require_relative './opentelemetry/instrumentation'
+require_relative 'opentelemetry/instrumentation'

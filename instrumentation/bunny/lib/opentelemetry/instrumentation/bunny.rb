@@ -14,5 +14,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './bunny/instrumentation'
-require_relative './bunny/version'
+require_relative 'bunny/instrumentation'
+require_relative 'bunny/version'

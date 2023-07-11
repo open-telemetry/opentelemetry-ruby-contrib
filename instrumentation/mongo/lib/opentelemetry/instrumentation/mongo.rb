@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './mongo/instrumentation'
-require_relative './mongo/version'
+require_relative 'mongo/instrumentation'
+require_relative 'mongo/version'

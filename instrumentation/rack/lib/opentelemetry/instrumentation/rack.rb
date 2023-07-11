@@ -48,6 +48,6 @@ module OpenTelemetry
   end
 end
 
-require_relative './rack/instrumentation'
-require_relative './rack/util'
-require_relative './rack/version'
+require_relative 'rack/instrumentation'
+require_relative 'rack/util'
+require_relative 'rack/version'

@@ -16,5 +16,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './dalli/instrumentation'
-require_relative './dalli/version'
+require_relative 'dalli/instrumentation'
+require_relative 'dalli/version'

@@ -19,4 +19,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './instrumentation/dalli'
+require_relative 'instrumentation/dalli'
