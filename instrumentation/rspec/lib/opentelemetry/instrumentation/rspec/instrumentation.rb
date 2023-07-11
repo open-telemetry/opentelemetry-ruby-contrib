@@ -21,7 +21,7 @@ module OpenTelemetry
         private
 
         def require_dependencies
-          require_relative './formatter'
+          require_relative 'formatter'
         end
 
         def add_formatter!

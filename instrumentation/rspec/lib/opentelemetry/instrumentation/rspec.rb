@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './rspec/instrumentation'
-require_relative './rspec/version'
+require_relative 'rspec/instrumentation'
+require_relative 'rspec/version'

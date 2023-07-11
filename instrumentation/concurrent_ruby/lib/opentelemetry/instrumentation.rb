@@ -19,4 +19,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './instrumentation/concurrent_ruby'
+require_relative 'instrumentation/concurrent_ruby'

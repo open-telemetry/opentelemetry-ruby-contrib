@@ -19,4 +19,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './instrumentation/mysql2'
+require_relative 'instrumentation/mysql2'

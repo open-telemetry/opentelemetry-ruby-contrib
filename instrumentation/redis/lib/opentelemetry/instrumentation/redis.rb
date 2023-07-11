@@ -55,5 +55,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './redis/instrumentation'
-require_relative './redis/version'
+require_relative 'redis/instrumentation'
+require_relative 'redis/version'
