@@ -73,14 +73,15 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       _(spans.first.attributes['messaging.destination']).must_equal(async_topic)
     end
 
-    it 'ignores headers when context is set' do
+    it 'uses headers even when context is set' do
+      trace_id = '0af7651916cd43dd8448eb211c80319c'
       span_id = 'b7ad6b7169203331'
       tracer.in_span('wat') do |sp|
-        producer.produce('hello', topic: topic, headers: { 'traceparent' => "00-0af7651916cd43dd8448eb211c80319c-#{span_id}-01" })
+        producer.produce('hello', topic: topic, headers: { 'traceparent' => "00-#{trace_id}-#{span_id}-01" })
         producer.deliver_messages
 
-        _(spans.first.parent_span_id).must_equal(sp.context.span_id)
-        _(spans.first.trace_id).must_equal(sp.context.trace_id)
+        _(spans.first.hex_parent_span_id).must_equal(span_id)
+        _(spans.first.hex_trace_id).must_equal(trace_id)
       end
     end
 

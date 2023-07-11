@@ -17,14 +17,9 @@ module OpenTelemetry
               'messaging.destination_kind' => 'topic'
             }
 
-            # If current span is recording, we use that context. Otherwise, we
-            # extract context from headers.
-            ctx = if OpenTelemetry::Trace.current_span.recording?
-                    OpenTelemetry::Context.current
-                  else
-                    OpenTelemetry.propagation.extract(headers)
-                  end
-
+            # If trace context is present in headers, extract and use it as parent. The spec mandates that extract
+            # return the current context (Context.current) in Ruby, so this is a noop if propagation headers are absent.
+            ctx = OpenTelemetry.propagation.extract(headers)
             OpenTelemetry::Context.with_current(ctx) do
               tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
                 OpenTelemetry.propagation.inject(headers)
