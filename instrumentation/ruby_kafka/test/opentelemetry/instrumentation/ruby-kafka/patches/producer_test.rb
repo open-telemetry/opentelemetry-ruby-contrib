@@ -76,7 +76,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
     it 'uses headers even when context is set' do
       trace_id = '0af7651916cd43dd8448eb211c80319c'
       span_id = 'b7ad6b7169203331'
-      tracer.in_span('wat') do |sp|
+      tracer.in_span('wat') do
         producer.produce('hello', topic: topic, headers: { 'traceparent' => "00-#{trace_id}-#{span_id}-01" })
         producer.deliver_messages
 
