@@ -36,12 +36,13 @@ module OpenTelemetry
           def validate(query:, validate:, &block)
             tracer.in_span('graphql.validate') do |span|
               super.tap do |response|
-                errors = response[:errors]&.compact&.map(&:to_h)&.to_json
-                unless errors.nil?
+                errors = response[:errors]&.compact&.map(&:to_h) || []
+
+                unless errors.empty?
                   span.add_event(
                     'graphql.validation.error',
                     attributes: {
-                      'message' => errors
+                      'message' => errors.to_json
                     }
                   )
                 end

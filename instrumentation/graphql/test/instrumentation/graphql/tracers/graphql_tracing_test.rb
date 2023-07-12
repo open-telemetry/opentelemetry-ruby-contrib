@@ -252,21 +252,30 @@ describe 'GraphQL Tracing' do
       end
     end
 
-    it 'traces validate with events' do
-      SomeGraphQLAppSchema.execute(
-        <<-GRAPHQL
-          {
-            nonExistentField
-          }
-        GRAPHQL
-      )
-      span = spans.find { |s| s.name == 'graphql.validate' }
-      event = span.events.find { |e| e.name == 'graphql.validation.error' }
-      # rubocop:disable Layout/LineLength
-      _(event.attributes['message']).must_equal(
-        "[{\"message\":\"Field 'nonExistentField' doesn't exist on type 'Query'\",\"locations\":[{\"line\":2,\"column\":13}],\"path\":[\"query\",\"nonExistentField\"],\"extensions\":{\"code\":\"undefinedField\",\"typeName\":\"Query\",\"fieldName\":\"nonExistentField\"}}]"
-      )
-      # rubocop:enable Layout/LineLength
+    describe 'validate spans' do
+      it 'adds events for validation errors' do
+        SomeGraphQLAppSchema.execute(
+          <<-GRAPHQL
+            {
+              nonExistentField
+            }
+          GRAPHQL
+        )
+        span = spans.find { |s| s.name == 'graphql.validate' }
+        event = span.events.find { |e| e.name == 'graphql.validation.error' }
+        # rubocop:disable Layout/LineLength
+        _(event.attributes['message']).must_equal(
+          "[{\"message\":\"Field 'nonExistentField' doesn't exist on type 'Query'\",\"locations\":[{\"line\":2,\"column\":15}],\"path\":[\"query\",\"nonExistentField\"],\"extensions\":{\"code\":\"undefinedField\",\"typeName\":\"Query\",\"fieldName\":\"nonExistentField\"}}]"
+        )
+        # rubocop:enable Layout/LineLength
+      end
+
+      it 'does not add events for valid documents' do
+        SomeGraphQLAppSchema.execute('{ vehicle { __typename } }')
+
+        span = spans.find { |s| s.name == 'graphql.validate' }
+        _(span.events).must_be_nil
+      end
     end
   end
 
