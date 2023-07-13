@@ -32,7 +32,7 @@ runs:
       id: setup
       shell: bash
       run: |
-        # Setup
+        # 🛠️ Setup 🛠️
         dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
@@ -78,7 +78,7 @@ runs:
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
       run: |
-        # Install dependencies and generate appraisals
+        # 💎 Install dependencies and generate appraisals 💎
         bundle install --quiet --jobs=3 --retry=4
         bundle exec appraisal generate
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
@@ -86,10 +86,10 @@ runs:
     - name: Test Gem
       shell: bash
       run: |
-        # Test Gem
+        # 🍿 Test Gem 🍿
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
-            echo "::group::Appraising ${i}"
+            echo "::group::🔎 Appraising ${i}"
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test
@@ -124,17 +124,23 @@ runs:
     - name: YARD
       shell: bash
       if: "${{ inputs.yard == 'true' }}"
-      run: bundle exec rake yard
+      run: |
+        # 📄 Yard Docs 📄
+        bundle exec rake yard
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Rubocop
       shell: bash
       if: "${{ inputs.rubocop == 'true' }}"
-      run: bundle exec rake rubocop
+      run: |
+        # 🤖 Rubocop 🤖
+        bundle exec rake rubocop
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
-      run: gem build ${{ inputs.gem }}.gemspec
+      run: |
+        # 📦 Build Gem 📦
+        gem build ${{ inputs.gem }}.gemspec
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
