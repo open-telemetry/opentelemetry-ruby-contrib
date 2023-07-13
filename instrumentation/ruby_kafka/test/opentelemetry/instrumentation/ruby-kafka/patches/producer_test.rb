@@ -24,6 +24,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
   let(:producer) { kafka.producer }
   let(:consumer) { kafka.consumer(group_id: SecureRandom.uuid, fetcher_max_queue_size: 1) }
   let(:async_producer) { kafka.async_producer(delivery_threshold: 1000) }
+  let(:send_span) {  EXPORTER.finished_spans.find { |sp| sp.name == "#{topic} send" } }
+  let(:async_send_span) {  EXPORTER.finished_spans.find { |sp| sp.name == "#{async_topic} send" } }
 
   before do
     kafka.create_topic(topic)
@@ -79,32 +81,48 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       tracer.in_span('wat') do
         producer.produce('hello', topic: topic, headers: { 'traceparent' => "00-#{trace_id}-#{span_id}-01" })
         producer.deliver_messages
-
-        _(spans.first.hex_parent_span_id).must_equal(span_id)
-        _(spans.first.hex_trace_id).must_equal(trace_id)
       end
+
+      _(send_span.hex_parent_span_id).must_equal(span_id)
+      _(send_span.hex_trace_id).must_equal(trace_id)
     end
 
     it 'propagates context when tracing async produce calls' do
-      tracer.in_span('wat') do |sp|
-        async_producer.produce('hello async', topic: async_topic)
-        async_producer.deliver_messages
-
-        # Wait for the async calls to produce spans
-        wait_for(error_message: 'Max wait time exceeded for async producer') { EXPORTER.finished_spans.size.positive? }
-
-        _(spans.first.trace_id).must_equal(sp.context.trace_id)
-        _(spans.first.parent_span_id).must_equal(sp.context.span_id)
-      end
-    end
-
-    it 'does propagate context for nonrecording spans' do
-      sp = OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext::INVALID)
+      sp = tracer.start_span('parent')
       OpenTelemetry::Trace.with_span(sp) do
         async_producer.produce('hello async', topic: async_topic)
-        async_producer.deliver_messages
-        _(EXPORTER.finished_spans.size).must_equal(0)
       end
+      sp.finish
+      async_producer.deliver_messages
+
+      # Wait for the async calls to produce spans
+      wait_for(error_message: 'Max wait time exceeded for async producer') { EXPORTER.finished_spans.size == 2 }
+
+      _(async_send_span.trace_id).must_equal(sp.context.trace_id)
+      _(async_send_span.parent_span_id).must_equal(sp.context.span_id)
+    end
+
+    it 'propagates context for nonrecording spans' do
+      sp = OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new)
+      OpenTelemetry::Trace.with_span(sp) do
+        async_producer.produce('hello async', topic: async_topic)
+      end
+      sp.finish
+      async_producer.deliver_messages
+      # The nonrecording span's context indicates that it's sampled _out_ so the producer respects that sampling
+      # decision based on the default ParentBased(AlwaysOn) sampler.
+      _(EXPORTER.finished_spans.size).must_equal(0)
+    end
+
+    it 'preserves proper context when no headers are present' do
+      sp = tracer.start_span('parent')
+      OpenTelemetry::Trace.with_span(sp) do
+        producer.produce('hello', topic: topic)
+        producer.deliver_messages
+      end
+      sp.finish
+      _(EXPORTER.finished_spans.size).must_equal(2)
+      _(send_span.hex_parent_span_id).must_equal(sp.context.hex_span_id)
     end
   end
 end unless ENV['OMIT_SERVICES']
