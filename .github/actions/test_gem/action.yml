@@ -124,20 +124,17 @@ runs:
     - name: YARD
       shell: bash
       if: "${{ inputs.yard == 'true' }}"
-      run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
-        bundle exec rake yard
+      run: bundle exec rake yard
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Rubocop
       shell: bash
       if: "${{ inputs.rubocop == 'true' }}"
-      run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
-        bundle exec rake rubocop
+      run: bundle exec rake rubocop
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
-      run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
-        gem build ${{ inputs.gem }}.gemspec
+      run: gem build ${{ inputs.gem }}.gemspec
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
