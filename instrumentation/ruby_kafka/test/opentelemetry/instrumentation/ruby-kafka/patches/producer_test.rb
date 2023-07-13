@@ -24,8 +24,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
   let(:producer) { kafka.producer }
   let(:consumer) { kafka.consumer(group_id: SecureRandom.uuid, fetcher_max_queue_size: 1) }
   let(:async_producer) { kafka.async_producer(delivery_threshold: 1000) }
-  let(:send_span) {  EXPORTER.finished_spans.find { |sp| sp.name == "#{topic} send" } }
-  let(:async_send_span) {  EXPORTER.finished_spans.find { |sp| sp.name == "#{async_topic} send" } }
+  let(:send_span) { EXPORTER.finished_spans.find { |sp| sp.name == "#{topic} send" } }
+  let(:async_send_span) { EXPORTER.finished_spans.find { |sp| sp.name == "#{async_topic} send" } }
 
   before do
     kafka.create_topic(topic)
