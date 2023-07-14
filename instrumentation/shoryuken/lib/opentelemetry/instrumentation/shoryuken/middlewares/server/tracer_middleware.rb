@@ -17,11 +17,6 @@ module OpenTelemetry
                 OpenTelemetry::SemanticConventions::Trace::MESSAGING_DESTINATION_KIND => 'queue',
                 OpenTelemetry::SemanticConventions::Trace::MESSAGING_OPERATION => 'process'
               }
-              if sqs_msg.respond_to?(:attributes)
-                sqs_msg.attributes.each do |k, v|
-                  attributes["messaging.attributes.#{k}"] = v
-                end
-              end
               span_name = case instrumentation_config[:span_naming]
                           when :job_class then "#{worker_instance.class.name} process"
                           else "#{queue} process"
