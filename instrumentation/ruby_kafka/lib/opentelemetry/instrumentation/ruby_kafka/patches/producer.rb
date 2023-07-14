@@ -17,9 +17,15 @@ module OpenTelemetry
               'messaging.destination_kind' => 'topic'
             }
 
-            tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
-              OpenTelemetry.propagation.inject(headers)
-              super
+            # If trace context is present in headers, extract and use it as parent. If there is _no_ trace context key
+            # in the headers, OpenTelemetry.propagation.extract will return an unmodified copy of the the current
+            # Thread's context, so the next two lines preserve the correct Thread-local context.
+            ctx = OpenTelemetry.propagation.extract(headers)
+            OpenTelemetry::Context.with_current(ctx) do
+              tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
+                OpenTelemetry.propagation.inject(headers)
+                super
+              end
             end
           end
 
