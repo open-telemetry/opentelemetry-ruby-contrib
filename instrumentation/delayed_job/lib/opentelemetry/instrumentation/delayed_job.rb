@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './delayed_job/instrumentation'
-require_relative './delayed_job/version'
+require_relative 'delayed_job/instrumentation'
+require_relative 'delayed_job/version'

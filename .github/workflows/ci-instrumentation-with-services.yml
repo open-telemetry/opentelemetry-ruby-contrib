@@ -1,4 +1,4 @@
-name: CI Intrumentation With Services
+name: CI Instrumentation With Services
 
 on:
   workflow_dispatch:

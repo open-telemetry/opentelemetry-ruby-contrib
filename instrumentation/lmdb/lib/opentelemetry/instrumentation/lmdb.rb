@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './lmdb/instrumentation'
-require_relative './lmdb/version'
+require_relative 'lmdb/instrumentation'
+require_relative 'lmdb/version'

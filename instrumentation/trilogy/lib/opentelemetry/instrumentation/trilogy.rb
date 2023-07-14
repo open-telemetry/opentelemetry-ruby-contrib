@@ -54,5 +54,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './trilogy/instrumentation'
-require_relative './trilogy/version'
+require_relative 'trilogy/instrumentation'
+require_relative 'trilogy/version'
