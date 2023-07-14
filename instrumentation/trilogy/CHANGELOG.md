@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.56.2 / 2023-07-14
+
+* (No significant changes)
+
 ### v0.56.1 / 2023-06-05
 
 * FIXED: Base config options 
