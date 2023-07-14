@@ -19,4 +19,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './instrumentation/shoryuken'
+require_relative 'instrumentation/shoryuken'

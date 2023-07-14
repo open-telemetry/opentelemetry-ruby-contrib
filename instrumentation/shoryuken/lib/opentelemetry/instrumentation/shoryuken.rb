@@ -11,5 +11,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './shoryuken/instrumentation'
+require_relative 'shoryuken/instrumentation'
 require 'opentelemetry/common'
