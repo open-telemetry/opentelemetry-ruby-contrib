@@ -1,23 +1,31 @@
 # frozen_string_literal: true
 
+# test against latest 4.x
+appraise 'redis-4.x' do
+  gem 'redis', '~> 4.0'
+end
+
+# and known previous minors
+appraise 'redis-4.7' do
+  gem 'redis', '~> 4.7.0'
+end
+
 appraise 'redis-4.6' do
-  gem 'redis', '~> 4.1.0'
+  gem 'redis', '~> 4.6.0'
 end
 
 appraise 'redis-4.5' do
-  gem 'redis', '~> 4.1.0'
+  gem 'redis', '~> 4.5.0'
 end
 
 appraise 'redis-4.4' do
-  gem 'redis', '~> 4.1.0'
+  gem 'redis', '~> 4.4.0'
 end
 
-appraise 'redis-4.3' do
-  gem 'redis', '~> 4.1.0'
-end
+# 4.3 got weird
 
 appraise 'redis-4.2' do
-  gem 'redis', '~> 4.1.0'
+  gem 'redis', '~> 4.2.0'
 end
 
 appraise 'redis-4.1' do
