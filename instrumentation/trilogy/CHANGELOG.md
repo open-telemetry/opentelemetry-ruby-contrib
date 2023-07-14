@@ -2,7 +2,7 @@
 
 ### v0.56.2 / 2023-07-14
 
-* (No significant changes)
+* ADDED: `db.user` attribute (recommended connection-level attribute)
 
 ### v0.56.1 / 2023-06-05
 
