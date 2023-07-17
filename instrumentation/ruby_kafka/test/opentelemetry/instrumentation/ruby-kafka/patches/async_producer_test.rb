@@ -25,21 +25,22 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::AsyncProducer do
 
   describe '__otel_merge_options' do
     it 'injects context when options are not present' do
-      tracer.in_span("wat") do
+      tracer.in_span('wat') do
         opts = producer.__otel_merge_options!
-        _(opts[:headers]["traceparent"]).wont_be_nil
+        _(opts[:headers]['traceparent']).wont_be_nil
       end
     end
 
     it 'injects context when options are present but headers are not' do
-      tracer.in_span("wat") do
+      tracer.in_span('wat') do
         create_time = Time.now
         opts = producer.__otel_merge_options!(
           key: 'wat',
           partition: 1,
           partition_key: 'ok',
-          create_time: create_time)
-        _(opts[:headers]["traceparent"]).wont_be_nil
+          create_time: create_time
+        )
+        _(opts[:headers]['traceparent']).wont_be_nil
         _(opts[:key]).must_equal('wat')
         _(opts[:partition]).must_equal(1)
         _(opts[:partition_key]).must_equal('ok')
@@ -48,15 +49,16 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::AsyncProducer do
     end
 
     it 'injects context when headers are present' do
-      tracer.in_span("wat") do
+      tracer.in_span('wat') do
         create_time = Time.now
         opts = producer.__otel_merge_options!(
           key: 'wat',
           partition: 1,
           partition_key: 'ok',
           create_time: create_time,
-          headers: { foo: :bar })
-        _(opts[:headers]["traceparent"]).wont_be_nil
+          headers: { foo: :bar }
+        )
+        _(opts[:headers]['traceparent']).wont_be_nil
         _(opts[:headers][:foo]).must_equal(:bar)
         _(opts[:key]).must_equal('wat')
         _(opts[:partition]).must_equal(1)
