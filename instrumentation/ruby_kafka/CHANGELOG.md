@@ -2,7 +2,7 @@
 
 ### v0.20.2 / 2023-07-17
 
-* (No significant changes)
+* Async producer spans have proper heritage
 
 ### v0.20.1 / 2023-06-05
 
