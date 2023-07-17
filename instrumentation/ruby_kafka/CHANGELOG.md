@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ruby_kafka
 
+### v0.20.2 / 2023-07-17
+
+* (No significant changes)
+
 ### v0.20.1 / 2023-06-05
 
 * FIXED: Base config options 
