@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './active_model_serializers/instrumentation'
-require_relative './active_model_serializers/version'
+require_relative 'active_model_serializers/instrumentation'
+require_relative 'active_model_serializers/version'

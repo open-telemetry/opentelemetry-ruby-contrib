@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './grape/instrumentation'
-require_relative './grape/version'
+require_relative 'grape/instrumentation'
+require_relative 'grape/version'

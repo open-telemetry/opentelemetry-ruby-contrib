@@ -31,7 +31,7 @@ module OpenTelemetry
         end
 
         def require_dependencies
-          require_relative './patches/task'
+          require_relative 'patches/task'
         end
 
         def patch_rake

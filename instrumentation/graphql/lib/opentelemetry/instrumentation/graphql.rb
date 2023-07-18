@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './graphql/instrumentation'
-require_relative './graphql/version'
+require_relative 'graphql/instrumentation'
+require_relative 'graphql/version'

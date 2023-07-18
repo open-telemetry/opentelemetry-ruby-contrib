@@ -11,7 +11,7 @@
 # The OpenTelemetry module provides global accessors for telemetry objects.
 # See the documentation for the `opentelemetry-api` gem for details.
 
-require_relative './xray/text_map_propagator'
+require_relative 'xray/text_map_propagator'
 
 module OpenTelemetry
   # Namespace for OpenTelemetry propagator extension libraries
@@ -45,5 +45,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './xray/version'
-require_relative './xray/id_generator'
+require_relative 'xray/version'
+require_relative 'xray/id_generator'

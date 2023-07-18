@@ -44,5 +44,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './pg/instrumentation'
-require_relative './pg/version'
+require_relative 'pg/instrumentation'
+require_relative 'pg/version'

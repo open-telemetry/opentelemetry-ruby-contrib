@@ -1,4 +1,4 @@
-name: CI Intrumentation With Services - Canary
+name: CI Instrumentation With Services - Canary
 
 on:
   workflow_dispatch:
