@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-ottrace
 
+### v0.21.1 / 2023-07-19
+
+* DOCS: Add some clarity to ottrace docs
+
 ### v0.21.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
