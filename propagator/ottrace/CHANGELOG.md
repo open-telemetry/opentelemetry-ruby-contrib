@@ -2,7 +2,7 @@
 
 ### v0.21.1 / 2023-07-19
 
-* DOCS: Add some clarity to ottrace docs
+* DOCS: Add some clarity to ottrace docs [#522](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/522)
 
 ### v0.21.0 / 2023-04-17
 
