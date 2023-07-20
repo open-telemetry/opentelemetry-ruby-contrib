@@ -14,10 +14,14 @@ module OpenTelemetry
         # Module to prepend to PG::Connection for instrumentation
         module Connection # rubocop:disable Metrics/ModuleLength
           PG::Constants::EXEC_ISH_METHODS.each do |method|
-            define_method method do |*args|
+            define_method method do |*args, &block|
               span_name, attrs = span_attrs(:query, *args)
               tracer.in_span(span_name, attributes: attrs, kind: :client) do
-                super(*args)
+                if block
+                  block.call(super(*args))
+                else
+                  super(*args)
+                end
               end
             end
           end
@@ -32,10 +36,14 @@ module OpenTelemetry
           end
 
           PG::Constants::EXEC_PREPARED_ISH_METHODS.each do |method|
-            define_method method do |*args|
+            define_method method do |*args, &block|
               span_name, attrs = span_attrs(:execute, *args)
               tracer.in_span(span_name, attributes: attrs, kind: :client) do
-                super(*args)
+                if block
+                  block.call(super(*args))
+                else
+                  super(*args)
+                end
               end
             end
           end
