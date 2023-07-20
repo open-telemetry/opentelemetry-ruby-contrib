@@ -7,8 +7,9 @@
 require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/graphql'
+require_relative '../../../../lib/opentelemetry/instrumentation/graphql/tracers/graphql_tracer'
 
-describe 'GraphQL Tracing' do
+describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
   let(:instrumentation) { OpenTelemetry::Instrumentation::GraphQL::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
@@ -29,9 +30,11 @@ describe 'GraphQL Tracing' do
   before do
     # Reset various instance variables to clear state between tests
     [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
-
     instrumentation.instance_variable_set(:@installed, false)
-    config[:legacy_tracing] = instrumentation.legacy_tracing_requirement_satisfied?
+
+    # This test file is all about testing the GraphQLTracer class
+    # so we're always going to force legacy_tracing to be true
+    config[:legacy_tracing] = true
     instrumentation.install(config)
 
     exporter.reset
@@ -39,11 +42,26 @@ describe 'GraphQL Tracing' do
 
   describe '#platform_trace' do
     it 'traces platform keys' do
+      expected_spans = [
+        'graphql.lex',
+        'graphql.parse',
+        'graphql.validate',
+        'graphql.analyze_query',
+        'graphql.analyze_multiplex',
+        'graphql.execute_query',
+        'graphql.execute_query_lazy',
+        'graphql.execute_multiplex'
+      ]
+
+      expected_result = {
+        'simpleField' => 'Hello.',
+        'resolvedField' => { 'originalValue' => 'testing=1', 'uppercasedValue' => 'TESTING=1' }
+      }
+
       result = SomeGraphQLAppSchema.execute(query_string, variables: { id: 1 })
 
-      _(spans.size).must_equal(8)
-
-      _(result.to_h['data']).must_equal('simpleField' => 'Hello.', 'resolvedField' => { 'originalValue' => 'testing=1', 'uppercasedValue' => 'TESTING=1' })
+      _(spans.map(&:name)).must_equal(expected_spans)
+      _(result.to_h['data']).must_equal(expected_result)
     end
 
     it 'includes operation attributes for execute_query' do
@@ -277,109 +295,5 @@ describe 'GraphQL Tracing' do
         _(span.events).must_be_nil
       end
     end
-  end
-
-  private
-
-  # These fields are only supported as of version 1.10.0
-  # https://github.com/rmosolgo/graphql-ruby/blob/v1.10.0/CHANGELOG.md#new-features-1
-  def supports_authorized_and_resolved_types?
-    Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('1.10.0')
-  end
-
-  module Old
-    Truck = Struct.new(:price, :model)
-  end
-
-  module Vehicle
-    include GraphQL::Schema::Interface
-
-    field :model, String, null: true, trace: true # Allow for this scalar to be traced
-  end
-
-  class Car < GraphQL::Schema::Object
-    implements Vehicle
-
-    field :price, Integer, null: true
-  end
-
-  class SlightlyComplexType < GraphQL::Schema::Object
-    field :uppercased_value, String, null: false
-    field :original_value, String, null: false
-
-    def uppercased_value
-      object.original_value.upcase
-    end
-  end
-
-  class SimpleResolver < GraphQL::Schema::Resolver
-    type SlightlyComplexType, null: false
-
-    argument :id, Integer, required: true
-
-    def resolve(id:)
-      Struct.new(:original_value).new("testing=#{id}")
-    end
-  end
-
-  class QueryType < GraphQL::Schema::Object
-    field :simple_field, String, null: false
-    field :resolved_field, resolver: SimpleResolver
-
-    # Required for testing resolve_type
-    field :vehicle, Vehicle, null: true
-
-    def vehicle
-      Old::Truck.new(50, 'Model T')
-    end
-
-    def simple_field
-      'Hello.'
-    end
-  end
-
-  LazyBox = Struct.new(:value)
-
-  class OtherQueryType < GraphQL::Schema::Object
-    field :simple_field, String, null: false
-    def simple_field
-      'Hello.'
-    end
-  end
-
-  class SomeOtherGraphQLAppSchema < GraphQL::Schema
-    query(::OtherQueryType)
-  end
-
-  class SomeGraphQLAppSchema < GraphQL::Schema
-    query(::QueryType)
-    orphan_types Car
-    lazy_resolve(LazyBox, :value)
-
-    def self.resolve_type(_type, _obj, ctx)
-      if ctx[:lazy_type_resolve]
-        LazyBox.new(Car)
-      else
-        Car
-      end
-    end
-  end
-
-  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.10.0')
-    [SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each do |schema|
-      schema.class_eval do
-        use GraphQL::Execution::Interpreter
-        use GraphQL::Analysis::AST
-      end
-    end
-  end
-
-  # https://github.com/rmosolgo/graphql-ruby/issues/4292 changes the behavior of the platform tracer to use interface keys instead of the concrete types
-  def uses_platform_interfaces?
-    Gem::Requirement.new('>= 2.0.19').satisfied_by?(gem_version)
-  end
-
-  def gem_version
-    Gem::Version.new(GraphQL::VERSION)
   end
 end

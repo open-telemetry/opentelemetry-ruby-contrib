@@ -12,11 +12,7 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the GraphQL instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         compatible do
-          if config[:legacy_tracing]
-            legacy_tracing_requirement_satisfied?
-          else
-            Gem::Requirement.new('>= 2.0.18', '< 3.0.0').satisfied_by?(gem_version)
-          end
+          config[:legacy_tracing] || supports_new_tracer?
         end
 
         install do |config|
@@ -33,8 +29,8 @@ module OpenTelemetry
           defined?(::GraphQL)
         end
 
-        def legacy_tracing_requirement_satisfied?
-          Gem::Requirement.new('<= 2.0.17').satisfied_by?(gem_version) || Gem::Requirement.new('2.0.19').satisfied_by?(gem_version)
+        def supports_new_tracer?
+          Gem::Requirement.new('>= 2.0.18').satisfied_by?(gem_version)
         end
 
         ## Supported configuration keys for the install config hash:
