@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.23.3 / 2023-07-21
+
+* (No significant changes)
+
 ### v0.23.2 / 2023-06-08
 
 * FIXED: Ensure Rack Events Handler Exists

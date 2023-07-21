@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.23.2 / 2023-07-21
+
+* (No significant changes)
+
 ### v0.23.1 / 2023-06-05
 
 * (No significant changes)

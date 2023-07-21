@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-excon
 
+### v0.21.2 / 2023-07-21
+
+* (No significant changes)
+
 ### v0.21.1 / 2023-06-05
 
 * FIXED: Base config options 
