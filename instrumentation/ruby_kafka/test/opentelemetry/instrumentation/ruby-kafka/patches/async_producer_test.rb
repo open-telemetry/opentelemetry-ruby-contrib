@@ -11,14 +11,10 @@ require_relative '../../../../../lib/opentelemetry/instrumentation/ruby_kafka/pa
 
 describe OpenTelemetry::Instrumentation::RubyKafka::Patches::AsyncProducer do
   let(:instrumentation) { OpenTelemetry::Instrumentation::RubyKafka::Instrumentation.instance }
-  let(:kafka) { Kafka.new(['abc:123']) }
-  let(:topic) { "topic-#{SecureRandom.uuid}" }
-  let(:producer) { double('producer', shutdown: true, produce: nil) }
   let(:tracer) { OpenTelemetry.tracer_provider.tracer('test-tracer') }
+  let(:producer) { Kafka.new(['abc:123']).async_producer(delivery_threshold: 1000) }
 
   before(:each) do
-    allow(kafka).to receive(:producer).and_return(producer)
-
     instrumentation.install
   end
 
@@ -27,31 +23,47 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::AsyncProducer do
     instrumentation.instance_variable_set(:@installed, false)
   end
 
-  describe 'produce' do
-    it 'adds headers to producer.produce call and forwards all other args' do
-      tracer.in_span('test') do |span|
-        async_producer = kafka.async_producer(delivery_threshold: 1000)
+  describe '__otel_merge_options' do
+    it 'injects context when options are not present' do
+      tracer.in_span('wat') do
+        opts = producer.__otel_merge_options!
+        _(opts[:headers]['traceparent']).wont_be_nil
+      end
+    end
+
+    it 'injects context when options are present but headers are not' do
+      tracer.in_span('wat') do
         create_time = Time.now
-        async_producer.produce('hello',
-                               key: 'wat',
-                               headers: { 'foo' => 'bar' },
-                               partition: 1,
-                               partition_key: 'ok',
-                               topic: topic,
-                               create_time: create_time)
-        async_producer.deliver_messages
-        expect(producer).to have_received(:produce).with(
-          'hello',
+        opts = producer.__otel_merge_options!(
+          key: 'wat',
+          partition: 1,
+          partition_key: 'ok',
+          create_time: create_time
+        )
+        _(opts[:headers]['traceparent']).wont_be_nil
+        _(opts[:key]).must_equal('wat')
+        _(opts[:partition]).must_equal(1)
+        _(opts[:partition_key]).must_equal('ok')
+        _(opts[:create_time]).must_equal(create_time)
+      end
+    end
+
+    it 'injects context when headers are present' do
+      tracer.in_span('wat') do
+        create_time = Time.now
+        opts = producer.__otel_merge_options!(
           key: 'wat',
           partition: 1,
           partition_key: 'ok',
           create_time: create_time,
-          topic: topic,
-          headers: {
-            'foo' => 'bar',
-            'traceparent' => "00-#{span.context.hex_trace_id}-#{span.context.hex_span_id}-01"
-          }
+          headers: { foo: :bar }
         )
+        _(opts[:headers]['traceparent']).wont_be_nil
+        _(opts[:headers][:foo]).must_equal(:bar)
+        _(opts[:key]).must_equal('wat')
+        _(opts[:partition]).must_equal(1)
+        _(opts[:partition_key]).must_equal('ok')
+        _(opts[:create_time]).must_equal(create_time)
       end
     end
   end
