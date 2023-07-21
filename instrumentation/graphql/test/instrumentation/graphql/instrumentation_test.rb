@@ -27,35 +27,15 @@ describe OpenTelemetry::Instrumentation::GraphQL do
   end
 
   describe '#install' do
-    let(:config) { { schemas: [SomeGraphQLAppSchema], legacy_tracing: false } }
+    describe 'when legacy_tracing is disabled' do
+      let(:config) { { schemas: [SomeGraphQLAppSchema], legacy_tracing: false } }
 
-    it 'installs the GraphQLTrace instrumentation using the latest api' do
-      skip unless instrumentation.supports_new_tracer?
-
-      expected_tracer = OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace
-      instrumentation.install(config)
-      _(SomeGraphQLAppSchema.trace_class.ancestors).must_include(expected_tracer)
-    end
-
-    it 'does not install on incompatible versions of GraphQL' do
-      skip if instrumentation.supports_new_tracer?
-
-      instrumentation.install(config)
-      _(instrumentation.installed?).must_equal(false)
-    end
-
-    describe 'when a user supplies an invalid schema' do
-      let(:config) { { schemas: [Old::Truck], legacy_tracing: false } }
-
-      it 'fails gracefully and logs the error' do
+      it 'installs the GraphQLTrace instrumentation using the latest api' do
         skip unless instrumentation.supports_new_tracer?
 
-        OpenTelemetry::TestHelpers.with_test_logger do |log|
-          instrumentation.install(config)
-          _(log.string).must_match(
-            / Unable to patch schema Old::Truck: undefined method `trace_with' for Old::Truck:Class/
-          )
-        end
+        expected_tracer = OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace
+        instrumentation.install(config)
+        _(SomeGraphQLAppSchema.trace_class.ancestors).must_include(expected_tracer)
       end
 
       it 'does not install on incompatible versions of GraphQL' do
@@ -64,24 +44,48 @@ describe OpenTelemetry::Instrumentation::GraphQL do
         instrumentation.install(config)
         _(instrumentation.installed?).must_equal(false)
       end
+
+      describe 'when a user supplies an invalid schema' do
+        let(:config) { { schemas: [Old::Truck], legacy_tracing: false } }
+
+        it 'fails gracefully and logs the error' do
+          skip unless instrumentation.supports_new_tracer?
+
+          OpenTelemetry::TestHelpers.with_test_logger do |log|
+            instrumentation.install(config)
+            _(log.string).must_match(
+              / Unable to patch schema Old::Truck: undefined method `trace_with' for Old::Truck:Class/
+            )
+          end
+        end
+      end
     end
 
     describe 'when legacy_tracing is enabled' do
       let(:config) { { schemas: [SomeGraphQLAppSchema], legacy_tracing: true } }
 
       it 'installs the GraphQLTracer instrumentation using legacy api' do
-        OpenTelemetry::TestHelpers.with_test_logger do |log|
-          expected_tracer = OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer
-          instrumentation.install(config)
-          _(SomeGraphQLAppSchema.tracers[0].class).must_equal(expected_tracer)
-          _(log.string).must_be_empty
-        end
+        skip unless instrumentation.supports_legacy_tracer?
+
+        expected_tracer = OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer
+        instrumentation.install(config)
+        _(instrumentation.installed?).must_equal(true)
+        _(SomeGraphQLAppSchema.tracers[0].class).must_equal(expected_tracer)
+      end
+
+      it 'installs the GraphQLTracer instrumentation using legacy api' do
+        skip if instrumentation.supports_legacy_tracer?
+
+        instrumentation.install(config)
+        _(instrumentation.installed?).must_equal(false)
       end
 
       describe 'when a user supplies an invalid schema' do
         let(:config) { { schemas: [Old::Truck], legacy_tracing: true } }
 
         it 'fails gracefully and logs the error' do
+          skip unless instrumentation.supports_legacy_tracer?
+
           OpenTelemetry::TestHelpers.with_test_logger do |log|
             instrumentation.install(config)
 
