@@ -2,9 +2,9 @@ name: Installation Tests
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  schedule:
+    # Everyday at 2 PM UTC
+    - cron: "0 14 * * *"
 
 jobs:
   installation-tests:
