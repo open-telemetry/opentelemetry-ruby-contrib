@@ -32,6 +32,7 @@ runs:
       id: setup
       shell: bash
       run: |
+        # 🛠️ Setup 🛠️
         dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
@@ -73,10 +74,11 @@ runs:
         ruby-version: "${{ inputs.ruby }}"
         bundler:  "latest"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-    - name: Install dependencies and appraisals
+    - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
       run: |
+        # 💎 Install dependencies and generate appraisals 💎
         bundle install --quiet --jobs=3 --retry=4
         bundle exec appraisal generate
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
@@ -84,12 +86,14 @@ runs:
     - name: Test Gem
       shell: bash
       run: |
+        # 🍿 Test Gem 🍿
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
-            echo "Appraisal install and test ${i}"
+            echo "::group::🔎 Appraising ${i}"
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test
+            echo "::endgroup::"
           done
         else
           bundle exec rake test
@@ -121,19 +125,22 @@ runs:
       shell: bash
       if: "${{ inputs.yard == 'true' }}"
       run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
+        # 📄 Yard Docs 📄
         bundle exec rake yard
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Rubocop
       shell: bash
       if: "${{ inputs.rubocop == 'true' }}"
       run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
+        # 🤖 Rubocop 🤖
         bundle exec rake rubocop
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
       run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
+        # 📦 Build Gem 📦
         gem build ${{ inputs.gem }}.gemspec
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"

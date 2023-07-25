@@ -67,6 +67,7 @@ module OpenTelemetry
             }
 
             attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
+            attributes[::OpenTelemetry::SemanticConventions::Trace::DB_USER] = database_user if database_user
             attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
             attributes['db.mysql.instance.address'] = @connected_host if defined?(@connected_host)
 
@@ -129,6 +130,10 @@ module OpenTelemetry
 
           def database_name
             connection_options[:database]
+          end
+
+          def database_user
+            connection_options[:username]
           end
 
           def tracer
