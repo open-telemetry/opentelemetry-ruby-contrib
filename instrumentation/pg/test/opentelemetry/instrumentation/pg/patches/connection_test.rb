@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
-require 'active_record'
 require 'pg'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/pg'
