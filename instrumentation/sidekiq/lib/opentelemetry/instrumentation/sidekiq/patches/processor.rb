@@ -18,6 +18,14 @@ module OpenTelemetry
               attributes[SemanticConventions::Trace::PEER_SERVICE] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
               tracer.in_span('Sidekiq::Processor#process_one', attributes: attributes) { super }
             else
+              super
+            end
+          end
+
+          def fetch
+            if instrumentation_config[:trace_processor_process_one]
+              super
+            else
               OpenTelemetry::Common::Utilities.untraced { super }
             end
           end
