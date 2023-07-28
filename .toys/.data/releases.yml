@@ -203,3 +203,8 @@ gems:
     directory: resource_detectors
     version_rb_path: lib/opentelemetry/resource/detectors/version.rb
     version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
+
+  - name: opentelemetry-resourcedetector-container
+    directory: resource_detectors/container
+    version_rb_path: lib/opentelemetry/resource/detectors/version.rb
+    version_constant: [OpenTelemetry, Resource, Detectors, Container, VERSION]

@@ -10,7 +10,7 @@ Bundler.require(:default, :development, :test)
 SimpleCov.minimum_coverage 85
 SimpleCov.start
 
-require 'opentelemetry-resource_detectors'
+require 'opentelemetry-resourcedetector-container'
 require 'minitest/autorun'
 require 'webmock/minitest'
 
