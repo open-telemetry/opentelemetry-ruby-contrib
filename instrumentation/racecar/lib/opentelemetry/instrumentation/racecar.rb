@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './racecar/instrumentation'
-require_relative './racecar/version'
+require_relative 'racecar/instrumentation'
+require_relative 'racecar/version'

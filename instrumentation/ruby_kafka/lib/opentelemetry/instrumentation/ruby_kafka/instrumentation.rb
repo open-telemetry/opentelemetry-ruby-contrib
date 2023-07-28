@@ -32,12 +32,14 @@ module OpenTelemetry
         end
 
         def require_patches
+          require_relative 'patches/async_producer'
           require_relative 'patches/producer'
           require_relative 'patches/consumer'
           require_relative 'patches/client'
         end
 
         def patch
+          ::Kafka::AsyncProducer.prepend(Patches::AsyncProducer)
           ::Kafka::Producer.prepend(Patches::Producer)
           ::Kafka::Consumer.prepend(Patches::Consumer)
           ::Kafka::Client.prepend(Patches::Client)

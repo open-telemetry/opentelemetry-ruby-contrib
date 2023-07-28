@@ -59,9 +59,9 @@ module OpenTelemetry
     # convention for environment variable name is the library name, upcased with
     # '::' replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG}, and '_ENABLED' appended.
     # For example: OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED = false.
-    class Base # rubocop:disable Metrics/ClassLength
+    class Base
       class << self
-        NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
+        NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/
         VALIDATORS = {
           array: ->(v) { v.is_a?(Array) },
           boolean: ->(v) { v == true || v == false }, # rubocop:disable Style/MultipleComparison
@@ -215,9 +215,10 @@ module OpenTelemetry
       # @param [Hash] config The config for this instrumentation
       def install(config = {})
         return true if installed?
-        return false unless installable?(config)
 
         @config = config_options(config)
+        return false unless installable?(config)
+
         instance_exec(@config, &@install_blk)
         @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true

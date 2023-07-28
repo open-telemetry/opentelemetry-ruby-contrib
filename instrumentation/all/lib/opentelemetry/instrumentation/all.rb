@@ -22,6 +22,7 @@ require 'opentelemetry-instrumentation-delayed_job'
 require 'opentelemetry-instrumentation-ethon'
 require 'opentelemetry-instrumentation-excon'
 require 'opentelemetry-instrumentation-faraday'
+require 'opentelemetry-instrumentation-grape'
 require 'opentelemetry-instrumentation-graphql'
 require 'opentelemetry-instrumentation-http_client'
 require 'opentelemetry-instrumentation-mongo'
@@ -55,4 +56,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './all/version'
+require_relative 'all/version'

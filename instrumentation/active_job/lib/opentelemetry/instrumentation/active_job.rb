@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './active_job/instrumentation'
-require_relative './active_job/version'
+require_relative 'active_job/instrumentation'
+require_relative 'active_job/version'

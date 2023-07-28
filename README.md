@@ -27,7 +27,7 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-approvers)):
 
-- [Robb Kidd](https://github.com/robbkidd), Honeycomb
+- (Could _your_ name appear here?)
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 
@@ -35,9 +35,10 @@ Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/
 
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Daniel Azuma](https://github.com/dazuma), Google
-- [Eric Mustin](https://github.com/ericmustin), Shopify
+- [Eric Mustin](https://github.com/ericmustin)
 - [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Matthew Wear](https://github.com/mwear), Lightstep
+- [Robb Kidd](https://github.com/robbkidd), Honeycomb
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
 - [Sam Handler](https://github.com/plantfansam), Shopify
 

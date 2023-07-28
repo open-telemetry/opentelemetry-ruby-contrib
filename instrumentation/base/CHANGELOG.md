@@ -1,9 +1,19 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.22.1 / 2023-06-02
+
+* feat: make config available to compatible blocks #453
+
+### v0.22.0 / 2023-04-16
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+
+* ADDED: Drop support for EoL Ruby 2.7
+
 ### v0.21.1 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.21.0 / 2022-05-26
 
@@ -12,12 +22,12 @@
 
 ### v0.20.0 / 2022-05-02
 
-* ADDED: Validate Using Enums 
-* FIXED: RubyGems Fallback 
+* ADDED: Validate Using Enums
+* FIXED: RubyGems Fallback
 
 ### v0.19.0 / 2021-12-01
 
-* ADDED: Add default options config helper + env var config option support 
+* ADDED: Add default options config helper + env var config option support
 
 ### v0.18.3 / 2021-09-29
 

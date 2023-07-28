@@ -30,6 +30,7 @@ module OpenTelemetry
 
           QUERY_NAME_RE = Regexp.new("^(#{QUERY_NAMES.join('|')})", Regexp::IGNORECASE)
 
+          # From: https://github.com/newrelic/newrelic-ruby-agent/blob/0235b288d85b8bc795bdc1a24621dd9f84cfef45/lib/new_relic/agent/database/obfuscation_helpers.rb#L9-L34
           COMPONENTS_REGEX_MAP = {
             single_quotes: /'(?:[^']|'')*?(?:\\'.*|'(?!'))/,
             double_quotes: /"(?:[^"]|"")*?(?:\\".*|"(?!"))/,
@@ -70,8 +71,13 @@ module OpenTelemetry
           private
 
           def obfuscate_sql(sql)
-            if sql.size > 2000
-              'SQL query too large to remove sensitive data ...'
+            if sql.size > config[:obfuscation_limit]
+              first_match_index = sql.index(generated_mysql_regex)
+              truncation_message = "SQL truncated (> #{config[:obfuscation_limit]} characters)"
+              return truncation_message unless first_match_index
+
+              truncated_sql = sql[..first_match_index - 1]
+              "#{truncated_sql}...\n#{truncation_message}"
             else
               obfuscated = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
               obfuscated = obfuscated.gsub(generated_mysql_regex, '?')

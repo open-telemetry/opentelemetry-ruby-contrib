@@ -4,24 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'faraday-1.0' do
-  gem 'faraday', '~> 1.0.0'
+appraise 'faraday-0.17' do
+  gem 'faraday', '~> 0.17.6'
 end
 
-# Incompatible with Ruby 3.0.0 (https://bugs.ruby-lang.org/issues/10499)
-if RUBY_VERSION < '3'
-  appraise 'faraday-0.17' do
-    gem 'faraday', '0.17.0'
-  end
+appraise 'faraday-1.x' do
+  gem 'faraday', '~> 1.0'
 end
 
-appraise 'faraday-0.16' do
-  gem 'faraday', '0.16.2'
-end
-
-# Incompatible with Ruby 3.0.0 (https://bugs.ruby-lang.org/issues/10499)
-if RUBY_VERSION < '3'
-  appraise 'faraday-0.13' do
-    gem 'faraday', '0.13.1'
-  end
+appraise 'faraday-2.x' do
+  gem 'faraday', '~> 2.0'
 end

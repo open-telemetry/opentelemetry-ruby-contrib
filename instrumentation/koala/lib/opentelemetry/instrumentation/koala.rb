@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './koala/instrumentation'
-require_relative './koala/version'
+require_relative 'koala/instrumentation'
+require_relative 'koala/version'

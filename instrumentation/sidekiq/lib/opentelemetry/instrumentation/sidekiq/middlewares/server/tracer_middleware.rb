@@ -14,14 +14,14 @@ module OpenTelemetry
           class TracerMiddleware
             def call(_worker, msg, _queue) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
               attributes = {
-                'messaging.system' => 'sidekiq',
+                SemanticConventions::Trace::MESSAGING_SYSTEM => 'sidekiq',
                 'messaging.sidekiq.job_class' => msg['wrapped']&.to_s || msg['class'],
-                'messaging.message_id' => msg['jid'],
-                'messaging.destination' => msg['queue'],
-                'messaging.destination_kind' => 'queue',
-                'messaging.operation' => 'process'
+                SemanticConventions::Trace::MESSAGING_MESSAGE_ID => msg['jid'],
+                SemanticConventions::Trace::MESSAGING_DESTINATION => msg['queue'],
+                SemanticConventions::Trace::MESSAGING_DESTINATION_KIND => 'queue',
+                SemanticConventions::Trace::MESSAGING_OPERATION => 'process'
               }
-              attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
+              attributes[SemanticConventions::Trace::PEER_SERVICE] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
 
               span_name = case instrumentation_config[:span_naming]
                           when :job_class then "#{msg['wrapped']&.to_s || msg['class']} process"

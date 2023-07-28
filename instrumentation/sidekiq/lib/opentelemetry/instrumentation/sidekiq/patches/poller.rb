@@ -13,7 +13,7 @@ module OpenTelemetry
           def enqueue
             if instrumentation_config[:trace_poller_enqueue]
               attributes = {}
-              attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
+              attributes[SemanticConventions::Trace::PEER_SERVICE] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
               tracer.in_span('Sidekiq::Scheduled::Poller#enqueue', attributes: attributes) { super }
             else
               OpenTelemetry::Common::Utilities.untraced { super }

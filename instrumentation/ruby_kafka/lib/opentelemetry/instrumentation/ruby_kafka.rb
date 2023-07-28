@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './ruby_kafka/instrumentation'
-require_relative './ruby_kafka/version'
+require_relative 'ruby_kafka/instrumentation'
+require_relative 'ruby_kafka/version'

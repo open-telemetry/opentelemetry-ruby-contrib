@@ -14,13 +14,13 @@ module OpenTelemetry
           class TracerMiddleware
             def call(_worker_class, job, _queue, _redis_pool)
               attributes = {
-                'messaging.system' => 'sidekiq',
+                SemanticConventions::Trace::MESSAGING_SYSTEM => 'sidekiq',
                 'messaging.sidekiq.job_class' => job['wrapped']&.to_s || job['class'],
-                'messaging.message_id' => job['jid'],
-                'messaging.destination' => job['queue'],
-                'messaging.destination_kind' => 'queue'
+                SemanticConventions::Trace::MESSAGING_MESSAGE_ID => job['jid'],
+                SemanticConventions::Trace::MESSAGING_DESTINATION => job['queue'],
+                SemanticConventions::Trace::MESSAGING_DESTINATION_KIND => 'queue'
               }
-              attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
+              attributes[SemanticConventions::Trace::PEER_SERVICE] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
 
               span_name = case instrumentation_config[:span_naming]
                           when :job_class then "#{job['wrapped']&.to_s || job['class']} send"

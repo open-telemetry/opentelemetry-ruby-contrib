@@ -4,19 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-current_ruby_version = Gem::Version.new(RUBY_VERSION)
+appraise 'graphql-1.13' do
+  gem 'graphql', '~> 1.13'
+end
 
-# Incompatible with Ruby 3.0.0 (https://bugs.ruby-lang.org/issues/10499)
-if current_ruby_version < Gem::Version.new('3.0.0')
-  appraise 'graphql-1.9' do
-    gem 'graphql', '~> 1.9.0'
-  end
-else
-  appraise 'graphql-1.13' do
-    gem 'graphql', '~> 1.13'
-  end
+appraise 'graphql-2.0.17' do
+  gem 'graphql', '~> 2.0.17'
+end
 
-  appraise 'graphql-2.x' do
-    gem 'graphql', '~> 2', '< 3.0.0'
-  end
+appraise 'graphql-2.x' do
+  gem 'graphql', '>= 2.0.18', '< 3.0.0'
 end

@@ -14,7 +14,7 @@ module OpenTelemetry
 
           app.middleware.insert_before(
             0,
-            OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
+            *OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args
           )
         end
       end

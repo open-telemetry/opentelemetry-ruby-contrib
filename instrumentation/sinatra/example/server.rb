@@ -19,6 +19,7 @@ end
 # Example application for the Sinatra instrumentation
 class App < Sinatra::Base
   set :bind, '0.0.0.0'
+  set :port, '4567'
   set :show_exceptions, false
 
   template :example_render do

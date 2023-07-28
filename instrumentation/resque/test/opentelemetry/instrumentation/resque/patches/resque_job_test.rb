@@ -184,6 +184,56 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         _(ev[0].attributes['exception.stacktrace']).wont_be_nil
       end
     end
+
+    describe 'force_flush' do
+      describe 'ask_the_job - default' do
+        let(:config) { { force_flush: :ask_the_job } }
+
+        it 'asks the job and skips forcibly flushing the tracer' do
+          mock_tracer_provider = Minitest::Mock.new
+          mock_tracer_provider.expect(:force_flush, true)
+
+          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
+            Resque.enqueue(DummyJob)
+            work_off_jobs
+          end
+
+          expect { mock_tracer_provider.verify }.must_raise MockExpectationError
+        end
+      end
+
+      describe 'always' do
+        let(:config) { { force_flush: :always } }
+
+        it 'does forcibly flush the tracer' do
+          mock_tracer_provider = Minitest::Mock.new
+          mock_tracer_provider.expect(:force_flush, true)
+
+          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
+            Resque.enqueue(DummyJob)
+            work_off_jobs
+          end
+
+          mock_tracer_provider.verify
+        end
+      end
+
+      describe 'never' do
+        let(:config) { { force_flush: :never } }
+
+        it 'does not forcibly flush the tracer' do
+          mock_tracer_provider = Minitest::Mock.new
+          mock_tracer_provider.expect(:force_flush, true)
+
+          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
+            Resque.enqueue(DummyJob)
+            work_off_jobs
+          end
+
+          expect { mock_tracer_provider.verify }.must_raise MockExpectationError
+        end
+      end
+    end
   end unless ENV['OMIT_SERVICES']
 
   private
