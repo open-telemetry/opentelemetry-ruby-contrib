@@ -59,7 +59,7 @@ jobs:
       matrix:
         gem:
           - resource_detectors
-          - resourcedetector-container
+          - resource_detectors-container
         os:
           - ubuntu-latest
           - macos-latest
