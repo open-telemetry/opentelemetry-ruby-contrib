@@ -59,7 +59,7 @@ describe OpenTelemetry::Resource::Detectors::Azure do
       end
 
       before do
-        metadata = MiniTest::Mock.new
+        metadata = Minitest::Mock.new
         metadata.expect(:code, 200)
         metadata.expect(:body, azure_metadata)
         metadata.expect(:nil?, false)
