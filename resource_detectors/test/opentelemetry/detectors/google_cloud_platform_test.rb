@@ -41,7 +41,7 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
       let(:project_id) { 'opentelemetry' }
 
       before do
-        gcp_env_mock = MiniTest::Mock.new
+        gcp_env_mock = Minitest::Mock.new
         gcp_env_mock.expect(:compute_engine?, true)
         gcp_env_mock.expect(:project_id, project_id)
         gcp_env_mock.expect(:instance_attribute, 'us-central1', %w[cluster-location])
