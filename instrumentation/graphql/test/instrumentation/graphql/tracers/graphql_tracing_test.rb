@@ -264,7 +264,7 @@ describe 'GraphQL Tracing' do
         span = spans.find { |s| s.name == 'graphql.validate' }
         event = span.events.find { |e| e.name == 'graphql.validation.error' }
         # rubocop:disable Layout/LineLength
-        _(event.attributes['message']).must_equal(
+        _(event.attributes['exception.message']).must_equal(
           "[{\"message\":\"Field 'nonExistentField' doesn't exist on type 'Query'\",\"locations\":[{\"line\":2,\"column\":15}],\"path\":[\"query\",\"nonExistentField\"],\"extensions\":{\"code\":\"undefinedField\",\"typeName\":\"Query\",\"fieldName\":\"nonExistentField\"}}]"
         )
         # rubocop:enable Layout/LineLength

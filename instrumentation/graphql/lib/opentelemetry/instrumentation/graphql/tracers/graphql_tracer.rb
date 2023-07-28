@@ -37,7 +37,7 @@ module OpenTelemetry
                   span.add_event(
                     'graphql.validation.error',
                     attributes: {
-                      'message' => errors.to_json
+                      'exception.message' => errors.to_json
                     }
                   )
                 end
