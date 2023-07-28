@@ -266,7 +266,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
   describe 'force_flush option' do
     let(:mock_tracer_provider) do
-      mock_tracer_provider = MiniTest::Mock.new
+      mock_tracer_provider = Minitest::Mock.new
       mock_tracer_provider.expect(:force_flush, true)
 
       mock_tracer_provider

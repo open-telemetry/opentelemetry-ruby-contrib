@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './action_view/instrumentation'
-require_relative './action_view/version'
+require_relative 'action_view/instrumentation'
+require_relative 'action_view/version'

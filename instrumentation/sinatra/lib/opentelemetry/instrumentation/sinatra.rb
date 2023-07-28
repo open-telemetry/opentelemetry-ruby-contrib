@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './sinatra/instrumentation'
-require_relative './sinatra/version'
+require_relative 'sinatra/instrumentation'
+require_relative 'sinatra/version'

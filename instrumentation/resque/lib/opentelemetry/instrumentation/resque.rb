@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './resque/instrumentation'
-require_relative './resque/version'
+require_relative 'resque/instrumentation'
+require_relative 'resque/version'

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.56.2 / 2023-07-14
+
+* ADDED: `db.user` attribute (recommended connection-level attribute)
+
 ### v0.56.1 / 2023-06-05
 
 * FIXED: Base config options 

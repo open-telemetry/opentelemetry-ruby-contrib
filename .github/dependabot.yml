@@ -177,3 +177,7 @@ updates:
   directory: "/resource_detectors"
   schedule:
     interval: weekly
+- package-ecosystem: bundler
+  directory: "/resource_detectors/container"
+  schedule:
+    interval: weekly

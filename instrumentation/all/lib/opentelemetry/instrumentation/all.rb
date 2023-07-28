@@ -57,4 +57,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './all/version'
+require_relative 'all/version'
