@@ -1,5 +1,9 @@
 # Release History: opentelemetry-resource_detectors
 
+### v0.24.0 / 2023-07-29
+
+* ADDED: Add container resource detector
+
 ### v0.23.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7 
