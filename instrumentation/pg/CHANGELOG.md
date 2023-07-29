@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.25.3 / 2023-07-29
+
+* FIXED: Pass block explicitly in `define_method` calls for PG instrumentation query methods
+
 ### v0.25.2 / 2023-06-05
 
 * FIXED: Base config options 
