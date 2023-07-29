@@ -2,7 +2,7 @@
 
 ### v0.24.0 / 2023-07-29
 
-* ADDED: Add container resource detector.
+* ADDED: Add container resource detector
 
 ### v0.23.0 / 2023-04-17
 
