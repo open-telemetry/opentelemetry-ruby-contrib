@@ -6,7 +6,7 @@
 
 module OpenTelemetry
   module Resource
-    module Detectors
+    module Detector
       # Container contains detect class method for determining container resource attributes
       module Container
         extend self
