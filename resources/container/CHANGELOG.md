@@ -1,8 +1,4 @@
-# Release History: opentelemetry-resourcedetector-container
-
-### v0.1.0 /
-
-* Initial release
+# Release History: opentelemetry-resource-detector-container
 
 ### v0.1.0 / 2023-07-29
 
