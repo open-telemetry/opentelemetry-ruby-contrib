@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rubocop', '~> 1.54.2'
+  spec.add_development_dependency 'rubocop', '~> 1.55.1'
   spec.add_development_dependency 'simplecov', '~> 0.17'
   spec.add_development_dependency 'webmock', '~> 3.18.1'
   spec.add_development_dependency 'yard', '~> 0.9'
