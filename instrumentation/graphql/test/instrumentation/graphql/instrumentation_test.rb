@@ -73,7 +73,7 @@ describe OpenTelemetry::Instrumentation::GraphQL do
         _(SomeGraphQLAppSchema.tracers[0].class).must_equal(expected_tracer)
       end
 
-      it 'installs the GraphQLTracer instrumentation using legacy api' do
+      it 'does not install instrumentation on gem versions that don't support it' do
         skip if instrumentation.supports_legacy_tracer?
 
         instrumentation.install(config)
