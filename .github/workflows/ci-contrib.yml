@@ -55,7 +55,7 @@ jobs:
       matrix:
         gem:
           - resource_detectors
-          - resource_detectors-container
+          - resource-detector-container
         os:
           - ubuntu-latest
     name: "opentelemetry-${{ matrix.gem }} / ${{ matrix.os }}"

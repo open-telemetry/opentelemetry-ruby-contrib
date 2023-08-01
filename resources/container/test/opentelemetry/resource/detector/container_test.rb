@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Resource::Detectors::Container do
-  let(:detector) { OpenTelemetry::Resource::Detectors::Container }
+describe OpenTelemetry::Resource::Detector::Container do
+  let(:detector) { OpenTelemetry::Resource::Detector::Container }
 
   describe '.detect' do
     let(:detected_resource) { detector.detect }

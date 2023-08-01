@@ -6,7 +6,7 @@
 
 module OpenTelemetry
   module Resource
-    module Detectors
+    module Detector
       module Container
         VERSION = '0.1.0'
       end
