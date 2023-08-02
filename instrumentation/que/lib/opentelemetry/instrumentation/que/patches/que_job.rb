@@ -46,9 +46,7 @@ module OpenTelemetry
                 # In Que version 2.1.0 `bulk_enqueue` was introduced and in order
                 # for it to work, we must pass `job_options` to `bulk_enqueue` instead of enqueue.
                 if gem_version >= Gem::Version.new('2.1.0') && Thread.current[:que_jobs_to_bulk_insert]
-                  Thread.current[:que_jobs_to_bulk_insert][:job_options] = Thread.current[:que_jobs_to_bulk_insert][:job_options].merge(tags: tags) do |_, a, b|
-                    a.is_a?(Array) && b.is_a?(Array) ? a + b : b
-                  end
+                  Thread.current[:que_jobs_to_bulk_insert][:job_options] = bulk_job_options(tags)
 
                   job = super(*args, **arg_opts)
                   job_attrs = Thread.current[:que_jobs_to_bulk_insert][:jobs_attrs].last
@@ -61,6 +59,12 @@ module OpenTelemetry
                 span.add_attributes(QueJob.job_attributes(job_attrs))
 
                 job
+              end
+            end
+
+            def bulk_job_options(tags)
+              Thread.current[:que_jobs_to_bulk_insert][:job_options].merge(tags: tags) do |_, a, b|
+                a.is_a?(Array) && b.is_a?(Array) ? a + b : b
               end
             end
 
