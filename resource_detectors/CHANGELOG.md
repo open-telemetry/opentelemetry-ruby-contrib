@@ -1,6 +1,6 @@
 # Release History: opentelemetry-resource_detectors
 
-### v0.24.0 / 2023-07-29
+### v0.24.0 / 2023-08-02
 
 * ADDED: Add container resource detector
 
