@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-grape
 
+### v0.1.4 / 2023-08-02
+
+* FIXED: Fix opentelemetry-api version constraint in grape gemspec
+
 ### v0.1.3 / 2023-06-05
 
 * FIXED: Base config options 
