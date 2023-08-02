@@ -13,7 +13,7 @@ module OpenTelemetry
           MAX_STATEMENT_LENGTH = 500
           private_constant :MAX_STATEMENT_LENGTH
 
-          def process(commands) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+          def process(commands)
             return super unless instrumentation_config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
 
             host = options[:host]
