@@ -4,4 +4,4 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative './opentelemetry/instrumentation/all'
+require_relative 'opentelemetry/instrumentation/all'

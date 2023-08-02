@@ -1,5 +1,6 @@
 AllCops:
-  TargetRubyVersion: '2.7.6'
+  TargetRubyVersion: '3.0'
+  NewCops: enable
   Exclude:
     - Rakefile
     - "rakelib/**/*"
@@ -8,26 +9,26 @@ AllCops:
     - "**/**/vendor/bundle/**/*"
 Bundler/OrderedGems:
   Enabled: false
+Gemspec/DevelopmentDependencies:
+  Enabled: false
 Gemspec/RequiredRubyVersion:
   Enabled: false
-Metrics/AbcSize:
-  Enabled: false
-Metrics/BlockLength:
-  Enabled: false
-Metrics/MethodLength:
-  Max: 20
 Lint/ConstantDefinitionInBlock:
   Exclude:
     - "**/*test.rb"
 Lint/UnusedMethodArgument:
   Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Metrics/MethodLength:
+  Max: 25
 Naming/FileName:
   Exclude:
     - '**/opentelemetry-*'
-Metrics/LineLength:
-  Enabled: false
-Metrics/ParameterLists:
-  Enabled: false
 Style/Documentation:
   Exclude:
     - "**/test/**/*"
@@ -49,4 +50,10 @@ Style/SlicingWithRange:
   Enabled: false
 Style/CaseLikeIf:
   Enabled: false
-
+## 1.41.1
+Gemspec/RequireMFA:
+  # We probably want to figure out how to set this up for the organization
+  Enabled: false
+Layout/LineLength:
+  Enabled: true
+  Max: 250

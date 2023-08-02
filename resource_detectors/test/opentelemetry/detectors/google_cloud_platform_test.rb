@@ -10,6 +10,24 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
   let(:detector) { OpenTelemetry::Resource::Detectors::GoogleCloudPlatform }
 
   describe '.detect' do
+    before do
+      WebMock.disable_net_connect!
+      stub_request(:get, 'http://169.254.169.254/')
+        .with(
+          headers: {
+            'Accept' => '*/*',
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Metadata-Flavor' => 'Google',
+            'User-Agent' => 'Ruby'
+          }
+        )
+        .to_return(status: 200, body: '', headers: {})
+    end
+
+    after do
+      WebMock.allow_net_connect!
+    end
+
     let(:detected_resource) { detector.detect }
     let(:detected_resource_attributes) { detected_resource.attribute_enumerator.to_h }
     let(:expected_resource_attributes) { {} }
@@ -23,7 +41,7 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
       let(:project_id) { 'opentelemetry' }
 
       before do
-        gcp_env_mock = MiniTest::Mock.new
+        gcp_env_mock = Minitest::Mock.new
         gcp_env_mock.expect(:compute_engine?, true)
         gcp_env_mock.expect(:project_id, project_id)
         gcp_env_mock.expect(:instance_attribute, 'us-central1', %w[cluster-location])
@@ -40,7 +58,7 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
         gcp_env_mock.expect(:instance_zone, 'us-central1-a')
 
         Socket.stub(:gethostname, 'opentelemetry-test') do
-          old_hostname = ENV['HOSTNAME']
+          old_hostname = ENV.fetch('HOSTNAME', nil)
           ENV['HOSTNAME'] = 'opentelemetry-host-name-1'
           begin
             Google::Cloud::Env.stub(:new, gcp_env_mock) { detected_resource }

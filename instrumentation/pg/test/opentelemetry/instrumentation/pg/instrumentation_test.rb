@@ -37,7 +37,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
 
   describe 'tracing' do
     let(:client) do
-      ::PG::Connection.open(
+      PG::Connection.open(
         host: host,
         port: port,
         user: user,
@@ -114,7 +114,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_equal 'SELECT 1'
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -128,7 +128,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_equal 'SELECT $1 AS a'
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -143,7 +143,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.operation']).must_equal 'PREPARE'
         _(span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -159,7 +159,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(last_span.attributes['db.statement']).must_equal 'SELECT $1 AS a'
         _(last_span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo'
         _(last_span.attributes['net.peer.name']).must_equal host.to_s
-        _(last_span.attributes['net.peer.port']).must_equal port.to_s
+        _(last_span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -173,7 +173,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_equal 'SELECT 1'
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -189,7 +189,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(last_span.attributes['db.statement']).must_be_nil
       _(last_span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo0'
       _(last_span.attributes['net.peer.name']).must_equal host.to_s
-      _(last_span.attributes['net.peer.port']).must_equal port.to_s
+      _(last_span.attributes['net.peer.port']).must_equal port.to_i
     end
 
     it 'after error' do
@@ -203,7 +203,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(span.attributes['db.statement']).must_equal 'SELECT INVALID'
       _(span.attributes['db.operation']).must_equal 'SELECT'
       _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_i
 
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
@@ -226,7 +226,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(span.attributes['db.statement']).must_equal explain_sql
       _(span.attributes['db.operation']).must_equal 'EXPLAIN'
       _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_i
     end
 
     it 'uses database name as span.name fallback with invalid sql' do
@@ -240,7 +240,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(span.attributes['db.statement']).must_equal 'DESELECT 1'
       _(span.attributes['db.operation']).must_be_nil
       _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_i
 
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
@@ -267,7 +267,32 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_equal obfuscated_sql
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
+      end
+
+      describe 'with obfuscation_limit' do
+        let(:config) { { db_statement: :obfuscate, obfuscation_limit: 10 } }
+
+        it 'truncates SQL using config limit' do
+          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+          obfuscated_sql = "SELECT * from users where users.id = ...\nSQL truncated (> 10 characters)"
+          expect do
+            client.exec(sql)
+          end.must_raise PG::UndefinedTable
+
+          _(span.attributes['db.statement']).must_equal obfuscated_sql
+        end
+
+        it 'handles regex non-matches' do
+          sql = 'ALTER TABLE my_table DISABLE TRIGGER ALL;'
+          obfuscated_sql = 'SQL truncated (> 10 characters)'
+
+          expect do
+            client.exec(sql)
+          end.must_raise PG::UndefinedTable
+
+          _(span.attributes['db.statement']).must_equal obfuscated_sql
+        end
       end
     end
 
@@ -285,29 +310,43 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.name).must_equal 'SELECT postgres'
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_i
 
         _(span.attributes['db.statement']).must_be_nil
       end
     end
 
-    describe 'when enable_statement_attribute is false' do
-      let(:config) { { enable_statement_attribute: false } }
+    describe 'when using a database socket' do
+      let(:host) { nil }
+      let(:port) { nil }
 
-      it 'does not include SQL statement as db.statement attribute' do
-        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-        expect do
-          client.exec(sql)
-        end.must_raise PG::UndefinedTable
+      it 'sets attributes for the socket directory and family' do
+        client.query('SELECT 1')
 
-        _(span.attributes['db.system']).must_equal 'postgresql'
-        _(span.attributes['db.name']).must_equal 'postgres'
-        _(span.name).must_equal 'SELECT postgres'
-        _(span.attributes['db.operation']).must_equal 'SELECT'
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
+        _(span.attributes['net.peer.name']).must_match %r{^/}
+        _(span.attributes['net.peer.port']).must_be_nil
+        _(span.attributes['net.sock.family']).must_equal 'unix'
+      end
+    end
 
-        _(span.attributes['db.statement']).must_be_nil
+    describe 'when connection has multiple hosts' do
+      before { skip 'requires libpq >= 10.0' if PG.library_version < 10_00_00 } # rubocop:disable Style/NumericLiterals
+
+      let(:client) do
+        PG::Connection.open(
+          host: ['nowhere.', host].join(','),
+          port: ['20823', port].join(','),
+          user: user,
+          dbname: dbname,
+          password: password
+        )
+      end
+
+      it 'sets attributes of the active connection' do
+        client.query('SELECT 1')
+
+        _(span.attributes['net.peer.name']).must_equal host
+        _(span.attributes['net.peer.port']).must_equal port.to_i if PG.const_defined?('DEF_PORT')
       end
     end
   end unless ENV['OMIT_SERVICES']

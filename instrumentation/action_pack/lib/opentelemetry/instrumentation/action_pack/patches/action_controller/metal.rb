@@ -16,23 +16,18 @@ module OpenTelemetry
               if rack_span.recording?
                 rack_span.name = "#{self.class.name}##{name}" unless request.env['action_dispatch.exception']
 
-                add_rails_route(rack_span, request) if instrumentation_config[:enable_recognize_route]
-
-                rack_span.set_attribute('http.target', request.filtered_path) if request.filtered_path != request.fullpath
+                attributes_to_append = {
+                  OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => self.class.name,
+                  OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(name)
+                }
+                attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = request.filtered_path if request.filtered_path != request.fullpath
+                rack_span.add_attributes(attributes_to_append)
               end
 
               super(name, request, response)
             end
 
             private
-
-            def add_rails_route(rack_span, request)
-              ::Rails.application.routes.router.recognize(request) do |route, _params|
-                rack_span.set_attribute('http.route', route.path.spec.to_s)
-                # Rails will match on the first route - see https://guides.rubyonrails.org/routing.html#crud-verbs-and-actions
-                break
-              end
-            end
 
             def instrumentation_config
               ActionPack::Instrumentation.instance.config

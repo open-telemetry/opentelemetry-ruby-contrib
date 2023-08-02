@@ -9,7 +9,7 @@ module OpenTelemetry
     module ActiveRecord
       # The Instrumentation class contains logic to detect and install the ActiveRecord instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('5.2.0')
+        MINIMUM_VERSION = Gem::Version.new('6.0.0')
         MAX_MAJOR_VERSION = 7
 
         install do |_config|
@@ -31,10 +31,6 @@ module OpenTelemetry
 
         private
 
-        def insert_class_methods_supported?
-          gem_version >= Gem::Version.new('6.0.0')
-        end
-
         def gem_version
           ::ActiveRecord.version
         end
@@ -52,7 +48,7 @@ module OpenTelemetry
           ::ActiveRecord::Base.prepend(Patches::Querying)
           ::ActiveRecord::Base.prepend(Patches::Persistence)
           ::ActiveRecord::Base.prepend(Patches::PersistenceClassMethods)
-          ::ActiveRecord::Base.prepend(Patches::PersistenceInsertClassMethods) if insert_class_methods_supported?
+          ::ActiveRecord::Base.prepend(Patches::PersistenceInsertClassMethods)
           ::ActiveRecord::Base.prepend(Patches::TransactionsClassMethods)
           ::ActiveRecord::Base.prepend(Patches::Validations)
 
@@ -60,11 +56,13 @@ module OpenTelemetry
         end
 
         def require_dependencies
-          require 'ruby2_keywords'
+          # Our patches depend on Ruby 2 Keyword Syntax compatability since it is decorating the existing AR API
+          # Once we migrate to ActiveSupport Notifications based instrumentation we can remove this require statement.
+          require 'ruby2_keywords' # rubocop:disable Lint/RedundantRequireStatement
           require_relative 'patches/querying'
           require_relative 'patches/persistence'
           require_relative 'patches/persistence_class_methods'
-          require_relative 'patches/persistence_insert_class_methods' if insert_class_methods_supported?
+          require_relative 'patches/persistence_insert_class_methods'
           require_relative 'patches/transactions_class_methods'
           require_relative 'patches/validations'
           require_relative 'patches/relation_persistence'

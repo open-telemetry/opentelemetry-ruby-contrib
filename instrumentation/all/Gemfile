@@ -7,3 +7,11 @@
 source 'https://rubygems.org'
 
 gemspec
+
+group :test do
+  Dir.entries('../')
+     .select { |entry| File.directory?(File.join('../', entry)) }
+     .reject { |entry| %w[. .. all].include?(entry) }
+     .sort
+     .each { |dir| gem "opentelemetry-instrumentation-#{dir}", path: "../#{dir}" }
+end

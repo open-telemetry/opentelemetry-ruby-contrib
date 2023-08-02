@@ -1,0 +1,12 @@
+# README
+
+This folder contains a working example of Kafka instrumentation (bonus: it can also work as a crude dev environment for working on this instrumentation).
+
+To run with `podman-compose`:
+
+- `podman-compose up -d`
+- wait for the `ruby:3.1-slim` image to spin up (`podman ps | grep slim` or just wait for `podman-compose up -d` to finish)
+- get into the container with `podman ps | grep slim | awk '{ print $1}' | xargs -o -I"{}" podman exec -it {} /bin/bash`
+- `bundle && bundle exec ruby ruby_kafka.rb`
+
+You can then view traces at [the Jaeger search page](http://localhost:16686/search).

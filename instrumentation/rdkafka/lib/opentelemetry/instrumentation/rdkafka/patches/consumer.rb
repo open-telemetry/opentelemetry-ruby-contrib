@@ -20,7 +20,9 @@ module OpenTelemetry
                 'messaging.kafka.offset' => message.offset
               }
 
-              attributes['messaging.kafka.message_key'] = message.key if message.key
+              message_key = extract_message_key(message.key)
+              attributes['messaging.kafka.message_key'] = message_key if message_key
+
               parent_context = OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)
               span_context = OpenTelemetry::Trace.current_span(parent_context).context
               links = [OpenTelemetry::Trace::Link.new(span_context)] if span_context.valid?
@@ -45,7 +47,8 @@ module OpenTelemetry
                 }
 
                 links = messages.map do |message|
-                  span_context = OpenTelemetry::Trace.current_span(OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)).context
+                  trace_context = OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)
+                  span_context = OpenTelemetry::Trace.current_span(trace_context).context
                   OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
                 end
                 links.compact!
@@ -61,6 +64,15 @@ module OpenTelemetry
 
           def tracer
             Rdkafka::Instrumentation.instance.tracer
+          end
+
+          def extract_message_key(key)
+            # skip encode if already valid utf8
+            return key if key.nil? || (key.encoding == Encoding::UTF_8 && key.valid_encoding?)
+
+            key.encode(Encoding::UTF_8)
+          rescue Encoding::UndefinedConversionError
+            nil
           end
         end
       end

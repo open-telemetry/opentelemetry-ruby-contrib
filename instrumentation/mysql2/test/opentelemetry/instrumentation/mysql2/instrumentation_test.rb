@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
   describe 'tracing' do
     let(:client) do
-      ::Mysql2::Client.new(
+      Mysql2::Client.new(
         host: host,
         port: port,
         database: database,
@@ -139,7 +139,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         client.query('DESELECT 1')
       end.must_raise Mysql2::Error
 
-      _(span.name).must_equal 'mysql.mysql'
+      _(span.name).must_equal 'mysql'
       _(span.attributes['db.system']).must_equal 'mysql'
       _(span.attributes['db.name']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'DESELECT 1'
@@ -172,6 +172,44 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         _(span.attributes['net.peer.name']).must_equal host.to_s
         _(span.attributes['net.peer.port']).must_equal port.to_s
       end
+
+      it 'encodes invalid byte sequences for db.statement' do
+        # \255 is off-limits https://en.wikipedia.org/wiki/UTF-8#Codepage_layout
+        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com\255'"
+        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
+
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        _(span.name).must_equal 'mysql'
+        _(span.attributes['db.statement']).must_equal obfuscated_sql
+      end
+
+      describe 'with obfuscation_limit' do
+        let(:config) { { db_statement: :obfuscate, obfuscation_limit: 10 } }
+
+        it 'truncates SQL using config limit' do
+          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+          obfuscated_sql = "SELECT * from users where users.id = ...\nSQL truncated (> 10 characters)"
+          expect do
+            client.query(sql)
+          end.must_raise Mysql2::Error
+
+          _(span.attributes['db.statement']).must_equal obfuscated_sql
+        end
+
+        it 'handles regex non-matches' do
+          sql = 'ALTER TABLE my_table DISABLE TRIGGER ALL;'
+          obfuscated_sql = 'SQL truncated (> 10 characters)'
+
+          expect do
+            client.query(sql)
+          end.must_raise Mysql2::Error
+
+          _(span.attributes['db.statement']).must_equal obfuscated_sql
+        end
+      end
     end
 
     describe 'when db_statement set as omit' do
@@ -187,44 +225,6 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         _(span.attributes['db.name']).must_equal 'mysql'
         _(span.name).must_equal 'select'
         _(span.attributes).wont_include('db.statement')
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
-      end
-    end
-
-    describe 'when enable_sql_obfuscation is enabled' do
-      let(:config) { { enable_sql_obfuscation: true } }
-
-      it 'is compatible with legacy enable_sql_obfuscation option' do
-        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
-        expect do
-          client.query(sql)
-        end.must_raise Mysql2::Error
-
-        _(span.attributes['db.system']).must_equal 'mysql'
-        _(span.attributes['db.name']).must_equal 'mysql'
-        _(span.name).must_equal 'select'
-        _(span.attributes['db.statement']).must_equal obfuscated_sql
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_s
-      end
-    end
-
-    describe 'when enable_sql_obfuscation is enabled with db_statement set' do
-      let(:config) { { enable_sql_obfuscation: true, db_statement: :omit } }
-
-      it 'respects enable_sql_obfuscation when enabled' do
-        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
-        expect do
-          client.query(sql)
-        end.must_raise Mysql2::Error
-
-        _(span.attributes['db.system']).must_equal 'mysql'
-        _(span.attributes['db.name']).must_equal 'mysql'
-        _(span.name).must_equal 'select'
-        _(span.attributes['db.statement']).must_equal obfuscated_sql
         _(span.attributes['net.peer.name']).must_equal host.to_s
         _(span.attributes['net.peer.port']).must_equal port.to_s
       end
@@ -293,6 +293,136 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
             _(span.attributes['db.statement']).must_equal obfuscated_sql
             _(span.attributes['net.peer.name']).must_equal host.to_s
             _(span.attributes['net.peer.port']).must_equal port.to_s
+          end
+        end
+      end
+
+      describe 'when span_name is set as statement_type' do
+        it 'sets span name to statement type' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=statement_type') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            expect do
+              client.query(sql)
+            end.must_raise Mysql2::Error
+
+            _(span.name).must_equal 'select'
+          end
+        end
+
+        it 'sets span name to mysql when statement type is not recognized' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=statement_type') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = 'DESELECT 1'
+            expect do
+              client.query(sql)
+            end.must_raise Mysql2::Error
+
+            _(span.name).must_equal 'mysql'
+          end
+        end
+      end
+
+      describe 'when span_name is set as db_name' do
+        it 'sets span name to db name' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_name') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            expect do
+              client.query(sql)
+            end.must_raise Mysql2::Error
+
+            _(span.name).must_equal 'mysql' # TODO: change the db name so we can distinguish it from the default
+          end
+        end
+
+        describe 'when db name is nil' do
+          let(:database) { nil }
+
+          it 'sets span name to mysql' do
+            OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_name') do
+              instrumentation.instance_variable_set(:@installed, false)
+              instrumentation.install
+
+              sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+              expect do
+                client.query(sql)
+              end.must_raise Mysql2::Error
+
+              _(span.name).must_equal 'mysql'
+            end
+          end
+        end
+      end
+
+      describe 'when span_name is set as db_operation_and_name' do
+        it 'sets span name to db operation and name' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            OpenTelemetry::Instrumentation::Mysql2.with_attributes('db.operation' => 'foo') do
+              expect do
+                client.query(sql)
+              end.must_raise Mysql2::Error
+            end
+
+            _(span.name).must_equal 'foo mysql'
+          end
+        end
+
+        it 'sets span name to db name when db.operation is not set' do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
+            instrumentation.instance_variable_set(:@installed, false)
+            instrumentation.install
+
+            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+            expect do
+              client.query(sql)
+            end.must_raise Mysql2::Error
+
+            _(span.name).must_equal 'mysql'
+          end
+        end
+
+        describe 'when db name is nil' do
+          let(:database) { nil }
+
+          it 'sets span name to db operation' do
+            OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
+              instrumentation.instance_variable_set(:@installed, false)
+              instrumentation.install
+
+              sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+              OpenTelemetry::Instrumentation::Mysql2.with_attributes('db.operation' => 'foo') do
+                expect do
+                  client.query(sql)
+                end.must_raise Mysql2::Error
+              end
+
+              _(span.name).must_equal 'foo'
+            end
+          end
+
+          it 'sets span name to mysql when db.operation is not set' do
+            OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'span_name=db_name') do
+              instrumentation.instance_variable_set(:@installed, false)
+              instrumentation.install
+
+              sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+              expect do
+                client.query(sql)
+              end.must_raise Mysql2::Error
+
+              _(span.name).must_equal 'mysql'
+            end
           end
         end
       end

@@ -15,7 +15,7 @@ jobs:
   release-retry:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     env:
-      ruby_version: "2.7"
+      ruby_version: "3.0"
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.ruby_version }}
@@ -23,7 +23,7 @@ jobs:
         with:
           ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Toys
         run: "gem install --no-document toys"
       - name: Retry release

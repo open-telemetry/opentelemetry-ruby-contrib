@@ -40,7 +40,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     end
 
     it 'after request with success code' do
-      ::Net::HTTP.get('example.com', '/success')
+      Net::HTTP.get('example.com', '/success')
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
@@ -58,7 +58,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     end
 
     it 'after request with failure code' do
-      ::Net::HTTP.post(URI('http://example.com/failure'), 'q' => 'ruby')
+      Net::HTTP.post(URI('http://example.com/failure'), 'q' => 'ruby')
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP POST'
@@ -77,7 +77,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
     it 'after request timeout' do
       expect do
-        ::Net::HTTP.get(URI('https://example.com/timeout'))
+        Net::HTTP.get(URI('https://example.com/timeout'))
       end.must_raise Net::OpenTimeout
 
       _(exporter.finished_spans.size).must_equal 1
@@ -103,7 +103,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
     it 'merges http client attributes' do
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'foo', 'http.target' => 'REDACTED') do
-        ::Net::HTTP.get('example.com', '/success')
+        Net::HTTP.get('example.com', '/success')
       end
 
       _(exporter.finished_spans.size).must_equal 1
@@ -141,21 +141,41 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       end
 
       it 'does not create a span when request ignored using a string' do
-        ::Net::HTTP.get('foobar.com', '/body')
+        Net::HTTP.get('foobar.com', '/body')
         _(exporter.finished_spans.size).must_equal 0
       end
 
       it 'does not create a span when request ignored using a regexp' do
-        ::Net::HTTP.get('bazqux.com', '/body')
+        Net::HTTP.get('bazqux.com', '/body')
+        _(exporter.finished_spans.size).must_equal 0
+      end
+
+      it 'does not create a span on connect when request ignored using a regexp' do
+        uri = URI.parse('http://bazqux.com')
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.send(:connect)
+        http.send(:do_finish)
         _(exporter.finished_spans.size).must_equal 0
       end
 
       it 'creates a span for a non-ignored request' do
-        ::Net::HTTP.get('example.com', '/body')
+        Net::HTTP.get('example.com', '/body')
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'HTTP GET'
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['net.peer.name']).must_equal 'example.com'
+      end
+
+      it 'creates a span on connect for a non-ignored request' do
+        uri = URI.parse('http://example.com')
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.send(:connect)
+        http.send(:do_finish)
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal('connect')
+        _(span.kind).must_equal(:internal)
+        _(span.attributes['net.peer.name']).must_equal('example.com')
+        _(span.attributes['net.peer.port']).must_equal(80)
       end
     end
   end
@@ -174,7 +194,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.name).must_equal 'connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
     ensure
@@ -184,19 +204,68 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     it 'captures errors' do
       WebMock.allow_net_connect!
 
-      uri  = URI.parse('http://localhost:99999/example')
+      uri  = URI.parse('http://invalid.com:99999/example')
       http = Net::HTTP.new(uri.host, uri.port)
       _(-> { http.request(Net::HTTP::Get.new(uri.request_uri)) }).must_raise
 
       _(exporter.finished_spans.size).must_equal(1)
-      _(span.name).must_equal 'HTTP CONNECT'
-      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.name).must_equal 'connect'
+      _(span.attributes['net.peer.name']).must_equal('invalid.com')
       _(span.attributes['net.peer.port']).must_equal(99_999)
 
       span_event = span.events.first
+
       _(span_event.name).must_equal 'exception'
       _(span_event.attributes['exception.type']).wont_be_nil
-      _(span_event.attributes['exception.message']).must_match(/Failed to open TCP connection to localhost:99999/)
+      _(span_event.attributes['exception.message']).must_match(/Failed to open TCP connection to invalid.com:99999/)
+    ensure
+      WebMock.disable_net_connect!
+    end
+
+    it 'emits an HTTP CONNECT span when connecting through an SSL proxy' do
+      WebMock.allow_net_connect!
+
+      uri = URI.parse('http://localhost')
+      proxy_uri = URI.parse('https://localhost')
+
+      # rubocop:disable Lint/SuppressedException
+      begin
+        Net::HTTP.start(uri.host, uri.port, proxy_uri.host, proxy_uri.port, 'proxy_user', 'proxy_pass', use_ssl: true) do |http|
+          http.get('/')
+        end
+      rescue StandardError
+      end
+      # rubocop:enable Lint/SuppressedException
+
+      _(exporter.finished_spans.size).must_equal(2)
+      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.kind).must_equal(:client)
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).must_equal(443)
+    ensure
+      WebMock.disable_net_connect!
+    end
+
+    it 'emits a "connect" span when connecting through an non-ssl proxy' do
+      WebMock.allow_net_connect!
+
+      uri = URI.parse('http://localhost')
+      proxy_uri = URI.parse('https://localhost')
+
+      # rubocop:disable Lint/SuppressedException
+      begin
+        Net::HTTP.start(uri.host, uri.port, proxy_uri.host, proxy_uri.port, 'proxy_user', 'proxy_pass', use_ssl: false) do |http|
+          http.get('/')
+        end
+      rescue StandardError
+      end
+      # rubocop:enable Lint/SuppressedException
+
+      _(exporter.finished_spans.size).must_equal(2)
+      _(span.name).must_equal 'connect'
+      _(span.kind).must_equal(:internal)
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).must_equal(443)
     ensure
       WebMock.disable_net_connect!
     end

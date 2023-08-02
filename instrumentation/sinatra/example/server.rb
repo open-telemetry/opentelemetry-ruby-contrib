@@ -19,6 +19,7 @@ end
 # Example application for the Sinatra instrumentation
 class App < Sinatra::Base
   set :bind, '0.0.0.0'
+  set :port, '4567'
   set :show_exceptions, false
 
   template :example_render do
@@ -36,6 +37,10 @@ class App < Sinatra::Base
 
   get '/thing/:id' do
     'Thing 1'
+  end
+
+  get '/error' do
+    raise 'Panic!'
   end
 
   run! if app_file == $PROGRAM_NAME

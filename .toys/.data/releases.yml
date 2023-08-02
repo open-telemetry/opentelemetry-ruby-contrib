@@ -7,10 +7,8 @@ main_branch: main
 # Time in seconds for release scripts to wait for CI to complete.
 required_checks_timeout: 1200
 # Git user attached to commits for release pull requests.
-git_user_name: Daniel Azuma
-git_user_email: dazuma@gmail.com
-# Toys tool that builds YARD reference docs
-docs_builder_tool: [yardoc]
+git_user_name: Ariel Valentin
+git_user_email: ariel@arielvalentin.com
 
 # Control the conventional commit linter.
 commit_lint:
@@ -31,6 +29,18 @@ commit_lint:
 #  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
+  - name: opentelemetry-instrumentation-grape
+    directory: instrumentation/grape
+    version_constant: [OpenTelemetry, Instrumentation, Grape, VERSION]
+
+  - name: opentelemetry-instrumentation-racecar
+    directory: instrumentation/racecar
+    version_constant: [OpenTelemetry, Instrumentation, Racecar, VERSION]
+
+  - name: opentelemetry-instrumentation-rake
+    directory: instrumentation/rake
+    version_constant: [OpenTelemetry, Instrumentation, Rake, VERSION]
+
   - name: opentelemetry-instrumentation-rdkafka
     directory: instrumentation/rdkafka
     version_constant: [OpenTelemetry, Instrumentation, Rdkafka, VERSION]
@@ -193,3 +203,8 @@ gems:
     directory: resource_detectors
     version_rb_path: lib/opentelemetry/resource/detectors/version.rb
     version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
+
+  - name: opentelemetry-resource-detector-container
+    directory: resources/container
+    version_rb_path: lib/opentelemetry/resource/detector/container/version.rb
+    version_constant: [OpenTelemetry, Resource, Detector, Container, VERSION]

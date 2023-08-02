@@ -10,6 +10,7 @@ gemfile(true) do
   source 'https://rubygems.org'
 
   gem 'rails'
+  gem 'puma'
   gem 'opentelemetry-sdk'
   gem 'opentelemetry-instrumentation-rails', path: '../../rails'
   gem 'opentelemetry-instrumentation-action_view', path: '../'
@@ -32,17 +33,21 @@ class TraceRequestApp < Rails::Application
   config.logger = Logger.new($stdout)
   Rails.logger  = config.logger
 
-  routes.draw do
-    get '/' => 'test#index'
+  routes.append do
+    root 'test#index'
   end
 end
 
 # A minimal test controller
 class TestController < ActionController::Base
   include Rails.application.routes.url_helpers
+  layout 'application'
 
-  def index; end
+  def index
+  end
 end
+
+TestController.append_view_path 'views'
 
 # Simple setup for demonstration purposes, simple span processor should not be
 # used in a production environment

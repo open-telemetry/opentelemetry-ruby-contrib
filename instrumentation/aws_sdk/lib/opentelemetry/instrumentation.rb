@@ -19,4 +19,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './instrumentation/aws_sdk'
+require_relative 'instrumentation/aws_sdk'

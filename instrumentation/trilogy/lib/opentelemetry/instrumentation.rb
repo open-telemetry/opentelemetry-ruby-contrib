@@ -16,4 +16,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './instrumentation/trilogy'
+require_relative 'instrumentation/trilogy'

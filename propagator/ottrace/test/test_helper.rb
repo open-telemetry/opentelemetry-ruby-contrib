@@ -4,15 +4,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
+
+require 'opentelemetry-propagator-ottrace'
+require 'minitest/autorun'
+
 if ENV['ENABLE_COVERAGE'].to_i.positive?
   require 'simplecov'
   SimpleCov.start
   SimpleCov.minimum_coverage 85
 end
 
-$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
-require 'minitest/autorun'
-require 'opentelemetry-api'
-require 'opentelemetry-propagator-ottrace'
-
-OpenTelemetry.logger = Logger.new(File::NULL)
+OpenTelemetry.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)

@@ -1,5 +1,52 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.25.3 / 2023-07-29
+
+* FIXED: Pass block explicitly in `define_method` calls for PG instrumentation query methods
+
+### v0.25.2 / 2023-06-05
+
+* FIXED: Base config options 
+
+### v0.25.1 / 2023-06-01
+
+* FIXED: Regex non-match with obfuscation limit (issue #486) 
+
+### v0.25.0 / 2023-05-25
+
+* ADDED: Add config[:obfuscation_limit] to pg and mysql2 
+
+### v0.24.0 / 2023-04-17
+
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+
+* ADDED: Drop support for EoL Ruby 2.7 
+
+### v0.23.0 / 2023-01-14
+
+* BREAKING CHANGE: Removed deprecated instrumentation options 
+
+* ADDED: Removed deprecated instrumentation options 
+* FIXED: Reduce Hash Allocations in PG Instrumentation 
+* DOCS: Fix gem homepage 
+* DOCS: More gem documentation fixes 
+
+### v0.22.3 / 2022-12-06
+
+* FIXED: Use attributes from the active PG connection
+
+### v0.22.2 / 2022-11-10
+
+* FIXED: Safeguard against host being nil
+
+### v0.22.1 / 2022-10-27
+
+* FIXED: Only take the first item in a comma-separated list for pg attrs
+
+### v0.22.0 / 2022-10-04
+
+* ADDED: Add `with_attributes` context propagation for PG instrumentation 
+
 ### v0.21.0 / 2022-06-09
 
 * Upgrading Base dependency version

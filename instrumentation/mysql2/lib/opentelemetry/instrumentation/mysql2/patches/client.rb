@@ -9,7 +9,7 @@ module OpenTelemetry
     module Mysql2
       module Patches
         # Module to prepend to Mysql2::Client for instrumentation
-        module Client
+        module Client # rubocop:disable Metrics/ModuleLength
           QUERY_NAMES = [
             'set names',
             'select',
@@ -30,6 +30,7 @@ module OpenTelemetry
 
           QUERY_NAME_RE = Regexp.new("^(#{QUERY_NAMES.join('|')})", Regexp::IGNORECASE)
 
+          # From: https://github.com/newrelic/newrelic-ruby-agent/blob/0235b288d85b8bc795bdc1a24621dd9f84cfef45/lib/new_relic/agent/database/obfuscation_helpers.rb#L9-L34
           COMPONENTS_REGEX_MAP = {
             single_quotes: /'(?:[^']|'')*?(?:\\'.*|'(?!'))/,
             double_quotes: /"(?:[^"]|"")*?(?:\\".*|"(?!"))/,
@@ -54,9 +55,9 @@ module OpenTelemetry
             attributes = client_attributes
             case config[:db_statement]
             when :include
-              attributes['db.statement'] = sql
+              attributes[SemanticConventions::Trace::DB_STATEMENT] = sql
             when :obfuscate
-              attributes['db.statement'] = obfuscate_sql(sql)
+              attributes[SemanticConventions::Trace::DB_STATEMENT] = obfuscate_sql(sql)
             end
             tracer.in_span(
               database_span_name(sql),
@@ -70,13 +71,22 @@ module OpenTelemetry
           private
 
           def obfuscate_sql(sql)
-            if sql.size > 2000
-              'SQL query too large to remove sensitive data ...'
+            if sql.size > config[:obfuscation_limit]
+              first_match_index = sql.index(generated_mysql_regex)
+              truncation_message = "SQL truncated (> #{config[:obfuscation_limit]} characters)"
+              return truncation_message unless first_match_index
+
+              truncated_sql = sql[..first_match_index - 1]
+              "#{truncated_sql}...\n#{truncation_message}"
             else
-              obfuscated = sql.gsub(generated_mysql_regex, '?')
+              obfuscated = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
+              obfuscated = obfuscated.gsub(generated_mysql_regex, '?')
               obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
               obfuscated
             end
+          rescue StandardError => e
+            OpenTelemetry.handle_error(message: 'Failed to obfuscate SQL', exception: e)
+            'OpenTelemetry error: failed to obfuscate sql'
           end
 
           def generated_mysql_regex
@@ -92,20 +102,23 @@ module OpenTelemetry
             %r{'|"|\/\*|\*\/}.match(obfuscated)
           end
 
-          def database_span_name(sql)
-            # Setting span name to the SQL query without obfuscation would
-            # result in PII + cardinality issues.
-            # First attempt to infer the statement type then fallback to
-            # current Otel approach {database.component_name}.{database_instance_name}
-            # https://github.com/open-telemetry/opentelemetry-python/blob/39fa078312e6f41c403aa8cad1868264011f7546/ext/opentelemetry-ext-dbapi/tests/test_dbapi_integration.py#L53
-            # This creates span names like mysql.default, mysql.replica, postgresql.staging etc.
-
-            statement_type = extract_statement_type(sql)
-
-            return statement_type unless statement_type.nil?
-
-            # fallback
-            database_name ? "mysql.#{database_name}" : 'mysql'
+          def database_span_name(sql) # rubocop:disable Metrics/CyclomaticComplexity
+            case config[:span_name]
+            when :statement_type
+              extract_statement_type(sql)
+            when :db_name
+              database_name
+            when :db_operation_and_name
+              op = OpenTelemetry::Instrumentation::Mysql2.attributes[SemanticConventions::Trace::DB_OPERATION]
+              name = database_name
+              if op && name
+                "#{op} #{name}"
+              elsif op
+                op
+              elsif name
+                name
+              end
+            end || 'mysql'
           end
 
           def database_name
@@ -121,12 +134,12 @@ module OpenTelemetry
             port = query_options[:port].to_s
 
             attributes = {
-              'db.system' => 'mysql',
-              'net.peer.name' => host,
-              'net.peer.port' => port
+              SemanticConventions::Trace::DB_SYSTEM => 'mysql',
+              SemanticConventions::Trace::NET_PEER_NAME => host,
+              SemanticConventions::Trace::NET_PEER_PORT => port
             }
-            attributes['db.name'] = database_name if database_name
-            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+            attributes[SemanticConventions::Trace::DB_NAME] = database_name if database_name
+            attributes[SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
             attributes
           end
 
@@ -142,6 +155,7 @@ module OpenTelemetry
             QUERY_NAME_RE.match(sql) { |match| match[1].downcase } unless sql.nil?
           rescue StandardError => e
             OpenTelemetry.logger.debug("Error extracting sql statement type: #{e.message}")
+            nil
           end
         end
       end

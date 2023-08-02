@@ -20,7 +20,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
   # Clear captured spans
   before { exporter.reset }
 
-  it 'sets the span name to ControllerName#action' do
+  it 'sets the span name to the format: ControllerName#action' do
     get '/ok'
 
     _(last_response.body).must_equal 'actually ok'
@@ -38,7 +38,37 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     _(span.attributes['http.target']).must_equal '/ok'
     _(span.attributes['http.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
-    _(span.attributes['http.route']).must_be_nil
+    _(span.attributes['code.namespace']).must_equal 'ExampleController'
+    _(span.attributes['code.function']).must_equal 'ok'
+  end
+
+  it 'handles action name as a symbol when setting code.function' do
+    get 'ok-symbol'
+
+    _(span.attributes['code.function']).must_equal 'ok'
+  end
+
+  it 'does not memoize data across requests' do
+    get '/ok'
+    get '/items/new'
+
+    _(last_response.body).must_equal 'created new item'
+    _(last_response.ok?).must_equal true
+    _(span.name).must_equal 'ExampleController#new_item'
+    _(span.kind).must_equal :server
+    _(span.status.ok?).must_equal true
+
+    _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
+    _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
+
+    _(span.attributes['http.method']).must_equal 'GET'
+    _(span.attributes['http.host']).must_equal 'example.org'
+    _(span.attributes['http.scheme']).must_equal 'http'
+    _(span.attributes['http.target']).must_equal '/items/new'
+    _(span.attributes['http.status_code']).must_equal 200
+    _(span.attributes['http.user_agent']).must_be_nil
+    _(span.attributes['code.namespace']).must_equal 'ExampleController'
+    _(span.attributes['code.function']).must_equal 'new_item'
   end
 
   it 'sets the span name when the controller raises an exception' do
@@ -66,36 +96,6 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
       get 'internal_server_error'
 
       _(span.name).must_equal 'ExampleController#internal_server_error'
-    end
-  end
-
-  describe 'when the application has enable_rails_route enabled' do
-    before do
-      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config[:enable_recognize_route] = true
-    end
-
-    after do
-      OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.config[:enable_recognize_route] = false
-    end
-
-    it 'sets the span name to ControllerName#action' do
-      get '/items/new'
-      _(last_response.body).must_equal 'created new item'
-      _(last_response.ok?).must_equal true
-      _(span.name).must_equal 'ExampleController#new_item'
-      _(span.kind).must_equal :server
-      _(span.status.ok?).must_equal true
-
-      _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
-      _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
-
-      _(span.attributes['http.method']).must_equal 'GET'
-      _(span.attributes['http.host']).must_equal 'example.org'
-      _(span.attributes['http.scheme']).must_equal 'http'
-      _(span.attributes['http.target']).must_equal '/items/new'
-      _(span.attributes['http.status_code']).must_equal 200
-      _(span.attributes['http.user_agent']).must_be_nil
-      _(span.attributes['http.route']).must_equal '/items/new(.:format)'
     end
   end
 

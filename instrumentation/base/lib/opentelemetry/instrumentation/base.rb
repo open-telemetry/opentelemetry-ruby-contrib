@@ -59,9 +59,9 @@ module OpenTelemetry
     # convention for environment variable name is the library name, upcased with
     # '::' replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG}, and '_ENABLED' appended.
     # For example: OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED = false.
-    class Base # rubocop:disable Metrics/ClassLength
+    class Base
       class << self
-        NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
+        NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/
         VALIDATORS = {
           array: ->(v) { v.is_a?(Array) },
           boolean: ->(v) { v == true || v == false }, # rubocop:disable Style/MultipleComparison
@@ -193,6 +193,7 @@ module OpenTelemetry
 
       alias installed? installed
 
+      # rubocop:disable Metrics/ParameterLists
       def initialize(name, version, install_blk, present_blk,
                      compatible_blk, options)
         @name = name
@@ -205,6 +206,7 @@ module OpenTelemetry
         @options = options
         @tracer = OpenTelemetry::Trace::Tracer.new
       end
+      # rubocop:enable Metrics/ParameterLists
 
       # Install instrumentation with the given config. The present? and compatible?
       # will be run first, and install will return false if either fail. Will
@@ -213,9 +215,10 @@ module OpenTelemetry
       # @param [Hash] config The config for this instrumentation
       def install(config = {})
         return true if installed?
-        return false unless installable?(config)
 
         @config = config_options(config)
+        return false unless installable?(config)
+
         instance_exec(@config, &@install_blk)
         @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true
@@ -275,6 +278,7 @@ module OpenTelemetry
           config_value = user_config[option_name]
           config_override = coerce_env_var(config_overrides[option_name], option[:validation_type]) if config_overrides[option_name]
 
+          # rubocop:disable Lint/DuplicateBranch
           value = if config_value.nil? && config_override.nil?
                     option[:default]
                   elsif option[:validator].respond_to?(:include?) && option[:validator].include?(config_override)
@@ -292,6 +296,7 @@ module OpenTelemetry
                     )
                     option[:default]
                   end
+          # rubocop:enable Lint/DuplicateBranch
 
           h[option_name] = value
         rescue StandardError => e

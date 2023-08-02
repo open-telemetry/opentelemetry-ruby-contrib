@@ -23,17 +23,17 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     instrumentation.instance_variable_set(:@config, config)
     exporter.reset
 
-    ::ActiveJob::Base.queue_adapter = :async
-    ::ActiveJob::Base.queue_adapter.immediate = true
+    ActiveJob::Base.queue_adapter = :async
+    ActiveJob::Base.queue_adapter.immediate = true
   end
 
   after do
     begin
-      ::ActiveJob::Base.queue_adapter.shutdown
+      ActiveJob::Base.queue_adapter.shutdown
     rescue StandardError
       nil
     end
-    ::ActiveJob::Base.queue_adapter = :inline
+    ActiveJob::Base.queue_adapter = :inline
     instrumentation.instance_variable_set(:@config, config)
   end
 
@@ -87,11 +87,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
   describe 'span kind' do
     it 'sets correct span kinds for inline jobs' do
       begin
-        ::ActiveJob::Base.queue_adapter.shutdown
+        ActiveJob::Base.queue_adapter.shutdown
       rescue StandardError
         nil
       end
-      ::ActiveJob::Base.queue_adapter = :inline
+      ActiveJob::Base.queue_adapter = :inline
 
       TestJob.perform_later
 
@@ -175,12 +175,12 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     describe 'messaging.system' do
       it 'is set correctly for the inline adapter' do
         begin
-          ::ActiveJob::Base.queue_adapter.shutdown
+          ActiveJob::Base.queue_adapter.shutdown
         rescue StandardError
           nil
         end
 
-        ::ActiveJob::Base.queue_adapter = :inline
+        ActiveJob::Base.queue_adapter = :inline
         TestJob.perform_later
 
         [send_span, process_span].each do |span|
@@ -212,6 +212,18 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
         executions = spans.filter { |s| s.kind == :consumer }.sum { |s| s.attributes['messaging.active_job.executions'] }
         _(executions).must_equal(3) # total of 3 runs. The initial and 2 retries.
+      end
+    end
+
+    describe 'messaging.active_job.provider_job_id' do
+      it 'is empty for a job that do not sets provider_job_id' do
+        TestJob.perform_now
+        _(process_span.attributes['messaging.active_job.provider_job_id']).must_be_nil
+      end
+
+      it 'sets the correct value if provider_job_id is provided' do
+        job = TestJob.perform_later
+        _(process_span.attributes['messaging.active_job.provider_job_id']).must_equal(job.provider_job_id)
       end
     end
 
@@ -254,7 +266,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
   describe 'force_flush option' do
     let(:mock_tracer_provider) do
-      mock_tracer_provider = MiniTest::Mock.new
+      mock_tracer_provider = Minitest::Mock.new
       mock_tracer_provider.expect(:force_flush, true)
 
       mock_tracer_provider

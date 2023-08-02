@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
   let(:config) { {} }
 
   before do
+    clear_job_queue
     instrumentation.install(config)
     exporter.reset
   end
@@ -25,7 +26,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
 
   describe '#perform' do
     it 'traces' do
-      ::Resque.enqueue(DummyJob)
+      Resque.enqueue(DummyJob)
       work_off_jobs
 
       _(job_span.name).must_equal('super_urgent process')
@@ -47,7 +48,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
     end
 
     it 'defaults to using links to the enqueing span but does not continue the trace' do
-      ::Resque.enqueue(DummyJob)
+      Resque.enqueue(DummyJob)
       work_off_jobs
 
       enqueuer_span = finished_spans.first
@@ -62,7 +63,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       let(:config) { { span_naming: :job_class } }
 
       it 'uses the job class name for the span name' do
-        ::Resque.enqueue(DummyJob)
+        Resque.enqueue(DummyJob)
         work_off_jobs
 
         _(job_span.name).must_equal('DummyJob process')
@@ -80,7 +81,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       let(:config) { { propagation_style: :link } }
 
       it 'continues the enqueuer trace to the job process' do
-        ::Resque.enqueue(DummyJob)
+        Resque.enqueue(DummyJob)
         work_off_jobs
 
         enqueuer_span = finished_spans.first
@@ -96,7 +97,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       it 'propagates baggage' do
         ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
-          ::Resque.enqueue(BaggageTestingJob)
+          Resque.enqueue(BaggageTestingJob)
         end
 
         work_off_jobs
@@ -105,7 +106,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       end
 
       it 'records exceptions' do
-        ::Resque.enqueue(ExceptionTestingJob)
+        Resque.enqueue(ExceptionTestingJob)
         _(-> { work_off_jobs }).must_raise(RuntimeError)
 
         ev = job_span.events
@@ -119,7 +120,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       let(:config) { { propagation_style: :child } }
 
       it 'continues the enqueuer trace to the job process' do
-        ::Resque.enqueue(DummyJob)
+        Resque.enqueue(DummyJob)
         work_off_jobs
 
         enqueuer_span = finished_spans.first
@@ -130,7 +131,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       it 'propagates baggage' do
         ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
-          ::Resque.enqueue(BaggageTestingJob)
+          Resque.enqueue(BaggageTestingJob)
         end
 
         work_off_jobs
@@ -139,7 +140,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       end
 
       it 'records exceptions' do
-        ::Resque.enqueue(ExceptionTestingJob)
+        Resque.enqueue(ExceptionTestingJob)
         _(-> { work_off_jobs }).must_raise(RuntimeError)
 
         ev = job_span.events
@@ -153,7 +154,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       let(:config) { { propagation_style: :none } }
 
       it 'continues the enqueuer trace to the job process' do
-        ::Resque.enqueue(DummyJob)
+        Resque.enqueue(DummyJob)
         work_off_jobs
 
         enqueuer_span = finished_spans.first
@@ -165,7 +166,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       it 'propagates baggage' do
         ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
-          ::Resque.enqueue(BaggageTestingJob)
+          Resque.enqueue(BaggageTestingJob)
         end
 
         work_off_jobs
@@ -174,7 +175,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       end
 
       it 'records exceptions' do
-        ::Resque.enqueue(ExceptionTestingJob)
+        Resque.enqueue(ExceptionTestingJob)
         _(-> { work_off_jobs }).must_raise(RuntimeError)
 
         ev = job_span.events
@@ -183,13 +184,69 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         _(ev[0].attributes['exception.stacktrace']).wont_be_nil
       end
     end
+
+    describe 'force_flush' do
+      describe 'ask_the_job - default' do
+        let(:config) { { force_flush: :ask_the_job } }
+
+        it 'asks the job and skips forcibly flushing the tracer' do
+          mock_tracer_provider = Minitest::Mock.new
+          mock_tracer_provider.expect(:force_flush, true)
+
+          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
+            Resque.enqueue(DummyJob)
+            work_off_jobs
+          end
+
+          expect { mock_tracer_provider.verify }.must_raise MockExpectationError
+        end
+      end
+
+      describe 'always' do
+        let(:config) { { force_flush: :always } }
+
+        it 'does forcibly flush the tracer' do
+          mock_tracer_provider = Minitest::Mock.new
+          mock_tracer_provider.expect(:force_flush, true)
+
+          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
+            Resque.enqueue(DummyJob)
+            work_off_jobs
+          end
+
+          mock_tracer_provider.verify
+        end
+      end
+
+      describe 'never' do
+        let(:config) { { force_flush: :never } }
+
+        it 'does not forcibly flush the tracer' do
+          mock_tracer_provider = Minitest::Mock.new
+          mock_tracer_provider.expect(:force_flush, true)
+
+          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
+            Resque.enqueue(DummyJob)
+            work_off_jobs
+          end
+
+          expect { mock_tracer_provider.verify }.must_raise MockExpectationError
+        end
+      end
+    end
   end unless ENV['OMIT_SERVICES']
 
   private
 
   def work_off_jobs
-    while (job = ::Resque.reserve(:super_urgent))
+    while (job = Resque.reserve(:super_urgent))
       job.perform
+    end
+  end
+
+  def clear_job_queue
+    [ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper, DummyJob, BaggageTestingJob, ExceptionTestingJob].each do |jobtype|
+      Resque::Job.destroy(:super_urgent, jobtype)
     end
   end
 end

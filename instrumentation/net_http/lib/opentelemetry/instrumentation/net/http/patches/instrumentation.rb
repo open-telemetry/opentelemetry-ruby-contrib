@@ -44,6 +44,8 @@ module OpenTelemetry
             private
 
             def connect
+              return super if untraced?
+
               if proxy?
                 conn_address = proxy_address
                 conn_port    = proxy_port
@@ -57,7 +59,15 @@ module OpenTelemetry
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port
               }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-              tracer.in_span('HTTP CONNECT', attributes: attributes) do
+              if use_ssl? && proxy?
+                span_name = 'HTTP CONNECT'
+                span_kind = :client
+              else
+                span_name = 'connect'
+                span_kind = :internal
+              end
+
+              tracer.in_span(span_name, attributes: attributes, kind: span_kind) do
                 super
               end
             end

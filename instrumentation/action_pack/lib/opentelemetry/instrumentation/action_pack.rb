@@ -16,5 +16,5 @@ module OpenTelemetry
 end
 
 require 'opentelemetry-instrumentation-rack'
-require_relative './action_pack/instrumentation'
-require_relative './action_pack/version'
+require_relative 'action_pack/instrumentation'
+require_relative 'action_pack/version'

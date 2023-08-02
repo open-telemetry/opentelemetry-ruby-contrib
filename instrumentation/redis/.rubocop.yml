@@ -1,1 +1,7 @@
 inherit_from: ../../.rubocop.yml
+
+Style/FetchEnvVar:
+  Enabled: true
+  Exclude:
+    - test/opentelemetry/instrumentation/redis/patches/client_test.rb
+    - test/opentelemetry/instrumentation/redis_client_test.rb

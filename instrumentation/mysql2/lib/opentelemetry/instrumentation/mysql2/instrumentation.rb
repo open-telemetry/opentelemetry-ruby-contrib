@@ -10,15 +10,7 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Mysql2
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        install do |config|
-          if config[:enable_sql_obfuscation]
-            config[:db_statement] = :obfuscate
-            OpenTelemetry.logger.warn(
-              'Instrumentation mysql2 configuration option enable_sql_obfuscation has been deprecated,' \
-              'use db_statement option instead'
-            )
-          end
-
+        install do |_config|
           require_dependencies
           patch_client
         end
@@ -28,8 +20,9 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
-        option :enable_sql_obfuscation, default: false, validate: :boolean
         option :db_statement, default: :include, validate: %I[omit include obfuscate]
+        option :span_name, default: :statement_type, validate: %I[statement_type db_name db_operation_and_name]
+        option :obfuscation_limit, default: 2000, validate: :integer
 
         private
 

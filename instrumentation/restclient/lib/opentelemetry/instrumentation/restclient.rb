@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './restclient/instrumentation'
-require_relative './restclient/version'
+require_relative 'restclient/instrumentation'
+require_relative 'restclient/version'
