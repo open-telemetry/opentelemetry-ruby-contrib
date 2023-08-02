@@ -8,7 +8,6 @@
 
 require 'test_helper'
 require 'securerandom'
-require 'pry'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/rdkafka'
 require_relative '../../../../../lib/opentelemetry/instrumentation/rdkafka/patches/consumer'
@@ -56,8 +55,6 @@ unless ENV['OMIT_SERVICES']
         )
 
         delivery_handles.each(&:wait)
-
-        producer.close
 
         consumer_config = config.merge(
           'group.id': 'me',
@@ -112,7 +109,9 @@ unless ENV['OMIT_SERVICES']
 
         _(spans.size).must_equal(4)
 
-        consumer.close
+      ensure
+        begin; producer&.close; rescue StandardError; end
+        begin; consumer&.close; rescue StandardError; end
       end
 
       it 'encodes messages keys depending on input format' do
@@ -132,8 +131,6 @@ unless ENV['OMIT_SERVICES']
         )
 
         delivery_handles.each(&:wait)
-
-        producer.close
 
         consumer_config = config.merge(
           'group.id': 'me',
@@ -162,6 +159,9 @@ unless ENV['OMIT_SERVICES']
         _(second_process_span.attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
 
         _(spans.size).must_equal(4)
+      ensure
+        begin; producer&.close; rescue StandardError; end
+        begin; consumer&.close; rescue StandardError; end
       end
     end
 
@@ -187,8 +187,6 @@ unless ENV['OMIT_SERVICES']
         )
 
         delivery_handles.each(&:wait)
-
-        producer.close
 
         consumer_config = config.merge(
           'group.id': 'me',
@@ -224,6 +222,9 @@ unless ENV['OMIT_SERVICES']
         _(linked_span_context.span_id).must_equal(spans[1].span_id)
 
         _(spans.size).must_equal(3)
+      ensure
+        begin; producer&.close; rescue StandardError; end
+        begin; consumer&.close; rescue StandardError; end
       end
     end
   end
