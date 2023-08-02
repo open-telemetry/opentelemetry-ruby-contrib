@@ -106,7 +106,6 @@ unless ENV['OMIT_SERVICES']
         _(event.attributes['exception.message']).must_equal('oops')
 
         _(spans.size).must_equal(4)
-
       ensure
         begin; producer&.close; rescue StandardError; end
         begin; consumer&.close; rescue StandardError; end
