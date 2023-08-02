@@ -26,8 +26,6 @@ instrumentation/mongo/ @johnnyshields @fbogsany @mwear @robertlaurin @dazuma @er
 
 instrumentation/racecar/ @chrisholmes @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
 
-instrumentation/rdkafka/ @andyfleming @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
-
 instrumentation/rspec/ @chrisholmes @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
 
 instrumentation/que/ @indrekj @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
