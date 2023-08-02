@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# rubocop:disable Lint/SuppressedException
-
 require 'test_helper'
 require 'securerandom'
 
