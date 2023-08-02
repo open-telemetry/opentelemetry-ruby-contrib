@@ -96,3 +96,7 @@
 
 * FIXED: Rename Resource labels to attributes 
 * ADDED: Environment variable resource detection
+
+### v0.24.0 / 2023-08-02
+
+* ADDED: Add container resource detector.
