@@ -1,53 +1,53 @@
 # frozen_string_literal: true
 
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "aws_sdk"
-gem "bunny"
-gem "concurrent-ruby"
-gem "dalli"
-gem "delayed_job"
-gem "ethon"
-gem "excon"
-gem "faraday"
-gem "grape"
-gem "graphql"
-gem "http"
-gem "httpclient"
-gem "koala"
-gem "lmdb"
-gem "mongo"
-gem "mysql2"
-gem "pg"
-gem "que"
-gem "racecar"
-gem "rack"
-gem "rails"
-gem "rake"
-gem "rdkafka"
-gem "redis"
-gem "resque"
-gem "rest-client"
-gem "rspec"
-gem "ruby-kafka"
-gem "sidekiq"
-gem "sinatra"
-gem "trilogy"
+gem 'aws_sdk'
+gem 'bunny'
+gem 'concurrent-ruby'
+gem 'dalli'
+gem 'delayed_job'
+gem 'ethon'
+gem 'excon'
+gem 'faraday'
+gem 'grape'
+gem 'graphql'
+gem 'http'
+gem 'httpclient'
+gem 'koala'
+gem 'lmdb'
+gem 'mongo'
+gem 'mysql2'
+gem 'pg'
+gem 'que'
+gem 'racecar'
+gem 'rack'
+gem 'rails'
+gem 'rake'
+gem 'rdkafka'
+gem 'redis'
+gem 'resque'
+gem 'rest-client'
+gem 'rspec'
+gem 'ruby-kafka'
+gem 'sidekiq'
+gem 'sinatra'
+gem 'trilogy'
 
-gem "opentelemetry-api"
-gem "opentelemetry-sdk"
-gem "opentelemetry-resource_detectors"
+gem 'opentelemetry-api'
+gem 'opentelemetry-sdk'
+gem 'opentelemetry-resource_detectors'
 
-Dir["../propagator/**/version.rb"].each do |f|
-  name = f.match(/propagator\/(\w+)\/lib/)[1]
+Dir['../propagator/**/version.rb'].each do |f|
+  name = f.match(%r{propagator/(\w+)/lib})[1]
 
-  version = File.read(f).match(%r|VERSION = '([\d\.]+)'|)[1]
+  version = File.read(f).match(/VERSION = '([\d\.]+)'/)[1]
   gem "opentelemetry-propagator-#{name}", version
 end
 
-Dir["../instrumentation/**/version.rb"].each do |f|
-  name = f.match(/instrumentation\/(\w+)\/lib/)[1]
+Dir['../instrumentation/**/version.rb'].each do |f|
+  name = f.match(%r{instrumentation/(\w+)/lib})[1]
 
-  version = File.read(f).match(%r|VERSION = '([\d\.]+)'|)[1]
+  version = File.read(f).match(/VERSION = '([\d\.]+)'/)[1]
   gem "opentelemetry-instrumentation-#{name}", version
 end

@@ -4,13 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require "minitest/test_task"
+require 'minitest/test_task'
 
 Minitest::TestTask.create(:test) do |t|
-  t.libs << "test"
-  t.libs << "lib"
+  t.libs << 'test'
+  t.libs << 'lib'
   t.warning = false
-  t.test_globs = ["test/**/*_test.rb"]
+  t.test_globs = ['test/**/*_test.rb']
 end
 
-task :default => :test
+task default: :test
