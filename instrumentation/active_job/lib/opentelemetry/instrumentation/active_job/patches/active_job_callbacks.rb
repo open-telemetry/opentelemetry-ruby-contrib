@@ -24,7 +24,7 @@ module OpenTelemetry
             end
           end
 
-          def perform_now # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          def perform_now
             span_kind = self.class.queue_adapter_name == 'inline' ? :server : :consumer
             span_name = "#{otel_config[:span_naming] == :job_class ? self.class : queue_name} process"
             span_attributes = job_attributes(self).merge('messaging.operation' => 'process', 'code.function' => 'perform_now')
