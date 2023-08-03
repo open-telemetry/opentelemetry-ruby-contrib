@@ -27,7 +27,7 @@ module OpenTelemetry
           def perform_now # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
             span_kind = self.class.queue_adapter_name == 'inline' ? :server : :consumer
             span_name = "#{otel_config[:span_naming] == :job_class ? self.class : queue_name} process"
-            span_attributes = job_attributes(self).merge('messaging.operation' => 'process')
+            span_attributes = job_attributes(self).merge('messaging.operation' => 'process', 'code.function' => 'perform_now')
             executions_count = (executions || 0) + 1 # because we run before the count is incremented in ActiveJob::Execution
 
             extracted_context = OpenTelemetry.propagation.extract(metadata)
@@ -67,6 +67,7 @@ module OpenTelemetry
 
           def job_attributes(job)
             otel_attributes = {
+              'code.namespace' => job.class.name,
               'messaging.destination_kind' => 'queue',
               'messaging.system' => job.class.queue_adapter_name,
               'messaging.destination' => job.queue_name,
