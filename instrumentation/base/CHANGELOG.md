@@ -49,3 +49,7 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
+
+### v0.22.2 / 2023-08-03
+
+* FIXED: Remove inline linter rules
