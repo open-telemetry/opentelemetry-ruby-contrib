@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.56.3 / 2023-08-03
+
+* FIXED: Remove inline linter rules
+
 ### v0.56.2 / 2023-07-14
 
 * ADDED: `db.user` attribute (recommended connection-level attribute)

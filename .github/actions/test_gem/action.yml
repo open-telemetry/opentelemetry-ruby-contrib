@@ -24,6 +24,11 @@ inputs:
     required: false
     type: boolean
     default: false
+  latest:
+    description: Build against the latest version of the gem
+    required: false
+    type: boolean
+    default: false
 
 runs:
   using: composite
@@ -50,8 +55,11 @@ runs:
         fi
 
         echo "appraisals=false" >> $GITHUB_OUTPUT
-        if [[ -f "${dir}/Appraisals" ]]; then
-          echo "appraisals=true" >> $GITHUB_OUTPUT
+
+        if [[ "${{ inputs.latest }}" != "true" ]]; then
+          if [[ -f "${dir}/Appraisals" ]]; then
+            echo "appraisals=true" >> $GITHUB_OUTPUT
+          fi
         fi
 
     # Install ruby and bundle dependencies and cache!

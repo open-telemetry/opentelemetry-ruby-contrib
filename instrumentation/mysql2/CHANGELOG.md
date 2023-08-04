@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.24.3 / 2023-08-03
+
+* FIXED: Remove inline linter rules
+
 ### v0.24.2 / 2023-06-05
 
 * FIXED: Base config options 

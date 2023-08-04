@@ -24,17 +24,20 @@ module OpenTelemetry
             'execute_multiplex' => 'graphql.execute_multiplex'
           }
 
-          def platform_trace(platform_key, key, data) # rubocop:disable Metrics/CyclomaticComplexity
+          def platform_trace(platform_key, key, data)
             return yield if platform_key.nil?
 
             tracer.in_span(platform_key, attributes: attributes_for(key, data)) do |span|
               yield.tap do |response|
-                errors = response[:errors]&.compact&.map(&:to_h)&.to_json if key == 'validate'
-                unless errors.nil?
+                next unless key == 'validate'
+
+                errors = response[:errors]&.compact&.map(&:to_h) || []
+
+                unless errors.empty?
                   span.add_event(
                     'graphql.validation.error',
                     attributes: {
-                      'message' => errors
+                      'exception.message' => errors.to_json
                     }
                   )
                 end
@@ -82,7 +85,7 @@ module OpenTelemetry
             GraphQL::Instrumentation.instance.config
           end
 
-          def attributes_for(key, data) # rubocop:disable Metrics/CyclomaticComplexity
+          def attributes_for(key, data)
             attributes = {}
             case key
             when 'execute_field', 'execute_field_lazy'
