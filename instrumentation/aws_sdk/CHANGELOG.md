@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.4.2 / 2023-08-03
+
+* FIXED: Remove inline linter rules
+
 ### v0.4.1 / 2023-06-05
 
 * FIXED: Base config options 

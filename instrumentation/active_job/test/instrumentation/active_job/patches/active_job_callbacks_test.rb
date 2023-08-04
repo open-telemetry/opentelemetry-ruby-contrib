@@ -52,6 +52,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
       _(send_span).must_be_nil
       _(process_span).wont_be_nil
+      _(process_span.attributes['code.namespace']).must_equal('TestJob')
+      _(process_span.attributes['code.function']).must_equal('perform_now')
     end
   end
 
@@ -231,6 +233,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       job = TestJob.perform_later
 
       [send_span, process_span].each do |span|
+        _(span.attributes['code.namespace']).must_equal('TestJob')
         _(span.attributes['messaging.destination_kind']).must_equal('queue')
         _(span.attributes['messaging.system']).must_equal('async')
         _(span.attributes['messaging.message_id']).must_equal(job.job_id)
@@ -266,7 +269,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
   describe 'force_flush option' do
     let(:mock_tracer_provider) do
-      mock_tracer_provider = MiniTest::Mock.new
+      mock_tracer_provider = Minitest::Mock.new
       mock_tracer_provider.expect(:force_flush, true)
 
       mock_tracer_provider

@@ -269,7 +269,7 @@ module OpenTelemetry
       # Invalid configuration values are logged, and replaced by the default.
       #
       # @param [Hash] user_config The user supplied configuration hash
-      def config_options(user_config) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      def config_options(user_config)
         @options ||= {}
         user_config ||= {}
         config_overrides = config_overrides_from_env
@@ -348,7 +348,7 @@ module OpenTelemetry
         environment_config_overrides
       end
 
-      def coerce_env_var(env_var, validation_type) # rubocop:disable Metrics/CyclomaticComplexity
+      def coerce_env_var(env_var, validation_type)
         case validation_type
         when :array
           env_var.split(',').map(&:strip)
