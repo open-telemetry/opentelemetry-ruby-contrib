@@ -31,6 +31,7 @@ jobs:
           - faraday
           - grape
           - graphql
+          - gruf
           - http
           - http_client
           - koala
