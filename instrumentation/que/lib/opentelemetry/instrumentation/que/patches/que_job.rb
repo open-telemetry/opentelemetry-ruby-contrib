@@ -18,7 +18,7 @@ module OpenTelemetry
 
           # Module to prepend to Que singleton class
           module ClassMethods
-            def enqueue(*args, job_options: {}, **arg_opts) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+            def enqueue(*args, job_options: {}, **arg_opts)
               tracer = Que::Instrumentation.instance.tracer
               otel_config = Que::Instrumentation.instance.config
 
