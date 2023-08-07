@@ -16,6 +16,9 @@ Gemspec/RequiredRubyVersion:
 Lint/ConstantDefinitionInBlock:
   Exclude:
     - "**/*test.rb"
+Lint/EmptyBlock:
+  Exclude:
+    - "**/*test.rb"
 Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
@@ -24,8 +27,12 @@ Metrics/BlockLength:
   Enabled: false
 Metrics/ClassLength:
   Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
 Metrics/MethodLength:
-  Max: 25
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
 Naming/FileName:
   Exclude:
     - '**/opentelemetry-*'

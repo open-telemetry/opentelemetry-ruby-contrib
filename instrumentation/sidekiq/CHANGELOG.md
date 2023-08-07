@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.24.3 / 2023-08-03
+
+* FIXED: Remove inline linter rules
+
 ### v0.24.2 / 2023-07-21
 
 * ADDED: Update `opentelemetry-common` from [0.19.3 to 0.20.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/537)

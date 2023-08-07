@@ -53,8 +53,8 @@ unless ENV['OMIT_SERVICES']
 
         _(spans.first.attributes['messaging.system']).must_equal('kafka')
         _(spans.first.attributes['messaging.destination']).must_equal(topic_name)
-
-        producer.close
+      ensure
+        begin; producer&.close; rescue StandardError; end
       end
     end
   end
