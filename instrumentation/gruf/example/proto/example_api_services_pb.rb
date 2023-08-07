@@ -4,7 +4,7 @@
 # Source: example/example_api.proto for package 'proto.example'
 
 require 'grpc'
-require_relative './example_api_pb'
+require_relative 'example_api_pb'
 
 module Proto
   module Example

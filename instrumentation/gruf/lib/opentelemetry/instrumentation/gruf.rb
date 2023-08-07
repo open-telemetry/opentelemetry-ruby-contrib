@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './gruf/instrumentation'
-require_relative './gruf/version'
+require_relative 'gruf/instrumentation'
+require_relative 'gruf/version'

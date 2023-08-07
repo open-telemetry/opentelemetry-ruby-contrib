@@ -9,7 +9,6 @@ module OpenTelemetry
     module Gruf
       module Interceptors
         class Server < ::Gruf::Interceptors::ServerInterceptor
-          # rubocop:disable Metrics/MethodLength
           def call
             return yield if instrumentation_config.blank?
 

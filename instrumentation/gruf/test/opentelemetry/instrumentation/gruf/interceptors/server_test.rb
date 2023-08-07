@@ -48,12 +48,12 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Server do
     let(:active_call) { RpcTestCall.new }
 
     let(:request) do
-      ::Gruf::Controllers::Request.new(
+      Gruf::Controllers::Request.new(
         method_key: :example,
-        service: ::Proto::Example::ExampleAPI::Service,
+        service: Proto::Example::ExampleAPI::Service,
         rpc_desc: :description,
         active_call: active_call,
-        message: ::Proto::Example::ExampleRequest.new
+        message: Proto::Example::ExampleRequest.new
       )
     end
 

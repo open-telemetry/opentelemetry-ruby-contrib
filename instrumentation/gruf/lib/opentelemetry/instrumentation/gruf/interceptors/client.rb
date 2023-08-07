@@ -9,7 +9,6 @@ module OpenTelemetry
     module Gruf
       module Interceptors
         class Client < ::Gruf::Interceptors::ClientInterceptor
-          # rubocop:disable Metrics/MethodLength
           def call(request_context:)
             return yield if instrumentation_config.blank?
 

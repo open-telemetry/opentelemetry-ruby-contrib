@@ -21,7 +21,7 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Client do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Gruf::Instrumentation.instance }
   let(:span) { exporter.finished_spans.first }
   let(:requests) do
-    [::Proto::Example::ExampleRequest.new]
+    [Proto::Example::ExampleRequest.new]
   end
   let(:request_context) do
     Gruf::Outbound::RequestContext.new(
@@ -32,7 +32,7 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Client do
       metadata: { foo: 'bar' }
     )
   end
-  let(:response) { ::Proto::Example::ExampleResponse.new(response_name: "Done") }
+  let(:response) { Proto::Example::ExampleResponse.new(response_name: 'Done') }
   let(:block) { proc { response } }
   let(:client_call) do
     OpenTelemetry::Instrumentation::Gruf::Interceptors::Client
@@ -65,7 +65,7 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Client do
         client_call
 
         expect(exporter.finished_spans.size).must_equal(1)
-        expect(span.attributes['rpc.request.metadata.foo']).must_equal("bar")
+        expect(span.attributes['rpc.request.metadata.foo']).must_equal('bar')
       end
     end
   end
@@ -82,7 +82,7 @@ describe OpenTelemetry::Instrumentation::Gruf::Interceptors::Client do
       expect(span.attributes['rpc.system']).must_equal('grpc')
       expect(span.attributes['rpc.type']).must_equal('request_response')
       expect(span.events.size).must_equal(1)
-      expect(span.events.first.name).must_equal("exception")
+      expect(span.events.first.name).must_equal('exception')
     end
   end
 end
