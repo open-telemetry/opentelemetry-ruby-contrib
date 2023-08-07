@@ -12,6 +12,8 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Sidekiq client
           # by way of its middleware system
           class TracerMiddleware
+            include ::Sidekiq::ClientMiddleware if defined?(::Sidekiq::ClientMiddleware)
+
             def call(_worker_class, job, _queue, _redis_pool)
               attributes = {
                 SemanticConventions::Trace::MESSAGING_SYSTEM => 'sidekiq',

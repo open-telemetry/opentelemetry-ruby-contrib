@@ -13,13 +13,12 @@ require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'sidekiq/testing'
 
-# Sidekiq changed its loading mechanism in 6.5.0, but we still want to test the
-# older versions. We can eliminate the first part of this conditional when we no
-# longer support Sidekiq 6.4.x versions.
-if Gem::Version.new(Sidekiq::VERSION) < Gem::Version.new('6.5.0')
-  require 'helpers/mock_loader'
+if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.0.0')
+  require 'helpers/mock_loader_for_7.0'
+elsif Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('6.5.0')
+  require 'helpers/mock_loader_for_6.5'
 else
-  require 'helpers/mock_loader_new_launcher'
+  require 'helpers/mock_loader'
 end
 
 # OpenTelemetry SDK config for testing
@@ -39,6 +38,11 @@ redis_url = "redis://#{ENV['TEST_REDIS_HOST']}:#{ENV['TEST_REDIS_PORT']}/0"
 
 Sidekiq.configure_server do |config|
   config.redis = { password: 'passw0rd', url: redis_url }
+
+  if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('6.5.0')
+    config.queues = ['default']
+    config.concurrency = 1
+  end
 end
 
 Sidekiq.configure_client do |config|
