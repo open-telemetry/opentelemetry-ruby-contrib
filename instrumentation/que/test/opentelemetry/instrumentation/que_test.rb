@@ -410,8 +410,8 @@ describe OpenTelemetry::Instrumentation::Que do
           end
 
           it 'keeps original tags' do
-            Que.bulk_enqueue(job_options: { job_class: 'LastHashParameterWithTags' }) do
-              TestJobAsync.enqueue(job_options: { tags: ['high-priority'] })
+            Que.bulk_enqueue(job_options: { job_class: 'LastHashParameterWithTags', tags: ['high-priority'] }) do
+              TestJobAsync.enqueue
             end
 
             model = last_record_in_database
