@@ -11,8 +11,6 @@ class MockLoader
   attr_reader :launcher
 
   def initialize
-    Sidekiq[:queues] << 'default'
-
     @launcher = Sidekiq::Launcher.new(Sidekiq)
     @launcher.fire_event(:startup)
   end
