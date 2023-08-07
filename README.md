@@ -56,7 +56,10 @@ using OpenTelemetry with minimal changes to your application. See the
 This repository also contains libraries to aid with interoperablity with vendor specific tracing solutions:
 
 - [Context Propagation](propagator/): OTTrace and Amazon X-Ray
-- [Resource Detectors](resource_detectors/): Google Cloud Platform
+- [Resource Detectors](resource_detectors/):
+  - Azure
+  - Container
+  - Google Cloud Platform
 
 ## Versioning
 

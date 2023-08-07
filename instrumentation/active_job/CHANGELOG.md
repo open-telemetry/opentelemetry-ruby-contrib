@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.5.2 / 2023-08-03
+
+* FIXED: Add code semconv attributes
+* FIXED: Remove inline linter rules
+
 ### v0.5.1 / 2023-06-05
 
 * FIXED: Base config options

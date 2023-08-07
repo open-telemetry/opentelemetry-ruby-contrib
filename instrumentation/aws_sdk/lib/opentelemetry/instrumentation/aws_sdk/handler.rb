@@ -14,7 +14,7 @@ module OpenTelemetry
         SQS_RECEIVE_MESSAGE = 'SQS.ReceiveMessage'
         SNS_PUBLISH = 'SNS.Publish'
 
-        def call(context) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def call(context)
           return super unless context
 
           service_name = service_name(context)

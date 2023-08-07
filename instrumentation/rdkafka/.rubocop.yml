@@ -1,5 +1,7 @@
 inherit_from: ../../.rubocop.yml
 
+Lint/SuppressedException:
+  Enabled: false
 Metrics/ParameterLists:
   Enabled: true
   Exclude:
