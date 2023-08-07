@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.26.5 / 2023-08-03
+
+* FIXED: Remove inline linter rules
+
 ### v0.26.4 / 2023-08-01
 
 * FIXED: GraphQL tests and installation
