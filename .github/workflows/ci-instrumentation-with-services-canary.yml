@@ -34,16 +34,19 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
+          latest: "true"
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.1"
+          latest: "true"
       - name: "Test Ruby 3.0"
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.0"
+          latest: "true"
           yard: true
           rubocop: true
           build: true
@@ -70,6 +73,7 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "jruby-9.4.2.0"
+          latest: "true"
       - name: "Truffleruby Filter"
         id: truffleruby_skip
         shell: bash
@@ -86,6 +90,7 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "truffleruby"
+          latest: "true"
     services:
       zookeeper:
         image: confluentinc/cp-zookeeper:latest

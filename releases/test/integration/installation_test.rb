@@ -20,10 +20,10 @@ class TestOpenTelemetry < Minitest::Test
       c.use_all
     end
 
-    tracer = OpenTelemetry.tracer_provider.tracer("releases","1.0")
-    tracer.in_span("test") { }
+    tracer = OpenTelemetry.tracer_provider.tracer('releases', '1.0')
+    tracer.in_span('test') {}
 
     spans = @exporter.finished_spans
-    assert_equal(["test"], spans.map(&:name))
+    assert_equal(['test'], spans.map(&:name))
   end
 end

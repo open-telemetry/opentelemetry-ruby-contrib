@@ -1,6 +1,6 @@
 # Release History: opentelemetry-resource_detectors
 
-### v0.24.0 / 2023-07-29
+### v0.24.0 / 2023-08-02
 
 * ADDED: Add container resource detector
 
@@ -96,3 +96,11 @@
 
 * FIXED: Rename Resource labels to attributes 
 * ADDED: Environment variable resource detection
+
+### v0.24.1 / 2023-08-03
+
+* FIXED: Remove inline linter rules
+
+### v0.24.0 / 2023-08-02
+
+* ADDED: Add container resource detector.
