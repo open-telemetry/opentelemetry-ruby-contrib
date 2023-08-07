@@ -29,7 +29,7 @@ module OpenTelemetry
               'net.sock.peer.addr' => request_context.call.instance_variable_get(:@wrapped)&.peer
             }.compact
 
-            attributes.merge!(allowed_metadata_headers(metadata.stringify_keys))
+            attributes.merge!(allowed_metadata_headers(metadata.transform_keys(&:to_s)))
 
             instrumentation_tracer.in_span(
               request_context.method.to_s,

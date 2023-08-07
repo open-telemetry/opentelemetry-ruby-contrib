@@ -30,7 +30,7 @@ module OpenTelemetry
               'net.sock.peer.addr' => request.active_call.instance_variable_get(:@wrapped)&.peer
             }.compact
 
-            attributes.merge!(allowed_metadata_headers(metadata.stringify_keys))
+            attributes.merge!(allowed_metadata_headers(metadata.transform_keys(&:to_s)))
 
             extracted_context = OpenTelemetry.propagation.extract(metadata)
             OpenTelemetry::Context.with_current(extracted_context) do
