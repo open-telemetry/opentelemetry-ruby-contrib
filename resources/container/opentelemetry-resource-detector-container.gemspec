@@ -6,11 +6,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/resource/detectors/container/version'
+require 'opentelemetry/resource/detector/container/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-resourcedetector-container'
-  spec.version     = OpenTelemetry::Resource::Detectors::Container::VERSION
+  spec.name        = 'opentelemetry-resource-detector-container'
+  spec.version     = OpenTelemetry::Resource::Detector::Container::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rubocop', '~> 1.54.2'
+  spec.add_development_dependency 'rubocop', '~> 1.55.1'
   spec.add_development_dependency 'simplecov', '~> 0.17'
   spec.add_development_dependency 'webmock', '~> 3.18.1'
   spec.add_development_dependency 'yard', '~> 0.9'
@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/resource_detectors/container'
+    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/resources/container'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
     spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end

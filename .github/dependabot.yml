@@ -178,6 +178,6 @@ updates:
   schedule:
     interval: weekly
 - package-ecosystem: bundler
-  directory: "/resource_detectors/container"
+  directory: "/resources/container"
   schedule:
     interval: weekly

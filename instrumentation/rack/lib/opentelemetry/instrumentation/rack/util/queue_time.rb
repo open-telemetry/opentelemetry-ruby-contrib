@@ -16,7 +16,7 @@ module OpenTelemetry
 
           module_function
 
-          def get_request_start(env, now = nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          def get_request_start(env, now = nil)
             header = env[REQUEST_START] || env[QUEUE_START]
             return unless header
 

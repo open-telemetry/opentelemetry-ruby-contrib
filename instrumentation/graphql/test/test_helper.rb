@@ -32,3 +32,96 @@ module SchemaTestPatches
 end
 
 GraphQL::Schema.extend(SchemaTestPatches)
+
+module Old
+  Truck = Struct.new(:price, :model)
+end
+
+module Vehicle
+  include GraphQL::Schema::Interface
+
+  field :model, String, null: true, trace: true # Allow for this scalar to be traced
+end
+
+class Car < GraphQL::Schema::Object
+  implements Vehicle
+
+  field :price, Integer, null: true
+end
+
+class SlightlyComplexType < GraphQL::Schema::Object
+  field :uppercased_value, String, null: false
+  field :original_value, String, null: false
+
+  def uppercased_value
+    object.original_value.upcase
+  end
+end
+
+class SimpleResolver < GraphQL::Schema::Resolver
+  type SlightlyComplexType, null: false
+
+  argument :id, Integer, required: true
+
+  def resolve(id:)
+    Struct.new(:original_value).new("testing=#{id}")
+  end
+end
+
+class QueryType < GraphQL::Schema::Object
+  field :simple_field, String, null: false
+  field :resolved_field, resolver: SimpleResolver
+
+  # Required for testing resolve_type
+  field :vehicle, Vehicle, null: true
+
+  def vehicle
+    Old::Truck.new(50, 'Model T')
+  end
+
+  def simple_field
+    'Hello.'
+  end
+end
+
+LazyBox = Struct.new(:value)
+
+class OtherQueryType < GraphQL::Schema::Object
+  field :simple_field, String, null: false
+  def simple_field
+    'Hello.'
+  end
+end
+
+class SomeGraphQLAppSchema < GraphQL::Schema
+  query(::QueryType)
+  orphan_types Car
+  lazy_resolve(LazyBox, :value)
+
+  def self.resolve_type(_type, _obj, ctx)
+    if ctx[:lazy_type_resolve]
+      LazyBox.new(Car)
+    else
+      Car
+    end
+  end
+end
+
+class SomeOtherGraphQLAppSchema < GraphQL::Schema
+  query(::OtherQueryType)
+end
+
+# These fields are only supported as of version 1.10.0
+# https://github.com/rmosolgo/graphql-ruby/blob/v1.10.0/CHANGELOG.md#new-features-1
+def supports_authorized_and_resolved_types?
+  Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('1.10.0')
+end
+
+# https://github.com/rmosolgo/graphql-ruby/issues/4292 changes the behavior of the platform tracer to use interface keys instead of the concrete types
+def uses_platform_interfaces?
+  Gem::Requirement.new('>= 2.0.19').satisfied_by?(gem_version)
+end
+
+def gem_version
+  Gem::Version.new(GraphQL::VERSION)
+end

@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/sdk'
-require 'opentelemetry/resource/detectors/container'
-require 'opentelemetry/resource/detectors/container/version'
+require 'opentelemetry/resource/detector/container'
+require 'opentelemetry/resource/detector/container/version'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
@@ -16,8 +16,8 @@ require 'opentelemetry/resource/detectors/container/version'
 # See the documentation for the `opentelemetry-api` gem for details.
 module OpenTelemetry
   module Resource
-    # Detectors contains the resource detectors
-    module Detectors
+    # Detector contains the resource detectors
+    module Detector
     end
   end
 end

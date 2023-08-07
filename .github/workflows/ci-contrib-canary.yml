@@ -26,17 +26,20 @@ jobs:
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.2"
+          latest: "true"
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.1"
+          latest: "true"
       - name: "Test Ruby 3.0"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.0"
+          latest: "true"
           yard: true
           rubocop: true
           build: true
@@ -46,12 +49,14 @@ jobs:
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "jruby-9.4.2.0"
+          latest: "true"
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "truffleruby"
+          latest: "true"
 
   resource-detectors:
     strategy:
@@ -59,7 +64,7 @@ jobs:
       matrix:
         gem:
           - resource_detectors
-          - resourcedetector-container
+          - resource-detector-container
         os:
           - ubuntu-latest
           - macos-latest
@@ -73,17 +78,20 @@ jobs:
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.2"
+          latest: "true"
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.1"
+          latest: "true"
       - name: "Test Ruby 3.0"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.0"
+          latest: "true"
           yard: true
           rubocop: true
           build: true
@@ -93,9 +101,11 @@ jobs:
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "jruby-9.4.2.0"
+          latest: "true"
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "truffleruby"
+          latest: "true"
