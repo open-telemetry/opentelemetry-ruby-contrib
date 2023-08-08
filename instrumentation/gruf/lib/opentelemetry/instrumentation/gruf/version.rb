@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Instrumentation
-    module All
-      VERSION = '0.40.0'
+    module Gruf
+      VERSION = '0.1.0'
     end
   end
 end

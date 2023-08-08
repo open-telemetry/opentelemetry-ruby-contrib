@@ -4,10 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Instrumentation
-    module All
-      VERSION = '0.40.0'
-    end
-  end
+appraise 'gruf-2.15.1' do
+  gem 'gruf', '~> 2.15.1'
+end
+
+appraise 'gruf-2.16.1' do
+  gem 'gruf', '~> 2.16.1'
 end

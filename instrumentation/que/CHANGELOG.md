@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.6.2 / 2023-08-07
+
+* FIXED: Correctly set bulk_enqueue job options
+
 ### v0.6.1 / 2023-06-05
 
 * FIXED: Base config options 

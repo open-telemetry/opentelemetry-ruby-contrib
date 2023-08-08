@@ -31,6 +31,7 @@ jobs:
           - faraday
           - grape
           - graphql
+          - gruf
           - http
           - http_client
           - koala
@@ -86,6 +87,7 @@ jobs:
           [[ "${{ matrix.gem }}" == "lmdb"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "rack"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "rails"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "gruf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test JRuby"
