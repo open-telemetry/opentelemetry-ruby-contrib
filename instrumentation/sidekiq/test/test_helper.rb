@@ -88,3 +88,25 @@ class ExceptionTestingJob
     raise 'a little hell'
   end
 end
+
+module Frontkiq
+  class SweetClientMiddleware
+    # Use middleware base classes that come with Sidekiq >= 7.0.0
+    include ::Sidekiq::ClientMiddleware if defined?(::Sidekiq::ClientMiddleware)
+
+    # see https://github.com/sidekiq/sidekiq/wiki/Middleware
+    def call(_job_class_or_string, _job, _queue, _redis_pool)
+      yield
+    end
+  end
+
+  class SweetServerMiddleware
+    # Use middleware base classes that come with Sidekiq >= 7.0.0
+    include ::Sidekiq::ServerMiddleware if defined?(::Sidekiq::ServerMiddleware)
+
+    # see https://github.com/sidekiq/sidekiq/wiki/Middleware
+    def call(_job_instance, _job_payload, _queue_name)
+      yield
+    end
+  end
+end

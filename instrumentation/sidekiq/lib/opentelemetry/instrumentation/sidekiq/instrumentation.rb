@@ -67,7 +67,7 @@ module OpenTelemetry
         def add_client_middleware
           ::Sidekiq.configure_client do |config|
             config.client_middleware do |chain|
-              chain.add Middlewares::Client::TracerMiddleware
+              chain.prepend Middlewares::Client::TracerMiddleware
             end
           end
         end
@@ -75,16 +75,16 @@ module OpenTelemetry
         def add_server_middleware
           ::Sidekiq.configure_server do |config|
             config.client_middleware do |chain|
-              chain.add Middlewares::Client::TracerMiddleware
+              chain.prepend Middlewares::Client::TracerMiddleware
             end
             config.server_middleware do |chain|
-              chain.add Middlewares::Server::TracerMiddleware
+              chain.prepend Middlewares::Server::TracerMiddleware
             end
           end
 
           if defined?(::Sidekiq::Testing) # rubocop:disable Style/GuardClause
             ::Sidekiq::Testing.server_middleware do |chain|
-              chain.add Middlewares::Server::TracerMiddleware
+              chain.prepend Middlewares::Server::TracerMiddleware
             end
           end
         end
