@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.40.0 / 2023-08-07
+
+* ADDED: Add Gruf instrumentation
+
 ### v0.39.1 / 2023-06-05
 
 * FIXED: Use latest bug fix version for all dependencies
