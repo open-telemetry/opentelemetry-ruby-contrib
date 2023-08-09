@@ -2,7 +2,7 @@
 
 ### v0.20.2 / 2023-08-09
 
-* (No significant changes)
+* FIXED: propagate context from async producer
 
 ### v0.20.1 / 2023-06-05
 
