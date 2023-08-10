@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ruby_kafka
 
+### v0.20.2 / 2023-08-09
+
+* FIXED: propagate context from async producer
+
 ### v0.20.1 / 2023-06-05
 
 * FIXED: Base config options 
