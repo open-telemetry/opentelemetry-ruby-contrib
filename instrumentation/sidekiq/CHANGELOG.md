@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.24.4 / 2023-08-07
+
+* FIXED: Allow traces inside jobs while avoiding Redis noise
+
 ### v0.24.3 / 2023-08-03
 
 * FIXED: Remove inline linter rules

@@ -13,3 +13,19 @@
 #
 
 * @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+
+resources/container/ @scbjans @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+
+instrumentation/aws_sdk/ @NathanielRN @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+
+instrumentation/grape/ @muripic @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+
+instrumentation/graphql/ @swalkinshaw @rmosolgo @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+
+instrumentation/mongo/ @johnnyshields @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+
+instrumentation/racecar/ @chrisholmes @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+
+instrumentation/rspec/ @chrisholmes @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+
+instrumentation/que/ @indrekj @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
