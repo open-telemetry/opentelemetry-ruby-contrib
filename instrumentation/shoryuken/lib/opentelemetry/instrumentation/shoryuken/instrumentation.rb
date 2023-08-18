@@ -33,14 +33,12 @@ module OpenTelemetry
         def require_dependencies
           require_relative 'middlewares/server/tracer_middleware'
 
-          require_relative 'patches/processor'
           require_relative 'patches/fetcher'
         end
 
         def patch_on_startup
           ::Shoryuken.configure_server do |config|
             config.on(:startup) do
-              ::Shoryuken::Processor.prepend(Patches::Processor)
               ::Shoryuken::Fetcher.prepend(Patches::Fetcher)
             end
 
