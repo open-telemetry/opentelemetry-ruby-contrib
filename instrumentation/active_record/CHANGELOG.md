@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.6.2 / 2023-08-14
+
+* FIXED: Ensure that transaction name property is used, rather than self
+
 ### v0.6.1 / 2023-06-05
 
 * FIXED: Base config options 
