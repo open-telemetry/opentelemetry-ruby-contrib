@@ -56,7 +56,7 @@ describe OpenTelemetry::Instrumentation::Shoryuken::Middlewares::Server::TracerM
       _(job_span.name).must_equal "#{queue_name} process"
       _(job_span.kind).must_equal :consumer
       _(job_span.attributes['messaging.system']).must_equal 'shoryuken'
-      _(job_span.attributes['messaging.shoryuken.job_class']).must_equal worker_class.name
+      _(job_span.attributes['code.namespace']).must_equal worker_class.name
       _(job_span.attributes['messaging.message_id']).must_equal sqs_msg.message_id
       _(job_span.attributes['messaging.destination']).must_equal 'default'
       _(job_span.attributes['messaging.destination_kind']).must_equal 'queue'
@@ -70,7 +70,7 @@ describe OpenTelemetry::Instrumentation::Shoryuken::Middlewares::Server::TracerM
         Shoryuken::Processor.process(queue_name, sqs_msg)
 
         _(job_span.attributes['messaging.system']).must_equal 'shoryuken'
-        _(job_span.attributes['messaging.shoryuken.job_class']).must_equal worker_class.name
+        _(job_span.attributes['code.namespace']).must_equal worker_class.name
         _(job_span.attributes['messaging.message_id']).must_equal sqs_msg.message_id
         _(job_span.attributes['messaging.destination']).must_equal 'default'
         _(job_span.attributes['messaging.destination_kind']).must_equal 'queue'
