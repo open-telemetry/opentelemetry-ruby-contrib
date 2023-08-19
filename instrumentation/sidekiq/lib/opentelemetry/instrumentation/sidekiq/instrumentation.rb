@@ -29,6 +29,7 @@ module OpenTelemetry
 
         option :span_naming,                 default: :queue, validate: %I[job_class queue]
         option :propagation_style,           default: :link,  validate: %i[link child none]
+        option :propagation_style_per_job,   default: nil,   validate: :callable
         option :trace_launcher_heartbeat,    default: false, validate: :boolean
         option :trace_poller_enqueue,        default: false, validate: :boolean
         option :trace_poller_wait,           default: false, validate: :boolean

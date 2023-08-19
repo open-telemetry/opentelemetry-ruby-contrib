@@ -25,14 +25,17 @@ module OpenTelemetry
               }
               attributes[SemanticConventions::Trace::PEER_SERVICE] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
 
+              job_class_str = msg['wrapped']&.to_s || msg['class']
+              queue = msg['queue']
+              propagation_style = find_propagation_style(job_class_str, queue)
               span_name = case instrumentation_config[:span_naming]
-                          when :job_class then "#{msg['wrapped']&.to_s || msg['class']} process"
-                          else "#{msg['queue']} process"
+                          when :job_class then "#{job_class_str} process"
+                          else "#{queue} process"
                           end
 
               extracted_context = OpenTelemetry.propagation.extract(msg)
               OpenTelemetry::Context.with_current(extracted_context) do
-                if instrumentation_config[:propagation_style] == :child
+                if propagation_style == :child
                   tracer.in_span(span_name, attributes: attributes, kind: :consumer) do |span|
                     span.add_event('created_at', timestamp: msg['created_at'])
                     span.add_event('enqueued_at', timestamp: msg['enqueued_at'])
@@ -41,7 +44,7 @@ module OpenTelemetry
                 else
                   links = []
                   span_context = OpenTelemetry::Trace.current_span(extracted_context).context
-                  links << OpenTelemetry::Trace::Link.new(span_context) if instrumentation_config[:propagation_style] == :link && span_context.valid?
+                  links << OpenTelemetry::Trace::Link.new(span_context) if propagation_style == :link && span_context.valid?
                   span = tracer.start_root_span(span_name, attributes: attributes, links: links, kind: :consumer)
                   OpenTelemetry::Trace.with_span(span) do
                     span.add_event('created_at', timestamp: msg['created_at'])
@@ -66,6 +69,11 @@ module OpenTelemetry
 
             def tracer
               Sidekiq::Instrumentation.instance.tracer
+            end
+
+            def find_propagation_style(job_class_str, queue)
+              instrumentation_config[:propagation_style_per_job]&.call(job_class_str, queue) ||
+                instrumentation_config[:propagation_style]
             end
           end
         end
