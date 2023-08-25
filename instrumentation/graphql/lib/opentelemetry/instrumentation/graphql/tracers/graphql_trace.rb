@@ -15,9 +15,9 @@ module OpenTelemetry
         module GraphQLTrace # rubocop:disable Metrics/ModuleLength
           def initialize(trace_scalars: false, **_options)
             @trace_scalars = trace_scalars
-            @platform_field_key_cache = Hash.new { |h, k| h[k] = platform_field_key(k) }
-            @platform_authorized_key_cache = Hash.new { |h, k| h[k] = platform_authorized_key(k) }
-            @platform_resolve_type_key_cache = Hash.new { |h, k| h[k] = platform_resolve_type_key(k) }
+            @_otel_field_key_cache = Hash.new { |h, k| h[k] = _otel_field_key(k) }
+            @_otel_authorized_key_cache = Hash.new { |h, k| h[k] = _otel_authorized_key(k) }
+            @_otel_resolve_type_key_cache = Hash.new { |h, k| h[k] = _otel_resolve_type_key(k) }
             super
           end
 
@@ -72,7 +72,7 @@ module OpenTelemetry
           end
 
           def execute_field(field:, query:, ast_node:, arguments:, object:, &block)
-            platform_key = platform_execute_field_key(field: field)
+            platform_key = _otel_execute_field_key(field: field)
             return super unless platform_key
 
             attributes = {}
@@ -84,7 +84,7 @@ module OpenTelemetry
           end
 
           def execute_field_lazy(field:, query:, ast_node:, arguments:, object:, &block)
-            platform_key = platform_execute_field_key(field: field)
+            platform_key = _otel_execute_field_key(field: field)
             return super unless platform_key
 
             attributes = {}
@@ -96,7 +96,7 @@ module OpenTelemetry
           end
 
           def authorized(query:, type:, object:, &block)
-            platform_key = @platform_authorized_key_cache[type]
+            platform_key = @_otel_authorized_key_cache[type]
             return super unless platform_key
 
             attributes = {}
@@ -107,7 +107,7 @@ module OpenTelemetry
           end
 
           def authorized_lazy(query:, type:, object:, &block)
-            platform_key = @platform_authorized_key_cache[type]
+            platform_key = @_otel_authorized_key_cache[type]
             return super unless platform_key
 
             attributes = {}
@@ -118,7 +118,7 @@ module OpenTelemetry
           end
 
           def resolve_type(query:, type:, object:, &block)
-            platform_key = @platform_resolve_type_key_cache[type]
+            platform_key = @_otel_resolve_type_key_cache[type]
 
             attributes = {}
             attributes['graphql.type.name'] = type.graphql_name
@@ -128,7 +128,7 @@ module OpenTelemetry
           end
 
           def resolve_type_lazy(query:, type:, object:, &block)
-            platform_key = @platform_resolve_type_key_cache[type]
+            platform_key = @_otel_resolve_type_key_cache[type]
 
             attributes = {}
             attributes['graphql.type.name'] = type.graphql_name
@@ -139,9 +139,9 @@ module OpenTelemetry
 
           private
 
-          def platform_execute_field_key(field:, &block)
+          def _otel_execute_field_key(field:, &block)
             trace_field = trace_field?(field)
-            platform_key = @platform_field_key_cache[field] if trace_field
+            platform_key = @_otel_field_key_cache[field] if trace_field
             platform_key if platform_key && trace_field
           end
 
@@ -155,7 +155,7 @@ module OpenTelemetry
             end
           end
 
-          def platform_field_key(field)
+          def _otel_field_key(field)
             return unless config[:enable_platform_field]
 
             if config[:legacy_platform_span_names]
@@ -165,7 +165,7 @@ module OpenTelemetry
             end
           end
 
-          def platform_authorized_key(type)
+          def _otel_authorized_key(type)
             return unless config[:enable_platform_authorized]
 
             if config[:legacy_platform_span_names]
@@ -175,7 +175,7 @@ module OpenTelemetry
             end
           end
 
-          def platform_resolve_type_key(type)
+          def _otel_resolve_type_key(type)
             return unless config[:enable_platform_resolve_type]
 
             if config[:legacy_platform_span_names]
