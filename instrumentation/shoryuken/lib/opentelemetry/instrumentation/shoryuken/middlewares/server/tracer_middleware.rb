@@ -8,7 +8,7 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Shoryuken requests
           # by way of its middleware system
           class TracerMiddleware
-            def call(worker_instance, queue, sqs_msg, _body) # rubocop:disable Metrics/MethodLength
+            def call(worker_instance, queue, sqs_msg, _body)
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::MESSAGING_SYSTEM => 'shoryuken',
                 'code.namespace' => worker_instance.class.name,
