@@ -75,12 +75,44 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     get 'internal_server_error'
 
     _(span.name).must_equal 'ExampleController#internal_server_error'
+    _(span.kind).must_equal :server
+    _(span.status.ok?).must_equal false
+
+    _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
+    _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
+
+    _(span.attributes['http.method']).must_equal 'GET'
+    _(span.attributes['http.host']).must_equal 'example.org'
+    _(span.attributes['http.scheme']).must_equal 'http'
+    _(span.attributes['http.target']).must_equal '/internal_server_error'
+    _(span.attributes['http.status_code']).must_equal 500
+    _(span.attributes['http.user_agent']).must_be_nil
+    _(span.attributes['code.namespace']).must_equal 'ExampleController'
+    _(span.attributes['code.function']).must_equal 'internal_server_error'
+
+    _(span.events.size).must_equal 1
+    _(span.events.first.name).must_equal 'exception'
+    _(span.events.first.attributes['exception.type']).must_equal 'TypeError'
+    _(span.events.first.attributes['exception.message']).must_equal 'exception class/object expected'
+    _(span.events.first.attributes['exception.stacktrace'].nil?).must_equal false
   end
 
   it 'does not set the span name when an exception is raised in middleware' do
     get '/ok?raise_in_middleware'
 
     _(span.name).must_equal 'HTTP GET'
+    _(span.kind).must_equal :server
+    _(span.status.ok?).must_equal false
+
+    _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
+    _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
+
+    _(span.attributes['http.method']).must_equal 'GET'
+    _(span.attributes['http.host']).must_equal 'example.org'
+    _(span.attributes['http.scheme']).must_equal 'http'
+    _(span.attributes['http.target']).must_equal '/ok?raise_in_middleware'
+    _(span.attributes['http.status_code']).must_equal 500
+    _(span.attributes['http.user_agent']).must_be_nil
   end
 
   it 'does not set the span name when the request is redirected in middleware' do
@@ -96,6 +128,20 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
       get 'internal_server_error'
 
       _(span.name).must_equal 'ExampleController#internal_server_error'
+      _(span.kind).must_equal :server
+      _(span.status.ok?).must_equal false
+
+      _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
+      _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
+
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.host']).must_equal 'example.org'
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.target']).must_equal '/internal_server_error'
+      _(span.attributes['http.status_code']).must_equal 500
+      _(span.attributes['http.user_agent']).must_be_nil
+      _(span.attributes['code.namespace']).must_equal 'ExceptionsController'
+      _(span.attributes['code.function']).must_equal 'show'
     end
   end
 

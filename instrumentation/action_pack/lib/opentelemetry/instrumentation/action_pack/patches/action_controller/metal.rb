@@ -25,6 +25,10 @@ module OpenTelemetry
               end
 
               super(name, request, response)
+            rescue Exception => e # rubocop:disable Lint/RescueException
+              rack_span.record_exception(e)
+              rack_span.status = OpenTelemetry::Trace::Status.error
+              raise
             end
 
             private
