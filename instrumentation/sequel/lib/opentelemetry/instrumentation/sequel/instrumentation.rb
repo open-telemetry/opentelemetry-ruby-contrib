@@ -11,7 +11,6 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('3.41')
 
-
         install do |_|
           patch_sequel_database
           patch_sequel_dataset
@@ -22,20 +21,20 @@ module OpenTelemetry
         end
 
         compatible do
-          present && Gem.loaded_specs['sequel'].version >= MINIMUM_VERSION
+          defined?(::Sequel) && Gem.loaded_specs['sequel'].version >= MINIMUM_VERSION
         end
 
-        option :service_name, default: nil, validate: :string
+        option :service_name, default: 'sequel', validate: :string
 
-          private
+        private
 
-          def patch_sequel_database
-            ::Sequel::Database.include(Database)
-          end
+        def patch_sequel_database
+          ::Sequel::Database.include(Database)
+        end
 
-          def patch_sequel_dataset
-            ::Sequel::Dataset.include(Dataset)
-          end
+        def patch_sequel_dataset
+          ::Sequel::Dataset.include(Dataset)
+        end
       end
     end
   end
