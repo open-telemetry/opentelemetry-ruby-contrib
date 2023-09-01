@@ -66,8 +66,8 @@ module OpenTelemetry
           end
 
           def set_common_tags(span, db)
-            span.set_attribute('component', Ext::TAG_COMPONENT)
-            span.set_attribute('operation', Ext::TAG_OPERATION_QUERY)
+            span.set_attribute(Ext::COMPONENT, Ext::SEQUEL)
+            span.set_attribute(Ext::OPERATION, Ext::OPERATION_QUERY)
 
             # TODO: Extract host for Sequel with JDBC. The easiest way seem to be through
             # TODO: the database URI. Unfortunately, JDBC URIs do not work with `URI.parse`.

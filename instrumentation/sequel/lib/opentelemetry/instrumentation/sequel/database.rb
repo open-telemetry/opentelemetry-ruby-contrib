@@ -22,7 +22,7 @@ module OpenTelemetry
             tracer.in_span(Ext::SPAN_QUERY) do |span|
               span.service = config[:service_name]
               span.set_attribute('query', opts[:query])
-              span.set_attribute('component', Tracing::Metadata::Ext::SQL::TYPE)
+              span.set_attribute('component', Ext::SQL)
               Utils.set_common_tags(span, self)
               span.set_attribute(Ext::TAG_DB_VENDOR, adapter_name)
               response = super(sql, options)
