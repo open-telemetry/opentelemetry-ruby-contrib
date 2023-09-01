@@ -22,7 +22,7 @@ module OpenTelemetry
 
         def detect
           OpenTelemetry.logger.warn('Azure resource detector - The Azure resource detector has been moved to a separate gem. ' \
-                                       'Please use the "opentelemetry-resource-detector-azure" gem onwards.')
+                                    'Please use the "opentelemetry-resource-detector-azure" gem onwards.')
 
           metadata = azure_metadata
           resource_attributes = {}
