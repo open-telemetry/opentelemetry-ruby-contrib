@@ -8,20 +8,12 @@ require 'google-cloud-env'
 
 module OpenTelemetry
   module Resource
-    module Detectors
+    module Detector
       # GoogleCloudPlatform contains detect class method for determining gcp environment resource attributes
-      #
-      # This gem has been moved into a separate gem:
-      # opentelemetry-resource-detector-google_cloud_platform
-      #
-      # Log a warning if someone still uses this gem for GoogleCloudPlatform Resource Detection
       module GoogleCloudPlatform
         extend self
 
         def detect
-          OpenTelemetry.logger.warn('GoogleCloudPlatform resource detector - The GoogleCloudPlatform resource detector has been moved to a separate gem. ' \
-                                    'Please use the "opentelemetry-resource-detector-google_cloud_platform" gem onwards.')
-
           gcp_env = Google::Cloud::Env.new
           resource_attributes = {}
 

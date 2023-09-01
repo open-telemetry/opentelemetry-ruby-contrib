@@ -8,22 +8,14 @@ require 'net/http'
 
 module OpenTelemetry
   module Resource
-    module Detectors
+    module Detector
       # Azure contains detect class method for determining Azure environment resource attributes
-      #
-      # This gem has been moved into a separate gem:
-      # opentelemetry-resource-detector-azure
-      #
-      # Log a warning if someone still uses this gem for Azure Resource Detection
       module Azure
         extend self
 
         AZURE_METADATA_URI = 'http://169.254.169.254/metadata/instance/compute?api-version=2019-08-15'
 
         def detect
-          OpenTelemetry.logger.warn('Azure resource detector - The Azure resource detector has been moved to a separate gem. ' \
-                                       'Please use the "opentelemetry-resource-detector-azure" gem onwards.')
-
           metadata = azure_metadata
           resource_attributes = {}
 

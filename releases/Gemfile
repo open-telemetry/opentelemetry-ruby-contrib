@@ -51,3 +51,10 @@ Dir['../instrumentation/**/version.rb'].each do |f|
   version = File.read(f).match(/VERSION = '([\d\.]+)'/)[1]
   gem "opentelemetry-instrumentation-#{name}", version
 end
+
+Dir['../resources/**/version.rb'].each do |f|
+  name = f.match(%r{resources/(\w+)/lib})[1]
+
+  version = File.read(f).match(/VERSION = '([\d\.]+)'/)[1]
+  gem "opentelemetry-resource-detector-#{name}", version
+end
