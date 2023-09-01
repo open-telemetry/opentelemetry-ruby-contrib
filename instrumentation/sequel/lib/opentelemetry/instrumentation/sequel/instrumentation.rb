@@ -21,7 +21,7 @@ module OpenTelemetry
         end
 
         compatible do
-          defined?(::Sequel) && Gem.loaded_specs['sequel'].version >= MINIMUM_VERSION
+          Gem.loaded_specs['sequel'].version >= MINIMUM_VERSION
         end
 
         option :service_name, default: 'sequel', validate: :string

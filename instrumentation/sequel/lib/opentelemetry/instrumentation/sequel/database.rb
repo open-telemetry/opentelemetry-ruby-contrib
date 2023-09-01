@@ -6,13 +6,13 @@ require_relative 'utils'
 module OpenTelemetry
   module Instrumentation
     module Sequel
-# Adds instrumentation to Sequel::Database
+      # Adds instrumentation to Sequel::Database
       module Database
         def self.included(base)
           base.prepend(InstanceMethods)
         end
 
-# Instance methods for instrumenting Sequel::Database
+        # Instance methods for instrumenting Sequel::Database
         module InstanceMethods
           def run(sql, options = ::Sequel::OPTS)
             opts = parse_opts(sql, options)
@@ -21,8 +21,8 @@ module OpenTelemetry
 
             tracer.in_span(Ext::SPAN_QUERY) do |span|
               span.service = config[:service_name]
-              span.set_attribute("query", opts[:query])
-              span.set_attribute("component", Tracing::Metadata::Ext::SQL::TYPE)
+              span.set_attribute('query', opts[:query])
+              span.set_attribute('component', Tracing::Metadata::Ext::SQL::TYPE)
               Utils.set_common_tags(span, self)
               span.set_attribute(Ext::TAG_DB_VENDOR, adapter_name)
               response = super(sql, options)
@@ -33,8 +33,12 @@ module OpenTelemetry
           private
 
           def tracer
-            # Sequel::Instrumentation.instance.tracer
-            OpenTelemetry.tracer_provider.tracer("test")
+            Sequel::Instrumentation.instance.tracer
+            # OpenTelemetry.tracer_provider.tracer("test")
+          end
+
+          def config
+            Sequel::Instrumentation.instance.config
           end
 
           def adapter_name
@@ -56,4 +60,3 @@ module OpenTelemetry
     end
   end
 end
-
