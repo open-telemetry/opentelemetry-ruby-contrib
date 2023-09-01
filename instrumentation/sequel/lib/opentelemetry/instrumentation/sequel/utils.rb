@@ -5,16 +5,16 @@ require_relative 'ext'
 module OpenTelemetry
   module Instrumentation
     module Sequel
-# General purpose functions for Sequel
+      # General purpose functions for Sequel
       module Utils
         class << self
-# Ruby database connector library
-#
-# e.g. adapter:mysql2 (database:mysql), adapter:jdbc (database:postgres)
+          # Ruby database connector library
+          #
+          # e.g. adapter:mysql2 (database:mysql), adapter:jdbc (database:postgres)
           def adapter_name(database)
             scheme = database.adapter_scheme.to_s
 
-            if scheme == 'jdbc'.freeze
+            if scheme == 'jdbc'
               # The subtype is more important in this case,
               # otherwise all database adapters will be 'jdbc'.
               database_type(database)
@@ -23,9 +23,9 @@ module OpenTelemetry
             end
           end
 
-# Database engine
-#
-# e.g. database:mysql (adapter:mysql2), database:postgres (adapter:jdbc)
+          # Database engine
+          #
+          # e.g. database:mysql (adapter:mysql2), database:postgres (adapter:jdbc)
           def database_type(database)
             normalize_vendor(database.database_type.to_s)
           end
@@ -35,16 +35,16 @@ module OpenTelemetry
           VENDOR_SQLITE = 'sqlite'
 
           def normalize_vendor(vendor)
-              case vendor
-              when nil
-                VENDOR_DEFAULT
-              when 'postgresql'
-                VENDOR_POSTGRES
-              when 'sqlite3'
-                VENDOR_SQLITE
-              else
-                vendor
-              end
+            case vendor
+            when nil
+              VENDOR_DEFAULT
+            when 'postgresql'
+              VENDOR_POSTGRES
+            when 'sqlite3'
+              VENDOR_SQLITE
+            else
+              vendor
+            end
           end
 
           def parse_opts(sql, opts, db_opts, dataset = nil)
@@ -66,14 +66,14 @@ module OpenTelemetry
           end
 
           def set_common_tags(span, db)
-            span.set_attribute(Tracing::Metadata::Ext::TAG_COMPONENT, Ext::TAG_COMPONENT)
-            span.set_attribute(Tracing::Metadata::Ext::TAG_OPERATION, Ext::TAG_OPERATION_QUERY)
+            span.set_attribute('component', Ext::TAG_COMPONENT)
+            span.set_attribute('operation', Ext::TAG_OPERATION_QUERY)
 
             # TODO: Extract host for Sequel with JDBC. The easiest way seem to be through
             # TODO: the database URI. Unfortunately, JDBC URIs do not work with `URI.parse`.
             # host, _port = extract_host_port_from_uri(db.uri)
             # span.set_attribute(Tracing::Metadata::Ext::TAG_DESTINATION_NAME, host)
-            span.set_attribute(Tracing::Metadata::Ext::NET::TAG_DESTINATION_NAME, db.opts[:host]) if db.opts[:host]
+            span.set_attribute('network.destination.name', db.opts[:host]) if db.opts[:host]
           end
         end
       end
