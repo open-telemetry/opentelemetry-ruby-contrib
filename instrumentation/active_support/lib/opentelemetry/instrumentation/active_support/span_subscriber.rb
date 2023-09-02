@@ -51,10 +51,9 @@ module OpenTelemetry
       class Handler
         ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
-        attr_reader :span_name
-
-        def initialize(name:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
+        def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
           @span_name = name.split('.')[0..1].reverse.join(' ').freeze
+          @tracer = tracer
           @disallowed_notification_payload_keys = disallowed_notification_payload_keys
           @notification_payload_transform = notification_payload_transform
         end
@@ -89,23 +88,44 @@ module OpenTelemetry
             value
           end
         end
+
+        def new_span(payload)
+          # why is this not using the name from the notification event that was passed in?
+          # How do we customize the context?
+          # What about span links vs parent context?
+          @tracer.start_span(@span_name, kind: :internal)
+        end
+
+        def on_finish(span, payload)
+          transformed_payload = transform_payload(payload)
+
+          attrs = transformed_payload.each_with_object({}) do |(k, v), accum|
+            accum[k.to_s] = sanitized_value(v) if valid_payload_key?(k) && valid_payload_value?(v)
+          end
+
+          span.add_attributes(attrs.compact.to_h)
+
+          if (e = transformed_payload[:exception_object])
+            span.record_exception(e)
+            span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
+          end
+        end
       end
 
       class SpanSubscriber
-
         attr_reader :handler
 
         def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
-          @tracer = tracer
           @handler = Handler.new(
             name: name,
+            tracer: tracer,
             disallowed_notification_payload_keys: disallowed_notification_payload_keys,
             notification_payload_transform: notification_payload_transform
           )
         end
 
         def start(name, id, payload)
-          span = @tracer.start_span(handler.span_name, kind: :internal)
+          span = handler.new_span(payload)
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
@@ -122,18 +142,7 @@ module OpenTelemetry
           token = payload.delete(:__opentelemetry_ctx_token)
           return unless span && token
 
-          transformed_payload = handler.transform_payload(payload)
-
-          attrs = transformed_payload.each_with_object({}) do |(k, v), accum|
-            accum[k.to_s] = handler.sanitized_value(v) if handler.valid_payload_key?(k) && handler.valid_payload_value?(v)
-          end
-
-          span.add_attributes(attrs.compact.to_h)
-
-          if (e = transformed_payload[:exception_object])
-            span.record_exception(e)
-            span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
-          end
+          handler.on_finish(span, payload)
 
           span.finish
           OpenTelemetry::Context.detach(token)
