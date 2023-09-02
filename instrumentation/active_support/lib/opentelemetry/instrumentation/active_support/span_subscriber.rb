@@ -104,7 +104,7 @@ module OpenTelemetry
 
           payload = handler.transform_payload(payload)
           attrs = payload.map do |k, v|
-            [k.to_s, sanitized_value(v)] if valid_payload_key?(k) && valid_payload_value?(v)
+            [k.to_s, sanitized_value(v)] if handler.valid_payload_key?(k) && valid_payload_value?(v)
           end
           span.add_attributes(attrs.compact.to_h)
 
@@ -118,10 +118,6 @@ module OpenTelemetry
         end
 
         private
-
-        def valid_payload_key?(key)
-          handler.valid_payload_key?(key)
-        end
 
         def valid_payload_value?(value)
           if value.is_a?(Array)
