@@ -48,18 +48,28 @@ module OpenTelemetry
         subscriber_object
       end
 
+      class Handler
+        attr_reader :span_name
+
+        def initialize(name:)
+          @span_name = name.split('.')[0..1].reverse.join(' ').freeze
+        end
+      end
+
       class SpanSubscriber
         ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
+        attr_reader :handler
+
         def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
-          @span_name = name.split('.')[0..1].reverse.join(' ').freeze
           @tracer = tracer
           @notification_payload_transform = notification_payload_transform
           @disallowed_notification_payload_keys = disallowed_notification_payload_keys
+          @handler = Handler.new(name: name)
         end
 
         def start(name, id, payload)
-          span = @tracer.start_span(@span_name, kind: :internal)
+          span = @tracer.start_span(handler.span_name, kind: :internal)
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
