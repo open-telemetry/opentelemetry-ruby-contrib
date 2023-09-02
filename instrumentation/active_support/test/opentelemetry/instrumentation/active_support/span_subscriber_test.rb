@@ -11,10 +11,21 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
   let(:tracer) { instrumentation.tracer }
   let(:exporter) { EXPORTER }
   let(:last_span) { exporter.finished_spans.last }
+  let(:pattern) { 'bar.foo' }
+  let(:notification_payload_transform) do
+    nil
+  end
+
+  let(:disallowed_notification_payload_keys) do
+    []
+  end
+
   let(:subscriber) do
     OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-      name: 'bar.foo',
-      tracer: tracer
+      tracer: tracer,
+      notification_payload_transform: notification_payload_transform,
+      disallowed_notification_payload_keys: disallowed_notification_payload_keys,
+      handler: OpenTelemetry::Instrumentation::ActiveSupport::Handler.new(name: pattern)
     )
   end
 
@@ -37,13 +48,19 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
     _(span.name).must_equal('foo bar')
   end
 
-  it 'uses the provided tracer' do
-    subscriber = OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-      name: 'oh.hai',
-      tracer: OpenTelemetry.tracer_provider.tracer('foo')
-    )
-    span, = subscriber.start('oh.hai', 'abc', {})
-    _(span.instrumentation_library.name).must_equal('foo')
+  describe 'given a custom tracer' do
+    let(:tracer) do
+      OpenTelemetry.tracer_provider.tracer('foo')
+    end
+
+    let(:pattern) do
+      'oh.hai'
+    end
+
+    it 'uses the provided tracer' do
+      span, = subscriber.start('oh.hai', 'abc', {})
+      _(span.instrumentation_library.name).must_equal('foo')
+    end
   end
 
   it 'finishes the passed span' do
@@ -110,14 +127,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
   end
 
   describe 'instrumentation option - disallowed_notification_payload_keys' do
-    let(:subscriber) do
-      OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-        name: 'bar.foo',
-        tracer: tracer,
-        notification_payload_transform: nil,
-        disallowed_notification_payload_keys: [:foo]
-      )
-    end
+    let(:disallowed_notification_payload_keys) { [:foo] }
 
     before do
       instrumentation.instance_variable_set(:@installed, false)
@@ -147,15 +157,9 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
   end
 
   describe 'instrumentation option - notification_payload_transform' do
-    let(:transformer_proc) { ->(v) { v.transform_values { 'optimus prime' } } }
-    let(:subscriber) do
-      OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-        name: 'bar.foo',
-        tracer: tracer,
-        notification_payload_transform: transformer_proc,
-        disallowed_notification_payload_keys: [:foo]
-      )
-    end
+    let(:pattern) { 'bar.foo' }
+    let(:notification_payload_transform) { ->(v) { v.transform_values { 'optimus prime' } } }
+    let(:disallowed_notification_payload_keys) { [:foo] }
 
     before do
       instrumentation.instance_variable_set(:@installed, false)

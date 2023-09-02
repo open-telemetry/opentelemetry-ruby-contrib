@@ -21,11 +21,12 @@ module OpenTelemetry
         notification_payload_transform = nil,
         disallowed_notification_payload_keys = []
       )
+        # TODO: Using the pattern as the span name is not ideal because it could be a regular expression.
         subscriber = OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-          name: pattern,
           tracer: tracer,
           notification_payload_transform: notification_payload_transform,
-          disallowed_notification_payload_keys: disallowed_notification_payload_keys
+          disallowed_notification_payload_keys: disallowed_notification_payload_keys,
+          handler: Handler.new(name: pattern)
         )
 
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
@@ -61,11 +62,11 @@ module OpenTelemetry
 
         attr_reader :handler
 
-        def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
+        def initialize(tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: [], handler:)
           @tracer = tracer
           @notification_payload_transform = notification_payload_transform
           @disallowed_notification_payload_keys = disallowed_notification_payload_keys
-          @handler = Handler.new(name: name)
+          @handler = handler
         end
 
         def start(name, id, payload)
