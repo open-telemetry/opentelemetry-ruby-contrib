@@ -51,8 +51,13 @@ module OpenTelemetry
       class Handler
         attr_reader :span_name
 
-        def initialize(name:)
+        def initialize(name:, disallowed_notification_payload_keys: [])
           @span_name = name.split('.')[0..1].reverse.join(' ').freeze
+          @disallowed_notification_payload_keys = disallowed_notification_payload_keys
+        end
+
+        def valid_payload_key?(key)
+          %i[exception exception_object].none?(key) && @disallowed_notification_payload_keys.none?(key)
         end
       end
 
@@ -64,8 +69,7 @@ module OpenTelemetry
         def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
           @tracer = tracer
           @notification_payload_transform = notification_payload_transform
-          @disallowed_notification_payload_keys = disallowed_notification_payload_keys
-          @handler = Handler.new(name: name)
+          @handler = Handler.new(name: name, disallowed_notification_payload_keys: disallowed_notification_payload_keys)
         end
 
         def start(name, id, payload)
@@ -110,7 +114,7 @@ module OpenTelemetry
         end
 
         def valid_payload_key?(key)
-          %i[exception exception_object].none?(key) && @disallowed_notification_payload_keys.none?(key)
+          handler.valid_payload_key?(key)
         end
 
         def valid_payload_value?(value)
