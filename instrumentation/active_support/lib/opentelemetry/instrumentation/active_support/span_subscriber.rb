@@ -49,6 +49,8 @@ module OpenTelemetry
       end
 
       class Handler
+        ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
+
         attr_reader :span_name
 
         def initialize(name:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
@@ -76,10 +78,20 @@ module OpenTelemetry
 
           @notification_payload_transform.call(payload)
         end
+
+        # We'll accept symbols as values, but stringify them; and we'll stringify symbols within an array.
+        def sanitized_value(value)
+          if value.is_a?(Array)
+            value.map { |v| v.is_a?(Symbol) ? v.to_s : v }
+          elsif value.is_a?(Symbol)
+            value.to_s
+          else
+            value
+          end
+        end
       end
 
       class SpanSubscriber
-        ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
         attr_reader :handler
 
@@ -113,7 +125,7 @@ module OpenTelemetry
           transformed_payload = handler.transform_payload(payload)
 
           attrs = transformed_payload.each_with_object({}) do |(k, v), accum|
-            accum[k.to_s] = sanitized_value(v) if handler.valid_payload_key?(k) && handler.valid_payload_value?(v)
+            accum[k.to_s] = handler.sanitized_value(v) if handler.valid_payload_key?(k) && handler.valid_payload_value?(v)
           end
 
           span.add_attributes(attrs.compact.to_h)
@@ -125,19 +137,6 @@ module OpenTelemetry
 
           span.finish
           OpenTelemetry::Context.detach(token)
-        end
-
-        private
-
-        # We'll accept symbols as values, but stringify them; and we'll stringify symbols within an array.
-        def sanitized_value(value)
-          if value.is_a?(Array)
-            value.map { |v| v.is_a?(Symbol) ? v.to_s : v }
-          elsif value.is_a?(Symbol)
-            value.to_s
-          else
-            value
-          end
         end
       end
     end
