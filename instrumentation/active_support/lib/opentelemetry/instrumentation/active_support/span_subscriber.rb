@@ -50,7 +50,6 @@ module OpenTelemetry
 
       class Handler
         attr_reader :span_name
-        attr_reader :notification_payload_transform
 
         def initialize(name:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
           @span_name = name.split('.')[0..1].reverse.join(' ').freeze
@@ -76,7 +75,6 @@ module OpenTelemetry
 
         def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
           @tracer = tracer
-          @notification_payload_transform = notification_payload_transform
           @handler = Handler.new(
             name: name,
             disallowed_notification_payload_keys: disallowed_notification_payload_keys,
