@@ -126,6 +126,10 @@ module OpenTelemetry
 
         def start(name, id, payload)
           begin
+            # What happens if active support changes notifications to be asynchronous in the future?
+            # That would make it so we could not use the active span as the parent,
+            # then child spans would _have_ to manually set the parent context.
+            # Should we include the current context in the payload?
             span = handler.new_span(payload)
             token = OpenTelemetry::Context.attach(
               OpenTelemetry::Trace.context_with_span(span)
@@ -143,24 +147,27 @@ module OpenTelemetry
         end
 
         def finish(name, id, payload)
+          # What happens if active support changes notifications to be asynchronous in the future?
+          # That would make it so we could not use the active span as the parent,
+          # however then child spans would _have_ to manually set the parent context.
+          # E.g. using a queue of notifications instead of nested method calls and then having a threaded notifications worker execute them.
+          # Should we include the current context in the payload?
+          span = payload.delete(:__opentelemetry_span)
+          token = payload.delete(:__opentelemetry_ctx_token)
+          return unless span && token
+
+          handler.on_finish(span, payload)
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e)
+        ensure
           begin
-            span = payload.delete(:__opentelemetry_span)
-            token = payload.delete(:__opentelemetry_ctx_token)
-            return unless span && token
+            span.finish
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
+          end
 
-            handler.on_finish(span, payload)
-
-            begin
-              span.finish
-            rescue StandardError => e
-              OpenTelemetry.handle_error(exception: e)
-            end
-
-            begin
-              OpenTelemetry::Context.detach(token)
-            rescue StandardError => e
-              OpenTelemetry.handle_error(exception: e)
-            end
+          begin
+            OpenTelemetry::Context.detach(token)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
