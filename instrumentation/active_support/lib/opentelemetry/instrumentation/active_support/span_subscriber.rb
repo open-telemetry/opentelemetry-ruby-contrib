@@ -61,6 +61,16 @@ module OpenTelemetry
           %i[exception exception_object].none?(key) && @disallowed_notification_payload_keys.none?(key)
         end
 
+        def valid_payload_value?(value)
+          if value.is_a?(Array)
+            return true if value.empty?
+
+            value.map(&:class).uniq.size == 1 && ALWAYS_VALID_PAYLOAD_TYPES.any? { |t| value.first.is_a?(t) }
+          else
+            ALWAYS_VALID_PAYLOAD_TYPES.any? { |t| value.is_a?(t) }
+          end
+        end
+
         def transform_payload(payload)
           return payload if @notification_payload_transform.nil?
 
@@ -103,7 +113,7 @@ module OpenTelemetry
           transformed_payload = handler.transform_payload(payload)
 
           attrs = transformed_payload.each_with_object({}) do |(k, v), accum|
-            accum[k.to_s] = sanitized_value(v) if handler.valid_payload_key?(k) && valid_payload_value?(v)
+            accum[k.to_s] = sanitized_value(v) if handler.valid_payload_key?(k) && handler.valid_payload_value?(v)
           end
 
           span.add_attributes(attrs.compact.to_h)
@@ -118,16 +128,6 @@ module OpenTelemetry
         end
 
         private
-
-        def valid_payload_value?(value)
-          if value.is_a?(Array)
-            return true if value.empty?
-
-            value.map(&:class).uniq.size == 1 && ALWAYS_VALID_PAYLOAD_TYPES.any? { |t| value.first.is_a?(t) }
-          else
-            ALWAYS_VALID_PAYLOAD_TYPES.any? { |t| value.is_a?(t) }
-          end
-        end
 
         # We'll accept symbols as values, but stringify them; and we'll stringify symbols within an array.
         def sanitized_value(value)
