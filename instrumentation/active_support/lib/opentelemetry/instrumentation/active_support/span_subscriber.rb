@@ -103,9 +103,11 @@ module OpenTelemetry
           return unless span && token
 
           payload = handler.transform_payload(payload)
-          attrs = payload.map do |k, v|
-            [k.to_s, sanitized_value(v)] if handler.valid_payload_key?(k) && valid_payload_value?(v)
+
+          attrs = payload.each_with_object({}) do |(k, v), accum|
+            accum[k.to_s] = sanitized_value(v) if handler.valid_payload_key?(k) && valid_payload_value?(v)
           end
+
           span.add_attributes(attrs.compact.to_h)
 
           if (e = payload[:exception_object])
