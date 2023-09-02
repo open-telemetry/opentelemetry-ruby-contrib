@@ -125,27 +125,45 @@ module OpenTelemetry
         end
 
         def start(name, id, payload)
-          span = handler.new_span(payload)
-          token = OpenTelemetry::Context.attach(
-            OpenTelemetry::Trace.context_with_span(span)
-          )
-          payload.merge!(
-            __opentelemetry_span: span,
-            __opentelemetry_ctx_token: token
-          )
+          begin
+            span = handler.new_span(payload)
+            token = OpenTelemetry::Context.attach(
+              OpenTelemetry::Trace.context_with_span(span)
+            )
+            payload.merge!(
+              __opentelemetry_span: span,
+              __opentelemetry_ctx_token: token
+            )
 
-          [span, token]
+            [span, token]
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
+            nil
+          end
         end
 
         def finish(name, id, payload)
-          span = payload.delete(:__opentelemetry_span)
-          token = payload.delete(:__opentelemetry_ctx_token)
-          return unless span && token
+          begin
+            span = payload.delete(:__opentelemetry_span)
+            token = payload.delete(:__opentelemetry_ctx_token)
+            return unless span && token
 
-          handler.on_finish(span, payload)
+            handler.on_finish(span, payload)
 
-          span.finish
-          OpenTelemetry::Context.detach(token)
+            begin
+              span.finish
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e)
+            end
+
+            begin
+              OpenTelemetry::Context.detach(token)
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e)
+            end
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
+          end
         end
       end
     end
