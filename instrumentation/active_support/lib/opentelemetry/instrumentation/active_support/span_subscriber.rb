@@ -102,7 +102,7 @@ module OpenTelemetry
           token = payload.delete(:__opentelemetry_ctx_token)
           return unless span && token
 
-          payload = transform_payload(payload)
+          payload = handler.transform_payload(payload)
           attrs = payload.map do |k, v|
             [k.to_s, sanitized_value(v)] if valid_payload_key?(k) && valid_payload_value?(v)
           end
@@ -118,10 +118,6 @@ module OpenTelemetry
         end
 
         private
-
-        def transform_payload(payload)
-          handler.transform_payload(payload)
-        end
 
         def valid_payload_key?(key)
           handler.valid_payload_key?(key)
