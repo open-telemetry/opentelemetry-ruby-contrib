@@ -102,15 +102,15 @@ module OpenTelemetry
           token = payload.delete(:__opentelemetry_ctx_token)
           return unless span && token
 
-          payload = handler.transform_payload(payload)
+          transformed_payload = handler.transform_payload(payload)
 
-          attrs = payload.each_with_object({}) do |(k, v), accum|
+          attrs = transformed_payload.each_with_object({}) do |(k, v), accum|
             accum[k.to_s] = sanitized_value(v) if handler.valid_payload_key?(k) && valid_payload_value?(v)
           end
 
           span.add_attributes(attrs.compact.to_h)
 
-          if (e = payload[:exception_object])
+          if (e = transformed_payload[:exception_object])
             span.record_exception(e)
             span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
           end
