@@ -76,11 +76,11 @@ module OpenTelemetry
           token = payload.delete(:__opentelemetry_ctx_token)
           return unless span && token
 
-          payload = transform_payload(payload)
-          attrs = payload.map do |k, v|
-            [k.to_s, sanitized_value(v)] if valid_payload_key?(k) && valid_payload_value?(v)
+          attrs = transform_payload(payload).each_with_object({}) do |(k, v), accum|
+            accum[k.to_s] = sanitized_value(v) if valid_payload_key?(k) && valid_payload_value?(v)
           end
-          span.add_attributes(attrs.compact.to_h)
+
+          span.add_attributes(attrs)
 
           if (e = payload[:exception_object])
             span.record_exception(e)
