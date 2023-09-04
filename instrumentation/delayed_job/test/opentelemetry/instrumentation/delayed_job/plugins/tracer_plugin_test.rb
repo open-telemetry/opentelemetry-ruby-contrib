@@ -65,13 +65,13 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
       _(exporter.finished_spans.size).must_equal 1
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
-      _(span.name).must_equal 'default send'
+      _(span.name).must_equal 'default publish'
       _(span.attributes['messaging.system']).must_equal 'delayed_job'
       _(span.attributes['messaging.destination']).must_equal 'default'
       _(span.attributes['messaging.destination_kind']).must_equal 'queue'
       _(span.attributes['messaging.delayed_job.name']).must_equal 'BasicPayload'
       _(span.attributes['messaging.delayed_job.priority']).must_equal 0
-      _(span.attributes['messaging.operation']).must_equal 'send'
+      _(span.attributes['messaging.operation']).must_equal 'publish'
       _(span.attributes['messaging.message_id']).must_be_kind_of String
 
       _(span.events.size).must_equal 2
@@ -122,7 +122,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
       _(exporter.finished_spans).must_equal []
       job_enqueue
       _(exporter.finished_spans.size).must_equal 1
-      _(exporter.finished_spans.first.name).must_equal 'default send'
+      _(exporter.finished_spans.first.name).must_equal 'default publish'
       job_run
       _(exporter.finished_spans.size).must_equal 2
 
