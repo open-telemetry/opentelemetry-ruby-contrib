@@ -36,6 +36,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'webmock', '~> 3.18.1'
   spec.add_development_dependency 'yard', '~> 0.9'
 
+  spec.post_install_message = 'This gem has been deprecated. Please use opentelemetry-resource-detector-azure ' \
+                              'or opentelemetry-resource-detector-google_cloud_platform onwards.'
+
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/resource_detectors'
