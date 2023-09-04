@@ -29,7 +29,7 @@ module OpenTelemetry
       #   OpenTelemetry.propagation.extract(message, getter: MessageAttributeGetter)
       class MessageAttributeGetter
         def self.get(carrier, key)
-          return carrier[key][:string_value] if carrier[key][:data_type] == 'String'
+          carrier[key][:string_value] if carrier[key][:data_type] == 'String'
         end
       end
     end
