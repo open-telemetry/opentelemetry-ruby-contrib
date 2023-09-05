@@ -72,7 +72,7 @@ unless ENV['OMIT_SERVICES']
 
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
 
-        # First pair for send and process spans
+        # First pair for publish and process spans
         first_process_span = process_spans[0]
         _(first_process_span.name).must_equal("#{topic_name} process")
         _(first_process_span.kind).must_equal(:consumer)
@@ -82,12 +82,12 @@ unless ENV['OMIT_SERVICES']
         first_process_span_link = first_process_span.links[0]
         linked_span_context = first_process_span_link.span_context
 
-        linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
-        _(linked_send_span.name).must_equal("#{topic_name} send")
-        _(linked_send_span.trace_id).must_equal(first_process_span.trace_id)
-        _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
+        linked_publish_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+        _(linked_publish_span.name).must_equal("#{topic_name} publish")
+        _(linked_publish_span.trace_id).must_equal(first_process_span.trace_id)
+        _(linked_publish_span.trace_id).must_equal(linked_span_context.trace_id)
 
-        # Second pair of send and process spans
+        # Second pair of publish and process spans
         second_process_span = process_spans[1]
         _(second_process_span.name).must_equal("#{topic_name} process")
         _(second_process_span.kind).must_equal(:consumer)
@@ -95,10 +95,10 @@ unless ENV['OMIT_SERVICES']
         second_process_span_link = second_process_span.links[0]
         linked_span_context = second_process_span_link.span_context
 
-        linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
-        _(linked_send_span.name).must_equal("#{topic_name} send")
-        _(linked_send_span.trace_id).must_equal(second_process_span.trace_id)
-        _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
+        linked_publish_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+        _(linked_publish_span.name).must_equal("#{topic_name} publish")
+        _(linked_publish_span.trace_id).must_equal(second_process_span.trace_id)
+        _(linked_publish_span.trace_id).must_equal(linked_span_context.trace_id)
 
         event = second_process_span.events.first
         _(event.name).must_equal('exception')
@@ -148,7 +148,7 @@ unless ENV['OMIT_SERVICES']
         _(spans.size).must_equal(4)
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
 
-        # First pair for send and process spans
+        # First pair for publish and process spans
         first_process_span = process_spans[0]
         _(first_process_span.attributes).wont_include('messaging.kafka.message_key')
 
