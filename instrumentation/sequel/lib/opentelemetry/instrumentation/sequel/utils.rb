@@ -65,7 +65,7 @@ module OpenTelemetry
             }
           end
 
-          def set_common_tags(span, db)
+          def set_common_attributes(span, db)
             span.set_attribute(Ext::COMPONENT, Ext::SEQUEL)
             span.set_attribute(Ext::OPERATION, Ext::OPERATION_QUERY)
 

@@ -34,7 +34,6 @@ module OpenTelemetry
 
           def tracer
             Sequel::Instrumentation.instance.tracer
-            # OpenTelemetry.tracer_provider.tracer("test")
           end
 
           def config
@@ -46,9 +45,8 @@ module OpenTelemetry
             response = nil
 
             tracer.in_span(Ext::SPAN_QUERY) do |span|
-              span.name = config[:service_name]
-              span.attributes[Ext::SQL]
-              Utils.set_common_tags(span, db)
+              span.name = opts[:query]
+              Utils.set_common_attributes(span, db)
               span.set_attribute(Ext::TAG_DB_VENDOR, adapter_name)
               span.set_attribute(Ext::TAG_PREPARED_NAME, opts[:prepared_name]) if opts[:prepared_name]
               response = super_method.call(sql, options, &block)
