@@ -2,7 +2,7 @@
 
 ### v0.24.2 / 2023-09-07
 
-* (No significant changes)
+* CHANGED: split resource_detectors into their own gems
 
 ### v0.24.1 / 2023-08-03
 
