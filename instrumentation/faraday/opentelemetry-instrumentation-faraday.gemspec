@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-common', '~> 0.20.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.1'
 
-  spec.add_development_dependency 'appraisal', '~> 2.2.0'
+  spec.add_development_dependency 'appraisal', '~> 2.5'
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'faraday', '~> 0.17.0'
   spec.add_development_dependency 'minitest', '~> 5.0'
@@ -39,7 +39,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'webmock', '~> 3.7.6'
   spec.add_development_dependency 'yard', '~> 0.9'
-  spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
