@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.6.0 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names
+
 ### v0.5.2 / 2023-08-03
 
 * FIXED: Add code semconv attributes

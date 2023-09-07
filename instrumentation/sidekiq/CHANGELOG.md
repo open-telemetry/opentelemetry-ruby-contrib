@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.25.0 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names
+
 ### v0.24.4 / 2023-08-07
 
 * FIXED: Allow traces inside jobs while avoiding Redis noise
