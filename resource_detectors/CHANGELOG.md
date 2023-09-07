@@ -1,5 +1,9 @@
 # Release History: opentelemetry-resource_detectors
 
+### v0.24.2 / 2023-09-07
+
+* (No significant changes)
+
 ### v0.24.1 / 2023-08-03
 
 * FIXED: Remove inline linter rules
