@@ -28,7 +28,7 @@ jobs:
     name: ${{ matrix.gem }} / ubuntu-latest / services
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
