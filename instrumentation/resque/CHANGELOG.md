@@ -2,7 +2,7 @@
 
 ### v0.5.0 / 2023-09-07
 
-* (No significant changes)
+* FIXED: Align messaging instrumentation operation names
 
 ### v0.4.2 / 2023-08-03
 
