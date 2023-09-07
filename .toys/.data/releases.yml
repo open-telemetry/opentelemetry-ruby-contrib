@@ -114,10 +114,6 @@ gems:
     directory: instrumentation/active_model_serializers
     version_constant: [OpenTelemetry, Instrumentation, ActiveModelSerializers, VERSION]
 
-  - name: opentelemetry-instrumentation-all
-    directory: instrumentation/all
-    version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
-
   - name: opentelemetry-instrumentation-concurrent_ruby
     directory: instrumentation/concurrent_ruby
     version_constant: [OpenTelemetry, Instrumentation, ConcurrentRuby, VERSION]
@@ -194,6 +190,10 @@ gems:
   - name: opentelemetry-instrumentation-sinatra
     directory: instrumentation/sinatra
     version_constant: [OpenTelemetry, Instrumentation, Sinatra, VERSION]
+
+  - name: opentelemetry-instrumentation-all
+    directory: instrumentation/all
+    version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
 
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace
