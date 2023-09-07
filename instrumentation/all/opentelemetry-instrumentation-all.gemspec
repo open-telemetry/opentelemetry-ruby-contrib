@@ -53,7 +53,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-rake', '~> 0.2.1'
   spec.add_dependency 'opentelemetry-instrumentation-rdkafka', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.25.1'
-  spec.add_dependency 'opentelemetry-instrumentation-resque', '~> 0.4.1'
+  spec.add_dependency 'opentelemetry-instrumentation-resque', '~> 0.5.0'
   spec.add_dependency 'opentelemetry-instrumentation-restclient', '~> 0.22.1'
   spec.add_dependency 'opentelemetry-instrumentation-ruby_kafka', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.25.0'
