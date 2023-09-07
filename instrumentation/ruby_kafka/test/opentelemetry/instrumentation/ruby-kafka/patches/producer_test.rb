@@ -24,8 +24,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
   let(:producer) { kafka.producer }
   let(:consumer) { kafka.consumer(group_id: SecureRandom.uuid, fetcher_max_queue_size: 1) }
   let(:async_producer) { kafka.async_producer(delivery_threshold: 1000) }
-  let(:send_span) { EXPORTER.finished_spans.find { |sp| sp.name == "#{topic} send" } }
-  let(:async_send_span) { EXPORTER.finished_spans.find { |sp| sp.name == "#{async_topic} send" } }
+  let(:publish_span) { EXPORTER.finished_spans.find { |sp| sp.name == "#{topic} publish" } }
+  let(:async_publish_span) { EXPORTER.finished_spans.find { |sp| sp.name == "#{async_topic} publish" } }
 
   before do
     kafka.create_topic(topic)
@@ -54,7 +54,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       producer.produce('hello', topic: topic)
       producer.deliver_messages
 
-      _(spans.first.name).must_equal("#{topic} send")
+      _(spans.first.name).must_equal("#{topic} publish")
       _(spans.first.kind).must_equal(:producer)
 
       _(spans.first.attributes['messaging.system']).must_equal('kafka')
@@ -68,7 +68,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       # Wait for the async calls to produce spans
       wait_for(error_message: 'Max wait time exceeded for async producer') { EXPORTER.finished_spans.size.positive? }
 
-      _(spans.first.name).must_equal("#{async_topic} send")
+      _(spans.first.name).must_equal("#{async_topic} publish")
       _(spans.first.kind).must_equal(:producer)
 
       _(spans.first.attributes['messaging.system']).must_equal('kafka')
@@ -83,8 +83,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
         producer.deliver_messages
       end
 
-      _(send_span.hex_parent_span_id).must_equal(span_id)
-      _(send_span.hex_trace_id).must_equal(trace_id)
+      _(publish_span.hex_parent_span_id).must_equal(span_id)
+      _(publish_span.hex_trace_id).must_equal(trace_id)
     end
 
     it 'propagates context when tracing async produce calls' do
@@ -98,8 +98,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       # Wait for the async calls to produce spans
       wait_for(error_message: 'Max wait time exceeded for async producer') { EXPORTER.finished_spans.size == 2 }
 
-      _(async_send_span.trace_id).must_equal(sp.context.trace_id)
-      _(async_send_span.parent_span_id).must_equal(sp.context.span_id)
+      _(async_publish_span.trace_id).must_equal(sp.context.trace_id)
+      _(async_publish_span.parent_span_id).must_equal(sp.context.span_id)
     end
 
     it 'propagates context for nonrecording spans' do
@@ -122,7 +122,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       end
       sp.finish
       _(EXPORTER.finished_spans.size).must_equal(2)
-      _(send_span.hex_parent_span_id).must_equal(sp.context.hex_span_id)
+      _(publish_span.hex_parent_span_id).must_equal(sp.context.hex_span_id)
     end
   end
 end unless ENV['OMIT_SERVICES']

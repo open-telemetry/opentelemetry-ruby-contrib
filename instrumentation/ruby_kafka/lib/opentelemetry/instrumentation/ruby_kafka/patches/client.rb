@@ -24,7 +24,7 @@ module OpenTelemetry
 
             attributes['messaging.kafka.partition'] = partition if partition
 
-            tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
+            tracer.in_span("#{topic} publish", attributes: attributes, kind: :producer) do
               OpenTelemetry.propagation.inject(headers)
               super
             end

@@ -35,8 +35,8 @@ module OpenTelemetry
               }
 
               span_name = case config[:span_naming]
-                          when :job_class then "#{job_class} send"
-                          else "#{queue} send"
+                          when :job_class then "#{job_class} publish"
+                          else "#{queue} publish"
                           end
 
               tracer.in_span(span_name, attributes: attributes, kind: :producer) do

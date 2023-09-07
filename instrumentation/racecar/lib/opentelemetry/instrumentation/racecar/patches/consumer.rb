@@ -19,7 +19,7 @@ module OpenTelemetry
 
             headers ||= {}
 
-            tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
+            tracer.in_span("#{topic} publish", attributes: attributes, kind: :producer) do
               OpenTelemetry.propagation.inject(headers)
               super
             end

@@ -40,7 +40,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
     kafka.each_message(topic: topic) { |_msg| break } # rubocop:disable Lint/UnreachableLoop
 
     _(spans.size).must_equal(2)
-    _(spans[0].name).must_equal("#{topic} send")
+    _(spans[0].name).must_equal("#{topic} publish")
     _(spans[0].kind).must_equal(:producer)
 
     _(spans[1].name).must_equal("#{topic} process")
@@ -57,9 +57,9 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
       break if counter >= 2
     end
 
-    send_spans = spans.select { |s| s.name == "#{topic} send" }
-    _(send_spans[0].attributes).wont_include('messaging.kafka.message_key')
-    _(send_spans[1].attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
+    publish_spans = spans.select { |s| s.name == "#{topic} publish" }
+    _(publish_spans[0].attributes).wont_include('messaging.kafka.message_key')
+    _(publish_spans[1].attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
 
     process_spans = spans.select { |s| s.name == "#{topic} process" }
     _(process_spans[0].attributes).wont_include('messaging.kafka.message_key')
