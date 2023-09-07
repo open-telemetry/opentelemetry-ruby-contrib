@@ -95,7 +95,7 @@ module OpenTelemetry
         def span_name(context, client_method)
           case client_method
           when SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH
-            "#{MessagingHelper.queue_name(context)} send"
+            "#{MessagingHelper.queue_name(context)} publish"
           when SQS_RECEIVE_MESSAGE
             "#{MessagingHelper.queue_name(context)} receive"
           else

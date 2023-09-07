@@ -22,7 +22,7 @@ module OpenTelemetry
               tracer = Que::Instrumentation.instance.tracer
               otel_config = Que::Instrumentation.instance.config
 
-              tracer.in_span('send', kind: :producer) do |span|
+              tracer.in_span('publish', kind: :producer) do |span|
                 # Que doesn't have a good place to store metadata. There are
                 # basically two options: the job payload and the job tags.
                 #
@@ -57,7 +57,7 @@ module OpenTelemetry
                   job_attrs = job.que_attrs
                 end
 
-                span.name = "#{job_attrs[:job_class]} send"
+                span.name = "#{job_attrs[:job_class]} publish"
                 span.add_attributes(QueJob.job_attributes(job_attrs))
 
                 job
@@ -73,7 +73,7 @@ module OpenTelemetry
             attributes = {
               'messaging.system' => 'que',
               'messaging.destination_kind' => 'queue',
-              'messaging.operation' => 'send',
+              'messaging.operation' => 'publish',
               'messaging.destination' => job_attrs[:queue] || 'default',
               'messaging.que.job_class' => job_attrs[:job_class],
               'messaging.que.priority' => job_attrs[:priority] || 100

@@ -16,7 +16,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
   let(:config) { { propagation_style: :link, force_flush: false, span_naming: :queue } }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
-  let(:send_span) { spans.find { |s| s.name == 'default send' } }
+  let(:publish_span) { spans.find { |s| s.name == 'default publish' } }
   let(:process_span) { spans.find { |s| s.name == 'default process' } }
 
   before do
@@ -41,7 +41,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     it 'traces enqueuing and processing the job' do
       TestJob.perform_later
 
-      _(send_span).wont_be_nil
+      _(publish_span).wont_be_nil
       _(process_span).wont_be_nil
     end
   end
@@ -50,7 +50,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     it 'only traces processing the job' do
       TestJob.perform_now
 
-      _(send_span).must_be_nil
+      _(publish_span).must_be_nil
       _(process_span).wont_be_nil
       _(process_span.attributes['code.namespace']).must_equal('TestJob')
       _(process_span.attributes['code.function']).must_equal('perform_now')
@@ -97,14 +97,14 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
       TestJob.perform_later
 
-      _(send_span.kind).must_equal(:client)
+      _(publish_span.kind).must_equal(:client)
       _(process_span.kind).must_equal(:server)
     end
 
     it 'sets correct span kinds for all other jobs' do
       TestJob.perform_later
 
-      _(send_span.kind).must_equal(:producer)
+      _(publish_span.kind).must_equal(:producer)
       _(process_span.kind).must_equal(:consumer)
     end
   end
@@ -113,7 +113,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     it 'sets the messaging.operation attribute only when processing the job' do
       TestJob.perform_later
 
-      _(send_span.attributes['messaging.operation']).must_be_nil
+      _(publish_span.attributes['messaging.operation']).must_be_nil
       _(process_span.attributes['messaging.operation']).must_equal('process')
     end
 
@@ -121,7 +121,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'is sets correctly for inline jobs' do
         TestJob.perform_later
 
-        [send_span, process_span].each do |span|
+        [publish_span, process_span].each do |span|
           _(span.attributes['net.transport']).must_equal('inproc')
         end
       end
@@ -129,7 +129,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'is set correctly for async jobs' do
         TestJob.perform_later
 
-        [send_span, process_span].each do |span|
+        [publish_span, process_span].each do |span|
           _(span.attributes['net.transport']).must_equal('inproc')
         end
       end
@@ -139,7 +139,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'is unset for unprioritized jobs' do
         TestJob.perform_later
 
-        [send_span, process_span].each do |span|
+        [publish_span, process_span].each do |span|
           _(span.attributes['messaging.active_job.priority']).must_be_nil
         end
       end
@@ -147,7 +147,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'is set for jobs with a priority' do
         TestJob.set(priority: 1).perform_later
 
-        [send_span, process_span].each do |span|
+        [publish_span, process_span].each do |span|
           _(span.attributes['messaging.active_job.priority']).must_equal(1)
         end
       end
@@ -157,7 +157,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'is unset for jobs that do not specify a wait time' do
         TestJob.perform_later
 
-        [send_span, process_span].each do |span|
+        [publish_span, process_span].each do |span|
           _(span.attributes['messaging.active_job.scheduled_at']).must_be_nil
         end
       end
@@ -166,8 +166,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         job = TestJob.set(wait: 0.second).perform_later
 
         # Only the sending span is a 'scheduled' thing
-        _(send_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at)
-        assert(send_span.attributes['messaging.active_job.scheduled_at'])
+        _(publish_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at)
+        assert(publish_span.attributes['messaging.active_job.scheduled_at'])
 
         # The processing span isn't a 'scheduled' thing
         _(process_span.attributes['messaging.active_job.scheduled_at']).must_be_nil
@@ -185,7 +185,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         ActiveJob::Base.queue_adapter = :inline
         TestJob.perform_later
 
-        [send_span, process_span].each do |span|
+        [publish_span, process_span].each do |span|
           _(span.attributes['messaging.system']).must_equal('inline')
         end
       end
@@ -193,7 +193,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'is set correctly for the async adapter' do
         TestJob.perform_later
 
-        [send_span, process_span].each do |span|
+        [publish_span, process_span].each do |span|
           _(span.attributes['messaging.system']).must_equal('async')
         end
       end
@@ -232,7 +232,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     it 'generally sets other attributes as expected' do
       job = TestJob.perform_later
 
-      [send_span, process_span].each do |span|
+      [publish_span, process_span].each do |span|
         _(span.attributes['code.namespace']).must_equal('TestJob')
         _(span.attributes['messaging.destination_kind']).must_equal('queue')
         _(span.attributes['messaging.system']).must_equal('async')
@@ -245,8 +245,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     describe 'when queue - default' do
       it 'names spans according to the job queue' do
         TestJob.set(queue: :foo).perform_later
-        send_span = exporter.finished_spans.find { |s| s.name == 'foo send' }
-        _(send_span).wont_be_nil
+        publish_span = exporter.finished_spans.find { |s| s.name == 'foo publish' }
+        _(publish_span).wont_be_nil
 
         process_span = exporter.finished_spans.find { |s| s.name == 'foo process' }
         _(process_span).wont_be_nil
@@ -258,8 +258,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
       it 'names span according to the job class' do
         TestJob.set(queue: :foo).perform_later
-        send_span = exporter.finished_spans.find { |s| s.name == 'TestJob send' }
-        _(send_span).wont_be_nil
+        publish_span = exporter.finished_spans.find { |s| s.name == 'TestJob publish' }
+        _(publish_span).wont_be_nil
 
         process_span = exporter.finished_spans.find { |s| s.name == 'TestJob process' }
         _(process_span).wont_be_nil
@@ -309,11 +309,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'creates span links in separate traces' do
         TestJob.perform_later
 
-        _(send_span.trace_id).wont_equal(process_span.trace_id)
+        _(publish_span.trace_id).wont_equal(process_span.trace_id)
 
         _(process_span.total_recorded_links).must_equal(1)
-        _(process_span.links[0].span_context.trace_id).must_equal(send_span.trace_id)
-        _(process_span.links[0].span_context.span_id).must_equal(send_span.span_id)
+        _(process_span.links[0].span_context.trace_id).must_equal(publish_span.trace_id)
+        _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
       end
 
       it 'propagates baggage' do
@@ -322,11 +322,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
           BaggageJob.perform_later
         end
 
-        _(send_span.trace_id).wont_equal(process_span.trace_id)
+        _(publish_span.trace_id).wont_equal(process_span.trace_id)
 
         _(process_span.total_recorded_links).must_equal(1)
-        _(process_span.links[0].span_context.trace_id).must_equal(send_span.trace_id)
-        _(process_span.links[0].span_context.span_id).must_equal(send_span.span_id)
+        _(process_span.links[0].span_context.trace_id).must_equal(publish_span.trace_id)
+        _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
         _(process_span.attributes['success']).must_equal(true)
       end
     end
@@ -339,8 +339,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
         _(process_span.total_recorded_links).must_equal(0)
 
-        _(send_span.trace_id).must_equal(process_span.trace_id)
-        _(process_span.parent_span_id).must_equal(send_span.span_id)
+        _(publish_span.trace_id).must_equal(process_span.trace_id)
+        _(process_span.parent_span_id).must_equal(publish_span.span_id)
       end
 
       it 'propagates baggage' do
@@ -350,8 +350,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         end
         _(process_span.total_recorded_links).must_equal(0)
 
-        _(send_span.trace_id).must_equal(process_span.trace_id)
-        _(process_span.parent_span_id).must_equal(send_span.span_id)
+        _(publish_span.trace_id).must_equal(process_span.trace_id)
+        _(process_span.parent_span_id).must_equal(publish_span.span_id)
         _(process_span.attributes['success']).must_equal(true)
       end
     end
@@ -364,8 +364,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
         _(process_span.total_recorded_links).must_equal(0)
 
-        _(send_span.trace_id).wont_equal(process_span.trace_id)
-        _(process_span.parent_span_id).wont_equal(send_span.span_id)
+        _(publish_span.trace_id).wont_equal(process_span.trace_id)
+        _(process_span.parent_span_id).wont_equal(publish_span.span_id)
       end
 
       it 'still propagates baggage' do
@@ -376,8 +376,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
         _(process_span.total_recorded_links).must_equal(0)
 
-        _(send_span.trace_id).wont_equal(process_span.trace_id)
-        _(process_span.parent_span_id).wont_equal(send_span.span_id)
+        _(publish_span.trace_id).wont_equal(process_span.trace_id)
+        _(process_span.parent_span_id).wont_equal(publish_span.span_id)
         _(process_span.attributes['success']).must_equal(true)
       end
     end
