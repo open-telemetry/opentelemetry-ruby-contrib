@@ -123,7 +123,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
 
         # root job that enqueues another job
         _(root_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
-        _(root_span.name).must_equal 'default send'
+        _(root_span.name).must_equal 'default publish'
         _(root_span.kind).must_equal :producer
 
         # process span is linked to the root enqueuing job
@@ -133,7 +133,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
 
         # enquene span is child to the parent process job
         child_span2 = spans.find { |s| s.parent_span_id == child_span1.span_id }
-        _(child_span2.name).must_equal 'default send'
+        _(child_span2.name).must_equal 'default publish'
         _(child_span2.kind).must_equal :producer
 
         # last process job is linked back to the process job that enqueued it
@@ -182,7 +182,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
         _(exporter.finished_spans.size).must_equal 4
 
         _(root_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
-        _(root_span.name).must_equal 'default send'
+        _(root_span.name).must_equal 'default publish'
         _(root_span.kind).must_equal :producer
 
         child_span1 = spans.find { |s| s.parent_span_id == root_span.span_id }
@@ -190,7 +190,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
         _(child_span1.kind).must_equal :consumer
 
         child_span2 = spans.find { |s| s.parent_span_id == child_span1.span_id }
-        _(child_span2.name).must_equal 'default send'
+        _(child_span2.name).must_equal 'default publish'
         _(child_span2.kind).must_equal :producer
 
         child_span3 = spans.find { |s| s.parent_span_id == child_span2.span_id }

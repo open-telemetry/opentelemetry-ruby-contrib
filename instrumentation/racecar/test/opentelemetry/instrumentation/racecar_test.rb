@@ -40,7 +40,7 @@ describe OpenTelemetry::Instrumentation::Racecar do
     producer.delivery_callback = ->(_) {}
 
     producer_messages.map do |msg|
-      tracer.in_span("#{msg[:topic]} send", kind: :producer) do
+      tracer.in_span("#{msg[:topic]} publish", kind: :producer) do
         msg[:headers] ||= {}
         OpenTelemetry.propagation.inject(msg[:headers])
         producer.produce(**msg)
@@ -120,9 +120,9 @@ describe OpenTelemetry::Instrumentation::Racecar do
 
       it 'traces each message and traces publishing' do
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
-        racecar_send_spans = spans.select { |s| s.name == "ack-#{topic_name} send" }
+        racecar_publish_spans = spans.select { |s| s.name == "ack-#{topic_name} publish" }
 
-        # First pair for send and process spans
+        # First pair for publish and process spans
         first_process_span = process_spans[0]
         _(first_process_span.name).must_equal("#{topic_name} process")
         _(first_process_span.kind).must_equal(:consumer)
@@ -132,20 +132,20 @@ describe OpenTelemetry::Instrumentation::Racecar do
         first_process_span_link = first_process_span.links[0]
         linked_span_context = first_process_span_link.span_context
 
-        linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
-        _(linked_send_span.name).must_equal("#{topic_name} send")
-        _(linked_send_span.trace_id).must_equal(first_process_span.trace_id)
-        _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
+        linked_publish_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+        _(linked_publish_span.name).must_equal("#{topic_name} publish")
+        _(linked_publish_span.trace_id).must_equal(first_process_span.trace_id)
+        _(linked_publish_span.trace_id).must_equal(linked_span_context.trace_id)
 
         # first racecar ack span
-        first_send_span = racecar_send_spans[0]
-        _(first_send_span.name).must_equal("ack-#{topic_name} send")
-        _(first_send_span.kind).must_equal(:producer)
-        _(first_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Racecar')
-        _(first_send_span.parent_span_id).must_equal(first_process_span.span_id)
-        _(first_send_span.trace_id).must_equal(first_process_span.trace_id)
+        first_publish_span = racecar_publish_spans[0]
+        _(first_publish_span.name).must_equal("ack-#{topic_name} publish")
+        _(first_publish_span.kind).must_equal(:producer)
+        _(first_publish_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Racecar')
+        _(first_publish_span.parent_span_id).must_equal(first_process_span.span_id)
+        _(first_publish_span.trace_id).must_equal(first_process_span.trace_id)
 
-        # Second pair of send and process spans
+        # Second pair of publish and process spans
         second_process_span = process_spans[1]
         _(second_process_span.name).must_equal("#{topic_name} process")
         _(second_process_span.kind).must_equal(:consumer)
@@ -153,18 +153,18 @@ describe OpenTelemetry::Instrumentation::Racecar do
         second_process_span_link = second_process_span.links[0]
         linked_span_context = second_process_span_link.span_context
 
-        linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
-        _(linked_send_span.name).must_equal("#{topic_name} send")
-        _(linked_send_span.trace_id).must_equal(second_process_span.trace_id)
-        _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
+        linked_publish_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+        _(linked_publish_span.name).must_equal("#{topic_name} publish")
+        _(linked_publish_span.trace_id).must_equal(second_process_span.trace_id)
+        _(linked_publish_span.trace_id).must_equal(linked_span_context.trace_id)
 
         # second racecar ack span
-        second_send_span = racecar_send_spans[1]
-        _(second_send_span.name).must_equal("ack-#{topic_name} send")
-        _(second_send_span.kind).must_equal(:producer)
-        _(second_send_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Racecar')
-        _(second_send_span.parent_span_id).must_equal(second_process_span.span_id)
-        _(second_send_span.trace_id).must_equal(second_process_span.trace_id)
+        second_publish_span = racecar_publish_spans[1]
+        _(second_publish_span.name).must_equal("ack-#{topic_name} publish")
+        _(second_publish_span.kind).must_equal(:producer)
+        _(second_publish_span.instrumentation_library.name).must_equal('OpenTelemetry::Instrumentation::Racecar')
+        _(second_publish_span.parent_span_id).must_equal(second_process_span.span_id)
+        _(second_publish_span.trace_id).must_equal(second_process_span.trace_id)
       end
 
       describe 'when message keys are encoded differently' do
@@ -212,7 +212,7 @@ describe OpenTelemetry::Instrumentation::Racecar do
       it 'can consume and publish a message' do
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
 
-        # First pair for send and process spans
+        # First pair for publish and process spans
         first_process_span = process_spans[0]
         _(first_process_span.name).must_equal("#{topic_name} process")
         _(first_process_span.kind).must_equal(:consumer)
@@ -222,10 +222,10 @@ describe OpenTelemetry::Instrumentation::Racecar do
         first_process_span_link = first_process_span.links[0]
         linked_span_context = first_process_span_link.span_context
 
-        linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
-        _(linked_send_span.name).must_equal("#{topic_name} send")
-        _(linked_send_span.trace_id).must_equal(first_process_span.trace_id)
-        _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
+        linked_publish_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+        _(linked_publish_span.name).must_equal("#{topic_name} publish")
+        _(linked_publish_span.trace_id).must_equal(first_process_span.trace_id)
+        _(linked_publish_span.trace_id).must_equal(linked_span_context.trace_id)
 
         event = first_process_span.events.first
         _(event.name).must_equal('exception')
