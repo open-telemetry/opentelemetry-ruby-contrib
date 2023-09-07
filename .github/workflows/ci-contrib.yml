@@ -22,7 +22,7 @@ jobs:
     name: "propagator-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
@@ -61,7 +61,7 @@ jobs:
     name: "opentelemetry-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
