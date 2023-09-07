@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+### v0.4.2 / 2023-09-07
+
+* (No significant changes)
+
 ### v0.4.1 / 2023-06-05
 
 * FIXED: Base config options 
