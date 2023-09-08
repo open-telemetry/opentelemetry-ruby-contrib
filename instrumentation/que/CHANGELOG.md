@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.7.0 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names
+
 ### v0.6.2 / 2023-08-07
 
 * FIXED: Correctly set bulk_enqueue job options

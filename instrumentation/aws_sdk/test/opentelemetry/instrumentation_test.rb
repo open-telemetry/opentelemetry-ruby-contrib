@@ -205,7 +205,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         sns_client.publish message: 'msg', phone_number: '123456'
 
         _(last_span.attributes['messaging.destination']).must_equal 'phone_number'
-        _(last_span.name).must_equal 'phone_number send'
+        _(last_span.name).must_equal 'phone_number publish'
       end
     end
   end

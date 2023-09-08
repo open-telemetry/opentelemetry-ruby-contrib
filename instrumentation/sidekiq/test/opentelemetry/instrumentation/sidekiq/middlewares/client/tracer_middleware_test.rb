@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Client::TracerMid
 
       _(exporter.finished_spans.size).must_equal 1
 
-      _(enqueue_span.name).must_equal 'default send'
+      _(enqueue_span.name).must_equal 'default publish'
       _(enqueue_span.kind).must_equal :producer
       _(enqueue_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
       _(enqueue_span.attributes['messaging.system']).must_equal 'sidekiq'
@@ -49,7 +49,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Client::TracerMid
 
     it 'traces when enqueued with Active Job' do
       SimpleJobWithActiveJob.perform_later(1, 2)
-      _(enqueue_span.name).must_equal('default send')
+      _(enqueue_span.name).must_equal('default publish')
       _(enqueue_span.attributes['messaging.system']).must_equal('sidekiq')
       _(enqueue_span.attributes['messaging.sidekiq.job_class']).must_equal('SimpleJobWithActiveJob')
       _(enqueue_span.attributes['messaging.destination']).must_equal('default')
@@ -62,12 +62,12 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Client::TracerMid
       it 'uses the job class name for the span name' do
         SimpleJob.perform_async
 
-        _(enqueue_span.name).must_equal('SimpleJob send')
+        _(enqueue_span.name).must_equal('SimpleJob publish')
       end
 
       it 'uses the job class name when enqueued with Active Job' do
         SimpleJobWithActiveJob.perform_later(1, 2)
-        _(enqueue_span.name).must_equal('SimpleJobWithActiveJob send')
+        _(enqueue_span.name).must_equal('SimpleJobWithActiveJob publish')
       end
     end
 

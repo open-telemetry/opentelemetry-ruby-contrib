@@ -16,7 +16,7 @@ module OpenTelemetry
           attributes = basic_attributes(channel, channel.connection, exchange, routing_key)
           destination = destination_name(exchange, routing_key)
 
-          tracer.in_span("#{destination} send", attributes: attributes, kind: :producer, &block)
+          tracer.in_span("#{destination} publish", attributes: attributes, kind: :producer, &block)
         end
 
         def self.with_process_span(channel, tracer, delivery_info, properties, &block)

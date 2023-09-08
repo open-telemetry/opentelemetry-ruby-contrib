@@ -17,10 +17,10 @@ module OpenTelemetry
               return block.call(job) unless enabled?
 
               attributes = build_attributes(job)
-              attributes['messaging.operation'] = 'send'
+              attributes['messaging.operation'] = 'publish'
               attributes.compact!
 
-              tracer.in_span("#{job_queue(job)} send", attributes: attributes, kind: :producer) do |span|
+              tracer.in_span("#{job_queue(job)} publish", attributes: attributes, kind: :producer) do |span|
                 yield job
                 span.set_attribute('messaging.message_id', job.id.to_s)
                 add_events(span, job)
