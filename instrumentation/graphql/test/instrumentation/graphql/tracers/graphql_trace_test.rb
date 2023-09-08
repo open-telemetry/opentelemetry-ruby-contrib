@@ -288,5 +288,78 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
         # rubocop:enable Layout/LineLength
       end
     end
+
+    describe 'compatibility with other tracers' do
+      let(:config) { { enable_platform_field: true } }
+
+      if GraphQL::Tracing.const_defined?('PlatformTrace')
+        module CustomPlatformTracer
+          include ::GraphQL::Tracing::PlatformTrace
+
+          def initialize(events:, **_options)
+            @events = events
+            super
+          end
+
+          def platform_execute_field(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_execute_field_lazy(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_authorized(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_authorized_lazy(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_resolve_type(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_resolve_type_lazy(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_authorized_key(type)
+            "custom.#{type.graphql_name}.authorized"
+          end
+
+          def platform_resolve_type_key(type)
+            "custom.#{type.graphql_name}.resolve_type"
+          end
+
+          def platform_field_key(field)
+            "custom.#{field.path}"
+          end
+        end
+
+        it 'does not conflict with PlatformTrace' do
+          custom_tracer_events = []
+
+          SchemaWithMultipleTracers = Class.new(SomeGraphQLAppSchema) do
+            trace_with(CustomPlatformTracer, events: custom_tracer_events)
+          end
+
+          SchemaWithMultipleTracers.execute('{ vehicle { __typename } }')
+
+          span = spans.find { |s| s.name == 'graphql.execute_field' }
+          _(span).wont_be_nil
+
+          custom_events = custom_tracer_events.all? { |event| event.start_with?('custom') }
+          _(custom_events).must_equal(true)
+        end
+      end
+    end
   end
 end

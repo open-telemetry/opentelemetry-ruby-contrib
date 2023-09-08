@@ -114,10 +114,6 @@ gems:
     directory: instrumentation/active_model_serializers
     version_constant: [OpenTelemetry, Instrumentation, ActiveModelSerializers, VERSION]
 
-  - name: opentelemetry-instrumentation-all
-    directory: instrumentation/all
-    version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
-
   - name: opentelemetry-instrumentation-concurrent_ruby
     directory: instrumentation/concurrent_ruby
     version_constant: [OpenTelemetry, Instrumentation, ConcurrentRuby, VERSION]
@@ -195,6 +191,10 @@ gems:
     directory: instrumentation/sinatra
     version_constant: [OpenTelemetry, Instrumentation, Sinatra, VERSION]
 
+  - name: opentelemetry-instrumentation-all
+    directory: instrumentation/all
+    version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
+
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace
     version_constant: [OpenTelemetry, Propagator, OTTrace, VERSION]
@@ -208,7 +208,17 @@ gems:
     version_rb_path: lib/opentelemetry/resource/detectors/version.rb
     version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
 
+  - name: opentelemetry-resource-detector-azure
+    directory: resources/azure
+    version_rb_path: lib/opentelemetry/resource/detector/azure/version.rb
+    version_constant: [OpenTelemetry, Resource, Detector, Azure, VERSION]
+
   - name: opentelemetry-resource-detector-container
     directory: resources/container
     version_rb_path: lib/opentelemetry/resource/detector/container/version.rb
     version_constant: [OpenTelemetry, Resource, Detector, Container, VERSION]
+
+  - name: opentelemetry-resource-detector-google_cloud_platform
+    directory: resources/google_cloud_platform
+    version_rb_path: lib/opentelemetry/resource/detector/google_cloud_platform/version.rb
+    version_constant: [OpenTelemetry, Resource, Detector, GoogleCloudPlatform, VERSION]

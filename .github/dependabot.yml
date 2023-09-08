@@ -182,6 +182,14 @@ updates:
   schedule:
     interval: weekly
 - package-ecosystem: bundler
+  directory: "/resources/azure"
+  schedule:
+    interval: weekly
+- package-ecosystem: bundler
   directory: "/resources/container"
+  schedule:
+    interval: weekly
+- package-ecosystem: bundler
+  directory: "/resources/google_cloud_platform"
   schedule:
     interval: weekly

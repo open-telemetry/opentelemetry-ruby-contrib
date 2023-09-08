@@ -344,6 +344,56 @@ For releases to succeed, new gems MUST include the following:
  *  A `CHANGELOG.md` file.
  *  A `yard` rake task.
 
+## Dependabot Updates
+
+This repository uses [Dependabot](https://dependabot.com/) to keep dependencies up to date, however there shared development dependencies are often scattered across multiple gems. Dependabot does not currently support the ability to group dependencies for gems in multiple subdirectories, so we use a custom script to bulk update dependencies across all gems.
+
+E.g. if you want to update Rubocop to version 1.56.1, you would run:
+
+```console
+
+$> bin/update-dependencies rubocop 1.56.1
+
+Review your changes and commit
+Press any key to continue
+
+```
+
+This will then run a bulk update on all of the gems in the repository, and then prompt you to review the changes and stage them for a commit:
+
+```console
+
+diff --git a/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec b/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
+index 42c5ecba..74fcc743 100644
+--- a/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
++++ b/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
+@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
+   spec.add_development_dependency 'bundler', '~> 2.4'
+   spec.add_development_dependency 'minitest', '~> 5.0'
+   spec.add_development_dependency 'rake', '~> 13.0'
+-  spec.add_development_dependency 'rubocop', '~> 1.50.0'
++  spec.add_development_dependency 'rubocop', '~> 1.56.1'
+   spec.add_development_dependency 'simplecov', '~> 0.22.0'
+   spec.add_development_dependency 'yard', '~> 0.9'
+   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
+(1/1) Stage this hunk [y,n,q,a,d,e,?]? y
+
+diff --git a/propagator/xray/opentelemetry-propagator-xray.gemspec b/propagator/xray/opentelemetry-propagator-xray.gemspec
+index e29acbfc..85622d25 100644
+--- a/propagator/xray/opentelemetry-propagator-xray.gemspec
++++ b/propagator/xray/opentelemetry-propagator-xray.gemspec
+@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
+   spec.add_development_dependency 'bundler', '~> 2.4'
+   spec.add_development_dependency 'minitest', '~> 5.0'
+   spec.add_development_dependency 'rake', '~> 13.0'
+-  spec.add_development_dependency 'rubocop', '~> 1.50.0'
++  spec.add_development_dependency 'rubocop', '~> 1.56.1'
+   spec.add_development_dependency 'simplecov', '~> 0.22.0'
+   spec.add_development_dependency 'yard', '~> 0.9'
+   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
+(1/1) Stage this hunk [y,n,q,a,d,e,?]? y
+```
+
 [cncf-cla]: https://identity.linuxfoundation.org/projects/cncf
 [github-draft]: https://github.blog/2019-02-14-introducing-draft-pull-requests/
 [kube-github-workflow-pr]: https://github.com/kubernetes/community/blob/master/contributors/guide/github-workflow.md#7-create-a-pull-request

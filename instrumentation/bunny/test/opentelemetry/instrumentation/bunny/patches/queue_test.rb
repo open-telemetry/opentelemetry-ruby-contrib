@@ -47,8 +47,8 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Queue do
 
       queue.pop { |_delivery_info, _metadata, _payload| break }
 
-      send_span = spans.find { |span| span.name == ".#{queue_name} send" }
-      _(send_span).wont_be_nil
+      publish_span = spans.find { |span| span.name == ".#{queue_name} publish" }
+      _(publish_span).wont_be_nil
 
       receive_span = spans.find { |span| span.name == ".#{queue_name} receive" }
       _(receive_span).wont_be_nil
@@ -58,7 +58,7 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Queue do
       _(process_span.kind).must_equal(:consumer)
 
       linked_span_context = process_span.links.first.span_context
-      _(linked_span_context.trace_id).must_equal(send_span.trace_id)
+      _(linked_span_context.trace_id).must_equal(publish_span.trace_id)
     end
 
     it 'traces messages returned' do

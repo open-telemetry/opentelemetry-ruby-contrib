@@ -162,7 +162,7 @@ module OpenTelemetry
             # string when there is only one. Some older versions of libpq allow
             # multiple without any way to discern which is presently connected.
             addr = conninfo_hash[:hostaddr]
-            return addr unless addr&.include?(',')
+            addr unless addr&.include?(',')
           end
 
           def transport_attrs
@@ -190,7 +190,7 @@ module OpenTelemetry
             # As a fallback, we can use the port of the parsed connection
             # string when there is exactly one.
             p = conninfo_hash[:port]
-            return p.to_i unless p.nil? || p.empty? || p.include?(',')
+            p.to_i unless p.nil? || p.empty? || p.include?(',')
           end
         end
       end
