@@ -37,7 +37,7 @@ module OpenTelemetry
           parent_context = OpenTelemetry.propagation.extract(properties[:tracer_receive_headers])
 
           # link to the producer context
-          producer_context = OpenTelemetry.propagation.extract(properties[:headers])
+          producer_context = OpenTelemetry.propagation.extract(properties[:headers] || {})
           producer_span_context = OpenTelemetry::Trace.current_span(producer_context).context
           links = [OpenTelemetry::Trace::Link.new(producer_span_context)] if producer_span_context.valid?
 
