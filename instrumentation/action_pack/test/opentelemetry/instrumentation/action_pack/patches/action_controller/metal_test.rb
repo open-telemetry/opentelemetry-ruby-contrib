@@ -142,6 +142,12 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
       _(span.attributes['http.user_agent']).must_be_nil
       _(span.attributes['code.namespace']).must_equal 'ExceptionsController'
       _(span.attributes['code.function']).must_equal 'show'
+
+      _(span.events.size).must_equal 1
+      _(span.events.first.name).must_equal 'exception'
+      _(span.events.first.attributes['exception.type']).must_equal 'TypeError'
+      _(span.events.first.attributes['exception.message']).must_equal 'exception class/object expected'
+      _(span.events.first.attributes['exception.stacktrace'].nil?).must_equal false
     end
   end
 
