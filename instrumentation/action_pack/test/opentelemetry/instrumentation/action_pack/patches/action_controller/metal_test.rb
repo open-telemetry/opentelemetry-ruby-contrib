@@ -121,6 +121,78 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     _(span.name).must_equal 'HTTP GET'
   end
 
+  it 'does not set span to error when 404 is raised from controller' do
+    get '/internal_page_not_found'
+
+    _(span.name).must_equal 'ExampleController#internal_page_not_found'
+    _(span.kind).must_equal :server
+    _(span.status.ok?).must_equal true
+
+    _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
+    _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
+
+    _(span.attributes['http.method']).must_equal 'GET'
+    _(span.attributes['http.host']).must_equal 'example.org'
+    _(span.attributes['http.scheme']).must_equal 'http'
+    _(span.attributes['http.target']).must_equal '/internal_page_not_found'
+    _(span.attributes['http.status_code']).must_equal 404
+    _(span.attributes['http.user_agent']).must_be_nil
+    _(span.attributes['code.namespace']).must_equal 'ExampleController'
+    _(span.attributes['code.function']).must_equal 'internal_page_not_found'
+
+    _(span.events.size).must_equal 1
+    _(span.events.first.name).must_equal 'exception'
+    _(span.events.first.attributes['exception.type']).must_equal 'ActionController::RoutingError'
+    _(span.events.first.attributes['exception.message']).must_equal 'Not Found'
+    _(span.events.first.attributes['exception.stacktrace'].nil?).must_equal false
+  end
+
+  it 'does not set span to error when wrong url is requested' do
+    get '/not_found_url'
+
+    _(span.name).must_equal 'HTTP GET'
+    _(span.kind).must_equal :server
+    _(span.status.ok?).must_equal true
+
+    _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
+    _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
+
+    _(span.attributes['http.method']).must_equal 'GET'
+    _(span.attributes['http.host']).must_equal 'example.org'
+    _(span.attributes['http.scheme']).must_equal 'http'
+    _(span.attributes['http.target']).must_equal '/not_found_url'
+    _(span.attributes['http.status_code']).must_equal 404
+    _(span.attributes['http.user_agent']).must_be_nil
+
+    _(span.events).must_be_nil
+  end
+
+  it 'does not set span to error when 422 is raised from controller' do
+    get '/internal_invalid_auth'
+
+    _(span.name).must_equal 'ExampleController#internal_invalid_auth'
+    _(span.kind).must_equal :server
+    _(span.status.ok?).must_equal true
+
+    _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
+    _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
+
+    _(span.attributes['http.method']).must_equal 'GET'
+    _(span.attributes['http.host']).must_equal 'example.org'
+    _(span.attributes['http.scheme']).must_equal 'http'
+    _(span.attributes['http.target']).must_equal '/internal_invalid_auth'
+    _(span.attributes['http.status_code']).must_equal 422
+    _(span.attributes['http.user_agent']).must_be_nil
+    _(span.attributes['code.namespace']).must_equal 'ExampleController'
+    _(span.attributes['code.function']).must_equal 'internal_invalid_auth'
+
+    _(span.events.size).must_equal 1
+    _(span.events.first.name).must_equal 'exception'
+    _(span.events.first.attributes['exception.type']).must_equal 'ActionController::InvalidAuthenticityToken'
+    _(span.events.first.attributes['exception.message']).must_equal 'Invalid Authentication'
+    _(span.events.first.attributes['exception.stacktrace'].nil?).must_equal false
+  end
+
   describe 'when the application has exceptions_app configured' do
     let(:rails_app) { AppConfig.initialize_app(use_exceptions_app: true) }
 

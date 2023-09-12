@@ -22,4 +22,12 @@ class ExampleController < ActionController::Base
   def internal_server_error
     raise :internal_server_error
   end
+
+  def internal_page_not_found
+    raise ::ActionController::RoutingError.new("Not Found")
+  end
+
+  def internal_invalid_auth
+    raise ::ActionController::InvalidAuthenticityToken.new("Invalid Authentication")
+  end
 end
