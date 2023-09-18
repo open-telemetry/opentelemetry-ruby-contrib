@@ -34,6 +34,7 @@ jobs:
           - gruf
           - http
           - http_client
+          - httpx
           - koala
           - lmdb
           - net_http
