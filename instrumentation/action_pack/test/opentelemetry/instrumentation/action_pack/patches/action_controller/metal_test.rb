@@ -96,6 +96,9 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
       get 'internal_server_error'
 
       _(span.name).must_equal 'ExampleController#internal_server_error'
+      _(span.events[0].name).must_equal 'exception'
+      _(span.events[0].attributes['exception.type']).must_equal 'RuntimeError'
+      _(span.events[0].attributes['exception.message']).must_equal 'a little hell'
     end
   end
 

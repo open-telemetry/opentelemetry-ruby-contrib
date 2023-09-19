@@ -16,6 +16,10 @@ module OpenTelemetry
               if rack_span.recording?
                 rack_span.name = "#{self.class.name}##{name}" unless request.env['action_dispatch.exception']
 
+                if request.env['action_dispatch.exception']
+                  rack_span.record_exception(request.env['action_dispatch.exception'])
+                end
+
                 attributes_to_append = {
                   OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => self.class.name,
                   OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(name)
