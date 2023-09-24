@@ -25,8 +25,8 @@ module OpenTelemetry
 
             begin
               message.merge!('__otel_headers' => serialize_arguments(@__otel_headers))
-            rescue StandardError => error
-              OpenTelemetry.handle_error(exception: error)
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e)
             end
 
             message
@@ -35,8 +35,8 @@ module OpenTelemetry
           def deserialize(job_data)
             begin
               @__otel_headers = deserialize_arguments(job_data.delete('__otel_headers') || []).to_h
-            rescue StandardError => error
-              OpenTelemetry.handle_error(exception: error)
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e)
             end
             super
           end
@@ -162,8 +162,8 @@ module OpenTelemetry
         def start(name, id, payload)
           begin
             payload.merge!(__otel: @handlers_by_pattern[name].on_start(name, id, payload)) # The payload is _not_ transmitted over the wire
-          rescue StandardError => error
-            OpenTelemetry.handle_error(exception: error)
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
           end
 
           super
@@ -174,23 +174,27 @@ module OpenTelemetry
             otel = payload.delete(:__otel)
             span = otel.fetch(:span)
             tokens = otel.fetch(:ctx_tokens)
-          rescue StandardError => error
-            OpenTelemetry.handle_error(exception: error)
+            exception = payload[:error]
+            if exception
+              span.record_exception(exception)
+              span.status = OpenTelemetry::Trace::Status.error
+            end
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
           end
 
           super
-
         ensure
           begin
             span&.finish
-          rescue StandardError => error
-            OpenTelemetry.handle_error(exception: error)
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e)
           end
           tokens&.reverse&.each do |token|
             begin
               OpenTelemetry::Context.detach(token)
-            rescue StandardError => error
-              OpenTelemetry.handle_error(exception: error)
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e)
             end
           end
         end
