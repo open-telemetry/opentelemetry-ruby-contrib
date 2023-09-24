@@ -151,9 +151,13 @@ module OpenTelemetry
         end
 
         # The methods below are the events the Subscriber is interested in.
+        def enqueue_at(...); end
         def enqueue(...); end
+        def enqueue_retry(...); end
         def perform_start(...); end
         def perform(...);end
+        def retry_stopped(...); end
+        def discard(...); end
 
         def start(name, id, payload)
           begin
