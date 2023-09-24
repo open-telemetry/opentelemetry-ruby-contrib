@@ -52,6 +52,10 @@ module OpenTelemetry
 
       class GenericSubscriber < ::ActiveSupport::Subscriber
         TEST_ADAPTERS = %w[async inline]
+        EVENT_HANDLERS = {
+          'enqueue.active_job' => EnqueueSubscriber.new,
+          'perform.active_job' => PerformSubscriber.new,
+        }
 
         attach_to :active_job
 
@@ -61,7 +65,7 @@ module OpenTelemetry
 
         def start(name, id, payload)
           begin
-            payload.merge!(__otel: on_start(name, id, payload)) # The payload is _not_ transmitted over the wire
+            payload.merge!(__otel: EVENT_HANDLERS.fetch(name).on_start(name, id, payload)) # The payload is _not_ transmitted over the wire
           rescue StandardError => error
             OpenTelemetry.handle_error(exception: error)
           end
@@ -126,8 +130,7 @@ module OpenTelemetry
         end
       end
 
-      class EnqueueSubscriber < GenericSubscriber
-
+      class EnqueueSubscriber
         def on_start(name, _id, payload)
           span = tracer.start_span("#{payload.fetch(:job).queue_name} publish",
           kind: :producer,
@@ -138,7 +141,7 @@ module OpenTelemetry
         end
       end
 
-      class PerformSubscriber < GenericSubscriber
+      class PerformSubscriber
         def on_start(name, _id, payload)
           tokens = []
           parent_context = OpenTelemetry.propagation.extract(payload.fetch(:job).__otel_headers)
