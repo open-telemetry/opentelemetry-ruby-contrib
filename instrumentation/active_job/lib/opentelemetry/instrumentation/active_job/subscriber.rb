@@ -55,8 +55,8 @@ module OpenTelemetry
           @tracer = tracer
         end
 
-        def on_start(name, _id, payload, subscriber)
-          span = @tracer.start_span(name, attributes: subscriber.as_otel_semconv_attrs(payload.fetch(:job)))
+        def on_start(name, _id, payload, attribute_processor)
+          span = @tracer.start_span(name, attributes: attribute_processor.as_otel_semconv_attrs(payload.fetch(:job)))
           tokens = [OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))]
           OpenTelemetry.propagation.inject(payload.fetch(:job).__otel_headers) # This must be transmitted over the wire
           { span: span, ctx_tokens: tokens }
@@ -68,7 +68,7 @@ module OpenTelemetry
           @tracer = tracer
         end
 
-        def on_start(name, _id, payload, subscriber)
+        def on_start(name, _id, payload, attribute_processor)
           span = @tracer.start_span("#{payload.fetch(:job).queue_name} publish",
           kind: :producer,
           attributes: subscriber.as_otel_semconv_attrs(payload.fetch(:job)))
@@ -83,7 +83,7 @@ module OpenTelemetry
           @tracer = tracer
         end
 
-        def on_start(name, _id, payload, subscriber)
+        def on_start(name, _id, payload, attribute_processor)
           tokens = []
           parent_context = OpenTelemetry.propagation.extract(payload.fetch(:job).__otel_headers)
           span_context = OpenTelemetry::Trace.current_span(parent_context).context
@@ -96,7 +96,7 @@ module OpenTelemetry
           span = @tracer.start_span(
             "#{payload.fetch(:job).queue_name} process",
             kind: :consumer,
-            attributes: subscriber.as_otel_semconv_attrs(payload.fetch(:job)),
+            attributes: attribute_processor.as_otel_semconv_attrs(payload.fetch(:job)),
             links: links
           )
 
