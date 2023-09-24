@@ -96,20 +96,16 @@ module OpenTelemetry
       end
 
       class Subscriber < ::ActiveSupport::Subscriber
-        EVENT_HANDLERS = {
-          'enqueue.active_job' => EnqueueSubscriber.new(OpenTelemetry.tracer_provider.tracer('otel-active_job', '0.0.1')),
-          'perform.active_job' => PerformSubscriber.new(OpenTelemetry.tracer_provider.tracer('otel-active_job', '0.0.1')),
-        }
+        attr_reader :tracer
 
         def initialize(...)
           super
+          @tracer = OpenTelemetry.tracer_provider.tracer('otel-active_job', '0.0.1')
           @handlers_by_pattern = {
-            'enqueue.active_job' => EnqueueSubscriber.new(OpenTelemetry.tracer_provider.tracer('otel-active_job', '0.0.1')),
-            'perform.active_job' => PerformSubscriber.new(OpenTelemetry.tracer_provider.tracer('otel-active_job', '0.0.1')),
+            'enqueue.active_job' => EnqueueSubscriber.new(@tracer),
+            'perform.active_job' => PerformSubscriber.new(@tracer),
           }
         end
-
-        attach_to :active_job
 
         # The methods below are the events the Subscriber is interested in.
         def enqueue(...); end
@@ -177,9 +173,7 @@ module OpenTelemetry
           otel_attributes
         end
 
-        def tracer
-          OpenTelemetry.tracer_provider.tracer('otel-active_job', '0.0.1')
-        end
+        attach_to :active_job
       end
     end
   end
