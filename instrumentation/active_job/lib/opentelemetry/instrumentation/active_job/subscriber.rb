@@ -86,7 +86,7 @@ module OpenTelemetry
         end
       end
 
-      class GenericSubscriber < ::ActiveSupport::Subscriber
+      class Subscriber < ::ActiveSupport::Subscriber
         TEST_ADAPTERS = %w[async inline]
         EVENT_HANDLERS = {
           'enqueue.active_job' => EnqueueSubscriber.new,
