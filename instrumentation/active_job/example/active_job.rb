@@ -107,7 +107,11 @@ end
 
 ::ActiveJob::Base.queue_adapter = :async
 
-DoItNowJob.perform_now
-BatchJob.perform_later
+tracer = OpenTelemetry.tracer_provider.tracer('example', '0.1.0')
 
-sleep 1 # allow the job to complete
+tracer.in_span('run-jobs') do
+  DoItNowJob.perform_now
+  BatchJob.perform_later
+end
+
+sleep 5 # allow the job to complete
