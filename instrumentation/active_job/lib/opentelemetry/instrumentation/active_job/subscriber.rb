@@ -51,6 +51,8 @@ module OpenTelemetry
     module ActiveJob
 
       class GenericSubscriber < ::ActiveSupport::Subscriber
+        TEST_ADAPTERS = %w[async inline]
+
         attach_to :active_job
 
         # The methods below are the events the Subscriber is interested in.
@@ -125,7 +127,6 @@ module OpenTelemetry
       end
 
       class EnqueueSubscriber < GenericSubscriber
-        TEST_ADAPTERS = %w[async inline]
 
         def on_start(name, _id, payload)
           span = tracer.start_span("#{payload.fetch(:job).queue_name} publish",
@@ -138,8 +139,6 @@ module OpenTelemetry
       end
 
       class PerformSubscriber < GenericSubscriber
-        TEST_ADAPTERS = %w[async inline]
-
         def on_start(name, _id, payload)
           tokens = []
           parent_context = OpenTelemetry.propagation.extract(payload.fetch(:job).__otel_headers)
