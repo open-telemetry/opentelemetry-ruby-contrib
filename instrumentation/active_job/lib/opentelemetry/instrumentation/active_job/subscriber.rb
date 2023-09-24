@@ -121,7 +121,7 @@ module OpenTelemetry
             links = [OpenTelemetry::Trace::Link.new(span_context)]
           end
 
-          span = @tracer.start_span(
+          span = @tracer.start_root_span(
             "#{payload.fetch(:job).queue_name} process",
             kind: :consumer,
             attributes: to_otel_semconv_attributes(payload.fetch(:job)),
