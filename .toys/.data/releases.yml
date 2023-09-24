@@ -183,6 +183,10 @@ gems:
     directory: instrumentation/ruby_kafka
     version_constant: [OpenTelemetry, Instrumentation, RubyKafka, VERSION]
 
+  - name: opentelemetry-instrumentation-sequel
+    directory: instrumentation/sequel
+    version_constant: [OpenTelemetry, Instrumentation, Sequel, VERSION]
+
   - name: opentelemetry-instrumentation-sidekiq
     directory: instrumentation/sidekiq
     version_constant: [OpenTelemetry, Instrumentation, Sidekiq, VERSION]

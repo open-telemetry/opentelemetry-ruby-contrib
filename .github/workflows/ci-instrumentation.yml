@@ -41,6 +41,7 @@ jobs:
           - rails
           - restclient
           - rspec
+          - sequel
           - sinatra
         os:
           - ubuntu-latest
