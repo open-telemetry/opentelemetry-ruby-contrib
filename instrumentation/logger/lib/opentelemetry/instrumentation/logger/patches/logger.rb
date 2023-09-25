@@ -22,6 +22,9 @@ module OpenTelemetry
             # TODO: Is there another way I can find the logger that's more
             # similar to how the tracers are found/set?
             OpenTelemetry.logger_provider.logger(
+              'opentelemetry-instrumentation-logger',
+              OpenTelemetry::Instrumentation::Logger::VERSION
+            ).emit(
               severity_text: severity,
               severity_number: ::Logger::Severity.const_get(severity),
               timestamp: datetime,
