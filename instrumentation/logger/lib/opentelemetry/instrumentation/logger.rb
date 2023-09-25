@@ -15,5 +15,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './logger/instrumentation'
-require_relative './logger/version'
+require_relative 'logger/instrumentation'
+require_relative 'logger/version'
