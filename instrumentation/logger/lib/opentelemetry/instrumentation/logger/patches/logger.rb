@@ -15,6 +15,7 @@ module OpenTelemetry
 
           def format_message(severity, datetime, progname, msg)
             formatted_message = super(severity, datetime, progname, msg)
+            return formatted_message if skip_instrumenting?
 
             return formatted_message if instance_variable_get(:@skip_instrumenting) == true
 
@@ -32,8 +33,8 @@ module OpenTelemetry
 
           def instrumentation_config; end
 
-          def logger
-            Logger::Instrumentation.instance.logger
+          def skip_instrumenting?
+            instance_variable_get(:@skip_instrumenting)
           end
         end
       end
