@@ -15,7 +15,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(Logger)
+          defined?(::Logger)
         end
 
         # option :name, default: 'default', validate: :validation
