@@ -12,24 +12,21 @@ module OpenTelemetry
         module Logger
           # TODO: Make sure OTel logs aren't instrumented
           # TODO: How to pass attributes?
-
           def format_message(severity, datetime, progname, msg)
             formatted_message = super(severity, datetime, progname, msg)
             return formatted_message if skip_instrumenting?
 
-            return formatted_message if instance_variable_get(:@skip_instrumenting) == true
-
-            # TODO: Is there another way I can find the logger that's more
-            # similar to how the tracers are found/set?
             OpenTelemetry.logger_provider.logger(
               'opentelemetry-instrumentation-logger',
               OpenTelemetry::Instrumentation::Logger::VERSION
             ).emit(
               severity_text: severity,
-              severity_number: ::Logger::Severity.const_get(severity),
+              severity_number: severity_number(severity),
               timestamp: datetime,
               body: formatted_message
             )
+
+            formatted_message
           end
 
           private
@@ -38,6 +35,13 @@ module OpenTelemetry
 
           def skip_instrumenting?
             instance_variable_get(:@skip_instrumenting)
+          end
+
+          def severity_number(severity)
+            ::Logger::Severity.const_get(severity)
+          rescue NameError => e
+            OpenTelemetry.handle_error(message: "Unable to coerce severity text #{severity} into severity_number. Setting severity_number to nil.", exception: e)
+            nil
           end
         end
       end
