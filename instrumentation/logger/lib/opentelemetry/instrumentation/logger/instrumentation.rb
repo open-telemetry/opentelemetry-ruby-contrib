@@ -18,8 +18,6 @@ module OpenTelemetry
           defined?(::Logger)
         end
 
-        # option :name, default: 'default', validate: :validation
-
         private
 
         def patch
