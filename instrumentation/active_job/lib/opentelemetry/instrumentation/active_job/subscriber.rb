@@ -61,8 +61,8 @@ module OpenTelemetry
             'messaging.system' => job.class.queue_adapter_name,
             'messaging.destination' => job.queue_name,
             'messaging.message_id' => job.job_id,
-            'messaging.active_job.provider_job_id' => job.provider_job_id,
-            'messaging.active_job.priority' => job.priority
+            'rails.active_job.provider_job_id' => job.provider_job_id,
+            'rails.active_job.priority' => job.priority
           }
 
           otel_attributes['net.transport'] = 'inproc' if test_adapters.include?(job.class.queue_adapter_name)
