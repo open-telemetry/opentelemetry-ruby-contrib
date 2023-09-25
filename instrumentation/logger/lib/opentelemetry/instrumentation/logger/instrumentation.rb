@@ -22,10 +22,18 @@ module OpenTelemetry
 
         def patch
           ::Logger.prepend(Patches::Logger)
+          active_support_patch
         end
 
         def require_dependencies
           require_relative 'patches/logger'
+        end
+
+        def active_support_patch
+          return unless defined?(::ActiveSupport::Logger)
+
+          require_relative 'patches/active_support_logger'
+          ::ActiveSupport::Logger.singleton_class.prepend(Patches::ActiveSupportLogger)
         end
       end
     end
