@@ -35,7 +35,7 @@ module OpenTelemetry
                   span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
                   raise e
                 ensure
-                  span&.finish
+                  span.finish
                 end
               end
             end
