@@ -2,6 +2,8 @@
 
 The Shoryuken instrumentation is a community-maintained instrumentation for the [Shoryuken][shoryuken-home] Ruby jobs system.
 
+**Note that this gem currently only supports instrumentation of server side processing.**
+
 ## How do I get started?
 
 Install the gem using:
