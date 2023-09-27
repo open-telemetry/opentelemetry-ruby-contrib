@@ -2,7 +2,7 @@
 
 ### v0.26.7 / 2023-09-27
 
-* (No significant changes)
+* FIXED: Micro optimization: build Hash w/ {} (https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/665)
 
 ### v0.26.6 / 2023-08-26
 
