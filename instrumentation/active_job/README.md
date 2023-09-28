@@ -30,6 +30,40 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+## Active Support Instrumentation
+
+Earlier versions of this instrumentation relied on registring custom `around_perform` hooks in order to deal with limitations
+in `ActiveSupport::Notifications`, however those patches resulted in error reports and inconsistent behavior when combined with other gems.
+
+This instrumentation now relies entirely on `ActiveSupport::Notifications` and registers a custom Subscriber that listens to relevant events to report as spans.
+
+See the table below for details of what [Rails Framework Hook Events](https://guides.rubyonrails.org/active_support_instrumentation.html#active-job) are recorded by this instrumentation:
+
+| Event Name | Creates Span? | Notes |
+| - | - | - |
+| `enqueue_at.active_job` | :white_check_mark: | Creates an egress span with kind `producer` |
+| `enqueue.active_job` | :white_check_mark: | Creates an egress span with kind `producer` |
+| `enqueue_retry.active_job` | :white_check_mark: | Creates an `internal` span |
+| `perform_start.active_job` | :x: | This is invoked prior to the appropriate ingress point and is therefore ignored |
+| `perform.active_job` | :white_check_mark: | Creates an ingress span with kind `consumer` |
+| `retry_stopped.active_job` | :white_check_mark: | Creates and `internal` span with an `exception` event |
+| `discard.active_job` | :white_check_mark: | Creates and `internal` span with an `exception` event |
+
+## Semantic Conventions
+
+This instrumentation generally uses Messaging semantic conventions by treating job enqueuers as `producers` and workers as `consumers`.
+
+Internal spans are named using the name of the `ActiveSupport` event that was provided.
+
+Attributes that are specific to this instrumentation are recorded under `rails.active_job.*`:
+
+| Attribute Name | Type | Notes |
+| - | - | - |
+| `rails.active_job.execution.counter` | Integer | _Subject to be removed once metrics are available_ |
+| `rails.active_job.provider_job_id` | String | |
+| `rails.active_job.priority` | Integer | |
+| `rails.active_job.scheduled_at` | Float | _Subject to be converted to a Span Event_ |
+
 ## Examples
 
 Example usage can be seen in the `./example/active_job.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/active_job/example/active_job.rb)

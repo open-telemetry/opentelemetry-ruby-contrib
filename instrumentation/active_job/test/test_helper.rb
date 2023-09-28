@@ -11,7 +11,6 @@ Bundler.require(:default, :development, :test)
 require 'active_job'
 require 'opentelemetry-instrumentation-active_job'
 require 'minitest/autorun'
-require 'webmock/minitest'
 
 class TestJob < ActiveJob::Base
   def perform; end
@@ -25,6 +24,15 @@ class RetryJob < ActiveJob::Base
   end
 end
 
+class DiscardJob < ActiveJob::Base
+  class DiscardError < StandardError; end
+  discard_on DiscardError
+
+  def perform
+    raise DiscardError, 'discard me'
+  end
+end
+
 class ExceptionJob < ActiveJob::Base
   def perform
     raise StandardError, 'This job raises an exception'
@@ -33,7 +41,7 @@ end
 
 class BaggageJob < ActiveJob::Base
   def perform
-    OpenTelemetry::Trace.current_span['success'] = true if OpenTelemetry::Baggage.value('testing_baggage') == 'it_worked'
+    OpenTelemetry::Trace.current_span['success'] = OpenTelemetry::Baggage.value('testing_baggage') == 'it_worked'
   end
 end
 

@@ -6,25 +6,30 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/active_job'
+require_relative '../../../lib/opentelemetry/instrumentation/active_job'
 
-describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks do
+describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance }
   # Technically these are the defaults. But ActiveJob seems to act oddly if you re-install
   # the instrumentation over and over again - so we manipulate instance variables to
   # reset between tests, and that means we should set the defaults here.
-  let(:config) { { propagation_style: :link, force_flush: false, span_naming: :queue } }
+  let(:config) { { propagation_style: :link, span_naming: :queue } }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:publish_span) { spans.find { |s| s.name == 'default publish' } }
   let(:process_span) { spans.find { |s| s.name == 'default process' } }
+  let(:discard_span) { spans.find { |s| s.name == 'discard.active_job' } }
 
   before do
+    OpenTelemetry::Instrumentation::ActiveJob::Subscriber.uninstall
     instrumentation.instance_variable_set(:@config, config)
-    exporter.reset
+    instrumentation.instance_variable_set(:@installed, false)
 
+    instrumentation.install(config)
     ActiveJob::Base.queue_adapter = :async
     ActiveJob::Base.queue_adapter.immediate = true
+
+    exporter.reset
   end
 
   after do
@@ -34,7 +39,6 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       nil
     end
     ActiveJob::Base.queue_adapter = :inline
-    instrumentation.instance_variable_set(:@config, config)
   end
 
   describe 'perform_later' do
@@ -53,7 +57,6 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       _(publish_span).must_be_nil
       _(process_span).wont_be_nil
       _(process_span.attributes['code.namespace']).must_equal('TestJob')
-      _(process_span.attributes['code.function']).must_equal('perform_now')
     end
   end
 
@@ -73,16 +76,25 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
   describe 'exception handling' do
     it 'sets span status to error' do
-      _ { ExceptionJob.perform_now }.must_raise StandardError, 'This job raises an exception'
-      _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-      _(process_span.status.description).must_equal 'Unhandled exception of type: StandardError'
-    end
+      _ { ExceptionJob.perform_later }.must_raise StandardError, 'This job raises an exception'
 
-    it 'records the exception' do
-      _ { ExceptionJob.perform_now }.must_raise StandardError, 'This job raises an exception'
+      _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(process_span.status.description).must_equal 'This job raises an exception'
+
       _(process_span.events.first.name).must_equal 'exception'
       _(process_span.events.first.attributes['exception.type']).must_equal 'StandardError'
       _(process_span.events.first.attributes['exception.message']).must_equal 'This job raises an exception'
+    end
+
+    it 'sets discard span status to error' do
+      DiscardJob.perform_later
+
+      _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(process_span.status.description).must_equal 'discard me'
+
+      _(discard_span.events.first.name).must_equal 'exception'
+      _(discard_span.events.first.attributes['exception.type']).must_equal 'DiscardJob::DiscardError'
+      _(discard_span.events.first.attributes['exception.message']).must_equal 'discard me'
     end
   end
 
@@ -97,8 +109,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
       TestJob.perform_later
 
-      _(publish_span.kind).must_equal(:client)
-      _(process_span.kind).must_equal(:server)
+      _(publish_span.kind).must_equal(:producer)
+      _(process_span.kind).must_equal(:consumer)
     end
 
     it 'sets correct span kinds for all other jobs' do
@@ -110,13 +122,6 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
   end
 
   describe 'attributes' do
-    it 'sets the messaging.operation attribute only when processing the job' do
-      TestJob.perform_later
-
-      _(publish_span.attributes['messaging.operation']).must_be_nil
-      _(process_span.attributes['messaging.operation']).must_equal('process')
-    end
-
     describe 'net.transport' do
       it 'is sets correctly for inline jobs' do
         TestJob.perform_later
@@ -148,36 +153,28 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         TestJob.set(priority: 1).perform_later
 
         [publish_span, process_span].each do |span|
-          _(span.attributes['messaging.active_job.priority']).must_equal(1)
+          _(span.attributes['rails.active_job.priority']).must_equal(1)
         end
       end
     end
 
     describe 'messaging.active_job.scheduled_at' do
-      it 'is unset for jobs that do not specify a wait time' do
-        TestJob.perform_later
-
-        [publish_span, process_span].each do |span|
-          _(span.attributes['messaging.active_job.scheduled_at']).must_be_nil
-        end
-      end
-
-      it 'records the scheduled at time for apps running Rails 7.1 and newer' do
-        skip 'scheduled jobs behave differently in Rails 7.1+' if ActiveJob.version < Gem::Version.new('7.1')
+      it 'is set correctly for jobs that do wait in Rails 7.0 or older' do
+        skip 'scheduled jobs behave differently in Rails 7.1 and newer' if ActiveJob.version < Gem::Version.new('7.1')
 
         job = TestJob.set(wait: 0.second).perform_later
 
-        _(publish_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at.to_f)
-        _(process_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at.to_f)
+        _(publish_span.attributes['rails.active_job.scheduled_at']).must_equal(job.scheduled_at.to_f)
+        _(process_span.attributes['rails.active_job.scheduled_at']).must_equal(job.scheduled_at.to_f)
       end
 
-      it 'records the scheduled at time for apps running Rails 7.0 or older' do
-        skip 'scheduled jobs behave differently in Rails 7.1+' if ActiveJob.version >= Gem::Version.new('7.1')
+      it 'is set correctly for jobs that do wait in Rails 7.1 and newer' do
+        skip 'scheduled jobs behave differently in Rails 7.0 and older' if ActiveJob.version >= Gem::Version.new('7.1')
 
         job = TestJob.set(wait: 0.second).perform_later
 
-        _(publish_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at.to_f)
-        _(process_span.attributes['messaging.active_job.scheduled_at']).must_be_nil
+        _(publish_span.attributes['rails.active_job.scheduled_at']).must_equal(job.scheduled_at.to_f)
+        _(process_span.attributes['rails.active_job.scheduled_at']).must_be_nil
       end
     end
 
@@ -207,20 +204,40 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
 
     describe 'messaging.active_job.executions' do
-      it 'is 1 for a normal job that does not retry' do
+      it 'is 1 for a normal job that does not retry in Rails 6 or earlier' do
+        skip "ActiveJob #{ActiveJob.version} starts at 0 in newer versions" if ActiveJob.version >= Gem::Version.new('7')
         TestJob.perform_now
-        _(process_span.attributes['messaging.active_job.executions']).must_equal(1)
+        _(process_span.attributes['rails.active_job.execution.counter']).must_equal(1)
       end
 
-      it 'tracks correctly for jobs that do retry' do
+      it 'is 0 for a normal job that does not retry in Rails 7 or later' do
+        skip "ActiveJob #{ActiveJob.version} starts at 1 for older versions" if ActiveJob.version < Gem::Version.new('7')
+        TestJob.perform_now
+        _(process_span.attributes['rails.active_job.execution.counter']).must_equal(0)
+      end
+
+      it 'tracks correctly for jobs that do retry in Rails 6 or earlier' do
+        skip "ActiveJob #{ActiveJob.version} starts at 0 in newer versions" if ActiveJob.version >= Gem::Version.new('7')
         begin
           RetryJob.perform_later
         rescue StandardError
           nil
         end
 
-        executions = spans.filter { |s| s.kind == :consumer }.sum { |s| s.attributes['messaging.active_job.executions'] }
-        _(executions).must_equal(3) # total of 3 runs. The initial and 2 retries.
+        executions = spans.filter { |s| s.kind == :consumer }.map { |s| s.attributes['rails.active_job.execution.counter'] }.compact.max
+        _(executions).must_equal(2) # total of 3 runs. The initial and 2 retries.
+      end
+
+      it 'tracks correctly for jobs that do retry in Rails 7 or later' do
+        skip "ActiveJob #{ActiveJob.version} starts at 1 in older versions" if ActiveJob.version < Gem::Version.new('7')
+        begin
+          RetryJob.perform_later
+        rescue StandardError
+          nil
+        end
+
+        executions = spans.filter { |s| s.kind == :consumer }.map { |s| s.attributes['rails.active_job.execution.counter'] }.compact.max
+        _(executions).must_equal(1)
       end
     end
 
@@ -232,7 +249,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
       it 'sets the correct value if provider_job_id is provided' do
         job = TestJob.perform_later
-        _(process_span.attributes['messaging.active_job.provider_job_id']).must_equal(job.provider_job_id)
+        _(process_span.attributes['rails.active_job.provider_job_id']).must_equal(job.provider_job_id)
       end
     end
 
@@ -265,44 +282,12 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
       it 'names span according to the job class' do
         TestJob.set(queue: :foo).perform_later
+
         publish_span = exporter.finished_spans.find { |s| s.name == 'TestJob publish' }
         _(publish_span).wont_be_nil
 
         process_span = exporter.finished_spans.find { |s| s.name == 'TestJob process' }
         _(process_span).wont_be_nil
-      end
-    end
-  end
-
-  describe 'force_flush option' do
-    let(:mock_tracer_provider) do
-      mock_tracer_provider = Minitest::Mock.new
-      mock_tracer_provider.expect(:force_flush, true)
-
-      mock_tracer_provider
-    end
-
-    describe 'false - default' do
-      it 'does not forcibly flush the tracer' do
-        OpenTelemetry.stub(:tracer_provider, mock_tracer_provider) do
-          TestJob.perform_later
-        end
-
-        # We *do not* actually force flush in this case, so we expect the mock
-        # to fail validation - we will not actually call the mocked force_flush method.
-        expect { mock_tracer_provider.verify }.must_raise MockExpectationError
-      end
-    end
-
-    describe 'true' do
-      let(:config) { { propagation_style: :link, force_flush: true, span_naming: :job_class } }
-      it 'does forcibly flush the tracer' do
-        OpenTelemetry.stub(:tracer_provider, mock_tracer_provider) do
-          TestJob.perform_later
-        end
-
-        # Nothing should raise, the mock should be successful, we should have flushed.
-        mock_tracer_provider.verify
       end
     end
   end
@@ -334,6 +319,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         _(process_span.total_recorded_links).must_equal(1)
         _(process_span.links[0].span_context.trace_id).must_equal(publish_span.trace_id)
         _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
+
         _(process_span.attributes['success']).must_equal(true)
       end
     end
@@ -392,6 +378,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
   describe 'active_job callbacks' do
     it 'makes the tracing context available in before_perform callbacks' do
+      skip "ActiveJob #{ActiveJob.version} subscribers do not include timing information for callbacks" if ActiveJob.version < Gem::Version.new('7')
       CallbacksJob.perform_now
 
       _(CallbacksJob.context_before).wont_be_nil
@@ -399,23 +386,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
 
     it 'makes the tracing context available in after_perform callbacks' do
+      skip "ActiveJob #{ActiveJob.version} subscribers do not include timing information for callbacks" if ActiveJob.version < Gem::Version.new('7')
       CallbacksJob.perform_now
 
       _(CallbacksJob.context_after).wont_be_nil
       _(CallbacksJob.context_after).must_be :valid?
-    end
-  end
-
-  describe 'perform.active_job notifications' do
-    it 'makes the tracing context available in notifications' do
-      context = nil
-      callback = proc { context = OpenTelemetry::Trace.current_span.context }
-      ActiveSupport::Notifications.subscribed(callback, 'perform.active_job') do
-        TestJob.perform_now
-      end
-
-      _(context).wont_be_nil
-      _(context).must_be :valid?
     end
   end
 end
