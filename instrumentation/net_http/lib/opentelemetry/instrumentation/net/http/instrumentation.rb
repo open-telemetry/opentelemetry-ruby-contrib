@@ -26,7 +26,11 @@ module OpenTelemetry
           #   or `Regexp` in this array, the instrumentation will not record a
           #   `kind = :client` representing the request and will not propagate
           #   context in the request.
-          option :untraced_hosts, default: [], validate: :array
+          # filter_target: a callable object that takes a path `String` and returns
+          #   a `String` to be used as the http.target attribute. The default is to
+          #   use the request path as-is.
+          option :untraced_hosts, default: [],  validate: :array
+          option :filter_target,  default: nil, validate: :callable
 
           private
 

@@ -34,6 +34,31 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     OpenTelemetry.propagation = @orig_propagation
   end
 
+  describe '#filter_target' do
+    before do
+      stub_request(:get, 'http://example.com/path?token=broken').to_return(status: 200)
+      instrumentation.instance_variable_set(:@installed, false)
+      config = {
+        filter_target: proc { |path| URI(path).path }
+      }
+
+      instrumentation.install(config)
+    end
+
+    it 'reports the target without params' do
+      Net::HTTP.get(URI('http://example.com/path?token=broken'))
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.attributes['http.target']).must_equal '/path'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
+      assert_requested(
+        :get,
+        'http://example.com/path?token=broken',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
+  end
+
   describe '#request' do
     it 'before request' do
       _(exporter.finished_spans.size).must_equal 0

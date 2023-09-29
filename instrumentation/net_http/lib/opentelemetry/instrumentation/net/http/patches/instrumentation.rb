@@ -23,7 +23,7 @@ module OpenTelemetry
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
-                OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
+                OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => filter_target(req.path),
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
               }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
@@ -83,6 +83,14 @@ module OpenTelemetry
 
             def tracer
               Net::HTTP::Instrumentation.instance.tracer
+            end
+
+            def filter_target(path)
+              if (filter = Net::HTTP::Instrumentation.instance.config[:filter_target])
+                filter.call(path)
+              else
+                path
+              end
             end
 
             def untraced?
