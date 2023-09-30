@@ -24,7 +24,7 @@ module OpenTelemetry
         private
 
         def gem_version
-          ::Rails.version
+          ::Rails.gem_version
         end
       end
     end
