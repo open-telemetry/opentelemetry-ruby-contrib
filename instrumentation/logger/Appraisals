@@ -4,13 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-## TODO: Include the supported version to be tested here.
-## Example:
-# appraise 'rack-2.1' do
-#   gem 'rack', '~> 2.1.2'
-# end
+appraise 'rails-6.0' do
+  gem 'rails', '~> 6.0.0'
+end
 
-# appraise 'rack-2.0' do
-#   gem 'rack', '2.0.8'
-# end
+appraise 'rails-6.1' do
+  gem 'rails', '~> 6.1.0'
+end
 
+appraise 'rails-7.0' do
+  gem 'rails', '~> 7.0.0'
+end

@@ -23,7 +23,7 @@ module OpenTelemetry
               severity_text: severity,
               severity_number: severity_number(severity),
               timestamp: datetime,
-              body: formatted_message
+              body: msg # New Relic uses formatted_message here. This also helps us with not recording progname, because it is included in the formatted message by default. Which seems more appropriate?
             )
 
             formatted_message
@@ -40,7 +40,7 @@ module OpenTelemetry
           def severity_number(severity)
             ::Logger::Severity.const_get(severity)
           rescue NameError => e
-            OpenTelemetry.handle_error(message: "Unable to coerce severity text #{severity} into severity_number. Setting severity_number to nil.", exception: e)
+            OpenTelemetry.logger.warn(message: "Unable to coerce severity text #{severity} into severity_number. Setting severity_number to nil.", exception: e)
             nil
           end
         end
