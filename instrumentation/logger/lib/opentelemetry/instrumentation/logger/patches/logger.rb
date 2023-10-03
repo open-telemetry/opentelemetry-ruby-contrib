@@ -17,7 +17,7 @@ module OpenTelemetry
             return formatted_message if skip_instrumenting?
 
             OpenTelemetry.logger_provider.logger(
-              'opentelemetry-instrumentation-logger',
+              OpenTelemetry::Instrumentation::Logger::NAME,
               OpenTelemetry::Instrumentation::Logger::VERSION
             ).emit(
               severity_text: severity,
