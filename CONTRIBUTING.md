@@ -16,7 +16,7 @@ As with other OpenTelemetry clients, opentelemetry-ruby follows the
 ### Focus on Capabilities, Not Structure Compliance
 
 OpenTelemetry is an evolving specification, one where the desires and
-use cases are clear, but the method to satisfy those uses cases are not.
+use cases are clear, but the method to satisfy those use cases are not.
 
 As such, Contributions should provide functionality and behavior that
 conforms to the specification, but the interface and structure are flexible.
