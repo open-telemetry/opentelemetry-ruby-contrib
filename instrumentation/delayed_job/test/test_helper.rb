@@ -11,8 +11,7 @@ Bundler.require(:default, :development, :test)
 # We are compensating for that here in this test... that is a smell
 # NoMethodError: undefined method `extract_options!' for [#<ActiveJobPayload:0x0000000108bf5d48>, {}]:Array
 # delayed_job-4.1.11/lib/delayed/backend/job_preparer.rb:7:in `initialize'0
-# require 'active_support/core_ext/array'
-require 'delayed_job'
+require 'active_support/core_ext/array/extract_options'
 
 require 'opentelemetry-instrumentation-delayed_job'
 
