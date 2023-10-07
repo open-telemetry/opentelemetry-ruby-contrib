@@ -30,7 +30,6 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 gem_dir = Gem::Specification.find_by_name('delayed_job').gem_dir
-require "#{gem_dir}/spec/delayed/serialization/test"
 require "#{gem_dir}/spec/delayed/backend/test"
 
 Delayed::Worker.backend = Delayed::Backend::Test::Job
