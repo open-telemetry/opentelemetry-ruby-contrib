@@ -56,7 +56,6 @@ module OpenTelemetry
             end
 
             def add_events(span, job)
-              span.add_event('created_at', timestamp: job.created_at)
               span.add_event('run_at', timestamp: job.run_at) if job.run_at
               span.add_event('locked_at', timestamp: job.locked_at) if job.locked_at
             end
