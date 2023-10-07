@@ -10,7 +10,7 @@ module OpenTelemetry
       module Interceptors
         class Server < ::Gruf::Interceptors::ServerInterceptor
           def call
-            return yield if instrumentation_config.blank?
+            return yield if instrumentation_config.empty?
 
             method = request.method_name
 
