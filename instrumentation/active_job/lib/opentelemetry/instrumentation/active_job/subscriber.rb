@@ -43,7 +43,8 @@ module OpenTelemetry
           span = @tracer.start_span(name, attributes: @mapper.call(payload))
           tokens = [OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))]
           OpenTelemetry.propagation.inject(payload.fetch(:job).__otel_headers) # This must be transmitted over the wire
-          { span: span, ctx_tokens: tokens }
+
+          payload.merge!(__otel: { span: span, ctx_tokens: tokens })
         end
 
         def finish(_name, _id, payload)
@@ -88,7 +89,7 @@ module OpenTelemetry
           span = @tracer.start_span(span_name, kind: :producer, attributes: @mapper.call(payload))
           tokens = [OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))]
           OpenTelemetry.propagation.inject(payload.fetch(:job).__otel_headers) # This must be transmitted over the wire
-          { span: span, ctx_tokens: tokens }
+          payload.merge!(__otel: { span: span, ctx_tokens: tokens })
         end
       end
 
@@ -116,7 +117,7 @@ module OpenTelemetry
 
           tokens.concat([consumer_context, aj_context].map { |context| OpenTelemetry::Context.attach(context) })
 
-          { span: span, ctx_tokens: tokens }
+          payload.merge!(__otel: { span: span, ctx_tokens: tokens })
         end
       end
 
@@ -151,10 +152,10 @@ module OpenTelemetry
         # def perform_start(...); end
         def perform(...); end
         def retry_stopped(...); end
-        def discard(...); end
+        # def discard(...); end
 
         def start(name, id, payload)
-          payload.merge!(__otel: @handlers_by_pattern[name].start(name, id, payload))
+          @handlers_by_pattern[name].start(name, id, payload)
           # This is nuts
           super if @call_super
         end
@@ -167,10 +168,16 @@ module OpenTelemetry
 
         def self.install
           attach_to :active_job
+          tracer = Instrumentation.instance.tracer
+          mapper = AttributeMapper.new
+          default_handler = DefaultHandler.new(tracer, mapper)
+          @subscriptions ||= []
+          @subscriptions << ActiveSupport::Notifications.subscribe('discard.active_job', default_handler)
         end
 
         def self.uninstall
           detach_from :active_job
+          @subscriptions&.each { |subscriber| ActiveSupport::Notifications.unsubscribe(subscriber) }
         end
       end
     end
