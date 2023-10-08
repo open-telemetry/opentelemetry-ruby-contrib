@@ -121,12 +121,22 @@ module OpenTelemetry
             span = @tracer.start_root_span(span_name, kind: :consumer, attributes: @mapper.call(payload), links: links)
           end
 
+          tokens.concat(attach_consumer_context(span))
+
+          { span: span, ctx_tokens: tokens }
+        end
+
+        # This method attaches a span to multiple contexts:
+        # 1. Registers the ingress span as the top level ActiveJob span.
+        #    This is used later to enrich the ingress span in children, e.g. setting span status to error when a child event like `discard` terminates due to an error
+        # 2. Registers the ingress span as the "active" span, which is the default behavior of the SDK.
+        # @param span [OpenTelemetry::Trace::Span] the currently active span used to record the exception and set the status
+        # @return [Array] Context tokens that must be detached when finished
+        def attach_consumer_context(span)
           consumer_context = OpenTelemetry::Trace.context_with_span(span)
           aj_context = OpenTelemetry::Instrumentation::ActiveJob.context_with_span(span, parent_context: consumer_context)
 
-          tokens.concat([consumer_context, aj_context].map { |context| OpenTelemetry::Context.attach(context) })
-
-          { span: span, ctx_tokens: tokens }
+          [consumer_context, aj_context].map { |context| OpenTelemetry::Context.attach(context) }
         end
       end
 
