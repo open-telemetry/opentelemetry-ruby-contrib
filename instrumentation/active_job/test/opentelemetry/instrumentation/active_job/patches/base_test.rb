@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/active_job'
+require_relative '../../../../../lib/opentelemetry/instrumentation/active_job'
 
 describe OpenTelemetry::Instrumentation::ActiveJob::Patches::Base do
   describe 'serialization / deserialization' do

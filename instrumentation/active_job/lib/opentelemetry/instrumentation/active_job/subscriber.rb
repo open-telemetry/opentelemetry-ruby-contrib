@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/subscriber'
-
 module OpenTelemetry
   module Instrumentation
     module ActiveJob
@@ -55,18 +53,24 @@ module OpenTelemetry
           span = otel&.fetch(:span)
           tokens = otel&.fetch(:ctx_tokens)
 
-          # Unhandled exceptions are reported in `exception_object`
-          # while handled exceptions are reported in `error`
           exception = payload[:error] || payload[:exception_object]
           on_exception(exception, span) if exception
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e)
         ensure
+          finish_span(span, tokens)
+        end
+
+        def finish_span(span, tokens)
+          # closes the span after all attributes have been finalized
           begin
+            span&.status = OpenTelemetry::Trace::Status.ok if span&.status&.code == OpenTelemetry::Trace::Status::UNSET
             span&.finish
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
+
+          # pops the context stack
           tokens&.reverse&.each do |token|
             OpenTelemetry::Context.detach(token)
           rescue StandardError => e
@@ -134,9 +138,9 @@ module OpenTelemetry
         # @return [Array] Context tokens that must be detached when finished
         def attach_consumer_context(span)
           consumer_context = OpenTelemetry::Trace.context_with_span(span)
-          aj_context = OpenTelemetry::Instrumentation::ActiveJob.context_with_span(span, parent_context: consumer_context)
+          internal_context = OpenTelemetry::Instrumentation::ActiveJob.context_with_span(span, parent_context: consumer_context)
 
-          [consumer_context, aj_context].map { |context| OpenTelemetry::Context.attach(context) }
+          [consumer_context, internal_context].map { |context| OpenTelemetry::Context.attach(context) }
         end
 
         # TODO: refactor into a strategy

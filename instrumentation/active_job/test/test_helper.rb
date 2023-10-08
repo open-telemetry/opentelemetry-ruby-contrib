@@ -20,7 +20,7 @@ class RetryJob < ActiveJob::Base
   retry_on StandardError, wait: 0, attempts: 2
 
   def perform
-    raise StandardError
+    raise StandardError, 'from retry job'
   end
 end
 
@@ -73,6 +73,18 @@ class CallbacksJob < TestJob
 
   after_perform do
     self.class.context_after = OpenTelemetry::Trace.current_span.context
+  end
+end
+
+class RescueFromJob < ActiveJob::Base
+  class RescueFromError < StandardError; end
+
+  rescue_from RescueFromError do
+    # do nothing
+  end
+
+  def perform
+    raise RescueFromError, 'I was handled by rescue_from'
   end
 end
 

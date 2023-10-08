@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-require_relative '../../../lib/opentelemetry/instrumentation/active_job'
+require_relative '../../../../lib/opentelemetry/instrumentation/active_job'
 
 describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance }
@@ -19,6 +19,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
   let(:publish_span) { spans.find { |s| s.name == 'default publish' } }
   let(:process_span) { spans.find { |s| s.name == 'default process' } }
   let(:discard_span) { spans.find { |s| s.name == 'discard.active_job' } }
+  let(:retry_span) { spans.find { |s| s.name == 'retry_stopped.active_job' } }
 
   before do
     OpenTelemetry::Instrumentation::ActiveJob::Subscriber.uninstall
@@ -92,9 +93,32 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
       _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
       _(process_span.status.description).must_equal 'discard me'
 
+      _(discard_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(discard_span.status.description).must_equal 'discard me'
       _(discard_span.events.first.name).must_equal 'exception'
       _(discard_span.events.first.attributes['exception.type']).must_equal 'DiscardJob::DiscardError'
       _(discard_span.events.first.attributes['exception.message']).must_equal 'discard me'
+    end
+
+    it 'captures errors that were handled by rescue_from in versions earlier than Rails 7' do
+      skip 'rescue_from jobs behave differently in Rails 7 and newer' if ActiveJob.version >= Gem::Version.new('7')
+      RescueFromJob.perform_later
+
+      _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(process_span.status.description).must_equal 'I was handled by rescue_from'
+
+      _(process_span.events.first.name).must_equal 'exception'
+      _(process_span.events.first.attributes['exception.type']).must_equal 'RescueFromJob::RescueFromError'
+      _(process_span.events.first.attributes['exception.message']).must_equal 'I was handled by rescue_from'
+    end
+
+    it 'ignores errors that were handled by rescue_from in versions of Rails 7 or newer' do
+      skip 'rescue_from jobs behave differently in Rails 7 and newer' if ActiveJob.version < Gem::Version.new('7')
+      RescueFromJob.perform_later
+
+      _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::OK
+
+      _(process_span.events).must_be_nil
     end
   end
 
@@ -208,11 +232,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
 
       it 'tracks correctly for jobs that do retry in Rails 6 or earlier' do
         skip "ActiveJob #{ActiveJob.version} starts at 0 in newer versions" if ActiveJob.version >= Gem::Version.new('7')
-        begin
-          RetryJob.perform_later
-        rescue StandardError
-          nil
-        end
+        _ { RetryJob.perform_later }.must_raise StandardError
 
         executions = spans.filter { |s| s.kind == :consumer }.map { |s| s.attributes['rails.active_job.execution.counter'] }.compact.max
         _(executions).must_equal(2) # total of 3 runs. The initial and 2 retries.
@@ -220,14 +240,23 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
 
       it 'tracks correctly for jobs that do retry in Rails 7 or later' do
         skip "ActiveJob #{ActiveJob.version} starts at 1 in older versions" if ActiveJob.version < Gem::Version.new('7')
-        begin
-          RetryJob.perform_later
-        rescue StandardError
-          nil
-        end
+        _ { RetryJob.perform_later }.must_raise StandardError
 
         executions = spans.filter { |s| s.kind == :consumer }.map { |s| s.attributes['rails.active_job.execution.counter'] }.compact.max
         _(executions).must_equal(1)
+      end
+
+      it 'records retry errors' do
+        _ { RetryJob.perform_later }.must_raise StandardError
+
+        _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(process_span.status.description).must_equal 'from retry job'
+
+        _(retry_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(retry_span.status.description).must_equal 'from retry job'
+        _(retry_span.events.first.name).must_equal 'exception'
+        _(retry_span.events.first.attributes['exception.type']).must_equal 'StandardError'
+        _(retry_span.events.first.attributes['exception.message']).must_equal 'from retry job'
       end
     end
 
