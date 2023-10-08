@@ -10,8 +10,6 @@ module OpenTelemetry
       # Some of the more promenant attributes will come from
       #
       class AttributeMapper
-        TEST_ADAPTERS = %w[async inline].freeze
-
         def call(payload)
           job = payload.fetch(:job)
 
@@ -27,7 +25,6 @@ module OpenTelemetry
             'rails.active_job.scheduled_at' => job.scheduled_at&.to_f
           }
 
-          otel_attributes['net.transport'] = 'inproc' if TEST_ADAPTERS.include?(job.class.queue_adapter_name)
           otel_attributes.compact!
 
           otel_attributes
@@ -43,6 +40,8 @@ module OpenTelemetry
 
         def start(name, id, payload)
           payload.merge!(__otel: on_start(name, id, payload))
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e)
         end
 
         def on_start(name, _id, payload)
@@ -53,25 +52,23 @@ module OpenTelemetry
         end
 
         def finish(_name, _id, payload)
-          begin
-            otel = payload.delete(:__otel)
-            span = otel&.fetch(:span)
-            tokens = otel&.fetch(:ctx_tokens)
+          otel = payload.delete(:__otel)
+          span = otel&.fetch(:span)
+          tokens = otel&.fetch(:ctx_tokens)
 
-            # Unhandled exceptions are reported in `exception_object`
-            # while handled exceptions are reported in `error`
-            exception = payload[:error] || payload[:exception_object]
-            if exception
-              status = OpenTelemetry::Trace::Status.error(exception.message)
-              OpenTelemetry::Instrumentation::ActiveJob.current_span.status = status
-              # Only record the exception on the ActiveSpan
-              # This is particularly useful when
-              span&.record_exception(exception)
-              span&.status = status
-            end
-          rescue StandardError => e
-            OpenTelemetry.handle_error(exception: e)
+          # Unhandled exceptions are reported in `exception_object`
+          # while handled exceptions are reported in `error`
+          exception = payload[:error] || payload[:exception_object]
+          if exception
+            status = OpenTelemetry::Trace::Status.error(exception.message)
+            OpenTelemetry::Instrumentation::ActiveJob.current_span.status = status
+            # Only record the exception on the ActiveSpan
+            # This is particularly useful when
+            span&.record_exception(exception)
+            span&.status = status
           end
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e)
         ensure
           begin
             span&.finish

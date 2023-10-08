@@ -122,30 +122,12 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
   end
 
   describe 'attributes' do
-    describe 'net.transport' do
-      it 'is sets correctly for inline jobs' do
-        TestJob.perform_later
-
-        [publish_span, process_span].each do |span|
-          _(span.attributes['net.transport']).must_equal('inproc')
-        end
-      end
-
-      it 'is set correctly for async jobs' do
-        TestJob.perform_later
-
-        [publish_span, process_span].each do |span|
-          _(span.attributes['net.transport']).must_equal('inproc')
-        end
-      end
-    end
-
-    describe 'messaging.active_job.priority' do
+    describe 'active_job.priority' do
       it 'is unset for unprioritized jobs' do
         TestJob.perform_later
 
         [publish_span, process_span].each do |span|
-          _(span.attributes['messaging.active_job.priority']).must_be_nil
+          _(span.attributes['rails.active_job.priority']).must_be_nil
         end
       end
 
@@ -158,7 +140,15 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
       end
     end
 
-    describe 'messaging.active_job.scheduled_at' do
+    describe 'active_job.scheduled_at' do
+      it 'is unset for jobs that do not specify a wait time' do
+        TestJob.perform_later
+
+        [publish_span, process_span].each do |span|
+          _(span.attributes['rails.active_job.scheduled_at']).must_be_nil
+        end
+      end
+
       it 'is set correctly for jobs that do wait in Rails 7.0 or older' do
         skip 'scheduled jobs behave differently in Rails 7.1 and newer' if ActiveJob.version < Gem::Version.new('7.1')
 
@@ -203,7 +193,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
       end
     end
 
-    describe 'messaging.active_job.executions' do
+    describe 'active_job.executions' do
       it 'is 1 for a normal job that does not retry in Rails 6 or earlier' do
         skip "ActiveJob #{ActiveJob.version} starts at 0 in newer versions" if ActiveJob.version >= Gem::Version.new('7')
         TestJob.perform_now
@@ -241,10 +231,10 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
       end
     end
 
-    describe 'messaging.active_job.provider_job_id' do
+    describe 'active_job.provider_job_id' do
       it 'is empty for a job that do not sets provider_job_id' do
         TestJob.perform_now
-        _(process_span.attributes['messaging.active_job.provider_job_id']).must_be_nil
+        _(process_span.attributes['rails.active_job.provider_job_id']).must_equal('')
       end
 
       it 'sets the correct value if provider_job_id is provided' do
