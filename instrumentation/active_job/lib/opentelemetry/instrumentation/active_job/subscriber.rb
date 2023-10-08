@@ -7,8 +7,7 @@ module OpenTelemetry
     module ActiveJob
       # Maps ActiveJob Attributes to Semantic Conventions
       #
-      # Some of the more promenant attributes will come from
-      #
+      # This follows the General and Messaging semantic conventions and uses `rails.active_job.*` namespace for custom attributes
       class AttributeMapper
         def call(payload)
           job = payload.fetch(:job)
@@ -59,14 +58,7 @@ module OpenTelemetry
           # Unhandled exceptions are reported in `exception_object`
           # while handled exceptions are reported in `error`
           exception = payload[:error] || payload[:exception_object]
-          if exception
-            status = OpenTelemetry::Trace::Status.error(exception.message)
-            OpenTelemetry::Instrumentation::ActiveJob.current_span.status = status
-            # Only record the exception on the ActiveSpan
-            # This is particularly useful when
-            span&.record_exception(exception)
-            span&.status = status
-          end
+          on_exception(exception, span) if exception
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e)
         ensure
@@ -80,6 +72,21 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
+        end
+
+        # Records exceptions on spans and sets Span statuses to `Error`
+        #
+        # Handled exceptions are recorded on internal spans related to the event. E.g. `discard` events are recorded on the `discard.active_job` span
+        # Handled exceptions _are not_ copied to the ingress span, but it does set the status to `Error` making it easier to know that a job has failed
+        # Unhandled exceptions bubble up to the ingress span and are recorded there.
+        #
+        # @param [Exception] exception to report as a Span Event
+        # @param [OpenTelemetry::Trace::Span] the currently active span used to record the exception and set the status
+        def on_exception(exception, span)
+          status = OpenTelemetry::Trace::Status.error(exception.message)
+          OpenTelemetry::Instrumentation::ActiveJob.current_span.status = status
+          span&.record_exception(exception)
+          span&.status = status
         end
       end
 
