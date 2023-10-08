@@ -171,8 +171,9 @@ module OpenTelemetry
           tracer = Instrumentation.instance.tracer
           mapper = AttributeMapper.new
           default_handler = DefaultHandler.new(tracer, mapper)
-          @subscriptions ||= []
-          @subscriptions << ActiveSupport::Notifications.subscribe('discard.active_job', default_handler)
+          @subscriptions = %w[discard.active_job].map do |key|
+            ActiveSupport::Notifications.subscribe(key, default_handler)
+          end
         end
 
         def self.uninstall
