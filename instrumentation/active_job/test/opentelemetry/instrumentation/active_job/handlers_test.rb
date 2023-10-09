@@ -22,7 +22,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers do
   let(:retry_span) { spans.find { |s| s.name == 'retry_stopped.active_job' } }
 
   before do
-    OpenTelemetry::Instrumentation::ActiveJob::Handlers.uninstall
+    OpenTelemetry::Instrumentation::ActiveJob::Handlers.unsubscribe
     instrumentation.instance_variable_set(:@config, config)
     instrumentation.instance_variable_set(:@installed, false)
 

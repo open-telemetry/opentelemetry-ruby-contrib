@@ -35,7 +35,7 @@ module OpenTelemetry
         #       It should not be the ingress span because it does not measure anything.
         #       https://github.com/rails/rails/blob/v6.1.7.6/activejob/lib/active_job/instrumentation.rb#L14
         #       https://github.com/rails/rails/blob/v7.0.8/activejob/lib/active_job/instrumentation.rb#L19
-        def install
+        def subscribe
           return unless Array(@subscriptions).empty?
 
           tracer = Instrumentation.instance.tracer
@@ -61,7 +61,7 @@ module OpenTelemetry
 
         # Removes Event Handler Subscriptions for ActiveJob notifications
         # @note this method is not thread safe and sholud not be used in a multi-threaded context
-        def uninstall
+        def unsubscribe
           @subscriptions&.each { |subscriber| ActiveSupport::Notifications.unsubscribe(subscriber) }
           @subscriptions = nil
         end

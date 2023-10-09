@@ -24,7 +24,7 @@ module OpenTelemetry
           # @param payload [Hash] containing job run information
           # @return [Hash] the payload passed as a method argument
           def start(name, id, payload)
-            payload.merge!(__otel: on_start(name, id, payload))
+            payload.merge!(__otel: start_span(name, id, payload))
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
