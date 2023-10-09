@@ -64,13 +64,13 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'patches/base'
-          require_relative 'subscriber'
+          require_relative 'handlers'
         end
 
         def patch_activejob
           ::ActiveJob::Base.prepend(Patches::Base) unless ::ActiveJob::Base.ancestors.include?(Patches::Base)
 
-          Subscriber.install
+          Handlers.install
         end
       end
     end

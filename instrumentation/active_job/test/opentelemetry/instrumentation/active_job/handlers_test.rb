@@ -8,7 +8,7 @@ require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/active_job'
 
-describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
+describe OpenTelemetry::Instrumentation::ActiveJob::Handlers do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance }
   # Technically these are the defaults. But ActiveJob seems to act oddly if you re-install
   # the instrumentation over and over again - so we manipulate instance variables to
@@ -22,7 +22,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Subscriber do
   let(:retry_span) { spans.find { |s| s.name == 'retry_stopped.active_job' } }
 
   before do
-    OpenTelemetry::Instrumentation::ActiveJob::Subscriber.uninstall
+    OpenTelemetry::Instrumentation::ActiveJob::Handlers.uninstall
     instrumentation.instance_variable_set(:@config, config)
     instrumentation.instance_variable_set(:@installed, false)
 
