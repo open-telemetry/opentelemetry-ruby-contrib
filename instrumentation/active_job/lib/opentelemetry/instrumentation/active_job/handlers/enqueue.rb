@@ -10,7 +10,7 @@ module OpenTelemetry
       module Handlers
         # Handles enqueue.active_job
         class Enqueue < Default
-          def on_start(name, _id, payload)
+          def start_span(name, _id, payload)
             otel_config = ActiveJob::Instrumentation.instance.config
             span_name = "#{otel_config[:span_naming] == :job_class ? payload.fetch(:job).class.name : payload.fetch(:job).queue_name} publish"
             span = @tracer.start_span(span_name, kind: :producer, attributes: @mapper.call(payload))

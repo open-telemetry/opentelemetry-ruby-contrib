@@ -10,7 +10,7 @@ module OpenTelemetry
       module Handlers
         # Handles perform.active_job
         class Perform < Default
-          def on_start(name, _id, payload)
+          def start_span(name, _id, payload)
             tokens = []
             parent_context = OpenTelemetry.propagation.extract(payload.fetch(:job).__otel_headers)
 

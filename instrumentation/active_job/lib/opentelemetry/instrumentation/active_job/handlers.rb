@@ -12,10 +12,29 @@ require_relative 'handlers/perform'
 module OpenTelemetry
   module Instrumentation
     module ActiveJob
-      # Custom subscriber that handles ActiveJob notifications
+      # Module that contains custom event handlers, which are used to generate spans per event
       module Handlers
         module_function
 
+        # Subscribes Event Handlers to relevant ActiveJob notifications
+        #
+        # The following events are recorded as spans:
+        # - enqueue
+        # - enqueue_at
+        # - enqueue_retry
+        # - perform
+        # - retry_stopped
+        # - discard
+        #
+        # Ingress and Egress spans (perform, enqueue, enqueue_at) use Messaging semantic conventions for naming the span,
+        # while internal spans keep their ActiveSupport event name.
+        #
+        # @note this method is not thread safe and should not be used in a multi-threaded context
+        # @note Why no perform_start?
+        #       This event causes much heartache as it is the first in a series of events that is triggered.
+        #       It should not be the ingress span because it does not measure anything.
+        #       https://github.com/rails/rails/blob/v6.1.7.6/activejob/lib/active_job/instrumentation.rb#L14
+        #       https://github.com/rails/rails/blob/v7.0.8/activejob/lib/active_job/instrumentation.rb#L19
         def install
           return unless Array(@subscriptions).empty?
 
@@ -26,11 +45,6 @@ module OpenTelemetry
           enqueue_handler = Handlers::Enqueue.new(tracer, mapper)
           perform_handler = Handlers::Perform.new(tracer, mapper)
 
-          # Why no perform_start?
-          # This event causes much heartache as it is the first in a series of events that is triggered.
-          # It should not be the ingress span because it does not measure anything.
-          # https://github.com/rails/rails/blob/v6.1.7.6/activejob/lib/active_job/instrumentation.rb#L14
-          # https://github.com/rails/rails/blob/v7.0.8/activejob/lib/active_job/instrumentation.rb#L19
           handlers_by_pattern = {
             'enqueue' => enqueue_handler,
             'enqueue_at' => enqueue_handler,
@@ -45,6 +59,8 @@ module OpenTelemetry
           end
         end
 
+        # Removes Event Handler Subscriptions for ActiveJob notifications
+        # @note this method is not thread safe and sholud not be used in a multi-threaded context
         def uninstall
           @subscriptions&.each { |subscriber| ActiveSupport::Notifications.unsubscribe(subscriber) }
           @subscriptions = nil
