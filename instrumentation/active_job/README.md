@@ -64,6 +64,33 @@ Attributes that are specific to this instrumentation are recorded under `rails.a
 | `rails.active_job.priority` | Integer | |
 | `rails.active_job.scheduled_at` | Float | _Subject to be converted to a Span Event_ |
 
+## Differences between ActiveJob versions
+
+### ActiveJob 6.1
+
+`perform.active_job` events do not include timings for `ActiveJob` callbacks therefore time spent in `before` and `after` hooks will be missing
+
+`ActiveJob::Base#executions` start at `1`.
+
+### ActiveJob 7+
+
+`perform.active_job` no longer includes exceptions handled using `rescue_from` in the payload.
+
+In order to preseve this behavior you will have to update the span yourself, e.g.
+
+```ruby
+  rescue_from MyCustomError do |e|
+    # Custom code to handle the error
+    span = OpenTelemetry::Instrumentation::ActiveJob.current_span
+    span.record_exception(e)
+    span.status = OpenTelemetry::Trace::Status.error('Job failed')
+  end
+```
+
+`ActiveJob::Base#executions` start at `0` instead of `1` as it did in v6.1.
+
+
+
 ## Examples
 
 Example usage can be seen in the `./example/active_job.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/active_job/example/active_job.rb)

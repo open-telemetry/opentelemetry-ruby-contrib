@@ -8,16 +8,24 @@ module OpenTelemetry
   module Instrumentation
     module ActiveJob
       module Handlers
-        # Handles perform.active_job
+        # Handles perform.active_job to geenrate ingress spans
         class Perform < Default
+          # Overrides the `Default#start_span` method to create an ingress span
+          # and registers it with the current context
+          #
+          # @param name [String] of the Event
+          # @param id [String] of the event
+          # @param payload [Hash] containing job run information
+          # @return [Hash] with the span and generated context tokens
           def start_span(name, _id, payload)
             tokens = []
-            parent_context = OpenTelemetry.propagation.extract(payload.fetch(:job).__otel_headers)
+            job = payload.fetch(:job)
+            parent_context = OpenTelemetry.propagation.extract(job.__otel_headers)
 
-            span_name = span_name_from(payload)
+            span_name = span_name_from(job)
 
             # TODO: Refactor into a propagation strategy
-            propagation_style = otel_config[:propagation_style]
+            propagation_style = @config[:propagation_style]
             if propagation_style == :child
               tokens << OpenTelemetry::Context.attach(parent_context)
               span = @tracer.start_span(span_name, kind: :consumer, attributes: @mapper.call(payload))
@@ -46,12 +54,8 @@ module OpenTelemetry
           end
 
           # TODO: refactor into a strategy
-          def span_name_from(payload)
-            "#{otel_config[:span_naming] == :job_class ? payload.fetch(:job).class.name : payload.fetch(:job).queue_name} process"
-          end
-
-          def otel_config
-            ActiveJob::Instrumentation.instance.config
+          def span_name_from(job)
+            "#{@config[:span_naming] == :job_class ? job.class.name : job.queue_name} process"
           end
         end
       end

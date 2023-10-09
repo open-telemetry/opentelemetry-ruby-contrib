@@ -8,15 +8,26 @@ module OpenTelemetry
   module Instrumentation
     module ActiveJob
       module Handlers
-        # Handles enqueue.active_job
+        # Handles `enqueue.active_job` and `enqueue_at.active_job` to generate egress spans
         class Enqueue < Default
+          # Overrides the `Default#start_span` method to create an egress span
+          # and registers it with the current context
+          #
+          # @param name [String] of the Event
+          # @param id [String] of the event
+          # @param payload [Hash] containing job run information
+          # @return [Hash] with the span and generated context tokens
           def start_span(name, _id, payload)
-            otel_config = ActiveJob::Instrumentation.instance.config
-            span_name = "#{otel_config[:span_naming] == :job_class ? payload.fetch(:job).class.name : payload.fetch(:job).queue_name} publish"
-            span = @tracer.start_span(span_name, kind: :producer, attributes: @mapper.call(payload))
+            job = payload.fetch(:job)
+            span = @tracer.start_span(span_name_from(job), kind: :producer, attributes: @mapper.call(payload))
             tokens = [OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))]
-            OpenTelemetry.propagation.inject(payload.fetch(:job).__otel_headers) # This must be transmitted over the wire
+            OpenTelemetry.propagation.inject(job.__otel_headers) # This must be transmitted over the wire
             { span: span, ctx_tokens: tokens }
+          end
+
+          # TODO: extract strategy
+          def span_name_from(job)
+            "#{@config[:span_naming] == :job_class ? job.class.name : job.queue_name} publish"
           end
         end
       end

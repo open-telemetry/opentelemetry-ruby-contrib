@@ -40,10 +40,13 @@ module OpenTelemetry
 
           tracer = Instrumentation.instance.tracer
           mapper = Mappers::Attribute.new
+          config = ActiveJob::Instrumentation.instance.config
+          parent_span_provider = OpenTelemetry::Instrumentation::ActiveJob
 
-          default_handler = Handlers::Default.new(tracer, mapper)
-          enqueue_handler = Handlers::Enqueue.new(tracer, mapper)
-          perform_handler = Handlers::Perform.new(tracer, mapper)
+          # TODO, use delegation instead of inheritance
+          default_handler = Handlers::Default.new(tracer, parent_span_provider, mapper, config)
+          enqueue_handler = Handlers::Enqueue.new(tracer, parent_span_provider, mapper, config)
+          perform_handler = Handlers::Perform.new(tracer, parent_span_provider, mapper, config)
 
           handlers_by_pattern = {
             'enqueue' => enqueue_handler,

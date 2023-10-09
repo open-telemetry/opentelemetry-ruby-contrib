@@ -6,15 +6,16 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/active_job'
+require_relative '../../../../../lib/opentelemetry/instrumentation/active_job'
 
-describe OpenTelemetry::Instrumentation::ActiveJob::Handlers do
+describe 'OpenTelemetry::Instrumentation::ActiveJob::Handlers::Discard' do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance }
   let(:config) { { propagation_style: :link, span_naming: :queue } }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:publish_span) { spans.find { |s| s.name == 'default publish' } }
   let(:process_span) { spans.find { |s| s.name == 'default process' } }
+  let(:discard_span) { spans.find { |s| s.name == 'discard.active_job' } }
 
   before do
     OpenTelemetry::Instrumentation::ActiveJob::Handlers.unsubscribe
@@ -37,17 +38,18 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers do
     ActiveJob::Base.queue_adapter = :inline
   end
 
-  describe 'compatibility' do
-    it 'works with positional args' do
-      _(PositionalOnlyArgsJob.perform_now('arg1')).must_be_nil # Make sure this runs without raising an error
-    end
+  describe 'exception handling' do
+    it 'sets discard span status to error' do
+      DiscardJob.perform_later
 
-    it 'works with keyword args' do
-      _(KeywordOnlyArgsJob.perform_now(keyword2: :keyword2)).must_be_nil # Make sure this runs without raising an error
-    end
+      _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(process_span.status.description).must_equal 'discard me'
 
-    it 'works with mixed args' do
-      _(MixedArgsJob.perform_now('arg1', 'arg2', keyword2: :keyword2)).must_be_nil # Make sure this runs without raising an error
+      _(discard_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(discard_span.status.description).must_equal 'discard me'
+      _(discard_span.events.first.name).must_equal 'exception'
+      _(discard_span.events.first.attributes['exception.type']).must_equal 'DiscardJob::DiscardError'
+      _(discard_span.events.first.attributes['exception.message']).must_equal 'discard me'
     end
   end
 end
