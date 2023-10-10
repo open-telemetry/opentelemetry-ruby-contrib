@@ -17,10 +17,10 @@ module OpenTelemetry
               return block.call(job) unless enabled?
 
               attributes = build_attributes(job)
-              attributes['messaging.operation'] = 'send'
+              attributes['messaging.operation'] = 'publish'
               attributes.compact!
 
-              tracer.in_span("#{job_queue(job)} send", attributes: attributes, kind: :producer) do |span|
+              tracer.in_span("#{job_queue(job)} publish", attributes: attributes, kind: :producer) do |span|
                 yield job
                 span.set_attribute('messaging.message_id', job.id.to_s)
                 add_events(span, job)
@@ -56,7 +56,6 @@ module OpenTelemetry
             end
 
             def add_events(span, job)
-              span.add_event('created_at', timestamp: job.created_at)
               span.add_event('run_at', timestamp: job.run_at) if job.run_at
               span.add_event('locked_at', timestamp: job.locked_at) if job.locked_at
             end

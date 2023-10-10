@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ruby_kafka
 
+### v0.21.0 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names
+
 ### v0.20.2 / 2023-08-09
 
 * FIXED: propagate context from async producer

@@ -14,7 +14,7 @@ module OpenTelemetry
             base.class_eval do
               around_enqueue do |job, block|
                 span_kind = job.class.queue_adapter_name == 'inline' ? :client : :producer
-                span_name = "#{otel_config[:span_naming] == :job_class ? job.class : job.queue_name} send"
+                span_name = "#{otel_config[:span_naming] == :job_class ? job.class : job.queue_name} publish"
                 span_attributes = job_attributes(job)
                 otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do
                   OpenTelemetry.propagation.inject(job.metadata)

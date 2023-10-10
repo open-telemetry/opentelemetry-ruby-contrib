@@ -26,7 +26,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueModule do
     it 'traces' do
       Resque.enqueue(DummyJob)
 
-      _(enqueue_span.name).must_equal('super_urgent send')
+      _(enqueue_span.name).must_equal('super_urgent publish')
       _(enqueue_span.attributes['messaging.system']).must_equal('resque')
       _(enqueue_span.attributes['messaging.resque.job_class']).must_equal('DummyJob')
       _(enqueue_span.attributes['messaging.destination']).must_equal('super_urgent')
@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueModule do
 
     it 'traces when enqueued with Active Job' do
       DummyJobWithActiveJob.perform_later(1, 2)
-      _(enqueue_span.name).must_equal('super_urgent send')
+      _(enqueue_span.name).must_equal('super_urgent publish')
       _(enqueue_span.attributes['messaging.system']).must_equal('resque')
       _(enqueue_span.attributes['messaging.resque.job_class']).must_equal('DummyJobWithActiveJob')
       _(enqueue_span.attributes['messaging.destination']).must_equal('super_urgent')
@@ -48,12 +48,12 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueModule do
       it 'uses the job class name for the span name' do
         Resque.enqueue(DummyJob)
 
-        _(enqueue_span.name).must_equal('DummyJob send')
+        _(enqueue_span.name).must_equal('DummyJob publish')
       end
 
       it 'uses the job class name when enqueued with Active Job' do
         DummyJobWithActiveJob.perform_later(1, 2)
-        _(enqueue_span.name).must_equal('DummyJobWithActiveJob send')
+        _(enqueue_span.name).must_equal('DummyJobWithActiveJob publish')
       end
     end
   end

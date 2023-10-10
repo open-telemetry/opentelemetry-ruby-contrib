@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::Que do
       TestJobAsync.enqueue
 
       span = finished_spans.last
-      _(span.name).must_equal('TestJobAsync send')
+      _(span.name).must_equal('TestJobAsync publish')
     end
 
     it 'records attributes' do
@@ -45,7 +45,7 @@ describe OpenTelemetry::Instrumentation::Que do
       _(attributes['messaging.system']).must_equal('que')
       _(attributes['messaging.destination']).must_equal('default')
       _(attributes['messaging.destination_kind']).must_equal('queue')
-      _(attributes['messaging.operation']).must_equal('send')
+      _(attributes['messaging.operation']).must_equal('publish')
       _(attributes['messaging.message_id']).must_be_instance_of(Integer)
       _(attributes['messaging.que.job_class']).must_equal('TestJobAsync')
       _(attributes['messaging.que.priority']).must_equal(100)
@@ -117,7 +117,7 @@ describe OpenTelemetry::Instrumentation::Que do
       TestJobSync.enqueue
 
       span1 = finished_spans.last
-      _(span1.name).must_equal('TestJobSync send')
+      _(span1.name).must_equal('TestJobSync publish')
 
       span2 = finished_spans.first
       _(span2.name).must_equal('TestJobSync process')
@@ -171,14 +171,14 @@ describe OpenTelemetry::Instrumentation::Que do
 
         _(finished_spans.size).must_equal(2)
 
-        send_span = finished_spans.first
+        publish_span = finished_spans.first
         process_span = finished_spans.last
 
-        _(send_span.trace_id).wont_equal(process_span.trace_id)
+        _(publish_span.trace_id).wont_equal(process_span.trace_id)
 
         _(process_span.total_recorded_links).must_equal(1)
-        _(process_span.links[0].span_context.trace_id).must_equal(send_span.trace_id)
-        _(process_span.links[0].span_context.span_id).must_equal(send_span.span_id)
+        _(process_span.links[0].span_context.trace_id).must_equal(publish_span.trace_id)
+        _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
       end
     end
 
@@ -191,11 +191,11 @@ describe OpenTelemetry::Instrumentation::Que do
 
         _(finished_spans.size).must_equal(2)
 
-        send_span = finished_spans.first
+        publish_span = finished_spans.first
         process_span = finished_spans.last
 
-        _(send_span.trace_id).must_equal(process_span.trace_id)
-        _(process_span.parent_span_id).must_equal(send_span.span_id)
+        _(publish_span.trace_id).must_equal(process_span.trace_id)
+        _(process_span.parent_span_id).must_equal(publish_span.span_id)
         _(process_span.total_recorded_links).must_equal(0)
       end
     end
@@ -221,11 +221,11 @@ describe OpenTelemetry::Instrumentation::Que do
 
         _(finished_spans.size).must_equal(2)
 
-        send_span = finished_spans.first
+        publish_span = finished_spans.first
         process_span = finished_spans.last
 
-        _(send_span.trace_id).wont_equal(process_span.trace_id)
-        _(send_span.total_recorded_links).must_equal(0)
+        _(publish_span.trace_id).wont_equal(process_span.trace_id)
+        _(publish_span.total_recorded_links).must_equal(0)
         _(process_span.total_recorded_links).must_equal(0)
       end
     end
@@ -281,7 +281,7 @@ describe OpenTelemetry::Instrumentation::Que do
           end
 
           span = finished_spans.last
-          _(span.name).must_equal('TestJobAsync send')
+          _(span.name).must_equal('TestJobAsync publish')
         end
 
         it 'links spans together' do
@@ -293,14 +293,14 @@ describe OpenTelemetry::Instrumentation::Que do
 
           _(finished_spans.size).must_equal(2)
 
-          send_span = finished_spans.first
+          publish_span = finished_spans.first
           process_span = finished_spans.last
 
-          _(send_span.trace_id).wont_equal(process_span.trace_id)
+          _(publish_span.trace_id).wont_equal(process_span.trace_id)
 
           _(process_span.total_recorded_links).must_equal(1)
-          _(process_span.links[0].span_context.trace_id).must_equal(send_span.trace_id)
-          _(process_span.links[0].span_context.span_id).must_equal(send_span.span_id)
+          _(process_span.links[0].span_context.trace_id).must_equal(publish_span.trace_id)
+          _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
         end
       end
 
@@ -376,7 +376,7 @@ describe OpenTelemetry::Instrumentation::Que do
           end
 
           span1 = finished_spans.first
-          _(span1.name).must_equal('TestJobSync send')
+          _(span1.name).must_equal('TestJobSync publish')
 
           span2 = finished_spans.last
           _(span2.name).must_equal('TestJobSync process')
@@ -429,14 +429,14 @@ describe OpenTelemetry::Instrumentation::Que do
 
             _(finished_spans.size).must_equal(2)
 
-            send_span = finished_spans.first
+            publish_span = finished_spans.first
             process_span = finished_spans.last
 
-            _(send_span.trace_id).wont_equal(process_span.trace_id)
+            _(publish_span.trace_id).wont_equal(process_span.trace_id)
 
             _(process_span.total_recorded_links).must_equal(1)
-            _(process_span.links[0].span_context.trace_id).must_equal(send_span.trace_id)
-            _(process_span.links[0].span_context.span_id).must_equal(send_span.span_id)
+            _(process_span.links[0].span_context.trace_id).must_equal(publish_span.trace_id)
+            _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
           end
         end
 
@@ -452,11 +452,11 @@ describe OpenTelemetry::Instrumentation::Que do
 
             _(finished_spans.size).must_equal(2)
 
-            send_span = finished_spans.first
+            publish_span = finished_spans.first
             process_span = finished_spans.last
 
-            _(send_span.trace_id).must_equal(process_span.trace_id)
-            _(process_span.parent_span_id).must_equal(send_span.span_id)
+            _(publish_span.trace_id).must_equal(process_span.trace_id)
+            _(process_span.parent_span_id).must_equal(publish_span.span_id)
             _(process_span.total_recorded_links).must_equal(0)
           end
         end
@@ -482,11 +482,11 @@ describe OpenTelemetry::Instrumentation::Que do
 
             _(finished_spans.size).must_equal(2)
 
-            send_span = finished_spans.first
+            publish_span = finished_spans.first
             process_span = finished_spans.last
 
-            _(send_span.trace_id).wont_equal(process_span.trace_id)
-            _(send_span.total_recorded_links).must_equal(0)
+            _(publish_span.trace_id).wont_equal(process_span.trace_id)
+            _(publish_span.total_recorded_links).must_equal(0)
             _(process_span.total_recorded_links).must_equal(0)
           end
         end
