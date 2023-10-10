@@ -38,7 +38,7 @@ module OpenTelemetry
         def subscribe
           return unless Array(@subscriptions).empty?
 
-          tracer = Instrumentation.instance.tracer
+          tracer = OpenTelemetry.tracer_provider.tracer(ActiveJob.name, ActiveJob::VERSION)
           mapper = Mappers::Attribute.new
           config = ActiveJob::Instrumentation.instance.config
           parent_span_provider = OpenTelemetry::Instrumentation::ActiveJob

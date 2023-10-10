@@ -10,6 +10,15 @@ module OpenTelemetry
       module Handlers
         # Handles perform.active_job to geenrate ingress spans
         class Perform < Default
+          def initialize(...)
+            super
+            @span_name_formatter = if @config[:span_naming] == :job_class
+                                     ->(job) { "#{job.class.name} process" }
+                                   else
+                                     ->(job) { "#{job.queue_name} process" }
+                                   end
+          end
+
           # Overrides the `Default#start_span` method to create an ingress span
           # and registers it with the current context
           #
@@ -22,7 +31,7 @@ module OpenTelemetry
             job = payload.fetch(:job)
             parent_context = OpenTelemetry.propagation.extract(job.__otel_headers)
 
-            span_name = span_name_from(job)
+            span_name = @span_name_formatter.call(job)
 
             # TODO: Refactor into a propagation strategy
             propagation_style = @config[:propagation_style]
@@ -51,11 +60,6 @@ module OpenTelemetry
             internal_context = OpenTelemetry::Instrumentation::ActiveJob.context_with_span(span, parent_context: consumer_context)
 
             [consumer_context, internal_context].map { |context| OpenTelemetry::Context.attach(context) }
-          end
-
-          # TODO: refactor into a strategy
-          def span_name_from(job)
-            "#{@config[:span_naming] == :job_class ? job.class.name : job.queue_name} process"
           end
         end
       end
