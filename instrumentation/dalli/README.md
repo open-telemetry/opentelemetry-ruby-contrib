@@ -30,6 +30,22 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Configuration options
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Dalli', {
+    # You may optionally set a value for 'peer.service', which
+    # will be included on all spans from this instrumentation:
+    peer_service: '',
+
+    # The obfuscation of query in the db.statement attribute is enabled by default.
+    # To disable, set db_statement to :include; to omit the query completely, set db_statement to :omit
+    db_statement: :include,
+  }
+end
+```
+
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-dalli` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
