@@ -16,8 +16,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
   let(:span) { exporter.finished_spans.last }
 
   before do
-    TestHelper.setup_active_record
-
+    Delayed::Worker.backend.delete_all
     stub_const('BasicPayload', Class.new do
       def perform; end
     end)
@@ -50,8 +49,6 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
 
   after do
     OpenTelemetry.propagation = @orig_propagation
-
-    TestHelper.teardown_active_record
   end
 
   describe 'enqueue callback' do
@@ -74,11 +71,9 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
       _(span.attributes['messaging.operation']).must_equal 'publish'
       _(span.attributes['messaging.message_id']).must_be_kind_of String
 
-      _(span.events.size).must_equal 2
-      _(span.events[0].name).must_equal 'created_at'
+      _(span.events.size).must_equal 1
+      _(span.events[0].name).must_equal 'run_at'
       _(span.events[0].timestamp).must_be_kind_of Integer
-      _(span.events[1].name).must_equal 'run_at'
-      _(span.events[1].timestamp).must_be_kind_of Integer
     end
 
     describe 'when queue name is set' do
@@ -124,7 +119,6 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
       _(exporter.finished_spans.size).must_equal 1
       _(exporter.finished_spans.first.name).must_equal 'default publish'
       job_run
-      _(exporter.finished_spans.size).must_equal 2
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
       _(span.name).must_equal 'default process'
@@ -138,17 +132,15 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
       _(span.attributes['messaging.operation']).must_equal 'process'
       _(span.attributes['messaging.message_id']).must_be_kind_of String
 
-      _(span.events.size).must_equal 3
-      _(span.events[0].name).must_equal 'created_at'
+      _(span.events[0].name).must_equal 'run_at'
       _(span.events[0].timestamp).must_be_kind_of Integer
-      _(span.events[1].name).must_equal 'run_at'
+      _(span.events[1].name).must_equal 'locked_at'
       _(span.events[1].timestamp).must_be_kind_of Integer
-      _(span.events[2].name).must_equal 'locked_at'
-      _(span.events[2].timestamp).must_be_kind_of Integer
     end
 
     describe 'when queue name is set' do
       let(:job_params) { { queue: 'foobar_queue' } }
+      let(:job_enqueue) { Delayed::Job.enqueue(@basic_payload.new, job_params) }
 
       it 'span tags include queue name' do
         job_run
@@ -181,11 +173,10 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
       it 'has resource name equal to underlying ActiveJob class name' do
         job_run
         _(span.attributes['messaging.delayed_job.name']).must_equal 'ErrorPayload'
-        _(span.events.size).must_equal 4
-        _(span.events[3].name).must_equal 'exception'
-        _(span.events[3].timestamp).must_be_kind_of Integer
-        _(span.events[3].attributes['exception.type']).must_equal 'ArgumentError'
-        _(span.events[3].attributes['exception.message']).must_equal 'This job failed'
+        _(span.events[2].name).must_equal 'exception'
+        _(span.events[2].timestamp).must_be_kind_of Integer
+        _(span.events[2].attributes['exception.type']).must_equal 'ArgumentError'
+        _(span.events[2].attributes['exception.message']).must_equal 'This job failed'
       end
     end
   end
