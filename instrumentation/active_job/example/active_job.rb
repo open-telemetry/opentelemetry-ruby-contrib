@@ -71,6 +71,18 @@ class DiscardJob < ::ActiveJob::Base
 end
 
 class TestJob < ::ActiveJob::Base
+  around_enqueue do |_job, block|
+    OpenTelemetry.tracer_provider.tracer('demo', '1.0').in_span('around_enqueue') do
+      block.call
+    end
+  end
+
+  around_perform do |_job, block|
+    OpenTelemetry.tracer_provider.tracer("demo", 1.0).in_span("around_perform") do
+      block.call
+    end
+  end
+
   def perform
     puts <<~EOS
 
