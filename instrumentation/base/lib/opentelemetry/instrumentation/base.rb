@@ -204,7 +204,7 @@ module OpenTelemetry
         @config = {}
         @installed = false
         @options = options
-        @tracer = OpenTelemetry::Trace::Tracer.new
+        @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
       end
       # rubocop:enable Metrics/ParameterLists
 
@@ -220,7 +220,6 @@ module OpenTelemetry
         return false unless installable?(config)
 
         instance_exec(@config, &@install_blk)
-        @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true
       end
 
