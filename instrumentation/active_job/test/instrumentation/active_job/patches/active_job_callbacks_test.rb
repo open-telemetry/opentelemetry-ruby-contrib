@@ -162,14 +162,21 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         end
       end
 
-      it 'is set correctly for jobs that do wait' do
+      it 'records the scheduled at time for apps running Rails 7.1 and newer' do
+        skip 'scheduled jobs behave differently in Rails 7.1+' if ActiveJob.version < Gem::Version.new('7.1')
+
         job = TestJob.set(wait: 0.second).perform_later
 
-        # Only the sending span is a 'scheduled' thing
-        _(publish_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at)
-        assert(publish_span.attributes['messaging.active_job.scheduled_at'])
+        _(publish_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at.to_f)
+        _(process_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at.to_f)
+      end
 
-        # The processing span isn't a 'scheduled' thing
+      it 'records the scheduled at time for apps running Rails 7.0 or older' do
+        skip 'scheduled jobs behave differently in Rails 7.1+' if ActiveJob.version >= Gem::Version.new('7.1')
+
+        job = TestJob.set(wait: 0.second).perform_later
+
+        _(publish_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at.to_f)
         _(process_span.attributes['messaging.active_job.scheduled_at']).must_be_nil
       end
     end
