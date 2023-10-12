@@ -22,7 +22,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Mysql2::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
-  let(:config) { {} }
+  let(:config) { { db_statement: :include } }
 
   before do
     exporter.reset
