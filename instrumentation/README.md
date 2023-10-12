@@ -42,7 +42,7 @@ You also have the option of installing all of the instrumentation libraries by i
 We are a community of volunteers who do our best to provide our users with up to date support for instrumentations,
 however we have limited capacity and are unable to support compatability with EOL or unmaintained libraries.
 
-Should you need to instrument an _older_ version of a library you will have to ensure to pin to a instrumtation version that is compatable with that library.
+Should you need to instrument an _older_ version of a library you will have to ensure to pin to an instrumentation version that is compatible with that library.
 
 Please review the individual instrumentation READMEs for more information about version compatability.
 
