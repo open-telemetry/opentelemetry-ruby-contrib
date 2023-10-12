@@ -4,6 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'delayed_job-4.1' do
-  gem 'delayed_job', '~> 4.1.0'
+appraise 'delayed_job_4.1-rails-7.1' do
+  gem 'activejob', '~> 7.1.0'
+end
+
+appraise 'delayed_job_4.1-rails-7.0' do
+  gem 'activejob', '~> 7.0.0'
+end
+
+appraise 'delayed_job-4.1-rails-6.1' do
+  gem 'activejob', '~> 6.1.0'
 end

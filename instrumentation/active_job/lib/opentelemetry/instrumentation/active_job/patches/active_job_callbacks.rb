@@ -73,7 +73,7 @@ module OpenTelemetry
               'messaging.destination' => job.queue_name,
               'messaging.message_id' => job.job_id,
               'messaging.active_job.provider_job_id' => job.provider_job_id,
-              'messaging.active_job.scheduled_at' => job.scheduled_at,
+              'messaging.active_job.scheduled_at' => job.scheduled_at&.to_f,
               'messaging.active_job.priority' => job.priority
             }
 
