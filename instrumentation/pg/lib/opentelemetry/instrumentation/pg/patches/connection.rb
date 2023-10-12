@@ -101,7 +101,9 @@ module OpenTelemetry
 
           def extract_operation(sql)
             # From: https://github.com/open-telemetry/opentelemetry-js-contrib/blob/9244a08a8d014afe26b82b91cf86e407c2599d73/plugins/node/opentelemetry-instrumentation-pg/src/utils.ts#L35
-            sql.to_s.split[0].to_s.upcase
+            # Ignores prepend comment
+            comment_regex = %r{\A\/\*.*?\*\/}m
+            sql.to_s.sub(comment_regex, '').split[0].to_s.upcase
           end
 
           def span_name(operation)
