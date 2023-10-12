@@ -46,9 +46,9 @@ end
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Mysql2', {
-    # The obfuscation of SQL in the db.statement attribute is disabled by default.
-    # To enable, set db_statement to :obfuscate.
-    db_statement: :obfuscate,
+    # The obfuscation of SQL in the db.statement attribute is enabled by default.
+    # To disable, set db_statement to :include; to omit the query completely, set db_statement to :omit
+    db_statement: :include,
   }
 end
 ```
