@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module ActiveJob
       module Handlers
-        # Default handler to creates internal spans for events
+        # Default handler to create internal spans for events
         # This class provides default template methods that derived classes may override to generate spans and register contexts.
         class Default
           # @param tracer [OpenTelemetry::Trace::Tracer] to generate spans
