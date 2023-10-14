@@ -51,7 +51,7 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 
 ## Semantic Conventions
 
-This instrumentation generally uses Messaging semantic conventions by treating job enqueuers as `producers` and workers as `consumers`.
+This instrumentation generally uses [Messaging semantic conventions](https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/) by treating job enqueuers as `producers` and workers as `consumers`.
 
 Internal spans are named using the name of the `ActiveSupport` event that was provided.
 
