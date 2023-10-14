@@ -32,7 +32,7 @@ end
 
 ## Active Support Instrumentation
 
-Earlier versions of this instrumentation relied on registring custom `around_perform` hooks in order to deal with limitations
+Earlier versions of this instrumentation relied on registering custom `around_perform` hooks in order to deal with limitations
 in `ActiveSupport::Notifications`, however those patches resulted in error reports and inconsistent behavior when combined with other gems.
 
 This instrumentation now relies entirely on `ActiveSupport::Notifications` and registers a custom Subscriber that listens to relevant events to report as spans.
