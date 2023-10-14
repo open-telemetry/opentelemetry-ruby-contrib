@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module ActiveJob
       module Handlers
-        # Handles perform.active_job to geenrate ingress spans
+        # Handles perform.active_job to generate ingress spans
         class Perform < Default
           def initialize(...)
             super
