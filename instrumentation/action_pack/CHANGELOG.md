@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.7.1 / 2023-10-16
+
+* FIXED: Add Rails 7.1 compatibility
+
 ### v0.7.0 / 2023-06-05
 
 * ADDED: Use Rack Middleware Helper
