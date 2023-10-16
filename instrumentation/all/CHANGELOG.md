@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.51.0 / 2023-10-16
+
+* (No significant changes)
+
 ### v0.50.1 / 2023-09-07
 
 * FIXED: Align messaging instrumentation operation names (Resque)
