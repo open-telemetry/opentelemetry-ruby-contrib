@@ -2,7 +2,7 @@
 
 ### v0.1.1 / 2023-10-16
 
-* FIXED: Remove dependence on activesupport
+* FIXED: Remove activesupport dependency
 
 ### v0.1.0 / 2023-08-07
 

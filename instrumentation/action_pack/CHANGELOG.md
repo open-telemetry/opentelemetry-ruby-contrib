@@ -2,7 +2,7 @@
 
 ### v0.7.1 / 2023-10-16
 
-* FIXED: Add Rails 7.1 compatability
+* FIXED: Add Rails 7.1 compatibility
 
 ### v0.7.0 / 2023-06-05
 
