@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+### v0.4.3 / 2023-10-16
+
+* FIXED: Add Rails 7.1 compatability
+
 ### v0.4.2 / 2023-09-07
 
 FIXED: Reduce Object allocation
