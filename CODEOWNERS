@@ -12,7 +12,7 @@
 #  https://help.github.com/en/articles/about-code-owners
 #
 
-* @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+* @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @open-telemetry/ruby-contrib-approvers
 
 resources/container/ @scbjans @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
 
