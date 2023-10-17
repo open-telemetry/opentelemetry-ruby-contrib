@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.28.1 / 2023-10-16
+
+* FIXED: Add Rails 7.1 compatibility
+
 ### v0.28.0 / 2023-09-07
 
 * FIXED: Align messaging instrumentation operation names
