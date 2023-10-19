@@ -12,13 +12,24 @@ require_relative '../../../../../lib/opentelemetry/instrumentation/action_pack/h
 describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController do
   include Rack::Test::Methods
 
+  let(:instrumentation) { OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:span) { exporter.finished_spans.last }
   let(:rails_app) { DEFAULT_RAILS_APP }
+  let(:config) { {} }
 
   # Clear captured spans
-  before { exporter.reset }
+  before do
+    OpenTelemetry::Instrumentation::ActionPack::Handlers.unsubscribe
+
+    instrumentation.instance_variable_set(:@config, config)
+    instrumentation.instance_variable_set(:@installed, false)
+
+    instrumentation.install(config)
+
+    exporter.reset
+  end
 
   it 'sets the span name to the format: ControllerName#action' do
     get '/ok'

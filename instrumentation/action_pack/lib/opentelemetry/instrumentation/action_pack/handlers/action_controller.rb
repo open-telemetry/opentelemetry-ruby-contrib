@@ -22,17 +22,18 @@ module OpenTelemetry
           # @param payload [Hash] containing job run information
           # @return [Hash] the payload passed as a method argument
           def start(_name, _id, payload)
-            
             rack_span = OpenTelemetry::Instrumentation::Rack.current_span
 
-            rack_span.name = "#{payload[:controller]}##{payload[:action]}" unless payload[:request]&.env['action_dispatch.exception']
+            # from rails 6.1, the request is added to payload
+            rack_span.name = "#{payload[:controller]}##{payload[:action]}" unless payload[:request].env['action_dispatch.exception']
 
             attributes_to_append = {
               OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => String(payload[:controller]),
               OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(payload[:action])
             }
 
-            attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = payload[:request]&.filtered_path if payload[:request]&.filtered_path != payload[:request]&.fullpath
+            attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = payload[:request].filtered_path if payload[:request].filtered_path != payload[:request].fullpath
+
             rack_span.add_attributes(attributes_to_append)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
@@ -45,7 +46,6 @@ module OpenTelemetry
           # @param payload [Hash] containing job run information
           # @return [Hash] the payload passed as a method argument
           def finish(_name, _id, payload)
-
             rack_span = OpenTelemetry::Instrumentation::Rack.current_span
             rack_span.record_exception(payload[:exception_object]) if payload[:exception_object]
           rescue StandardError => e
