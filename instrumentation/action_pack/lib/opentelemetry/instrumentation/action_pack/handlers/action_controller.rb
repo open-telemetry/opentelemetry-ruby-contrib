@@ -46,13 +46,6 @@ module OpenTelemetry
           # @return [Hash] the payload passed as a method argument
           def finish(_name, _id, payload)
 
-            # payload in finish: {:controller=>"UsersController", :action=>"new", :request=>#<ActionDispatch::Request GET "http://0.0.0.0:8002/users/new" for 127.0.0.1>, 
-            # :params=>{"controller"=>"users", "action"=>"new"}, :headers=>#<ActionDispatch::Http::Headers:0x0000ffff876add80 @req=#<ActionDispatch::Request GET "http://0.0.0.0:8002/users/new" for 127.0.0.1>>, 
-            # :format=>"*/*", :method=>"GET", :path=>"/users/new", :view_runtime=>nil, :db_runtime=>0.23200000578071922, 
-            # :exception=>["NoMethodError", "undefined method `asdfsf' for #<User id: nil, name: nil, email: nil, created_at: nil, updated_at: nil, password_digest: nil, remember_digest: nil, admin: false, activation_digest: nil, activated: false, activated_at: nil, reset_digest: nil, reset_sent_at: nil>"], 
-            # :exception_object=>#<NoMethodError: undefined method `asdfsf' for #<User id: nil, name: nil, email: nil, created_at: nil, updated_at: nil, password_digest: nil, remember_digest: nil, admin: false, activation_digest: nil, activated: false, activated_at: nil, reset_digest: nil, reset_sent_at: nil>>}
-            # error will appear here
-
             rack_span = OpenTelemetry::Instrumentation::Rack.current_span
             rack_span.record_exception(payload[:exception_object]) if payload[:exception_object]
           rescue StandardError => e
