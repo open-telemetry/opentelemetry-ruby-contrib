@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.23.3 / 2023-10-16
+
+* FIXED: Omit `nil` `net.peer.name` attributes
+
 ### v0.23.2 / 2023-07-21
 
 * ADDED: Update `opentelemetry-common` from [0.19.3 to 0.20.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/537)

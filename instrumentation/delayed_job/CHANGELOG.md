@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+### v0.22.0 / 2023-10-16
+
+* BREAKING CHANGE: Drop DelayedJob ActiveRecord in Tests
+
+* FIXED: Drop DelayedJob ActiveRecord in Tests
+
 ### v0.21.0 / 2023-09-07
 
 * FIXED: Align messaging instrumentation operation names

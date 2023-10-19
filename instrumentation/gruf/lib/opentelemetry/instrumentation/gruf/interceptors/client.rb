@@ -10,7 +10,7 @@ module OpenTelemetry
       module Interceptors
         class Client < ::Gruf::Interceptors::ClientInterceptor
           def call(request_context:)
-            return yield if instrumentation_config.blank?
+            return yield if instrumentation_config.empty?
 
             service = request_context.method.split('/')[1]
             method = request_context.method_name
