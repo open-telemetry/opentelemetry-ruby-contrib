@@ -32,11 +32,11 @@ module OpenTelemetry
         end
 
         def patch
-          ::ActionController::Metal.prepend(Patches::ActionController::Metal)
+          Handlers.subscribe
         end
 
         def require_dependencies
-          require_relative 'patches/action_controller/metal'
+          require_relative 'handlers'
         end
 
         def require_railtie
