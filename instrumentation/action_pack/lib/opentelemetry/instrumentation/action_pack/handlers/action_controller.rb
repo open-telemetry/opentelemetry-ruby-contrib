@@ -24,15 +24,18 @@ module OpenTelemetry
           def start(_name, _id, payload)
             rack_span = OpenTelemetry::Instrumentation::Rack.current_span
 
-            # from rails 6.1, the request is added to payload
-            rack_span.name = "#{payload[:controller]}##{payload[:action]}" unless payload[:request].env['action_dispatch.exception']
+            # from rails 6.1, the request will be added to payload
+            request = payload[:request]
+            request = payload[:headers].instance_variable_get(:@req) if ::ActionPack.version < Gem::Version.new('6.1.0')
+
+            rack_span.name = "#{payload[:controller]}##{payload[:action]}" unless request.env['action_dispatch.exception']
 
             attributes_to_append = {
               OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => String(payload[:controller]),
               OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(payload[:action])
             }
 
-            attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = payload[:request].filtered_path if payload[:request].filtered_path != payload[:request].fullpath
+            attributes_to_append[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = request.filtered_path if request.filtered_path != request.fullpath
 
             rack_span.add_attributes(attributes_to_append)
           rescue StandardError => e
