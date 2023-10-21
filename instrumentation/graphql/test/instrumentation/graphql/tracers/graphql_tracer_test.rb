@@ -97,13 +97,11 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
         after do
           # Reset various instance variables to clear state between tests
-          SomeOtherGraphQLAppSchema.instance_variable_set(:@own_tracers, [])
-          SomeOtherGraphQLAppSchema.instance_variable_set(:@own_plugins, SomeOtherGraphQLAppSchema.plugins[0..1])
+          [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
         end
 
         it 'traces the provided schemas' do
           SomeOtherGraphQLAppSchema.execute('query SimpleQuery{ __typename }')
-
           _(spans.size).must_equal(8)
         end
 
