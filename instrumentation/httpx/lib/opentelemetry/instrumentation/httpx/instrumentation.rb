@@ -15,7 +15,7 @@ module OpenTelemetry
         end
 
         compatible do
-          Gem::Version.new(::HTTPX::VERSION) >= Gem::Version.new("0.24.7")
+          Gem::Version.new(::HTTPX::VERSION) >= Gem::Version.new('0.24.7')
         end
 
         present do
