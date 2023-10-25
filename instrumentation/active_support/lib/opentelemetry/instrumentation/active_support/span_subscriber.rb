@@ -30,7 +30,7 @@ module OpenTelemetry
 
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
 
-        if Rails.version < Gem::Version.new('7.2')
+        if Gem::Version.new(Rails.version) < Gem::Version.new('7.2')
           ::ActiveSupport::Notifications.notifier.synchronize do
             subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
 
