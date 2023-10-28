@@ -29,7 +29,7 @@ module OpenTelemetry
         option :untraced_requests,        default: nil,   validate: :callable
         option :response_propagators,     default: [],    validate: :array
         # This option is only valid for applicaitons using Rack 2.0 or greater
-        option :use_rack_events,          default: false, validate: :boolean
+        option :use_rack_events,          default: true, validate: :boolean
 
         # Temporary Helper for Sinatra and ActionPack middleware to use during installation
         #
