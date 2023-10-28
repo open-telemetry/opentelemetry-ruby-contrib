@@ -20,7 +20,7 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
-        option :db_statement, default: :include, validate: %I[omit include obfuscate]
+        option :db_statement, default: :obfuscate, validate: %I[omit include obfuscate]
         option :span_name, default: :statement_type, validate: %I[statement_type db_name db_operation_and_name]
         option :obfuscation_limit, default: 2000, validate: :integer
 

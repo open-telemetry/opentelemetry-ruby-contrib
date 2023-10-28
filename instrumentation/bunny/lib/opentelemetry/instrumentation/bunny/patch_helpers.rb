@@ -35,6 +35,7 @@ module OpenTelemetry
         def self.extract_context(properties)
           # use the receive span as parent context
           parent_context = OpenTelemetry.propagation.extract(properties[:tracer_receive_headers])
+          return [parent_context, nil] if properties[:headers].nil?
 
           # link to the producer context
           producer_context = OpenTelemetry.propagation.extract(properties[:headers])

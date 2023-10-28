@@ -7,8 +7,13 @@
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
+# These are dependencies that delayed job assumes are already loaded
+# We are compensating for that here in this test... that is a smell
+# NoMethodError: undefined method `extract_options!' for [#<ActiveJobPayload:0x0000000108bf5d48>, {}]:Array
+# delayed_job-4.1.11/lib/delayed/backend/job_preparer.rb:7:in `initialize'0
+require 'active_support/core_ext/array/extract_options'
+
 require 'opentelemetry-instrumentation-delayed_job'
-require 'active_support/core_ext/kernel/reporting'
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
@@ -24,31 +29,7 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor span_processor
 end
 
-ActiveRecord::Migration.verbose = false
+gem_dir = Gem::Specification.find_by_name('delayed_job').gem_dir
+require "#{gem_dir}/spec/delayed/backend/test"
 
-module TestHelper
-  extend self
-
-  def setup_active_record
-    ::ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:')
-    ::ActiveRecord::Schema.define do
-      create_table 'delayed_jobs', force: :cascade do |t|
-        t.integer 'priority', default: 0, null: false
-        t.integer 'attempts', default: 0, null: false
-        t.text 'handler', null: false
-        t.text 'last_error'
-        t.datetime 'run_at'
-        t.datetime 'locked_at'
-        t.datetime 'failed_at'
-        t.string 'locked_by'
-        t.string 'queue'
-        t.datetime 'created_at'
-        t.datetime 'updated_at'
-      end
-    end
-  end
-
-  def teardown_active_record
-    ::ActiveRecord::Base.connection.close
-  end
-end
+Delayed::Worker.backend = Delayed::Backend::Test::Job

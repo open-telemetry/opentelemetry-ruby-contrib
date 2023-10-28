@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.6.3 / 2023-10-16
+
+* FIXED: Add Rails 7.1 compatibility
+
 ### v0.6.2 / 2023-08-14
 
 * FIXED: Ensure that transaction name property is used, rather than self
