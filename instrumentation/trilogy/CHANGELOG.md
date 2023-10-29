@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.57.0 / 2023-10-27
+
+* ADDED: Instrument connect and ping
+
 ### v0.56.3 / 2023-08-03
 
 * FIXED: Remove inline linter rules
