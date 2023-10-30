@@ -203,11 +203,6 @@ gems:
     directory: propagator/xray
     version_constant: [OpenTelemetry, Propagator, XRay, VERSION]
 
-  - name: opentelemetry-resource_detectors
-    directory: resource_detectors
-    version_rb_path: lib/opentelemetry/resource/detectors/version.rb
-    version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
-
   - name: opentelemetry-resource-detector-azure
     directory: resources/azure
     version_rb_path: lib/opentelemetry/resource/detector/azure/version.rb

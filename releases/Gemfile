@@ -36,7 +36,6 @@ gem 'trilogy'
 
 gem 'opentelemetry-api'
 gem 'opentelemetry-sdk'
-gem 'opentelemetry-resource_detectors'
 
 Dir['../propagator/**/version.rb'].each do |f|
   name = f.match(%r{propagator/(\w+)/lib})[1]
