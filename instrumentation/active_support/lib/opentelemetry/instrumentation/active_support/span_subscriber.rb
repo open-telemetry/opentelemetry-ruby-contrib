@@ -31,7 +31,7 @@ module OpenTelemetry
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
 
         # this can be removed once we drop support for Rails < 7.2
-        # see https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/707 for more context    
+        # see https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/707 for more context
         if ::ActiveSupport::Notifications.notifier.respond_to?(:synchronize)
           ::ActiveSupport::Notifications.notifier.synchronize do
             subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
