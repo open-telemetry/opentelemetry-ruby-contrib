@@ -38,15 +38,14 @@ module OpenTelemetry
         def subscribe
           return unless Array(@subscriptions).empty?
 
-          tracer = OpenTelemetry.tracer_provider.tracer(ActiveJob.name, ActiveJob::VERSION)
           mapper = Mappers::Attribute.new
           config = ActiveJob::Instrumentation.instance.config
           parent_span_provider = OpenTelemetry::Instrumentation::ActiveJob
 
           # TODO, use delegation instead of inheritance
-          default_handler = Handlers::Default.new(tracer, parent_span_provider, mapper, config)
-          enqueue_handler = Handlers::Enqueue.new(tracer, parent_span_provider, mapper, config)
-          perform_handler = Handlers::Perform.new(tracer, parent_span_provider, mapper, config)
+          default_handler = Handlers::Default.new(parent_span_provider, mapper, config)
+          enqueue_handler = Handlers::Enqueue.new(parent_span_provider, mapper, config)
+          perform_handler = Handlers::Perform.new(parent_span_provider, mapper, config)
 
           handlers_by_pattern = {
             'enqueue' => enqueue_handler,

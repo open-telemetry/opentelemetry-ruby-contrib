@@ -37,11 +37,11 @@ module OpenTelemetry
             propagation_style = @config[:propagation_style]
             if propagation_style == :child
               tokens << OpenTelemetry::Context.attach(parent_context)
-              span = @tracer.start_span(span_name, kind: :consumer, attributes: @mapper.call(payload))
+              span = tracer.start_span(span_name, kind: :consumer, attributes: @mapper.call(payload))
             else
               span_context = OpenTelemetry::Trace.current_span(parent_context).context
               links = [OpenTelemetry::Trace::Link.new(span_context)] if span_context.valid? && propagation_style == :link
-              span = @tracer.start_root_span(span_name, kind: :consumer, attributes: @mapper.call(payload), links: links)
+              span = tracer.start_root_span(span_name, kind: :consumer, attributes: @mapper.call(payload), links: links)
             end
 
             tokens.concat(attach_consumer_context(span))

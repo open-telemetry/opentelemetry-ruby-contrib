@@ -11,12 +11,10 @@ module OpenTelemetry
         # Default handler to create internal spans for events
         # This class provides default template methods that derived classes may override to generate spans and register contexts.
         class Default
-          # @param tracer [OpenTelemetry::Trace::Tracer] to generate spans
           # @param parent_span_provider [Object] provides access to the top most parent span (usually the ingress span)
           # @param mapper [Callable] converts ActiveSupport::Notifications payloads to span attributes
           # @param config [Hash] of instrumentation options
-          def initialize(tracer, parent_span_provider, mapper, config)
-            @tracer = tracer
+          def initialize(parent_span_provider, mapper, config)
             @mapper = mapper
             @config = config
             @parent_span_provider = parent_span_provider
@@ -42,7 +40,7 @@ module OpenTelemetry
           # @param payload [Hash] containing job run information
           # @return [Hash] with the span and generated context tokens
           def start_span(name, _id, payload)
-            span = @tracer.start_span(name, attributes: @mapper.call(payload))
+            span = tracer.start_span(name, attributes: @mapper.call(payload))
             tokens = [OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))]
 
             { span: span, ctx_tokens: tokens }
@@ -103,6 +101,10 @@ module OpenTelemetry
             span&.record_exception(exception)
             span&.status = status
             @parent_span_provider.current_span.status = status
+          end
+
+          def tracer
+            OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.tracer
           end
         end
       end
