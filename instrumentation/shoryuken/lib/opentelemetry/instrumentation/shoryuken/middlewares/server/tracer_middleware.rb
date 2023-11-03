@@ -22,7 +22,7 @@ module OpenTelemetry
                           else "#{queue} process"
                           end
 
-              extracted_context = OpenTelemetry.propagation.extract(sqs_msg)
+              extracted_context = OpenTelemetry.propagation.extract(sqs_msg.message_attributes)
               OpenTelemetry::Context.with_current(extracted_context) do
                 links = []
                 span_context = OpenTelemetry::Trace.current_span(extracted_context).context

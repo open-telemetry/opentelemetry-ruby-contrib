@@ -34,8 +34,6 @@ describe OpenTelemetry::Instrumentation::Shoryuken::Middlewares::Server::TracerM
 
   before do
     allow(sqs_client).to receive(:get_queue_url).and_return(double(queue_url: 'https://sqs.fake.amazonaws.com/1/queue-name'))
-    allow(sqs_msg).to receive(:[]).with('baggage')
-    allow(sqs_msg).to receive(:[]).with('traceparent')
     instrumentation.install(config)
     exporter.reset
     Shoryuken::Client.sqs = sqs_client
