@@ -32,7 +32,7 @@ end
 
 ## How can I get involved?
 
-The `opentelemetry-instrumentation-http` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
+The `opentelemetry-instrumentation-httpx` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
