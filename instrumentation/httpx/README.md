@@ -38,7 +38,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 ## License
 
-The `opentelemetry-instrumentation-http` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
+The `opentelemetry-instrumentation-httpx` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
 [http-home]: https://gitlab.com/os85/httpx
 [bundler-home]: https://bundler.io
