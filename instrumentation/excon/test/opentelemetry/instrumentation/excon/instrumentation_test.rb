@@ -211,7 +211,12 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       WebMock.allow_net_connect!
 
       TCPServer.open('localhost', 0) do |server|
-        Thread.start { server.accept }
+        Thread.start do
+          server.accept
+        rescue IOError
+          nil
+        end
+
         port = server.addr[1]
 
         _(-> { Excon.get("http://localhost:#{port}/example", read_timeout: 0) }).must_raise(Excon::Error::Timeout)
