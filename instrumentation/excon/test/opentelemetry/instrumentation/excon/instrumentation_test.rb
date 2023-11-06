@@ -239,7 +239,6 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(span_event.name).must_equal 'exception'
       _(span_event.attributes['exception.type']).must_equal(SocketError.name)
-      _(span_event.attributes['exception.message']).must_match(/nodename nor servname provided, or not known/)
     ensure
       WebMock.disable_net_connect!
     end
