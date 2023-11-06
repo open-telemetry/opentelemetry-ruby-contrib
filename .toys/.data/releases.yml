@@ -106,6 +106,10 @@ gems:
     directory: instrumentation/http_client
     version_constant: [OpenTelemetry, Instrumentation, HttpClient, VERSION]
 
+  - name: opentelemetry-instrumentation-httpx
+    directory: instrumentation/httpx
+    version_constant: [OpenTelemetry, Instrumentation, HTTPX, VERSION]
+
   - name: opentelemetry-instrumentation-koala
     directory: instrumentation/koala
     version_constant: [OpenTelemetry, Instrumentation, Koala, VERSION]
