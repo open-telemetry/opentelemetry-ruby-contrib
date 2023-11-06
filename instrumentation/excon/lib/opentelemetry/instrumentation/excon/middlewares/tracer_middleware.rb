@@ -22,23 +22,27 @@ module OpenTelemetry
           end.freeze
 
           def request_call(datum)
-            begin
-              unless datum.key?(:otel_span)
-                http_method = HTTP_METHODS_TO_UPPERCASE[datum[:method]]
-                attributes = span_creation_attributes(datum, http_method)
-                tracer.start_span(
-                  HTTP_METHODS_TO_SPAN_NAMES[http_method],
-                  attributes: attributes,
-                  kind: :client
-                ).tap do |span|
-                  datum[:otel_span] = span
-                  OpenTelemetry::Trace.with_span(span) do
-                    OpenTelemetry.propagation.inject(datum[:headers])
-                  end
-                end
-              end
-            rescue StandardError => e
-              OpenTelemetry.logger.debug(e.message)
+            return @stack.request_call(datum) if skip_trace?(datum)
+
+            http_method = HTTP_METHODS_TO_UPPERCASE[datum[:method]]
+
+            attributes = {
+              OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => http_method,
+              OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => datum[:scheme],
+              OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => datum[:path],
+              OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => datum[:host],
+              OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => datum[:hostname],
+              OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => datum[:port]
+            }
+
+            peer_service = Excon::Instrumentation.instance.config[:peer_service]
+            attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = peer_service if peer_service
+            attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+
+            datum[:otel_span] = tracer.start_span(HTTP_METHODS_TO_SPAN_NAMES[http_method], attributes: attributes, kind: :client)
+
+            OpenTelemetry::Trace.with_span(datum[:otel_span]) do
+              OpenTelemetry.propagation.inject(datum[:headers])
             end
 
             @stack.request_call(datum)
@@ -71,42 +75,31 @@ module OpenTelemetry
           private
 
           def handle_response(datum)
-            if datum.key?(:otel_span)
-              datum[:otel_span].tap do |span|
-                return span if span.end_timestamp
+            datum.delete(:otel_span)&.tap do |span|
+              return span if span.end_timestamp
 
-                if datum.key?(:response)
-                  response = datum[:response]
-                  span.set_attribute('http.status_code', response[:status])
-                  span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response[:status].to_i)
-                end
-
-                span.status = OpenTelemetry::Trace::Status.error("Request has failed: #{datum[:error]}") if datum.key?(:error)
-
-                span.finish
-                datum.delete(:otel_span)
+              if datum.key?(:response)
+                response = datum[:response]
+                span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response[:status])
+                span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response[:status].to_i)
               end
+
+              span.status = OpenTelemetry::Trace::Status.error("Request has failed: #{datum[:error]}") if datum.key?(:error)
+
+              span.finish
             end
           rescue StandardError => e
             OpenTelemetry.logger.debug(e.message)
           end
 
-          def span_creation_attributes(datum, http_method)
-            instrumentation_attrs = {
-              'http.host' => datum[:host],
-              'http.method' => http_method,
-              'http.scheme' => datum[:scheme],
-              'http.target' => datum[:path]
-            }
-            config = Excon::Instrumentation.instance.config
-            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
-            instrumentation_attrs.merge!(
-              OpenTelemetry::Common::HTTP::ClientContext.attributes
-            )
-          end
-
           def tracer
             Excon::Instrumentation.instance.tracer
+          end
+
+          def skip_trace?(datum)
+            datum.key?(:otel_span) || Excon::Instrumentation.instance.config[:untraced_hosts].any? do |host|
+              host.is_a?(Regexp) ? host.match?(datum[:host]) : host == datum[:host]
+            end
           end
         end
       end
