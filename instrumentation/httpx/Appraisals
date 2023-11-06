@@ -4,4 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative 'opentelemetry/resource/detectors'
+appraise 'httpx-1' do
+  gem 'httpx', '~> 1.0'
+end
+
+appraise 'httpx-0' do
+  gem 'httpx', '~> 0.24'
+end

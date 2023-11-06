@@ -5,9 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module Resource
-    module Detectors
-      VERSION = '0.24.2'
+  module Instrumentation
+    module HTTPX
+      VERSION = '0.1.0'
     end
   end
 end

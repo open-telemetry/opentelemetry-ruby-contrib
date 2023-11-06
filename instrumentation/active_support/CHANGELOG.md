@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+### v0.4.4 / 2023-10-31
+
+* FIXED: Remove call to ActiveSupport::Notifications.notifier#synchronize deprecated in Rails 7.2
+
 ### v0.4.3 / 2023-10-16
 
 * FIXED: Add Rails 7.1 compatibility

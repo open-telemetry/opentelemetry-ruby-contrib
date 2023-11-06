@@ -22,6 +22,8 @@ instrumentation/grape/ @muripic @fbogsany @mwear @robertlaurin @dazuma @ericmust
 
 instrumentation/graphql/ @swalkinshaw @rmosolgo @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
 
+instrumentation/httpx/ @HoneyryderChuck @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+
 instrumentation/mongo/ @johnnyshields @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
 
 instrumentation/racecar/ @chrisholmes @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
