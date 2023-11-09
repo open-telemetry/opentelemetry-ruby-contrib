@@ -51,7 +51,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
     let(:user) { ENV.fetch('TEST_POSTGRES_USER', 'postgres') }
     let(:dbname) { ENV.fetch('TEST_POSTGRES_DB', 'postgres') }
     let(:password) { ENV.fetch('TEST_POSTGRES_PASSWORD', 'postgres') }
-
+    let(:config) { { db_statement: :include } }
     before do
       instrumentation.install(config)
     end

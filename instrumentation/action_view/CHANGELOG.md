@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.6.1 / 2023-10-16
+
+* FIXED: Add Rails 7.1 compatibility
+
 ### v0.6.0 / 2023-06-05
 
 * ADDED: Render layout for action view 

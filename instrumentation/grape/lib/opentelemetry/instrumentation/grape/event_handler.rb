@@ -96,7 +96,7 @@ module OpenTelemetry
             version = endpoint.routes.first.options[:version] || ''
             prefix = endpoint.routes.first.options[:prefix]&.to_s || ''
             parts = [prefix, version] + namespace.split('/') + endpoint.options[:path]
-            parts.reject { |p| p.blank? || p.eql?('/') }.join('/').prepend('/')
+            parts.reject { |p| p.nil? || p.empty? || p.eql?('/') }.join('/').prepend('/')
           end
 
           def formatter_type(formatter)

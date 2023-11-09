@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.51.1 / 2023-10-27
+
+* ADDED: Instrument connect and ping (Trilogy)
+
+### v0.51.0 / 2023-10-16
+
+* CHANGED: See [#695](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/695) for details
+
 ### v0.50.1 / 2023-09-07
 
 * FIXED: Align messaging instrumentation operation names (Resque)

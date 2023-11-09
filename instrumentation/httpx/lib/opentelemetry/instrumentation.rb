@@ -4,12 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/sdk'
-require 'opentelemetry/resource/detectors/version'
-require 'opentelemetry/resource/detectors/google_cloud_platform'
-require 'opentelemetry/resource/detectors/azure'
-require 'opentelemetry/resource/detectors/auto_detector'
-
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
 # of cloud-native software, frameworks, and libraries.
@@ -17,10 +11,9 @@ require 'opentelemetry/resource/detectors/auto_detector'
 # The OpenTelemetry module provides global accessors for telemetry objects.
 # See the documentation for the `opentelemetry-api` gem for details.
 module OpenTelemetry
-  module Resource
-    # Detectors contains the resource detectors as well as the AutoDetector
-    # that can run all the detectors and return an accumlated resource
-    module Detectors
-    end
+  # Instrumentation should be able to handle the case when the library is not installed on a user's system.
+  module Instrumentation
   end
 end
+
+require_relative 'instrumentation/httpx'

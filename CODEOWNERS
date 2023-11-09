@@ -12,7 +12,7 @@
 #  https://help.github.com/en/articles/about-code-owners
 #
 
-* @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+* @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @open-telemetry/ruby-contrib-approvers
 
 resources/container/ @scbjans @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
 
@@ -21,6 +21,8 @@ instrumentation/aws_sdk/ @NathanielRN @fbogsany @mwear @robertlaurin @dazuma @er
 instrumentation/grape/ @muripic @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
 
 instrumentation/graphql/ @swalkinshaw @rmosolgo @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+
+instrumentation/httpx/ @HoneyryderChuck @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
 
 instrumentation/mongo/ @johnnyshields @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
 

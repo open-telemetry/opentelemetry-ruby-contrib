@@ -6,6 +6,7 @@ repo: open-telemetry/opentelemetry-ruby-contrib
 main_branch: main
 # Time in seconds for release scripts to wait for CI to complete.
 required_checks_timeout: 1200
+required_jobs: "^(ci|CI).*"
 # Git user attached to commits for release pull requests.
 git_user_name: Ariel Valentin
 git_user_email: ariel@arielvalentin.com
@@ -106,6 +107,10 @@ gems:
     directory: instrumentation/http_client
     version_constant: [OpenTelemetry, Instrumentation, HttpClient, VERSION]
 
+  - name: opentelemetry-instrumentation-httpx
+    directory: instrumentation/httpx
+    version_constant: [OpenTelemetry, Instrumentation, HTTPX, VERSION]
+
   - name: opentelemetry-instrumentation-koala
     directory: instrumentation/koala
     version_constant: [OpenTelemetry, Instrumentation, Koala, VERSION]
@@ -202,11 +207,6 @@ gems:
   - name: opentelemetry-propagator-xray
     directory: propagator/xray
     version_constant: [OpenTelemetry, Propagator, XRay, VERSION]
-
-  - name: opentelemetry-resource_detectors
-    directory: resource_detectors
-    version_rb_path: lib/opentelemetry/resource/detectors/version.rb
-    version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
 
   - name: opentelemetry-resource-detector-azure
     directory: resources/azure
