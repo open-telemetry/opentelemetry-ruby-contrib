@@ -17,7 +17,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::ActiveJob)
+          defined?(::ActiveJob) && defined?(::ActiveSupport)
         end
 
         compatible do

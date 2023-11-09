@@ -57,7 +57,7 @@ module OpenTelemetry
           }
 
           @subscriptions = handlers_by_pattern.map do |key, handler|
-            ActiveSupport::Notifications.subscribe("#{key}.active_job", handler)
+            ::ActiveSupport::Notifications.subscribe("#{key}.active_job", handler)
           end
         end
 
