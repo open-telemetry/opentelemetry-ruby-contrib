@@ -26,8 +26,6 @@ module AppConfig
     new_app.config.log_level = level
 
     case Rails.version
-    when /^6\.0/
-      apply_rails_6_0_configs(new_app)
     when /^6\.1/
       apply_rails_6_1_configs(new_app)
     when /^7\./
@@ -69,13 +67,6 @@ module AppConfig
       ActionDispatch::DebugExceptions,
       RedirectMiddleware
     )
-  end
-
-  def apply_rails_6_0_configs(application)
-    # Required in Rails 6
-    application.config.hosts << 'example.org'
-    # Creates a lot of deprecation warnings on subsequent app initializations if not explicitly set.
-    application.config.action_view.finalize_compiled_template_methods = ActionView::Railtie::NULL_OPTION
   end
 
   def apply_rails_6_1_configs(application)
