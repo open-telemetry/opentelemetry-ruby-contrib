@@ -4,8 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[6.1.0 7.0.0 7.1.0].each do |version|
-  appraise "activejob-#{version}" do
-    gem 'activejob', "~> #{version}"
+module OpenTelemetry
+  module Instrumentation
+    module HTTPX
+      VERSION = '0.1.0'
+    end
   end
 end

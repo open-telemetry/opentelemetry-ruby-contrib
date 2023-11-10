@@ -33,6 +33,7 @@ jobs:
           - koala
           - lmdb
           - net_http
+          - httpx
           - rack
           - rails
           - restclient

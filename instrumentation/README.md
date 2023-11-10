@@ -37,6 +37,15 @@ Instrumentation-specific documentation can be found in each subdirectory's `READ
 
 You also have the option of installing all of the instrumentation libraries by installing `opentelemetry-instrumentation-all`.  See that gem's [README](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/all) for more.
 
+### Maintenance and Version Compatability
+
+We are a community of volunteers who do our best to provide our users with up to date support for instrumentations,
+however we have limited capacity and are unable to support compatability with EOL or unmaintained libraries.
+
+Should you need to instrument an _older_ version of a library you will have to ensure to pin to an instrumentation version that is compatible with that library.
+
+Please review the individual instrumentation READMEs for more information about version compatability.
+
 ## How can I get involved?
 
 The source for all OpenTelemetry Ruby instrumentation gems is [on github](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation).

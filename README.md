@@ -65,6 +65,19 @@ This repository also contains libraries to aid with interoperablity with vendor 
 
 OpenTelemetry Ruby follows the [versioning and stability document][otel-versioning] in the OpenTelemetry specification. Notably, we adhere to the outlined version numbering exception, which states that experimental signals may have a `0.x` version number.
 
+### Library Compatability
+
+This project is managed on a volunteer basis and therefore we have limited capacity to support compatability with unmaintained or EOL libraries.
+
+We will regularly review the instrumentations to drop compatability for any versions of Ruby or gems that reach EOL or no longer receive regular maintenance.
+
+Should you need instrumentation for _older_ versions of a library then you must pin to a specific version of the instrumentation that supports it,
+however, you will no longer receive any updates for the instrumentation from this repository.
+
+> When a release series is no longer supported, it's your own responsibility to deal with bugs and security issues. We may provide backports of the fixes and publish them to git, however there will be no new versions released. If you are not comfortable maintaining your own versions, you should upgrade to a supported version. <https://guides.rubyonrails.org/maintenance_policy.html#security-issues>
+
+Consult instrumentation gem's README file and gemspec for details about library compatability.
+
 ### Releases
 
 This repository was extracted from the [OpenTelemetry Ruby repository][otel-ruby]. Versions of libraries contained in this repo released prior to 2022-06-13 are available on the [OpenTelemetry Ruby Releases][otel-ruby-releases] page. Newer versions are available [here][otel-ruby-contrib-releases]
