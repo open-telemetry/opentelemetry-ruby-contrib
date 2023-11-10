@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-common', '~> 0.20.0'
+  spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.5.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.1'
 
   spec.add_development_dependency 'activejob', '>= 6.0'
