@@ -5,20 +5,31 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require_relative('cache')
+require_relative('client')
 
 module OpenTelemetry
   module Sampling
     module XRay
       class Sampler
+        DEFAULT_RULE_POLLING_INTERVAL = 5 * 60
+        DEFAULT_TARGET_POLLING_INTERVAL = 10
+
+        # @param [String] endpoint
         # @param [OpenTelemetry::SDK::Resources::Resource] resource
         # @param [OpenTelemetry::SDK::Trace::Samplers] fallback_sampler
-        def initialize(resource:, fallback_sampler:)
+        def initialize(endpoint:, resource:, fallback_sampler:)
           raise(ArgumentError, 'resource must not be nil') if resource.nil?
           raise(ArgumentError, 'fallback_sampler must not be nil') if fallback_sampler.nil?
 
           @resource = resource
           @fallback_sampler = fallback_sampler
           @cache = Cache.new
+          @poller = Poller.new(
+            client: Client.new(endpoint: endpoint),
+            cache: @cache,
+            rule_interval: DEFAULT_RULE_POLLING_INTERVAL,
+            target_interval: DEFAULT_TARGET_POLLING_INTERVAL
+          )
         end
 
         # @param [String] trace_id
@@ -54,6 +65,12 @@ module OpenTelemetry
               tracestate: OpenTelemetry::Trace.current_span(parent_context).context.tracestate
             )
           end
+        end
+
+        private
+
+        def start
+          @poller.start
         end
       end
     end

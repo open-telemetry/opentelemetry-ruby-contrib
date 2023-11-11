@@ -12,6 +12,7 @@ describe(OpenTelemetry::Sampling::XRay::Sampler) do
     it('should initialize') do
       _(
         OpenTelemetry::Sampling::XRay::Sampler.new(
+          endpoint: SecureRandom.uuid.to_s,
           resource: OpenTelemetry::SDK::Resources::Resource.create({}),
           fallback_sampler: OpenTelemetry::SDK::Trace::Samplers.trace_id_ratio_based(rand)
         )
@@ -22,6 +23,7 @@ describe(OpenTelemetry::Sampling::XRay::Sampler) do
       _(
         lambda {
           OpenTelemetry::Sampling::XRay::Sampler.new(
+            endpoint: SecureRandom.uuid.to_s,
             resource: nil,
             fallback_sampler: OpenTelemetry::SDK::Trace::Samplers.trace_id_ratio_based(rand)
           )
@@ -33,6 +35,7 @@ describe(OpenTelemetry::Sampling::XRay::Sampler) do
       _(
         lambda {
           OpenTelemetry::Sampling::XRay::Sampler.new(
+            endpoint: SecureRandom.uuid.to_s,
             resource: OpenTelemetry::SDK::Resources::Resource.create({}),
             fallback_sampler: nil
           )
@@ -52,6 +55,7 @@ describe(OpenTelemetry::Sampling::XRay::Sampler) do
         resource = OpenTelemetry::SDK::Resources::Resource.create({})
         sampler = OpenTelemetry::Sampling::XRay::Cache.stub(:new, cache) do
           OpenTelemetry::Sampling::XRay::Sampler.new(
+            endpoint: SecureRandom.uuid.to_s,
             resource: resource,
             fallback_sampler: fallback_sampler
           )
@@ -105,6 +109,7 @@ describe(OpenTelemetry::Sampling::XRay::Sampler) do
       resource = OpenTelemetry::SDK::Resources::Resource.create({})
       sampler = OpenTelemetry::Sampling::XRay::Cache.stub(:new, cache) do
         OpenTelemetry::Sampling::XRay::Sampler.new(
+          endpoint: SecureRandom.uuid.to_s,
           resource: resource,
           fallback_sampler: fallback_sampler
         )
