@@ -1,0 +1,9 @@
+--no-private
+--title=OpenTelemetry Hierarchical Sampling
+--markup=markdown
+--main=README.md
+./lib/opentelemetry/sampling/hierarchical/**/*.rb
+./lib/opentelemetry/sampling/hierarchical.rb
+-
+README.md
+CHANGELOG.md
