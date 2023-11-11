@@ -7,6 +7,8 @@
 module OpenTelemetry
   module Sampling
     module XRay
+      attr_reader(:request_count)
+
       class Statistic
         def initialize
           @borrowed_count = 0

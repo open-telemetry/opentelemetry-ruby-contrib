@@ -113,6 +113,11 @@ module OpenTelemetry
           end
         end
 
+        # @return [Boolean]
+        def ever_matched?
+          @statistic.request_count.positive?
+        end
+
         private
 
         # @param [String] http_target

@@ -40,10 +40,10 @@ module OpenTelemetry
 
           Thread.new do
             while @running
-              sleep_time = @target_interval + rand
-              sleep(sleep_time)
-              @rule_interval_elapsed += sleep_time
+              sleep(@target_interval)
+              @rule_interval_elapsed += @target_interval
 
+              refresh_targets
               refresh_rules if @rule_interval_elapsed >= @rule_interval
             end
           end
@@ -53,6 +53,19 @@ module OpenTelemetry
           OpenTelemetry.logger.debug('Refreshing sampling rules')
           @cache.update_rules(@client.fetch_sampling_rules)
           @rule_interval_elapsed = 0
+        end
+
+        def refresh_targets
+          matched_rules = @cache.get_matched_rules
+          if matched_rules.empty?
+            OpenTelemetry.logger.debug('Not refreshing sampling targets because no rules matched')
+            return
+          end
+
+          OpenTelemetry.logger.debug('Refreshing sampling targets')
+          @cache.update_targets(
+            @client.fetch_sampling_targets(matched_rules)
+          )
         end
       end
     end

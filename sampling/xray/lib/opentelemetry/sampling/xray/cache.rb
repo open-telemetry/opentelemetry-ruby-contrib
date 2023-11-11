@@ -22,6 +22,11 @@ module OpenTelemetry
           @rules.find { |rule| rule.match?(resource: resource, attributes: attributes) }
         end
 
+        # @return [Array<SamplingRule>]
+        def get_matched_rules
+          @rules.select(&:ever_matched?)
+        end
+
         # @param [Array<SamplingRule>] rules
         def update_rules(rules)
           @lock.synchronize do
@@ -29,6 +34,10 @@ module OpenTelemetry
           end
 
           OpenTelemetry.logger.debug("Updated sampling rules: #{@rules}")
+        end
+
+        def update_targets(targets)
+          raise(NotImplementedError)
         end
       end
     end

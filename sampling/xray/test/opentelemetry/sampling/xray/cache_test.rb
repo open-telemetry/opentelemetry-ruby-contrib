@@ -53,6 +53,32 @@ describe(OpenTelemetry::Sampling::XRay::Cache) do
     end
   end
 
+  describe('#get_matched_rules') do
+    it('returns rules that matched at least once') do
+      cache = OpenTelemetry::Sampling::XRay::Cache.new
+
+      matched_rule = Minitest::Mock.new
+      matched_rule.expect(:priority, rand)
+      matched_rule.expect(:rule_name, SecureRandom.uuid.to_s)
+      matched_rule.expect(:ever_matched?, true)
+      matched_rule.expect(:==, true, [matched_rule])
+
+      not_matched_rule = Minitest::Mock.new
+      not_matched_rule.expect(:priority, rand)
+      not_matched_rule.expect(:rule_name, SecureRandom.uuid.to_s)
+      not_matched_rule.expect(:ever_matched?, false)
+
+      cache.update_rules([matched_rule, not_matched_rule])
+
+      matched_rules = cache.get_matched_rules
+      _(matched_rules.length).must_equal(1)
+      _(matched_rules.first).must_equal(matched_rule)
+
+      matched_rule.verify
+      not_matched_rule.verify
+    end
+  end
+
   describe('#update_rules') do
     it('sorts rules by priority and name') do
       cache = OpenTelemetry::Sampling::XRay::Cache.new

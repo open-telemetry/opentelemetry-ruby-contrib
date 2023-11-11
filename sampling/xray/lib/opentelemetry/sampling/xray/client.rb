@@ -17,6 +17,10 @@ module OpenTelemetry
         def fetch_sampling_rules
           raise(NotImplementedError)
         end
+
+        def fetch_sampling_targets
+          raise(NotImplementedError)
+        end
       end
     end
   end
