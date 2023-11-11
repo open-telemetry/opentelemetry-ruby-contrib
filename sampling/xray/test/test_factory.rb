@@ -5,9 +5,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require('opentelemetry/sampling/xray/sampling_rule')
+require('opentelemetry/sampling/xray/client')
 
 # @param [Hash] attributes
-# @param [Integer] fixed_rate
+# @param [Float] fixed_rate
 # @param [String] host
 # @param [String] http_method
 # @param [Integer] priority
@@ -22,7 +23,7 @@ require('opentelemetry/sampling/xray/sampling_rule')
 # @return [OpenTelemetry::Sampling::XRay::SamplingRule]
 def build_rule(
   attributes: {},
-  fixed_rate: rand(0..100),
+  fixed_rate: rand,
   host: '*',
   http_method: '*',
   priority: rand(0..100),
@@ -49,5 +50,27 @@ def build_rule(
     service_type: service_type,
     url_path: url_path,
     version: version
+  )
+end
+
+# @param [String] rule_name
+# @param [Float] fixed_rate
+# @param [Integer] reservoir_quota
+# @param [Integer] reservoir_quota_ttl
+# @param [Integer] interval
+# @return [OpenTelemetry::Sampling::XRay::Client::SamplingTargetDocument]
+def build_target_document(
+  rule_name: SecureRandom.uuid.to_s,
+  fixed_rate: rand,
+  reservoir_quota: rand(0..100),
+  reservoir_quota_ttl: rand(0..100),
+  interval: rand(0..100)
+)
+  OpenTelemetry::Sampling::XRay::Client::SamplingTargetDocument.new(
+    rule_name: rule_name,
+    fixed_rate: fixed_rate,
+    reservoir_quota: reservoir_quota,
+    reservoir_quota_ttl: reservoir_quota_ttl,
+    interval: interval
   )
 end

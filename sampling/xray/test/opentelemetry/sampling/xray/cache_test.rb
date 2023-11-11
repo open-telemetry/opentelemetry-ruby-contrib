@@ -14,11 +14,9 @@ describe(OpenTelemetry::Sampling::XRay::Cache) do
       resource = OpenTelemetry::SDK::Resources::Resource.create
 
       rule = Minitest::Mock.new
-      rule.expect(:priority, rand)
-      rule.expect(:rule_name, SecureRandom.uuid.to_s)
       rule.expect(:match?, false, resource: resource, attributes: {})
 
-      cache.update_rules([rule])
+      cache.instance_variable_set(:@rules, [rule])
 
       _(
         cache.get_first_matching_rule(
@@ -35,12 +33,10 @@ describe(OpenTelemetry::Sampling::XRay::Cache) do
       resource = OpenTelemetry::SDK::Resources::Resource.create
 
       rule = Minitest::Mock.new
-      rule.expect(:priority, rand)
-      rule.expect(:rule_name, SecureRandom.uuid.to_s)
       rule.expect(:match?, true, resource: resource, attributes: {})
       rule.expect(:==, true, [rule])
 
-      cache.update_rules([rule])
+      cache.instance_variable_set(:@rules, [rule])
 
       _(
         cache.get_first_matching_rule(
@@ -58,17 +54,13 @@ describe(OpenTelemetry::Sampling::XRay::Cache) do
       cache = OpenTelemetry::Sampling::XRay::Cache.new
 
       matched_rule = Minitest::Mock.new
-      matched_rule.expect(:priority, rand)
-      matched_rule.expect(:rule_name, SecureRandom.uuid.to_s)
       matched_rule.expect(:ever_matched?, true)
       matched_rule.expect(:==, true, [matched_rule])
 
       not_matched_rule = Minitest::Mock.new
-      not_matched_rule.expect(:priority, rand)
-      not_matched_rule.expect(:rule_name, SecureRandom.uuid.to_s)
       not_matched_rule.expect(:ever_matched?, false)
 
-      cache.update_rules([matched_rule, not_matched_rule])
+      cache.instance_variable_set(:@rules, [matched_rule, not_matched_rule].shuffle)
 
       matched_rules = cache.get_matched_rules
       _(matched_rules.length).must_equal(1)
@@ -109,6 +101,42 @@ describe(OpenTelemetry::Sampling::XRay::Cache) do
           rules[1]
         ]
       )
+    end
+
+    it('merges rules with their predecessor') do
+      cache = OpenTelemetry::Sampling::XRay::Cache.new
+
+      rule = build_rule
+      reservoir = OpenTelemetry::Sampling::XRay::Reservoir.new(rand(0..100))
+      rule.instance_variable_set(:@reservoir, reservoir)
+      statistic = OpenTelemetry::Sampling::XRay::Statistic.new
+      rule.instance_variable_set(:@statistic, statistic)
+
+      cache.update_rules([rule])
+
+      new_rule = build_rule(rule_name: rule.rule_name)
+      cache.update_rules([new_rule])
+
+      _(cache.instance_variable_get(:@rules).length).must_equal(1)
+      _(cache.instance_variable_get(:@rules).first).must_equal(new_rule)
+      _(new_rule.reservoir).must_equal(reservoir)
+      _(new_rule.statistic).must_equal(statistic)
+    end
+  end
+
+  describe('#update_targets') do
+    it('updates rule targets') do
+      cache = OpenTelemetry::Sampling::XRay::Cache.new
+      target = build_target_document
+
+      rule = Minitest::Mock.new
+      rule.expect(:with_target, nil, [target])
+      rule.expect(:rule_name, target.rule_name)
+
+      cache.instance_variable_set(:@rules, [rule])
+      cache.update_targets([target])
+
+      rule.verify
     end
   end
 end

@@ -24,7 +24,9 @@ module OpenTelemetry
 
         attr_reader(
           :priority,
-          :rule_name
+          :reservoir,
+          :rule_name,
+          :statistic
         )
 
         # @param [Hash] attributes
@@ -116,6 +118,25 @@ module OpenTelemetry
         # @return [Boolean]
         def ever_matched?
           @statistic.request_count.positive?
+        end
+
+        # @param [SamplingRule] rule
+        def merge(rule)
+          return if rule.nil? || rule.rule_name != @rule_name
+
+          @statistic = rule.statistic
+          @reservoir = rule.reservoir
+        end
+
+        # @param [Client::SamplingTargetDocument] target
+        def with_target(target)
+          return if target.nil? || target.rule_name != @rule_name
+
+          @fixed_rate = target.fixed_rate
+          @reservoir.update_target(
+            quota: target.reservoir_quota,
+            quota_ttl: target.reservoir_quota_ttl
+          )
         end
 
         private
