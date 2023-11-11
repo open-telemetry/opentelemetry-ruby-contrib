@@ -19,7 +19,7 @@ module OpenTelemetry
         # @param [OpenTelemetry::SDK::Resources::Resource] resource
         # @return [SamplingRule]
         def get_first_matching_rule(attributes:, resource:)
-          @rules.find { |rule| rule.matches?(resource: resource, attributes: attributes) }
+          @rules.find { |rule| rule.match?(resource: resource, attributes: attributes) }
         end
 
         # @param [Array<SamplingRule>] rules

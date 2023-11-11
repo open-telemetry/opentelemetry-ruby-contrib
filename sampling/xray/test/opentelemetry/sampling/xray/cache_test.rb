@@ -16,7 +16,7 @@ describe(OpenTelemetry::Sampling::XRay::Cache) do
       rule = Minitest::Mock.new
       rule.expect(:priority, rand)
       rule.expect(:rule_name, SecureRandom.uuid.to_s)
-      rule.expect(:matches?, false, resource: resource, attributes: {})
+      rule.expect(:match?, false, resource: resource, attributes: {})
 
       cache.update_rules([rule])
 
@@ -37,7 +37,7 @@ describe(OpenTelemetry::Sampling::XRay::Cache) do
       rule = Minitest::Mock.new
       rule.expect(:priority, rand)
       rule.expect(:rule_name, SecureRandom.uuid.to_s)
-      rule.expect(:matches?, true, resource: resource, attributes: {})
+      rule.expect(:match?, true, resource: resource, attributes: {})
       rule.expect(:==, true, [rule])
 
       cache.update_rules([rule])
