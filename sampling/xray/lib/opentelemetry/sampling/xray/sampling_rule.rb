@@ -139,6 +139,15 @@ module OpenTelemetry
           )
         end
 
+        # @return [Statistic]
+        def snapshot_statistic
+          @lock.synchronize do
+            statistic = @statistic
+            @statistic = Statistic.new
+            statistic
+          end
+        end
+
         private
 
         # @param [String] http_target

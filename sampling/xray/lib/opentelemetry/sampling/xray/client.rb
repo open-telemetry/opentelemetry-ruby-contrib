@@ -54,7 +54,7 @@ module OpenTelemetry
             OpenTelemetry.logger.debug("X-Ray response for #{path}: #{response.body}")
             JSON.parse(response.body, symbolize_names: true)
           else
-            raise("Received #{response.code}: #{response.message}")
+            raise("Received #{response.code} (#{response.message}): #{response.body}")
           end
         rescue StandardError => e
           OpenTelemetry.logger.error("Error while posting to X-Ray: #{e.message}")
@@ -143,13 +143,15 @@ module OpenTelemetry
           # @param [String] client_id
           # @return [SamplingStatisticsDocument]
           def self.from_rule(rule, client_id)
+            statistic = rule.snapshot_statistic
+
             SamplingStatisticsDocument.new(
               rule_name: rule.rule_name,
               client_id: client_id,
               timestamp: Time.now,
-              request_count: rule.statistic.request_count,
-              sampled_count: rule.statistic.sampled_count,
-              borrow_count: rule.statistic.borrow_count
+              request_count: statistic.request_count,
+              sampled_count: statistic.sampled_count,
+              borrow_count: statistic.borrow_count
             )
           end
         end
