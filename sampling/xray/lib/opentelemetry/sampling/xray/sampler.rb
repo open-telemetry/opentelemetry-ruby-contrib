@@ -29,14 +29,30 @@ module OpenTelemetry
         # @param [Hash<String, Object>] attributes
         # @return [OpenTelemetry::SDK::Trace::Samplers::Result]
         def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
-          @fallback_sampler.should_sample?(
-            trace_id: trace_id,
-            parent_context: parent_context,
-            links: links,
-            name: name,
-            kind: kind,
-            attributes: attributes
+          matching_rule = @cache.get_first_matching_rule(
+            attributes: attributes,
+            resource: @resource
           )
+
+          if matching_rule.nil?
+            @fallback_sampler.should_sample?(
+              trace_id: trace_id,
+              parent_context: parent_context,
+              links: links,
+              name: name,
+              kind: kind,
+              attributes: attributes
+            )
+          else
+            matching_rule.should_sample?(
+              trace_id: trace_id,
+              parent_context: parent_context,
+              links: links,
+              name: name,
+              kind: kind,
+              attributes: attributes
+            )
+          end
         end
       end
     end

@@ -44,6 +44,24 @@ module OpenTelemetry
           @rule_name = rule_name
           @priority = priority
         end
+
+        # @param [OpenTelemetry::SDK::Resources::Resource] resource
+        # @param [Hash<String, Object>] attributes
+        # @return [Boolean]
+        def matches?(resource:, attributes:)
+          raise(NotImplementedError)
+        end
+
+        # @param [String] trace_id
+        # @param [OpenTelemetry::Context] parent_context
+        # @param [Enumerable<Link>] links
+        # @param [String] name
+        # @param [Symbol] kind
+        # @param [Hash<String, Object>] attributes
+        # @return [OpenTelemetry::SDK::Trace::Samplers::Result]
+        def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
+          raise(NotImplementedError)
+        end
       end
     end
   end

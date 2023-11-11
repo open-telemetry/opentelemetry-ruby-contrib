@@ -15,6 +15,13 @@ module OpenTelemetry
           @lock = Mutex.new
         end
 
+        # @param [Hash<String, Object>] attributes
+        # @param [OpenTelemetry::SDK::Resources::Resource] resource
+        # @return [SamplingRule]
+        def get_first_matching_rule(attributes:, resource:)
+          @rules.find { |rule| rule.matches?(resource: resource, attributes: attributes) }
+        end
+
         # @param [Array<SamplingRule>] rules
         def update_rules(rules)
           @lock.synchronize do
