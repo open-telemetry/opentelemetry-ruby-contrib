@@ -4,5 +4,5 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require('opentelemetry-api')
-require_relative('opentelemetry/sampling/hierarchical')
+require 'opentelemetry-api'
+require_relative 'opentelemetry/sampling/hierarchical'

@@ -4,14 +4,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require('bundler/setup')
-Bundler.require(:default, :development, :test)
+require 'bundler/setup'
+Bundler.require :default, :development, :test
 
-SimpleCov.minimum_coverage(85)
+SimpleCov.minimum_coverage 85
 SimpleCov.start
 
-require('opentelemetry-sampling-hierarchical')
-require('minitest/autorun')
-require('webmock/minitest')
+require 'opentelemetry-sampling-hierarchical'
+require 'minitest/autorun'
 
-OpenTelemetry.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'debug').to_sym)
+OpenTelemetry.logger = Logger.new(
+  $stderr,
+  level: ENV.fetch('OTEL_LOG_LEVEL', 'debug').to_sym
+)

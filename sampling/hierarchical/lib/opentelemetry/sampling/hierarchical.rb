@@ -11,4 +11,5 @@
 # The OpenTelemetry module provides global accessors for telemetry objects.
 # See the documentation for the `opentelemetry-api` gem for details.
 
-require_relative('hierarchical/version')
+require_relative 'hierarchical/sampler'
+require_relative 'hierarchical/version'
