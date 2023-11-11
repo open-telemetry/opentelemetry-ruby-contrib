@@ -9,5 +9,6 @@ Bundler.require(:default, :development, :test)
 
 require('opentelemetry-sampling-xray')
 require('minitest/autorun')
+require_relative('test_factory')
 
 OpenTelemetry.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'info').to_sym)

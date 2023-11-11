@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative('cache')
+
 module OpenTelemetry
   module Sampling
     module XRay
@@ -16,6 +18,7 @@ module OpenTelemetry
 
           @resource = resource
           @fallback_sampler = fallback_sampler
+          @cache = Cache.new
         end
 
         # @param [String] trace_id
