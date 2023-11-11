@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require_relative('matcher')
+require_relative('reservoir')
+require_relative('statistic')
 
 module OpenTelemetry
   module Sampling
@@ -53,6 +55,7 @@ module OpenTelemetry
           url_path:,
           version:
         )
+          @fixed_rate = fixed_rate
           @rule_name = rule_name
           @priority = priority
 
@@ -63,6 +66,11 @@ module OpenTelemetry
           @service_name_matcher = Matcher.to_matcher(service_name)
           @service_type_matcher = Matcher.to_matcher(service_type)
           @url_path_matcher = Matcher.to_matcher(url_path)
+
+          @reservoir = Reservoir.new(reservoir_size)
+          @statistic = Statistic.new
+
+          @lock = Mutex.new
         end
 
         # @param [OpenTelemetry::SDK::Resources::Resource] resource
@@ -83,15 +91,26 @@ module OpenTelemetry
             @url_path_matcher.match?(extract_http_target(http_target, http_url))
         end
 
-        # @param [String] trace_id
-        # @param [OpenTelemetry::Context] parent_context
-        # @param [Enumerable<Link>] links
-        # @param [String] name
-        # @param [Symbol] kind
-        # @param [Hash<String, Object>] attributes
-        # @return [OpenTelemetry::SDK::Trace::Samplers::Result]
-        def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
-          raise(NotImplementedError)
+        # @return [Boolean]
+        def can_sample?
+          @lock.synchronize do
+            @statistic.increment_request_count
+            case @reservoir.borrow_or_take?
+            when Reservoir::BORROW
+              @statistic.increment_borrowed_count
+              true
+            when Reservoir::TAKE
+              @statistic.increment_sampled_count
+              true
+            else
+              if rand <= @fixed_rate
+                @statistic.increment_sampled_count
+                true
+              else
+                false
+              end
+            end
+          end
         end
 
         private

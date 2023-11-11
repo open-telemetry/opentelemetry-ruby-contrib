@@ -43,14 +43,15 @@ module OpenTelemetry
               kind: kind,
               attributes: attributes
             )
+          elsif matching_rule.can_sample?
+            OpenTelemetry::SDK::Trace::Samplers::Result.new(
+              decision: OpenTelemetry::SDK::Trace::Samplers::Decision::RECORD_AND_SAMPLE,
+              tracestate: OpenTelemetry::Trace.current_span(parent_context).context.tracestate
+            )
           else
-            matching_rule.should_sample?(
-              trace_id: trace_id,
-              parent_context: parent_context,
-              links: links,
-              name: name,
-              kind: kind,
-              attributes: attributes
+            OpenTelemetry::SDK::Trace::Samplers::Result.new(
+              decision: OpenTelemetry::SDK::Trace::Samplers::Decision::DROP,
+              tracestate: OpenTelemetry::Trace.current_span(parent_context).context.tracestate
             )
           end
         end

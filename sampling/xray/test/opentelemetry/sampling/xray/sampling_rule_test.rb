@@ -256,4 +256,73 @@ describe(OpenTelemetry::Sampling::XRay::SamplingRule) do
       ).must_equal(false)
     end
   end
+
+  describe('#can_sample?') do
+    it('increments the request count and returns true if it can borrow from the reservoir') do
+      reservoir = Minitest::Mock.new
+      statistic = Minitest::Mock.new
+      rule = OpenTelemetry::Sampling::XRay::Reservoir.stub(:new, reservoir) do
+        OpenTelemetry::Sampling::XRay::Statistic.stub(:new, statistic) { build_rule }
+      end
+
+      reservoir.expect(:borrow_or_take?, OpenTelemetry::Sampling::XRay::Reservoir::BORROW)
+      statistic.expect(:increment_borrowed_count, nil)
+      statistic.expect(:increment_request_count, nil)
+
+      _(rule.can_sample?).must_equal(true)
+
+      reservoir.verify
+      statistic.verify
+    end
+
+    it('increments the request count and returns true if it can take from the reservoir') do
+      reservoir = Minitest::Mock.new
+      statistic = Minitest::Mock.new
+      rule = OpenTelemetry::Sampling::XRay::Reservoir.stub(:new, reservoir) do
+        OpenTelemetry::Sampling::XRay::Statistic.stub(:new, statistic) { build_rule }
+      end
+
+      reservoir.expect(:borrow_or_take?, OpenTelemetry::Sampling::XRay::Reservoir::TAKE)
+      statistic.expect(:increment_request_count, nil)
+      statistic.expect(:increment_sampled_count, nil)
+
+      _(rule.can_sample?).must_equal(true)
+
+      reservoir.verify
+      statistic.verify
+    end
+
+    it('returns true according to fixed_rate') do
+      reservoir = Minitest::Mock.new
+      statistic = Minitest::Mock.new
+      rule = OpenTelemetry::Sampling::XRay::Reservoir.stub(:new, reservoir) do
+        OpenTelemetry::Sampling::XRay::Statistic.stub(:new, statistic) { build_rule(fixed_rate: 2) }
+      end
+
+      reservoir.expect(:borrow_or_take?, nil)
+      statistic.expect(:increment_request_count, nil)
+      statistic.expect(:increment_sampled_count, nil)
+
+      _(rule.can_sample?).must_equal(true)
+
+      reservoir.verify
+      statistic.verify
+    end
+
+    it('returns false according to fixed_rate') do
+      reservoir = Minitest::Mock.new
+      statistic = Minitest::Mock.new
+      rule = OpenTelemetry::Sampling::XRay::Reservoir.stub(:new, reservoir) do
+        OpenTelemetry::Sampling::XRay::Statistic.stub(:new, statistic) { build_rule(fixed_rate: 0) }
+      end
+
+      reservoir.expect(:borrow_or_take?, nil)
+      statistic.expect(:increment_request_count, nil)
+
+      _(rule.can_sample?).must_equal(false)
+
+      reservoir.verify
+      statistic.verify
+    end
+  end
 end
