@@ -11,4 +11,5 @@
 # The OpenTelemetry module provides global accessors for telemetry objects.
 # See the documentation for the `opentelemetry-api` gem for details.
 
+require_relative('xray/sampler')
 require_relative('xray/version')
