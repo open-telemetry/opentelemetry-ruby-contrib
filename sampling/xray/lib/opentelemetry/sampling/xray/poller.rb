@@ -41,10 +41,9 @@ module OpenTelemetry
           Thread.new do
             while @running
               sleep(@target_interval)
-              @rule_interval_elapsed += @target_interval
 
               refresh_targets
-              refresh_rules if @rule_interval_elapsed >= @rule_interval
+              refresh_rules if (Time.now - @last_rule_refresh).to_i >= @rule_interval
             end
           end
         end
@@ -52,7 +51,7 @@ module OpenTelemetry
         def refresh_rules
           OpenTelemetry.logger.debug('Refreshing sampling rules')
           @cache.update_rules(@client.fetch_sampling_rules.map(&:sampling_rule))
-          @rule_interval_elapsed = 0
+          @last_rule_refresh = Time.now
         end
 
         def refresh_targets
@@ -63,9 +62,13 @@ module OpenTelemetry
           end
 
           OpenTelemetry.logger.debug('Refreshing sampling targets')
-          @cache.update_targets(
-            @client.fetch_sampling_targets(matched_rules)
-          )
+          response = @client.fetch_sampling_targets(matched_rules)
+          return if response.nil?
+
+          @cache.update_targets(response.sampling_target_documents)
+          return unless response.last_rule_modification > @last_rule_refresh
+
+          refresh_rules
         end
       end
     end

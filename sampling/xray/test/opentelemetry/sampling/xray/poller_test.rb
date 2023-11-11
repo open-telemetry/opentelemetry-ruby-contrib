@@ -15,8 +15,8 @@ describe(OpenTelemetry::Sampling::XRay::Poller) do
       rules = [
         OpenTelemetry::Sampling::XRay::Client::SamplingRuleRecord.new(
           sampling_rule: build_rule,
-          created_at: DateTime.now,
-          modified_at: DateTime.now
+          created_at: Time.now,
+          modified_at: Time.now
         )
       ]
 
@@ -44,15 +44,15 @@ describe(OpenTelemetry::Sampling::XRay::Poller) do
       first_rules = [
         OpenTelemetry::Sampling::XRay::Client::SamplingRuleRecord.new(
           sampling_rule: build_rule,
-          created_at: DateTime.now,
-          modified_at: DateTime.now
+          created_at: Time.now,
+          modified_at: Time.now
         )
       ]
       second_rules = [
         OpenTelemetry::Sampling::XRay::Client::SamplingRuleRecord.new(
           sampling_rule: build_rule,
-          created_at: DateTime.now,
-          modified_at: DateTime.now
+          created_at: Time.now,
+          modified_at: Time.now
         )
       ]
 
@@ -83,18 +83,29 @@ describe(OpenTelemetry::Sampling::XRay::Poller) do
       rules = [
         OpenTelemetry::Sampling::XRay::Client::SamplingRuleRecord.new(
           sampling_rule: build_rule,
-          created_at: DateTime.now,
-          modified_at: DateTime.now
+          created_at: Time.now,
+          modified_at: Time.now
         )
       ]
       matched_rules = [build_rule]
-      targets = [SecureRandom.uuid.to_s]
+      targets = OpenTelemetry::Sampling::XRay::Client::SamplingTargetResponse.new(
+        last_rule_modification: Time.now,
+        sampling_target_documents: [
+          OpenTelemetry::Sampling::XRay::Client::SamplingTargetDocument.new(
+            rule_name: SecureRandom.uuid.to_s,
+            fixed_rate: rand,
+            reservoir_quota: rand(0..100),
+            reservoir_quota_ttl: rand(0..100),
+            interval: rand(0..100)
+          )
+        ]
+      )
 
       client.expect(:fetch_sampling_rules, rules)
       cache.expect(:update_rules, nil, [rules.map(&:sampling_rule)])
       cache.expect(:get_matched_rules, matched_rules)
       client.expect(:fetch_sampling_targets, targets, [matched_rules])
-      cache.expect(:update_targets, nil, [targets])
+      cache.expect(:update_targets, nil, [targets.sampling_target_documents])
 
       poller = OpenTelemetry::Sampling::XRay::Poller.new(
         client: client,

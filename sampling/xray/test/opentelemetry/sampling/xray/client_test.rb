@@ -102,16 +102,19 @@ describe(OpenTelemetry::Sampling::XRay::Client) do
       before do
         stub_request(:post, "#{endpoint}/SamplingTargets")
           .to_return(
-            body: { SamplingTargetDocuments: [] }.to_json,
+            body: {
+              SamplingTargetDocuments: [],
+              LastRuleModification: Time.now.to_i
+            }.to_json,
             headers: { content_type: 'application/json' }
           )
       end
       it do
-        rules = OpenTelemetry::Sampling::XRay::Client
-                .new(endpoint: endpoint)
-                .fetch_sampling_targets([])
+        response = OpenTelemetry::Sampling::XRay::Client
+                   .new(endpoint: endpoint)
+                   .fetch_sampling_targets([])
 
-        _(rules).must_equal([])
+        _(response.sampling_target_documents).must_equal([])
       end
     end
 
@@ -123,11 +126,11 @@ describe(OpenTelemetry::Sampling::XRay::Client) do
           .to_return(status: 500)
       end
       it do
-        rules = OpenTelemetry::Sampling::XRay::Client
-                .new(endpoint: endpoint)
-                .fetch_sampling_targets([])
+        response = OpenTelemetry::Sampling::XRay::Client
+                   .new(endpoint: endpoint)
+                   .fetch_sampling_targets([])
 
-        _(rules).must_equal([])
+        _(response).must_be_nil
       end
     end
 
@@ -146,15 +149,19 @@ describe(OpenTelemetry::Sampling::XRay::Client) do
       before do
         stub_request(:post, "#{endpoint}/SamplingTargets")
           .to_return(
-            body: { SamplingTargetDocuments: [document] }.to_json,
+            body: {
+              SamplingTargetDocuments: [document],
+              LastRuleModification: Time.now.to_i
+            }.to_json,
             headers: { content_type: 'application/json' }
           )
       end
       it do
-        targets = OpenTelemetry::Sampling::XRay::Client
-                  .new(endpoint: endpoint)
-                  .fetch_sampling_targets([])
+        response = OpenTelemetry::Sampling::XRay::Client
+                   .new(endpoint: endpoint)
+                   .fetch_sampling_targets([])
 
+        targets = response.sampling_target_documents
         _(targets.size).must_equal(1)
 
         target = targets.first

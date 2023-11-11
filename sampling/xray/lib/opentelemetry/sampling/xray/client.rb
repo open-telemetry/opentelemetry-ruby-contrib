@@ -28,18 +28,17 @@ module OpenTelemetry
         end
 
         # @param [Array<SamplingRule>] sampling_rules
-        # @return [Array<SamplingTargetDocument>]
+        # @return [SamplingTargetResponse]
         def fetch_sampling_targets(sampling_rules)
           OpenTelemetry.logger.debug("Fetching sampling targets for rules: #{sampling_rules}")
 
-          post(
+          response = post(
             path: '/SamplingTargets',
             body: {
               SamplingStatisticsDocuments: sampling_rules.map { |rule| SamplingStatisticsDocument.from_rule(rule, @client_id) }.map(&:to_request)
             }
           )
-            .fetch(:SamplingTargetDocuments, [])
-            .map { |item| SamplingTargetDocument.from_response(item) }
+          SamplingTargetResponse.from_response(response)
         end
 
         private
@@ -50,12 +49,10 @@ module OpenTelemetry
         def post(path:, body: nil)
           response = Net::HTTP.post(URI("#{@endpoint}#{path}"), body&.to_json)
 
-          if response.kind_of?(Net::HTTPSuccess)
-            OpenTelemetry.logger.debug("X-Ray response for #{path}: #{response.body}")
-            JSON.parse(response.body, symbolize_names: true)
-          else
-            raise("Received #{response.code} (#{response.message}): #{response.body}")
-          end
+          raise("Received #{response.code} (#{response.message}): #{response.body}") unless response.is_a?(Net::HTTPSuccess)
+
+          OpenTelemetry.logger.debug("X-Ray response for #{path}: #{response.body}")
+          JSON.parse(response.body, symbolize_names: true)
         rescue StandardError => e
           OpenTelemetry.logger.error("Error while posting to X-Ray: #{e.message}")
           {}
@@ -193,6 +190,26 @@ module OpenTelemetry
               reservoir_quota: response[:ReservoirQuota],
               reservoir_quota_ttl: response[:ReservoirQuotaTTL],
               interval: response[:Interval]
+            )
+          end
+        end
+
+        class SamplingTargetResponse
+          attr_reader(:last_rule_modification, :sampling_target_documents)
+
+          def initialize(last_rule_modification:, sampling_target_documents:)
+            @last_rule_modification = last_rule_modification
+            @sampling_target_documents = sampling_target_documents
+          end
+
+          # @param [Hash] response
+          # @return [SamplingTargetResponse]
+          def self.from_response(response)
+            return nil if response.empty?
+
+            SamplingTargetResponse.new(
+              last_rule_modification: Time.at(response[:LastRuleModification]),
+              sampling_target_documents: response[:SamplingTargetDocuments].map { |item| SamplingTargetDocument.from_response(item) }
             )
           end
         end
