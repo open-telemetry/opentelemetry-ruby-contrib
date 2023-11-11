@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency('opentelemetry-sdk', '~> 1.1')
   spec.add_development_dependency('rake', '~> 13.0')
   spec.add_development_dependency('rubocop', '~> 1.57.1')
+  spec.add_development_dependency('webmock', '~> 3.19.1')
   spec.add_development_dependency('yard', '~> 0.9')
 
   if spec.respond_to?(:metadata)

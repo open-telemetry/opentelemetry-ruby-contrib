@@ -6,6 +6,7 @@
 
 require_relative('cache')
 require_relative('client')
+require_relative('poller')
 
 module OpenTelemetry
   module Sampling
@@ -30,6 +31,10 @@ module OpenTelemetry
             rule_interval: DEFAULT_RULE_POLLING_INTERVAL,
             target_interval: DEFAULT_TARGET_POLLING_INTERVAL
           )
+        end
+
+        def start
+          @poller.start
         end
 
         # @param [String] trace_id
@@ -65,12 +70,6 @@ module OpenTelemetry
               tracestate: OpenTelemetry::Trace.current_span(parent_context).context.tracestate
             )
           end
-        end
-
-        private
-
-        def start
-          @poller.start
         end
       end
     end

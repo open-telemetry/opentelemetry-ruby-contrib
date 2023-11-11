@@ -99,7 +99,7 @@ module OpenTelemetry
             @statistic.increment_request_count
             case @reservoir.borrow_or_take?
             when Reservoir::BORROW
-              @statistic.increment_borrowed_count
+              @statistic.increment_borrow_count
               true
             when Reservoir::TAKE
               @statistic.increment_sampled_count

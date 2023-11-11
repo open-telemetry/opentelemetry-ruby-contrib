@@ -8,12 +8,12 @@ require('test_helper')
 require('opentelemetry/sampling/xray/statistic')
 
 describe(OpenTelemetry::Sampling::XRay::Statistic) do
-  describe('#increment_borrowed_count') do
+  describe('#increment_borrow_count') do
     it('should increment the borrowed count') do
       statistic = OpenTelemetry::Sampling::XRay::Statistic.new
       increments = rand(0..100)
-      increments.times.each { statistic.increment_borrowed_count }
-      _(statistic.instance_variable_get(:@borrowed_count)).must_equal(increments)
+      increments.times.each { statistic.increment_borrow_count }
+      _(statistic.instance_variable_get(:@borrow_count)).must_equal(increments)
     end
   end
 

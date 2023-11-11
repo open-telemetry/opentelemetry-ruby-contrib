@@ -51,7 +51,7 @@ module OpenTelemetry
 
         def refresh_rules
           OpenTelemetry.logger.debug('Refreshing sampling rules')
-          @cache.update_rules(@client.fetch_sampling_rules)
+          @cache.update_rules(@client.fetch_sampling_rules.map(&:sampling_rule))
           @rule_interval_elapsed = 0
         end
 

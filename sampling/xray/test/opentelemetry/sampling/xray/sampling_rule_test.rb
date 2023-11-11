@@ -266,7 +266,7 @@ describe(OpenTelemetry::Sampling::XRay::SamplingRule) do
       end
 
       reservoir.expect(:borrow_or_take?, OpenTelemetry::Sampling::XRay::Reservoir::BORROW)
-      statistic.expect(:increment_borrowed_count, nil)
+      statistic.expect(:increment_borrow_count, nil)
       statistic.expect(:increment_request_count, nil)
 
       _(rule.can_sample?).must_equal(true)
