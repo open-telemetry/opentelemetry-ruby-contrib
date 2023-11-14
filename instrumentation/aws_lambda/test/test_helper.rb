@@ -1,0 +1,106 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
+
+require 'opentelemetry-instrumentation-aws_lambda'
+
+require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
+
+class MockLambdaContext
+  attr_reader :aws_request_id, :invoked_function_arn
+
+  def initialize(aws_request_id:, invoked_function_arn:)
+    @aws_request_id = aws_request_id
+    @invoked_function_arn = invoked_function_arn
+  end
+end
+
+EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
+span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
+
+EVENT_V1 = {
+  'body' => nil,
+  'headers' => {
+    'Accept' => '*/*',
+    'Host' => '127.0.0.1:3000',
+    'User-Agent' => 'curl/8.1.2',
+    'X-Forwarded-Port' => 3000,
+    'X-Forwarded-Proto' => 'http'
+  },
+  'httpMethod' => 'GET',
+  'isBase64Encoded' => false,
+  'multiValueHeaders' => {},
+  'multiValueQueryStringParameters' => nil,
+  'path' => '/',
+  'pathParameters' => nil,
+  'queryStringParameters' => nil,
+  requestContext: {
+    'accountId' => 123_456_789_012,
+    'apiId' => 1_234_567_890,
+    'domainName' => '127.0.0.1:3000',
+    'extendedRequestId' => nil,
+    'httpMethod' => 'GET',
+    'identity' => {},
+    'path' => '/',
+    'protocol' => 'HTTP/1.1',
+    'requestId' => 'db7f8e7a-4cc5-4f6d-987b-713d0d9052c3',
+    'requestTime' => '08/Nov/2023:19:09:59 +0000',
+    'requestTimeEpoch' => 1_699_470_599,
+    'resourceId' => '123456',
+    'resourcePath' => '/',
+    'stage' => 'api'
+  },
+  'resource' => '/',
+  'stageVariables' => nil,
+  'version' => '1.0'
+}.freeze
+
+EVENT_V2 = {
+  'version' => '2.0',
+  'routeKey' => '$default',
+  'rawPath' => '/path/to/resource',
+  'rawQueryString' => 'parameter1=value1&parameter1=value2&parameter2=value',
+  'cookies' => %w[cookie1 cookie2],
+  'headers' => { 'header1' => 'value1', 'Header2' => 'value1,value2' },
+  'queryStringParameters' => {},
+  'requestContext' => {
+    'accountId' => '123456789012',
+    'apiId' => 'api-id',
+    'authentication' => { 'clientCert' => {} },
+    'authorizer' => {},
+    'domainName' => 'id.execute-api.us-east-1.amazonaws.com',
+    'domainPrefix' => 'id',
+    'http' => {
+      'method' => 'POST',
+      'path' => '/path/to/resource',
+      'protocol' => 'HTTP/1.1',
+      'sourceIp' => '192.168.0.1/32',
+      'userAgent' => 'agent'
+    },
+    'requestId' => 'id',
+    'routeKey' => '$default',
+    'stage' => '$default',
+    'time' => '12/Mar/2020:19:03:58 +0000',
+    'timeEpoch' => 1_583_348_638_390
+  },
+  'body' => 'eyJ0ZXN0IjoiYm9keSJ9',
+  'pathParameters' => { 'parameter1' => 'value1' },
+  'isBase64Encoded' => true,
+  'stageVariables' => { 'stageVariable1' => 'value1', 'stageVariable2' => 'value2' }
+}.freeze
+
+CONTEXT = MockLambdaContext.new(aws_request_id: '41784178-4178-4178-4178-4178417855e',
+                                invoked_function_arn: 'arn:aws:lambda:location:id:function_name:function_name')
+
+OpenTelemetry::SDK.configure do |c|
+  c.error_handler = ->(exception:, message:) { raise(exception || message) }
+  c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
+  c.use 'OpenTelemetry::Instrumentation::AwsLambda'
+  c.add_span_processor span_processor
+end
