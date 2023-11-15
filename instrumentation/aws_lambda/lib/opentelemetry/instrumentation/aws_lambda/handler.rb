@@ -40,18 +40,23 @@ module OpenTelemetry
             span&.finish
             OpenTelemetry.tracer_provider.force_flush(timeout: @flush_timeout)
           end
+
+          response
         end
 
         def resolve_original_handler
           original_handler = ENV['ORIG_HANDLER'] || ENV['_HANDLER'] || ''
           original_handler_parts = original_handler.split('.')
           if original_handler_parts.size == 2
-            _, @handler_method = original_handler_parts
+            hanlder_file, @handler_method = original_handler_parts
           elsif original_handler_parts.size == 3
-            _, @handler_class, @handler_method = original_handler_parts
+            hanlder_file, @handler_class, @handler_method = original_handler_parts
           else
             OpenTelemetry.logger.warn("aws-lambda instrumentation: Invalid handler #{original_handler}, must be of form FILENAME.METHOD or FILENAME.CLASS.METHOD.")
           end
+
+          require hanlder_file
+
           original_handler
         end
 
