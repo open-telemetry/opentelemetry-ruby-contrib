@@ -105,6 +105,10 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
         'http://example.com/timeout',
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
+
+      exception_event = span.events.first
+      _(exception_event.attributes['exception.type']).must_equal('Excon::Error::Timeout')
+      _(exception_event.attributes['exception.message']).must_equal('Excon::Error::Timeout')
     end
 
     it 'merges HTTP client context' do
