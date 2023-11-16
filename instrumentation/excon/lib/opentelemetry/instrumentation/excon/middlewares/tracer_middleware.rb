@@ -80,7 +80,7 @@ module OpenTelemetry
 
           def handle_response(datum)
             datum.delete(:otel_span)&.tap do |span|
-              return span if span.end_timestamp
+              return span unless span.recording?
 
               if datum.key?(:response)
                 response = datum[:response]
