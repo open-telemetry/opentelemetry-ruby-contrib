@@ -40,7 +40,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
     end
 
     it 'before request' do
-      _(exporter.finished_spans.size).must_equal 0
+      _(exporter.finished_spans).must_be_empty
     end
 
     it 'after request with success code' do
@@ -163,12 +163,12 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
     it 'does not create a span when request ignored using a string' do
       Excon.get('http://foobar.com/body')
-      _(exporter.finished_spans.size).must_equal 0
+      _(exporter.finished_spans).must_be_empty
     end
 
     it 'does not create a span when request ignored using a regexp' do
       Excon.get('http://bazqux.com/body')
-      _(exporter.finished_spans.size).must_equal 0
+      _(exporter.finished_spans).must_be_empty
     end
 
     it 'does not create a span on connect when request ignored using a regexp' do
@@ -176,7 +176,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       Excon::Socket.new(hostname: uri.host, port: uri.port)
 
-      _(exporter.finished_spans.size).must_equal 0
+      _(exporter.finished_spans).must_be_empty
     end
 
     it 'creates a span for a non-ignored request' do
