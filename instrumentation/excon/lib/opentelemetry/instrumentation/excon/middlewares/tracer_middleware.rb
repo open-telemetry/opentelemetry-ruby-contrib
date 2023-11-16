@@ -22,7 +22,11 @@ module OpenTelemetry
           end.freeze
 
           def request_call(datum)
-            return @stack.request_call(datum) if skip_trace?(datum)
+            if skip_trace?(datum)
+              return OpenTelemetry::Common::Utilities.untraced do
+                @stack.request_call(datum)
+              end
+            end
 
             http_method = HTTP_METHODS_TO_UPPERCASE[datum[:method]]
 
