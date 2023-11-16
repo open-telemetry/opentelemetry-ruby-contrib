@@ -205,11 +205,14 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
   describe '#connect' do
     before do
       instrumentation.install
+      WebMock.allow_net_connect!
+    end
+
+    after do
+      WebMock.disable_net_connect!
     end
 
     it 'emits span on connect' do
-      WebMock.allow_net_connect!
-
       TCPServer.open('localhost', 0) do |server|
         Thread.start do
           server.accept
@@ -226,13 +229,9 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.name).must_equal 'connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
-    ensure
-      WebMock.disable_net_connect!
     end
 
     it 'captures errors' do
-      WebMock.allow_net_connect!
-
       _(-> { Excon.get('http://invalid.com:99999/example') }).must_raise
 
       _(exporter.finished_spans.size).must_equal(3)
@@ -244,13 +243,9 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(span_event.name).must_equal 'exception'
       _(span_event.attributes['exception.type']).must_equal(SocketError.name)
-    ensure
-      WebMock.disable_net_connect!
     end
 
     it '[BUG] fails to emit an HTTP CONNECT span when connecting through an SSL proxy for an HTTP service' do
-      WebMock.allow_net_connect!
-
       _(-> { Excon.get('http://localhost/', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
 
       _(exporter.finished_spans.size).must_equal(3)
@@ -258,13 +253,9 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
-    ensure
-      WebMock.disable_net_connect!
     end
 
     it 'emits an HTTP CONNECT span when connecting through an SSL proxy' do
-      WebMock.allow_net_connect!
-
       _(-> { Excon.get('https://localhost/', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
 
       _(exporter.finished_spans.size).must_equal(3)
@@ -272,13 +263,9 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.kind).must_equal(:client)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
-    ensure
-      WebMock.disable_net_connect!
     end
 
     it 'emits a "connect" span when connecting through an non-ssl proxy' do
-      WebMock.allow_net_connect!
-
       _(-> { Excon.get('http://localhost', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
 
       _(exporter.finished_spans.size).must_equal(3)
@@ -286,8 +273,6 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
-    ensure
-      WebMock.disable_net_connect!
     end
   end
 end
