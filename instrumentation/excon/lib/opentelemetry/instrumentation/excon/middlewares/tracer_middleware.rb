@@ -93,7 +93,7 @@ module OpenTelemetry
               span.finish
             end
           rescue StandardError => e
-            OpenTelemetry.logger.debug(e.message)
+            OpenTelemetry.handle_error(e)
           end
 
           def tracer
