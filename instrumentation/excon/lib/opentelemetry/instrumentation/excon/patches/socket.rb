@@ -16,8 +16,8 @@ module OpenTelemetry
             return super if untraced?
 
             if @data[:proxy]
-              conn_address = @data[:proxy][:hostname]
-              conn_port = @data[:proxy][:port]
+              conn_address = @data.dig(:proxy, :hostname)
+              conn_port = @data.dig(:proxy, :port)
             else
               conn_address = @data[:hostname]
               conn_port = @port
