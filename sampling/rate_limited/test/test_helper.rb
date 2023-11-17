@@ -14,7 +14,7 @@ Bundler.require(
 SimpleCov.minimum_coverage 85
 SimpleCov.start
 
-require 'opentelemetry-sampling-rate-limited'
+require 'opentelemetry-sampling-rate_limited'
 require 'minitest/autorun'
 
 OpenTelemetry.logger = Logger.new(

@@ -10,7 +10,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require('opentelemetry/sampling/rate_limited/version')
 
 Gem::Specification.new do |spec|
-  spec.name = 'opentelemetry-sampling-rate-limited'
+  spec.name = 'opentelemetry-sampling-rate_limited'
   spec.version = OpenTelemetry::Sampling::RateLimited::VERSION
   spec.authors = ['OpenTelemetry Authors']
   spec.email = ['cncf-opentelemetry-contributors@lists.cncf.io']

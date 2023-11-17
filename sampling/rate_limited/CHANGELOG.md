@@ -1,1 +1,1 @@
-# Release History: opentelemetry-sampling-rate-limited
+# Release History: opentelemetry-sampling-rate_limited

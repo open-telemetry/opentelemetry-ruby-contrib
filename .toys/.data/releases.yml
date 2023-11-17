@@ -227,6 +227,6 @@ gems:
     directory: sampling/hierarchical
     version_constant: [OpenTelemetry, Sampling, Hierarchical, VERSION]
 
-  - name: opentelemetry-sampling-rate-limited
+  - name: opentelemetry-sampling-rate_limited
     directory: sampling/rate_limited
     version_constant: [OpenTelemetry, Sampling, Rate Limited, VERSION]

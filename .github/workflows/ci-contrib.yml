@@ -94,7 +94,7 @@ jobs:
       matrix:
         gem:
           - hierarchical
-          - rate-limited
+          - rate_limited
         os:
           - ubuntu-latest
     name: "sampling-${{ matrix.gem }} / ${{ matrix.os }}"

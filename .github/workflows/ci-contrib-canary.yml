@@ -117,7 +117,7 @@ jobs:
       matrix:
         gem:
           - hierarchical
-          - rate-limited
+          - rate_limited
         os:
           - ubuntu-latest
           - macos-latest
