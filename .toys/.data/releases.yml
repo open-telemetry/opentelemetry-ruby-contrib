@@ -222,3 +222,11 @@ gems:
     directory: resources/google_cloud_platform
     version_rb_path: lib/opentelemetry/resource/detector/google_cloud_platform/version.rb
     version_constant: [OpenTelemetry, Resource, Detector, GoogleCloudPlatform, VERSION]
+
+  - name: opentelemetry-sampling-hierarchical
+    directory: sampling/hierarchical
+    version_constant: [OpenTelemetry, Sampling, Hierarchical, VERSION]
+
+  - name: opentelemetry-sampling-rate-limited
+    directory: sampling/rate_limited
+    version_constant: [OpenTelemetry, Sampling, Rate Limited, VERSION]
