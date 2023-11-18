@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
-  spec.add_development_dependency 'redis', '~> 4.1.0'
+  spec.add_development_dependency 'redis', '~> 4.1'
   spec.add_development_dependency 'redis-client', '~> 0.7'
   spec.add_development_dependency 'rubocop', '~> 1.56.1'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
