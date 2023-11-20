@@ -76,7 +76,7 @@ Attributes that are specific to this instrumentation are recorded under `rails.a
 
 `perform.active_job` no longer includes exceptions handled using `rescue_from` in the payload.
 
-In order to preseve this behavior you will have to update the span yourself, e.g.
+In order to preserve this behavior you will have to update the span yourself, e.g.
 
 ```ruby
   rescue_from MyCustomError do |e|
