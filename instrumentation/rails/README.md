@@ -14,7 +14,7 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-r
 
 ### Version Compatibility
 
-EOL versions of Rails are not supported by the latest version of this instrumentation. If you are using an EOL version of Rails and need an earlier version of this instrumentation, then consider installing and pinning the compatible gem version, e.g.: 
+EOL versions of Rails are not supported by the latest version of this instrumentation. If you are using an EOL version of Rails and need an earlier version of this instrumentation, then consider installing and pinning the compatible gem version, e.g.:
 
 ```console
 gem opentelemetry-instrumentation-rails, "<version>"
@@ -23,7 +23,7 @@ gem opentelemetry-instrumentation-rails, "<version>"
 | Rails Version | Instrumentation Version |
 | --- | --- |
 | `5.2` | `= 0.24.1` |
-| `6.0` | `~> 0.24.1` |
+| `6.0` | `= 0.28.0` |
 | `6.1` | `~> 0.24` |
 | `7.x` | `~> 0.24` |
 

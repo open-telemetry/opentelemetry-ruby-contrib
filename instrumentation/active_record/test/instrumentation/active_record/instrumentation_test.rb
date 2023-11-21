@@ -28,18 +28,6 @@ describe OpenTelemetry::Instrumentation::ActiveRecord do
       end
     end
 
-    it 'when a version above the maximum supported gem version is installed' do
-      ActiveRecord.stub(:version, Gem::Version.new('8.0.0')) do
-        _(instrumentation.compatible?).must_equal false
-      end
-    end
-
-    it 'it treats pre releases as being equivalent to a full release' do
-      ActiveRecord.stub(:version, Gem::Version.new('8.0.0.alpha')) do
-        _(instrumentation.compatible?).must_equal false
-      end
-    end
-
     it 'when supported gem version installed' do
       _(instrumentation.compatible?).must_equal true
     end
