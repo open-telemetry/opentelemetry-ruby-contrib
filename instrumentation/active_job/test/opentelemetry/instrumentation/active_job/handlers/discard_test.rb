@@ -43,10 +43,10 @@ describe 'OpenTelemetry::Instrumentation::ActiveJob::Handlers::Discard' do
       DiscardJob.perform_later
 
       _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-      _(process_span.status.description).must_equal 'discard me'
+      _(process_span.status.description).must_equal 'Unexpected ActiveJob Error DiscardJob::DiscardError'
 
       _(discard_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-      _(discard_span.status.description).must_equal 'discard me'
+      _(discard_span.status.description).must_equal 'Unexpected ActiveJob Error DiscardJob::DiscardError'
       _(discard_span.events.first.name).must_equal 'exception'
       _(discard_span.events.first.attributes['exception.type']).must_equal 'DiscardJob::DiscardError'
       _(discard_span.events.first.attributes['exception.message']).must_equal 'discard me'

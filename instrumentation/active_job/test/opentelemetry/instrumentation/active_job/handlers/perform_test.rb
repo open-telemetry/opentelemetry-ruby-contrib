@@ -61,7 +61,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
       _ { ExceptionJob.perform_later }.must_raise StandardError, 'This job raises an exception'
 
       _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-      _(process_span.status.description).must_equal 'This job raises an exception'
+      _(process_span.status.description).must_equal 'Unexpected ActiveJob Error StandardError'
 
       _(process_span.events.first.name).must_equal 'exception'
       _(process_span.events.first.attributes['exception.type']).must_equal 'StandardError'

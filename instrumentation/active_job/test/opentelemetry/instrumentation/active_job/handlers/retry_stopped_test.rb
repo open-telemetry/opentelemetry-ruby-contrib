@@ -60,10 +60,10 @@ describe 'OpenTelemetry::Instrumentation::ActiveJob::Handlers::RetryStopped' do
         _ { RetryJob.perform_later }.must_raise StandardError
 
         _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-        _(process_span.status.description).must_equal 'from retry job'
+        _(process_span.status.description).must_equal 'Unexpected ActiveJob Error StandardError'
 
         _(retry_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-        _(retry_span.status.description).must_equal 'from retry job'
+        _(retry_span.status.description).must_equal 'Unexpected ActiveJob Error StandardError'
         _(retry_span.events.first.name).must_equal 'exception'
         _(retry_span.events.first.attributes['exception.type']).must_equal 'StandardError'
         _(retry_span.events.first.attributes['exception.message']).must_equal 'from retry job'
