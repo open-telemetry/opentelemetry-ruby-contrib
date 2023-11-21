@@ -42,14 +42,14 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Mappers::Attribute do
 
     [publish_span, process_span].each do |span|
       _(span.attributes['code.namespace']).must_equal('TestJob')
-      _(span.attributes['messaging.system']).must_equal('async')
+      _(span.attributes['messaging.system']).must_equal('active_job')
+      _(span.attributes['messaging.active_job.adapter.name']).must_equal('async')
       _(span.attributes['messaging.destination']).must_equal('default')
       _(span.attributes['messaging.message.id']).must_equal(job.job_id)
       _(span.attributes['messaging.active_job.message.priority']).must_be_nil
     end
 
-    _(publish_span.attributes['messaging.message.id']).must_equal('')
-    _(process_span.attributes['messaging.message.id']).must_equal(job.provider_job_id)
+    _(process_span.attributes['messaging.active_job.message.provider_job_id']).must_equal(job.provider_job_id)
   end
 
   it 'tracks the job priority' do
@@ -71,7 +71,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Mappers::Attribute do
     TestJob.perform_later
 
     [publish_span, process_span].each do |span|
-      _(span.attributes['messaging.system']).must_equal('inline')
+      _(span.attributes['messaging.active_job.adapter.name']).must_equal('inline')
     end
   end
 end

@@ -21,12 +21,14 @@ module OpenTelemetry
 
             otel_attributes = {
               'code.namespace' => job.class.name,
-              'messaging.system' => job.class.queue_adapter_name,
+              'messaging.system' => 'active_job',
               'messaging.destination' => job.queue_name,
               'messaging.message.id' => job.job_id,
-              'messaging.message.id' => job.provider_job_id.to_s
+              'messaging.active_job.adapter.name' => job.class.queue_adapter_name
             }
 
+            # Not all adapters generate or provide back end specific ids for messages
+            otel_attributes['messaging.active_job.message.provider_job_id'] = job.provider_job_id.to_s if job.provider_job_id
             # This can be problematic if programs use invalid attribute types like Symbols for priority instead of using Integers.
             otel_attributes['messaging.active_job.message.priority'] = job.priority.to_s if job.priority
 

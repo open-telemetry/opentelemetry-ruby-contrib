@@ -73,26 +73,16 @@ end
 EXAMPLE_TRACER = OpenTelemetry.tracer_provider.tracer('activejob-example', '1.0')
 
 class TestJob < ::ActiveJob::Base
-  around_enqueue do |_job, block|
-    EXAMPLE_TRACER.in_span('around_enqueue') do
-      block.call
-    end
-  end
-
-  around_perform do |_job, block|
-    EXAMPLE_TRACER.in_span("around_perform") do
-      block.call
-    end
-  end
-
   def perform
-    puts <<~EOS
+    EXAMPLE_TRACER.in_span("custom span") do
+      puts <<~EOS
 
-    --------------------------------------------------
-     The computer is doing some work, beep beep boop.
-    --------------------------------------------------
+      --------------------------------------------------
+       The computer is doing some work, beep beep boop.
+      --------------------------------------------------
 
-    EOS
+      EOS
+    end
   end
 end
 

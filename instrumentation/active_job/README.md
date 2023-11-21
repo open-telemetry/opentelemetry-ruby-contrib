@@ -59,8 +59,13 @@ Attributes that are specific to this instrumentation are recorded under `messagi
 
 | Attribute Name | Type | Notes |
 | - | - | - |
-| `messaging.message.id` | String | |
-| `messaging.active_job.message.priority` | Integer | |
+| `code.namespace` | String | `ActiveJob` class name |
+| `messaging.system` | String | Static value set to `active_job` |
+| `messaging.destination` | String | Set from `ActiveJob#queue_name` |
+| `messaging.message.id` | String | Set from `ActiveJob#job_id` |
+| `messaging.active_job.adapter.name` | String | The name of the `ActiveJob` adapter implementation |
+| `messaging.active_job.message.priority` | String | Present when set by the client from `ActiveJob#priority` |
+| `messaging.active_job.message.provider_job_id` | String | Present if the underlying adapter has backend specific message ids |
 
 ## Differences between ActiveJob versions
 
