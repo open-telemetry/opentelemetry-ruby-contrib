@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rack-test', '~> 1.1.0'
   spec.add_development_dependency 'rubocop', '~> 1.56.1'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
-  spec.add_development_dependency 'sinatra', '~> 2.0.7'
+  spec.add_development_dependency 'sinatra'
   spec.add_development_dependency 'webmock', '~> 3.19'
   spec.add_development_dependency 'yard', '~> 0.9'
 
