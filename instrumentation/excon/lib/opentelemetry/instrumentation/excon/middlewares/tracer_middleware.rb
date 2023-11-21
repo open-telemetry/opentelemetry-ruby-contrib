@@ -22,11 +22,7 @@ module OpenTelemetry
           end.freeze
 
           def request_call(datum)
-            if skip_trace?(datum)
-              return OpenTelemetry::Common::Utilities.untraced do
-                @stack.request_call(datum)
-              end
-            end
+            return @stack.request_call(datum) if untraced?(datum)
 
             http_method = HTTP_METHODS_TO_UPPERCASE[datum[:method]]
 
@@ -107,8 +103,16 @@ module OpenTelemetry
             Excon::Instrumentation.instance.tracer
           end
 
-          def skip_trace?(datum)
-            datum.key?(:otel_span) || Excon::Instrumentation.instance.config[:untraced_hosts].any? do |host|
+          def untraced?(datum)
+            untraced_context? || datum.key?(:otel_span) || untraced_host?(datum)
+          end
+
+          def untraced_context?
+            OpenTelemetry::Common::Utilities.untraced?
+          end
+
+          def untraced_host?(datum)
+            Excon::Instrumentation.instance.config[:untraced_hosts].any? do |host|
               host.is_a?(Regexp) ? host.match?(datum[:host]) : host == datum[:host]
             end
           end
