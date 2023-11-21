@@ -96,12 +96,12 @@ module OpenTelemetry
           # @param [Exception] exception to report as a Span Event
           # @param [OpenTelemetry::Trace::Span] the currently active span used to record the exception and set the status
           def on_exception(exception, span)
-            return unless (exception && span)
-​
+            return unless exception && span
+
             span.record_exception(exception)
             span.status =
               @parent_span_provider.current_span.status =
-                OpenTelemetry::Trace::Status.error(exception.message)
+                OpenTelemetry::Trace::Status.error("Unexpected ActiveJob Error #{exception.class.name}")
           end
 
           def tracer
