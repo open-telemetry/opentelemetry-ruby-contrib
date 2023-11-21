@@ -73,7 +73,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
       RescueFromJob.perform_later
 
       _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-      _(process_span.status.description).must_equal 'I was handled by rescue_from'
+      _(process_span.status.description).must_equal 'Unexpected ActiveJob Error RescueFromJob::RescueFromError'
 
       _(process_span.events.first.name).must_equal 'exception'
       _(process_span.events.first.attributes['exception.type']).must_equal 'RescueFromJob::RescueFromError'
