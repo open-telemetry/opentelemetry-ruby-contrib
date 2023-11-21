@@ -24,11 +24,11 @@ module OpenTelemetry
               'messaging.system' => job.class.queue_adapter_name,
               'messaging.destination' => job.queue_name,
               'messaging.message.id' => job.job_id,
-              'rails.active_job.execution.counter' => job.executions.to_i,
-              'rails.active_job.provider_job_id' => job.provider_job_id.to_s,
-              'rails.active_job.priority' => job.priority, # this can be problematic. Programs may use invalid attributes for priority.
-              'rails.active_job.scheduled_at' => job.scheduled_at&.to_f
+              'messaging.active_job.provider_job_id' => job.provider_job_id.to_s
             }
+
+            # This can be problematic if programs use invalid attribute types like Symbols for priority instead of using Integers.
+            otel_attributes['messaging.active_job.priority'] = job.priority.to_s if job.priority
 
             otel_attributes.compact!
 

@@ -55,22 +55,18 @@ This instrumentation generally uses [Messaging semantic conventions](https://ope
 
 Internal spans are named using the name of the `ActiveSupport` event that was provided.
 
-Attributes that are specific to this instrumentation are recorded under `rails.active_job.*`:
+Attributes that are specific to this instrumentation are recorded under `messaging.active_job.*`:
 
 | Attribute Name | Type | Notes |
 | - | - | - |
-| `rails.active_job.execution.counter` | Integer | _Subject to be removed once metrics are available_ |
-| `rails.active_job.provider_job_id` | String | |
-| `rails.active_job.priority` | Integer | |
-| `rails.active_job.scheduled_at` | Float | _Subject to be converted to a Span Event_ |
+| `messaging.active_job.provider_job_id` | String | |
+| `messaging.active_job.priority` | Integer | |
 
 ## Differences between ActiveJob versions
 
 ### ActiveJob 6.1
 
 `perform.active_job` events do not include timings for `ActiveJob` callbacks therefore time spent in `before` and `after` hooks will be missing
-
-`ActiveJob::Base#executions` start at `1`.
 
 ### ActiveJob 7+
 
@@ -86,10 +82,6 @@ In order to preserve this behavior you will have to update the span yourself, e.
     span.status = OpenTelemetry::Trace::Status.error('Job failed')
   end
 ```
-
-`ActiveJob::Base#executions` start at `0` instead of `1` as it did in v6.1.
-
-
 
 ## Examples
 

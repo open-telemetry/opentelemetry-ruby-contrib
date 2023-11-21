@@ -40,22 +40,6 @@ describe 'OpenTelemetry::Instrumentation::ActiveJob::Handlers::RetryStopped' do
 
   describe 'attributes' do
     describe 'active_job.executions' do
-      it 'tracks correctly for jobs that do retry in Rails 6 or earlier' do
-        skip "ActiveJob #{ActiveJob.version} starts at 0 in newer versions" if ActiveJob.version >= Gem::Version.new('7')
-        _ { RetryJob.perform_later }.must_raise StandardError
-
-        executions = spans.filter { |s| s.kind == :consumer }.map { |s| s.attributes['rails.active_job.execution.counter'] }.compact.max
-        _(executions).must_equal(2) # total of 3 runs. The initial and 2 retries.
-      end
-
-      it 'tracks correctly for jobs that do retry in Rails 7 or later' do
-        skip "ActiveJob #{ActiveJob.version} starts at 1 in older versions" if ActiveJob.version < Gem::Version.new('7')
-        _ { RetryJob.perform_later }.must_raise StandardError
-
-        executions = spans.filter { |s| s.kind == :consumer }.map { |s| s.attributes['rails.active_job.execution.counter'] }.compact.max
-        _(executions).must_equal(1)
-      end
-
       it 'records retry errors' do
         _ { RetryJob.perform_later }.must_raise StandardError
 
