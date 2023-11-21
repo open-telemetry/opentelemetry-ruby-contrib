@@ -286,6 +286,14 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       assert_http_spans(exception: 'Excon::Error::Socket')
     end
+
+    it 'emits no spans when untraced' do
+      OpenTelemetry::Common::Utilities.untraced do
+        _(-> { Excon.get('http://localhost', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
+
+        _(exporter.finished_spans.size).must_equal(0)
+      end
+    end
   end
 
   def assert_http_spans(scheme: 'http', host: 'localhost', target: '/', exception: nil)
