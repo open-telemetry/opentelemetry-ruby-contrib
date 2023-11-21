@@ -98,8 +98,8 @@ module OpenTelemetry
           def on_exception(exception, span)
             return unless (exception && span)
 ​
-            span&.record_exception(exception)
-            span&.status =
+            span.record_exception(exception)
+            span.status =
               @parent_span_provider.current_span.status =
                 OpenTelemetry::Trace::Status.error(exception.message)
           end
