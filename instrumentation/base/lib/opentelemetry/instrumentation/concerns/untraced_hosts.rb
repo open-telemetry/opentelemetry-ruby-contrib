@@ -7,7 +7,8 @@
 module OpenTelemetry
   module Instrumentation
     module Concerns
-      # The untraced hosts concerns allows instrumentation to skip traces on hostnames in an exclusion list.  
+      # The untraced hosts concerns allows instrumentation to skip traces on hostnames in an exclusion list.
+      # When included in a class that extends OpenTelemetry::Instrumentation::Base, this module defines an option named :untraced_hosts.
       module UntracedHosts
         def self.included(klass)
             klass.instance_eval do
