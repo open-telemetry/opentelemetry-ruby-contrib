@@ -70,15 +70,17 @@ class DiscardJob < ::ActiveJob::Base
   end
 end
 
+EXAMPLE_TRACER = OpenTelemetry.tracer_provider.tracer('activejob-example', '1.0')
+
 class TestJob < ::ActiveJob::Base
   around_enqueue do |_job, block|
-    OpenTelemetry.tracer_provider.tracer('demo', '1.0').in_span('around_enqueue') do
+    EXAMPLE_TRACER.in_span('around_enqueue') do
       block.call
     end
   end
 
   around_perform do |_job, block|
-    OpenTelemetry.tracer_provider.tracer("demo", 1.0).in_span("around_perform") do
+    EXAMPLE_TRACER.in_span("around_perform") do
       block.call
     end
   end
@@ -118,9 +120,7 @@ end
 
 ::ActiveJob::Base.queue_adapter = :async
 
-tracer = OpenTelemetry.tracer_provider.tracer('example', '0.1.0')
-
-tracer.in_span('run-jobs') do
+EXAMPLE_TRACER.in_span('run-jobs') do
   DoItNowJob.perform_now
   BatchJob.perform_later
 end
