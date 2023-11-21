@@ -62,7 +62,7 @@ module OpenTelemetry
         end
 
         # Removes Event Handler Subscriptions for ActiveJob notifications
-        # @note this method is not thread safe and sholud not be used in a multi-threaded context
+        # @note this method is not thread-safe and should not be used in a multi-threaded context
         def unsubscribe
           @subscriptions&.each { |subscriber| ActiveSupport::Notifications.unsubscribe(subscriber) }
           @subscriptions = nil
