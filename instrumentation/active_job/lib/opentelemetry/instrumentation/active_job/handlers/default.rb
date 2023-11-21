@@ -72,8 +72,8 @@ module OpenTelemetry
             # closes the span after all attributes have been finalized
             begin
               if span&.recording?
-                span&.status = OpenTelemetry::Trace::Status.ok if span&.status&.code == OpenTelemetry::Trace::Status::UNSET
-                span&.finish
+                span.status = OpenTelemetry::Trace::Status.ok if span.status.code == OpenTelemetry::Trace::Status::UNSET
+                span.finish
               end
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
