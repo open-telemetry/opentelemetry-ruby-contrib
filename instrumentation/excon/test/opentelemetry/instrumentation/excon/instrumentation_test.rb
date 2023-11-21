@@ -97,9 +97,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
-      _(span.status.description).must_equal(
-        'Request has failed: Excon::Error::Timeout'
-      )
+      _(span.status.description).must_equal('Request has failed')
       assert_requested(
         :get,
         'http://example.com/timeout',
