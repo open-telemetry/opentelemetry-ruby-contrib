@@ -59,7 +59,7 @@ Attributes that are specific to this instrumentation are recorded under `messagi
 
 | Attribute Name | Type | Notes |
 | - | - | - |
-| `messaging.active_job.provider_job_id` | String | |
+| `messaging.message.id` | String | |
 | `messaging.active_job.priority` | Integer | |
 
 ## Differences between ActiveJob versions

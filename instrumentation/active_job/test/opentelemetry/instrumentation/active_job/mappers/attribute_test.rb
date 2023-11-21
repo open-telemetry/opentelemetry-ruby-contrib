@@ -48,8 +48,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Mappers::Attribute do
       _(span.attributes['messaging.active_job.priority']).must_be_nil
     end
 
-    _(publish_span.attributes['messaging.active_job.provider_job_id']).must_equal('')
-    _(process_span.attributes['messaging.active_job.provider_job_id']).must_equal(job.provider_job_id)
+    _(publish_span.attributes['messaging.message.id']).must_equal('')
+    _(process_span.attributes['messaging.message.id']).must_equal(job.provider_job_id)
   end
 
   it 'tracks the job priority' do

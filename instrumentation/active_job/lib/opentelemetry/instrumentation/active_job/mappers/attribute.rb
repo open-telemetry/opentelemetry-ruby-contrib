@@ -24,7 +24,7 @@ module OpenTelemetry
               'messaging.system' => job.class.queue_adapter_name,
               'messaging.destination' => job.queue_name,
               'messaging.message.id' => job.job_id,
-              'messaging.active_job.provider_job_id' => job.provider_job_id.to_s
+              'messaging.message.id' => job.provider_job_id.to_s
             }
 
             # This can be problematic if programs use invalid attribute types like Symbols for priority instead of using Integers.
