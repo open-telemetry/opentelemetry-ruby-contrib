@@ -45,7 +45,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Mappers::Attribute do
       _(span.attributes['messaging.system']).must_equal('async')
       _(span.attributes['messaging.destination']).must_equal('default')
       _(span.attributes['messaging.message.id']).must_equal(job.job_id)
-      _(span.attributes['messaging.active_job.priority']).must_be_nil
+      _(span.attributes['messaging.active_job.message.priority']).must_be_nil
     end
 
     _(publish_span.attributes['messaging.message.id']).must_equal('')
@@ -56,7 +56,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Mappers::Attribute do
     TestJob.set(priority: 5).perform_later
 
     [publish_span, process_span].each do |span|
-      _(span.attributes['messaging.active_job.priority']).must_equal('5')
+      _(span.attributes['messaging.active_job.message.priority']).must_equal('5')
     end
   end
 

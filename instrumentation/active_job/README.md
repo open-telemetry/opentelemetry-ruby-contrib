@@ -60,7 +60,7 @@ Attributes that are specific to this instrumentation are recorded under `messagi
 | Attribute Name | Type | Notes |
 | - | - | - |
 | `messaging.message.id` | String | |
-| `messaging.active_job.priority` | Integer | |
+| `messaging.active_job.message.priority` | Integer | |
 
 ## Differences between ActiveJob versions
 

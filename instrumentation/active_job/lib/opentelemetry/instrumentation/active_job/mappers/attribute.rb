@@ -28,7 +28,7 @@ module OpenTelemetry
             }
 
             # This can be problematic if programs use invalid attribute types like Symbols for priority instead of using Integers.
-            otel_attributes['messaging.active_job.priority'] = job.priority.to_s if job.priority
+            otel_attributes['messaging.active_job.message.priority'] = job.priority.to_s if job.priority
 
             otel_attributes.compact!
 

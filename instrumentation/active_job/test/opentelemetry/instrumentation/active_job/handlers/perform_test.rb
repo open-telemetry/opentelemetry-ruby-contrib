@@ -119,7 +119,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
         TestJob.perform_later
 
         [publish_span, process_span].each do |span|
-          _(span.attributes['messaging.active_job.priority']).must_be_nil
+          _(span.attributes['messaging.active_job.message.priority']).must_be_nil
         end
       end
 
@@ -127,7 +127,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
         TestJob.set(priority: 1).perform_later
 
         [publish_span, process_span].each do |span|
-          _(span.attributes['messaging.active_job.priority']).must_equal('1')
+          _(span.attributes['messaging.active_job.message.priority']).must_equal('1')
         end
       end
     end
