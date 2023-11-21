@@ -7,6 +7,7 @@
 require 'opentelemetry'
 require 'opentelemetry-registry'
 require 'opentelemetry/instrumentation/base'
+require 'opentelemetry/instrumentation/concerns/untraced_hosts'
 
 module OpenTelemetry
   # The instrumentation module contains functionality to register and install

@@ -10,6 +10,8 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Excon
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        include OpenTelemetry::Instrumentation::Concerns::UntracedHosts
+
         install do |_config|
           require_dependencies
           add_middleware
@@ -21,12 +23,6 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
-
-        # untraced_hosts: if a request's address matches any of the `String`
-        #   or `Regexp` in this array, the instrumentation will not record a
-        #   `kind = :client` representing the request and will not propagate
-        #   context in the request.
-        option :untraced_hosts, default: [], validate: :array
 
         private
 

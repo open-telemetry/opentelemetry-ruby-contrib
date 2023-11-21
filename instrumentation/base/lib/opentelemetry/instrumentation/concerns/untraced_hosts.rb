@@ -1,0 +1,34 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+module OpenTelemetry
+  module Instrumentation
+    module Concerns
+      # The untraced hosts concerns allows instrumentation to skip traces on hostnames in an exclusion list.  
+      module UntracedHosts
+        def self.included(klass)
+            klass.instance_eval do
+              # untraced_hosts: if a request's address matches any of the `String`
+              #   or `Regexp` in this array, the instrumentation will not record a
+              #   `kind = :client` representing the request and will not propagate
+              #   context in the request.
+              option :untraced_hosts, default: [], validate: :array
+            end
+        end
+
+        def untraced?(host)
+            OpenTelemetry::Common::Utilities.untraced? || untraced_host?(host)
+        end
+
+        def untraced_host?(host)
+          config[:untraced_hosts].any? do |rule|
+            rule.is_a?(Regexp) ? rule.match?(host) : rule == host
+          end
+        end
+      end
+    end
+  end     
+end

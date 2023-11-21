@@ -104,17 +104,7 @@ module OpenTelemetry
           end
 
           def untraced?(datum)
-            untraced_context? || datum.key?(:otel_span) || untraced_host?(datum)
-          end
-
-          def untraced_context?
-            OpenTelemetry::Common::Utilities.untraced?
-          end
-
-          def untraced_host?(datum)
-            Excon::Instrumentation.instance.config[:untraced_hosts].any? do |host|
-              host.is_a?(Regexp) ? host.match?(datum[:host]) : host == datum[:host]
-            end
+            datum.key?(:otel_span) || Excon::Instrumentation.instance.untraced?(datum[:host])
           end
         end
       end

@@ -43,17 +43,13 @@ module OpenTelemetry
           end
 
           def untraced?
-            return true if OpenTelemetry::Common::Utilities.untraced?
-
             address = if @data[:proxy]
                         @data.dig(:proxy, :hostname)
                       else
                         @data[:hostname]
                       end
 
-            Excon::Instrumentation.instance.config[:untraced_hosts].any? do |host|
-              host.is_a?(Regexp) ? host.match?(address) : host == address
-            end
+            Excon::Instrumentation.instance.untraced?(address)
           end
         end
       end
