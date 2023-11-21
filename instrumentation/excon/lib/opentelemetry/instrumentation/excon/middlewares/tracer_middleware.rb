@@ -43,13 +43,15 @@ module OpenTelemetry
             attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = peer_service if peer_service
             attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-            datum[:otel_span] = tracer.start_span(HTTP_METHODS_TO_SPAN_NAMES[http_method], attributes: attributes, kind: :client)
+            span = tracer.start_span(HTTP_METHODS_TO_SPAN_NAMES[http_method], attributes: attributes, kind: :client)
+            ctx = OpenTelemetry::Trace.context_with_span(span)
 
-            OpenTelemetry::Trace.with_span(datum[:otel_span]) do
-              OpenTelemetry.propagation.inject(datum[:headers])
+            datum[:otel_span] = span
+            datum[:otel_token] = OpenTelemetry::Context.attach(ctx)
 
-              @stack.request_call(datum)
-            end
+            OpenTelemetry.propagation.inject(datum[:headers])
+
+            @stack.request_call(datum)
           end
 
           def response_call(datum)
@@ -94,6 +96,8 @@ module OpenTelemetry
               end
 
               span.finish
+
+              OpenTelemetry::Context.detach(datum.delete(:otel_token)) if datum.include?(:otel_token)
             end
           rescue StandardError => e
             OpenTelemetry.handle_error(e)
