@@ -47,7 +47,7 @@ module OpenTelemetry
 
             OpenTelemetry::Trace.with_span(datum[:otel_span]) do
               OpenTelemetry.propagation.inject(datum[:headers])
-              
+
               @stack.request_call(datum)
             end
           end

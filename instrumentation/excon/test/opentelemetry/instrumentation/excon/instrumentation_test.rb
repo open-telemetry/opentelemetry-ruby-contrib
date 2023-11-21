@@ -274,7 +274,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
 
-      assert_http_spans(scheme: "https")
+      assert_http_spans(scheme: 'https')
     end
 
     it 'emits a "connect" span when connecting through an non-ssl proxy' do

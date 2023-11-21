@@ -13,9 +13,7 @@ module OpenTelemetry
           private
 
           def connect
-            if untraced?
-              return OpenTelemetry::Common::Utilities.untraced { super }
-            end
+            return OpenTelemetry::Common::Utilities.untraced { super } if untraced?
 
             if @data[:proxy]
               conn_address = @data.dig(:proxy, :hostname)
