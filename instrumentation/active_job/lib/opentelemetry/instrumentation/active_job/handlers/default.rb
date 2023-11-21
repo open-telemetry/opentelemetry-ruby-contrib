@@ -57,8 +57,7 @@ module OpenTelemetry
             span = otel&.fetch(:span)
             tokens = otel&.fetch(:ctx_tokens)
 
-            exception = payload[:error] || payload[:exception_object]
-            on_exception(exception, span) if exception
+            on_exception((payload[:error] || payload[:exception_object]), span)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           ensure
@@ -97,10 +96,12 @@ module OpenTelemetry
           # @param [Exception] exception to report as a Span Event
           # @param [OpenTelemetry::Trace::Span] the currently active span used to record the exception and set the status
           def on_exception(exception, span)
-            status = OpenTelemetry::Trace::Status.error(exception.message)
+            return unless (exception && span)
+​
             span&.record_exception(exception)
-            span&.status = status
-            @parent_span_provider.current_span.status = status
+            span&.status =
+              @parent_span_provider.current_span.status =
+                OpenTelemetry::Trace::Status.error(exception.message)
           end
 
           def tracer
