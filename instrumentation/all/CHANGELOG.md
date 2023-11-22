@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.52.0 / 2023-11-21
+
+* BREAKING CHANGE: Drop Support for EoL Rails 6.0 [#680](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/680)
+* BREAKING CHANGE: Use ActiveSupport Instrumentation instead of Money Patches [#677](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/677)
+
+* CHANGED: Drop Support for EoL Rails 6.0 [#680](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/680)
+* CHANGED: Use ActiveSupport Instrumentation instead of Money Patches [#677](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/677)
+
 ### v0.51.1 / 2023-10-27
 
 * ADDED: Instrument connect and ping (Trilogy)

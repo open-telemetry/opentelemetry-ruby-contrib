@@ -12,7 +12,7 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('0.10.0')
 
         compatible do
-          Gem.loaded_specs['rdkafka'].version >= MINIMUM_VERSION
+          Gem::Version.new(::Rdkafka::VERSION) >= MINIMUM_VERSION
         end
 
         install do |_config|

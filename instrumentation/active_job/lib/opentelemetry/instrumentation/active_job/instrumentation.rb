@@ -17,7 +17,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::ActiveJob)
+          defined?(::ActiveJob) && defined?(::ActiveSupport)
         end
 
         compatible do
@@ -64,12 +64,13 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'patches/base'
-          require_relative 'patches/active_job_callbacks'
+          require_relative 'handlers'
         end
 
         def patch_activejob
-          ::ActiveJob::Base.prepend(Patches::Base)
-          ::ActiveJob::Base.prepend(Patches::ActiveJobCallbacks)
+          ::ActiveJob::Base.prepend(Patches::Base) unless ::ActiveJob::Base.ancestors.include?(Patches::Base)
+
+          Handlers.subscribe
         end
       end
     end
