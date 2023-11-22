@@ -22,21 +22,21 @@ module OpenTelemetry
             @_otel_resolve_type_key_cache = Hash.new { |h, k| h[k] = _otel_resolve_type_key(k) }
             @_otel_resolve_type_key_cache.compare_by_identity
 
-            @_otel_authorized_attrs_cache = Hash.new do |h, type|
+            @_otel_type_attrs_cache = Hash.new do |h, type|
               h[type] = {
                 'graphql.type.name' => type.graphql_name,
                 'graphql.lazy' => false
               }.freeze
             end
-            @_otel_authorized_attrs_cache.compare_by_identity
+            @_otel_type_attrs_cache.compare_by_identity
 
-            @_otel_lazy_authorized_attrs_cache = Hash.new do |h, type|
+            @_otel_lazy_type_attrs_cache = Hash.new do |h, type|
               h[type] = {
                 'graphql.type.name' => type.graphql_name,
                 'graphql.lazy' => true
               }.freeze
             end
-            @_otel_lazy_authorized_attrs_cache.compare_by_identity
+            @_otel_lazy_type_attrs_cache.compare_by_identity
 
             @_otel_field_attrs_cache = Hash.new do |h, field|
               h[field] = {
@@ -56,21 +56,6 @@ module OpenTelemetry
             end
             @_otel_lazy_field_attrs_cache.compare_by_identity
 
-            @_otel_resolve_type_attrs_cache = Hash.new do |h, type|
-              h[type] = {
-                'graphql.type.name' => type.graphql_name,
-                'graphql.lazy' => false
-              }.freeze
-            end
-            @_otel_resolve_type_attrs_cache.compare_by_identity
-
-            @_otel_lazy_resolve_type_attrs_cache = Hash.new do |h, type|
-              h[type] = {
-                'graphql.type.name' => type.graphql_name,
-                'graphql.lazy' => true
-              }.freeze
-            end
-            @_otel_lazy_resolve_type_attrs_cache.compare_by_identity
             super
           end
 
@@ -146,7 +131,7 @@ module OpenTelemetry
             platform_key = @_otel_authorized_key_cache[type]
             return super unless platform_key
 
-            attributes = @_otel_authorized_attrs_cache[type]
+            attributes = @_otel_type_attrs_cache[type]
 
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
@@ -155,19 +140,19 @@ module OpenTelemetry
             platform_key = @_otel_authorized_key_cache[type]
             return super unless platform_key
 
-            attributes = @_otel_lazy_authorized_attrs_cache[type]
+            attributes = @_otel_lazy_type_attrs_cache[type]
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
 
           def resolve_type(query:, type:, object:, &block)
             platform_key = @_otel_resolve_type_key_cache[type]
-            attributes = @_otel_resolve_type_attrs_cache[type]
+            attributes = @_otel_type_attrs_cache[type]
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
 
           def resolve_type_lazy(query:, type:, object:, &block)
             platform_key = @_otel_resolve_type_key_cache[type]
-            attributes = @_otel_lazy_resolve_type_attrs_cache[type]
+            attributes = @_otel_lazy_type_attrs_cache[type]
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
 

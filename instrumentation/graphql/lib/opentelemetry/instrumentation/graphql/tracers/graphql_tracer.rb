@@ -105,38 +105,22 @@ module OpenTelemetry
                 }.freeze
               end
               lazy_field_attr_cache[data[:field]]
-            when 'authorized'
-              authorized_attr_cache = data[:context].namespace(:otel_attrs)[:authorized_attrs] ||= attr_cache do |type|
+            when 'authorized', 'resolve_type'
+              type_attrs_cache = data[:context].namespace(:otel_attrs)[:type_attrs] ||= attr_cache do |type|
                 {
                   'graphql.type.name' => type.graphql_name,
                   'graphql.lazy' => false
                 }.freeze
               end
-              authorized_attr_cache[data[:type]]
-            when 'authorized_lazy'
-              authorized_lazy_attr_cache = data[:context].namespace(:otel_attrs)[:authorized_lazy_attrs] ||= attr_cache do |type|
+              type_attrs_cache[data[:type]]
+            when 'authorized_lazy', 'resolve_type_lazy'
+              type_lazy_attrs_cache = data[:context].namespace(:otel_attrs)[:type_lazy_attrs] ||= attr_cache do |type|
                 {
                   'graphql.type.name' => type.graphql_name,
                   'graphql.lazy' => true
                 }
               end
-              authorized_lazy_attr_cache[data[:type]]
-            when 'resolve_type'
-              resolve_type_attr_cache = data[:context].namespace(:otel_attrs)[:resolve_type_attrs] ||= attr_cache do |type|
-                {
-                  'graphql.type.name' => type.graphql_name,
-                  'graphql.lazy' => false
-                }
-              end
-              resolve_type_attr_cache[data[:type]]
-            when 'resolve_type_lazy'
-              resolve_type_lazy_attr_cache = data[:context].namespace(:otel_attrs)[:resolve_type_lazy_attrs] ||= attr_cache do |type|
-                {
-                  'graphql.type.name' => type.graphql_name,
-                  'graphql.lazy' => true
-                }
-              end
-              resolve_type_lazy_attr_cache[data[:type]]
+              type_lazy_attrs_cache[data[:type]]
             when 'execute_query'
               attributes = {
                 'graphql.document' => data[:query].query_string,
