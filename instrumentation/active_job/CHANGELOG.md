@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.7.0 / 2023-11-22
+
+* BREAKING CHANGE: Drop Rails 6.0 EOL
+
+* ADDED: Drop Rails 6.0 EOL
+
 ### v0.6.1 / 2023-10-16
 
 * FIXED: Add Rails 7.1 compatibility
