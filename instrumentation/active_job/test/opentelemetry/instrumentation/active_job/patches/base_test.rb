@@ -6,29 +6,20 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/active_job'
+require_relative '../../../../../lib/opentelemetry/instrumentation/active_job'
 
 describe OpenTelemetry::Instrumentation::ActiveJob::Patches::Base do
-  describe 'attr_accessor' do
-    it 'adds a "metadata" accessor' do
-      job = TestJob.new
-
-      _(job).must_respond_to :metadata
-      _(job).must_respond_to :metadata=
-    end
-  end
-
   describe 'serialization / deserialization' do
     it 'must handle metadata' do
       job = TestJob.new
-      job.metadata = { 'foo' => 'bar' }
+      job.__otel_headers = { 'foo' => 'bar' }
 
       serialized_job = job.serialize
-      _(serialized_job.keys).must_include 'metadata'
+      _(serialized_job.keys).must_include '__otel_headers'
 
       job = TestJob.new
       job.deserialize(serialized_job)
-      _(job.metadata).must_equal('foo' => 'bar')
+      _(job.__otel_headers).must_equal('foo' => 'bar')
     end
 
     it 'handles jobs queued without instrumentation' do # e.g. during a rolling deployment

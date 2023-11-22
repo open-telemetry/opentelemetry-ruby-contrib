@@ -12,6 +12,19 @@ gem install opentelemetry-instrumentation-rack
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-rack` in your `Gemfile`.
 
+### Version Compatibility
+
+Older versions of Rack are not supported by the latest version of this instrumentation. If you are using an older version of Rack and need an earlier version of this instrumentation, then consider installing and pinning the compatible gem version, e.g.:
+
+```console
+gem opentelemetry-instrumentation-rack, "<version>"
+```
+
+| Rack Version | Instrumentation Version |
+| ------------ | ----------------------- |
+| `< 2.0`      | `= 0.22.1`              |
+| `>= 2.0`     | `~> 0.23`               |
+
 ## Usage
 
 To use the instrumentation, call `use` with the name of the instrumentation:

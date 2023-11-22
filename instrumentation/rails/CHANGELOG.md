@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.29.0 / 2023-11-22
+
+* BREAKING CHANGE: Drop Rails 6.0 EOL
+
+* ADDED: Drop Rails 6.0 EOL
+
 ### v0.28.1 / 2023-10-16
 
 * FIXED: Add Rails 7.1 compatibility

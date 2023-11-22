@@ -30,19 +30,23 @@ module OpenTelemetry
 
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
 
-        ::ActiveSupport::Notifications.notifier.synchronize do
-          subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
+        # this can be removed once we drop support for Rails < 7.2
+        # see https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/707 for more context
+        if ::ActiveSupport::Notifications.notifier.respond_to?(:synchronize)
+          ::ActiveSupport::Notifications.notifier.synchronize do
+            subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
 
-          if subscribers.nil?
-            OpenTelemetry.handle_error(
-              message: 'Unable to move OTEL ActiveSupport Notifications subscriber to the front of the notifications list which may cause incomplete traces.' \
-                       'Please report an issue here: ' \
-                       'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/new?labels=bug&template=bug_report.md&title=ActiveSupport%20Notifications%20subscribers%20list%20is%20nil'
-            )
-          else
-            subscribers.unshift(
-              subscribers.delete(subscriber_object)
-            )
+            if subscribers.nil?
+              OpenTelemetry.handle_error(
+                message: 'Unable to move OTEL ActiveSupport Notifications subscriber to the front of the notifications list which may cause incomplete traces.' \
+                         'Please report an issue here: ' \
+                         'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/new?labels=bug&template=bug_report.md&title=ActiveSupport%20Notifications%20subscribers%20list%20is%20nil'
+              )
+            else
+              subscribers.unshift(
+                subscribers.delete(subscriber_object)
+              )
+            end
           end
         end
         subscriber_object

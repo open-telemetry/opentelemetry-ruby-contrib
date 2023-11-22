@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'pry-byebug'
-  spec.add_development_dependency 'rails', '>= 6'
+  spec.add_development_dependency 'rails', '>= 6.1'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rubocop', '~> 1.56.1'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
