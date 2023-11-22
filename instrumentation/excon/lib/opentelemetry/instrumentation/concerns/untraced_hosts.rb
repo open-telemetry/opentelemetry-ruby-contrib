@@ -21,6 +21,9 @@ module OpenTelemetry
           end
         end
 
+        # Checks whether the given host should be treated as untraced.
+        # If the current OpenTelemetry context is untraced, all hosts will be treated as untraced.
+        # The given host must be a String.
         def untraced?(host)
           OpenTelemetry::Common::Utilities.untraced? || untraced_host?(host)
         end
