@@ -68,7 +68,7 @@ module OpenTelemetry
         end
 
         def patch_activejob
-          ::ActiveJob::Base.prepend(Patches::Base) unless ::ActiveJob::Base.ancestors.include?(Patches::Base)
+          ::ActiveJob::Base.prepend(Patches::Base) unless ::ActiveJob::Base <= Patches::Base
 
           Handlers.subscribe
         end

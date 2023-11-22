@@ -116,10 +116,10 @@ module OpenTelemetry
             getter.keys(carrier).each do |carrier_key|
               baggage_key = carrier_key.start_with?(prefix) && carrier_key[prefix.length..-1]
               next unless baggage_key
-              next unless VALID_BAGGAGE_HEADER_NAME_CHARS =~ baggage_key
+              next unless VALID_BAGGAGE_HEADER_NAME_CHARS.match?(baggage_key)
 
               value = getter.get(carrier, carrier_key)
-              next unless INVALID_BAGGAGE_HEADER_VALUE_CHARS !~ value
+              next if INVALID_BAGGAGE_HEADER_VALUE_CHARS.match?(value)
 
               builder.set_value(baggage_key, value)
             end
