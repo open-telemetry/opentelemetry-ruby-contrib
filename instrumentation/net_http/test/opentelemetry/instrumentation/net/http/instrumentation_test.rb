@@ -178,6 +178,34 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         _(span.attributes['net.peer.port']).must_equal(80)
       end
     end
+
+    describe 'untraced context' do
+      it 'no-ops on #request' do
+        # Calling `tracer.in_span` within an untraced context causes the logging of "called
+        # finish on an ended Span" messages. To avoid log noise, the instrumentation must
+        # no-op (i.e., not call `tracer.in_span`) when the context is untraced.
+        expect(instrumentation.tracer).not_to receive(:in_span)
+
+        OpenTelemetry::Common::Utilities.untraced do
+          Net::HTTP.get('example.com', '/body')
+        end
+
+        _(exporter.finished_spans.size).must_equal 0
+      end
+
+      it 'no-ops on #connect' do
+        expect(instrumentation.tracer).not_to receive(:in_span)
+
+        OpenTelemetry::Common::Utilities.untraced do
+          uri = URI.parse('http://example.com/body')
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.send(:connect)
+          http.send(:do_finish)
+        end
+
+        _(exporter.finished_spans.size).must_equal 0
+      end
+    end
   end
 
   describe '#connect' do
