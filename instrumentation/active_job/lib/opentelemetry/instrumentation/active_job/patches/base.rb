@@ -12,22 +12,33 @@ module OpenTelemetry
         module Base
           def self.prepended(base)
             base.class_eval do
-              attr_accessor :metadata
+              attr_accessor :__otel_headers
             end
           end
 
-          def initialize(*args)
-            @metadata = {}
+          def initialize(...)
+            @__otel_headers = {}
             super
           end
-          ruby2_keywords(:initialize) if respond_to?(:ruby2_keywords, true)
 
           def serialize
-            super.merge('metadata' => serialize_arguments(metadata))
+            message = super
+
+            begin
+              message.merge!('__otel_headers' => serialize_arguments(@__otel_headers))
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e)
+            end
+
+            message
           end
 
           def deserialize(job_data)
-            self.metadata = deserialize_arguments(job_data['metadata'] || []).to_h
+            begin
+              @__otel_headers = deserialize_arguments(job_data.delete('__otel_headers') || []).to_h
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e)
+            end
             super
           end
         end
