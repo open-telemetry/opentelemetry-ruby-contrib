@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../concerns/untraced_hosts'
+
 module OpenTelemetry
   module Instrumentation
     module Excon
