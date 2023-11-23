@@ -2,7 +2,7 @@
 
 ### v0.21.2 / 2023-11-23
 
-* (No significant changes)
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
 
 ### v0.21.1 / 2023-07-19
 
