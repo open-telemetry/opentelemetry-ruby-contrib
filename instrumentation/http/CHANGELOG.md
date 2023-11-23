@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.23.2 / 2023-11-23
+
+* (No significant changes)
+
 ### v0.23.1 / 2023-06-05
 
 * FIXED: Base config options 

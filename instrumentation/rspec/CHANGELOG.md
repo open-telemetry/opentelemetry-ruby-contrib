@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rspec
 
+### v0.3.2 / 2023-11-23
+
+* (No significant changes)
+
 ### v0.3.1 / 2023-06-05
 
 * FIXED: Base config options 

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-ottrace
 
+### v0.21.2 / 2023-11-23
+
+* (No significant changes)
+
 ### v0.21.1 / 2023-07-19
 
 * DOCS: Add some clarity to ottrace docs [#522](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/522)

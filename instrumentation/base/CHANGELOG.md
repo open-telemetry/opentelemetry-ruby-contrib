@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.22.3 / 2023-11-23
+
+* (No significant changes)
+
 ### v0.22.2 / 2023-08-03
 
 * FIXED: Remove inline linter rules

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+### v0.5.1 / 2023-11-23
+
+* (No significant changes)
+
 ### v0.5.0 / 2023-11-22
 
 * BREAKING CHANGE: Drop Rails 6.0 EOL

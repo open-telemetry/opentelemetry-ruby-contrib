@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.23.5 / 2023-11-23
+
+* (No significant changes)
+
 ### v0.23.4 / 2023-08-03
 
 * FIXED: Remove inline linter rules

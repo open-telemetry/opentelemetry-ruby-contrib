@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.23.4 / 2023-11-23
+
+* (No significant changes)
+
 ### v0.23.3 / 2023-10-16
 
 * FIXED: Omit `nil` `net.peer.name` attributes

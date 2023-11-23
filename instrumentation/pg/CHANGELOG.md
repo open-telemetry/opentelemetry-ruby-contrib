@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.26.1 / 2023-11-23
+
+* (No significant changes)
+
 ### v0.26.0 / 2023-10-16
 
 * BREAKING CHANGE: Obfuscation for mysql2, dalli and postgresql as default option for db_statement

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.22.4 / 2023-11-23
+
+* (No significant changes)
+
 ### v0.22.3 / 2023-11-22
 
 * FIXED: Update `Net::HTTP` instrumentation to no-op on untraced contexts
