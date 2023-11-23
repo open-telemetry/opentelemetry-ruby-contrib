@@ -26,7 +26,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
     OpenTelemetry.propagation = propagator
     # simulate a fresh install:
-    instrumentation.instance_variable_set('@installed', false)
+    instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(config)
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)

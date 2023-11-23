@@ -78,7 +78,7 @@ module OpenTelemetry
               status_code = response.code.to_i
 
               span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code)
-              span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(status_code.to_i)
+              span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(status_code.to_i)
             end
 
             def tracer

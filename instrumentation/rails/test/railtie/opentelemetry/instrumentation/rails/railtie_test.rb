@@ -9,10 +9,10 @@ class OpenTelemetry::Instrumentation::Rails::RailtieTest < ActiveSupport::TestCa
   include OpenTelemetry::SemanticConventions
 
   setup do
-    OpenTelemetry::Instrumentation.registry.instance_variable_get('@instrumentation').each do |i|
-      i.instance_variable_set('@instance', nil)
+    OpenTelemetry::Instrumentation.registry.instance_variable_get(:@instrumentation).each do |i|
+      i.instance_variable_set(:@instance, nil)
     end
-    OpenTelemetry::SDK::Resources::Resource.instance_variable_set('@default', nil)
+    OpenTelemetry::SDK::Resources::Resource.instance_variable_set(:@default, nil)
     OpenTelemetry.tracer_provider = OpenTelemetry::Internal::ProxyTracerProvider.new
   end
 
@@ -20,7 +20,7 @@ class OpenTelemetry::Instrumentation::Rails::RailtieTest < ActiveSupport::TestCa
     OpenTelemetry::TestHelpers.with_env('OTEL_SERVICE_NAME' => nil) do
       run_initializer
       assert_instance_of(OpenTelemetry::SDK::Trace::TracerProvider, OpenTelemetry.tracer_provider)
-      assert_same(Rails.logger, OpenTelemetry.logger.instance_variable_get('@logger'))
+      assert_same(Rails.logger, OpenTelemetry.logger.instance_variable_get(:@logger))
     end
   end
 
