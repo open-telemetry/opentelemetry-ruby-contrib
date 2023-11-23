@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.22.4 / 2023-11-23
+
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+
 ### v0.22.3 / 2023-11-22
 
 * FIXED: Update `Net::HTTP` instrumentation to no-op on untraced contexts

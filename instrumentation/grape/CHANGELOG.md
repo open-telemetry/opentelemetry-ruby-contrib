@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-grape
 
+### v0.1.6 / 2023-11-23
+
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+
 ### v0.1.5 / 2023-10-31
 
 * FIXED: Remove dependency on ActiveSupport core extensions from Grape instrumentation
