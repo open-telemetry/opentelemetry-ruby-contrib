@@ -24,9 +24,7 @@ module OpenTelemetry
           def start(_name, _id, payload)
             rack_span = OpenTelemetry::Instrumentation::Rack.current_span
 
-            # from rails 6.1, the request will be added to payload
             request = payload[:request]
-            request = payload[:headers].instance_variable_get(:@req) if ::ActionPack.version < Gem::Version.new('6.1.0')
 
             rack_span.name = "#{payload[:controller]}##{payload[:action]}" unless request.env['action_dispatch.exception']
 
