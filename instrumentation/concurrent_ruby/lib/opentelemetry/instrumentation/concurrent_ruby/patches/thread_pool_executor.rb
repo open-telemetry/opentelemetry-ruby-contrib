@@ -17,7 +17,7 @@ module OpenTelemetry
 
             super(*args, **kwargs) do
               OpenTelemetry::Context.with_current(context) do
-                task.call(*args, **kwargs)
+                yield(*args, **kwargs)
               end
             end
           end

@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module ActiveSupport
-      VERSION = '0.5.0'
+      VERSION = '0.5.1'
     end
   end
 end

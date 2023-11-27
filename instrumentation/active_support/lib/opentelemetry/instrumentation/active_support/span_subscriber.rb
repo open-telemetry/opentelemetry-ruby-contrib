@@ -67,10 +67,8 @@ module OpenTelemetry
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
-          payload.merge!(
-            __opentelemetry_span: span,
-            __opentelemetry_ctx_token: token
-          )
+          payload[:__opentelemetry_span] = span
+          payload[:__opentelemetry_ctx_token] = token
 
           [span, token]
         end
