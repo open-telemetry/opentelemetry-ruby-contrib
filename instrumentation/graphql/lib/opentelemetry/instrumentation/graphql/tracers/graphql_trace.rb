@@ -16,8 +16,46 @@ module OpenTelemetry
           def initialize(trace_scalars: false, **_options)
             @trace_scalars = trace_scalars
             @_otel_field_key_cache = Hash.new { |h, k| h[k] = _otel_field_key(k) }
+            @_otel_field_key_cache.compare_by_identity
             @_otel_authorized_key_cache = Hash.new { |h, k| h[k] = _otel_authorized_key(k) }
+            @_otel_authorized_key_cache.compare_by_identity
             @_otel_resolve_type_key_cache = Hash.new { |h, k| h[k] = _otel_resolve_type_key(k) }
+            @_otel_resolve_type_key_cache.compare_by_identity
+
+            @_otel_type_attrs_cache = Hash.new do |h, type|
+              h[type] = {
+                'graphql.type.name' => type.graphql_name,
+                'graphql.lazy' => false
+              }.freeze
+            end
+            @_otel_type_attrs_cache.compare_by_identity
+
+            @_otel_lazy_type_attrs_cache = Hash.new do |h, type|
+              h[type] = {
+                'graphql.type.name' => type.graphql_name,
+                'graphql.lazy' => true
+              }.freeze
+            end
+            @_otel_lazy_type_attrs_cache.compare_by_identity
+
+            @_otel_field_attrs_cache = Hash.new do |h, field|
+              h[field] = {
+                'graphql.field.parent' => field.owner&.graphql_name,
+                'graphql.field.name' => field.graphql_name,
+                'graphql.lazy' => false
+              }.freeze
+            end
+            @_otel_field_attrs_cache.compare_by_identity
+
+            @_otel_lazy_field_attrs_cache = Hash.new do |h, field|
+              h[field] = {
+                'graphql.field.parent' => field.owner&.graphql_name,
+                'graphql.field.name' => field.graphql_name,
+                'graphql.lazy' => true
+              }.freeze
+            end
+            @_otel_lazy_field_attrs_cache.compare_by_identity
+
             super
           end
 
@@ -73,26 +111,18 @@ module OpenTelemetry
 
           def execute_field(field:, query:, ast_node:, arguments:, object:, &block)
             platform_key = _otel_execute_field_key(field: field)
-            return super unless platform_key
+            return super(field: field, query: query, ast_node: ast_node, object: object, arguments: arguments, &block) unless platform_key
 
-            attributes = {
-              'graphql.field.parent' => field.owner&.graphql_name,
-              'graphql.field.name' => field.graphql_name,
-              'graphql.lazy' => false
-            }
+            attributes = @_otel_field_attrs_cache[field]
 
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
 
           def execute_field_lazy(field:, query:, ast_node:, arguments:, object:, &block)
             platform_key = _otel_execute_field_key(field: field)
-            return super unless platform_key
+            return super(field: field, query: query, ast_node: ast_node, object: object, arguments: arguments, &block) unless platform_key
 
-            attributes = {
-              'graphql.field.parent' => field.owner&.graphql_name,
-              'graphql.field.name' => field.graphql_name,
-              'graphql.lazy' => true
-            }
+            attributes = @_otel_lazy_field_attrs_cache[field]
 
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
@@ -101,10 +131,7 @@ module OpenTelemetry
             platform_key = @_otel_authorized_key_cache[type]
             return super unless platform_key
 
-            attributes = {
-              'graphql.type.name' => type.graphql_name,
-              'graphql.lazy' => false
-            }
+            attributes = @_otel_type_attrs_cache[type]
 
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
@@ -113,33 +140,19 @@ module OpenTelemetry
             platform_key = @_otel_authorized_key_cache[type]
             return super unless platform_key
 
-            attributes = {
-              'graphql.type.name' => type.graphql_name,
-              'graphql.lazy' => true
-            }
-
+            attributes = @_otel_lazy_type_attrs_cache[type]
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
 
           def resolve_type(query:, type:, object:, &block)
             platform_key = @_otel_resolve_type_key_cache[type]
-
-            attributes = {
-              'graphql.type.name' => type.graphql_name,
-              'graphql.lazy' => false
-            }
-
+            attributes = @_otel_type_attrs_cache[type]
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
 
           def resolve_type_lazy(query:, type:, object:, &block)
             platform_key = @_otel_resolve_type_key_cache[type]
-
-            attributes = {
-              'graphql.type.name' => type.graphql_name,
-              'graphql.lazy' => true
-            }
-
+            attributes = @_otel_lazy_type_attrs_cache[type]
             tracer.in_span(platform_key, attributes: attributes, &block)
           end
 
