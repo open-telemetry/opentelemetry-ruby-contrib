@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.27.0 / 2023-11-27
+
+* (No significant changes)
+
 ### v0.26.8 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
