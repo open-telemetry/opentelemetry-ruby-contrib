@@ -86,59 +86,24 @@ module OpenTelemetry
           end
 
           def attributes_for(key, data)
+            attributes = {}
             case key
-            when 'execute_field'
-              field_attr_cache = data[:query].context.namespace(:otel_attrs)[:execute_field_attrs] ||= attr_cache do |field|
-                {
-                  'graphql.field.parent' => field.owner.graphql_name,
-                  'graphql.field.name' => field.graphql_name,
-                  'graphql.lazy' => false
-                }.freeze
-              end
-              field_attr_cache[data[:field]]
-            when 'execute_field_lazy'
-              lazy_field_attr_cache = data[:query].context.namespace(:otel_attrs)[:execute_field_lazy_attrs] ||= attr_cache do |field|
-                {
-                  'graphql.field.parent' => field.owner.graphql_name,
-                  'graphql.field.name' => field.graphql_name,
-                  'graphql.lazy' => true
-                }.freeze
-              end
-              lazy_field_attr_cache[data[:field]]
-            when 'authorized', 'resolve_type'
-              type_attrs_cache = data[:context].namespace(:otel_attrs)[:type_attrs] ||= attr_cache do |type|
-                {
-                  'graphql.type.name' => type.graphql_name,
-                  'graphql.lazy' => false
-                }.freeze
-              end
-              type_attrs_cache[data[:type]]
-            when 'authorized_lazy', 'resolve_type_lazy'
-              type_lazy_attrs_cache = data[:context].namespace(:otel_attrs)[:type_lazy_attrs] ||= attr_cache do |type|
-                {
-                  'graphql.type.name' => type.graphql_name,
-                  'graphql.lazy' => true
-                }
-              end
-              type_lazy_attrs_cache[data[:type]]
+            when 'execute_field', 'execute_field_lazy'
+              attributes['graphql.field.parent'] = data[:owner]&.graphql_name # owner is the concrete type, not interface
+              attributes['graphql.field.name'] = data[:field]&.graphql_name
+              attributes['graphql.lazy'] = key == 'execute_field_lazy'
+            when 'authorized', 'authorized_lazy'
+              attributes['graphql.type.name'] = data[:type]&.graphql_name
+              attributes['graphql.lazy'] = key == 'authorized_lazy'
+            when 'resolve_type', 'resolve_type_lazy'
+              attributes['graphql.type.name'] = data[:type]&.graphql_name
+              attributes['graphql.lazy'] = key == 'resolve_type_lazy'
             when 'execute_query'
-              attributes = {
-                'graphql.document' => data[:query].query_string,
-                'graphql.operation.type' => data[:query].selected_operation.operation_type
-              }
               attributes['graphql.operation.name'] = data[:query].selected_operation_name if data[:query].selected_operation_name
-              attributes
-            else
-              {}
+              attributes['graphql.operation.type'] = data[:query].selected_operation.operation_type
+              attributes['graphql.document'] = data[:query].query_string
             end
-          end
-
-          def attr_cache
-            cache_h = Hash.new do |h, k|
-              h[k] = yield(k)
-            end
-            cache_h.compare_by_identity
-            cache_h
+            attributes
           end
         end
       end
