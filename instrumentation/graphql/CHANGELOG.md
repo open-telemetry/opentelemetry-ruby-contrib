@@ -2,7 +2,7 @@
 
 ### v0.27.0 / 2023-11-27
 
-* (No significant changes)
+* CHANGED: Performance optimization cache attribute hashes [#723](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/723)
 
 ### v0.26.8 / 2023-11-23
 
