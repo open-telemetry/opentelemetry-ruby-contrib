@@ -1,8 +1,8 @@
 # Release History: opentelemetry-instrumentation-all
 
-### v053.0 / 2023-11-28
+### v0.53.0 / 2023-11-28
 
-* (No significant changes)
+* CHANGED: Performance optimization cache attribute hashes [#723](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/723)
 
 ### v0.52.0 / 2023-11-21
 

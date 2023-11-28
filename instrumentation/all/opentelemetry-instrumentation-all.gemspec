@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-excon', '~> 0.21.1'
   spec.add_dependency 'opentelemetry-instrumentation-faraday', '~> 0.23.1'
   spec.add_dependency 'opentelemetry-instrumentation-grape', '~> 0.1.3'
-  spec.add_dependency 'opentelemetry-instrumentation-graphql', '~> 0.26.2'
+  spec.add_dependency 'opentelemetry-instrumentation-graphql', '~> 0.27.0'
   spec.add_dependency 'opentelemetry-instrumentation-gruf', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-http', '~> 0.23.1'
   spec.add_dependency 'opentelemetry-instrumentation-http_client', '~> 0.22.1'
