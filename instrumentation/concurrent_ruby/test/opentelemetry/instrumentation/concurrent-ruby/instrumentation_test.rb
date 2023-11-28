@@ -23,7 +23,7 @@ describe OpenTelemetry::Instrumentation::ConcurrentRuby::Instrumentation do
   after do
     # Force re-install of instrumentation
     Concurrent.send(:remove_const, :ThreadPoolExecutor)
-    Concurrent.const_set('ThreadPoolExecutor', unmodified_future)
+    Concurrent.const_set(:ThreadPoolExecutor, unmodified_future)
     instrumentation.instance_variable_set(:@installed, false)
   end
 

@@ -36,7 +36,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
     exporter.reset
 
     # simulate a fresh install:
-    instrumentation.instance_variable_set('@installed', false)
+    instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(config)
 
     # clear out cached config:
@@ -49,7 +49,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
 
   after do
     # installation is 'global', so it should be reset:
-    instrumentation.instance_variable_set('@installed', false)
+    instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(default_config)
   end
 

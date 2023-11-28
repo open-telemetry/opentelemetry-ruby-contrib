@@ -353,7 +353,7 @@ module OpenTelemetry
         when :array
           env_var.split(',').map(&:strip)
         when :boolean
-          env_var.to_s.strip.downcase == 'true'
+          env_var.to_s.strip.casecmp('true').zero?
         when :integer
           env_var.to_i
         when :string

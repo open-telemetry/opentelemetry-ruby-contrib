@@ -63,7 +63,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
     exporter.reset
 
     # simulate a fresh install:
-    instrumentation.instance_variable_set('@installed', false)
+    instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(config)
   end
 
