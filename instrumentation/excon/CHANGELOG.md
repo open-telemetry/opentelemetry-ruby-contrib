@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-excon
 
+### v0.22.0 / 2023-11-28
+
+* BREAKING CHANGE: Add a connect span to excon
+
+* ADDED: Add a connect span to excon
+
 ### v0.21.3 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
