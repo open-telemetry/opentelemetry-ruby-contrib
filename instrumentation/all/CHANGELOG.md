@@ -2,7 +2,7 @@
 
 ### v0.54.0 / 2023-11-28
 
-* (No significant changes)
+* ADDED: Updated excon to include connect spans 
 
 ### v0.53.0 / 2023-11-28
 
