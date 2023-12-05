@@ -45,7 +45,7 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 
 ### Error Handling for Action Controller
 
-If an error is triggered by the action controller (such as a 500 internal server error), actionpack will typically employ the default `ActionDispatch::PublicExceptions.new(Rails.public_path)` as the `exceptions_app`, as detailed in the [documentation](https://guides.rubyonrails.org/configuring.html#config-exceptions-app).
+If an error is triggered by Action Controller (such as a 500 internal server error), Action Pack will typically employ the default `ActionDispatch::PublicExceptions.new(Rails.public_path)` as the `exceptions_app`, as detailed in the [documentation](https://guides.rubyonrails.org/configuring.html#config-exceptions-app).
 
 The error object will be retained within `payload[:exception_object]`. Additionally, its storage in `request.env['action_dispatch.exception']` is contingent upon the configuration of `action_dispatch.show_exceptions` in Rails.
 
