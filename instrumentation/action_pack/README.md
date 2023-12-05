@@ -32,7 +32,7 @@ end
 
 ## Active Support Instrumentation
 
-Earlier versions of this instrumentation relied on patching custom `dispatch` hooks from rails [action_controller](https://github.com/rails/rails/blob/main/actionpack/lib/action_controller/metal.rb#L224) in order to extract request information.
+Earlier versions of this instrumentation relied on patching custom `dispatch` hooks from Rails's [Action Controller](https://github.com/rails/rails/blob/main/actionpack/lib/action_controller/metal.rb#L224) to extract request information.
 
 This instrumentation now relies on `ActiveSupport::Notifications` and registers a custom Subscriber that listens to relevant events to modify rack span.
 
