@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module ActionPack
       module Handlers
-        # Action controller handler to handle the notification from ActiveSupport
+        # Action Controller handler to handle the notification from Active Support
         class ActionController
           # @param config [Hash] of instrumentation options
           def initialize(config)
