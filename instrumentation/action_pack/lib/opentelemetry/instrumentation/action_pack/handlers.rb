@@ -26,7 +26,7 @@ module OpenTelemetry
           end
         end
 
-        # Removes Event Handler Subscriptions for ActionController notifications
+        # Removes Event Handler Subscriptions for Action Controller notifications
         # @note this method is not thread safe and sholud not be used in a multi-threaded context
         def unsubscribe
           @subscriptions&.each { |subscriber| ::ActiveSupport::Notifications.unsubscribe(subscriber) }
