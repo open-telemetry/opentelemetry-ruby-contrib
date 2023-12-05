@@ -16,7 +16,7 @@ module OpenTelemetry
           end
 
           def call
-            @request.on(:response, &method(:finish))
+            @request.on(:response, &method(:finish)) # rubocop:disable Performance/MethodObjectAsBlock
 
             uri = @request.uri
             request_method = @request.verb
@@ -54,7 +54,7 @@ module OpenTelemetry
               @span.status = Trace::Status.error("Unhandled exception of type: #{response.error.class}")
             else
               @span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response.status)
-              @span.status = Trace::Status.error unless (100..399).include?(response.status)
+              @span.status = Trace::Status.error unless (100..399).cover?(response.status)
             end
 
             OpenTelemetry::Context.detach(@trace_token) if @trace_token
