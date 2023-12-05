@@ -19,7 +19,7 @@ module OpenTelemetry
           #
           # @param _name [String] of the Event (unused)
           # @param _id [String] of the event (unused)
-          # @param payload [Hash] containing job run information
+          # @param payload [Hash] the payload passed as a method argument
           # @return [Hash] the payload passed as a method argument
           def start(_name, _id, payload)
             rack_span = OpenTelemetry::Instrumentation::Rack.current_span
