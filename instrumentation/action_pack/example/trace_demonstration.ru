@@ -39,6 +39,6 @@ Rails.application.initialize!
 run Rails.application
 
 # To run this example run the `rackup` command with this file
-# Example: rackup trace_request_demonstration.ru
+# Example: rackup trace_demonstration.ru
 # Navigate to http://localhost:9292/
 # Spans for the requests will appear in the console
