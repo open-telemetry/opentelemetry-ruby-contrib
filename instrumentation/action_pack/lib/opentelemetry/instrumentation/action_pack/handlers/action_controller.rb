@@ -17,7 +17,7 @@ module OpenTelemetry
 
           # Invoked by ActiveSupport::Notifications at the start of the instrumentation block
           #
-          # @param _name [String] of the Event (unused)
+          # @param _name [String] of the event (unused)
           # @param _id [String] of the event (unused)
           # @param payload [Hash] the payload passed as a method argument
           # @return [Hash] the payload passed as a method argument
