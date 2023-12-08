@@ -128,7 +128,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       let(:span_name_formatter) do
         # demonstrate simple addition of path and string to span name:
         lambda { |request_method, request_path|
-          return "HTTP #{request_method} #{request_path} miniswan"
+          "HTTP #{request_method} #{request_path} miniswan"
         }
       end
 
