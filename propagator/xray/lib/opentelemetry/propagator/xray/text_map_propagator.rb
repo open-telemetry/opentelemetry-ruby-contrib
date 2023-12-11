@@ -119,7 +119,7 @@ module OpenTelemetry
         def to_trace_state(trace_state)
           return nil unless trace_state
 
-          Trace::Tracestate.from_string(trace_state.gsub(';', ','))
+          Trace::Tracestate.from_string(trace_state.tr(';', ','))
         end
       end
     end

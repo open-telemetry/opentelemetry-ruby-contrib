@@ -13,7 +13,7 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
 
   before do
     # simulate a fresh install:
-    instrumentation.instance_variable_set('@installed', false)
+    instrumentation.instance_variable_set(:@installed, false)
     instrumentation.config.clear
   end
 

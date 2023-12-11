@@ -150,7 +150,7 @@ module OpenTelemetry
           end
 
           def set_attributes_after_request(span, status, headers, _response)
-            span.status = OpenTelemetry::Trace::Status.error unless (100..499).include?(status.to_i)
+            span.status = OpenTelemetry::Trace::Status.error unless (100..499).cover?(status.to_i)
             span.set_attribute('http.status_code', status)
 
             # NOTE: if data is available, it would be good to do this:

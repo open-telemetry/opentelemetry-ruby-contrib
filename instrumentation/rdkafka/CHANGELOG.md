@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-rdkafka
 
+### v0.4.2 / 2023-11-23
+
+* FIXED: Retry Release of 0.4.1 [#730](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/730)
+
+### v0.4.1 / 2023-11-22
+
+* FIXED: Get Rdkafka version from VERSION contant
+
 ### v0.4.0 / 2023-09-07
 
 * FIXED: Align messaging instrumentation operation names

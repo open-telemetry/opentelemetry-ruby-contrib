@@ -121,7 +121,7 @@ module OpenTelemetry
         end
 
         def multiple_failure_message(exception)
-          exception.failures.map(&:message).map(&method(:strip_console_codes)).join("\n\n")
+          exception.failures.map(&:message).map { |x| strip_console_codes(x) }.join("\n\n")
         end
       end
     end
