@@ -20,6 +20,7 @@ require 'opentelemetry/sdk'
 require 'opentelemetry/instrumentation/aws_lambda'
 OpenTelemetry::SDK.configure do |c|
   c.service_name = '<YOUR_SERVICE_NAME>'
+  c.use 'OpenTelemetry::Instrumentation::AwsLambda'
 end
 
 def otel_wrapper(event:, context:)
