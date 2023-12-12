@@ -48,7 +48,7 @@ module OpenTelemetry
           original_handler = ENV['ORIG_HANDLER'] || ENV['_HANDLER'] || ''
           original_handler_parts = original_handler.split('.')
           if original_handler_parts.size == 2
-            hanlder_file, @handler_method = original_handler_parts
+            handler_file, @handler_method = original_handler_parts
           elsif original_handler_parts.size == 3
             hanlder_file, @handler_class, @handler_method = original_handler_parts
           else
