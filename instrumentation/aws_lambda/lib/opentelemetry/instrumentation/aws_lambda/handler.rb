@@ -50,7 +50,7 @@ module OpenTelemetry
           if original_handler_parts.size == 2
             handler_file, @handler_method = original_handler_parts
           elsif original_handler_parts.size == 3
-            hanlder_file, @handler_class, @handler_method = original_handler_parts
+            handler_file, @handler_class, @handler_method = original_handler_parts
           else
             OpenTelemetry.logger.warn("aws-lambda instrumentation: Invalid handler #{original_handler}, must be of form FILENAME.METHOD or FILENAME.CLASS.METHOD.")
           end
