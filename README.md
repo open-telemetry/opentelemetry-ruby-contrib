@@ -27,7 +27,8 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-approvers)):
 
-- (Could _your_ name appear here?)
+- [Josef Šimánek](https://github.com/simi)
+- [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 

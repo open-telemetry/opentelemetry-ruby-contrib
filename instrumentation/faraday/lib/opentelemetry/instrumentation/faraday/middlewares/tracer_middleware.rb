@@ -60,7 +60,7 @@ module OpenTelemetry
 
           def trace_response(span, response)
             span.set_attribute('http.status_code', response.status)
-            span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response.status.to_i)
+            span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(response.status.to_i)
           end
         end
       end

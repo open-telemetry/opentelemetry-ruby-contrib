@@ -26,7 +26,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
     OpenTelemetry.propagation = propagator
     # simulate a fresh install:
-    instrumentation.instance_variable_set('@installed', false)
+    instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(config)
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
@@ -128,7 +128,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       let(:span_name_formatter) do
         # demonstrate simple addition of path and string to span name:
         lambda { |request_method, request_path|
-          return "HTTP #{request_method} #{request_path} miniswan"
+          "HTTP #{request_method} #{request_path} miniswan"
         }
       end
 
