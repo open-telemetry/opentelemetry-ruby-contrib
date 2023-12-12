@@ -55,7 +55,7 @@ module OpenTelemetry
             OpenTelemetry.logger.warn("aws-lambda instrumentation: Invalid handler #{original_handler}, must be of form FILENAME.METHOD or FILENAME.CLASS.METHOD.")
           end
 
-          require hanlder_file
+          require handler_file
 
           original_handler
         end
