@@ -27,6 +27,32 @@ class MockLambdaContext
   end
 end
 
+# To accommendate the test case, handler class doesn't need to require the sample file if it's required here
+# In lambda environment, the env will find the handler file.
+module OpenTelemetry
+  module Instrumentation
+    module AwsLambda
+      class Handler
+        def resolve_original_handler
+          original_handler = ENV['ORIG_HANDLER'] || ENV['_HANDLER'] || ''
+          original_handler_parts = original_handler.split('.')
+          if original_handler_parts.size == 2
+            handler_file, @handler_method = original_handler_parts
+          elsif original_handler_parts.size == 3
+            handler_file, @handler_class, @handler_method = original_handler_parts
+          else
+            OpenTelemetry.logger.warn("aws-lambda instrumentation: Invalid handler #{original_handler}, must be of form FILENAME.METHOD or FILENAME.CLASS.METHOD.")
+          end
+
+          # require handler_file #-> don't require file for this sample test
+
+          original_handler
+        end
+      end
+    end
+  end
+end
+
 def otel_wrapper(event:, context:)
   otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new()
   otel_wrapper.call_wrapped(event: event, context: context)

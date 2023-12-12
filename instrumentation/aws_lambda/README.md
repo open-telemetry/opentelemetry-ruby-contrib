@@ -17,10 +17,9 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-a
 From the Lambda Layer side, create the wrapper. More information can be found at https://github.com/open-telemetry/opentelemetry-lambda
 ```ruby
 require 'opentelemetry/sdk'
-require 'opentelemetry/instrumentation/all'
+require 'opentelemetry/instrumentation/aws_lambda'
 OpenTelemetry::SDK.configure do |c|
   c.service_name = '<YOUR_SERVICE_NAME>'
-  c.use_all()
 end
 
 def otel_wrapper(event:, context:)
