@@ -25,6 +25,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
   let(:exporter) { EXPORTER }
   let(:finished_spans) { exporter.finished_spans }
   let(:first_span) { exporter.finished_spans.first }
+  let(:proxy_event) { first_span.events&.first }
 
   let(:default_config) { {} }
   let(:config) { default_config }
@@ -81,6 +82,15 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       it 'records the query path' do
         _(first_span.attributes['http.target']).must_equal '/endpoint?query=true'
         _(first_span.name).must_equal 'HTTP GET'
+      end
+    end
+
+    describe 'given request proxy headers' do
+      let(:env) { Hash('HTTP_X_REQUEST_START' => '1677723466') }
+
+      it 'records an event' do
+        _(proxy_event.name).must_equal 'http.proxy.request.started'
+        _(proxy_event.timestamp).must_equal 1_677_723_466_000_000_000
       end
     end
 
