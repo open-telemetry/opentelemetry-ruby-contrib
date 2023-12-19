@@ -33,10 +33,12 @@ module OpenTelemetry
 
         def patch
           Handlers.subscribe
+          ActionController::Live.include(Patches::ActionController::Live)
         end
 
         def require_dependencies
           require_relative 'handlers'
+          require_relative 'patches/action_controller/live'
         end
 
         def require_railtie
