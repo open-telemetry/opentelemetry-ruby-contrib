@@ -1,0 +1,297 @@
+{
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "draft": false,
+  "include-component-in-tag": true,
+  "include-v-in-tag": true,
+  "prerelease": false,
+  "release-type": "ruby",
+  "skip-github-release": false,
+  "separate-pull-requests": false,
+  "sequential-calls": true,
+  "tag-separator": " ",
+  "packages": [
+    {
+      "instrumentation/gruf": {
+        "package-name": "opentelemetry-instrumentation-gruf",
+        "version-file": "lib/instrumentation/gruf/version.rb"
+      }
+    },
+    {
+      "instrumentation/grape": {
+        "package-name": "opentelemetry-instrumentation-grape",
+        "version-file": "lib/instrumentation/grape/version.rb"
+      }
+    },
+    {
+      "instrumentation/racecar": {
+        "package-name": "opentelemetry-instrumentation-racecar",
+        "version-file": "lib/instrumentation/racecar/version.rb"
+      }
+    },
+    {
+      "instrumentation/rake": {
+        "package-name": "opentelemetry-instrumentation-rake",
+        "version-file": "lib/instrumentation/rake/version.rb"
+      }
+    },
+    {
+      "instrumentation/rdkafka": {
+        "package-name": "opentelemetry-instrumentation-rdkafka",
+        "version-file": "lib/instrumentation/rdkafka/version.rb"
+      }
+    },
+    {
+      "instrumentation/trilogy": {
+        "package-name": "opentelemetry-instrumentation-trilogy",
+        "version-file": "lib/instrumentation/trilogy/version.rb"
+      }
+    },
+    {
+      "instrumentation/active_support": {
+        "package-name": "opentelemetry-instrumentation-active_support",
+        "version-file": "lib/instrumentation/active_support/version.rb"
+      }
+    },
+    {
+      "instrumentation/action_view": {
+        "package-name": "opentelemetry-instrumentation-action_view",
+        "version-file": "lib/instrumentation/action_view/version.rb"
+      }
+    },
+    {
+      "instrumentation/action_pack": {
+        "package-name": "opentelemetry-instrumentation-action_pack",
+        "version-file": "lib/instrumentation/action_pack/version.rb"
+      }
+    },
+    {
+      "instrumentation/active_job": {
+        "package-name": "opentelemetry-instrumentation-active_job",
+        "version-file": "lib/instrumentation/active_job/version.rb"
+      }
+    },
+    {
+      "instrumentation/resque": {
+        "package-name": "opentelemetry-instrumentation-resque",
+        "version-file": "lib/instrumentation/resque/version.rb"
+      }
+    },
+    {
+      "instrumentation/bunny": {
+        "package-name": "opentelemetry-instrumentation-bunny",
+        "version-file": "lib/instrumentation/bunny/version.rb"
+      }
+    },
+    {
+      "instrumentation/base": {
+        "package-name": "opentelemetry-instrumentation-base",
+        "version-file": "lib/opentelemetry/instrumentation/version.rb"
+      }
+    },
+    {
+      "instrumentation/active_record": {
+        "package-name": "opentelemetry-instrumentation-active_record",
+        "version-file": "lib/instrumentation/active_record/version.rb"
+      }
+    },
+    {
+      "instrumentation/aws_sdk": {
+        "package-name": "opentelemetry-instrumentation-aws_sdk",
+        "version-file": "lib/instrumentation/aws_sdk/version.rb"
+      }
+    },
+    {
+      "instrumentation/lmdb": {
+        "package-name": "opentelemetry-instrumentation-lmdb",
+        "version-file": "lib/instrumentation/lmdb/version.rb"
+      }
+    },
+    {
+      "instrumentation/http": {
+        "package-name": "opentelemetry-instrumentation-http",
+        "version-file": "lib/instrumentation/http/version.rb"
+      }
+    },
+    {
+      "instrumentation/graphql": {
+        "package-name": "opentelemetry-instrumentation-graphql",
+        "version-file": "lib/instrumentation/graphql/version.rb"
+      }
+    },
+    {
+      "instrumentation/http_client": {
+        "package-name": "opentelemetry-instrumentation-http_client",
+        "version-file": "lib/instrumentation/http_client/version.rb"
+      }
+    },
+    {
+      "instrumentation/httpx": {
+        "package-name": "opentelemetry-instrumentation-httpx",
+        "version-file": "lib/instrumentation/httpx/version.rb"
+      }
+    },
+    {
+      "instrumentation/koala": {
+        "package-name": "opentelemetry-instrumentation-koala",
+        "version-file": "lib/instrumentation/koala/version.rb"
+      }
+    },
+    {
+      "instrumentation/active_model_serializers": {
+        "package-name": "opentelemetry-instrumentation-active_model_serializers",
+        "version-file": "lib/instrumentation/active_model_serializers/version.rb"
+      }
+    },
+    {
+      "instrumentation/concurrent_ruby": {
+        "package-name": "opentelemetry-instrumentation-concurrent_ruby",
+        "version-file": "lib/instrumentation/concurrent_ruby/version.rb"
+      }
+    },
+    {
+      "instrumentation/dalli": {
+        "package-name": "opentelemetry-instrumentation-dalli",
+        "version-file": "lib/instrumentation/dalli/version.rb"
+      }
+    },
+    {
+      "instrumentation/delayed_job": {
+        "package-name": "opentelemetry-instrumentation-delayed_job",
+        "version-file": "lib/instrumentation/delayed_job/version.rb"
+      }
+    },
+    {
+      "instrumentation/ethon": {
+        "package-name": "opentelemetry-instrumentation-ethon",
+        "version-file": "lib/instrumentation/ethon/version.rb"
+      }
+    },
+    {
+      "instrumentation/excon": {
+        "package-name": "opentelemetry-instrumentation-excon",
+        "version-file": "lib/instrumentation/excon/version.rb"
+      }
+    },
+    {
+      "instrumentation/faraday": {
+        "package-name": "opentelemetry-instrumentation-faraday",
+        "version-file": "lib/instrumentation/faraday/version.rb"
+      }
+    },
+    {
+      "instrumentation/mongo": {
+        "package-name": "opentelemetry-instrumentation-mongo",
+        "version-file": "lib/instrumentation/mongo/version.rb"
+      }
+    },
+    {
+      "instrumentation/mysql2": {
+        "package-name": "opentelemetry-instrumentation-mysql2",
+        "version-file": "lib/instrumentation/mysql2/version.rb"
+      }
+    },
+    {
+      "instrumentation/net_http": {
+        "package-name": "opentelemetry-instrumentation-net_http",
+        "version-file": "lib/opentelemetry/instrumentation/net/http/version.rb"
+      }
+    },
+    {
+      "instrumentation/pg": {
+        "package-name": "opentelemetry-instrumentation-pg",
+        "version-file": "lib/instrumentation/pg/version.rb"
+      }
+    },
+    {
+      "instrumentation/que": {
+        "package-name": "opentelemetry-instrumentation-que",
+        "version-file": "lib/instrumentation/que/version.rb"
+      }
+    },
+    {
+      "instrumentation/rack": {
+        "package-name": "opentelemetry-instrumentation-rack",
+        "version-file": "lib/instrumentation/rack/version.rb"
+      }
+    },
+    {
+      "instrumentation/rails": {
+        "package-name": "opentelemetry-instrumentation-rails",
+        "version-file": "lib/instrumentation/rails/version.rb"
+      }
+    },
+    {
+      "instrumentation/redis": {
+        "package-name": "opentelemetry-instrumentation-redis",
+        "version-file": "lib/instrumentation/redis/version.rb"
+      }
+    },
+    {
+      "instrumentation/restclient": {
+        "package-name": "opentelemetry-instrumentation-restclient",
+        "version-file": "lib/instrumentation/restclient/version.rb"
+      }
+    },
+    {
+      "instrumentation/rspec": {
+        "package-name": "opentelemetry-instrumentation-rspec",
+        "version-file": "lib/instrumentation/rspec/version.rb"
+      }
+    },
+    {
+      "instrumentation/ruby_kafka": {
+        "package-name": "opentelemetry-instrumentation-ruby_kafka",
+        "version-file": "lib/instrumentation/ruby_kafka/version.rb"
+      }
+    },
+    {
+      "instrumentation/sidekiq": {
+        "package-name": "opentelemetry-instrumentation-sidekiq",
+        "version-file": "lib/instrumentation/sidekiq/version.rb"
+      }
+    },
+    {
+      "instrumentation/sinatra": {
+        "package-name": "opentelemetry-instrumentation-sinatra",
+        "version-file": "lib/instrumentation/sinatra/version.rb"
+      }
+    },
+    {
+      "instrumentation/all": {
+        "package-name": "opentelemetry-instrumentation-all",
+        "version-file": "lib/instrumentation/all/version.rb"
+      }
+    },
+    {
+      "propagator/ottrace": {
+        "package-name": "opentelemetry-propagator-ottrace",
+        "version-file": "lib/propagator/ottrace/version.rb"
+      }
+    },
+    {
+      "propagator/xray": {
+        "package-name": "opentelemetry-propagator-xray",
+        "version-file": "lib/propagator/xray/version.rb"
+      }
+    },
+    {
+      "resources/azure": {
+        "package-name": "opentelemetry-resources-azure",
+        "version-file": "lib/opentelemetry/resource/detector/azure/version.rb"
+      }
+    },
+    {
+      "resources/container": {
+        "package-name": "opentelemetry-resources-container",
+        "version-file": "lib/opentelemetry/resource/detector/container/version.rb"
+      }
+    },
+    {
+      "resources/google_cloud_platform": {
+        "package-name": "opentelemetry-resources-google_cloud_platform",
+        "version-file": "lib/opentelemetry/resource/detector/google_cloud_platform/version.rb"
+      }
+    }
+  ]
+}
