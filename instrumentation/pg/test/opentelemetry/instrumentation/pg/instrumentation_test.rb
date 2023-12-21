@@ -346,7 +346,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         client.query('SELECT 1')
 
         _(span.attributes['net.peer.name']).must_equal host
-        _(span.attributes['net.peer.port']).must_equal port.to_i if PG.const_defined?('DEF_PORT')
+        _(span.attributes['net.peer.port']).must_equal port.to_i if PG.const_defined?(:DEF_PORT)
       end
     end
   end unless ENV['OMIT_SERVICES']

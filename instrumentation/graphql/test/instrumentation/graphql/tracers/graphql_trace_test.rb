@@ -291,7 +291,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
     describe 'compatibility with other tracers' do
       let(:config) { { enable_platform_field: true } }
 
-      if GraphQL::Tracing.const_defined?('PlatformTrace')
+      if GraphQL::Tracing.const_defined?(:PlatformTrace)
         module CustomPlatformTracer
           include ::GraphQL::Tracing::PlatformTrace
 
