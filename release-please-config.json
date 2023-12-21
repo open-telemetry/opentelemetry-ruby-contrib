@@ -6,9 +6,10 @@
   "include-v-in-tag": true,
   "prerelease": false,
   "release-type": "ruby",
-  "skip-github-release": false,
   "separate-pull-requests": false,
   "sequential-calls": true,
+  "signoff": "OpenTelemetry Bot <opentelemetrybot@github.com>",
+  "skip-github-release": false,
   "tag-separator": " ",
   "packages": [
     {
