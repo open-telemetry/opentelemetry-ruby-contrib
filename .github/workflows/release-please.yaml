@@ -18,8 +18,6 @@ jobs:
     steps:
       - uses: google-github-actions/release-please-action@cc61a07e2da466bebbc19b3a7dd01d6aecb20d1e
         id: release
-        with:
-          command: manifest
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
       paths_released: ${{ steps.release.outputs.paths_released }}
