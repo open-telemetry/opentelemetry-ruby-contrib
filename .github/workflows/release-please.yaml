@@ -20,7 +20,6 @@ jobs:
         id: release
 
     outputs:
-      releases_created: ${{ steps.release.outputs.releases_created }}
       paths_released: ${{ steps.release.outputs.paths_released }}
 
   publish:
