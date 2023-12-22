@@ -34,6 +34,7 @@ jobs:
       max-parallel: 1
       matrix:
         path: ${{ fromJson(needs.release.outputs.paths_released) }}
+      if: ${{ needs.release.outputs.releases_created }}
 
     steps:
       - name: Checkout repository
