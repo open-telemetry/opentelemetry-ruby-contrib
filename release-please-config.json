@@ -1,7 +1,7 @@
 {
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
-  "draft": false,
+  "draft": true,
   "include-component-in-tag": true,
   "include-v-in-tag": true,
   "prerelease": false,
@@ -11,7 +11,7 @@
   "signoff": "OpenTelemetry Bot <opentelemetrybot@github.com>",
   "skip-github-release": false,
   "tag-separator": " ",
-  "packages": [
+  "packages": {
     {
       "instrumentation/gruf": {
         "package-name": "opentelemetry-instrumentation-gruf",
@@ -294,5 +294,5 @@
         "version-file": "lib/opentelemetry/resource/detector/google_cloud_platform/version.rb"
       }
     }
-  ]
+  }
 }
