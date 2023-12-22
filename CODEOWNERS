@@ -12,22 +12,22 @@
 #  https://help.github.com/en/articles/about-code-owners
 #
 
-* @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @open-telemetry/ruby-contrib-approvers
+* @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle
 
-resources/container/ @scbjans @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+resources/container/ @scbjans @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle
 
-instrumentation/aws_sdk/ @NathanielRN @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+instrumentation/aws_sdk/ @NathanielRN @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle
 
-instrumentation/grape/ @muripic @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+instrumentation/grape/ @muripic @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle
 
-instrumentation/graphql/ @swalkinshaw @rmosolgo @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+instrumentation/graphql/ @swalkinshaw @rmoslogo @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle
 
-instrumentation/httpx/ @HoneyryderChuck @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+instrumentation/httpx/ @HoneyryderChuck @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle
 
-instrumentation/mongo/ @johnnyshields @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+instrumentation/mongo/ @johnnyshields @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle
 
-instrumentation/racecar/ @chrisholmes @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+instrumentation/racecar/ @chrisholmes @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle
 
-instrumentation/rspec/ @chrisholmes @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+instrumentation/rspec/ @chrisholmes @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle
 
-instrumentation/que/ @indrekj @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd
+instrumentation/que/ @indrekj @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle
