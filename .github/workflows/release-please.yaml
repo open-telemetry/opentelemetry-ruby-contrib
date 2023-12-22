@@ -58,5 +58,5 @@ jobs:
         working-directory: ${{ matrix.path }}
         run: |
           bundle install
-          bundle exec rake --verbose build
-          bundle exec rake --verbose release:rubygem_push
+          bundle exec rake --trace build
+          bundle exec rake --trace release:rubygem_push
