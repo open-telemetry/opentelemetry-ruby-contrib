@@ -1,0 +1,63 @@
+---
+name: Release Please
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Process Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@cc61a07e2da466bebbc19b3a7dd01d6aecb20d1e
+        id: release
+        with:
+          command: manifest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      paths_released: ${{ steps.release.outputs.paths_released }}
+
+  publish:
+    needs: release
+    name: Publish Gems
+    runs-on: ubuntu-latest
+    if: ${{ needs.release.outputs.releases_created }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        path: ${{ fromJson(needs.release.outputs.paths_released) }}
+        max-parallel: 1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@af848b40be8bb463a751551a1180d74782ba8a72
+        with:
+          ruby-version: 3.0.0
+
+      - name: Configure RubyGems
+        env:
+          GEM_HOST_API_KEY: "${{secrets.RUBYGEMS_API_KEY}}"
+
+        run: |
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+
+      - name: Release Gem
+        working-directory: ${{ matrix.path }}
+        run: |
+          bundle install
+          bundle exec rake --trace build
+          bundle exec rake --trace release:rubygem_push
