@@ -125,3 +125,12 @@ end
 def gem_version
   Gem::Version.new(GraphQL::VERSION)
 end
+
+# When tracing, is the parser expected to call `lex` before `parse`
+def trace_lex_supported?
+  return @trace_lex_supported if defined?(@trace_lex_supported)
+
+  # In GraphQL 2.2, the default parser was changed such that `lex` is no longer called
+  @trace_lex_supported = Gem::Requirement.new('< 2.2').satisfied_by?(Gem::Version.new(GraphQL::VERSION)) \
+    || (defined?(GraphQL::CParser) == 'constant')
+end
