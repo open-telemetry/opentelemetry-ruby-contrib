@@ -1,5 +1,34 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+## 1.0.0 (2023-12-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* obfuscation for mysql2, dalli and postgresql as default option for db_statement ([#682](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/682))
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389))
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3))
+
+### Features
+
+* add db.operation attribute for dalli ([#458](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/458)) ([f631a26](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/f631a26222b5cc3b20224c081b6d594568089044))
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389)) ([233dfd0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/233dfd0dae81346e9687090f9d8dfb85215e0ba7))
+* obfuscation for mysql2, dalli and postgresql as default option for db_statement ([#682](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/682)) ([20e1cd0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/20e1cd04f8167276453b27469912e90984a291ac))
+* Validate Using Enums ([#1132](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1132)) ([7cd4b10](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7cd4b10ba516cecbb15a40dbe3bd5ed3860b1f88))
+
+
+### Bug Fixes
+
+* `format_command`'s terrible performance ([#207](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/207)) ([950c7b2](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/950c7b283a0343fef6a3396c9eb542e173b9e3da))
+* Base config options ([#499](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/499)) ([7304e86](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7304e86e9a3beba5c20f790b256bbb54469411ca))
+* broken test file requirements ([#1286](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1286)) ([3ec7d8a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3ec7d8a456dbd3c9bbad7b397a3da8b8a311d8e3))
+* regex non-match with obfuscation limit (issue [#486](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/486)) ([#488](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/488)) ([6a9c330](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/6a9c33088c6c9f39b2bc30247a3ed825553c07d4))
+
+
+### Code Refactoring
+
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3)) ([3e85d44](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3e85d4436d338f326816c639cd2087751c63feb1))
+
 ### v0.25.0 / 2023-10-16
 
 * BREAKING CHANGE: Obfuscation for mysql2, dalli and postgresql as default option for db_statement

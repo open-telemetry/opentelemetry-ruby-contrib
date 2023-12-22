@@ -1,5 +1,33 @@
 # Release History: opentelemetry-instrumentation-http
 
+## 1.0.0 (2023-12-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389))
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3))
+
+### Features
+
+* add request/response hooks to more http clients ([#71](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/71)) ([37696bd](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/37696bd2c5c8c58c072937e69834b562bf2c42a5))
+* Add span_preprocessor hook ([#456](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/456)) ([e222bdf](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e222bdfe1607f3459c0ddc203f2be651b473c03d))
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389)) ([233dfd0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/233dfd0dae81346e9687090f9d8dfb85215e0ba7))
+
+
+### Bug Fixes
+
+* Base config options ([#499](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/499)) ([7304e86](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7304e86e9a3beba5c20f790b256bbb54469411ca))
+* broken test file requirements ([#1286](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1286)) ([3ec7d8a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3ec7d8a456dbd3c9bbad7b397a3da8b8a311d8e3))
+* excessive hash creation on context attr merging ([#1117](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1117)) ([bc1291a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/bc1291a000abf2a27421bc4d5596d59d142e4055))
+* regex non-match with obfuscation limit (issue [#486](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/486)) ([#488](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/488)) ([6a9c330](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/6a9c33088c6c9f39b2bc30247a3ed825553c07d4))
+* RubyGems Fallback ([#1161](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1161)) ([3b03ff7](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3b03ff7ea66b69c85ba205a369b85c2c33b712fe))
+
+
+### Code Refactoring
+
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3)) ([3e85d44](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3e85d4436d338f326816c639cd2087751c63feb1))
+
 ### v0.23.2 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)

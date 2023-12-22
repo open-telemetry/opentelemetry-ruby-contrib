@@ -1,5 +1,48 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+## 1.0.0 (2023-12-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* GraphQL instrumentation: support new tracing API ([#453](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/453))
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389))
+* Add support for GraphQL 2.0.19 ([#379](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/379))
+* Lock graphql max version to 2.0.17 ([#375](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/375))
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3))
+
+### Features
+
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389)) ([233dfd0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/233dfd0dae81346e9687090f9d8dfb85215e0ba7))
+* GraphQL instrumentation: support new tracing API ([#453](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/453)) ([5d87786](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/5d87786984b42e795af4646a3e9ca240c56573e9))
+* Normalize GraphQL span names for easier aggregation analysis ([#291](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/291)) ([738f14a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/738f14a39339d8226d5a417d76975c58e2f0e312))
+
+
+### Bug Fixes
+
+* Add support for GraphQL 2.0.19 ([#379](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/379)) ([653d422](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/653d422989f10dedf6784f553940c9dd9202b6a0))
+* Base config options ([#499](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/499)) ([7304e86](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7304e86e9a3beba5c20f790b256bbb54469411ca))
+* broken test file requirements ([#1286](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1286)) ([3ec7d8a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3ec7d8a456dbd3c9bbad7b397a3da8b8a311d8e3))
+* GraphQL resolve_type_lazy ([#512](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/512)) ([ed03835](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/ed038358d63b3fbeb66d33ccf21f3f0414312127))
+* GraphQL tests and installation ([#572](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/572)) ([052f78f](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/052f78f5ac29df967f4aa94b5c87ad16d11b978b))
+* GraphQL tracing ([#482](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/482)) ([2614600](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/2614600916338a5a3a13f56bb9cea0daccb5f9d0))
+* GraphQL validate events ([#557](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/557)) ([e749ff7](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e749ff7e234dca78dc25f38226cf4f2328b952ce))
+* improve GraphQL tracing compatibility with other tracers ([#618](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/618)) ([c308b95](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/c308b95b34e16a72dc744fd57cc705183d15956f))
+* Lock graphql max version to 2.0.17 ([#375](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/375)) ([f1c1125](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/f1c112529bce28a2dbbbfa01df80b5a0a7bbdb93))
+* regex non-match with obfuscation limit (issue [#486](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/486)) ([#488](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/488)) ([6a9c330](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/6a9c33088c6c9f39b2bc30247a3ed825553c07d4))
+* Remove inline linter rules ([#608](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/608)) ([bc4a937](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/bc4a937ed2a0d1898f0f19ae45a2b3a0ef9a067c))
+* Use semantic graphql attribute names ([#73](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/73)) ([9bdcd06](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/9bdcd06e03d74b33f9470c2972b66a573876ac5f))
+
+
+### Performance Improvements
+
+* **graphql:** cache attribute hashes ([#723](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/723)) ([a7f6111](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/a7f6111e769b5547cae5291765b4c45318ff6fdf))
+
+
+### Code Refactoring
+
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3)) ([3e85d44](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3e85d4436d338f326816c639cd2087751c63feb1))
+
 ### v0.27.0 / 2023-11-28
 
 * CHANGED: Performance optimization cache attribute hashes [#723](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/723)

@@ -1,5 +1,34 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+## 1.0.0 (2023-12-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389))
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3))
+
+### Features
+
+* add net.peer.name to faraday instrumentation ([#1115](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1115)) ([0e4ed4e](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/0e4ed4e5aac9bec6bdea63916c99c3106a19835e))
+* add request/response hooks to more http clients ([#71](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/71)) ([37696bd](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/37696bd2c5c8c58c072937e69834b562bf2c42a5))
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389)) ([233dfd0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/233dfd0dae81346e9687090f9d8dfb85215e0ba7))
+
+
+### Bug Fixes
+
+* Base config options ([#499](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/499)) ([7304e86](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7304e86e9a3beba5c20f790b256bbb54469411ca))
+* broken test file requirements ([#1286](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1286)) ([3ec7d8a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3ec7d8a456dbd3c9bbad7b397a3da8b8a311d8e3))
+* excessive hash creation on context attr merging ([#1117](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1117)) ([bc1291a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/bc1291a000abf2a27421bc4d5596d59d142e4055))
+* Omit `nil` `net.peer.name` attributes ([#693](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/693)) ([0cc425b](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/0cc425b80dfcd339daee97b87fd7e7167e09d798))
+* regex non-match with obfuscation limit (issue [#486](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/486)) ([#488](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/488)) ([6a9c330](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/6a9c33088c6c9f39b2bc30247a3ed825553c07d4))
+* Stop leaking basic authentication credentials in Faraday instrumentation ([#53](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/53)) ([3bc1865](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3bc18658263d6f320e0540585d684da1c774c1c2))
+
+
+### Code Refactoring
+
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3)) ([3e85d44](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3e85d4436d338f326816c639cd2087751c63feb1))
+
 ### v0.23.4 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)

@@ -1,5 +1,40 @@
 # Release History: opentelemetry-instrumentation-all
 
+## 1.0.0 (2023-12-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389))
+* Drop Rails 5 support ([#324](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/324))
+* Update Instrumentations ([#303](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/303))
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3))
+
+### Features
+
+* add Grape instrumentation ([#394](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/394)) ([98baa88](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/98baa88ed0979702f56b804b34f397debe9bbaad))
+* Add Gruf instrumentation ([#188](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/188)) ([ac0c3c6](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/ac0c3c698386f623cea00cb4a558f93c5fbeaba1))
+* Add Rake instrumentation ([#80](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/80)) ([f0b55c1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/f0b55c1b25344a9d5e8d2c441b2799769868e014))
+* Adds instrumentation for rdkafka ([#978](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/978)) ([a84067b](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/a84067bb6c8404a4c784b7291e16985ab859010d))
+* bump minimum gem versions for opentelemetry-instrumentation-all ([#168](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/168)) ([11cb74e](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/11cb74e7bd10e2e0130a3ce34c925c149a4ba499))
+* Drop Rails 5 support ([#324](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/324)) ([6d99707](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/6d9970708e51b0beb42761a9012751c4e9b64257))
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389)) ([233dfd0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/233dfd0dae81346e9687090f9d8dfb85215e0ba7))
+* instrumentation for racecar ([#72](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/72)) ([7b87ce5](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7b87ce557ed13ad80d135348050a64042d423165))
+* Update Instrumentations ([#303](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/303)) ([5441260](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/54412608511e42591f5775e1d805682147e3bb94))
+* upgrade min instrumentation versions ([#135](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/135)) ([ddf9a7a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/ddf9a7a9e1d2862374a93048fea0d3ab82f2d92b))
+
+
+### Bug Fixes
+
+* Add rdkafka to all ([#1201](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1201)) ([f6efe3a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/f6efe3abccabbe1904058bce27d08c4a135649f7))
+* re-add Grape instrumentation to opentelemetry-instrumentation-all ([#439](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/439)) ([60d5165](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/60d5165341882c9d4f4e53807f1845b2ab0a5ba2))
+* regex non-match with obfuscation limit (issue [#486](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/486)) ([#488](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/488)) ([6a9c330](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/6a9c33088c6c9f39b2bc30247a3ed825553c07d4))
+
+
+### Code Refactoring
+
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3)) ([3e85d44](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3e85d4436d338f326816c639cd2087751c63feb1))
+
 ### v0.54.0 / 2023-11-28
 
 * ADDED: Updated excon to include connect spans 
