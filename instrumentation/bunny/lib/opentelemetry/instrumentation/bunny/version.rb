@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Bunny
-      VERSION = '0.21.1'
+      VERSION = '1.0.0'
     end
   end
 end

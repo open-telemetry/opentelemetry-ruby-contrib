@@ -1,5 +1,42 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+## 1.0.0 (2023-12-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* change db.mysql.instance.address to db.instance.id ([#758](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/758))
+* Separate logical MySQL host from connected host ([#487](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/487))
+* Add database name for trilogy traces ([#484](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/484))
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389))
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3))
+
+### Features
+
+* Add database name for trilogy traces ([#484](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/484)) ([e8f57c6](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e8f57c6ea4d29a0ea9a61ad9352970c29a1d8516))
+* Add Obfuscation Limit Option to Trilogy ([#477](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/477)) ([234738c](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/234738c5fbd8d630d543f61d84fcefcf948756f1))
+* add option to configure span name for trilogy ([#348](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/348)) ([518e108](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/518e108c08486f5755d637d63bc0f7771889f271))
+* add with_attributes context propagation to Trilogy instrumentation ([#347](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/347)) ([64a2b10](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/64a2b101c901117d8555708a1ffbbb6bab0376b3))
+* change db.mysql.instance.address to db.instance.id ([#758](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/758)) ([73fa809](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/73fa809867dd08c1e3fde7413d88538e0df748bf))
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389)) ([233dfd0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/233dfd0dae81346e9687090f9d8dfb85215e0ba7))
+* Separate logical MySQL host from connected host ([#487](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/487)) ([f6df818](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/f6df818e7e92b1357314dae0f9c1b0877d04878e))
+* **trilogy:** instrument connect and ping ([#704](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/704)) ([6e7f8da](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/6e7f8daf0342204e7cf946771980064efdfb1c35))
+
+
+### Bug Fixes
+
+* Base config options ([#499](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/499)) ([7304e86](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7304e86e9a3beba5c20f790b256bbb54469411ca))
+* broken test file requirements ([#1286](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1286)) ([3ec7d8a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3ec7d8a456dbd3c9bbad7b397a3da8b8a311d8e3))
+* Ensure encoding errors handled during SQL obfuscation for Trilogy ([#345](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/345)) ([1a5972f](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/1a5972f449e920bd3b54fc1033121d72f906c771))
+* regex non-match with obfuscation limit (issue [#486](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/486)) ([#488](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/488)) ([6a9c330](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/6a9c33088c6c9f39b2bc30247a3ed825553c07d4))
+* regex non-match with obfuscation limit (issue [#486](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/486)) ([#488](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/488)) ([b31a4cb](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/b31a4cbb20ba7ee4a3422ce65f948a7fa3f43f85))
+* Remove inline linter rules ([#608](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/608)) ([bc4a937](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/bc4a937ed2a0d1898f0f19ae45a2b3a0ef9a067c))
+
+
+### Code Refactoring
+
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3)) ([3e85d44](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3e85d4436d338f326816c639cd2087751c63feb1))
+
 ### v0.57.0 / 2023-10-27
 
 * ADDED: Instrument connect and ping

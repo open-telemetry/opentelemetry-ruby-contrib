@@ -8,7 +8,7 @@ module OpenTelemetry
   module Resource
     module Detector
       module Azure
-        VERSION = '0.1.0'
+        VERSION = '1.0.0'
       end
     end
   end
