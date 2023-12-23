@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Rack
-      VERSION = '0.23.5'
+      VERSION = '0.23.6'
     end
   end
 end
