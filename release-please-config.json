@@ -1,7 +1,7 @@
 {
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
-  "draft": true,
+  "draft": false,
   "include-component-in-tag": true,
   "include-v-in-tag": true,
   "prerelease": true,
