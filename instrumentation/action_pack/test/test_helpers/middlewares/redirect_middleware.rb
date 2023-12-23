@@ -10,7 +10,7 @@ class RedirectMiddleware
   end
 
   def call(env)
-    return [307, {}, 'Temporary Redirect'] if should_redirect?(env)
+    return [307, { 'Location' => '/ok', 'Content-Type' => 'text/plain' }, ['Temporary Redirect']] if should_redirect?(env)
 
     @app.call(env)
   end

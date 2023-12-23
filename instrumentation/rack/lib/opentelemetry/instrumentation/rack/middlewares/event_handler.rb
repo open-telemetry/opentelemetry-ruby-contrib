@@ -90,7 +90,7 @@ module OpenTelemetry
             return unless span.recording?
 
             span.record_exception(error)
-            span.status = OpenTelemetry::Trace::Status.error
+            span.status = OpenTelemetry::Trace::Status.error(error.class.name)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
