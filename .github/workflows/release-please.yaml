@@ -18,6 +18,8 @@ jobs:
     steps:
       - uses: google-github-actions/release-please-action@cc61a07e2da466bebbc19b3a7dd01d6aecb20d1e
         id: release
+        with:
+          token: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
 
     outputs:
       paths_released: ${{ steps.release.outputs.paths_released }}

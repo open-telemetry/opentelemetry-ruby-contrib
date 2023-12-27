@@ -22,7 +22,7 @@ jobs:
         run: "gem install --no-document toys -v 0.15.3"
       - name: Update open releases
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
         run: |
           toys release _onpush --verbose \
             < /dev/null

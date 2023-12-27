@@ -21,7 +21,7 @@ jobs:
         run: "gem install --no-document toys -v 0.15.3"
       - name: Process release request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
         run: |
           toys release _onclosed --verbose \
             "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
