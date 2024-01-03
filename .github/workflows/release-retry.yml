@@ -28,7 +28,7 @@ jobs:
         run: "gem install --no-document toys -v 0.15.3"
       - name: Retry release
         env:
-          GITHUB_TOKEN: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           toys release retry --yes --verbose \
             "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
