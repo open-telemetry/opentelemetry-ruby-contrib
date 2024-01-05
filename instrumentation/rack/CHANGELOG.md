@@ -1,5 +1,21 @@
 # Release History: opentelemetry-instrumentation-rack
 
+## [0.24.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-rack/v0.23.5...opentelemetry-instrumentation-rack/v0.24.0) (2024-01-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* Use Rack Events By Default
+
+### Features
+
+* Use Rack Events By Default ([f7f4603](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/f7f46037bdda286a25763a31ae5236c947f060ed))
+
+
+### Bug Fixes
+
+* Backport Rack proxy event to middleware ([#764](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/764)) ([3d0f818](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3d0f818c06a2b246425c114b41bec260b9274bc0))
+
 ### v0.23.5 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
