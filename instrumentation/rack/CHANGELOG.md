@@ -1,5 +1,40 @@
 # Release History: opentelemetry-instrumentation-rack
 
+## [0.25.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-rack-v0.24.0...opentelemetry-instrumentation-rack/v0.25.0) (2024-01-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* Use Rack Events By Default
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389))
+* Remove retain_middleware_names Rack Option ([#356](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/356))
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3))
+
+### Features
+
+* Add experimental traceresponse propagator to Rack instrumentation ([#182](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/182)) ([4e2d98b](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4e2d98bd635e099518fc05041057e94e967186d5))
+* Drop support for EoL Ruby 2.7 ([#389](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/389)) ([233dfd0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/233dfd0dae81346e9687090f9d8dfb85215e0ba7))
+* Remove retain_middleware_names Rack Option ([#356](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/356)) ([d84a8cb](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/d84a8cb949c5f846174c8136a2b98e06bf265b75))
+* Use Rack Events By Default ([f7f4603](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/f7f46037bdda286a25763a31ae5236c947f060ed))
+* Use Rack::Events for instrumentation ([#342](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/342)) ([c179d3b](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/c179d3b0f8c69c03867b84c667f98abb66f46a41))
+
+
+### Bug Fixes
+
+* Backport Rack proxy event to middleware ([#764](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/764)) ([3d0f818](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3d0f818c06a2b246425c114b41bec260b9274bc0))
+* Base config options ([#499](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/499)) ([7304e86](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7304e86e9a3beba5c20f790b256bbb54469411ca))
+* bring http.request.header and http.response.header in line with … ([#111](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/111)) ([1af9fc1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/1af9fc1a35264dcaf3bd0d88234e8ad8dacdaa22))
+* bring http.request.header and http.response.header in line with semantic conventions. ([1af9fc1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/1af9fc1a35264dcaf3bd0d88234e8ad8dacdaa22))
+* broken test file requirements ([#1286](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1286)) ([3ec7d8a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3ec7d8a456dbd3c9bbad7b397a3da8b8a311d8e3))
+* Ensure Rack Events Handler Exists ([#519](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/519)) ([823883b](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/823883bab58d90c4b92937b25c5acf582bf81fa3))
+* regex non-match with obfuscation limit (issue [#486](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/486)) ([#488](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/488)) ([6a9c330](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/6a9c33088c6c9f39b2bc30247a3ed825553c07d4))
+* Remove inline linter rules ([#608](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/608)) ([bc4a937](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/bc4a937ed2a0d1898f0f19ae45a2b3a0ef9a067c))
+
+
+### Code Refactoring
+
+* Remove parent repo libraries ([#3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/3)) ([3e85d44](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/3e85d4436d338f326816c639cd2087751c63feb1))
+
 ## [0.24.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-rack/v0.23.5...opentelemetry-instrumentation-rack/v0.24.0) (2024-01-05)
 
 
