@@ -40,8 +40,11 @@ jobs:
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@af848b40be8bb463a751551a1180d74782ba8a72
+        working-directory: ${{ matrix.path }}
         with:
           ruby-version: 3.0.0
+          bundler: latest
+          bundler-cache: false
 
       - name: Configure RubyGems
         env:
