@@ -29,6 +29,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.3"
+          latest: "true"
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:

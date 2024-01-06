@@ -23,6 +23,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.3"
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
@@ -69,6 +74,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.3"
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
@@ -106,6 +116,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.3"
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
@@ -159,6 +174,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.3"
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
@@ -203,6 +223,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.3"
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
@@ -244,6 +269,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.3"
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:

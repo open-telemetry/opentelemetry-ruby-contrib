@@ -90,7 +90,7 @@ describe OpenTelemetry::Instrumentation::GraphQL do
             instrumentation.install(config)
 
             _(log.string).must_match(
-              /Unable to patch schema Old::Truck: undefined method `use' for Old::Truck:Class/
+              /undefined method `use'.*Old::Truck/
             )
           end
         end
