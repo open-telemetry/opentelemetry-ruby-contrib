@@ -1,21 +1,5 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
-## [0.58.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-trilogy/v0.57.0...opentelemetry-instrumentation-trilogy/v0.58.0) (2024-01-05)
-
-
-### ⚠ BREAKING CHANGES
-
-* change db.mysql.instance.address to db.instance.id ([#758](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/758))
-
-### Features
-
-* change db.mysql.instance.address to db.instance.id ([#758](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/758)) ([73fa809](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/73fa809867dd08c1e3fde7413d88538e0df748bf))
-
-
-### Bug Fixes
-
-* Trilogy only set db.instance.id attribute if there is a value ([#792](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/792)) ([8b790a1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/8b790a1d4b5801bafe71b654bc8a933af21f76c7))
-
 ### v0.57.0 / 2023-10-27
 
 * ADDED: Instrument connect and ping
