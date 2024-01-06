@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.55.0 / 2024-01-06
+
+* (No significant changes)
+
 ### v0.54.0 / 2023-11-28
 
 * ADDED: Updated excon to include connect spans 
