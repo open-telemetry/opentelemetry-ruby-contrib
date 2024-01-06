@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.55.0 / 2024-01-06
+
+* CHANGED: Upgrade Trilogy and Rack [#796](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/796)
+
 ### v0.54.0 / 2023-11-28
 
 * ADDED: Updated excon to include connect spans 
