@@ -54,7 +54,7 @@ describe OpenTelemetry::Instrumentation::GraphQL do
           OpenTelemetry::TestHelpers.with_test_logger do |log|
             instrumentation.install(config)
             _(log.string).must_match(
-              / Unable to patch schema Old::Truck: undefined method `trace_with' for Old::Truck:Class/
+              /undefined method `trace_with'.*Old::Truck/
             )
           end
         end
