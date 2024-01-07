@@ -246,7 +246,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       span_event = span.events.first
       _(span_event.name).must_equal 'exception'
       # Depending on the Ruby and Excon Version this will be a SocketError, Socket::ResolutionError or Resolv::ResolvError
-      _(span_event.attributes['exception.type']).must_match(/(SocketError|Resolv)/)
+      _(span_event.attributes['exception.type']).must_match(/(Socket|Resolv)/)
 
       assert_http_spans(host: 'invalid.com', target: '/example')
     end
