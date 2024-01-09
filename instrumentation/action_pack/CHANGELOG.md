@@ -2,7 +2,7 @@
 
 ### v0.9.0 / 2024-01-09
 
-* (No significant changes)
+* BREAKING CHANGE: Use ActiveSupport instead of patches #703 
 
 ### v0.8.0 / 2023-11-22
 

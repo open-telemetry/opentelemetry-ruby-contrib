@@ -1,8 +1,8 @@
 # Release History: opentelemetry-instrumentation-all
 
-### v056.0 / 2024-01-09
+### v0.56.0 / 2024-01-09
 
-* (No significant changes)
+* BREAKING CHANGE: Use ActiveSupport instead of patches #703 
 
 ### v0.55.0 / 2024-01-06
 
