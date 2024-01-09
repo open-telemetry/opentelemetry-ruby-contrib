@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.9.0 / 2024-01-09
+
+* (No significant changes)
+
 ### v0.8.0 / 2023-11-22
 
 * BREAKING CHANGE: Drop Rails 6.0 EOL

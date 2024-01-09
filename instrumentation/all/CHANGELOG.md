@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v056.0 / 2024-01-09
+
+* (No significant changes)
+
 ### v0.55.0 / 2024-01-06
 
 * CHANGED: Upgrade Trilogy and Rack [#796](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/796)
