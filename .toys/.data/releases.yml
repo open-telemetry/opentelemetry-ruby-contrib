@@ -6,10 +6,10 @@ repo: open-telemetry/opentelemetry-ruby-contrib
 main_branch: main
 # Time in seconds for release scripts to wait for CI to complete.
 required_checks_timeout: 1200
-required_jobs: "^(ci|CI).*"
+required_checks: "^(ci|CI).*"
 # Git user attached to commits for release pull requests.
-git_user_name: Ariel Valentin
-git_user_email: ariel@arielvalentin.com
+git_user_name: OpenTelemetry Bot
+git_user_email: 107717825+opentelemetrybot@users.noreply.github.com
 
 # Control the conventional commit linter.
 commit_lint:

@@ -42,6 +42,23 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+
+## Rack Middleware vs Rack Events
+
+Since `v0.24.0`, this instrumentation uses `Rake::Events` as opposed to `Middleware` to support Requests that use Buffered Response Bodies.
+
+If your application does not support `Rack::Events`, you may disable it by setting `use_rack_events: false`, e.g.
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Rack', use_rack_events: false
+end
+```
+
+This will switch to using `Rack::Middleware` by default in dependent instrumentations.
+
+See [#342](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/342) for more details.
+
 ## Controlling span name cardinality
 
 By default we will set the rack span name to match the format "HTTP #{method}" (ie. HTTP GET). There are different ways to control span names with this instrumentation.

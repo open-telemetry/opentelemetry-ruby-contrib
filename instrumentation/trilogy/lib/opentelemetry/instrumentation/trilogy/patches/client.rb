@@ -91,7 +91,7 @@ module OpenTelemetry
             attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
             attributes[::OpenTelemetry::SemanticConventions::Trace::DB_USER] = database_user if database_user
             attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
-            attributes['db.instance.id'] = @connected_host if defined?(@connected_host)
+            attributes['db.instance.id'] = @connected_host unless @connected_host.nil?
 
             if sql
               case config[:db_statement]

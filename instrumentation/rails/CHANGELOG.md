@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.30.0 / 2024-01-09
+
+* BREAKING CHANGE: Use ActiveSupport instead of patches #703 
+
 ### v0.29.1 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
