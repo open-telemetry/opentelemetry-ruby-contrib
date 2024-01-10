@@ -66,18 +66,18 @@ runs:
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@v1.144.1
+      uses: ruby/setup-ruby@v1.165.1
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
         bundler:  "latest"
         bundler-cache: true
-        cache-version: "v1-${{ steps.setup.outputs.cache_key }}"
+        cache-version: "${{ inputs.ruby }}-${{ steps.setup.outputs.cache_key }}"
 
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@v1.144.1
+      uses: ruby/setup-ruby@v1.165.1
       with:
         ruby-version: "${{ inputs.ruby }}"
         bundler:  "latest"
