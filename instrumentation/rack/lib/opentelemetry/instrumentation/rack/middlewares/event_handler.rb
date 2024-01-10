@@ -192,7 +192,7 @@ module OpenTelemetry
           end
 
           def detach_contexts(request)
-            request.env[TOKENS_KEY]&.reverse&.each do |token|
+            request.env[TOKENS_KEY]&.reverse_each do |token|
               OpenTelemetry::Context.detach(token)
               OpenTelemetry::Trace.current_span.finish
             end

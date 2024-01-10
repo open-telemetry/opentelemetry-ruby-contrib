@@ -80,7 +80,7 @@ module OpenTelemetry
             end
 
             # pops the context stack
-            tokens&.reverse&.each do |token|
+            tokens&.reverse_each do |token|
               OpenTelemetry::Context.detach(token)
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
