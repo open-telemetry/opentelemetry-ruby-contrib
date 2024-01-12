@@ -29,6 +29,7 @@ Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open
 
 - [Josef Šimánek](https://github.com/simi)
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
+- [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 
