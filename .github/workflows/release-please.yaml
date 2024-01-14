@@ -22,7 +22,7 @@ jobs:
       paths_released: ${{ steps.release.outputs.paths_released }}
 
   publish-release:
-    needs: process-release
+    needs: prepare-release
     name: Publish Gems
     runs-on: ubuntu-latest
     if: ${{ needs.release.outputs.paths_released != '[]'}}
