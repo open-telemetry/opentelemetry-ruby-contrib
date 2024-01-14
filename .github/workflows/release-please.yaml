@@ -12,11 +12,11 @@ permissions:
   pull-requests: write
 
 jobs:
-  release:
+  release-please:
     name: Process Release
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@cc61a07e2da466bebbc19b3a7dd01d6aecb20d1e
+      - uses: google-github-actions/release-please-action@v4.0.2
         id: release
 
     outputs:
@@ -35,16 +35,8 @@ jobs:
         path: ${{ fromJson(needs.release.outputs.paths_released) }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@360dc864d5da99d54fcb8e9148c14a84b90d3e88
-        with:
-          ruby-version: 3.0.0
-          bundler: latest
-          bundler-cache: false
-
+      - name: Checkout Repository
+        uses: actions/checkout@v4.1.1
       - name: Configure RubyGems
         env:
           GEM_HOST_API_KEY: "${{secrets.RUBYGEMS_API_KEY}}"
@@ -55,9 +47,15 @@ jobs:
           chmod 0600 $HOME/.gem/credentials
           printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
 
-      - name: Release Gem
+      - uses: ruby/setup-ruby@v1.165.1
+        working-directory: ${{ matrix.path }}
+        with:
+          ruby-version: "3.0"
+          bundler: latest
+          bundler-cache: false
+
+      - name: Publish to RubyGems
         working-directory: ${{ matrix.path }}
         run: |
-          bundle install
           bundle exec rake --trace build
           bundle exec rake --trace release:rubygem_push
