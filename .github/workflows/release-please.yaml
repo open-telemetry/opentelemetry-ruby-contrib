@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v4.0.2
+        id: prepare
 
     outputs:
       paths_released: ${{ steps.prepare.outputs.paths_released }}
