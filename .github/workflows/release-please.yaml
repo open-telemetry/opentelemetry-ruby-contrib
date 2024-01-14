@@ -19,19 +19,19 @@ jobs:
       - uses: google-github-actions/release-please-action@v4.0.2
 
     outputs:
-      paths_released: ${{ steps.release.outputs.paths_released }}
+      paths_released: ${{ steps.prepare-release.outputs.paths_released }}
 
   publish-release:
     needs: prepare-release
     name: Publish Gems
     runs-on: ubuntu-latest
-    if: ${{ needs.release.outputs.paths_released != '[]'}}
+    if: ${{ needs.prepare-release.outputs.paths_released != '[]'}}
 
     strategy:
       fail-fast: false
       max-parallel: 1
       matrix:
-        path: ${{ fromJson(needs.release.outputs.paths_released) }}
+        path: ${{ fromJson(needs.prepare-release.outputs.paths_released) }}
 
     steps:
       - name: Checkout Repository
