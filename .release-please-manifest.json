@@ -32,7 +32,7 @@
   "instrumentation/net_http": "0.22.4",
   "instrumentation/pg": "0.26.1",
   "instrumentation/que": "0.7.1",
-  "instrumentation/rack": "0.23.5",
+  "instrumentation/rack": "0.24.0",
   "instrumentation/rails": "0.30.0",
   "instrumentation/redis": "0.25.3",
   "instrumentation/restclient": "0.22.3",
