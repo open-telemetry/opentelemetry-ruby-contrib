@@ -48,11 +48,11 @@ jobs:
           printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
 
       - uses: ruby/setup-ruby@v1.165.1
-        working-directory: ${{ matrix.path }}
         with:
           ruby-version: "3.0"
           bundler: latest
           bundler-cache: false
+          working-directory: ${{ matrix.path }}
 
       - name: Publish to RubyGems
         working-directory: ${{ matrix.path }}
