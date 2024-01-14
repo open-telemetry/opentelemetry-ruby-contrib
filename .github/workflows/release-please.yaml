@@ -12,18 +12,17 @@ permissions:
   pull-requests: write
 
 jobs:
-  release-please:
+  prepare-release:
     name: Process Release
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v4.0.2
-        id: release
 
     outputs:
       paths_released: ${{ steps.release.outputs.paths_released }}
 
-  publish:
-    needs: release
+  publish-release:
+    needs: process-release
     name: Publish Gems
     runs-on: ubuntu-latest
     if: ${{ needs.release.outputs.paths_released != '[]'}}
