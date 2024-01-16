@@ -348,6 +348,8 @@ For releases to succeed, new gems MUST include the following:
 
 This repository uses [Dependabot](https://dependabot.com/) to keep dependencies up to date, however there shared development dependencies are often scattered across multiple gems. Dependabot does not currently support the ability to group dependencies for gems in multiple subdirectories, so we use a custom script to bulk update dependencies across all gems.
 
+**Note:** This script uses a version of sed that isn't available on MacOS bash. You'll need to use an ubuntu-linux machine to execute it. One way to accomplish this is to run `docker-compose run app` and execute the script within the container.
+
 E.g. if you want to update Rubocop to version 1.56.1, you would run:
 
 ```console
