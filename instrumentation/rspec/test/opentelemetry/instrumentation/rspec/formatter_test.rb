@@ -103,10 +103,10 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
   end
 
   describe 'exports spans for examples' do
-    def run_example(&blk)
+    def run_example(...)
       spans = run_rspec_with_tracing do
         RSpec.describe('group one') do
-          instance_eval(&blk)
+          instance_eval(...)
         end
       end
       spans.first
