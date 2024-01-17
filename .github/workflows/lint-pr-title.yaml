@@ -4,7 +4,7 @@ name: "Lint PR Title"
 # https://github.com/honeycombio/.github/blob/main/.github/workflows/validate-pr-title.yml
 
 on:
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - synchronize
@@ -20,7 +20,7 @@ jobs:
     name: Lint PR title
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
     steps:
       - uses: amannn/action-semantic-pull-request@v5.4.0
@@ -45,8 +45,6 @@ jobs:
       - if: always() && (steps.lint_pr_title.outputs.error_message != null)
         name: "📝 Add PR comment about using conventional commit spec"
         uses: marocchino/sticky-pull-request-comment@v2.8.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           header: pr-title-lint-error
           message: |
@@ -68,8 +66,6 @@ jobs:
       - if: ${{ steps.lint_pr_title.outputs.error_message == null }}
         name: "❌ Delete PR comment after title has been updated"
         uses: marocchino/sticky-pull-request-comment@v2.8.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           header: pr-title-lint-error
           delete: true
