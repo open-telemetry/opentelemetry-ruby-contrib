@@ -1,0 +1,19 @@
+name: "Lint Commit Messages"
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true  # Cancel any previous runs of this workflow
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: wagoid/commitlint-github-action@v5.4.5
+        name: Lint Commit Messages
