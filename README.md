@@ -98,7 +98,7 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [otel-ruby-contrib-releases]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/releases
 [ci-image]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/workflows/CI/badge.svg?event=push
 [examples-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/examples
-[getting-started]: https://opentelemetry.io/docs/ruby/
+[getting-started]: https://opentelemetry.io/docs/languages/ruby/getting-started/
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 [issues-help-wanted]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 [license-image]: https://img.shields.io/badge/license-Apache_2.0-green.svg?style=flat
