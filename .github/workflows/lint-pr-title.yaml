@@ -47,6 +47,7 @@ jobs:
         name: "📝 Add PR comment about using conventional commit spec"
         uses: marocchino/sticky-pull-request-comment@v2.8.0
         with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           header: pr-title-lint-error
           message: |
             Thank you for contributing to the project! 🎉
@@ -68,5 +69,6 @@ jobs:
         name: "❌ Delete PR comment after title has been updated"
         uses: marocchino/sticky-pull-request-comment@v2.8.0
         with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           header: pr-title-lint-error
           delete: true
