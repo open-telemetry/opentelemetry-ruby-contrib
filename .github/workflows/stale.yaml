@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/stale@v8
+    - uses: actions/stale@v9
       name: Clean up stale issues and PRs
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -18,7 +18,7 @@ jobs:
         stale-issue-label: "stale"
         exempt-issue-labels: "keep"
         days-before-issue-stale: 30
-        days-before-issue-close: -1
+        days-before-issue-close: 30
         stale-pr-message: "👋 This pull request has been marked as stale because it has been open with no activity. You can: comment on the issue or remove the stale label to hold stale off for a while, add the `keep` label to hold stale off permanently, or do nothing. If you do nothing this pull request will be closed eventually by the stale bot"
         stale-pr-label: "stale"
         exempt-pr-labels: "keep"

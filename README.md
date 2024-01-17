@@ -27,7 +27,9 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-approvers)):
 
-- (Could _your_ name appear here?)
+- [Josef Šimánek](https://github.com/simi)
+- [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
+- [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 
@@ -56,7 +58,7 @@ using OpenTelemetry with minimal changes to your application. See the
 This repository also contains libraries to aid with interoperablity with vendor specific tracing solutions:
 
 - [Context Propagation](propagator/): OTTrace and Amazon X-Ray
-- [Resource Detectors](resource_detectors/):
+- [Resource Detectors](resources/):
   - Azure
   - Container
   - Google Cloud Platform
@@ -64,6 +66,19 @@ This repository also contains libraries to aid with interoperablity with vendor 
 ## Versioning
 
 OpenTelemetry Ruby follows the [versioning and stability document][otel-versioning] in the OpenTelemetry specification. Notably, we adhere to the outlined version numbering exception, which states that experimental signals may have a `0.x` version number.
+
+### Library Compatability
+
+This project is managed on a volunteer basis and therefore we have limited capacity to support compatability with unmaintained or EOL libraries.
+
+We will regularly review the instrumentations to drop compatability for any versions of Ruby or gems that reach EOL or no longer receive regular maintenance.
+
+Should you need instrumentation for _older_ versions of a library then you must pin to a specific version of the instrumentation that supports it,
+however, you will no longer receive any updates for the instrumentation from this repository.
+
+> When a release series is no longer supported, it's your own responsibility to deal with bugs and security issues. We may provide backports of the fixes and publish them to git, however there will be no new versions released. If you are not comfortable maintaining your own versions, you should upgrade to a supported version. <https://guides.rubyonrails.org/maintenance_policy.html#security-issues>
+
+Consult instrumentation gem's README file and gemspec for details about library compatability.
 
 ### Releases
 
@@ -83,7 +98,7 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [otel-ruby-contrib-releases]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/releases
 [ci-image]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/workflows/CI/badge.svg?event=push
 [examples-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/examples
-[getting-started]: https://opentelemetry.io/docs/ruby/
+[getting-started]: https://opentelemetry.io/docs/languages/ruby/getting-started/
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 [issues-help-wanted]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 [license-image]: https://img.shields.io/badge/license-Apache_2.0-green.svg?style=flat

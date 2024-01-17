@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ -z "$1" ] ; then
+  echo "gem name is required!" && exit 1;
+fi
+
+if [ -z "$2" ] ; then
+  echo "gem version is required!" && exit 2;
+fi
+
+for gemspec in $(git ls-files \*.gemspec)
+do
+  sed -i -E "s/'$1', '~> [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+'/'$1', '~> $2'/" "$gemspec"
+done
+
+echo "Review your changes and commit"
+read -n 1 -s -r -p "Press any key to continue"
+echo ""
+git add -p

@@ -20,7 +20,7 @@ module OpenTelemetry
             OpenTelemetry::Context.with_current(extracted_context) do
               if otel_config[:propagation_style] == :child
                 tracer.in_span(span_name, attributes: attributes, kind: :consumer) do |span|
-                  block.call
+                  yield
                   enhance_span_after_job_completion(span, job)
                 end
               else
@@ -28,7 +28,7 @@ module OpenTelemetry
 
                 root_span = tracer.start_root_span(span_name, attributes: attributes, links: span_links, kind: :consumer)
                 OpenTelemetry::Trace.with_span(root_span) do |span|
-                  block.call
+                  yield
                   enhance_span_after_job_completion(span, job)
                 ensure
                   root_span.finish

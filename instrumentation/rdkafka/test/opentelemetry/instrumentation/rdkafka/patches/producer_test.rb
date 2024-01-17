@@ -48,13 +48,13 @@ unless ENV['OMIT_SERVICES']
 
         delivery_handles.each(&:wait)
 
-        _(spans.first.name).must_equal("#{topic_name} send")
+        _(spans.first.name).must_equal("#{topic_name} publish")
         _(spans.first.kind).must_equal(:producer)
 
         _(spans.first.attributes['messaging.system']).must_equal('kafka')
         _(spans.first.attributes['messaging.destination']).must_equal(topic_name)
-
-        producer.close
+      ensure
+        begin; producer&.close; rescue StandardError; end
       end
     end
   end

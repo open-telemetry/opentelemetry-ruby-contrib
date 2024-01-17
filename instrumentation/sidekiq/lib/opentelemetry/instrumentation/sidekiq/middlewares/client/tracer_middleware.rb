@@ -12,6 +12,8 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Sidekiq client
           # by way of its middleware system
           class TracerMiddleware
+            include ::Sidekiq::ClientMiddleware if defined?(::Sidekiq::ClientMiddleware)
+
             def call(_worker_class, job, _queue, _redis_pool)
               attributes = {
                 SemanticConventions::Trace::MESSAGING_SYSTEM => 'sidekiq',
@@ -23,8 +25,8 @@ module OpenTelemetry
               attributes[SemanticConventions::Trace::PEER_SERVICE] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
 
               span_name = case instrumentation_config[:span_naming]
-                          when :job_class then "#{job['wrapped']&.to_s || job['class']} send"
-                          else "#{job['queue']} send"
+                          when :job_class then "#{job['wrapped']&.to_s || job['class']} publish"
+                          else "#{job['queue']} publish"
                           end
 
               tracer.in_span(span_name, attributes: attributes, kind: :producer) do |span|

@@ -6,9 +6,10 @@ repo: open-telemetry/opentelemetry-ruby-contrib
 main_branch: main
 # Time in seconds for release scripts to wait for CI to complete.
 required_checks_timeout: 1200
+required_checks: "^(ci|CI).*"
 # Git user attached to commits for release pull requests.
-git_user_name: Ariel Valentin
-git_user_email: ariel@arielvalentin.com
+git_user_name: OpenTelemetry Bot
+git_user_email: 107717825+opentelemetrybot@users.noreply.github.com
 
 # Control the conventional commit linter.
 commit_lint:
@@ -29,6 +30,10 @@ commit_lint:
 #  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
+  - name: opentelemetry-instrumentation-gruf
+    directory: instrumentation/gruf
+    version_constant: [OpenTelemetry, Instrumentation, Gruf, VERSION]
+
   - name: opentelemetry-instrumentation-grape
     directory: instrumentation/grape
     version_constant: [OpenTelemetry, Instrumentation, Grape, VERSION]
@@ -102,6 +107,10 @@ gems:
     directory: instrumentation/http_client
     version_constant: [OpenTelemetry, Instrumentation, HttpClient, VERSION]
 
+  - name: opentelemetry-instrumentation-httpx
+    directory: instrumentation/httpx
+    version_constant: [OpenTelemetry, Instrumentation, HTTPX, VERSION]
+
   - name: opentelemetry-instrumentation-koala
     directory: instrumentation/koala
     version_constant: [OpenTelemetry, Instrumentation, Koala, VERSION]
@@ -109,10 +118,6 @@ gems:
   - name: opentelemetry-instrumentation-active_model_serializers
     directory: instrumentation/active_model_serializers
     version_constant: [OpenTelemetry, Instrumentation, ActiveModelSerializers, VERSION]
-
-  - name: opentelemetry-instrumentation-all
-    directory: instrumentation/all
-    version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
 
   - name: opentelemetry-instrumentation-concurrent_ruby
     directory: instrumentation/concurrent_ruby
@@ -191,6 +196,10 @@ gems:
     directory: instrumentation/sinatra
     version_constant: [OpenTelemetry, Instrumentation, Sinatra, VERSION]
 
+  - name: opentelemetry-instrumentation-all
+    directory: instrumentation/all
+    version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
+
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace
     version_constant: [OpenTelemetry, Propagator, OTTrace, VERSION]
@@ -199,12 +208,17 @@ gems:
     directory: propagator/xray
     version_constant: [OpenTelemetry, Propagator, XRay, VERSION]
 
-  - name: opentelemetry-resource_detectors
-    directory: resource_detectors
-    version_rb_path: lib/opentelemetry/resource/detectors/version.rb
-    version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
+  - name: opentelemetry-resource-detector-azure
+    directory: resources/azure
+    version_rb_path: lib/opentelemetry/resource/detector/azure/version.rb
+    version_constant: [OpenTelemetry, Resource, Detector, Azure, VERSION]
 
   - name: opentelemetry-resource-detector-container
     directory: resources/container
     version_rb_path: lib/opentelemetry/resource/detector/container/version.rb
     version_constant: [OpenTelemetry, Resource, Detector, Container, VERSION]
+
+  - name: opentelemetry-resource-detector-google_cloud_platform
+    directory: resources/google_cloud_platform
+    version_rb_path: lib/opentelemetry/resource/detector/google_cloud_platform/version.rb
+    version_constant: [OpenTelemetry, Resource, Detector, GoogleCloudPlatform, VERSION]

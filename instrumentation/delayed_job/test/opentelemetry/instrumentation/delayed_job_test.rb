@@ -11,6 +11,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob do
   let(:exporter) { EXPORTER }
 
   before do
+    Delayed::Worker.backend.delete_all
     instrumentation.install
     exporter.reset
   end
@@ -48,14 +49,6 @@ describe OpenTelemetry::Instrumentation::DelayedJob do
   end
 
   describe 'tracing' do
-    before do
-      TestHelper.setup_active_record
-    end
-
-    after do
-      TestHelper.teardown_active_record
-    end
-
     it 'before job' do
       _(exporter.finished_spans.size).must_equal 0
     end

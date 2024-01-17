@@ -79,7 +79,7 @@ module OpenTelemetry
             # Only record exceptions if they were not raised (i.e. do not have a status code in Grape)
             # or do not have a 5xx status code. These exceptions are recorded by Rack.
             # See instrumentation/rack/lib/opentelemetry/instrumentation/rack/middlewares/tracer_middleware.rb#L155
-            return unless exception.respond_to?('status') && ::Rack::Utils.status_code(exception.status) < 500
+            return unless exception.respond_to?(:status) && ::Rack::Utils.status_code(exception.status) < 500
 
             span.record_exception(exception)
             span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{exception.class}")
@@ -93,10 +93,10 @@ module OpenTelemetry
             return '' unless endpoint.routes
 
             namespace = endpoint.routes.first.namespace
-            version = endpoint.routes.first.options[:version] || ''
-            prefix = endpoint.routes.first.options[:prefix]&.to_s || ''
+            version = endpoint.routes.first.options[:version]&.to_s
+            prefix = endpoint.routes.first.options[:prefix]&.to_s
             parts = [prefix, version] + namespace.split('/') + endpoint.options[:path]
-            parts.reject { |p| p.blank? || p.eql?('/') }.join('/').prepend('/')
+            parts.reject { |p| p.nil? || p.empty? || p.eql?('/') }.join('/').prepend('/')
           end
 
           def formatter_type(formatter)
@@ -108,7 +108,7 @@ module OpenTelemetry
           end
 
           def built_in_grape_formatter?(formatter)
-            formatter.respond_to?('name') && formatter.name.include?('Grape::Formatter')
+            formatter.respond_to?(:name) && formatter.name.include?('Grape::Formatter')
           end
         end
       end

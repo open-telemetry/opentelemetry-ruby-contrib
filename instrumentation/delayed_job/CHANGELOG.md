@@ -1,5 +1,19 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+### v0.22.1 / 2023-11-23
+
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+
+### v0.22.0 / 2023-10-16
+
+* BREAKING CHANGE: Drop DelayedJob ActiveRecord in Tests
+
+* FIXED: Drop DelayedJob ActiveRecord in Tests
+
+### v0.21.0 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names
+
 ### v0.20.1 / 2023-06-05
 
 * FIXED: Base config options 

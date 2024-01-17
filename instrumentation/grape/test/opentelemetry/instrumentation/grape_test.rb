@@ -272,7 +272,7 @@ describe OpenTelemetry::Instrumentation::Grape do
       it 'sets span status to error' do
         _(span.name).must_equal expected_span_name
         _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-        _(span.status.description).must_equal "Unhandled exception of type: #{expected_error_type}"
+        _(span.status.description).must_equal expected_error_type
       end
 
       it 'records the exception event' do
@@ -316,7 +316,7 @@ describe OpenTelemetry::Instrumentation::Grape do
       it 'sets span status to error' do
         _(span.name).must_equal expected_span_name
         _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-        _(span.status.description).must_equal "Unhandled exception of type: #{expected_error_type}"
+        _(span.status.description).must_equal expected_error_type
       end
 
       it 'records the exception event' do

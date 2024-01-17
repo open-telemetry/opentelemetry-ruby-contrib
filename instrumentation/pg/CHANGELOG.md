@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.26.1 / 2023-11-23
+
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+
+### v0.26.0 / 2023-10-16
+
+* BREAKING CHANGE: Obfuscation for mysql2, dalli and postgresql as default option for db_statement
+
+* ADDED: Obfuscation for mysql2, dalli and postgresql as default option for db_statement
+
 ### v0.25.3 / 2023-07-29
 
 * FIXED: Pass block explicitly in `define_method` calls for PG instrumentation query methods

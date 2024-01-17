@@ -48,6 +48,28 @@ module OpenTelemetry
 
           FULL_SQL_REGEXP = Regexp.union(MYSQL_COMPONENTS.map { |component| COMPONENTS_REGEX_MAP[component] })
 
+          def initialize(options = {})
+            @connection_options = options # This is normally done by Trilogy#initialize
+
+            tracer.in_span(
+              'connect',
+              attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
+              kind: :client
+            ) do
+              super
+            end
+          end
+
+          def ping(...)
+            tracer.in_span(
+              'ping',
+              attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
+              kind: :client
+            ) do
+              super
+            end
+          end
+
           def query(sql)
             tracer.in_span(
               database_span_name(sql),
@@ -60,22 +82,24 @@ module OpenTelemetry
 
           private
 
-          def client_attributes(sql)
+          def client_attributes(sql = nil)
             attributes = {
               ::OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM => 'mysql',
-              ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => connection_options.fetch(:host, 'unknown sock')
+              ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => connection_options&.fetch(:host, 'unknown sock') || 'unknown sock'
             }
 
             attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
             attributes[::OpenTelemetry::SemanticConventions::Trace::DB_USER] = database_user if database_user
             attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
-            attributes['db.mysql.instance.address'] = @connected_host if defined?(@connected_host)
+            attributes['db.instance.id'] = @connected_host unless @connected_host.nil?
 
-            case config[:db_statement]
-            when :obfuscate
-              attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] = obfuscate_sql(sql)
-            when :include
-              attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] = sql
+            if sql
+              case config[:db_statement]
+              when :obfuscate
+                attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] = obfuscate_sql(sql)
+              when :include
+                attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] = sql
+              end
             end
 
             attributes
@@ -109,7 +133,7 @@ module OpenTelemetry
             %r{'|"|\/\*|\*\/}.match(obfuscated)
           end
 
-          def database_span_name(sql) # rubocop:disable Metrics/CyclomaticComplexity
+          def database_span_name(sql)
             case config[:span_name]
             when :statement_type
               extract_statement_type(sql)

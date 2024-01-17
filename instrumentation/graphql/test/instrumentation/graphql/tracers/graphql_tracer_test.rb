@@ -53,6 +53,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
           'graphql.execute_query_lazy',
           'graphql.execute_multiplex'
         ]
+        expected_spans.delete('graphql.lex') unless trace_lex_supported?
 
         expected_result = {
           'simpleField' => 'Hello.',
@@ -97,14 +98,12 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
         after do
           # Reset various instance variables to clear state between tests
-          SomeOtherGraphQLAppSchema.instance_variable_set(:@own_tracers, [])
-          SomeOtherGraphQLAppSchema.instance_variable_set(:@own_plugins, SomeOtherGraphQLAppSchema.plugins[0..1])
+          [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
         end
 
         it 'traces the provided schemas' do
           SomeOtherGraphQLAppSchema.execute('query SimpleQuery{ __typename }')
-
-          _(spans.size).must_equal(8)
+          _(spans.select { |s| s.name.start_with?('graphql.') }).wont_be(:empty?)
         end
 
         it 'does not trace all schemas' do

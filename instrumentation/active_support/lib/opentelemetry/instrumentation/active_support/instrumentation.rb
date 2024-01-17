@@ -9,6 +9,8 @@ module OpenTelemetry
     module ActiveSupport
       # The Instrumentation class contains logic to detect and install the ActiveSupport instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        MINIMUM_VERSION = Gem::Version.new('6.1.0')
+
         install do |_config|
           require_dependencies
         end
@@ -17,7 +19,15 @@ module OpenTelemetry
           defined?(::ActiveSupport)
         end
 
+        compatible do
+          gem_version >= MINIMUM_VERSION
+        end
+
         private
+
+        def gem_version
+          ::ActiveSupport.version
+        end
 
         def require_dependencies
           require_relative 'span_subscriber'

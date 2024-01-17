@@ -24,7 +24,7 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 # integrate instrumentation explicitly:
-builder.use OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
+builder.use ::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new]
 
 # demonstrate tracing (span output to console):
 puts Rack::MockRequest.new(builder).get('/')

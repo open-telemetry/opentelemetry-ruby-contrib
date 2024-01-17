@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-resque
 
+### v0.5.0 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names
+
+### v0.4.2 / 2023-08-03
+
+* FIXED: Remove inline linter rules
+
 ### v0.4.1 / 2023-06-05
 
 * FIXED: Base config options 

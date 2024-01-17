@@ -20,6 +20,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Processor do
   let(:config) { {} }
   let(:manager) { MockLoader.new.manager }
   let(:processor) { manager.workers.first }
+  let(:tracer) { instrumentation.tracer }
 
   before do
     # Clear spans
@@ -40,6 +41,12 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Processor do
       _(spans.size).must_equal(0)
     end
 
+    it 'does not run inside an untraced block' do
+      expect(processor).to receive(:fetch) # accounts for #fetch calling untraced
+      expect(OpenTelemetry::Common::Utilities).not_to receive(:untraced)
+      processor.send(:process_one)
+    end
+
     describe 'when process_one tracing is enabled' do
       let(:config) { { trace_processor_process_one: true } }
 
@@ -57,6 +64,28 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Processor do
           span = spans.last
           _(span.attributes['peer.service']).must_equal 'MySidekiqService'
         end
+      end
+    end
+  end unless ENV['OMIT_SERVICES']
+
+  describe '#fetch' do
+    before do
+      tracer.in_span('TEST') do
+        processor.send(:fetch)
+      end
+    end
+
+    it 'runs inside an untraced block' do
+      _(spans.size).must_equal(1)
+    end
+
+    describe 'when process_one tracing is enabled' do
+      let(:config) { { trace_processor_process_one: true } }
+
+      it 'does not run inside an untraced block' do
+        span_names = spans.map(&:name)
+        _(span_names).must_include('TEST')
+        _(span_names).must_include('BRPOP')
       end
     end
   end unless ENV['OMIT_SERVICES']

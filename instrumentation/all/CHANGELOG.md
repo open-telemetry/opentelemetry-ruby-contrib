@@ -1,5 +1,49 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.56.0 / 2024-01-09
+
+* BREAKING CHANGE: Use ActiveSupport instead of patches #703 
+
+### v0.55.0 / 2024-01-06
+
+* CHANGED: Upgrade Trilogy and Rack [#796](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/796)
+
+### v0.54.0 / 2023-11-28
+
+* ADDED: Updated excon to include connect spans 
+
+### v0.53.0 / 2023-11-28
+
+* CHANGED: Performance optimization cache attribute hashes [#723](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/723)
+
+### v0.52.0 / 2023-11-21
+
+* BREAKING CHANGE: Drop Support for EoL Rails 6.0 [#680](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/680)
+* BREAKING CHANGE: Use ActiveSupport Instrumentation instead of Money Patches [#677](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/677)
+
+* CHANGED: Drop Support for EoL Rails 6.0 [#680](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/680)
+* CHANGED: Use ActiveSupport Instrumentation instead of Money Patches [#677](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/677)
+
+### v0.51.1 / 2023-10-27
+
+* ADDED: Instrument connect and ping (Trilogy)
+
+### v0.51.0 / 2023-10-16
+
+* CHANGED: See [#695](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/695) for details
+
+### v0.50.1 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names (Resque)
+
+### v0.50.0 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names
+
+### v0.40.0 / 2023-08-07
+
+* ADDED: Add Gruf instrumentation
+
 ### v0.39.1 / 2023-06-05
 
 * FIXED: Use latest bug fix version for all dependencies

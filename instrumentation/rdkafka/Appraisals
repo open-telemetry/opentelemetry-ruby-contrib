@@ -7,3 +7,11 @@
 appraise 'rdkafka-0.12.x' do
   gem 'rdkafka', '~> 0.12.0'
 end
+
+appraise 'rdkafka-0.13.x' do
+  gem 'rdkafka', '~> 0.13.0'
+end
+
+appraise 'rdkafka-latest' do
+  gem 'rdkafka'
+end

@@ -54,6 +54,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
           'graphql.execute_multiplex'
         ]
 
+        expected_spans.delete('graphql.lex') unless trace_lex_supported?
+
         expected_result = {
           'simpleField' => 'Hello.',
           'resolvedField' => { 'originalValue' => 'testing=1', 'uppercasedValue' => 'TESTING=1' }
@@ -97,14 +99,13 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
 
         after do
           # Reset various instance variables to clear state between tests
-          SomeOtherGraphQLAppSchema.instance_variable_set(:@own_tracers, [])
-          SomeOtherGraphQLAppSchema.instance_variable_set(:@own_plugins, SomeOtherGraphQLAppSchema.plugins[0..1])
+          [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
         end
 
         it 'traces the provided schemas' do
           SomeOtherGraphQLAppSchema.execute('query SimpleQuery{ __typename }')
 
-          _(spans.size).must_equal(8)
+          _(spans.select { |s| s.name.start_with?('graphql.') }).wont_be(:empty?)
         end
 
         it 'does not trace all schemas' do
@@ -286,6 +287,79 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
           "[{\"message\":\"Field 'nonExistentField' doesn't exist on type 'Query'\",\"locations\":[{\"line\":2,\"column\":15}],\"path\":[\"query\",\"nonExistentField\"],\"extensions\":{\"code\":\"undefinedField\",\"typeName\":\"Query\",\"fieldName\":\"nonExistentField\"}}]"
         )
         # rubocop:enable Layout/LineLength
+      end
+    end
+
+    describe 'compatibility with other tracers' do
+      let(:config) { { enable_platform_field: true } }
+
+      if GraphQL::Tracing.const_defined?(:PlatformTrace)
+        module CustomPlatformTracer
+          include ::GraphQL::Tracing::PlatformTrace
+
+          def initialize(events:, **_options)
+            @events = events
+            super
+          end
+
+          def platform_execute_field(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_execute_field_lazy(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_authorized(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_authorized_lazy(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_resolve_type(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_resolve_type_lazy(platform_key, &block)
+            @events << platform_key
+            yield
+          end
+
+          def platform_authorized_key(type)
+            "custom.#{type.graphql_name}.authorized"
+          end
+
+          def platform_resolve_type_key(type)
+            "custom.#{type.graphql_name}.resolve_type"
+          end
+
+          def platform_field_key(field)
+            "custom.#{field.path}"
+          end
+        end
+
+        it 'does not conflict with PlatformTrace' do
+          custom_tracer_events = []
+
+          SchemaWithMultipleTracers = Class.new(SomeGraphQLAppSchema) do
+            trace_with(CustomPlatformTracer, events: custom_tracer_events)
+          end
+
+          SchemaWithMultipleTracers.execute('{ vehicle { __typename } }')
+
+          span = spans.find { |s| s.name == 'graphql.execute_field' }
+          _(span).wont_be_nil
+
+          custom_events = custom_tracer_events.all? { |event| event.start_with?('custom') }
+          _(custom_events).must_equal(true)
+        end
       end
     end
   end

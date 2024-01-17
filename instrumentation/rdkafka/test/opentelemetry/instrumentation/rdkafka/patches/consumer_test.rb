@@ -4,11 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# rubocop:disable Lint/SuppressedException
-
 require 'test_helper'
 require 'securerandom'
-require 'pry'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/rdkafka'
 require_relative '../../../../../lib/opentelemetry/instrumentation/rdkafka/patches/consumer'
@@ -57,8 +54,6 @@ unless ENV['OMIT_SERVICES']
 
         delivery_handles.each(&:wait)
 
-        producer.close
-
         consumer_config = config.merge(
           'group.id': 'me',
           'auto.offset.reset': 'smallest' # https://stackoverflow.com/a/51081649
@@ -77,7 +72,7 @@ unless ENV['OMIT_SERVICES']
 
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
 
-        # First pair for send and process spans
+        # First pair for publish and process spans
         first_process_span = process_spans[0]
         _(first_process_span.name).must_equal("#{topic_name} process")
         _(first_process_span.kind).must_equal(:consumer)
@@ -87,12 +82,12 @@ unless ENV['OMIT_SERVICES']
         first_process_span_link = first_process_span.links[0]
         linked_span_context = first_process_span_link.span_context
 
-        linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
-        _(linked_send_span.name).must_equal("#{topic_name} send")
-        _(linked_send_span.trace_id).must_equal(first_process_span.trace_id)
-        _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
+        linked_publish_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+        _(linked_publish_span.name).must_equal("#{topic_name} publish")
+        _(linked_publish_span.trace_id).must_equal(first_process_span.trace_id)
+        _(linked_publish_span.trace_id).must_equal(linked_span_context.trace_id)
 
-        # Second pair of send and process spans
+        # Second pair of publish and process spans
         second_process_span = process_spans[1]
         _(second_process_span.name).must_equal("#{topic_name} process")
         _(second_process_span.kind).must_equal(:consumer)
@@ -100,10 +95,10 @@ unless ENV['OMIT_SERVICES']
         second_process_span_link = second_process_span.links[0]
         linked_span_context = second_process_span_link.span_context
 
-        linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
-        _(linked_send_span.name).must_equal("#{topic_name} send")
-        _(linked_send_span.trace_id).must_equal(second_process_span.trace_id)
-        _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
+        linked_publish_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+        _(linked_publish_span.name).must_equal("#{topic_name} publish")
+        _(linked_publish_span.trace_id).must_equal(second_process_span.trace_id)
+        _(linked_publish_span.trace_id).must_equal(linked_span_context.trace_id)
 
         event = second_process_span.events.first
         _(event.name).must_equal('exception')
@@ -111,8 +106,9 @@ unless ENV['OMIT_SERVICES']
         _(event.attributes['exception.message']).must_equal('oops')
 
         _(spans.size).must_equal(4)
-
-        consumer.close
+      ensure
+        begin; producer&.close; rescue StandardError; end
+        begin; consumer&.close; rescue StandardError; end
       end
 
       it 'encodes messages keys depending on input format' do
@@ -133,8 +129,6 @@ unless ENV['OMIT_SERVICES']
 
         delivery_handles.each(&:wait)
 
-        producer.close
-
         consumer_config = config.merge(
           'group.id': 'me',
           'auto.offset.reset': 'smallest' # https://stackoverflow.com/a/51081649
@@ -154,7 +148,7 @@ unless ENV['OMIT_SERVICES']
         _(spans.size).must_equal(4)
         process_spans = spans.select { |s| s.name == "#{topic_name} process" }
 
-        # First pair for send and process spans
+        # First pair for publish and process spans
         first_process_span = process_spans[0]
         _(first_process_span.attributes).wont_include('messaging.kafka.message_key')
 
@@ -162,6 +156,9 @@ unless ENV['OMIT_SERVICES']
         _(second_process_span.attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
 
         _(spans.size).must_equal(4)
+      ensure
+        begin; producer&.close; rescue StandardError; end
+        begin; consumer&.close; rescue StandardError; end
       end
     end
 
@@ -187,8 +184,6 @@ unless ENV['OMIT_SERVICES']
         )
 
         delivery_handles.each(&:wait)
-
-        producer.close
 
         consumer_config = config.merge(
           'group.id': 'me',
@@ -224,6 +219,9 @@ unless ENV['OMIT_SERVICES']
         _(linked_span_context.span_id).must_equal(spans[1].span_id)
 
         _(spans.size).must_equal(3)
+      ensure
+        begin; producer&.close; rescue StandardError; end
+        begin; consumer&.close; rescue StandardError; end
       end
     end
   end

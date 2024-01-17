@@ -31,8 +31,10 @@ jobs:
           - faraday
           - grape
           - graphql
+          - gruf
           - http
           - http_client
+          - httpx
           - koala
           - lmdb
           - net_http
@@ -47,7 +49,14 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: "Test Ruby 3.3"
+        # BLOCKED BY: https://github.com/bigcommerce/gruf/pull/197
+        if: "${{ matrix.gem != 'gruf' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.3"
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
@@ -86,6 +95,7 @@ jobs:
           [[ "${{ matrix.gem }}" == "lmdb"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "rack"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "rails"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "gruf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test JRuby"

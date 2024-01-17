@@ -12,7 +12,7 @@ require_relative '../../../../lib/opentelemetry/instrumentation/trilogy/patches/
 describe OpenTelemetry::Instrumentation::Trilogy do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance }
   let(:exporter) { EXPORTER }
-  let(:span) { exporter.finished_spans.first }
+  let(:span) { exporter.finished_spans[1] }
   let(:config) { {} }
   let(:driver_options) do
     {
@@ -139,7 +139,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
-        _(span.attributes['db.mysql.instance.address']).must_be_nil
+        _(span.attributes['db.instance.id']).must_be_nil
       end
 
       it 'extracts statement type' do
@@ -166,6 +166,37 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       end
     end
 
+    describe 'when connecting' do
+      let(:span) { exporter.finished_spans.first }
+
+      it 'spans will include database name' do
+        _(client.connected_host).wont_be_nil
+
+        _(span.name).must_equal 'connect'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
+        _(span.attributes['db.instance.id']).must_be_nil
+      end
+    end
+
+    describe 'when pinging' do
+      let(:span) { exporter.finished_spans[2] }
+
+      it 'spans will include database name' do
+        _(client.connected_host).wont_be_nil
+
+        client.ping
+
+        _(span.name).must_equal 'ping'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
+      end
+    end
+
     describe 'when quering for the connected host' do
       it 'spans will include the net.peer.name attribute' do
         _(client.connected_host).wont_be_nil
@@ -176,7 +207,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'select @@hostname'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
-        _(span.attributes['db.mysql.instance.address']).must_be_nil
+        _(span.attributes['db.instance.id']).must_be_nil
 
         client.query('SELECT 1')
 
@@ -188,7 +219,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
-        _(last_span.attributes['db.mysql.instance.address']).must_equal client.connected_host
+        _(last_span.attributes['db.instance.id']).must_equal client.connected_host
       end
     end
 

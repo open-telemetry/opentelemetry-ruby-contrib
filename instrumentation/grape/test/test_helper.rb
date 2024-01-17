@@ -23,7 +23,7 @@ end
 
 # Helper functions
 def uninstall_and_cleanup
-  instrumentation.instance_variable_set('@installed', false)
+  instrumentation.instance_variable_set(:@installed, false)
   unsubscribe
   EXPORTER.reset
 end
