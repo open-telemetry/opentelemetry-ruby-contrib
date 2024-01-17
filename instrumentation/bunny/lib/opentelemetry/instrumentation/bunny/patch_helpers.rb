@@ -12,19 +12,19 @@ module OpenTelemetry
       # For additional details around trace messaging semantics
       # See https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#messaging-attributes
       module PatchHelpers
-        def self.with_send_span(channel, tracer, exchange, routing_key, &block)
+        def self.with_send_span(channel, tracer, exchange, routing_key, &block) # rubocop:disable Style/ArgumentsForwarding
           attributes = basic_attributes(channel, channel.connection, exchange, routing_key)
           destination = destination_name(exchange, routing_key)
 
-          tracer.in_span("#{destination} publish", attributes: attributes, kind: :producer, &block)
+          tracer.in_span("#{destination} publish", attributes: attributes, kind: :producer, &block) # rubocop:disable Style/ArgumentsForwarding
         end
 
-        def self.with_process_span(channel, tracer, delivery_info, properties, &block)
+        def self.with_process_span(channel, tracer, delivery_info, properties, &block) # rubocop:disable Style/ArgumentsForwarding
           destination = destination_name(delivery_info[:exchange], delivery_info[:routing_key])
           parent_context, links = extract_context(properties)
 
           OpenTelemetry::Context.with_current(parent_context) do
-            tracer.in_span("#{destination} process", links: links, kind: :consumer, &block)
+            tracer.in_span("#{destination} process", links: links, kind: :consumer, &block) # rubocop:disable Style/ArgumentsForwarding
           end
         end
 
