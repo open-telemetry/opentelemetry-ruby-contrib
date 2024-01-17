@@ -21,6 +21,7 @@ module.exports = {
         'perf',
         'refactor',
         'revert',
+        'squash',
         'style',
         'test'
       ]
