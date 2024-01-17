@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   main:
-    name: Validate PR title
+    name: Lint PR title
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -45,8 +45,9 @@ jobs:
       - if: always() && (steps.lint_pr_title.outputs.error_message != null)
         name: "📝 Add PR comment about using conventional commit spec"
         uses: marocchino/sticky-pull-request-comment@v2.8.0
-        with:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
           header: pr-title-lint-error
           message: |
             Thank you for contributing to the project! 🎉
@@ -67,7 +68,8 @@ jobs:
       - if: ${{ steps.lint_pr_title.outputs.error_message == null }}
         name: "❌ Delete PR comment after title has been updated"
         uses: marocchino/sticky-pull-request-comment@v2.8.0
-        with:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
           header: pr-title-lint-error
           delete: true
