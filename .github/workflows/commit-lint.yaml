@@ -11,12 +11,12 @@ jobs:
   commitlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.1
-      - uses: wagoid/commitlint-github-action@v5.4.5
-        name: Lint Commit Messages
       - uses: amannn/action-semantic-pull-request@v5.4.0
         name: Lint PR Title
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           wip: true
+      - uses: actions/checkout@v4.1.1
+      - uses: wagoid/commitlint-github-action@v5.4.5
+        name: Lint Commit Messages
