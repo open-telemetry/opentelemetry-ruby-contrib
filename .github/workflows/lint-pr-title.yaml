@@ -4,12 +4,10 @@ name: "Lint PR Title"
 # https://github.com/honeycombio/.github/blob/main/.github/workflows/validate-pr-title.yml
 
 on:
-  pull_request_target:
-    types:
-      - opened
-      - reopened
-      - edited
-      - synchronize
+  pull_request:
+
+permissions:
+  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
@@ -19,8 +17,6 @@ jobs:
   main:
     name: Validate PR title
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - uses: amannn/action-semantic-pull-request@v5.4.0
         id: lint_pr_title
