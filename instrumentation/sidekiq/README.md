@@ -29,6 +29,27 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+
+### Options
+
+If you wish to change any of the default behaviour, you can pass options during instrumentation setup:
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Sidekiq', span_naming: :job_class
+end
+```
+
+|name|type|default|description|
+|---|---|---|---|
+|`span_naming`|symbol|`:quque`|Determines how spans are named|
+|`propagation_style`|symbol|`:link`|Specify propagation style|
+|`trace_launcher_heartbeat`|boolean|`false`|Allows tracing `Sidekiq::Launcher#heartbeat`|
+|`trace_poller_enqueue`|boolean|`false`|Allows tracing `Sidekiq::Scheduled::Poller#enqueue`|
+|`trace_poller_wait`|boolean|`false`|Allows tracing `Sidekiq::Scheduled::Poller#wait`|
+|`trace_processor_process_one`|boolean|`false`|Allows tracing `Sidekiq::Processor#process_one`|
+|`peer_service`|string|`nil`|Set name of the remote service|
+
 ## Examples
 
 Example usage can be seen in the `./example/sidekiq.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/sidekiq/example/sidekiq.rb)
