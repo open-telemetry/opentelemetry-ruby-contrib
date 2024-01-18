@@ -38,6 +38,10 @@ module OpenTelemetry
         #   - `:queue` - the span names will be set to '<destination / queue name> <operation>'.
         #   - `:job_class` - the span names will be set to '<job class name> <operation>'.
         option :span_naming,                 default: :queue, validate: %I[job_class queue]
+        # @!macro
+        #   @!method $1
+        #   @instrumentation_option_default `:$2`
+        #   @!scope class
         #   Controls how the job's execution is traced and related
         #   to the trace where the job was enqueued. Can be one of:
         #
@@ -51,7 +55,7 @@ module OpenTelemetry
         option :propagation_style,           default: :link,  validate: %i[link child none]
         # @!macro
         #   @!method $1
-        #   @instrumentation_option_default `:$2`
+        #   @instrumentation_option_default $2
         #   @!scope class
         #   Allows tracing Sidekiq::Launcher#heartbeat.
         option :trace_launcher_heartbeat,    default: false, validate: :boolean
