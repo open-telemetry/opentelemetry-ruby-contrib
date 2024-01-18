@@ -27,6 +27,11 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
+        # @!group Instrumentation Options
+        # @!macro [attach] option
+        #   @!method $1
+        #   @instrumentation_option_default `$2`
+        #   @!scope class
         option :span_naming,                 default: :queue, validate: %I[job_class queue]
         option :propagation_style,           default: :link,  validate: %i[link child none]
         option :trace_launcher_heartbeat,    default: false, validate: :boolean
@@ -34,6 +39,7 @@ module OpenTelemetry
         option :trace_poller_wait,           default: false, validate: :boolean
         option :trace_processor_process_one, default: false, validate: :boolean
         option :peer_service,                default: nil,   validate: :string
+        # @!endgroup
 
         private
 
