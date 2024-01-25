@@ -27,6 +27,6 @@ jobs:
           FORCE_COLOR: 3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          include-commits: true
+          include-commits: false
           update-labels: false
           config: ".commit-me.json"
