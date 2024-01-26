@@ -19,12 +19,12 @@ module OpenTelemetry
           tracer.in_span("#{destination} publish", attributes: attributes, kind: :producer, &block)
         end
 
-        def self.with_process_span(channel, tracer, delivery_info, properties, &block) # rubocop:disable Style/ArgumentsForwarding
+        def self.with_process_span(channel, tracer, delivery_info, properties, &block)
           destination = destination_name(delivery_info[:exchange], delivery_info[:routing_key])
           parent_context, links = extract_context(properties)
 
           OpenTelemetry::Context.with_current(parent_context) do
-            tracer.in_span("#{destination} process", links: links, kind: :consumer, &block) # rubocop:disable Style/ArgumentsForwarding
+            tracer.in_span("#{destination} process", links: links, kind: :consumer, &block)
           end
         end
 
