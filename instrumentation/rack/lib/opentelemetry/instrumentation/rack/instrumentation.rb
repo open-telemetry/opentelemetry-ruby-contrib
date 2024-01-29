@@ -26,6 +26,7 @@ module OpenTelemetry
         option :record_frontend_span,     default: false, validate: :boolean
         option :untraced_endpoints,       default: [],    validate: :array
         option :url_quantization,         default: nil,   validate: :callable
+        option :propagate_with_link,      default: nil,   validate: :callable
         option :untraced_requests,        default: nil,   validate: :callable
         option :response_propagators,     default: [],    validate: :array
         # This option is only valid for applications using Rack 2.0 or greater

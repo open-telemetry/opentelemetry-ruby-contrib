@@ -30,6 +30,7 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
       _(instrumentation.config[:record_frontend_span]).must_equal false
       _(instrumentation.config[:untraced_endpoints]).must_be_empty
       _(instrumentation.config[:url_quantization]).must_be_nil
+      _(instrumentation.config[:propagate_with_link]).must_be_nil
       _(instrumentation.config[:untraced_requests]).must_be_nil
       _(instrumentation.config[:response_propagators]).must_be_empty
       _(instrumentation.config[:use_rack_events]).must_equal true

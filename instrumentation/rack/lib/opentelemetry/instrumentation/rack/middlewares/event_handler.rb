@@ -55,7 +55,15 @@ module OpenTelemetry
             return if untraced_request?(request.env)
 
             parent_context = extract_remote_context(request)
-            span = create_span(parent_context, request)
+            links = nil
+
+            fn = propagate_with_link
+            if fn&.call(request.env)
+              links = prepare_span_links(parent_context)
+              parent_context = OpenTelemetry::Context.empty
+            end
+
+            span = create_span(parent_context, request, links)
             request.env[TOKENS_KEY] = register_current_span(span)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
@@ -224,6 +232,10 @@ module OpenTelemetry
             config[:url_quantization]
           end
 
+          def propagate_with_link
+            config[:propagate_with_link]
+          end
+
           def response_propagators
             config[:response_propagators]
           end
@@ -253,16 +265,22 @@ module OpenTelemetry
             contexts.map { |context| OpenTelemetry::Context.attach(context) }
           end
 
-          def create_span(parent_context, request)
+          def create_span(parent_context, request, links)
             span = tracer.start_span(
               create_request_span_name(request),
               with_parent: parent_context,
               kind: :server,
-              attributes: request_span_attributes(request.env)
+              attributes: request_span_attributes(request.env),
+              links: links
             )
             request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
             span.add_event('http.proxy.request.started', timestamp: request_start_time) unless request_start_time.nil?
             span
+          end
+
+          def prepare_span_links(ctx)
+            span_context = OpenTelemetry::Trace.current_span(ctx).context
+            span_context.valid? ? [OpenTelemetry::Trace::Link.new(span_context)] : []
           end
         end
       end
