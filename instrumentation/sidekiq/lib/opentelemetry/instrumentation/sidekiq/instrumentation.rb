@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Sidekiq
-      # The {OpenTelemetry::Instrumentation::Sidekiq::Instrumentation} class contains logic to detect and install the Sidekiq instrumentation
+      # The `OpenTelemetry::Instrumentation::Sidekiq::Instrumentation` class contains logic to detect and install the Sidekiq instrumentation
       #
       # Installation and configuration of this instrumentation is done within the
       # {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry/SDK#configure-instance_method OpenTelemetry::SDK#configure}
