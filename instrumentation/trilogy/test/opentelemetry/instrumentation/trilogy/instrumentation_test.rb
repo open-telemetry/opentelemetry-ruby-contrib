@@ -381,7 +381,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         expect do
           client.query(sql)
         end.must_raise Trilogy::Error
-        encoded = Base64.strict_encode64("{\"uber-trace-id\":\"#{span.context.hex_trace_id}:#{span.context.hex_span_id}:0:1\"}")
+        encoded = Base64.strict_encode64("{\"uber-trace-id\":\"#{span.hex_trace_id}:#{span.hex_span_id}:0:1\"}")
         _(sql).must_equal "/*VT_SPAN_CONTEXT=#{encoded}*/#{original_sql}"
       end
     end
