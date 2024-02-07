@@ -213,6 +213,10 @@ gems:
     directory: propagator/ottrace
     version_constant: [OpenTelemetry, Propagator, OTTrace, VERSION]
 
+  - name: opentelemetry-propagator-vitess
+    directory: propagator/vitess
+    version_constant: [OpenTelemetry, Propagator, Vitess, VERSION]
+
   - name: opentelemetry-propagator-xray
     directory: propagator/xray
     version_constant: [OpenTelemetry, Propagator, XRay, VERSION]

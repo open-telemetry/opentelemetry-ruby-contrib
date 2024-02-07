@@ -7,11 +7,28 @@
 module OpenTelemetry
   module Instrumentation
     module Trilogy
+      # @api private
+      class NoopPropagator
+        EMPTY_LIST = [].freeze
+        private_constant(:EMPTY_LIST)
+
+        def inject(carrier, context: Context.current, setter: nil); end
+
+        def extract(carrier, context: Context.current, getter: nil)
+          context
+        end
+
+        def fields
+          EMPTY_LIST
+        end
+      end
+
       # The Instrumentation class contains logic to detect and install the Trilogy instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        install do |_config|
+        install do |config|
           require_dependencies
           patch_client
+          configure_propagator(config)
         end
 
         present do
@@ -26,6 +43,9 @@ module OpenTelemetry
         option :db_statement, default: :obfuscate, validate: %I[omit include obfuscate]
         option :span_name, default: :statement_type, validate: %I[statement_type db_name db_operation_and_name]
         option :obfuscation_limit, default: 2000, validate: :integer
+        option :propagator, default: nil, validate: :string
+
+        attr_reader :propagator
 
         private
 
@@ -35,6 +55,24 @@ module OpenTelemetry
 
         def patch_client
           ::Trilogy.prepend(Patches::Client)
+        end
+
+        def configure_propagator(config)
+          propagator = config[:propagator]
+          @propagator = case propagator
+                        when 'vitess' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Vitess')
+                        when 'none', nil then NoopPropagator.new
+                        else
+                          OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
+                          NoopPropagator.new
+                        end
+        end
+
+        def fetch_propagator(name, class_name, gem_suffix = name)
+          Kernel.const_get(class_name).sql_query_propagator
+        rescue NameError
+          OpenTelemetry.logger.warn "The #{name} propagator cannot be configured - please add opentelemetry-propagator-#{gem_suffix} to your Gemfile"
+          nil
         end
       end
     end
