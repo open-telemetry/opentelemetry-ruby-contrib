@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'base64'
 require 'opentelemetry'
 require 'opentelemetry-instrumentation-base'
 
