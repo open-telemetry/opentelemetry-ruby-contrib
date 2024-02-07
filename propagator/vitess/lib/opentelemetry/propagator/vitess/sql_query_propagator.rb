@@ -27,6 +27,7 @@ module OpenTelemetry
         # @param [String] value The value to set
         def set(carrier, key, value)
           carrier.gsub!(/\A/, "/*#{key}=#{value}*/")
+        rescue FrozenError
         end
       end
 

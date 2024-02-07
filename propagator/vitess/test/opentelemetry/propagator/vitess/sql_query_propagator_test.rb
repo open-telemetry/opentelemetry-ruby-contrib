@@ -90,6 +90,15 @@ describe OpenTelemetry::Propagator::Vitess::SqlQueryPropagator do
       end
     end
 
+    describe 'when the carrier is frozen' do
+      it 'does not raise an error' do
+        carrier = -''
+        propagator.inject(carrier, context: context)
+
+        _(carrier).must_be_empty
+      end
+    end
+
     describe 'given a sampled trace flag' do
       let(:trace_flags) do
         OpenTelemetry::Trace::TraceFlags::SAMPLED
