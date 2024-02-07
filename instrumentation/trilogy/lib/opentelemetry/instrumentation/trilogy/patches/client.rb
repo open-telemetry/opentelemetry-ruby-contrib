@@ -10,6 +10,15 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Trilogy for instrumentation
         module Client
+          module StringSetter
+            extend self
+
+            def set(carrier, key, value)
+              encoded = Base64.strict_encode64("\"#{key}\":\"#{value}\"}")
+              carrier.gsub!(/\A/, "/*VT_SPAN_CONTEXT=#{encoded}*/")
+            end
+          end
+
           def initialize(options = {})
             @connection_options = options # This is normally done by Trilogy#initialize
 
@@ -46,7 +55,8 @@ module OpenTelemetry
                 OpenTelemetry::Instrumentation::Trilogy.attributes
               ),
               kind: :client
-            ) do
+            ) do |_span, context|
+              propagator.inject(sql, context: context, setter: StringSetter)
               super(sql)
             end
           end
@@ -91,6 +101,10 @@ module OpenTelemetry
 
           def config
             Trilogy::Instrumentation.instance.config
+          end
+
+          def propagator
+            Trilogy::Instrumentation.instance.propagator
           end
         end
       end
