@@ -5,7 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'json'
+require 'base64'
 require 'opentelemetry-api'
+require 'opentelemetry/propagator/jaeger'
 require 'opentelemetry/propagator/vitess/version'
 require 'opentelemetry/propagator/vitess/sql_query_propagator'
 
