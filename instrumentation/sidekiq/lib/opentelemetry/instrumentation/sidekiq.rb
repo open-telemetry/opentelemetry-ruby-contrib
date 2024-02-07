@@ -9,7 +9,7 @@ require 'opentelemetry-instrumentation-base'
 
 module OpenTelemetry
   module Instrumentation
-    # (see OpenTelemetry::Instrumentation::Sidekiq::Instrumentation)
+    # (see {OpenTelemetry::Instrumentation::Sidekiq::Instrumentation})
     module Sidekiq
     end
   end
