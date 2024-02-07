@@ -372,8 +372,8 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       end
     end
 
-    describe 'when propagator is set to jaeger' do
-      let(:config) { { propagator: :jaeger } }
+    describe 'when propagator is set to vitess' do
+      let(:config) { { propagator: :vitess } }
 
       it 'does inject context' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
