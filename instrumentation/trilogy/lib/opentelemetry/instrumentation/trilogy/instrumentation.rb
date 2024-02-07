@@ -7,6 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Trilogy
+      # @api private
       class NoopPropagator
         EMPTY_LIST = [].freeze
         private_constant(:EMPTY_LIST)
@@ -59,12 +60,12 @@ module OpenTelemetry
         def configure_propagator(config)
           propagator = config[:propagator]
           @propagator = case propagator
-          when 'vitess' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Vitess')
-          when 'none', nil then NoopPropagator.new
-          else
-            OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
-            NoopPropagator.new
-          end
+                        when 'vitess' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Vitess')
+                        when 'none', nil then NoopPropagator.new
+                        else
+                          OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
+                          NoopPropagator.new
+                        end
         end
 
         def fetch_propagator(name, class_name, gem_suffix = name)
