@@ -34,6 +34,14 @@ gems:
     directory: instrumentation/gruf
     version_constant: [OpenTelemetry, Instrumentation, Gruf, VERSION]
 
+  - name: opentelemetry-helpers-mysql
+    directory: helpers/mysql
+    version_constant: [OpenTelemetry, Helpers, MySQL, VERSION]
+
+  - name: opentelemetry-helpers-sql-obfuscation
+    directory: helpers/sql-obfuscation
+    version_constant: [OpenTelemetry, Helpers, SqlObfuscation, VERSION]
+
   - name: opentelemetry-instrumentation-grape
     directory: instrumentation/grape
     version_constant: [OpenTelemetry, Instrumentation, Grape, VERSION]
