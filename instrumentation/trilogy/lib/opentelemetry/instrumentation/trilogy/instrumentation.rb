@@ -7,13 +7,13 @@
 module OpenTelemetry
   module Instrumentation
     module Trilogy
-      class NoopTextMapPropagator
+      class NoopPropagator
         EMPTY_LIST = [].freeze
         private_constant(:EMPTY_LIST)
 
-        def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter); end
+        def inject(carrier, context: Context.current, setter: nil); end
 
-        def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
+        def extract(carrier, context: Context.current, getter: nil)
           context
         end
 
@@ -59,16 +59,16 @@ module OpenTelemetry
         def configure_propagator(config)
           propagator = config[:propagator]
           @propagator = case propagator
-          when 'jaeger' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Jaeger')
-          when 'none', nil then NoopTextMapPropagator.new
+          when 'vitess' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Vitess')
+          when 'none', nil then NoopPropagator.new
           else
             OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
-            NoopTextMapPropagator.new
+            NoopPropagator.new
           end
         end
 
         def fetch_propagator(name, class_name, gem_suffix = name)
-          Kernel.const_get(class_name).text_map_propagator
+          Kernel.const_get(class_name).sql_query_propagator
         rescue NameError
           OpenTelemetry.logger.warn "The #{name} propagator cannot be configured - please add opentelemetry-propagator-#{gem_suffix} to your Gemfile"
           nil
