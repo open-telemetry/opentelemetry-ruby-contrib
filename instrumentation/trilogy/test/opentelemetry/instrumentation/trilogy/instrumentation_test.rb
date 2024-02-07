@@ -350,7 +350,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       let(:config) { { propagator: :none } }
 
       it 'does not inject context' do
-        sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         original_sql = sql.dup
         expect do
           client.query(sql)
@@ -363,7 +363,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       let(:config) { { propagator: nil } }
 
       it 'does not inject context' do
-        sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         original_sql = sql.dup
         expect do
           client.query(sql)
@@ -376,7 +376,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       let(:config) { { propagator: :vitess } }
 
       it 'does inject context' do
-        sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         original_sql = sql.dup
         expect do
           client.query(sql)
