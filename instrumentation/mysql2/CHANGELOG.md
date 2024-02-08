@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.26.0 / 2024-02-08
+
+* BREAKING CHANGE: Move shared sql behavior to helper gems
+
+
 ### v0.25.0 / 2023-10-16
 
 * BREAKING CHANGE: Obfuscation for mysql2, dalli and postgresql as default option for db_statement

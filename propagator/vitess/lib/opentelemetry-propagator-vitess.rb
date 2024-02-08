@@ -4,10 +4,5 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Instrumentation
-    module Resque
-      VERSION = '0.5.1'
-    end
-  end
-end
+require 'opentelemetry-api'
+require_relative 'opentelemetry/propagator/vitess'

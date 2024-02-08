@@ -46,7 +46,8 @@ module OpenTelemetry
                 OpenTelemetry::Instrumentation::Trilogy.attributes
               ),
               kind: :client
-            ) do
+            ) do |_span, context|
+              propagator.inject(sql, context: context)
               super(sql)
             end
           end
@@ -91,6 +92,10 @@ module OpenTelemetry
 
           def config
             Trilogy::Instrumentation.instance.config
+          end
+
+          def propagator
+            Trilogy::Instrumentation.instance.propagator
           end
         end
       end

@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.57.0 / 2024-02-08
+
+* BREAKING CHANGE: Move shared sql behavior to helper gems
+
+
 ### v0.56.0 / 2024-01-09
 
 * BREAKING CHANGE: Use ActiveSupport instead of patches #703 
