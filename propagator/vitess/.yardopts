@@ -1,0 +1,9 @@
+--no-private
+--title=OpenTelemetry Propagator Vitess
+--markup=markdown
+--main=README.md
+./lib/opentelemetry/propagator/vitess/**/*.rb
+./lib/opentelemetry/propagator/vitess.rb
+-
+README.md
+CHANGELOG.md

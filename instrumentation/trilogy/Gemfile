@@ -10,4 +10,7 @@ gemspec
 
 group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
+  gem 'opentelemetry-helpers-mysql', path: '../../helpers/mysql'
+  gem 'opentelemetry-helpers-sql-obfuscation', path: '../../helpers/sql-obfuscation'
+  gem 'opentelemetry-propagator-vitess', path: '../../propagator/vitess'
 end

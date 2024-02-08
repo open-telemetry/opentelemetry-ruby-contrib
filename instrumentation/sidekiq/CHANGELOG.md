@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.25.1 / 2024-02-08
+
+* DOCS: ✏️ Sidekiq instrumentation options
+
 ### v0.25.0 / 2023-09-07
 
 * FIXED: Align messaging instrumentation operation names
