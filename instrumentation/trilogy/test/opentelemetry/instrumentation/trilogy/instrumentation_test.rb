@@ -316,7 +316,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
           client.query(sql)
         end.must_raise Trilogy::Error
 
-        _(span.name).must_equal 'mysql'
+        _(span.name).must_equal 'select'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal obfuscated_sql
       end
 
@@ -343,6 +343,46 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
           _(span.attributes['db.statement']).must_equal obfuscated_sql
         end
+      end
+    end
+
+    describe 'when propagator is set to none' do
+      let(:config) { { propagator: :none } }
+
+      it 'does not inject context' do
+        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        original_sql = sql.dup
+        expect do
+          client.query(sql)
+        end.must_raise Trilogy::Error
+        _(sql).must_equal original_sql
+      end
+    end
+
+    describe 'when propagator is set to nil' do
+      let(:config) { { propagator: nil } }
+
+      it 'does not inject context' do
+        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        original_sql = sql.dup
+        expect do
+          client.query(sql)
+        end.must_raise Trilogy::Error
+        _(sql).must_equal original_sql
+      end
+    end
+
+    describe 'when propagator is set to vitess' do
+      let(:config) { { propagator: 'vitess' } }
+
+      it 'does inject context' do
+        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        original_sql = sql.dup
+        expect do
+          client.query(sql)
+        end.must_raise Trilogy::Error
+        encoded = Base64.strict_encode64("{\"uber-trace-id\":\"#{span.hex_trace_id}:#{span.hex_span_id}:0:1\"}")
+        _(sql).must_equal "/*VT_SPAN_CONTEXT=#{encoded}*/#{original_sql}"
       end
     end
 

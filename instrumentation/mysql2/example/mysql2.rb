@@ -18,4 +18,6 @@ client = Mysql2::Client.new(
   password: ENV.fetch('TEST_MYSQL_PASSWORD') { 'root' }
 )
 
-client.query("SELECT * FROM users WHERE group='x'")
+client.query("SELECT * from information_schema.INNODB_TABLES; /**DÃ©**/").each do |row|
+  puts row
+end

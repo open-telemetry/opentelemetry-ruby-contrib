@@ -182,7 +182,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
           client.query(sql)
         end.must_raise Mysql2::Error
 
-        _(span.name).must_equal 'mysql'
+        _(span.name).must_equal 'select'
         _(span.attributes['db.statement']).must_equal obfuscated_sql
       end
 
