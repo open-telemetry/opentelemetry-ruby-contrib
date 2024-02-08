@@ -2,7 +2,7 @@
 
 ### v0.25.2 / 2024-02-08
 
-* DOCS: Fix doc for sidekiq options
+* DOCS: Fix doc for sidekiq options.
 
 ### v0.25.1 / 2024-02-08
 
