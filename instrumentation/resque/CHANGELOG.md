@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-resque
 
+### v0.5.1 / 2024-02-08
+
+* DOCS: Relocate Resque config option comments to render in Yard docs
+
 ### v0.5.0 / 2023-09-07
 
 * FIXED: Align messaging instrumentation operation names

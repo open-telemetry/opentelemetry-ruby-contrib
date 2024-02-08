@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Que
-      VERSION = '0.7.1'
+      VERSION = '0.8.0'
     end
   end
 end
