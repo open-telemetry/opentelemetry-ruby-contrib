@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.59.1 / 2024-02-08
+
+* FIXED: Add missing requires for sql-helpers to mysql, pg, and trilogy instrumentation
+
 ### v0.59.0 / 2024-02-08
 
 * BREAKING CHANGE: Move shared sql behavior to helper gems
