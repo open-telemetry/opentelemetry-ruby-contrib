@@ -9,7 +9,7 @@ require 'opentelemetry-instrumentation-base'
 
 module OpenTelemetry
   module Instrumentation
-    # Contains the OpenTelemetry instrumentation for the Resque gem
+    # (see OpenTelemetry::Instrumentation::Resque::Instrumentation)
     module Resque
     end
   end

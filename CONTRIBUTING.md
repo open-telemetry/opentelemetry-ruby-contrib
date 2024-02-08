@@ -132,7 +132,7 @@ merging.
 All commits to the main repository should follow the
 [conventional commit](https://conventionalcommits.org) standard. In a nutshell,
 this means commit messages should begin with a semantic tag such as `feat:`,
-`fix:`, `docs:`, `tests:`, or `refactor:`. Our release tooling uses these tags
+`fix:`, `docs:`, `test:`, `refactor:`, etc... Our release tooling uses these tags
 to determine the semantics of your commit, such as how it affects semantic
 versioning of the libraries, and to generate changelogs from commit
 descriptions. If you are not familiar with conventional commits, please review
@@ -347,6 +347,8 @@ For releases to succeed, new gems MUST include the following:
 ## Dependabot Updates
 
 This repository uses [Dependabot](https://dependabot.com/) to keep dependencies up to date, however there shared development dependencies are often scattered across multiple gems. Dependabot does not currently support the ability to group dependencies for gems in multiple subdirectories, so we use a custom script to bulk update dependencies across all gems.
+
+**Note:** This script uses a version of sed that isn't available on MacOS bash. You'll need to use an ubuntu-linux machine to execute it. One way to accomplish this is to run `docker-compose run app` and execute the script within the container.
 
 E.g. if you want to update Rubocop to version 1.56.1, you would run:
 

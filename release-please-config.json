@@ -2,16 +2,25 @@
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "draft": true,
+  "draft-pull-request": true,
   "include-component-in-tag": true,
   "include-v-in-tag": true,
   "prerelease": true,
   "release-type": "ruby",
-  "separate-pull-requests": false,
+  "separate-pull-requests": true,
   "sequential-calls": true,
   "signoff": "OpenTelemetry Bot <107717825+opentelemetrybot@users.noreply.github.com>",
   "skip-github-release": false,
   "tag-separator": " ",
   "packages": {
+    "helpers/mysql": {
+      "package-name": "opentelemetry-helpers-mysql",
+      "version-file": "lib/opentelemetry/helpers/mysql/version.rb"
+    },
+    "helpers/sql_obfuscation": {
+      "package-name": "opentelemetry-helpers-sql-obfuscation",
+      "version-file": "lib/opentelemetry/helpers/sql_obfuscation/version.rb"
+    },
     "instrumentation/gruf": {
       "package-name": "opentelemetry-instrumentation-gruf",
       "version-file": "lib/opentelemetry/instrumentation/gruf/version.rb"
@@ -183,6 +192,10 @@
     "propagator/ottrace": {
       "package-name": "opentelemetry-propagator-ottrace",
       "version-file": "lib/opentelemetry/propagator/ottrace/version.rb"
+    },
+    "propagator/vitess": {
+      "package-name": "opentelemetry-propagator-vitess",
+      "version-file": "lib/opentelemetry/propagator/vitess/version.rb"
     },
     "propagator/xray": {
       "package-name": "opentelemetry-propagator-xray",
