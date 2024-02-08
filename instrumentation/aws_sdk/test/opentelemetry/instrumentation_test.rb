@@ -246,5 +246,25 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       OpenTelemetry::Instrumentation::AwsSdk::MessageAttributeSetter.set(metadata_attributes, 'new10', 'value')
       _(metadata_attributes.keys).must_equal(%w[existingKey0 existingKey1 existingKey2 existingKey3 existingKey4 existingKey5 existingKey6 existingKey7 existingKey8 existingKey9])
     end
+
+    describe 'MessageAttributeGetter' do
+      let(:getter) { OpenTelemetry::Instrumentation::AwsSdk::MessageAttributeGetter }
+      let(:carrier) do
+        {
+          'traceparent' => { data_type: 'String', string_value: 'tp' },
+          'tracestate' => { data_type: 'String', string_value: 'ts' },
+          'x-source-id' => { data_type: 'String', string_value: '123' }
+        }
+      end
+
+      it 'reads key from carrier' do
+        _(getter.get(carrier, 'traceparent')).must_equal('tp')
+        _(getter.get(carrier, 'x-source-id')).must_equal('123')
+      end
+
+      it 'returns nil for non-existant key' do
+        _(getter.get(carrier, 'not-here')).must_be_nil
+      end
+    end
   end
 end
