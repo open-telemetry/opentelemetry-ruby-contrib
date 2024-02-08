@@ -90,7 +90,7 @@ module OpenTelemetry
             return unless span.recording?
 
             span.record_exception(error)
-            span.status = OpenTelemetry::Trace::Status.error
+            span.status = OpenTelemetry::Trace::Status.error(error.class.name)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
@@ -192,7 +192,7 @@ module OpenTelemetry
           end
 
           def detach_contexts(request)
-            request.env[TOKENS_KEY]&.reverse&.each do |token|
+            request.env[TOKENS_KEY]&.reverse_each do |token|
               OpenTelemetry::Context.detach(token)
               OpenTelemetry::Trace.current_span.finish
             end

@@ -10,6 +10,14 @@ updates:
   schedule:
     interval: weekly
 - package-ecosystem: bundler
+  directory: "/helpers/mysql"
+  schedule:
+    interval: weekly
+- package-ecosystem: bundler
+  directory: "/helpers/sql-obfuscation"
+  schedule:
+    interval: weekly
+- package-ecosystem: bundler
   directory: "/propagator/ottrace"
   schedule:
     interval: weekly

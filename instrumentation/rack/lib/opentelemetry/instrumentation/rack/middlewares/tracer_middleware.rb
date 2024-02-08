@@ -77,6 +77,8 @@ module OpenTelemetry
               tracer.in_span(request_span_name,
                              attributes: request_span_attributes(env: env),
                              kind: request_span_kind) do |request_span|
+                request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(env)
+                request_span.add_event('http.proxy.request.started', timestamp: request_start_time) unless request_start_time.nil?
                 OpenTelemetry::Instrumentation::Rack.with_span(request_span) do
                   @app.call(env).tap do |status, headers, response|
                     set_attributes_after_request(request_span, status, headers, response)

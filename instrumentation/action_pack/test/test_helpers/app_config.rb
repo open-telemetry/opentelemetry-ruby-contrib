@@ -48,9 +48,7 @@ module AppConfig
   private
 
   def remove_rack_middleware(application)
-    application.middleware.delete(
-      OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
-    )
+    application.middleware.delete(Rack::Events)
   end
 
   def add_exceptions_app(application)

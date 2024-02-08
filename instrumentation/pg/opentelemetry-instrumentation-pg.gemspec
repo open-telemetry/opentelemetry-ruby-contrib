@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.0'
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
+  spec.add_dependency 'opentelemetry-helpers-sql-obfuscation'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.1'
 
   spec.add_development_dependency 'activerecord'
@@ -37,8 +38,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pg', '>= 1.1.0'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
-  spec.add_development_dependency 'rubocop', '~> 1.59.0'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.19.1'
+  spec.add_development_dependency 'rubocop', '~> 1.60.1'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.20'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'yard', '~> 0.9'
 
