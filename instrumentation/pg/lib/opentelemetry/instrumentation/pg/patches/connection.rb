@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry-helpers-sql-obfuscation'
 require_relative '../constants'
 require_relative '../lru_cache'
 
