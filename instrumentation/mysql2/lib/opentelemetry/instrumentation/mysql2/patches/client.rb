@@ -15,6 +15,45 @@ module OpenTelemetry
         module Client
           def query(sql, options = {})
             attributes = client_attributes
+            attributes.merge!(span_attributes(sql))
+
+            tracer.in_span(
+              span_name(sql),
+              attributes: attributes.merge!(OpenTelemetry::Instrumentation::Mysql2.attributes),
+              kind: :client
+            ) do
+              super(sql, options)
+            end
+          end
+
+          def prepare(sql)
+            attributes = client_attributes
+            attributes.merge!(span_attributes(sql))
+
+            tracer.in_span(
+              span_name(sql),
+              attributes: attributes.merge!(OpenTelemetry::Instrumentation::Mysql2.attributes),
+              kind: :client
+            ) do
+              super(sql)
+            end
+          end
+
+          private
+
+          def span_name(sql)
+            OpenTelemetry::Helpers::MySQL.database_span_name(
+              sql,
+              OpenTelemetry::Instrumentation::Mysql2.attributes[
+                SemanticConventions::Trace::DB_OPERATION
+              ],
+              database_name,
+              config
+            )
+          end
+
+          def span_attributes(sql)
+            attributes = {}
             case config[:db_statement]
             when :include
               attributes[SemanticConventions::Trace::DB_STATEMENT] = sql
@@ -24,23 +63,8 @@ module OpenTelemetry
                   sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql
                 )
             end
-            tracer.in_span(
-              OpenTelemetry::Helpers::MySQL.database_span_name(
-                sql,
-                OpenTelemetry::Instrumentation::Mysql2.attributes[
-                  SemanticConventions::Trace::DB_OPERATION
-                ],
-                database_name,
-                config
-              ),
-              attributes: attributes.merge!(OpenTelemetry::Instrumentation::Mysql2.attributes),
-              kind: :client
-            ) do
-              super(sql, options)
-            end
+            attributes
           end
-
-          private
 
           def database_name
             # https://github.com/brianmario/mysql2/blob/ca08712c6c8ea672df658bb25b931fea22555f27/lib/mysql2/client.rb#L78
