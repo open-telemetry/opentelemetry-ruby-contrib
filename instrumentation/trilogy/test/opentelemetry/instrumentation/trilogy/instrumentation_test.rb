@@ -376,13 +376,14 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       let(:config) { { propagator: 'vitess' } }
 
       it 'does inject context' do
-        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
-        original_sql = sql.dup
+        sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'.freeze # rubocop:disable Style/RedundantFreeze
+        propagator = double('propagator')
+        allow(propagator).to receive(:inject)
+        allow(client).to receive(:propagator).and_return(propagator)
         expect do
           client.query(sql)
         end.must_raise Trilogy::Error
-        encoded = Base64.strict_encode64("{\"uber-trace-id\":\"#{span.hex_trace_id}:#{span.hex_span_id}:0:1\"}")
-        _(sql).must_equal "/*VT_SPAN_CONTEXT=#{encoded}*/#{original_sql}"
+        expect(propagator).to have_received(:inject).with(sql, context: instance_of(OpenTelemetry::Context)).once
       end
     end
 
