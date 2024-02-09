@@ -112,7 +112,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       end
 
       it 'query ? sequences for db.statement with prepare' do
-        sql = "SELECT * from users where users.id = ? and users.email = ?"
+        sql = 'SELECT * from users where users.id = ? and users.email = ?'
         expect do
           client.prepare(sql)
         end.must_raise Mysql2::Error
@@ -126,12 +126,12 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       end
 
       it 'query invalid byte sequences for db.statement without prepare' do
-        sql = "SELECT * from users where users.id = ? and users.email = ?"
+        sql = 'SELECT * from users where users.id = ? and users.email = ?'
         expect do
           client.query(sql)
         end.must_raise Mysql2::Error
 
-        _(span.events[0].attributes['exception.message'].slice(0,37)).must_equal "You have an error in your SQL syntax;"
+        _(span.events[0].attributes['exception.message'].slice(0, 37)).must_equal 'You have an error in your SQL syntax;'
       end
     end
 
