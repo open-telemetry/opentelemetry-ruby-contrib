@@ -50,8 +50,11 @@ module OpenTelemetry
               ),
               kind: :client
             ) do |_span, context|
-              sql = sql.dup unless !sql.frozen? || propagator.is_a?(OpenTelemetry::Instrumentation::Trilogy::NoopPropagator)
-              propagator.inject(sql, context: context)
+              if propagator
+                sql = sql.dup if sql.frozen?
+                propagator.inject(sql, context: context)
+              end
+
               super(sql.freeze)
             end
           end
