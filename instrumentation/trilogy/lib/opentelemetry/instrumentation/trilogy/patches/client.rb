@@ -51,11 +51,13 @@ module OpenTelemetry
               kind: :client
             ) do |_span, context|
               if propagator
-                sql = sql.dup if sql.frozen?
+                dup = sql.frozen?
+                sql = sql.dup if dup
                 propagator.inject(sql, context: context)
+                sql.freeze if dup
               end
 
-              super(sql.freeze)
+              super(sql)
             end
           end
 
