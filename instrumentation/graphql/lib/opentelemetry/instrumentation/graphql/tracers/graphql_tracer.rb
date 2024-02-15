@@ -90,8 +90,8 @@ module OpenTelemetry
             when 'execute_field'
               field_attr_cache = data[:query].context.namespace(:otel_attrs)[:execute_field_attrs] ||= attr_cache do |field|
                 {
-                  'graphql.field.parent' => field.owner.graphql_name,
-                  'graphql.field.name' => field.graphql_name,
+                  'graphql.field.parent' => field.owner.graphql_name || "", # nil values are not permitted
+                  'graphql.field.name' => (field.graphql_name if field.graphql_name),
                   'graphql.lazy' => false
                 }.freeze
               end
@@ -99,8 +99,8 @@ module OpenTelemetry
             when 'execute_field_lazy'
               lazy_field_attr_cache = data[:query].context.namespace(:otel_attrs)[:execute_field_lazy_attrs] ||= attr_cache do |field|
                 {
-                  'graphql.field.parent' => field.owner.graphql_name,
-                  'graphql.field.name' => field.graphql_name,
+                  'graphql.field.parent' => (field.owner.graphql_name if field.owner.graphql_name),
+                  'graphql.field.name' => (field.graphql_name if field.graphql_name),
                   'graphql.lazy' => true
                 }.freeze
               end
@@ -108,7 +108,7 @@ module OpenTelemetry
             when 'authorized', 'resolve_type'
               type_attrs_cache = data[:context].namespace(:otel_attrs)[:type_attrs] ||= attr_cache do |type|
                 {
-                  'graphql.type.name' => type.graphql_name,
+                  'graphql.type.name' => (type.graphql_name if type.graphql_name),
                   'graphql.lazy' => false
                 }.freeze
               end
@@ -116,18 +116,17 @@ module OpenTelemetry
             when 'authorized_lazy', 'resolve_type_lazy'
               type_lazy_attrs_cache = data[:context].namespace(:otel_attrs)[:type_lazy_attrs] ||= attr_cache do |type|
                 {
-                  'graphql.type.name' => type.graphql_name,
+                  'graphql.type.name' => (type.graphql_name if type.graphql_name),
                   'graphql.lazy' => true
-                }
+                }.freeze
               end
               type_lazy_attrs_cache[data[:type]]
             when 'execute_query'
-              attributes = {
-                'graphql.document' => data[:query].query_string,
-                'graphql.operation.type' => data[:query].selected_operation.operation_type
-              }
-              attributes['graphql.operation.name'] = data[:query].selected_operation_name if data[:query].selected_operation_name
-              attributes
+              {
+                'graphql.document' => (data[:query].query_string if data[:query].query_string),
+                'graphql.operation.type' => (data[:query].selected_operation.operation_type if data[:query].selected_operation && data[:query].selected_operation.operation_type),
+                'graphql.operation.name' => data[:query].selected_operation_name || "", # nil values are not permitted
+              }.freeze
             else
               {}
             end
