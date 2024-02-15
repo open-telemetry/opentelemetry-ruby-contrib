@@ -45,7 +45,7 @@ module OpenTelemetry
           propagator = config[:propagator]
           @propagator = case propagator
                         when 'vitess' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Vitess')
-                        when "none", nil
+                        when 'none', nil
                           nil
                         else
                           OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
