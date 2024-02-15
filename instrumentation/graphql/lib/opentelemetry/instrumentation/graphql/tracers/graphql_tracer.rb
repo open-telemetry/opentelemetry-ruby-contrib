@@ -101,7 +101,7 @@ module OpenTelemetry
               field_unique_key = "execute_field.#{data[:owner]&.graphql_name}.#{data[:field].graphql_name}"
               lazy_field_attr_cache = data[:query].context.namespace(:otel_attrs)[field_unique_key] ||= attr_cache do |field|
                 attrs = {}
-                attrs['graphql.field.parent'] = data[:owner].graphql_name if field.owner.graphql_name
+                attrs['graphql.field.parent'] = data[:owner].graphql_name if data[:owner].graphql_name
                 attrs['graphql.field.name'] = field.graphql_name if field.graphql_name
                 attrs['graphql.lazy'] = true
                 attrs.freeze
