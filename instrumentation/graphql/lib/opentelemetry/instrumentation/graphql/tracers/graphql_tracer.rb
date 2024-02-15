@@ -88,18 +88,20 @@ module OpenTelemetry
           def attributes_for(key, data)
             case key
             when 'execute_field'
-              field_attr_cache = data[:query].context.namespace(:otel_attrs)[:execute_field_attrs] ||= attr_cache do |field|
+              field_unique_key = "execute_field.#{data[:owner]&.graphql_name}.#{data[:field].graphql_name}"
+              field_attr_cache = data[:query].context.namespace(:otel_attrs)[field_unique_key] ||= attr_cache do |field|
                 attrs = {}
-                attrs['graphql.field.parent'] = field.owner.graphql_name if field.owner.graphql_name
+                attrs['graphql.field.parent'] = data[:owner].graphql_name if data[:owner].graphql_name
                 attrs['graphql.field.name'] = field.graphql_name if field.graphql_name
                 attrs['graphql.lazy'] = false
                 attrs.freeze
               end
               field_attr_cache[data[:field]]
             when 'execute_field_lazy'
-              lazy_field_attr_cache = data[:query].context.namespace(:otel_attrs)[:execute_field_lazy_attrs] ||= attr_cache do |field|
+              field_unique_key = "execute_field.#{data[:owner]&.graphql_name}.#{data[:field].graphql_name}"
+              lazy_field_attr_cache = data[:query].context.namespace(:otel_attrs)[field_unique_key] ||= attr_cache do |field|
                 attrs = {}
-                attrs['graphql.field.parent'] = field.owner.graphql_name if field.owner.graphql_name
+                attrs['graphql.field.parent'] = data[:owner].graphql_name if field.owner.graphql_name
                 attrs['graphql.field.name'] = field.graphql_name if field.graphql_name
                 attrs['graphql.lazy'] = true
                 attrs.freeze
