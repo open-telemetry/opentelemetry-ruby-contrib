@@ -32,7 +32,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
   let(:port) { ENV.fetch('TEST_MYSQL_PORT', '3306').to_i }
   let(:database) { ENV.fetch('TEST_MYSQL_DB', 'mysql') }
   let(:username) { ENV.fetch('TEST_MYSQL_USER', 'root') }
-  let(:password) { ENV.fetch('TEST_MYSQL_PASSWORD', '') }
+  let(:password) { ENV.fetch('TEST_MYSQL_PASSWORD', 'root') }
 
   before do
     exporter.reset
