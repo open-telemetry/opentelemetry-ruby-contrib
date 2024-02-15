@@ -377,6 +377,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
       it 'does inject context on frozen strings' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        assert(sql.frozen?)
         propagator = OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
 
         arg_cache = {} # maintain handles to args
@@ -408,6 +409,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       it 'does inject context on unfrozen strings' do
         # inbound SQL is not frozen (string prefixed with +)
         sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        refute(sql.frozen?)
 
         # dup sql for comparison purposes, since propagator  mutates it
         cached_sql = sql.dup
