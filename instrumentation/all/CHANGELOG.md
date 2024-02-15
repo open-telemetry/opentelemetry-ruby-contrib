@@ -2,7 +2,7 @@
 
 ### v0.58.0 / 2024-02-15
 
-* (No significant changes)
+* CHANGED: upgrade mysql2 instrumentation
 
 ### v0.57.0 / 2024-02-08
 
