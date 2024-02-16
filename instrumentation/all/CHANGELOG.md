@@ -2,7 +2,7 @@
 
 ### v0.59.0 / 2024-02-16
 
-* (No significant changes)
+* BREAKING CHANGE: GraphQL Legacy Tracer perf improvements [#867](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867).
 
 ### v0.58.0 / 2024-02-15
 

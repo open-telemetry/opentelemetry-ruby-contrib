@@ -2,9 +2,9 @@
 
 ### v0.28.0 / 2024-02-16
 
-* BREAKING CHANGE: Cache GraphQL attributes
+* BREAKING CHANGE: GraphQL Legacy Tracer perf improvements [#867](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867).
 
-* ADDED: Cache GraphQL attributes
+* ADDED: GraphQL Legacy Tracer perf improvements [#867](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867).
 
 ### v0.27.0 / 2023-11-28
 
