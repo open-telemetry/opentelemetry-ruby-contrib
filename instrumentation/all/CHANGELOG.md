@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.59.0 / 2024-02-16
+
+* (No significant changes)
+
 ### v0.58.0 / 2024-02-15
 
 * CHANGED: upgrade mysql2 instrumentation
