@@ -13,6 +13,8 @@ module OpenTelemetry
         # GraphQLTracer contains the OpenTelemetry tracer implementation compatible with
         # the GraphQL tracer API
         class GraphQLTracer < ::GraphQL::Tracing::PlatformTracing
+          DEFAULT_HASH = {}.freeze
+
           self.platform_keys = {
             'lex' => 'graphql.lex',
             'parse' => 'graphql.parse',
@@ -130,7 +132,7 @@ module OpenTelemetry
               attrs['graphql.operation.name'] = data[:query].selected_operation_name || 'anonymous'
               attrs.freeze
             else
-              {}
+              DEFAULT_HASH
             end
           end
 
