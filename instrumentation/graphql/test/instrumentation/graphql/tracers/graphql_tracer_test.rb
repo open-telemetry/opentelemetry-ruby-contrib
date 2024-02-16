@@ -142,7 +142,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         it 'includes attributes using platform types' do
           skip if uses_platform_interfaces?
           expected_attributes = {
-            'graphql.field.parent' => 'Car', # type name, not interface
+            'graphql.field.parent' => 'Vehicle', # interface name, not type
             'graphql.field.name' => 'model',
             'graphql.lazy' => false
           }
