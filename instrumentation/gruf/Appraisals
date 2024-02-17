@@ -4,10 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'gruf-2.15.1' do
-  gem 'gruf', '~> 2.15.1'
-end
-
-appraise 'gruf-2.16.1' do
-  gem 'gruf', '~> 2.16.1'
+appraise 'gruf-2.19.0' do
+  gem 'gruf', '~> 2.19.0'
+  gem 'grpc', '>= 1.61.0'
 end
