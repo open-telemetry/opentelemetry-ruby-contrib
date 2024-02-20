@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.59.0 / 2024-02-16
+
+* BREAKING CHANGE: GraphQL Legacy Tracer perf improvements [#867](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867).
+
+### v0.58.0 / 2024-02-15
+
+* CHANGED: upgrade mysql2 instrumentation
+
 ### v0.57.0 / 2024-02-08
 
 * BREAKING CHANGE: Move shared sql behavior to helper gems
