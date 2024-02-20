@@ -96,7 +96,7 @@ class SqlObfuscationTest < Minitest::Test
     acceptable_outputs << FAILED_TO_OBFUSCATE_MESSAGE if test_case['malformed']
 
     dialects.each do |dialect|
-      define_method("test_sql_obfuscation_#{name}_#{dialect}") do
+      define_method(:"test_sql_obfuscation_#{name}_#{dialect}") do
         actual_obfuscated = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(query, adapter: dialect.to_sym)
         message = build_failure_message(query, dialect, acceptable_outputs, actual_obfuscated)
 
