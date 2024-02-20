@@ -2,7 +2,8 @@
 
 ### v0.60.0 / 2024-02-20
 
-* (No significant changes)
+* ADDED: Add support gruf 2.19
+* ADDED: Faraday add support for internal spans
 
 ### v0.59.0 / 2024-02-16
 
