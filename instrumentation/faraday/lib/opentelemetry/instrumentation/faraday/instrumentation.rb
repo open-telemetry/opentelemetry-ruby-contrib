@@ -20,6 +20,7 @@ module OpenTelemetry
           defined?(::Faraday)
         end
 
+        option :span_kind, default: :client, validate: %i[client internal]
         option :peer_service, default: nil, validate: :string
 
         private

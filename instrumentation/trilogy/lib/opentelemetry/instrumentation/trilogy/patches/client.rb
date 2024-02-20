@@ -50,7 +50,14 @@ module OpenTelemetry
               ),
               kind: :client
             ) do |_span, context|
-              propagator.inject(sql, context: context)
+              if propagator && sql.frozen?
+                sql = +sql
+                propagator.inject(sql, context: context)
+                sql.freeze
+              elsif propagator
+                propagator.inject(sql, context: context)
+              end
+
               super(sql)
             end
           end
