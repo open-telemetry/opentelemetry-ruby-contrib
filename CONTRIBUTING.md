@@ -132,7 +132,7 @@ merging.
 All commits to the main repository should follow the
 [conventional commit](https://conventionalcommits.org) standard. In a nutshell,
 this means commit messages should begin with a semantic tag such as `feat:`,
-`fix:`, `docs:`, `tests:`, or `refactor:`. Our release tooling uses these tags
+`fix:`, `docs:`, `test:`, `refactor:`, etc... Our release tooling uses these tags
 to determine the semantics of your commit, such as how it affects semantic
 versioning of the libraries, and to generate changelogs from commit
 descriptions. If you are not familiar with conventional commits, please review

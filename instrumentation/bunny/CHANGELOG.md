@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-bunny
 
+### v0.21.2 / 2024-02-08
+
+* FIXED: Remove disable directives leftover from older version of Rubocop
+
 ### v0.21.1 / 2023-09-27
 
 * FIXED: Headers property needs to exist

@@ -110,6 +110,33 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         _(span.attributes['peer.service']).must_equal 'example:faraday'
       end
 
+      it 'defaults to span kind client' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install
+
+        client.get('/success')
+
+        _(span.kind).must_equal :client
+      end
+
+      it 'allows overriding the span kind to internal' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(span_kind: :internal)
+
+        client.get('/success')
+
+        _(span.kind).must_equal :internal
+      end
+
+      it 'reports the name of the configured adapter' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install
+
+        client.get('/success')
+
+        _(span.attributes.fetch('faraday.adapter.name')).must_equal Faraday::Adapter::Test.name
+      end
+
       it 'prioritizes context attributes over config for peer service name' do
         instrumentation.instance_variable_set(:@installed, false)
         instrumentation.install(peer_service: 'example:faraday')

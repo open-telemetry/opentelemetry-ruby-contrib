@@ -60,8 +60,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: "Test Ruby 3.3"
-        # BLOCKED BY: https://github.com/bigcommerce/gruf/pull/197
-        if: "${{ matrix.gem != 'gruf' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"

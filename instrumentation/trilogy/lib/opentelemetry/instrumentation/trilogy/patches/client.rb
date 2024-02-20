@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry-helpers-mysql'
+require 'opentelemetry-helpers-sql-obfuscation'
+
 module OpenTelemetry
   module Instrumentation
     module Trilogy
@@ -46,7 +49,15 @@ module OpenTelemetry
                 OpenTelemetry::Instrumentation::Trilogy.attributes
               ),
               kind: :client
-            ) do
+            ) do |_span, context|
+              if propagator && sql.frozen?
+                sql = +sql
+                propagator.inject(sql, context: context)
+                sql.freeze
+              elsif propagator
+                propagator.inject(sql, context: context)
+              end
+
               super(sql)
             end
           end
@@ -91,6 +102,10 @@ module OpenTelemetry
 
           def config
             Trilogy::Instrumentation.instance.config
+          end
+
+          def propagator
+            Trilogy::Instrumentation.instance.propagator
           end
         end
       end

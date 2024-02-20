@@ -40,6 +40,7 @@ gems:
 
   - name: opentelemetry-helpers-sql-obfuscation
     directory: helpers/sql-obfuscation
+    version_rb_path: lib/opentelemetry/helpers/sql_obfuscation/version.rb
     version_constant: [OpenTelemetry, Helpers, SqlObfuscation, VERSION]
 
   - name: opentelemetry-instrumentation-grape
@@ -211,6 +212,10 @@ gems:
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace
     version_constant: [OpenTelemetry, Propagator, OTTrace, VERSION]
+
+  - name: opentelemetry-propagator-vitess
+    directory: propagator/vitess
+    version_constant: [OpenTelemetry, Propagator, Vitess, VERSION]
 
   - name: opentelemetry-propagator-xray
     directory: propagator/xray
