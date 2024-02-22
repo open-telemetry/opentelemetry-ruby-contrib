@@ -7,22 +7,6 @@
 module OpenTelemetry
   module Instrumentation
     module Trilogy
-      # @api private
-      class NoopPropagator
-        EMPTY_LIST = [].freeze
-        private_constant(:EMPTY_LIST)
-
-        def inject(carrier, context: Context.current, setter: nil); end
-
-        def extract(carrier, context: Context.current, getter: nil)
-          context
-        end
-
-        def fields
-          EMPTY_LIST
-        end
-      end
-
       # The Instrumentation class contains logic to detect and install the Trilogy instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |config|
@@ -61,10 +45,9 @@ module OpenTelemetry
           propagator = config[:propagator]
           @propagator = case propagator
                         when 'vitess' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Vitess')
-                        when 'none', nil then NoopPropagator.new
+                        when 'none', nil then nil
                         else
                           OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
-                          NoopPropagator.new
                         end
         end
 
