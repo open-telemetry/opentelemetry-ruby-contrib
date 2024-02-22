@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.60.0 / 2024-02-20
+
+* ADDED: Add support gruf 2.19
+* ADDED: Faraday add support for internal spans
+
 ### v0.59.0 / 2024-02-16
 
 * BREAKING CHANGE: GraphQL Legacy Tracer perf improvements [#867](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867).
