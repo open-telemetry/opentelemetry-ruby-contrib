@@ -51,9 +51,6 @@ module OpenTelemetry
         end
 
         def require_dependencies
-          # Our patches depend on Ruby 2 Keyword Syntax compatability since it is decorating the existing AR API
-          # Once we migrate to ActiveSupport Notifications based instrumentation we can remove this require statement.
-          require 'ruby2_keywords' # rubocop:disable Lint/RedundantRequireStatement
           require_relative 'patches/querying'
           require_relative 'patches/persistence'
           require_relative 'patches/persistence_class_methods'
