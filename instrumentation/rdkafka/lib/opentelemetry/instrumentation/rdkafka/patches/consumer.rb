@@ -76,11 +76,11 @@ module OpenTelemetry
           end
 
           def getter
-            if Gem::Version.new(::Rdkafka::VERSION) >= Gem::Version.new('0.13.0')
-              Context::Propagation.text_map_getter
-            else
-              OpenTelemetry::Common::Propagation.symbol_key_getter
-            end
+            @getter ||= if Gem::Version.new(::Rdkafka::VERSION) >= Gem::Version.new('0.13.0')
+                          Context::Propagation.text_map_getter
+                        else
+                          OpenTelemetry::Common::Propagation.symbol_key_getter
+                        end
           end
         end
       end
