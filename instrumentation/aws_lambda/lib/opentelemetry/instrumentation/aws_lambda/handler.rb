@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module AwsLambda
-      # Handler class that create span around the _HANDLER
+      # Handler class that creates a span around the _HANDLER
       class Handler
         attr_reader :handler_method, :handler_class
 
