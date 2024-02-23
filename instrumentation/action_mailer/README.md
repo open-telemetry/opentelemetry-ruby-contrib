@@ -49,7 +49,7 @@ class CrashingEndSubscriber
   def finish(name, id, payload) end
 end
 
-::ActiveSupport::Notifications.subscribe('render_template.action_mailer', CrashingStartSubscriber.new)
+::ActiveSupport::Notifications.subscribe('deliver.action_mailer', CrashingStartSubscriber.new)
 ```
 
 ## How can I get involved?
