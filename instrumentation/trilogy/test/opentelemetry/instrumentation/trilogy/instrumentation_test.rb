@@ -182,9 +182,36 @@ describe OpenTelemetry::Instrumentation::Trilogy do
     end
 
     describe 'when pinging' do
+      let(:span) { exporter.finished_spans[2] }
+
+      describe 'when default' do
+        it 'does not generate `ping` span' do
+          _(client.connected_host).wont_be_nil
+
+          client.ping
+
+          _(span).must_be_nil
+        end
+
+        describe 'but with parent' do
+          it 'spans will include database name' do
+            _(client.connected_host).wont_be_nil
+
+            OpenTelemetry.tracer_provider.tracer.in_span('parent') do
+              client.ping
+            end
+
+            _(span.name).must_equal 'ping'
+            _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
+            _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
+            _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
+            _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
+          end
+        end
+      end
+
       describe 'when `ping_enabled` is `true`' do
         let(:config) { { ping_enabled: true } }
-        let(:span) { exporter.finished_spans[2] }
 
         it 'spans will include database name' do
           _(client.connected_host).wont_be_nil
@@ -201,7 +228,6 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
       describe 'when `ping_enabled` is `false`' do
         let(:config) { { ping_enabled: false } }
-        let(:span) { exporter.finished_spans[2] }
 
         it 'does not generate `ping` span' do
           _(client.connected_host).wont_be_nil
@@ -209,6 +235,22 @@ describe OpenTelemetry::Instrumentation::Trilogy do
           client.ping
 
           _(span).must_be_nil
+        end
+
+        describe 'but with parent' do
+          it 'spans will include database name' do
+            _(client.connected_host).wont_be_nil
+
+            OpenTelemetry.tracer_provider.tracer.in_span('parent') do
+              client.ping
+            end
+
+            _(span.name).must_equal 'ping'
+            _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
+            _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
+            _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
+            _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
+          end
         end
       end
     end

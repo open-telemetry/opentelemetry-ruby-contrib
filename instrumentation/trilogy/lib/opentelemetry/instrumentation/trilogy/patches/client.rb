@@ -26,7 +26,7 @@ module OpenTelemetry
           end
 
           def ping(...)
-            return super unless config[:ping_enabled]
+            return super unless OpenTelemetry::Trace.current_span.context.valid? || config[:ping_enabled]
 
             tracer.in_span(
               'ping',
