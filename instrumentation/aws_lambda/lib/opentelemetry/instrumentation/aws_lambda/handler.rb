@@ -22,9 +22,8 @@ module OpenTelemetry
           original_handler = resolve_original_handler
           response         = call_original_handler(event: event, context: context)
 
+          span_attributes.merge!(otel_attributes(context))
           span_attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE] = response['statusCode'] if response.instance_of?(Hash) && response['statusCode']
-          span_attributes[OpenTelemetry::SemanticConventions::Resource::FAAS_ID]       = context.invoked_function_arn
-          span_attributes[OpenTelemetry::SemanticConventions::Trace::FAAS_EXECUTION]   = context.aws_request_id
 
           OpenTelemetry::Context.with_current(parent_context) do
             span = tracer.start_span(
@@ -125,6 +124,16 @@ module OpenTelemetry
           end
 
           attributes
+        end
+
+        # TODO: need to update Semantic Conventions for invocation_id, trigger and resource_id
+        def otel_attributes(context)
+          {
+            'faas.invocation_id' => context.aws_request_id,
+            'faas.trigger' => context.function_name,
+            OpenTelemetry::SemanticConventions::Trace::AWS_LAMBDA_INVOKED_ARN => context.invoked_function_arn,
+            'cloud.resource_id' => "#{context.invoked_function_arn};#{context.aws_request_id};#{context.function_name}"
+          }
         end
       end
     end

@@ -13,11 +13,12 @@ require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 
 class MockLambdaContext
-  attr_reader :aws_request_id, :invoked_function_arn
+  attr_reader :aws_request_id, :invoked_function_arn, :function_name
 
-  def initialize(aws_request_id:, invoked_function_arn:)
+  def initialize(aws_request_id:, invoked_function_arn:, function_name:)
     @aws_request_id = aws_request_id
     @invoked_function_arn = invoked_function_arn
+    @function_name = function_name
   end
 end
 
@@ -96,8 +97,12 @@ EVENT_V2 = {
 }.freeze
 
 CONTEXT = MockLambdaContext.new(aws_request_id: '41784178-4178-4178-4178-4178417855e',
-                                invoked_function_arn: 'arn:aws:lambda:location:id:function_name:function_name')
+                                invoked_function_arn: 'arn:aws:lambda:location:id:function_name:function_name',
+                                function_name: 'funcion')
 
+$LOAD_PATH.unshift("#{Dir.pwd}/example/")
+ENV['ORIG_HANDLER'] = 'sample.test'
+ENV['_HANDLER'] = 'sample.test'
 OpenTelemetry::SDK.configure do |c|
   c.error_handler = ->(exception:, message:) { raise(exception || message) }
   c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)

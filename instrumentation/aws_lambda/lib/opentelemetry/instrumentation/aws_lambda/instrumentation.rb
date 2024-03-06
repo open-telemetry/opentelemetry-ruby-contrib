@@ -13,9 +13,9 @@ module OpenTelemetry
           require_dependencies
         end
 
+        # determine if current environment is lambda by checking _HANLDER or ORIG_HANDLER
         present do
-          # maybe check if ORIG_HANDLER or _HANLDER exist
-          true
+          (ENV.key?('_HANDLER') || ENV.key?('ORIG_HANDLER'))
         end
 
         compatible do

@@ -19,11 +19,12 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 class MockLambdaContext
-  attr_reader :aws_request_id, :invoked_function_arn
+  attr_reader :aws_request_id, :invoked_function_arn, :function_name
 
-  def initialize(aws_request_id:, invoked_function_arn:)
+  def initialize(aws_request_id:, invoked_function_arn:, function_name:)
     @aws_request_id = aws_request_id
     @invoked_function_arn = invoked_function_arn
+    @function_name = function_name
   end
 end
 
@@ -96,6 +97,6 @@ event = {
    "version" => "1.0"
 }
 
-context = MockLambdaContext.new(aws_request_id: "aws_request_id",invoked_function_arn: "invoked_function_arn")
+context = MockLambdaContext.new(aws_request_id: "aws_request_id",invoked_function_arn: "invoked_function_arn",function_name: "function")
 
 otel_wrapper(event: event, context: context) # you should see Success before the trace
