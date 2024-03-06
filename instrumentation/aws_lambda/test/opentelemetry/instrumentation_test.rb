@@ -120,4 +120,46 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
       end
     end
   end
+
+  describe 'validate_error_handling' do
+    it 'handle error if original handler cause issue' do
+      otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
+      otel_wrapper.stub(:call_original_handler, ->(**_args) { raise StandardError, 'Simulated Error' }) do
+        otel_wrapper.call_wrapped(event: event_v1, context: context)
+      rescue StandardError
+        _(last_span.name).must_equal 'sample.test'
+        _(last_span.kind).must_equal :server
+
+        _(last_span.status.code).must_equal 2
+        _(last_span.status.description).must_equal 'Original lambda handler exception: StandardError. Please check if you have correct handler setting or code in lambda function.'
+        _(last_span.hex_parent_span_id).must_equal '0000000000000000'
+
+        _(last_span.events[0].name).must_equal 'exception'
+        _(last_span.events[0].attributes['exception.type']).must_equal 'StandardError'
+        _(last_span.events[0].attributes['exception.message']).must_equal 'Simulated Error'
+
+        _(last_span.hex_span_id.size).must_equal 16
+        _(last_span.hex_trace_id.size).must_equal 32
+        _(last_span.trace_flags.sampled?).must_equal true
+        _(last_span.tracestate.to_h.to_s).must_equal '{}'
+
+        _(last_span.attributes['http.status_code']).must_equal '500'
+      end
+    end
+
+    it 'if wrapped handler cause otel-related issue, wont break the entire lambda call' do
+      otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
+      otel_wrapper.stub(:call_wrapped, { 'test' => 'ok' }) do
+        otel_wrapper.stub(:call_original_handler, {}) do
+          OpenTelemetry::Context.stub(:with_current, lambda { |_context|
+            tracer.start_span('test_span', attributes: {}, kind: :server)
+            raise StandardError, 'OTEL Error'
+          }) do
+            response = otel_wrapper.call_wrapped(event: event_v1, context: context)
+            _(response['test']).must_equal 'ok'
+          end
+        end
+      end
+    end
+  end
 end
