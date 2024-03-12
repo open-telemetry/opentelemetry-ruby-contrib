@@ -24,6 +24,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       allowed_request_headers: allowed_request_headers,
       allowed_response_headers: allowed_response_headers,
       url_quantization: url_quantization,
+      propagate_with_link: propagate_with_link,
       response_propagators: response_propagators,
       enabled: instrumentation_enabled,
       use_rack_events: true
@@ -51,6 +52,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
   let(:allowed_response_headers) { nil }
   let(:response_propagators) { nil }
   let(:url_quantization) { nil }
+  let(:propagate_with_link) { nil }
   let(:headers) { {} }
   let(:app) do
     Rack::Builder.new.tap do |builder|
@@ -408,6 +410,48 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       _(rack_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       _(rack_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
       _(proxy_event).must_be_nil
+    end
+  end
+
+  describe 'link propagation' do
+    describe 'without link propagation fn' do
+      it 'the root span has no links' do
+        get '/url'
+
+        _(rack_span.name).must_equal 'HTTP GET'
+        _(rack_span.total_recorded_links).must_equal(0)
+      end
+    end
+
+    describe 'with link propagation fn that returns false' do
+      let(:propagate_with_link) do
+        ->(_env) { false }
+      end
+
+      it 'has no links' do
+        get '/url'
+
+        _(rack_span.name).must_equal 'HTTP GET'
+        _(rack_span.total_recorded_links).must_equal(0)
+      end
+    end
+
+    describe 'with link propagation fn that returns true' do
+      let(:propagate_with_link) do
+        ->(env) { env['PATH_INFO'].start_with?('/url') }
+      end
+
+      it 'has links' do
+        trace_id = '618c54694e838292271da0ba122547e9'
+        span_id = 'd408cc622ee29ce0'
+        header 'traceparent', "00-#{trace_id}-#{span_id}-01"
+        get '/url'
+
+        _(rack_span.name).must_equal 'HTTP GET'
+        _(rack_span.total_recorded_links).must_equal(1)
+        _(rack_span.links[0].span_context.trace_id.unpack1('H*')).must_equal(trace_id)
+        _(rack_span.links[0].span_context.span_id.unpack1('H*')).must_equal(span_id)
+      end
     end
   end
 end
