@@ -83,7 +83,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       it 'omits nil attributes for execute_query' do
         expected_attributes = {
           'graphql.operation.type' => 'query',
-          'graphql.document' => '{ simpleField }'
+          'graphql.document' => '{ simpleField }',
+          'graphql.operation.name' => 'anonymous'
         }
 
         SomeGraphQLAppSchema.execute('{ simpleField }')
@@ -141,7 +142,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         it 'includes attributes using platform types' do
           skip if uses_platform_interfaces?
           expected_attributes = {
-            'graphql.field.parent' => 'Car', # type name, not interface
+            'graphql.field.parent' => 'Vehicle', # interface name, not type
             'graphql.field.name' => 'model',
             'graphql.lazy' => false
           }

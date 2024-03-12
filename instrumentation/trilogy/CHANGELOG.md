@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.59.2 / 2024-02-20
+
+* FIXED: Dup string if frozen in trilogy query
+
 ### v0.59.1 / 2024-02-08
 
 * FIXED: Add missing requires for sql-helpers to mysql, pg, and trilogy instrumentation
