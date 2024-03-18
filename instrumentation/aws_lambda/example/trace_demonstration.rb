@@ -76,7 +76,7 @@ event = {
    "path" => "/",
    "pathParameters" => nil,
    "queryStringParameters" => nil,
-   "requestContext":{
+   "requestContext" => {
       "accountId" => 123456789012,
       "apiId" => 1234567890,
       "domainName" => "127.0.0.1:3000",

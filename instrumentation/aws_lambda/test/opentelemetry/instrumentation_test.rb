@@ -57,7 +57,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
 
         _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
         _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
-        _(last_span.attributes['faas.trigger']).must_equal 'funcion'
+        _(last_span.attributes['faas.trigger']).must_equal 'http'
         _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name;41784178-4178-4178-4178-4178417855e;funcion'
         _(last_span.attributes['http.method']).must_equal 'GET'
         _(last_span.attributes['http.route']).must_equal '/'
@@ -110,7 +110,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
 
         _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
         _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
-        _(last_span.attributes['faas.trigger']).must_equal 'funcion'
+        _(last_span.attributes['faas.trigger']).must_equal 'http'
         _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name;41784178-4178-4178-4178-4178417855e;funcion'
         _(last_span.attributes['net.host.name']).must_equal 'id.execute-api.us-east-1.amazonaws.com'
         _(last_span.attributes['http.method']).must_equal 'POST'

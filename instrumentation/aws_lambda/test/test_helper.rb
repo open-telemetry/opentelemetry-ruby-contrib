@@ -41,7 +41,7 @@ EVENT_V1 = {
   'path' => '/',
   'pathParameters' => nil,
   'queryStringParameters' => nil,
-  requestContext: {
+  'requestContext' => {
     'accountId' => 123_456_789_012,
     'apiId' => 1_234_567_890,
     'domainName' => '127.0.0.1:3000',

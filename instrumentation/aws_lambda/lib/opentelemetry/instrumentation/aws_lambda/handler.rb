@@ -112,6 +112,8 @@ module OpenTelemetry
           OpenTelemetry::Context.empty
         end
 
+        # lambda event version 1.0 and version 2.0
+        # https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html
         def v1_proxy_attributes(event)
           attributes = {
             OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => event['httpMethod'],
@@ -131,30 +133,32 @@ module OpenTelemetry
         end
 
         def v2_proxy_attributes(event)
+          attributes = {}
           request_context = event['requestContext']
           if request_context
-            attributes = {
-              OpenTelemetry::SemanticConventions::Trace::NET_HOST_NAME => request_context['domainName'],
-              OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => request_context['http']['method'],
-              OpenTelemetry::SemanticConventions::Trace::HTTP_USER_AGENT => request_context['http']['userAgent'],
-              OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE => request_context['http']['path'],
-              OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => request_context['http']['path']
-            }
+            attributes.merge!({
+                                OpenTelemetry::SemanticConventions::Trace::NET_HOST_NAME => request_context['domainName'],
+                                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => request_context['http']['method'],
+                                OpenTelemetry::SemanticConventions::Trace::HTTP_USER_AGENT => request_context['http']['userAgent'],
+                                OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE => request_context['http']['path'],
+                                OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => request_context['http']['path']
+                              })
             attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] += "?#{event['rawQueryString']}" if event['rawQueryString']
-          else
-            attributes = {}
           end
 
           attributes
         end
 
+        # fass.trigger set to http: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/faas/aws-lambda.md#api-gateway
         # TODO: need to update Semantic Conventions for invocation_id, trigger and resource_id
         def otel_attributes(event, context)
           span_attributes = event['version'] == '2.0' ? v2_proxy_attributes(event) : v1_proxy_attributes(event)
           span_attributes['faas.invocation_id'] = context.aws_request_id
-          span_attributes['faas.trigger']       = context.function_name
-          span_attributes[OpenTelemetry::SemanticConventions::Trace::AWS_LAMBDA_INVOKED_ARN] = context.invoked_function_arn
+          span_attributes['faas.trigger'] = 'http'
           span_attributes['cloud.resource_id'] = "#{context.invoked_function_arn};#{context.aws_request_id};#{context.function_name}"
+          span_attributes[OpenTelemetry::SemanticConventions::Trace::AWS_LAMBDA_INVOKED_ARN] = context.invoked_function_arn
+          span_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = event['requestContext']['accountId'] if event['requestContext']
+
           span_attributes
         rescue StandardError => e
           OpenTelemetry.logger.error("aws-lambda instrumentation exception occur while preparing span attributes: #{e.message}")
