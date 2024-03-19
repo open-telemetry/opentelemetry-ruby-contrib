@@ -161,7 +161,7 @@ module OpenTelemetry
 
           span_attributes
         rescue StandardError => e
-          OpenTelemetry.logger.error("aws-lambda instrumentation exception occur while preparing span attributes: #{e.message}")
+          OpenTelemetry.logger.error("aws-lambda instrumentation exception occurred while preparing span attributes: #{e.message}")
           {}
         end
       end
