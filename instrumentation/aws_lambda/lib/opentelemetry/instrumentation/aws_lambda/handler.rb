@@ -33,7 +33,7 @@ module OpenTelemetry
           original_handler_error = nil
           begin
             response = call_original_handler(event: event, context: context)
-            span_attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE] = response['statusCode'] if response.instance_of?(Hash) && response['statusCode']
+            span_attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE] = response['statusCode'] || response[:statusCode] if response.is_a? Hash
           rescue StandardError => e
             original_handler_error = e
             span_attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE] = '500'
