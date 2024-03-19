@@ -14,7 +14,7 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-a
 
 ## Usage
 
-From the Lambda Layer side, create the wrapper. More information can be found at https://github.com/open-telemetry/opentelemetry-lambda
+From the Lambda Layer side, create the wrapper. More information can be found at https://github.com/open-telemetry/opentelemetry-lambda/tree/main/ruby
 ```ruby
 require 'opentelemetry/sdk'
 require 'opentelemetry/instrumentation/aws_lambda'

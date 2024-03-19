@@ -108,7 +108,7 @@ module OpenTelemetry
             getter: OpenTelemetry::Context::Propagation.text_map_getter
           )
         rescue StandardError => e
-          OpenTelemetry.logger.error("aws-lambda instrumentation exception occur while extracting parent context: #{e.message}")
+          OpenTelemetry.logger.error("aws-lambda instrumentation exception occurred while extracting the parent context: #{e.message}")
           OpenTelemetry::Context.empty
         end
 
@@ -161,7 +161,7 @@ module OpenTelemetry
 
           span_attributes
         rescue StandardError => e
-          OpenTelemetry.logger.error("aws-lambda instrumentation exception occur while preparing span attributes: #{e.message}")
+          OpenTelemetry.logger.error("aws-lambda instrumentation exception occurred while preparing span attributes: #{e.message}")
           {}
         end
       end
