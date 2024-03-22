@@ -2,7 +2,7 @@
 
 ### v0.24.1 / 2024-03-22
 
-* FIXED: Propagate response attributes on Faraday::Error
+* FIXED: Propagate response attributes on Faraday::Error.
 
 ### v0.24.0 / 2024-02-20
 
