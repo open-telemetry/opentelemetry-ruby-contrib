@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.27.0 / 2024-02-15
+
+* ADDED: Instrument mysql2 prepare statement
+
 ### v0.26.1 / 2024-02-08
 
 * FIXED: Add missing requires for sql-helpers to mysql, pg, and trilogy instrumentation
