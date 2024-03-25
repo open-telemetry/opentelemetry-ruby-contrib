@@ -185,7 +185,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.kind).must_equal :server
 
         _(last_span.status.code).must_equal 2
-        _(last_span.status.description).must_equal 'Original lambda handler exception: StandardError. Please check if you have correct handler setting or code in lambda function.'
+        _(last_span.status.description).must_equal 'Original lambda handler exception: StandardError. Please check if you have the correct handler setting and code in your lambda function.'
         _(last_span.hex_parent_span_id).must_equal '0000000000000000'
 
         _(last_span.events[0].name).must_equal 'exception'

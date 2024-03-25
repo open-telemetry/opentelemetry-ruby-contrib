@@ -29,7 +29,7 @@ module OpenTelemetry
           parent_context = extract_parent_context(event)
 
           span_kind = nil
-          span_kind = if event['Records'] && ['aws:sqs', 'aws:s3', 'aws:sns', 'aws:dynamodb'].include?(event['Records'].dig(0,'eventSource'))
+          span_kind = if event['Records'] && ['aws:sqs', 'aws:s3', 'aws:sns', 'aws:dynamodb'].include?(event['Records'].dig(0, 'eventSource'))
                         :consumer
                       else
                         :server
@@ -186,16 +186,14 @@ module OpenTelemetry
         end
 
         # sqs spec for lambda: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/faas/aws-lambda.md#sqs
+        # current there is no spec for 'aws:sns', 'aws:s3' and 'aws:dynamodb'
         def trigger_type_attributes(event)
           attributes = {}
-          case event['Records'].dig(0,'eventSource')
+          case event['Records'].dig(0, 'eventSource')
           when 'aws:sqs'
             attributes[OpenTelemetry::SemanticConventions::Trace::FAAS_TRIGGER] = 'pubsub'
             attributes[OpenTelemetry::SemanticConventions::Trace::MESSAGING_OPERATION] = 'process'
             attributes[OpenTelemetry::SemanticConventions::Trace::MESSAGING_SYSTEM] = 'AmazonSQS'
-          when 'aws:sns'
-          when 'aws:s3'
-          when 'aws:dynamodb'
           end
           attributes
         end
