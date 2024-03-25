@@ -11,6 +11,8 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
   let(:exporter) { EXPORTER }
   let(:event_v1) { EVENT_V1 }
   let(:event_v2) { EVENT_V2 }
+  let(:event_record) { EVENT_RECORD }
+  let(:sqs_record) { SQS_RECORD }
   let(:context) { CONTEXT }
   let(:last_span) { exporter.finished_spans.last }
 
@@ -59,6 +61,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
         _(last_span.attributes['faas.trigger']).must_equal 'http'
         _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name;41784178-4178-4178-4178-4178417855e;funcion'
+        _(last_span.attributes['cloud.account.id']).must_equal 'id'
         _(last_span.attributes['http.method']).must_equal 'GET'
         _(last_span.attributes['http.route']).must_equal '/'
         _(last_span.attributes['http.target']).must_equal '/'
@@ -111,12 +114,63 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
         _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
         _(last_span.attributes['faas.trigger']).must_equal 'http'
+        _(last_span.attributes['cloud.account.id']).must_equal 'id'
         _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name;41784178-4178-4178-4178-4178417855e;funcion'
         _(last_span.attributes['net.host.name']).must_equal 'id.execute-api.us-east-1.amazonaws.com'
         _(last_span.attributes['http.method']).must_equal 'POST'
         _(last_span.attributes['http.user_agent']).must_equal 'agent'
         _(last_span.attributes['http.route']).must_equal '/path/to/resource'
         _(last_span.attributes['http.target']).must_equal '/path/to/resource?parameter1=value1&parameter1=value2&parameter2=value'
+      end
+    end
+
+    it 'validate_spans_with_records_from_non_gateway_request' do
+      otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
+      otel_wrapper.stub(:call_original_handler, {}) do
+        otel_wrapper.call_wrapped(event: event_record, context: context)
+
+        _(last_span.name).must_equal 'sample.test'
+        _(last_span.kind).must_equal :consumer
+        _(last_span.status.code).must_equal 1
+        _(last_span.hex_parent_span_id).must_equal '0000000000000000'
+
+        _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
+        _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
+        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name;41784178-4178-4178-4178-4178417855e;funcion'
+        _(last_span.attributes['cloud.account.id']).must_equal 'id'
+
+        assert_nil(last_span.attributes['faas.trigger'])
+        assert_nil(last_span.attributes['http.method'])
+        assert_nil(last_span.attributes['http.user_agent'])
+        assert_nil(last_span.attributes['http.route'])
+        assert_nil(last_span.attributes['http.target'])
+        assert_nil(last_span.attributes['net.host.name'])
+      end
+    end
+
+    it 'validate_spans_with_records_from_sqs' do
+      otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
+      otel_wrapper.stub(:call_original_handler, {}) do
+        otel_wrapper.call_wrapped(event: sqs_record, context: context)
+
+        _(last_span.name).must_equal 'sample.test'
+        _(last_span.kind).must_equal :consumer
+        _(last_span.status.code).must_equal 1
+        _(last_span.hex_parent_span_id).must_equal '0000000000000000'
+
+        _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
+        _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
+        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name;41784178-4178-4178-4178-4178417855e;funcion'
+        _(last_span.attributes['cloud.account.id']).must_equal 'id'
+        _(last_span.attributes['faas.trigger']).must_equal 'pubsub'
+        _(last_span.attributes['messaging.operation']).must_equal 'process'
+        _(last_span.attributes['messaging.system']).must_equal 'AmazonSQS'
+
+        assert_nil(last_span.attributes['http.method'])
+        assert_nil(last_span.attributes['http.user_agent'])
+        assert_nil(last_span.attributes['http.route'])
+        assert_nil(last_span.attributes['http.target'])
+        assert_nil(last_span.attributes['net.host.name'])
       end
     end
   end
@@ -142,8 +196,6 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.hex_trace_id.size).must_equal 32
         _(last_span.trace_flags.sampled?).must_equal true
         _(last_span.tracestate.to_h.to_s).must_equal '{}'
-
-        _(last_span.attributes['http.status_code']).must_equal '500'
       end
     end
 

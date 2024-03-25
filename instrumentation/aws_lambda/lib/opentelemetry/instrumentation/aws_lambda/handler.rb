@@ -26,27 +26,34 @@ module OpenTelemetry
         # We want to capture the error if user's handler is causing issue
         # but our wrapper and handler shouldn't cause any issue
         def call_wrapped(event:, context:)
-          parent_context   = extract_parent_context(event)
-          span_attributes  = otel_attributes(event, context)
+          parent_context = extract_parent_context(event)
 
-          response = nil
+          span_kind = nil
+          span_kind = if event['Records'] && ['aws:sqs', 'aws:s3', 'aws:sns', 'aws:dynamodb'].include?(event['Records'].dig(0,'eventSource'))
+                        :consumer
+                      else
+                        :server
+                      end
+
           original_handler_error = nil
-          begin
-            response = call_original_handler(event: event, context: context)
-            status_code = response.is_a?(Hash) ? (response['statusCode'] || response[:statusCode]) : nil
-          rescue StandardError => e
-            original_handler_error = e
-            status_code = '500'
-          end
-
-          span_attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE] = status_code if status_code
-
+          original_response = nil
           OpenTelemetry::Context.with_current(parent_context) do
+            span_attributes = otel_attributes(event, context)
             span = tracer.start_span(
               @original_handler,
               attributes: span_attributes,
-              kind: :server # Span kind MUST be `:server` for a HTTP server span
+              kind: span_kind
             )
+
+            begin
+              response = call_original_handler(event: event, context: context)
+              status_code = response['statusCode'] || response[:statusCode] if response.is_a?(Hash)
+              span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code) if status_code
+            rescue StandardError => e
+              original_handler_error = e
+            ensure
+              original_response = response
+            end
           rescue StandardError => e
             span&.record_exception(e)
             span&.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
@@ -61,7 +68,7 @@ module OpenTelemetry
 
           raise original_handler_error if original_handler_error
 
-          response
+          original_response
         end
 
         def instrumentation_config
@@ -130,41 +137,67 @@ module OpenTelemetry
             attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME]     = headers['X-Forwarded-Proto']
             attributes[OpenTelemetry::SemanticConventions::Trace::NET_HOST_NAME]   = headers['Host']
           end
-
           attributes
         end
 
         def v2_proxy_attributes(event)
-          attributes = {}
           request_context = event['requestContext']
-          if request_context
-            attributes.merge!({
-                                OpenTelemetry::SemanticConventions::Trace::NET_HOST_NAME => request_context['domainName'],
-                                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => request_context['http']['method'],
-                                OpenTelemetry::SemanticConventions::Trace::HTTP_USER_AGENT => request_context['http']['userAgent'],
-                                OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE => request_context['http']['path'],
-                                OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => request_context['http']['path']
-                              })
-            attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] += "?#{event['rawQueryString']}" if event['rawQueryString']
-          end
-
+          attributes = {
+            OpenTelemetry::SemanticConventions::Trace::NET_HOST_NAME => request_context['domainName'],
+            OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => request_context['http']['method'],
+            OpenTelemetry::SemanticConventions::Trace::HTTP_USER_AGENT => request_context['http']['userAgent'],
+            OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE => request_context['http']['path'],
+            OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => request_context['http']['path']
+          }
+          attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] += "?#{event['rawQueryString']}" if event['rawQueryString']
           attributes
         end
 
         # fass.trigger set to http: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/faas/aws-lambda.md#api-gateway
         # TODO: need to update Semantic Conventions for invocation_id, trigger and resource_id
         def otel_attributes(event, context)
-          span_attributes = event['version'] == '2.0' ? v2_proxy_attributes(event) : v1_proxy_attributes(event)
+          span_attributes = {}
           span_attributes['faas.invocation_id'] = context.aws_request_id
-          span_attributes['faas.trigger'] = 'http'
           span_attributes['cloud.resource_id'] = "#{context.invoked_function_arn};#{context.aws_request_id};#{context.function_name}"
           span_attributes[OpenTelemetry::SemanticConventions::Trace::AWS_LAMBDA_INVOKED_ARN] = context.invoked_function_arn
           span_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = event['requestContext']['accountId'] if event['requestContext']
+
+          # from python, need to find out which one is correct
+          account_id = context.invoked_function_arn.split(':')[4]
+          span_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = account_id
+          span_attributes[OpenTelemetry::SemanticConventions::Trace::FAAS_EXECUTION] = context.aws_request_id
+          span_attributes[OpenTelemetry::SemanticConventions::Resource::FAAS_ID] = context.invoked_function_arn
+
+          if event['requestContext']
+            request_attributes = event['version'] == '2.0' ? v2_proxy_attributes(event) : v1_proxy_attributes(event)
+            request_attributes[OpenTelemetry::SemanticConventions::Trace::FAAS_TRIGGER] = 'http'
+            span_attributes.merge!(request_attributes)
+          end
+
+          if event['Records']
+            trigger_attributes = trigger_type_attributes(event)
+            span_attributes.merge!(trigger_attributes)
+          end
 
           span_attributes
         rescue StandardError => e
           OpenTelemetry.logger.error("aws-lambda instrumentation exception occurred while preparing span attributes: #{e.message}")
           {}
+        end
+
+        # sqs spec for lambda: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/faas/aws-lambda.md#sqs
+        def trigger_type_attributes(event)
+          attributes = {}
+          case event['Records'].dig(0,'eventSource')
+          when 'aws:sqs'
+            attributes[OpenTelemetry::SemanticConventions::Trace::FAAS_TRIGGER] = 'pubsub'
+            attributes[OpenTelemetry::SemanticConventions::Trace::MESSAGING_OPERATION] = 'process'
+            attributes[OpenTelemetry::SemanticConventions::Trace::MESSAGING_SYSTEM] = 'AmazonSQS'
+          when 'aws:sns'
+          when 'aws:s3'
+          when 'aws:dynamodb'
+          end
+          attributes
         end
       end
     end

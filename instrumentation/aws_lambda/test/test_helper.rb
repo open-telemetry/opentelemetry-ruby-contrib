@@ -96,6 +96,57 @@ EVENT_V2 = {
   'stageVariables' => { 'stageVariable1' => 'value1', 'stageVariable2' => 'value2' }
 }.freeze
 
+EVENT_RECORD = {
+  'Records' =>
+    [
+      { 'eventVersion' => '2.0',
+        'eventSource' => 'aws:s3',
+        'awsRegion' => 'us-east-1',
+        'eventTime' => '1970-01-01T00:00:00.000Z',
+        'eventName' => 'ObjectCreated:Put',
+        'userIdentity' => { 'principalId' => 'EXAMPLE' },
+        'requestParameters' => { 'sourceIPAddress' => '127.0.0.1' },
+        'responseElements' => {
+          'x-amz-request-id' => 'EXAMPLE123456789',
+          'x-amz-id-2' => 'EXAMPLE123/5678abcdefghijklambdaisawesome/mnopqrstuvwxyzABCDEFGH'
+        },
+        's3' => {
+          's3SchemaVersion' => '1.0',
+          'configurationId' => 'testConfigRule',
+          'bucket' => {
+            'name' => 'mybucket',
+            'ownerIdentity' => {
+              'principalId' => 'EXAMPLE'
+            },
+            'arn' => 'arn:aws:s3:::mybucket'
+          },
+          'object' => {
+            'key' => 'test/key',
+            'size' => 1024,
+            'eTag' => '0123456789abcdef0123456789abcdef',
+            'sequencer' => '0A1B2C3D4E5F678901'
+          }
+        } }
+    ]
+}.freeze
+
+SQS_RECORD = {
+  'Records' =>
+    [{ 'messageId' => '19dd0b57-b21e-4ac1-bd88-01bbb068cb78',
+       'receiptHandle' => 'MessageReceiptHandle',
+       'body' => 'Hello from SQS!',
+       'attributes' =>
+       { 'ApproximateReceiveCount' => '1',
+         'SentTimestamp' => '1523232000000',
+         'SenderId' => '123456789012',
+         'ApproximateFirstReceiveTimestamp' => '1523232000001' },
+       'messageAttributes' => {},
+       'md5OfBody' => '7b270e59b47ff90a553787216d55d91d',
+       'eventSource' => 'aws:sqs',
+       'eventSourceARN' => 'arn:aws:sqs:us-east-1:123456789012:MyQueue',
+       'awsRegion' => 'us-east-1' }]
+}.freeze
+
 CONTEXT = MockLambdaContext.new(aws_request_id: '41784178-4178-4178-4178-4178417855e',
                                 invoked_function_arn: 'arn:aws:lambda:location:id:function_name:function_name',
                                 function_name: 'funcion')
