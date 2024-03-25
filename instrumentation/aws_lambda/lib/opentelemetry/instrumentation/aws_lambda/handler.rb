@@ -60,7 +60,7 @@ module OpenTelemetry
           ensure
             if original_handler_error
               span&.record_exception(original_handler_error)
-              span&.status = OpenTelemetry::Trace::Status.error("Original lambda handler exception: #{original_handler_error.class}. Please check if you have correct handler setting or code in lambda function.")
+              span&.status = OpenTelemetry::Trace::Status.error("Original lambda handler exception: #{original_handler_error.class}. Please check if you have the correct handler setting and code in your lambda function.")
             end
             span&.finish
             OpenTelemetry.tracer_provider.force_flush(timeout: @flush_timeout)
