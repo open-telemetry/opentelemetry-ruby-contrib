@@ -90,6 +90,10 @@ updates:
   schedule:
     interval: weekly
 - package-ecosystem: bundler
+  directory: "/instrumentation/aws_lambda"
+  schedule:
+    interval: weekly
+- package-ecosystem: bundler
   directory: "/instrumentation/active_record"
   schedule:
     interval: weekly

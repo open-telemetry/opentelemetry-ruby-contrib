@@ -23,6 +23,7 @@ jobs:
           - active_support
           - all
           - aws_sdk
+          - aws_lambda
           - base
           - concurrent_ruby
           - delayed_job
@@ -85,6 +86,7 @@ jobs:
           [[ "${{ matrix.gem }}" == "active_record"            ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "active_support"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "aws_sdk"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "aws_lambda"               ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "delayed_job"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "graphql"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "http"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
