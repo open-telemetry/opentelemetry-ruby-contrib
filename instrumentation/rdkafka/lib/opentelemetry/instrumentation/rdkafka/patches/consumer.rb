@@ -11,10 +11,10 @@ module OpenTelemetry
         # The Consumer module contains the instrumentation patch for the Consumer class
         module Consumer
           GETTER = if Gem::Version.new(::Rdkafka::VERSION) >= Gem::Version.new('0.13.0')
-              Context::Propagation.text_map_getter
-            else
-              OpenTelemetry::Common::Propagation.symbol_key_getter
-            end
+                     Context::Propagation.text_map_getter
+                   else
+                     OpenTelemetry::Common::Propagation.symbol_key_getter
+                   end
           private_constant :GETTER
 
           def each
