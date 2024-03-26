@@ -26,6 +26,8 @@ module OpenTelemetry
           end
 
           def ping(...)
+            return super unless OpenTelemetry::Trace.current_span.context.valid? || config[:ping_enabled]
+
             tracer.in_span(
               'ping',
               attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
