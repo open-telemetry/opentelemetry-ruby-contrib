@@ -31,3 +31,7 @@ instrumentation/racecar/ @chrisholmes @open-telemetry/ruby-contrib-maintainers @
 instrumentation/rspec/ @chrisholmes @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @xuan-cao-swi
 
 instrumentation/que/ @indrekj @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @xuan-cao-swi
+
+helpers/mysql/ @kaylareopelle @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @xuan-cao-swi
+
+helpers/sql-obfuscation/ @kaylareopelle @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @xuan-cao-swi
