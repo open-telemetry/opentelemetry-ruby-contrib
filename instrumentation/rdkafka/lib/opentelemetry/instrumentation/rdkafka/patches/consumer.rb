@@ -10,6 +10,13 @@ module OpenTelemetry
       module Patches
         # The Consumer module contains the instrumentation patch for the Consumer class
         module Consumer
+          GETTER = if Gem::Version.new(::Rdkafka::VERSION) >= Gem::Version.new('0.13.0')
+                     Context::Propagation.text_map_getter
+                   else
+                     OpenTelemetry::Common::Propagation.symbol_key_getter
+                   end
+          private_constant :GETTER
+
           def each
             super do |message|
               attributes = {
@@ -23,7 +30,7 @@ module OpenTelemetry
               message_key = extract_message_key(message.key)
               attributes['messaging.kafka.message_key'] = message_key if message_key
 
-              parent_context = OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)
+              parent_context = OpenTelemetry.propagation.extract(message.headers, getter: GETTER)
               span_context = OpenTelemetry::Trace.current_span(parent_context).context
               links = [OpenTelemetry::Trace::Link.new(span_context)] if span_context.valid?
 
@@ -47,7 +54,7 @@ module OpenTelemetry
                 }
 
                 links = messages.map do |message|
-                  trace_context = OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)
+                  trace_context = OpenTelemetry.propagation.extract(message.headers, getter: GETTER)
                   span_context = OpenTelemetry::Trace.current_span(trace_context).context
                   OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
                 end
