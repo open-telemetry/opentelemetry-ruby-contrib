@@ -30,7 +30,8 @@ OpenTelemetry::SDK.configure do |c|
   c.add_log_record_processor log_record_processor
 end
 
+# TODO: Re-enable Rails app and active_support_logger testing
 # Create a globally available Rails app, this should be used in test unless
 # specifically testing behaviour with different initialization configs.
-DEFAULT_RAILS_APP = AppConfig.initialize_app
-Rails.application = DEFAULT_RAILS_APP
+# DEFAULT_RAILS_APP = AppConfig.initialize_app
+# Rails.application = DEFAULT_RAILS_APP
