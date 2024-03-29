@@ -2,6 +2,12 @@
 
 # add more tests for excon
 
-appraise 'excon-0.71' do
-  gem 'excon', '~> 0.71.0'
+%w[0.71 0.109].each do |version|
+  appraise "excon-#{version}" do
+    gem 'excon', "~> #{version}.0"
+  end
+end
+
+appraise 'excon-latest' do
+  gem 'excon'
 end

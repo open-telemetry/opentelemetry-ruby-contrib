@@ -9,7 +9,7 @@ module OpenTelemetry
     module ActionView
       # The Instrumentation class contains logic to detect and install the ActionView instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('6.0.0')
+        MINIMUM_VERSION = Gem::Version.new('6.1.0')
         install do |_config|
           require_dependencies
         end

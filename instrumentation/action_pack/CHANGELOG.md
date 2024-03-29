@@ -1,5 +1,19 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.9.0 / 2024-01-09
+
+* BREAKING CHANGE: Use ActiveSupport instead of patches #703 
+
+### v0.8.0 / 2023-11-22
+
+* BREAKING CHANGE: Drop Rails 6.0 EOL
+
+* ADDED: Drop Rails 6.0 EOL
+
+### v0.7.1 / 2023-10-16
+
+* FIXED: Add Rails 7.1 compatibility
+
 ### v0.7.0 / 2023-06-05
 
 * ADDED: Use Rack Middleware Helper

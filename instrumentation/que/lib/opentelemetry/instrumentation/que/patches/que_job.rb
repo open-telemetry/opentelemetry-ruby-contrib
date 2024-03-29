@@ -22,7 +22,7 @@ module OpenTelemetry
               tracer = Que::Instrumentation.instance.tracer
               otel_config = Que::Instrumentation.instance.config
 
-              tracer.in_span('send', kind: :producer) do |span|
+              tracer.in_span('publish', kind: :producer) do |span|
                 # Que doesn't have a good place to store metadata. There are
                 # basically two options: the job payload and the job tags.
                 #
@@ -46,7 +46,10 @@ module OpenTelemetry
                 # In Que version 2.1.0 `bulk_enqueue` was introduced and in order
                 # for it to work, we must pass `job_options` to `bulk_enqueue` instead of enqueue.
                 if gem_version >= Gem::Version.new('2.1.0') && Thread.current[:que_jobs_to_bulk_insert]
-                  Thread.current[:que_jobs_to_bulk_insert][:job_options] = job_options.merge(tags: tags)
+                  Thread.current[:que_jobs_to_bulk_insert][:job_options] = Thread.current[:que_jobs_to_bulk_insert][:job_options]&.merge(tags: tags) do |_, a, b|
+                    a.is_a?(Array) && b.is_a?(Array) ? a.concat(b) : b
+                  end
+
                   job = super(*args, **arg_opts)
                   job_attrs = Thread.current[:que_jobs_to_bulk_insert][:jobs_attrs].last
                 else
@@ -54,7 +57,7 @@ module OpenTelemetry
                   job_attrs = job.que_attrs
                 end
 
-                span.name = "#{job_attrs[:job_class]} send"
+                span.name = "#{job_attrs[:job_class]} publish"
                 span.add_attributes(QueJob.job_attributes(job_attrs))
 
                 job
@@ -70,7 +73,7 @@ module OpenTelemetry
             attributes = {
               'messaging.system' => 'que',
               'messaging.destination_kind' => 'queue',
-              'messaging.operation' => 'send',
+              'messaging.operation' => 'publish',
               'messaging.destination' => job_attrs[:queue] || 'default',
               'messaging.que.job_class' => job_attrs[:job_class],
               'messaging.que.priority' => job_attrs[:priority] || 100

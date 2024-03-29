@@ -14,7 +14,7 @@ module OpenTelemetry
         SQS_RECEIVE_MESSAGE = 'SQS.ReceiveMessage'
         SNS_PUBLISH = 'SNS.Publish'
 
-        def call(context) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def call(context)
           return super unless context
 
           service_name = service_name(context)
@@ -95,7 +95,7 @@ module OpenTelemetry
         def span_name(context, client_method)
           case client_method
           when SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH
-            "#{MessagingHelper.queue_name(context)} send"
+            "#{MessagingHelper.queue_name(context)} publish"
           when SQS_RECEIVE_MESSAGE
             "#{MessagingHelper.queue_name(context)} receive"
           else

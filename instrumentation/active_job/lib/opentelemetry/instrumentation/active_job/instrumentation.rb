@@ -9,7 +9,7 @@ module OpenTelemetry
     module ActiveJob
       # The Instrumentation class contains logic to detect and install the ActiveJob instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('6.0.0')
+        MINIMUM_VERSION = Gem::Version.new('6.1.0')
 
         install do |_config|
           require_dependencies
@@ -17,7 +17,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::ActiveJob)
+          defined?(::ActiveJob) && defined?(::ActiveSupport)
         end
 
         compatible do
@@ -64,12 +64,13 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'patches/base'
-          require_relative 'patches/active_job_callbacks'
+          require_relative 'handlers'
         end
 
         def patch_activejob
-          ::ActiveJob::Base.prepend(Patches::Base)
-          ::ActiveJob::Base.prepend(Patches::ActiveJobCallbacks)
+          ::ActiveJob::Base.prepend(Patches::Base) unless ::ActiveJob::Base <= Patches::Base
+
+          Handlers.subscribe
         end
       end
     end

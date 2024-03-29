@@ -30,19 +30,23 @@ module OpenTelemetry
 
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
 
-        ::ActiveSupport::Notifications.notifier.synchronize do
-          subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
+        # this can be removed once we drop support for Rails < 7.2
+        # see https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/707 for more context
+        if ::ActiveSupport::Notifications.notifier.respond_to?(:synchronize)
+          ::ActiveSupport::Notifications.notifier.synchronize do
+            subscribers = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern]
 
-          if subscribers.nil?
-            OpenTelemetry.handle_error(
-              message: 'Unable to move OTEL ActiveSupport Notifications subscriber to the front of the notifications list which may cause incomplete traces.' \
-                       'Please report an issue here: ' \
-                       'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/new?labels=bug&template=bug_report.md&title=ActiveSupport%20Notifications%20subscribers%20list%20is%20nil'
-            )
-          else
-            subscribers.unshift(
-              subscribers.delete(subscriber_object)
-            )
+            if subscribers.nil?
+              OpenTelemetry.handle_error(
+                message: 'Unable to move OTEL ActiveSupport Notifications subscriber to the front of the notifications list which may cause incomplete traces.' \
+                         'Please report an issue here: ' \
+                         'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/new?labels=bug&template=bug_report.md&title=ActiveSupport%20Notifications%20subscribers%20list%20is%20nil'
+              )
+            else
+              subscribers.unshift(
+                subscribers.delete(subscriber_object)
+              )
+            end
           end
         end
         subscriber_object
@@ -63,10 +67,8 @@ module OpenTelemetry
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
-          payload.merge!(
-            __opentelemetry_span: span,
-            __opentelemetry_ctx_token: token
-          )
+          payload[:__opentelemetry_span] = span
+          payload[:__opentelemetry_ctx_token] = token
 
           [span, token]
         end
@@ -76,11 +78,11 @@ module OpenTelemetry
           token = payload.delete(:__opentelemetry_ctx_token)
           return unless span && token
 
-          payload = transform_payload(payload)
-          attrs = payload.map do |k, v|
-            [k.to_s, sanitized_value(v)] if valid_payload_key?(k) && valid_payload_value?(v)
+          attrs = transform_payload(payload).each_with_object({}) do |(k, v), accum|
+            accum[k.to_s] = sanitized_value(v) if valid_payload_key?(k) && valid_payload_value?(v)
           end
-          span.add_attributes(attrs.compact.to_h)
+
+          span.add_attributes(attrs)
 
           if (e = payload[:exception_object])
             span.record_exception(e)

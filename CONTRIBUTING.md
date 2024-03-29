@@ -16,7 +16,7 @@ As with other OpenTelemetry clients, opentelemetry-ruby follows the
 ### Focus on Capabilities, Not Structure Compliance
 
 OpenTelemetry is an evolving specification, one where the desires and
-use cases are clear, but the method to satisfy those uses cases are not.
+use cases are clear, but the method to satisfy those use cases are not.
 
 As such, Contributions should provide functionality and behavior that
 conforms to the specification, but the interface and structure are flexible.
@@ -67,15 +67,15 @@ _Setting up a running Ruby environment is outside the scope of this document._
 This repository contains multiple Ruby gems:
 
  *  Various instrumentation gems located in subdirectories of `instrumentation`
+ *  Various resource detector gems located in subdirectories of `resources`
  *  `opentelemetry-propagator-xray` located in the `propagator/xray` directory
  *  `opentelemetry-propagator-ottrace` located in the `propagator/ottrace` directory
- *  `opentelemetry-resource_detectors` located in the `resource_detectors` directory
 
 Each of these gems has its configuration and tests.
 
-For example, to test `opentelemetry-resource_detectors` you would:
+For example, to test `opentelemetry-instrumentation-action_pack` you would:
 
- 1. Change directory to `resource_detectors`
+ 1. Change directory to `instrumentation/action_pack`
  2. Install the bundle with `bundle install`
  3. Run the tests with `bundle exec rake`
 
@@ -132,7 +132,7 @@ merging.
 All commits to the main repository should follow the
 [conventional commit](https://conventionalcommits.org) standard. In a nutshell,
 this means commit messages should begin with a semantic tag such as `feat:`,
-`fix:`, `docs:`, `tests:`, or `refactor:`. Our release tooling uses these tags
+`fix:`, `docs:`, `test:`, `refactor:`, etc... Our release tooling uses these tags
 to determine the semantics of your commit, such as how it affects semantic
 versioning of the libraries, and to generate changelogs from commit
 descriptions. If you are not familiar with conventional commits, please review
@@ -343,6 +343,58 @@ For releases to succeed, new gems MUST include the following:
     the configuration.
  *  A `CHANGELOG.md` file.
  *  A `yard` rake task.
+
+## Dependabot Updates
+
+This repository uses [Dependabot](https://dependabot.com/) to keep dependencies up to date, however there shared development dependencies are often scattered across multiple gems. Dependabot does not currently support the ability to group dependencies for gems in multiple subdirectories, so we use a custom script to bulk update dependencies across all gems.
+
+**Note:** This script uses a version of sed that isn't available on MacOS bash. You'll need to use an ubuntu-linux machine to execute it. One way to accomplish this is to run `docker-compose run app` and execute the script within the container.
+
+E.g. if you want to update Rubocop to version 1.56.1, you would run:
+
+```console
+
+$> bin/update-dependencies rubocop 1.56.1
+
+Review your changes and commit
+Press any key to continue
+
+```
+
+This will then run a bulk update on all of the gems in the repository, and then prompt you to review the changes and stage them for a commit:
+
+```console
+
+diff --git a/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec b/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
+index 42c5ecba..74fcc743 100644
+--- a/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
++++ b/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
+@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
+   spec.add_development_dependency 'bundler', '~> 2.4'
+   spec.add_development_dependency 'minitest', '~> 5.0'
+   spec.add_development_dependency 'rake', '~> 13.0'
+-  spec.add_development_dependency 'rubocop', '~> 1.50.0'
++  spec.add_development_dependency 'rubocop', '~> 1.56.1'
+   spec.add_development_dependency 'simplecov', '~> 0.22.0'
+   spec.add_development_dependency 'yard', '~> 0.9'
+   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
+(1/1) Stage this hunk [y,n,q,a,d,e,?]? y
+
+diff --git a/propagator/xray/opentelemetry-propagator-xray.gemspec b/propagator/xray/opentelemetry-propagator-xray.gemspec
+index e29acbfc..85622d25 100644
+--- a/propagator/xray/opentelemetry-propagator-xray.gemspec
++++ b/propagator/xray/opentelemetry-propagator-xray.gemspec
+@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
+   spec.add_development_dependency 'bundler', '~> 2.4'
+   spec.add_development_dependency 'minitest', '~> 5.0'
+   spec.add_development_dependency 'rake', '~> 13.0'
+-  spec.add_development_dependency 'rubocop', '~> 1.50.0'
++  spec.add_development_dependency 'rubocop', '~> 1.56.1'
+   spec.add_development_dependency 'simplecov', '~> 0.22.0'
+   spec.add_development_dependency 'yard', '~> 0.9'
+   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
+(1/1) Stage this hunk [y,n,q,a,d,e,?]? y
+```
 
 [cncf-cla]: https://identity.linuxfoundation.org/projects/cncf
 [github-draft]: https://github.blog/2019-02-14-introducing-draft-pull-requests/

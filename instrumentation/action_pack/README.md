@@ -30,6 +30,25 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+## Active Support Instrumentation
+
+Earlier versions of this instrumentation relied on patching custom `dispatch` hooks from Rails's [Action Controller](https://github.com/rails/rails/blob/main/actionpack/lib/action_controller/metal.rb#L224) to extract request information.
+
+This instrumentation now relies on `ActiveSupport::Notifications` and registers a custom Subscriber that listens to relevant events to modify the Rack span.
+
+See the table below for details of what [Rails Framework Hook Events](https://guides.rubyonrails.org/active_support_instrumentation.html#action-controller) are recorded by this instrumentation:
+
+| Event Name | Subscribe? | Creates Span? |  Notes |
+| - | - | - | - |
+| `process_action.action_controller` | :white_check_mark: | :x: | It modifies the existing Rack span |
+
+
+### Error Handling for Action Controller
+
+If an error is triggered by Action Controller (such as a 500 internal server error), Action Pack will typically employ the default `ActionDispatch::PublicExceptions.new(Rails.public_path)` as the `exceptions_app`, as detailed in the [documentation](https://guides.rubyonrails.org/configuring.html#config-exceptions-app).
+
+The error object will be retained within `payload[:exception_object]`. Additionally, its storage in `request.env['action_dispatch.exception']` is contingent upon the configuration of `action_dispatch.show_exceptions` in Rails.
+
 ## Examples
 
 Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_pack/example/trace_demonstration.ru)

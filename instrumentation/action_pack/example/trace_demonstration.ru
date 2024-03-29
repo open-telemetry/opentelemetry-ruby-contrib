@@ -23,7 +23,7 @@ require 'action_controller/railtie'
 class TraceRequestApp < Rails::Application
   config.root = __dir__
   config.hosts << 'example.org'
-  secrets.secret_key_base = 'secret_key_base'
+  credentials.secret_key_base = 'secret_key_base'
   config.eager_load = false
   config.logger = Logger.new($stdout)
   Rails.logger  = config.logger
@@ -39,6 +39,6 @@ Rails.application.initialize!
 run Rails.application
 
 # To run this example run the `rackup` command with this file
-# Example: rackup trace_request_demonstration.ru
+# Example: rackup trace_demonstration.ru
 # Navigate to http://localhost:9292/
 # Spans for the requests will appear in the console

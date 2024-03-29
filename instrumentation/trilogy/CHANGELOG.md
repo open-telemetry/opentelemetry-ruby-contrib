@@ -1,5 +1,34 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.59.2 / 2024-02-20
+
+* FIXED: Dup string if frozen in trilogy query
+
+### v0.59.1 / 2024-02-08
+
+* FIXED: Add missing requires for sql-helpers to mysql, pg, and trilogy instrumentation
+
+### v0.59.0 / 2024-02-08
+
+* BREAKING CHANGE: Move shared sql behavior to helper gems
+
+* ADDED: Propagate context to Vitess
+
+### v0.58.0 / 2024-01-06
+
+* BREAKING CHANGE: Change db.mysql.instance.address to db.instance.id
+
+* ADDED: Change db.mysql.instance.address to db.instance.id
+* FIXED: Trilogy only set db.instance.id attribute if there is a value
+
+### v0.57.0 / 2023-10-27
+
+* ADDED: Instrument connect and ping
+
+### v0.56.3 / 2023-08-03
+
+* FIXED: Remove inline linter rules
+
 ### v0.56.2 / 2023-07-14
 
 * ADDED: `db.user` attribute (recommended connection-level attribute)

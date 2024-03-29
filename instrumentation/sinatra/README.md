@@ -10,7 +10,21 @@ Install the gem using:
 gem install opentelemetry-instrumentation-sinatra
 ```
 
+
 Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-sinatra` to your `Gemfile`.
+
+### Version Compatibility
+
+Older versions of Sinatra depend on older version of Rack, which are not supported by the latest version of Rack instrumentation. If you are using an older version of Sinatra and need an earlier version of Rack instrumentation, then consider installing and pinning the compatible gem version, e.g.:
+
+```console
+gem opentelemetry-instrumentation-rack, "<version>"
+```
+
+| Sinatra Version | Rack Instrumentation Version |
+| --------------- | ---------------------------- |
+| `< 2.0`         | `= 0.22.1`                   |
+| `>= 2.0`        | `~> 0.22`                    |
 
 ## Usage
 

@@ -1,5 +1,20 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.24.0 / 2024-01-06
+
+* BREAKING CHANGE: Use Rack Events By Default
+
+* ADDED: Use Rack Events By Default
+* FIXED: Backport Rack proxy event to middleware
+
+### v0.23.5 / 2023-11-23
+
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+
+### v0.23.4 / 2023-08-03
+
+* FIXED: Remove inline linter rules
+
 ### v0.23.3 / 2023-07-21
 
 * ADDED: Update `opentelemetry-common` from [0.19.3 to 0.20.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/537)

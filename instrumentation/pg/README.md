@@ -50,9 +50,9 @@ OpenTelemetry::SDK.configure do |c|
     # will be included on all spans from this instrumentation:
     peer_service: 'postgres:readonly',
 
-    # By default, this instrumentation includes the executed SQL as the `db.statement`
+    # By default, this instrumentation obfuscate/sanitize the executed SQL as the `db.statement`
     # semantic attribute. Optionally, you may disable the inclusion of this attribute entirely by
-    # setting this option to :omit or sanitize the attribute by setting to :obfuscate
+    # setting this option to :omit or disbale sanitization the attribute by setting to :include
     db_statement: :include,
   }
 end

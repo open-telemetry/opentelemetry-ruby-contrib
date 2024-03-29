@@ -9,9 +9,15 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
+  Dir.entries('../../helpers')
+     .select { |entry| File.directory?(File.join('../../helpers', entry)) }
+     .reject { |entry| %w[. ..].include?(entry) } # rubocop:disable Performance/CollectionLiteralInLoop
+     .sort
+     .each { |dir| gem "opentelemetry-helpers-#{dir}", path: "../../helpers/#{dir}" }
+
   Dir.entries('../')
      .select { |entry| File.directory?(File.join('../', entry)) }
-     .reject { |entry| %w[. .. all].include?(entry) }
+     .reject { |entry| %w[. .. all].include?(entry) } # rubocop:disable Performance/CollectionLiteralInLoop
      .sort
      .each { |dir| gem "opentelemetry-instrumentation-#{dir}", path: "../#{dir}" }
 end

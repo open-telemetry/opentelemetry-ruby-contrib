@@ -22,7 +22,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Mysql2::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
-  let(:config) { {} }
+  let(:config) { { db_statement: :include } }
 
   before do
     exporter.reset
@@ -85,6 +85,53 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         end
 
         _(span.attributes['db.statement']).must_equal 'foobar'
+      end
+    end
+
+    describe 'prepare statement' do
+      it 'after requests with prepare' do
+        client.prepare('SELECT 1')
+
+        _(span.name).must_equal 'select'
+        _(span.attributes['db.system']).must_equal 'mysql'
+        _(span.attributes['db.name']).must_equal 'mysql'
+        _(span.attributes['db.statement']).must_equal 'SELECT 1'
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
+      end
+
+      it 'after requests with prepare select ?' do
+        client.prepare('SELECT ?')
+
+        _(span.name).must_equal 'select'
+        _(span.attributes['db.system']).must_equal 'mysql'
+        _(span.attributes['db.name']).must_equal 'mysql'
+        _(span.attributes['db.statement']).must_equal 'SELECT ?'
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
+      end
+
+      it 'query ? sequences for db.statement with prepare' do
+        sql = 'SELECT * from users where users.id = ? and users.email = ?'
+        expect do
+          client.prepare(sql)
+        end.must_raise Mysql2::Error
+
+        _(span.attributes['db.system']).must_equal 'mysql'
+        _(span.attributes['db.name']).must_equal 'mysql'
+        _(span.name).must_equal 'select'
+        _(span.attributes['db.statement']).must_equal sql
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
+      end
+
+      it 'query invalid byte sequences for db.statement without prepare' do
+        sql = 'SELECT * from users where users.id = ? and users.email = ?'
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        _(span.events[0].attributes['exception.message'].slice(0, 37)).must_equal 'You have an error in your SQL syntax;'
       end
     end
 
@@ -182,7 +229,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
           client.query(sql)
         end.must_raise Mysql2::Error
 
-        _(span.name).must_equal 'mysql'
+        _(span.name).must_equal 'select'
         _(span.attributes['db.statement']).must_equal obfuscated_sql
       end
 

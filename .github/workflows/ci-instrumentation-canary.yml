@@ -27,12 +27,14 @@ jobs:
           - faraday
           - grape
           - graphql
+          - gruf
           - http
           - http_client
           - koala
           - lmdb
           - logger
           - net_http
+          - httpx
           - rack
           - rails
           - restclient
@@ -57,23 +59,32 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.3"
+          latest: "true"
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
+          latest: "true"
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.1"
+          latest: "true"
       - name: "Test Ruby 3.0"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.0"
+          latest: "true"
           yard: true
           rubocop: true
           build: true
@@ -103,6 +114,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          latest: "true"
           ruby: "jruby-9.4.2.0"
       - name: "Truffleruby Filter"
         id: truffleruby_skip
@@ -125,3 +137,4 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "truffleruby"
+          latest: "true"

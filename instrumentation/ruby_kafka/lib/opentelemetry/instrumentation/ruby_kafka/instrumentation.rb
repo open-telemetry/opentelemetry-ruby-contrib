@@ -22,7 +22,7 @@ module OpenTelemetry
         end
 
         compatible do
-          (!gem_version.nil? && gem_version >= MINIMUM_VERSION)
+          !gem_version.nil? && gem_version >= MINIMUM_VERSION
         end
 
         private

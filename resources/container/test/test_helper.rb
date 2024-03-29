@@ -12,6 +12,5 @@ SimpleCov.start
 
 require 'opentelemetry-resource-detector-container'
 require 'minitest/autorun'
-require 'webmock/minitest'
 
 OpenTelemetry.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)

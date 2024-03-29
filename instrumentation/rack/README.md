@@ -12,6 +12,19 @@ gem install opentelemetry-instrumentation-rack
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-rack` in your `Gemfile`.
 
+### Version Compatibility
+
+Older versions of Rack are not supported by the latest version of this instrumentation. If you are using an older version of Rack and need an earlier version of this instrumentation, then consider installing and pinning the compatible gem version, e.g.:
+
+```console
+gem opentelemetry-instrumentation-rack, "<version>"
+```
+
+| Rack Version | Instrumentation Version |
+| ------------ | ----------------------- |
+| `< 2.0`      | `= 0.22.1`              |
+| `>= 2.0`     | `~> 0.23`               |
+
 ## Usage
 
 To use the instrumentation, call `use` with the name of the instrumentation:
@@ -29,6 +42,23 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+
+## Rack Middleware vs Rack Events
+
+Since `v0.24.0`, this instrumentation uses `Rake::Events` as opposed to `Middleware` to support Requests that use Buffered Response Bodies.
+
+If your application does not support `Rack::Events`, you may disable it by setting `use_rack_events: false`, e.g.
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Rack', use_rack_events: false
+end
+```
+
+This will switch to using `Rack::Middleware` by default in dependent instrumentations.
+
+See [#342](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/342) for more details.
+
 ## Controlling span name cardinality
 
 By default we will set the rack span name to match the format "HTTP #{method}" (ie. HTTP GET). There are different ways to control span names with this instrumentation.

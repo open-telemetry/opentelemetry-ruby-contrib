@@ -48,17 +48,17 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Channel do
 
     _(spans.size >= 3).must_equal(true)
 
-    send_span = spans.find { |span| span.name == "#{topic}.ruby.news send" }
-    _(send_span).wont_be_nil
-    _(send_span.kind).must_equal(:producer)
-    _(send_span.attributes['messaging.system']).must_equal('rabbitmq')
-    _(send_span.attributes['messaging.destination']).must_equal(topic)
-    _(send_span.attributes['messaging.destination_kind']).must_equal('topic')
-    _(send_span.attributes['messaging.protocol']).must_equal('AMQP')
-    _(send_span.attributes['messaging.protocol_version']).must_equal('0.9.1')
-    _(send_span.attributes['messaging.rabbitmq.routing_key']).must_equal('ruby.news')
-    _(send_span.attributes['net.peer.name']).must_equal(host)
-    _(send_span.attributes['net.peer.port']).must_equal(port.to_i)
+    publish_span = spans.find { |span| span.name == "#{topic}.ruby.news publish" }
+    _(publish_span).wont_be_nil
+    _(publish_span.kind).must_equal(:producer)
+    _(publish_span.attributes['messaging.system']).must_equal('rabbitmq')
+    _(publish_span.attributes['messaging.destination']).must_equal(topic)
+    _(publish_span.attributes['messaging.destination_kind']).must_equal('topic')
+    _(publish_span.attributes['messaging.protocol']).must_equal('AMQP')
+    _(publish_span.attributes['messaging.protocol_version']).must_equal('0.9.1')
+    _(publish_span.attributes['messaging.rabbitmq.routing_key']).must_equal('ruby.news')
+    _(publish_span.attributes['net.peer.name']).must_equal(host)
+    _(publish_span.attributes['net.peer.port']).must_equal(port.to_i)
 
     receive_span = spans.find { |span| span.name == "#{topic}.ruby.news receive" }
     _(receive_span).wont_be_nil
@@ -78,7 +78,7 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Channel do
     _(process_span.trace_id).must_equal(receive_span.trace_id)
 
     linked_span_context = process_span.links.first.span_context
-    _(linked_span_context.trace_id).must_equal(send_span.trace_id)
-    _(linked_span_context.span_id).must_equal(send_span.span_id)
+    _(linked_span_context.trace_id).must_equal(publish_span.trace_id)
+    _(linked_span_context.span_id).must_equal(publish_span.span_id)
   end
 end unless ENV['OMIT_SERVICES']

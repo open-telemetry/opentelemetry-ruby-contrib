@@ -1,5 +1,31 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.28.0 / 2024-02-16
+
+* BREAKING CHANGE: GraphQL Legacy Tracer perf improvements [#867](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867).
+
+* ADDED: GraphQL Legacy Tracer perf improvements [#867](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867).
+
+### v0.27.0 / 2023-11-28
+
+* CHANGED: Performance optimization cache attribute hashes [#723](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/723)
+
+### v0.26.8 / 2023-11-23
+
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+
+### v0.26.7 / 2023-09-27
+
+* FIXED: Micro optimization: build Hash w/ {} (https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/665)
+
+### v0.26.6 / 2023-08-26
+
+* FIXED: Improve GraphQL tracing compatibility with other tracers
+
+### v0.26.5 / 2023-08-03
+
+* FIXED: Remove inline linter rules
+
 ### v0.26.4 / 2023-08-01
 
 * FIXED: GraphQL tests and installation
