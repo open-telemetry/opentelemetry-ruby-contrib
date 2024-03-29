@@ -10,6 +10,14 @@ updates:
   schedule:
     interval: weekly
 - package-ecosystem: bundler
+  directory: "/helpers/mysql"
+  schedule:
+    interval: weekly
+- package-ecosystem: bundler
+  directory: "/helpers/sql-obfuscation"
+  schedule:
+    interval: weekly
+- package-ecosystem: bundler
   directory: "/propagator/ottrace"
   schedule:
     interval: weekly
@@ -174,10 +182,14 @@ updates:
   schedule:
     interval: weekly
 - package-ecosystem: bundler
-  directory: "/resource_detectors"
+  directory: "/resources/azure"
   schedule:
     interval: weekly
 - package-ecosystem: bundler
   directory: "/resources/container"
+  schedule:
+    interval: weekly
+- package-ecosystem: bundler
+  directory: "/resources/google_cloud_platform"
   schedule:
     interval: weekly

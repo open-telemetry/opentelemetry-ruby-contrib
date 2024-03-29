@@ -19,7 +19,7 @@ end
 builder = Rack::Builder.app do
   # integration should be automatic in web frameworks (like rails),
   # but for a plain Rack application, enable it in your config.ru, e.g.,
-  use OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
+  use ::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new]
 
   app = ->(_env) { [200, { 'Content-Type' => 'text/plain' }, ['All responses are OK']] }
   run app

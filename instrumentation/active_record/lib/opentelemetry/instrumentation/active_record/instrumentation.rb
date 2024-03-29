@@ -9,8 +9,7 @@ module OpenTelemetry
     module ActiveRecord
       # The Instrumentation class contains logic to detect and install the ActiveRecord instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('6.0.0')
-        MAX_MAJOR_VERSION = 7
+        MINIMUM_VERSION = Gem::Version.new('6.1.0')
 
         install do |_config|
           require_dependencies
@@ -22,11 +21,7 @@ module OpenTelemetry
         end
 
         compatible do
-          # We know that releases after MAX_MAJOR_VERSION are unstable so we
-          # check the major version number of the gem installed to make sure we
-          # do not install on a pre-release or full release of the latest
-          # if it exceeds the MAX_MAJOR_VERSION version.
-          gem_version >= MINIMUM_VERSION && gem_version.segments[0] <= MAX_MAJOR_VERSION
+          gem_version >= MINIMUM_VERSION
         end
 
         private
@@ -56,9 +51,6 @@ module OpenTelemetry
         end
 
         def require_dependencies
-          # Our patches depend on Ruby 2 Keyword Syntax compatability since it is decorating the existing AR API
-          # Once we migrate to ActiveSupport Notifications based instrumentation we can remove this require statement.
-          require 'ruby2_keywords' # rubocop:disable Lint/RedundantRequireStatement
           require_relative 'patches/querying'
           require_relative 'patches/persistence'
           require_relative 'patches/persistence_class_methods'

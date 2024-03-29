@@ -1,5 +1,27 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.30.0 / 2024-01-09
+
+* BREAKING CHANGE: Use ActiveSupport instead of patches #703 
+
+### v0.29.1 / 2023-11-23
+
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+
+### v0.29.0 / 2023-11-22
+
+* BREAKING CHANGE: Drop Rails 6.0 EOL
+
+* ADDED: Drop Rails 6.0 EOL
+
+### v0.28.1 / 2023-10-16
+
+* FIXED: Add Rails 7.1 compatibility
+
+### v0.28.0 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names
+
 ### v0.27.1 / 2023-06-05
 
 * FIXED: Use latest bug fix version for all dependencies

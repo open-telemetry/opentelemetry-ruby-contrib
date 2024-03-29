@@ -1,5 +1,32 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.7.1 / 2023-11-23
+
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+
+### v0.7.0 / 2023-11-22
+
+* BREAKING CHANGE: Drop Rails 6.0 EOL
+
+* ADDED: Drop Rails 6.0 EOL
+
+* BREAKING CHANGE: Use ActiveSupport Instrumentation instead of Monkey Patches
+
+* CHANGED: Use ActiveSupport Instrumentation instead of Money Patches [#677](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/677)
+
+### v0.6.1 / 2023-10-16
+
+* FIXED: Add Rails 7.1 compatibility
+
+### v0.6.0 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names
+
+### v0.5.2 / 2023-08-03
+
+* FIXED: Add code semconv attributes
+* FIXED: Remove inline linter rules
+
 ### v0.5.1 / 2023-06-05
 
 * FIXED: Base config options

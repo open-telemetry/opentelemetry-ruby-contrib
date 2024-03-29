@@ -16,7 +16,7 @@ module OpenTelemetry
           attributes = basic_attributes(channel, channel.connection, exchange, routing_key)
           destination = destination_name(exchange, routing_key)
 
-          tracer.in_span("#{destination} send", attributes: attributes, kind: :producer, &block)
+          tracer.in_span("#{destination} publish", attributes: attributes, kind: :producer, &block)
         end
 
         def self.with_process_span(channel, tracer, delivery_info, properties, &block)
@@ -35,6 +35,7 @@ module OpenTelemetry
         def self.extract_context(properties)
           # use the receive span as parent context
           parent_context = OpenTelemetry.propagation.extract(properties[:tracer_receive_headers])
+          return [parent_context, nil] if properties[:headers].nil?
 
           # link to the producer context
           producer_context = OpenTelemetry.propagation.extract(properties[:headers])

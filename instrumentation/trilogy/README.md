@@ -51,6 +51,19 @@ OpenTelemetry::Instrumentation::Trilogy.with_attributes('pizzatoppings' => 'mush
 end
 ```
 
+## Semantic Conventions
+
+This instrumentation generally uses [Database semantic conventions](https://opentelemetry.io/docs/specs/semconv/database/database-spans/).
+
+| Attribute Name | Type | Notes |
+| - | - | - |
+| `db.instance.id` | String | The name of the DB host executing the query e.g. `SELECT @@hostname` |
+| `db.name` | String | The name of the database from connection_options |
+| `db.statement` | String | SQL statement being executed |
+| `db.user` | String | The username from connection_options |
+| `db.system` | String | `mysql` |
+| `net.peer.name` | String | The name of the remote host from connection_options |
+
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-trilogy` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.

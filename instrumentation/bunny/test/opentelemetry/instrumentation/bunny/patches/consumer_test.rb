@@ -53,9 +53,9 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Consumer do
 
     _(spans.size >= 3).must_equal(true)
 
-    send_span = spans.find { |span| span.name == "#{topic}.ruby.news send" }
-    _(send_span).wont_be_nil
-    _(send_span.kind).must_equal(:producer)
+    publish_span = spans.find { |span| span.name == "#{topic}.ruby.news publish" }
+    _(publish_span).wont_be_nil
+    _(publish_span.kind).must_equal(:producer)
 
     receive_span = spans.find { |span| span.name == "#{topic}.ruby.news receive" }
     _(receive_span).wont_be_nil
@@ -68,7 +68,7 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Consumer do
     _(process_span.trace_id).must_equal(receive_span.trace_id)
 
     linked_span_context = process_span.links.first.span_context
-    _(linked_span_context.trace_id).must_equal(send_span.trace_id)
-    _(linked_span_context.span_id).must_equal(send_span.span_id)
+    _(linked_span_context.trace_id).must_equal(publish_span.trace_id)
+    _(linked_span_context.span_id).must_equal(publish_span.span_id)
   end
 end unless ENV['OMIT_SERVICES']

@@ -1,5 +1,22 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.8.0 / 2024-02-08
+
+* BREAKING CHANGE: Move shared sql behavior to helper gems
+
+
+### v0.7.1 / 2023-11-23
+
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+
+### v0.7.0 / 2023-09-07
+
+* FIXED: Align messaging instrumentation operation names
+
+### v0.6.2 / 2023-08-07
+
+* FIXED: Correctly set bulk_enqueue job options
+
 ### v0.6.1 / 2023-06-05
 
 * FIXED: Base config options 

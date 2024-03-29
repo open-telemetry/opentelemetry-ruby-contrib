@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.24.0 / 2024-02-20
+
+* ADDED: Faraday add support for internal spans
+
+### v0.23.4 / 2023-11-23
+
+* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+
+### v0.23.3 / 2023-10-16
+
+* FIXED: Omit `nil` `net.peer.name` attributes
+
 ### v0.23.2 / 2023-07-21
 
 * ADDED: Update `opentelemetry-common` from [0.19.3 to 0.20.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/537)

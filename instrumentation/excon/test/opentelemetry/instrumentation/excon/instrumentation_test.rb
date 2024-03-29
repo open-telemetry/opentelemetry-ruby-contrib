@@ -8,6 +8,7 @@ require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/excon'
 require_relative '../../../../lib/opentelemetry/instrumentation/excon/middlewares/tracer_middleware'
+require_relative '../../../../lib/opentelemetry/instrumentation/excon/patches/socket'
 
 describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Excon::Instrumentation.instance }
@@ -39,7 +40,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
     end
 
     it 'before request' do
-      _(exporter.finished_spans.size).must_equal 0
+      _(exporter.finished_spans).must_be_empty
     end
 
     it 'after request with success code' do
@@ -96,14 +97,16 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
-      _(span.status.description).must_equal(
-        'Request has failed: Excon::Error::Timeout'
-      )
+      _(span.status.description).must_equal('Request has failed')
       assert_requested(
         :get,
         'http://example.com/timeout',
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
+
+      exception_event = span.events.first
+      _(exception_event.attributes['exception.type']).must_equal('Excon::Error::Timeout')
+      _(exception_event.attributes['exception.message']).must_equal('Excon::Error::Timeout')
     end
 
     it 'merges HTTP client context' do
@@ -148,6 +151,166 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       end
 
       _(span.attributes['peer.service']).must_equal 'example:custom'
+    end
+  end
+
+  describe 'untraced?' do
+    before do
+      instrumentation.install(untraced_hosts: ['foobar.com', /bazqux\.com/])
+
+      stub_request(:get, 'http://example.com/body').to_return(status: 200)
+      stub_request(:get, 'http://foobar.com/body').to_return(status: 200)
+      stub_request(:get, 'http://bazqux.com/body').to_return(status: 200)
+    end
+
+    it 'does not create a span when request ignored using a string' do
+      Excon.get('http://foobar.com/body')
+      _(exporter.finished_spans).must_be_empty
+    end
+
+    it 'does not create a span when request ignored using a regexp' do
+      Excon.get('http://bazqux.com/body')
+      _(exporter.finished_spans).must_be_empty
+    end
+
+    it 'does not create a span on connect when request ignored using a regexp' do
+      uri = URI.parse('http://bazqux.com')
+
+      Excon::Socket.new(hostname: uri.host, port: uri.port)
+
+      _(exporter.finished_spans).must_be_empty
+    end
+
+    it 'creates a span for a non-ignored request' do
+      Excon.get('http://example.com/body')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP GET'
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.host']).must_equal 'example.com'
+    end
+
+    it 'creates a span on connect for a non-ignored request' do
+      uri = URI.parse('http://example.com')
+
+      Excon::Socket.new(hostname: uri.host, port: uri.port)
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal('connect')
+      _(span.kind).must_equal(:internal)
+      _(span.attributes['net.peer.name']).must_equal('example.com')
+      _(span.attributes['net.peer.port']).must_equal(80)
+    end
+  end
+
+  # NOTE: WebMock introduces an extra HTTP request span due to the way the mocking is implemented.
+  describe '#connect' do
+    before do
+      instrumentation.install
+      WebMock.allow_net_connect!
+    end
+
+    after do
+      WebMock.disable_net_connect!
+    end
+
+    it 'emits span on connect' do
+      TCPServer.open('localhost', 0) do |server|
+        Thread.start do
+          server.accept
+        rescue IOError
+          nil
+        end
+
+        port = server.addr[1]
+
+        _(-> { Excon.get("http://localhost:#{port}/example", read_timeout: 0) }).must_raise(Excon::Error::Timeout)
+      end
+
+      _(exporter.finished_spans.size).must_equal(3)
+      _(span.name).must_equal 'connect'
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).wont_be_nil
+
+      assert_http_spans(target: '/example', exception: 'Excon::Error::Timeout')
+    end
+
+    it 'captures errors' do
+      _(-> { Excon.get('http://invalid.com:99999/example') }).must_raise
+
+      _(exporter.finished_spans.size).must_equal(3)
+      _(span.name).must_equal 'connect'
+      _(span.attributes['net.peer.name']).must_equal('invalid.com')
+      _(span.attributes['net.peer.port']).must_equal(99_999)
+
+      span_event = span.events.first
+      _(span_event.name).must_equal 'exception'
+      # Depending on the Ruby and Excon Version this will be a SocketError, Socket::ResolutionError or Resolv::ResolvError
+      _(span_event.attributes['exception.type']).must_match(/(Socket|Resolv)/)
+
+      assert_http_spans(host: 'invalid.com', target: '/example')
+    end
+
+    it '[BUG] fails to emit an HTTP CONNECT span when connecting through an SSL proxy for an HTTP service' do
+      _(-> { Excon.get('http://localhost/', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
+
+      _(exporter.finished_spans.size).must_equal(3)
+      _(span.name).must_equal 'connect'
+      _(span.kind).must_equal(:internal)
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).must_equal(443)
+
+      assert_http_spans
+    end
+
+    it 'emits an HTTP CONNECT span when connecting through an SSL proxy' do
+      _(-> { Excon.get('https://localhost/', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
+
+      _(exporter.finished_spans.size).must_equal(3)
+      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.kind).must_equal(:client)
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).must_equal(443)
+
+      assert_http_spans(scheme: 'https')
+    end
+
+    it 'emits a "connect" span when connecting through an non-ssl proxy' do
+      _(-> { Excon.get('http://localhost', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
+
+      _(exporter.finished_spans.size).must_equal(3)
+      _(span.name).must_equal 'connect'
+      _(span.kind).must_equal(:internal)
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).must_equal(443)
+
+      assert_http_spans(exception: 'Excon::Error::Socket')
+    end
+
+    it 'emits no spans when untraced' do
+      OpenTelemetry::Common::Utilities.untraced do
+        _(-> { Excon.get('http://localhost', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
+
+        _(exporter.finished_spans.size).must_equal(0)
+      end
+    end
+  end
+
+  def assert_http_spans(scheme: 'http', host: 'localhost', target: '/', exception: nil)
+    exporter.finished_spans[1..].each do |http_span|
+      _(http_span.name).must_equal 'HTTP GET'
+      _(http_span.attributes['http.method']).must_equal 'GET'
+      _(http_span.attributes['http.scheme']).must_equal scheme
+      _(http_span.attributes['http.host']).must_equal host
+      _(http_span.attributes['http.target']).must_equal target
+      _(http_span.status.code).must_equal(
+        OpenTelemetry::Trace::Status::ERROR
+      )
+
+      if exception
+        exception_event = http_span.events.first
+        _(exception_event.attributes['exception.type']).must_equal(exception)
+      end
     end
   end
 end

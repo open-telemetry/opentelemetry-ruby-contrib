@@ -28,7 +28,7 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
 
   describe 'tracing' do
     before do
-      instrumentation.install
+      instrumentation.install(db_statement: :include)
     end
 
     it 'accepts peer service name from config' do

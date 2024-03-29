@@ -22,7 +22,7 @@ module OpenTelemetry
             # Thread's context, so the next two lines preserve the correct Thread-local context.
             ctx = OpenTelemetry.propagation.extract(headers)
             OpenTelemetry::Context.with_current(ctx) do
-              tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
+              tracer.in_span("#{topic} publish", attributes: attributes, kind: :producer) do
                 OpenTelemetry.propagation.inject(headers)
                 super
               end

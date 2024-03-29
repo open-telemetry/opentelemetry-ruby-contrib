@@ -12,7 +12,7 @@ require_relative '../../../../lib/opentelemetry/instrumentation/trilogy/patches/
 describe OpenTelemetry::Instrumentation::Trilogy do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance }
   let(:exporter) { EXPORTER }
-  let(:span) { exporter.finished_spans.first }
+  let(:span) { exporter.finished_spans[1] }
   let(:config) { {} }
   let(:driver_options) do
     {
@@ -139,7 +139,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
-        _(span.attributes['db.mysql.instance.address']).must_be_nil
+        _(span.attributes['db.instance.id']).must_be_nil
       end
 
       it 'extracts statement type' do
@@ -166,6 +166,37 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       end
     end
 
+    describe 'when connecting' do
+      let(:span) { exporter.finished_spans.first }
+
+      it 'spans will include database name' do
+        _(client.connected_host).wont_be_nil
+
+        _(span.name).must_equal 'connect'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
+        _(span.attributes['db.instance.id']).must_be_nil
+      end
+    end
+
+    describe 'when pinging' do
+      let(:span) { exporter.finished_spans[2] }
+
+      it 'spans will include database name' do
+        _(client.connected_host).wont_be_nil
+
+        client.ping
+
+        _(span.name).must_equal 'ping'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
+      end
+    end
+
     describe 'when quering for the connected host' do
       it 'spans will include the net.peer.name attribute' do
         _(client.connected_host).wont_be_nil
@@ -176,7 +207,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'select @@hostname'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
-        _(span.attributes['db.mysql.instance.address']).must_be_nil
+        _(span.attributes['db.instance.id']).must_be_nil
 
         client.query('SELECT 1')
 
@@ -188,7 +219,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
-        _(last_span.attributes['db.mysql.instance.address']).must_equal client.connected_host
+        _(last_span.attributes['db.instance.id']).must_equal client.connected_host
       end
     end
 
@@ -285,7 +316,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
           client.query(sql)
         end.must_raise Trilogy::Error
 
-        _(span.name).must_equal 'mysql'
+        _(span.name).must_equal 'select'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal obfuscated_sql
       end
 
@@ -312,6 +343,84 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
           _(span.attributes['db.statement']).must_equal obfuscated_sql
         end
+      end
+    end
+
+    describe 'when propagator is set to none' do
+      let(:config) { { propagator: :none } }
+
+      it 'does not inject context' do
+        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        original_sql = sql.dup
+        expect do
+          client.query(sql)
+        end.must_raise Trilogy::Error
+        _(sql).must_equal original_sql
+      end
+    end
+
+    describe 'when propagator is set to nil' do
+      let(:config) { { propagator: nil } }
+
+      it 'does not inject context' do
+        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        original_sql = sql.dup
+        expect do
+          client.query(sql)
+        end.must_raise Trilogy::Error
+        _(sql).must_equal original_sql
+      end
+    end
+
+    describe 'when propagator is set to vitess' do
+      let(:config) { { propagator: 'vitess' } }
+
+      it 'does inject context on frozen strings' do
+        sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        assert(sql.frozen?)
+        propagator = OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
+
+        arg_cache = {} # maintain handles to args
+        allow(client).to receive(:query).and_wrap_original do |m, *args|
+          arg_cache[:query_input] = args[0]
+          assert(args[0].frozen?)
+          m.call(args[0])
+        end
+
+        allow(propagator).to receive(:inject).and_wrap_original do |m, *args|
+          arg_cache[:inject_input] = args[0]
+          refute(args[0].frozen?)
+          assert_match(sql, args[0])
+          m.call(args[0], context: args[1][:context])
+        end
+
+        expect do
+          client.query(sql)
+        end.must_raise Trilogy::Error
+
+        # arg_cache[:inject_input] _was_ a mutable string, so it has the context injected
+        encoded = Base64.strict_encode64("{\"uber-trace-id\":\"#{span.hex_trace_id}:#{span.hex_span_id}:0:1\"}")
+        assert_equal(arg_cache[:inject_input], "/*VT_SPAN_CONTEXT=#{encoded}*/#{sql}")
+
+        # arg_cache[:inject_input] is now frozen
+        assert(arg_cache[:inject_input].frozen?)
+      end
+
+      it 'does inject context on unfrozen strings' do
+        # inbound SQL is not frozen (string prefixed with +)
+        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        refute(sql.frozen?)
+
+        # dup sql for comparison purposes, since propagator  mutates it
+        cached_sql = sql.dup
+
+        expect do
+          client.query(sql)
+        end.must_raise Trilogy::Error
+
+        encoded = Base64.strict_encode64("{\"uber-trace-id\":\"#{span.hex_trace_id}:#{span.hex_span_id}:0:1\"}")
+        assert_equal(sql, "/*VT_SPAN_CONTEXT=#{encoded}*/#{cached_sql}")
+        refute(sql.frozen?)
       end
     end
 

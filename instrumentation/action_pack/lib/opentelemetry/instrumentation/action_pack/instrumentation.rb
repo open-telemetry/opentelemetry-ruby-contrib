@@ -9,7 +9,7 @@ module OpenTelemetry
     module ActionPack
       # The Instrumentation class contains logic to detect and install the ActionPack instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('6.0.0')
+        MINIMUM_VERSION = Gem::Version.new('6.1.0')
 
         install do |_config|
           require_railtie
@@ -32,11 +32,11 @@ module OpenTelemetry
         end
 
         def patch
-          ::ActionController::Metal.prepend(Patches::ActionController::Metal)
+          Handlers.subscribe
         end
 
         def require_dependencies
-          require_relative 'patches/action_controller/metal'
+          require_relative 'handlers'
         end
 
         def require_railtie

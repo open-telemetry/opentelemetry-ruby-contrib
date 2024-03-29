@@ -25,8 +25,9 @@ module SchemaTestPatches
   # Reseting @graphql_definition is needed for tests running against version `1.9.x`
   # Other variables are used by ~> 2.0.19
   def _reset_tracer_for_testing
-    %w[own_tracers trace_modes trace_class tracers graphql_definition].each do |ivar|
-      remove_instance_variable("@#{ivar}") if instance_variable_defined?("@#{ivar}")
+    %w[own_tracers trace_modes trace_class tracers graphql_definition own_trace_modes].each do |name|
+      ivar_name = "@#{name}"
+      remove_instance_variable(ivar_name) if instance_variable_defined?(ivar_name)
     end
   end
 end
@@ -124,4 +125,13 @@ end
 
 def gem_version
   Gem::Version.new(GraphQL::VERSION)
+end
+
+# When tracing, is the parser expected to call `lex` before `parse`
+def trace_lex_supported?
+  return @trace_lex_supported if defined?(@trace_lex_supported)
+
+  # In GraphQL 2.2, the default parser was changed such that `lex` is no longer called
+  @trace_lex_supported = Gem::Requirement.new('< 2.2').satisfied_by?(Gem::Version.new(GraphQL::VERSION)) \
+    || (defined?(GraphQL::CParser) == 'constant')
 end

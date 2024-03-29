@@ -75,7 +75,7 @@ module OpenTelemetry
           pipeline = command['pipeline']
           return unless pipeline
 
-          payload['pipeline'] = pipeline.map(&method(:mask))
+          payload['pipeline'] = pipeline.map { |x| mask(x) }
         end
 
         def add_val(payload, command, key)
