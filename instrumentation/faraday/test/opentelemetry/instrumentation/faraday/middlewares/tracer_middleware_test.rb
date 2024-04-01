@@ -178,5 +178,25 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         )
       end
     end
+
+    describe 'when faraday raises an error' do
+      let(:client) do
+        Faraday.new do |builder|
+          builder.response :raise_error
+          builder.adapter(:test) do |stub|
+            stub.get('/not_found') { |_| [404, {}, 'NOT FOUND'] }
+          end
+        end
+      end
+
+      it 'adds response attributes' do
+        assert_raises Faraday::Error do
+          client.get('/not_found')
+        end
+
+        _(span.attributes['http.status_code']).must_equal 404
+        _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+    end
   end
 end
