@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   prepare:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Process Release
     runs-on: ubuntu-latest
     steps:
