@@ -35,7 +35,11 @@ module OpenTelemetry
             ) do |span|
               OpenTelemetry.propagation.inject(env.request_headers)
 
-              app.call(env).on_complete { |resp| trace_response(span, resp) }
+              app.call(env).on_complete { |resp| trace_response(span, resp.status) }
+            rescue ::Faraday::Error => e
+              trace_response(span, e.response[:status]) if e.response
+
+              raise
             end
           end
 
@@ -62,9 +66,9 @@ module OpenTelemetry
             Faraday::Instrumentation.instance.tracer
           end
 
-          def trace_response(span, response)
-            span.set_attribute('http.status_code', response.status)
-            span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(response.status.to_i)
+          def trace_response(span, status)
+            span.set_attribute('http.status_code', status)
+            span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(status.to_i)
           end
         end
       end
