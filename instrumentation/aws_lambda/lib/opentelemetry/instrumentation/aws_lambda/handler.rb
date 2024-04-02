@@ -160,9 +160,7 @@ module OpenTelemetry
           span_attributes['faas.invocation_id'] = context.aws_request_id
           span_attributes['cloud.resource_id'] = "#{context.invoked_function_arn};#{context.aws_request_id};#{context.function_name}"
           span_attributes[OpenTelemetry::SemanticConventions::Trace::AWS_LAMBDA_INVOKED_ARN] = context.invoked_function_arn
-          span_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = event['requestContext']['accountId'] if event['requestContext']
 
-          # from python, need to find out which one is correct
           account_id = context.invoked_function_arn.split(':')[4]
           span_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = account_id
           span_attributes[OpenTelemetry::SemanticConventions::Trace::FAAS_EXECUTION] = context.aws_request_id
