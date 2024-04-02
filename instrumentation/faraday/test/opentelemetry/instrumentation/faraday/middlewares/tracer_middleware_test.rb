@@ -110,6 +110,33 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         _(span.attributes['peer.service']).must_equal 'example:faraday'
       end
 
+      it 'defaults to span kind client' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install
+
+        client.get('/success')
+
+        _(span.kind).must_equal :client
+      end
+
+      it 'allows overriding the span kind to internal' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(span_kind: :internal)
+
+        client.get('/success')
+
+        _(span.kind).must_equal :internal
+      end
+
+      it 'reports the name of the configured adapter' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install
+
+        client.get('/success')
+
+        _(span.attributes.fetch('faraday.adapter.name')).must_equal Faraday::Adapter::Test.name
+      end
+
       it 'prioritizes context attributes over config for peer service name' do
         instrumentation.instance_variable_set(:@installed, false)
         instrumentation.install(peer_service: 'example:faraday')
@@ -149,6 +176,26 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         _(response.env.request_headers['Traceparent']).must_equal(
           "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
         )
+      end
+    end
+
+    describe 'when faraday raises an error' do
+      let(:client) do
+        Faraday.new do |builder|
+          builder.response :raise_error
+          builder.adapter(:test) do |stub|
+            stub.get('/not_found') { |_| [404, {}, 'NOT FOUND'] }
+          end
+        end
+      end
+
+      it 'adds response attributes' do
+        assert_raises Faraday::Error do
+          client.get('/not_found')
+        end
+
+        _(span.attributes['http.status_code']).must_equal 404
+        _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
       end
     end
   end

@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.24.1 / 2024-03-22
+
+* FIXED: Propagate response attributes on Faraday::Error.
+
+### v0.24.0 / 2024-02-20
+
+* ADDED: Faraday add support for internal spans
+
 ### v0.23.4 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
