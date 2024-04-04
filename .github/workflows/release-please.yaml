@@ -13,10 +13,11 @@ permissions:
 
 jobs:
   prepare:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Process Release
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v4.0.2
+      - uses: google-github-actions/release-please-action@v4.1.0
         id: prepare
 
     outputs:
@@ -47,7 +48,7 @@ jobs:
           chmod 0600 $HOME/.gem/credentials
           printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
 
-      - uses: ruby/setup-ruby@v1.171.0
+      - uses: ruby/setup-ruby@v1.173.0
         with:
           ruby-version: "3.0"
           bundler: latest
