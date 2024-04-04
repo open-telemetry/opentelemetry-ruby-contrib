@@ -17,8 +17,8 @@ module OpenTelemetry
             return formatted_message if skip_instrumenting?
 
             OpenTelemetry.logger_provider.logger(
-              OpenTelemetry::Instrumentation::Logger::NAME,
-              OpenTelemetry::Instrumentation::Logger::VERSION
+              name: OpenTelemetry::Instrumentation::Logger::NAME,
+              version: OpenTelemetry::Instrumentation::Logger::VERSION
             ).emit(
               severity_text: severity,
               severity_number: severity_number(severity),
@@ -39,17 +39,17 @@ module OpenTelemetry
           def severity_number(severity)
             case severity.downcase
             when 'debug'
-              Opentelemetry::Proto::Logs::V1::SeverityNumber::SEVERITY_NUMBER_DEBUG
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_DEBUG
             when 'info'
-              Opentelemetry::Proto::Logs::V1::SeverityNumber::SEVERITY_NUMBER_INFO
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_INFO
             when 'warn'
-              Opentelemetry::Proto::Logs::V1::SeverityNumber::SEVERITY_NUMBER_WARN
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_WARN
             when 'error'
-              Opentelemetry::Proto::Logs::V1::SeverityNumber::SEVERITY_NUMBER_ERROR
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_ERROR
             when 'fatal'
-              Opentelemetry::Proto::Logs::V1::SeverityNumber::SEVERITY_NUMBER_FATAL
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_FATAL
             else
-              Opentelemetry::Proto::Logs::V1::SeverityNumber::SEVERITY_NUMBER_UNSPECIFIED
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_UNSPECIFIED
             end
           end
         end
