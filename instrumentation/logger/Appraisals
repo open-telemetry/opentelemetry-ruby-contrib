@@ -1,17 +1,18 @@
-# frozen_string_literal: true
+# # frozen_string_literal: true
 
-# Copyright The OpenTelemetry Authors
-#
-# SPDX-License-Identifier: Apache-2.0
+# # Copyright The OpenTelemetry Authors
+# #
+# # SPDX-License-Identifier: Apache-2.0
 
-appraise 'rails-6.0' do
-  gem 'rails', '~> 6.0.0'
-end
+# # TOOD: Re-enable before release, along with active_support_logger tests
+# appraise 'rails-6.0' do
+#   gem 'rails', '~> 6.0.0'
+# end
 
-appraise 'rails-6.1' do
-  gem 'rails', '~> 6.1.0'
-end
+# appraise 'rails-6.1' do
+#   gem 'rails', '~> 6.1.0'
+# end
 
-appraise 'rails-7.0' do
-  gem 'rails', '~> 7.0.0'
-end
+# appraise 'rails-7.0' do
+#   gem 'rails', '~> 7.0.0'
+# end

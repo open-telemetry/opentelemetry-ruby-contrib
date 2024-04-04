@@ -17,15 +17,14 @@ module OpenTelemetry
             return formatted_message if skip_instrumenting?
 
             OpenTelemetry.logger_provider.logger(
-              OpenTelemetry::Instrumentation::Logger::NAME,
-              OpenTelemetry::Instrumentation::Logger::VERSION
+              name: OpenTelemetry::Instrumentation::Logger::NAME,
+              version: OpenTelemetry::Instrumentation::Logger::VERSION
             ).emit(
               severity_text: severity,
               severity_number: severity_number(severity),
               timestamp: datetime,
               body: msg # New Relic uses formatted_message here. This also helps us with not recording progname, because it is included in the formatted message by default. Which seems more appropriate?
             )
-
             formatted_message
           end
 
@@ -38,10 +37,20 @@ module OpenTelemetry
           end
 
           def severity_number(severity)
-            ::Logger::Severity.const_get(severity)
-          rescue NameError => e
-            OpenTelemetry.logger.warn(message: "Unable to coerce severity text #{severity} into severity_number. Setting severity_number to nil.", exception: e)
-            nil
+            case severity.downcase
+            when 'debug'
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_DEBUG
+            when 'info'
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_INFO
+            when 'warn'
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_WARN
+            when 'error'
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_ERROR
+            when 'fatal'
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_FATAL
+            else
+              OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_UNSPECIFIED
+            end
           end
         end
       end

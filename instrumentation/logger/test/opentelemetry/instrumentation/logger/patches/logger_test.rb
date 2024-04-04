@@ -41,7 +41,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
         ruby_logger.debug(msg)
         assert_equal(msg, log_record.body)
         assert_equal('DEBUG', log_record.severity_text)
-        assert_equal(0, log_record.severity_number)
+        assert_equal(5, log_record.severity_number)
         assert_equal(timestamp, log_record.timestamp)
       end
     end

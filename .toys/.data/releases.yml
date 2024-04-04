@@ -49,7 +49,7 @@ gems:
 
   - name: opentelemetry-instrumentation-logger
     directory: instrumentation/logger
-    version_constant: [OpenTelemetry, Instrumentation, Logger, VERSION
+    version_constant: [OpenTelemetry, Instrumentation, Logger, VERSION]
 
   - name: opentelemetry-instrumentation-racecar
     directory: instrumentation/racecar
