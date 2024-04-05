@@ -18,10 +18,6 @@ module OpenTelemetry
           (ENV.key?('_HANDLER') || ENV.key?('ORIG_HANDLER'))
         end
 
-        compatible do
-          true
-        end
-
         private
 
         def require_dependencies

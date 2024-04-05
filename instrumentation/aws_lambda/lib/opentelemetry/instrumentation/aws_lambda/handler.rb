@@ -7,6 +7,8 @@
 module OpenTelemetry
   module Instrumentation
     module AwsLambda
+      AWS_TRIGGERS = ['aws:sqs', 'aws:s3', 'aws:sns', 'aws:dynamodb'].freeze
+
       # Handler class that creates a span around the _HANDLER
       class Handler
         attr_reader :handler_method, :handler_class
@@ -29,7 +31,7 @@ module OpenTelemetry
           parent_context = extract_parent_context(event)
 
           span_kind = nil
-          span_kind = if event['Records'] && ['aws:sqs', 'aws:s3', 'aws:sns', 'aws:dynamodb'].include?(event['Records'].dig(0, 'eventSource'))
+          span_kind = if event['Records'] && AWS_TRIGGERS.include?(event['Records'].dig(0, 'eventSource'))
                         :consumer
                       else
                         :server
