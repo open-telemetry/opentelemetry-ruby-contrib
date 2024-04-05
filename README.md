@@ -28,7 +28,6 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-approvers)):
 
 - [Josef Šimánek](https://github.com/simi)
-- [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
 - [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
@@ -39,6 +38,7 @@ Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/
 - [Daniel Azuma](https://github.com/dazuma), Google
 - [Eric Mustin](https://github.com/ericmustin)
 - [Francis Bogsanyi](https://github.com/fbogsany), Shopify
+- [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
 - [Matthew Wear](https://github.com/mwear), Lightstep
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
