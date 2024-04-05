@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.24.1 / 2024-04-05
+
+* DOCS: Fix typo where Rake is mentioned instead of Rack
+
 ### v0.24.0 / 2024-01-06
 
 * BREAKING CHANGE: Use Rack Events By Default
