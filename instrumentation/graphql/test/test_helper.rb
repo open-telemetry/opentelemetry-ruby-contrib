@@ -9,6 +9,8 @@ Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
 require 'webmock/minitest'
+# Mitigates https://github.com/rmosolgo/graphql-ruby/issues/4900
+require 'ostruct' if Gem::Requirement.new('< 2.0.0').satisfied_by?(Gem::Version.new(GraphQL::VERSION))
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
