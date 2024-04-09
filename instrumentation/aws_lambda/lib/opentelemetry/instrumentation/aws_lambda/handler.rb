@@ -57,12 +57,11 @@ module OpenTelemetry
               original_response = response
             end
           rescue StandardError => e
-            span&.record_exception(e)
-            span&.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
+            OpenTelemetry.logger.error("aws-lambda instrumentation #{e.class}: #{e.message}")
           ensure
             if original_handler_error
               span&.record_exception(original_handler_error)
-              span&.status = OpenTelemetry::Trace::Status.error("Original lambda handler exception: #{original_handler_error.class}. Please check if you have the correct handler setting and code in your lambda function.")
+              span&.status = OpenTelemetry::Trace::Status.error(original_handler_error.message)
             end
             span&.finish
             OpenTelemetry.tracer_provider.force_flush(timeout: @flush_timeout)
@@ -160,11 +159,9 @@ module OpenTelemetry
         def otel_attributes(event, context)
           span_attributes = {}
           span_attributes['faas.invocation_id'] = context.aws_request_id
-          span_attributes['cloud.resource_id'] = "#{context.invoked_function_arn};#{context.aws_request_id};#{context.function_name}"
+          span_attributes['cloud.resource_id'] = context.invoked_function_arn
           span_attributes[OpenTelemetry::SemanticConventions::Trace::AWS_LAMBDA_INVOKED_ARN] = context.invoked_function_arn
-
-          account_id = context.invoked_function_arn.split(':')[4]
-          span_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = account_id
+          span_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = context.invoked_function_arn.split(':')[4]
 
           if event['requestContext']
             request_attributes = event['version'] == '2.0' ? v2_proxy_attributes(event) : v1_proxy_attributes(event)

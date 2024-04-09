@@ -60,7 +60,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
         _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
         _(last_span.attributes['faas.trigger']).must_equal 'http'
-        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name;41784178-4178-4178-4178-4178417855e;funcion'
+        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
         _(last_span.attributes['cloud.account.id']).must_equal 'id'
         _(last_span.attributes['http.method']).must_equal 'GET'
         _(last_span.attributes['http.route']).must_equal '/'
@@ -115,7 +115,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
         _(last_span.attributes['faas.trigger']).must_equal 'http'
         _(last_span.attributes['cloud.account.id']).must_equal 'id'
-        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name;41784178-4178-4178-4178-4178417855e;funcion'
+        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
         _(last_span.attributes['net.host.name']).must_equal 'id.execute-api.us-east-1.amazonaws.com'
         _(last_span.attributes['http.method']).must_equal 'POST'
         _(last_span.attributes['http.user_agent']).must_equal 'agent'
@@ -136,7 +136,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
 
         _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
         _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
-        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name;41784178-4178-4178-4178-4178417855e;funcion'
+        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
         _(last_span.attributes['cloud.account.id']).must_equal 'id'
 
         assert_nil(last_span.attributes['faas.trigger'])
@@ -160,7 +160,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
 
         _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
         _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
-        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name;41784178-4178-4178-4178-4178417855e;funcion'
+        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
         _(last_span.attributes['cloud.account.id']).must_equal 'id'
         _(last_span.attributes['faas.trigger']).must_equal 'pubsub'
         _(last_span.attributes['messaging.operation']).must_equal 'process'
@@ -185,7 +185,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.kind).must_equal :server
 
         _(last_span.status.code).must_equal 2
-        _(last_span.status.description).must_equal 'Original lambda handler exception: StandardError. Please check if you have the correct handler setting and code in your lambda function.'
+        _(last_span.status.description).must_equal 'Simulated Error'
         _(last_span.hex_parent_span_id).must_equal '0000000000000000'
 
         _(last_span.events[0].name).must_equal 'exception'
