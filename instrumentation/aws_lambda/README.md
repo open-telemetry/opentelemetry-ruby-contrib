@@ -1,6 +1,6 @@
 # OpenTelemetry AWS-Lambda Instrumentation
 
-The OpenTelemetry `aws-lambda` gem is a community maintained instrumentation for [aws-sdk-lambda][aws-sdk-lambda].
+The OpenTelemetry `aws-lambda` gem is a community maintained instrumentation for [AWS Lambda functions](https://docs.aws.amazon.com/lambda/latest/dg/ruby-handler.html).
 
 ## How do I get started?
 
