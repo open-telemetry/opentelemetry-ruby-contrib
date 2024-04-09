@@ -25,8 +25,8 @@ module OpenTelemetry
           resolve_original_handler
         end
 
-        # We want to capture the error if user's handler is causing issue
-        # but our wrapper and handler shouldn't cause any issue
+        # Try to record and re-raise any exception from the wrapped function handler
+        # Instrumentation should never raise its own exception
         def call_wrapped(event:, context:)
           parent_context = extract_parent_context(event)
 
