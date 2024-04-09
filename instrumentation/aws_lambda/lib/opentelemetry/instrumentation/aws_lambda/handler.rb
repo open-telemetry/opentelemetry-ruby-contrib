@@ -165,8 +165,6 @@ module OpenTelemetry
 
           account_id = context.invoked_function_arn.split(':')[4]
           span_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = account_id
-          span_attributes[OpenTelemetry::SemanticConventions::Trace::FAAS_EXECUTION] = context.aws_request_id
-          span_attributes[OpenTelemetry::SemanticConventions::Resource::FAAS_ID] = context.invoked_function_arn
 
           if event['requestContext']
             request_attributes = event['version'] == '2.0' ? v2_proxy_attributes(event) : v1_proxy_attributes(event)
