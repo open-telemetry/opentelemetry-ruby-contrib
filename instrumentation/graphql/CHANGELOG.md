@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.28.1 / 2024-04-10
+
+* FIXED: Analyze span names in GraphQL instrumentation
+
 ### v0.28.0 / 2024-02-16
 
 * BREAKING CHANGE: GraphQL Legacy Tracer perf improvements [#867](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867).
