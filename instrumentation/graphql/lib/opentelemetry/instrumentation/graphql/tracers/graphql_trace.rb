@@ -89,11 +89,11 @@ module OpenTelemetry
           end
 
           def analyze_multiplex(multiplex:, &block)
-            tracer.in_span('graphql.analyze_query', &block)
+            tracer.in_span('graphql.analyze_multiplex', &block)
           end
 
           def analyze_query(query:, &block)
-            tracer.in_span('graphql.analyze_multiplex', &block)
+            tracer.in_span('graphql.analyze_query', &block)
           end
 
           def execute_query(query:, &block)
