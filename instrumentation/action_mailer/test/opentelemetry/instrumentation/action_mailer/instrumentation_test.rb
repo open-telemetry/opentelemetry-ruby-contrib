@@ -24,4 +24,12 @@ describe OpenTelemetry::Instrumentation::ActionMailer do
       instrumentation.instance_variable_set(:@installed, false)
     end
   end
+
+  describe '#install with default options' do
+    it 'with default options' do
+      _(instrumentation.config[:disallowed_notification_payload_keys]).wont_be_empty
+      _(instrumentation.config[:notification_payload_transform]).wont_be_nil
+      _(instrumentation.config[:email_address]).must_equal :omit
+    end
+  end
 end

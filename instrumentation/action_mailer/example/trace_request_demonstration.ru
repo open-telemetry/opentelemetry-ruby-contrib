@@ -13,6 +13,7 @@ gemfile(true) do
   gem 'puma'
   gem 'opentelemetry-sdk'
   gem 'opentelemetry-instrumentation-rails', path: '../../rails'
+  gem 'opentelemetry-instrumentation-active_support', path: '../../active_support'
   gem 'opentelemetry-instrumentation-action_mailer', path: '../'
 end
 
@@ -41,7 +42,7 @@ class TestMailer < ActionMailer::Base
   default from: 'no-reply@example.com'
 
   def welcome_email
-    mail(to: 'test_mailer@otel.org', subject: 'Welcome to OpenTelemetry!')
+    mail(to: 'test_mailer@otel.org', subject: 'Welcome to OpenTelemetry!', cc: 'cc@example.com', bcc: 'bcc@example.com')
   end
 end
 
@@ -55,6 +56,9 @@ OpenTelemetry::SDK.configure do |c|
   # At present, the Rails instrumentation is required.
   c.use 'OpenTelemetry::Instrumentation::Rails'
   c.use 'OpenTelemetry::Instrumentation::ActionMailer'
+  # to test with pre-existing options, try below options for action mailer
+  #, { notification_payload_transform: lambda {|payload| payload[:perform_deliveries] = false; payload} }
+  #, { disallowed_notification_payload_keys: [:mail] }
   c.add_span_processor(span_processor)
 end
 
