@@ -47,8 +47,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
           'graphql.lex',
           'graphql.parse',
           'graphql.validate',
-          'graphql.analyze_multiplex',
           'graphql.analyze_query',
+          'graphql.analyze_multiplex',
           'graphql.execute_query',
           'graphql.execute_query_lazy',
           'graphql.execute_multiplex'
