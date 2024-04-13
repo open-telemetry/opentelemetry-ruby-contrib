@@ -124,13 +124,14 @@ module OpenTelemetry
 
           def request_span_attributes(env:)
             attributes = {
-              'http.method' => env['REQUEST_METHOD'],
-              'http.host' => env['HTTP_HOST'] || 'unknown',
-              'http.scheme' => env['rack.url_scheme'],
-              'http.target' => env['QUERY_STRING'].empty? ? env['PATH_INFO'] : "#{env['PATH_INFO']}?#{env['QUERY_STRING']}"
+              'http.request.method' => env['REQUEST_METHOD'],
+              'server.address' => env['HTTP_HOST'] || 'unknown',
+              'url.scheme' => env['rack.url_scheme'],
+              'url.path' => env['PATH_INFO']
             }
 
-            attributes['http.user_agent'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
+            attributes['url.query'] = env['QUERY_STRING'] unless env['QUERY_STRING'].empty?
+            attributes['user_agent.original'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
             attributes.merge!(allowed_request_headers(env))
           end
 
@@ -153,7 +154,7 @@ module OpenTelemetry
 
           def set_attributes_after_request(span, status, headers, _response)
             span.status = OpenTelemetry::Trace::Status.error unless (100..499).cover?(status.to_i)
-            span.set_attribute('http.status_code', status)
+            span.set_attribute('http.response.status_code', status)
 
             # NOTE: if data is available, it would be good to do this:
             # set_attribute('http.route', ...
