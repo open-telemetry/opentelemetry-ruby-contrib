@@ -53,14 +53,13 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
     end
 
     it 'turns the severity into a number' do
-      assert_equal(Logger::Severity::DEBUG, 0)
       ruby_logger.debug(msg)
-      assert_equal(0, log_record.severity_number)
+      assert_equal(5, log_record.severity_number)
     end
 
     it 'safely handles unknown severity number translations' do
       ruby_logger.send(:format_message, 'CUSTOM_SEVERITY', Time.now, nil, msg)
-      assert_nil(log_record.severity_number)
+      assert_equal(0, log_record.severity_number)
     end
   end
 end
