@@ -19,7 +19,7 @@ module OpenTelemetry
             OpenTelemetry.logger_provider.logger(
               name: OpenTelemetry::Instrumentation::Logger::NAME,
               version: OpenTelemetry::Instrumentation::Logger::VERSION
-            ).emit(
+            ).on_emit(
               severity_text: severity,
               severity_number: severity_number(severity),
               timestamp: datetime,
@@ -30,6 +30,7 @@ module OpenTelemetry
 
           private
 
+          # Placeholder for now
           def instrumentation_config; end
 
           def skip_instrumenting?
