@@ -32,25 +32,40 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+
+## Active Support Instrumentation
+
+This instrumentation now relies entirely on `ActiveSupport::Notifications` and registers a custom Subscriber that listens to relevant events to report as spans.
+
+See the table below for details of what [Rails Framework Hook Events](https://guides.rubyonrails.org/active_support_instrumentation.html#action-mailer) are recorded by this instrumentation:
+
+| Event Name | Creates Span? | Notes |
+| - | - | - |
+| `deliver.action_mailer` | :white_check_mark: | Creates an span with kind `internal` and email content and status|
+| `process.action_mailer` | :x: | Lack of useful info so ignored |
+
+## Semantic Conventions
+
+Internal spans are named using the name of the `ActiveSupport` event that was provided (e.g. `action_mailer deliver`).
+
+Attributes that are specific to this instrumentation are recorded under `action_mailer deliver`:
+
+| Attribute Name | Type | Notes |
+| - | - | - |
+| `mail` | String | Mail content |
+| `mailer` | String | Mailer class that is used to send mail |
+| `message_id` | String | Set from Mail gem|
+| `subject` | String | Mail subject |
+| `to` | Array | Receiver for mails (omit when `email_address` set to `:omit` |
+| `from` | Array | Sender for mails (omit when `email_address` set to `:omit` |
+| `cc` | Array | mails CC (omit when `email_address` set to `:omit` |
+| `bcc` | Array | mails BCC (omit when `email_address` set to `:omit` |
+| `perform_deliveries` | Boolean | mail status |
+
 ## Examples
 
 Example usage can be seen in the `./example/trace_request_demonstration.ru` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_mailer/example/trace_request_demonstration.ru)
 
-## Known issues
-
-ActionMailer instrumentation uses ActiveSupport notifications and in the case when a subscriber raises in start method an unclosed span would break successive spans ends. Example:
-
-```ruby
-class CrashingEndSubscriber
-  def start(name, id, payload)
-    raise 'boom'
-  end
-
-  def finish(name, id, payload) end
-end
-
-::ActiveSupport::Notifications.subscribe('deliver.action_mailer', CrashingStartSubscriber.new)
-```
 
 ## How can I get involved?
 
