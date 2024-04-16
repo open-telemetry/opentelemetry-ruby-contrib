@@ -32,6 +32,22 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Options
+
+ActionMailer instrumentation doesn't expose email address by default, but if email address is needed, simply use `:email_address` option:
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::ActionMailer', { email_address: :include }
+end
+```
+
+If only want to hide certain field for email address:
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::ActionMailer', { email_address: :include, disallowed_notification_payload_keys: ['email.to.address'] }
+end
+```
+
 
 ## Active Support Instrumentation
 
@@ -52,15 +68,13 @@ Attributes that are specific to this instrumentation are recorded under `action_
 
 | Attribute Name | Type | Notes |
 | - | - | - |
-| `mail` | String | Mail content |
-| `mailer` | String | Mailer class that is used to send mail |
-| `message_id` | String | Set from Mail gem|
-| `subject` | String | Mail subject |
-| `to` | Array | Receiver for mails (omit when `email_address` set to `:omit` |
-| `from` | Array | Sender for mails (omit when `email_address` set to `:omit` |
-| `cc` | Array | mails CC (omit when `email_address` set to `:omit` |
-| `bcc` | Array | mails BCC (omit when `email_address` set to `:omit` |
-| `perform_deliveries` | Boolean | mail status |
+| `email.x_mailer` | String | Mailer class that is used to send mail |
+| `email.message_id` | String | Set from Mail gem|
+| `email.subject` | String | Mail subject |
+| `email.to.address` | Array | Receiver for mails (omit by default, inlcude when `email_address` set to `:include`) |
+| `email.from.address` | Array | Sender for mails (omit by default, inlcude when `email_address` set to `:include`) |
+| `email.cc.address` | Array | mails CC (omit by default, inlcude when `email_address` set to `:include`) |
+| `email.bcc.address` | Array | mails BCC (omit by default, inlcude when `email_address` set to `:include`)  |
 
 ## Examples
 

@@ -42,6 +42,7 @@ class TestMailer < ActionMailer::Base
   default from: 'no-reply@example.com'
 
   def welcome_email
+    attachments['filename.pdf'] = File.read('example.pdf')
     mail(to: 'test_mailer@otel.org', subject: 'Welcome to OpenTelemetry!', cc: 'cc@example.com', bcc: 'bcc@example.com')
   end
 end
