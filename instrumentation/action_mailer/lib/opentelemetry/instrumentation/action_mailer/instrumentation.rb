@@ -11,6 +11,7 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('6.1.0')
         install do |_config|
+          exclude_email
           resolve_email_address
           require_dependencies
         end
@@ -23,7 +24,7 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
-        option :disallowed_notification_payload_keys, default: [:mail], validate: :array
+        option :disallowed_notification_payload_keys, default: [], validate: :array
         option :notification_payload_transform,       default: nil, validate: :callable
         option :email_address,                        default: :omit, validate: %I[omit include]
 
@@ -31,6 +32,10 @@ module OpenTelemetry
 
         def gem_version
           ::ActionMailer.version
+        end
+
+        def exclude_email
+          ActionMailer::Instrumentation.instance.config[:disallowed_notification_payload_keys] += %i[mail]
         end
 
         def resolve_email_address
