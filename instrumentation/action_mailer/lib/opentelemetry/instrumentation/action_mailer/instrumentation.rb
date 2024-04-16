@@ -23,7 +23,7 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
-        option :disallowed_notification_payload_keys, default: [],  validate: :array
+        option :disallowed_notification_payload_keys, default: [:mail], validate: :array
         option :notification_payload_transform,       default: nil, validate: :callable
         option :email_address,                        default: :omit, validate: %I[omit include]
 
@@ -37,21 +37,6 @@ module OpenTelemetry
           return unless ActionMailer::Instrumentation.instance.config[:email_address] == :omit
 
           ActionMailer::Instrumentation.instance.config[:disallowed_notification_payload_keys] += %i[to from bcc cc]
-
-          if ActionMailer::Instrumentation.instance.config[:notification_payload_transform].nil?
-            mask_email = lambda do |payload|
-              payload[:mail].gsub!(/(From:\s+|To:\s+|Cc:\s+)[^\s]+/, '\1[redacted]')
-              payload
-            end
-          else
-            original_callable = ActionMailer::Instrumentation.instance.config[:notification_payload_transform]
-            mask_email = lambda do |payload|
-              original_callable.call(payload)
-              payload[:mail].gsub!(/(From:\s+|To:\s+|Cc:\s+)[^\s]+/, '\1[redacted]')
-              payload
-            end
-          end
-          ActionMailer::Instrumentation.instance.config[:notification_payload_transform] = mask_email
         end
 
         def require_dependencies
