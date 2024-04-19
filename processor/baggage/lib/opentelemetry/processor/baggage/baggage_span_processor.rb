@@ -29,7 +29,7 @@ module OpenTelemetry
       # @example
       #   OpenTelemetry::SDK.configure do |c|
       #     # Add the BaggageSpanProcessor to the collection of span processors
-      #     c.add_span_processor(Honeycomb::OpenTelemetry::Trace::BaggageSpanProcessor.new)
+      #     c.add_span_processor(OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new)
       #
       #     # Because the span processor list is no longer empty, the SDK will not use the
       #     # values in OTEL_TRACES_EXPORTER to instantiate exporters.
