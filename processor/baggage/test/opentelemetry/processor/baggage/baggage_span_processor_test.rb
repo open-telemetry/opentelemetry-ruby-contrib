@@ -32,32 +32,53 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
   end
 
   describe '#on_start' do
-    it 'sets baggage on the span' do
-      span = OpenTelemetry::Trace::Span.new
-      span.context = OpenTelemetry::Trace::SpanContext.new
-      span.context = span.context.create_with_baggage_item('key', 'value')
+    before do
+      @span = Minitest::Mock.new
+      @context_with_baggage = OpenTelemetry::Baggage.set_value('a_key', 'a_value')
+    end
 
-      processor.on_start(span)
+    it 'adds current baggage keys/values as attributes when a span starts' do
+      @span.expect(:add_attributes, @span, [{ 'a_key' => 'a_value' }])
 
-      _(span.context.baggage).must_equal('key' => 'value')
+      processor.on_start(@span, @context_with_baggage)
+
+      @span.verify
+    end
+
+    it 'does not blow up when given nil context' do
+      processor.on_start(@span, nil)
+      assert true # nothing above raised an exception
+    end
+    it 'does not blow up when given nil span' do
+      processor.on_start(nil, @context_with_baggage)
+      assert true # nothing above raised an exception
+    end
+    it 'does not blow up when given nil span and context' do
+      processor.on_start(nil, nil)
+      assert true # nothing above raised an exception
+    end
+    it 'does not blow up when given a context that is not a Context' do
+      processor.on_start(@span, :not_a_context)
+      assert true # nothing above raised an exception
+    end
+    it 'does not blow up when given a span that is not a Span' do
+      processor.on_start(:not_a_span, @context_with_baggage)
+      assert true # nothing above raised an exception
     end
   end
 
-  describe '#on_end' do
-    it 'does not modify the span' do
-      span = OpenTelemetry::Trace::Span.new
-      span.context = OpenTelemetry::Trace::SpanContext.new
-      span.context = span.context.create_with_baggage_item('key', 'value')
-
-      processor.on_end(span)
-
-      _(span.context.baggage).must_equal('key' => 'value')
+  describe 'satisfies the SpanProcessor duck type with no-op methods' do
+    it 'implements #on_finish' do
+      processor.on_finish(@span)
+      assert true # nothing above raised an exception
     end
-  end
 
-  describe '#shutdown' do
-    it 'does not modify the span' do
-      processor.shutdown
+    it 'implements #force_flush' do
+      _(processor.force_flush).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
+    end
+
+    it 'implements #shutdown' do
+      _(processor.shutdown).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
     end
   end
 end
