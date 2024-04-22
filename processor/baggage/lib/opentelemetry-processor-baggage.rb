@@ -1,0 +1,1 @@
+require_relative 'opentelemetry/processor/baggage/baggage_span_processor'
