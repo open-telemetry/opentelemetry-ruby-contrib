@@ -17,11 +17,11 @@ module OpenTelemetry
       # via propagation headers. If the external services also have a Baggage span
       # processor, the keys and values will appear in those child spans as well.
       #
-      # ⚠ ⚠ ⚠️
+      # ⚠️
       # To repeat: a consequence of adding data to Baggage is that the keys and
       # values will appear in all outgoing HTTP headers from the application.
       # Do not put sensitive information in Baggage.
-      # ⚠ ⚠ ⚠️
+      # ⚠️
       #
       # @example
       #   OpenTelemetry::SDK.configure do |c|
@@ -41,11 +41,11 @@ module OpenTelemetry
       #     )
       #   end
       class BaggageSpanProcessor
-        # Called when a {Span} is started, adds Baggage keys/values to the span as attributes.
+        # Called when a `Span` is started, adds Baggage keys/values to the span as attributes.
         #
-        # @param [Span] span the {Span} that just started, expected to conform
-        #  to the concrete {Span} interface from the SDK and respond to :add_attributes.
-        # @param [Context] parent_context the parent {Context} of the newly
+        # @param [Span] span the `Span` that just started, expected to conform
+        #  to the concrete `Span` interface from the SDK and respond to :add_attributes.
+        # @param [Context] parent_context the parent `Context` of the newly
         #  started span.
         def on_start(span, parent_context)
           return unless span.respond_to?(:add_attributes) && parent_context.is_a?(::OpenTelemetry::Context)
@@ -53,13 +53,16 @@ module OpenTelemetry
           span.add_attributes(::OpenTelemetry::Baggage.values(context: parent_context))
         end
 
+        # Called when a Span is ended, does nothing.
+        #
         # NO-OP method to satisfy the SpanProcessor duck type.
         #
-        # @param [Span] span the {Span} that just ended.
+        # @param [Span] span the {OpenTelemetry::Trace::Span} that just ended.
         def on_finish(span); end
 
-        # Export all ended spans to the configured `Exporter` that have not yet
-        # been exported.
+        # Always successful; this processor does not maintain any state to flush.
+        #
+        # NO-OP method to satisfy the `SpanProcessor` duck type.
         #
         # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] 0 for success and there is nothing to flush so always successful.
@@ -67,7 +70,9 @@ module OpenTelemetry
           0
         end
 
-        # Called when {TracerProvider#shutdown} is called.
+        # Always successful; this processor does not maintain any state to clean up or processes to close on shutdown.
+        #
+        # NO-OP method to satisfy the `SpanProcessor` duck type.
         #
         # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] 0 for success and there is nothing to stop so always successful.
