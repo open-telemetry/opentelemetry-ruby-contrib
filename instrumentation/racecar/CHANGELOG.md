@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-racecar
 
+### v0.3.1 / 2024-04-05
+
+* FIXED: Fix markdown header
+
 ### v0.3.0 / 2023-09-07
 
 * FIXED: Align messaging instrumentation operation names

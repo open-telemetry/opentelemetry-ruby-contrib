@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.7.1 / 2024-04-05
+
+* FIXED: Instrumentation/active_record: add `:allow_retry` option to `find_by_sql` patch
+
 ### v0.7.0 / 2023-11-22
 
 * BREAKING CHANGE: Drop Rails 6.0 EOL
