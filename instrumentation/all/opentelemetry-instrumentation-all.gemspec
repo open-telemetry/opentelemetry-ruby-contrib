@@ -26,7 +26,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.0'
 
-  spec.add_dependency 'opentelemetry-instrumentation-logger', '~> 0.0.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.20.1'
   spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.5.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.21.0'
@@ -43,6 +42,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-http_client', '~> 0.22.1'
   spec.add_dependency 'opentelemetry-instrumentation-koala', '~> 0.20.1'
   spec.add_dependency 'opentelemetry-instrumentation-lmdb', '~> 0.22.1'
+  spec.add_dependency 'opentelemetry-instrumentation-logger', '~> 0.0.0'
   spec.add_dependency 'opentelemetry-instrumentation-mongo', '~> 0.22.1'
   spec.add_dependency 'opentelemetry-instrumentation-mysql2', '~> 0.27.0'
   spec.add_dependency 'opentelemetry-instrumentation-net_http', '~> 0.22.1'
