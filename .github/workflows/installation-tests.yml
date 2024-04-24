@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1.174.0
+      - uses: ruby/setup-ruby@v1.175.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
       - name: "Install Latest Gem Versions on ${{ matrix.ruby-version }}"
