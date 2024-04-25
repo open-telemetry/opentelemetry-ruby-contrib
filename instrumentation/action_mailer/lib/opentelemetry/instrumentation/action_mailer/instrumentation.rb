@@ -42,9 +42,7 @@ module OpenTelemetry
 
         def ecs_mail_convention
           if ActionMailer::Instrumentation.instance.config[:notification_payload_transform].nil?
-            transform_attributes = lambda do |payload|
-              transform_payload(payload)
-            end
+            transform_attributes = ->(payload) { transform_payload(payload) }
           else
             original_callable = ActionMailer::Instrumentation.instance.config[:notification_payload_transform]
             transform_attributes = lambda do |payload|
@@ -64,7 +62,6 @@ module OpenTelemetry
           payload['email.from.address'] = payload[:from]
           payload['email.cc.address'] = payload[:cc]
           payload['email.bcc.address'] = payload[:bcc]
-          payload['email.delivery_timestamp'] = payload[:date]
           payload['email.origination_timestamp'] = payload[:date]
 
           payload.delete_if { |item| item.instance_of?(Symbol) }

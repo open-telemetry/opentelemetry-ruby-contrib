@@ -12,6 +12,7 @@ gemfile(true) do
   gem 'rails'
   gem 'puma'
   gem 'opentelemetry-sdk'
+  gem 'stringio', '3.0.4'
   gem 'opentelemetry-instrumentation-rails', path: '../../rails'
   gem 'opentelemetry-instrumentation-active_support', path: '../../active_support'
   gem 'opentelemetry-instrumentation-action_mailer', path: '../'
@@ -42,7 +43,6 @@ class TestMailer < ActionMailer::Base
   default from: 'no-reply@example.com'
 
   def welcome_email
-    attachments['filename.pdf'] = File.read('example.pdf')
     mail(to: 'test_mailer@otel.org', subject: 'Welcome to OpenTelemetry!', cc: 'cc@example.com', bcc: 'bcc@example.com')
   end
 end
