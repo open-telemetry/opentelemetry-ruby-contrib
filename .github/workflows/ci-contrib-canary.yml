@@ -45,7 +45,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "jruby-9.4.2.0"
+          ruby: "jruby-9.4.6.0"
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
@@ -101,7 +101,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "jruby-9.4.2.0"
+          ruby: "jruby-9.4.6.0"
           latest: "true"
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
@@ -160,7 +160,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "jruby-9.4.2.0"
+          ruby: "jruby-9.4.6.0"
           latest: "true"
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"

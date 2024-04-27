@@ -47,7 +47,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "jruby-9.4.2.0"
+          ruby: "jruby-9.4.6.0"
 
   propagators:
     strategy:
@@ -91,7 +91,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "jruby-9.4.2.0"
+          ruby: "jruby-9.4.6.0"
 
   resource-detectors:
     strategy:
@@ -136,4 +136,4 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "jruby-9.4.2.0"
+          ruby: "jruby-9.4.6.0"
