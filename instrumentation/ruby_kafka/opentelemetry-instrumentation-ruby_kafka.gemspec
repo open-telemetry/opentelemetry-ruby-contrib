@@ -36,7 +36,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-mocks'
   spec.add_development_dependency 'rubocop', '~> 1.62'
   spec.add_development_dependency 'rubocop-performance', '~> 1.20'
-  spec.add_development_dependency 'ruby-kafka'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'yard', '~> 0.9'
 

@@ -4,6 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+appraise 'rack-latest' do
+  gem 'rack'
+end
+
 appraise 'rack-3.0' do
   gem 'rack', '~> 3.0.0'
 end

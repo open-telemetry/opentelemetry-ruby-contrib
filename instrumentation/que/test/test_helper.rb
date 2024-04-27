@@ -54,12 +54,7 @@ def prepare_que
   ActiveRecord::Base.connection.execute('CREATE SCHEMA public')
 
   Que.connection = ActiveRecord
-
-  if que_version >= Gem::Version.new('2.1.0')
-    Que.migrate!(version: 7)
-  else
-    Que.migrate!(version: 4)
-  end
+  Que.migrate!(version: Que::Migrations::CURRENT_VERSION)
 end
 
 def database_name
