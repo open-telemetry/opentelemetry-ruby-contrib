@@ -146,7 +146,7 @@ jobs:
           - baggage
         os:
           - ubuntu-latest
-    name: ${{ matrix.gem }} / ${{ matrix.os }}
+    name: "processors-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
