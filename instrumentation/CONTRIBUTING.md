@@ -330,7 +330,7 @@ In addition to that, there should also be redundant `yardoc` comments in the ent
 
 Executuable examples should be included in the `examples` directory that demonstrate how to use the instrumentation in a real-world scenario.
 
-We recommend using Bundler's inline gemfile to run the examples. Here is an example from the `grape` instrumentation:
+We recommend using [Bundler's inline gemfile](https://bundler.io/guides/bundler_in_a_single_file_ruby_script.html) to run the examples. Here is an example from the `grape` instrumentation:
 
 ```ruby
 
