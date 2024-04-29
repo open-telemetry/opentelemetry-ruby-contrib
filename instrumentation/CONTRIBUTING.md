@@ -92,12 +92,12 @@ The output of the generator shows that it creates a new directory in the `instru
 
 The original design and implementation of this project was heavily influenced by Datadog's `dd-trace-rb` project. You may refer to the [Datadog Porting Guide](datadog-porting-guide.md) as a reference for implementing instrumentations, however the following guidelines are specific to OpenTelemetry Ruby:
 
-*. Use `OpenTelemetry::Instrumentation::Base`
-*. Use the OpenTelemetry API
-*. Use First Party Extension Points
-*. Use Semantic Conventions
-*. Write comprehensive automated tests
-*. Understand Performance Characteristics
+* Use `OpenTelemetry::Instrumentation::Base`
+* Use the OpenTelemetry API
+* Use First Party Extension Points
+* Use Semantic Conventions
+* Write comprehensive automated tests
+* Understand Performance Characteristics
 
 ### Use `OpenTelemetry::Instrumentation::Base`
 
