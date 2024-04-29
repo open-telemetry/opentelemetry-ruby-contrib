@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry-api'
+require 'opentelemetry-sdk'
 
 module OpenTelemetry
   module Processor
@@ -40,7 +41,7 @@ module OpenTelemetry
       #       )
       #     )
       #   end
-      class BaggageSpanProcessor
+      class BaggageSpanProcessor < OpenTelemetry::SDK::Trace::SpanProcessor
         # Called when a `Span` is started, adds Baggage keys/values to the span as attributes.
         #
         # @param [Span] span the `Span` that just started, expected to conform
