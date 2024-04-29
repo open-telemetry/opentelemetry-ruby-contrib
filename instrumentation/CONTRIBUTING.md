@@ -111,7 +111,7 @@ The entry point of your instrumentation should be implemented as a subclass of `
 
 Instrumentations are intended to be portable and usable with vendor distributions of the SDK. For this reason, you must use the OpenTelemetry API to create spans and add attributes, events, and links to spans and avoid using the OpenTelemetry SDK directly.
 
-Each instrumentation _must_ use a named tracer. Instrumentations that inherit from `OpenTelemetry::Instrumentation::Base` will get a single helper method that will automatically provide your instrumentation with a named tracer under `OpenTelemetry::Instrumentation::${Gem Name>}::Instrumentation.instance.tracer`.
+Each instrumentation _must_ use a named tracer. Instrumentations that inherit from `OpenTelemetry::Instrumentation::Base` will get a single helper method that will automatically provide your instrumentation with a named tracer under `OpenTelemetry::Instrumentation::${Gem Name}::Instrumentation.instance.tracer`.
 
 For example, the `Werewolf` generated in the example above instrumentation is available `OpenTelemetry::Instrumentation::Werewolf::Instrumentation.instance.tracer`. You should reference this tracer in your code when creating spans like this:
 
