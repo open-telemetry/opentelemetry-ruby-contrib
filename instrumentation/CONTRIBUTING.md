@@ -153,9 +153,23 @@ When you do in fact run into cases where test doubles or API stubs are absolutel
 
 Instrumentation libraries should be as lightweight as possible
 
-* Avoid allocating too many objects and private methods
+* Avoid allocating objects unless absolutely necessary
 * Rely on `rubocop-performance` linters to catch performance issues
 * Consider using [microbenchmarks](https://github.com/evanphx/benchmark-ips) and [profiling](https://ruby-prof.github.io/) to address any possible performance issues
+
+#### Minimal Solutions are Better
+
+Instrumentations should have both the minimal amount of code necessary to provide useful insights to our users.
+
+It may sound contrary to good engineering practices, but you should avoid adding lots of small methods, classes, and objects to handle your use cases.
+
+Adding lots of small well factored code adds some overhead to the library we are instrumenting. It may result in unnecessary allocations, method dispatching, and other performance overhead. It will end up contributing to building large backtraces and making it harder to understand what is happening in the application, which will likely result in additional filtering logic.
+
+In cases when code uses monkey patching, it runs the risk of _adding_ methods that conflict with the internal implementatation of the library that may result in unexpected behavior and bugs.
+
+Avoid instrumenting every method in a library, instead focus on the methods the provide the _most_ insights into what typically causes performance problems for applications, e.g. I/O and network calls.
+
+Hopefully in the near future, we will be able to provide [OTel Profiling](https://opentelemetry.io/blog/2024/profiling/) to help users gain an even deeper understanding of what is happening in their applications at a more granular level.
 
 ## Enable CI
 
