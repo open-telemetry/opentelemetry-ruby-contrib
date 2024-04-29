@@ -322,7 +322,7 @@ The `instrumentation_generator` will create a `README.md` file for your instrume
 3. Any known limitations or caveats
 4. The minimum supported gem version
 
-In addition to that There should also be redundant `yardoc` comments in the entrypoint of your gem, i.e. the subclass `OpenTelemetry::Instrumentation::Base`.
+In addition to that, there should also be redundant `yardoc` comments in the entrypoint of your gem, i.e. the subclass `OpenTelemetry::Instrumentation::Base`.
 
 > :information_source: See the `ActiveJob` instrumentation [`README`](./active_job/README.md) for a comprehensive example.
 
