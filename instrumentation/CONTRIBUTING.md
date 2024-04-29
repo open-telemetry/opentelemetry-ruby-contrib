@@ -47,7 +47,7 @@ The following steps are required to contribute a new instrumentation library:
 
 This repository contains a script to generate a new instrumentation library.
 
-The snippit below demonstrates how to generate a an instrumentation for the `werewolf` gem, starting from the repository root.
+The snippet below demonstrates how to generate a an instrumentation for the `werewolf` gem, starting from the repository root.
 
 ```console
 
