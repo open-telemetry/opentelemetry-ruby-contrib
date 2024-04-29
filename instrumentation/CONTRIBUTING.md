@@ -104,8 +104,51 @@ The original design and implementation of this project was heavily influenced by
 The entry point of your instrumentation should be implemented as a subclass of `OpenTelemetry::Instrumentation::Base`:
 
 * Implement `install` block, where all of the integration work happens
-* Implement `present` block
-* Implement `compatible` block and check for at least the minumum required gem version
+* Implement `present` block, which is you check if the library you are instrumenting was loaded
+* Implement `compatible` block and check for at least the minumum required library version
+* Any custom `options` you want to support
+
+The example below demonstrates how to implement the `Werewolf` instrumentation:
+
+```ruby
+
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+module OpenTelemetry
+  module Instrumentation
+    module Werewolf
+      class Instrumentation < OpenTelemetry::Instrumentation::Base
+        MINIMUM_VERSION = Gem::Version.new('0.1.0')
+
+        install do |_config|
+          require_relative 'handlers'
+          Handlers.subscribe
+        end
+
+        option :transformations, default: :omit, validate: %i[omit include]
+
+        present do
+          defined?(::Werewolf) && defined?(::ActiveSupport)
+        end
+
+        compatible do
+          Gem::Version.new(::Wereworlf::VERSION) >= MINIMUM_VERSION
+        end
+      end
+    end
+  end
+end
+
+```
+
+* The `install` block lazily requires the instrumentation handlers, which subscribe to events published by the `Werewolf` event hooks.
+* The `present` block checks if the `Werewolf` and `ActiveSupport` libraries are loaded, which it will use to subscribe to events and generate spans. It will skip the installation if those dependencies were not loaded before the instrumentation was being initialized.
+* The `compatible` block checks if the `Werewolf` library version is at least `0.1.0` and will skip it if it is not.
+* The `options` section allows you to define custom options that can be passed to the instrumentation. In this example, the `transformations` option is defined with a default value of `:omit` and a validation rule that only allows `:omit` or `:include` values.
 
 ### Use the OpenTelemetry API
 
