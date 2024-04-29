@@ -349,5 +349,92 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['net.peer.port']).must_equal port.to_i if PG.const_defined?(:DEF_PORT)
       end
     end
+
+    describe 'when untraced_queries is configured' do
+      let(:config) { { untraced_queries: ['SELECT 1'], db_statement: :include } }
+
+      %i[exec query sync_exec async_exec exec_params async_exec_params sync_exec_params].each do |method|
+        it "after request (with method: #{method}) does not include span" do
+          client.send(method, 'SELECT 1')
+
+          _(span).must_be_nil
+        end
+      end
+
+      %i[prepare async_prepare sync_prepare].each do |method|
+        it "after preparing a statement (with method: #{method}) does not include span" do
+          client.send(method, 'foo', 'SELECT 1')
+
+          _(span).must_be_nil
+        end
+      end
+
+      %i[exec_prepared async_exec_prepared sync_exec_prepared].each do |method|
+        it "after executing prepared statement (with method: #{method}) does not include the span" do
+          client.prepare('foo', 'SELECT 1')
+          client.send(method, 'foo', [])
+
+          _(last_span).must_be_nil
+        end
+      end
+
+      describe 'and db_statement is :obfuscate' do
+        let(:config) { { untraced_queries: ['SELECT 1'], db_statement: :obfuscate } }
+
+        %i[exec query sync_exec async_exec exec_params async_exec_params sync_exec_params].each do |method|
+          it "after request (with method: #{method}) does not include span" do
+            client.send(method, 'SELECT 1')
+
+            _(span).must_be_nil
+          end
+        end
+
+        %i[prepare async_prepare sync_prepare].each do |method|
+          it "after preparing a statement (with method: #{method}) does not include span" do
+            client.send(method, 'foo', 'SELECT 1')
+
+            _(span).must_be_nil
+          end
+        end
+
+        %i[exec_prepared async_exec_prepared sync_exec_prepared].each do |method|
+          it "after executing prepared statement (with method: #{method}) includes the span as the obfuscated sql from the LRU cache does not match" do
+            client.prepare('foo', 'SELECT 1')
+            client.send(method, 'foo', [])
+
+            _(last_span.name).must_equal 'EXECUTE postgres'
+          end
+        end
+      end
+
+      describe 'and db_statement is :omit' do
+        let(:config) { { untraced_queries: ['SELECT 1'], db_statement: :omit } }
+
+        %i[exec query sync_exec async_exec exec_params async_exec_params sync_exec_params].each do |method|
+          it "after request (with method: #{method}) does not include span" do
+            client.send(method, 'SELECT 1')
+
+            _(span).must_be_nil
+          end
+        end
+
+        %i[prepare async_prepare sync_prepare].each do |method|
+          it "after preparing a statement (with method: #{method}) does not include span" do
+            client.send(method, 'foo', 'SELECT 1')
+
+            _(span).must_be_nil
+          end
+        end
+
+        %i[exec_prepared async_exec_prepared sync_exec_prepared].each do |method|
+          it "after executing prepared statement (with method: #{method}) does not include the span" do
+            client.prepare('foo', 'SELECT 1')
+            client.send(method, 'foo', [])
+
+            _(last_span).must_be_nil
+          end
+        end
+      end
+    end
   end unless ENV['OMIT_SERVICES']
 end

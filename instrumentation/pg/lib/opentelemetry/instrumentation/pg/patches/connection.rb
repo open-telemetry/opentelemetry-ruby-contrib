@@ -16,35 +16,54 @@ module OpenTelemetry
         module Connection # rubocop:disable Metrics/ModuleLength
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args, &block|
-              span_name, attrs = span_attrs(:query, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
+              span_name, attrs, sql = span_attrs(:query, *args)
+
+              handler = proc do
                 if block
                   block.call(super(*args))
                 else
                   super(*args)
                 end
+              end
+
+              if !untraced_query_set.empty? && untraced_query_set.include?(sql)
+                handler.call
+              else
+                tracer.in_span(span_name, attributes: attrs, kind: :client, &handler)
               end
             end
           end
 
           PG::Constants::PREPARE_ISH_METHODS.each do |method|
             define_method method do |*args|
-              span_name, attrs = span_attrs(:prepare, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
-                super(*args)
+              span_name, attrs, sql = span_attrs(:prepare, *args)
+
+              handler = proc { super(*args) }
+
+              if !untraced_query_set.empty? && untraced_query_set.include?(sql)
+                handler.call
+              else
+                tracer.in_span(span_name, attributes: attrs, kind: :client, &handler)
               end
             end
           end
 
           PG::Constants::EXEC_PREPARED_ISH_METHODS.each do |method|
             define_method method do |*args, &block|
-              span_name, attrs = span_attrs(:execute, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
+              span_name, attrs, sql = span_attrs(:execute, *args)
+
+              handler = proc do
                 if block
                   block.call(super(*args))
                 else
                   super(*args)
                 end
+              end
+
+              if !untraced_query_set.empty? && untraced_query_set.include?(sql)
+                handler.call
+              else
+                tracer.in_span(span_name, attributes: attrs, kind: :client, &handler)
               end
             end
           end
@@ -69,6 +88,10 @@ module OpenTelemetry
             PG::Instrumentation.instance.config
           end
 
+          def untraced_query_set
+            @untraced_query_set ||= config[:untraced_queries].to_set
+          end
+
           def lru_cache
             # When SQL is being sanitized, we know that this cache will
             # never be more than 50 entries * 2000 characters (so, presumably
@@ -88,16 +111,19 @@ module OpenTelemetry
           def span_attrs(kind, *args)
             if kind == :query
               operation = extract_operation(args[0])
-              sql = obfuscate_sql(args[0]).to_s
+              raw_sql = args[0]
+              sql = obfuscate_sql(raw_sql).to_s
             else
               statement_name = args[0]
 
               if kind == :prepare
-                sql = obfuscate_sql(args[1]).to_s
+                raw_sql = args[1]
+                sql = obfuscate_sql(raw_sql).to_s
                 lru_cache[statement_name] = sql
                 operation = 'PREPARE'
               else
                 sql = lru_cache[statement_name]
+                raw_sql = sql
                 operation = 'EXECUTE'
               end
             end
@@ -107,7 +133,7 @@ module OpenTelemetry
             attrs.merge!(OpenTelemetry::Instrumentation::PG.attributes)
             attrs.compact!
 
-            [span_name(operation), client_attributes.merge(attrs)]
+            [span_name(operation), client_attributes.merge(attrs), raw_sql]
           end
 
           def extract_operation(sql)
