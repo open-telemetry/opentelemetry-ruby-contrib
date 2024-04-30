@@ -215,7 +215,7 @@ Avoid instrumenting every method in a library, instead focus on the methods the 
 
 In the near future, [OTel Profiling](https://opentelemetry.io/blog/2024/profiling/) will provide users an even deeper understanding of what is happening in their applications at a more granular level.
 
-#### Avoid Adding Custom Extensions (E_TOOMANYOPTIONS)
+#### Avoid Adding Custom Extensions
 
 Though your instrumentation may accept configurations options to customize the output, you should consider that the more options you add, the more complexity you will have to manage.
 
