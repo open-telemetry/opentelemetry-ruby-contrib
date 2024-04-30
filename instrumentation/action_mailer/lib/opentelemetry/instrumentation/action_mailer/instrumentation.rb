@@ -46,8 +46,14 @@ module OpenTelemetry
           else
             original_callable = ActionMailer::Instrumentation.instance.config[:notification_payload_transform]
             transform_attributes = lambda do |payload|
-              original_callable.call(payload)
-              transform_payload(payload)
+              new_payload = transform_payload(payload)
+              user_payload = original_callable.call(new_payload)
+              if user_payload.instance_of?(Hash)
+                user_payload
+              else
+                OpenTelemetry.logger.error("ActionMailer: transformed payload is #{user_payload.class} (require Hash)")
+                new_payload
+              end
             end
           end
           ActionMailer::Instrumentation.instance.config[:notification_payload_transform] = transform_attributes
@@ -55,16 +61,18 @@ module OpenTelemetry
 
         # email attribute key convention is obtained from: https://www.elastic.co/guide/en/ecs/8.11/ecs-email.html
         def transform_payload(payload)
-          payload['email.message_id'] = payload[:message_id]
-          payload['email.subject']    = payload[:subject]
-          payload['email.x_mailer']   = payload[:mailer]
-          payload['email.to.address'] = payload[:to]
-          payload['email.from.address'] = payload[:from]
-          payload['email.cc.address'] = payload[:cc]
-          payload['email.bcc.address'] = payload[:bcc]
-          payload['email.origination_timestamp'] = payload[:date]
-
-          payload.delete_if { |item| item.instance_of?(Symbol) }
+          new_payload = {
+            'email.message_id' => payload[:message_id],
+            'email.subject' => payload[:subject],
+            'email.x_mailer' => payload[:mailer],
+            'email.to.address' => payload[:to],
+            'email.from.address' => payload[:from],
+            'email.cc.address' => payload[:cc],
+            'email.bcc.address' => payload[:bcc],
+            'email.origination_timestamp' => payload[:date]
+          }
+          new_payload.compact!
+          new_payload
         end
 
         def require_dependencies

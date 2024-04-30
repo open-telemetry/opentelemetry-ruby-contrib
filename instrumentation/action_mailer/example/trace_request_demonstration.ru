@@ -10,16 +10,13 @@ gemfile(true) do
   source 'https://rubygems.org'
 
   gem 'rails'
-  gem 'puma'
   gem 'opentelemetry-sdk'
   gem 'stringio', '3.0.4'
-  gem 'opentelemetry-instrumentation-rails', path: '../../rails'
+  gem 'psych', '5.0.1'
   gem 'opentelemetry-instrumentation-active_support', path: '../../active_support'
   gem 'opentelemetry-instrumentation-action_mailer', path: '../'
 end
 
-require 'active_support/railtie'
-require 'action_controller/railtie'
 require 'action_mailer/railtie'
 
 # TraceRequestApp is a minimal Rails application inspired by the Rails
@@ -54,12 +51,7 @@ span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
 )
 
 OpenTelemetry::SDK.configure do |c|
-  # At present, the Rails instrumentation is required.
-  c.use 'OpenTelemetry::Instrumentation::Rails'
   c.use 'OpenTelemetry::Instrumentation::ActionMailer'
-  # to test with pre-existing options, try below options for action mailer
-  #, { notification_payload_transform: lambda {|payload| payload[:perform_deliveries] = false; payload} }
-  #, { disallowed_notification_payload_keys: [:mail] }
   c.add_span_processor(span_processor)
 end
 
