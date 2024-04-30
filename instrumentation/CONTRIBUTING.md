@@ -213,7 +213,7 @@ In cases when code uses monkey patching, it runs the risk of _adding_ methods th
 
 Avoid instrumenting every method in a library, instead focus on the methods the provide the _most_ insights into what typically causes performance problems for applications, e.g. I/O and network calls.
 
-Hopefully in the near future, we will be able to provide [OTel Profiling](https://opentelemetry.io/blog/2024/profiling/) to help users gain an even deeper understanding of what is happening in their applications at a more granular level.
+In the near future, [OTel Profiling](https://opentelemetry.io/blog/2024/profiling/) will provide users an even deeper understanding of what is happening in their applications at a more granular level.
 
 #### Avoid Adding Custom Extensions (E_TOOMANYOPTIONS)
 
