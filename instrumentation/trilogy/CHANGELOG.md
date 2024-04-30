@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.59.3 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.59.2 / 2024-02-20
 
 * FIXED: Dup string if frozen in trilogy query

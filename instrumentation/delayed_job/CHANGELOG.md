@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+### v0.22.2 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.22.1 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
