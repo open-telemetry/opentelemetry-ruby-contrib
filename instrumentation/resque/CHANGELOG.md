@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-resque
 
+### v0.5.2 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.5.1 / 2024-02-08
 
 * DOCS: Relocate Resque config option comments to render in Yard docs

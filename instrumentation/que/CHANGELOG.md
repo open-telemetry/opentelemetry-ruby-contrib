@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.8.1 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.8.0 / 2024-02-08
 
 * BREAKING CHANGE: Move shared sql behavior to helper gems

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.7.2 / 2024-04-30
+
+* FIXED: Resolve active_record testing issue
+
 ### v0.7.1 / 2024-04-05
 
 * FIXED: Instrumentation/active_record: add `:allow_retry` option to `find_by_sql` patch

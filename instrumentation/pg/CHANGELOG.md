@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.27.2 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.27.1 / 2024-02-08
 
 * FIXED: Add missing requires for sql-helpers to mysql, pg, and trilogy instrumentation

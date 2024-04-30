@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http_client
 
+### v0.22.4 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.22.3 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)

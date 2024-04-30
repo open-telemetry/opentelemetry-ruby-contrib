@@ -39,7 +39,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
   spec.add_development_dependency 'rack-test', '~> 2.1.0'
-  spec.add_development_dependency 'rails', '>= 6.1'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rubocop', '~> 1.62'
   spec.add_development_dependency 'rubocop-performance', '~> 1.20'

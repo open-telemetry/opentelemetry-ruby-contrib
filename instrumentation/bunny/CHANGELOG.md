@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-bunny
 
+### v0.21.3 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.21.2 / 2024-02-08
 
 * FIXED: Remove disable directives leftover from older version of Rubocop
