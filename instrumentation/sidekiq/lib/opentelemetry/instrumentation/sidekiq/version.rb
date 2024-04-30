@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Sidekiq
-      VERSION = '0.25.2'
+      VERSION = '0.25.3'
     end
   end
 end
