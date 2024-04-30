@@ -11,6 +11,10 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true  # Cancel any previous runs of this workflow
+
 jobs:
   instrumentation_with_services:
     strategy:
@@ -52,7 +56,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.2.0"
+          ruby: "jruby-9.4.6.0"
     services:
       memcached:
         image: memcached:alpine
