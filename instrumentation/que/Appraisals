@@ -4,11 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'que-1.2' do
-  gem 'que', '1.2.0'
+appraise 'que-1.x' do
+  gem 'que', '~> 1.4'
 end
 
-appraise 'que-2.1' do
-  ruby '>= 2.7'
-  gem 'que', '2.1.0'
+appraise 'que-2.x' do
+  gem 'que', '~> 2.3'
+end
+
+appraise 'que-latest' do
+  gem 'que'
 end
