@@ -203,7 +203,7 @@ Instrumentation libraries should be as lightweight as possible and must:
 
 #### Minimal Solutions are Better
 
-Instrumentations should have both the minimal amount of code necessary to provide useful insights to our users.
+Instrumentations should have the minimal amount of code necessary to provide useful insights to our users.
 
 It may sound contrary to good engineering practices, but you should avoid adding lots of small methods, classes, and objects to handle your use cases.
 
