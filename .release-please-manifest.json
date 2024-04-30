@@ -43,6 +43,7 @@
   "instrumentation/sidekiq": "0.25.0",
   "instrumentation/sinatra": "0.23.2",
   "instrumentation/all": "0.56.0",
+  "processor/baggage": "0.1.0",
   "propagator/ottrace": "0.21.2",
   "propagator/xray": "0.22.1",
   "resources/azure": "0.1.0",
