@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rspec
 
+### v0.3.3 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.3.2 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.30.1 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.30.0 / 2024-01-09
 
 * BREAKING CHANGE: Use ActiveSupport instead of patches #703 

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rake
 
+### v0.2.2 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.2.1 / 2023-06-05
 
 * FIXED: Base config options 
