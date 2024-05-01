@@ -8,6 +8,8 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    - cron: "0 0 * * *"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
