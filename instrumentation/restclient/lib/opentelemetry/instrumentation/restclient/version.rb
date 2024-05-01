@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module RestClient
-      VERSION = '0.22.3'
+      VERSION = '0.22.4'
     end
   end
 end

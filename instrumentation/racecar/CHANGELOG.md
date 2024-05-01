@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-racecar
 
+### v0.3.2 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.3.1 / 2024-04-05
 
 * FIXED: Fix markdown header

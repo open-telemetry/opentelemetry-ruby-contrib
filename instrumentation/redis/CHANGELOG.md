@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.25.4 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.25.3 / 2023-08-03
 
 * FIXED: Remove inline linter rules
