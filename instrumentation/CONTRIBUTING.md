@@ -194,26 +194,34 @@ When you do in fact run into cases where test doubles or API stubs are absolutel
 
 ### Understand Performance Characteristics
 
+The OTel Specification describes expectations around the performance of SDKs, which you must review and apply to instrumentations: <https://opentelemetry.io/docs/specs/otel/performance/>
+
 Instrumentation libraries should be as lightweight as possible and must:
 
-* Avoid allocating objects unless absolutely necessary
 * Rely on `rubocop-performance` linters to catch performance issues
 * Consider using [microbenchmarks](https://github.com/evanphx/benchmark-ips) and [profiling](https://ruby-prof.github.io/) to address any possible performance issues
 * Provide minimal solutions and code paths
 
-#### Minimal Solutions are Better
+#### Provide minimal solutions and code paths
 
-Instrumentations should have the minimal amount of code necessary to provide useful insights to our users.
+Instrumentations should have the minimal amount of code necessary to provide useful insights to our users. It may sound contrary to good engineering practices, but you must avoid adding lots of small methods, classes, and objects when instrumenting a library.
 
-It may sound contrary to good engineering practices, but you should avoid adding lots of small methods, classes, and objects to handle your use cases.
+Though often easier to maintain and reason about; small and well factored code adds overhead to the library you are instrumenting resulting in performance degradation due to unnecessary object allocations, method dispatching, and other performance overhead.
 
-Adding lots of small well factored code adds some overhead to the library we are instrumenting. It may result in unnecessary allocations, method dispatching, and other performance overhead. It will end up contributing to building large backtraces and making it harder to understand what is happening in the application, which will likely result in additional filtering logic.
+It will also contribute to building large backtraces that makes it more difficult for our end users to understand the essential parts of exception reports application. That will in turn likely result in additional filtering logic in the their application to avoid reporting unnecessary stack frames.
 
 In cases when code uses monkey patching, it runs the risk of _adding_ methods that conflict with the internal implementatation of the library and may result in unexpected behavior and bugs.
 
-Avoid instrumenting every method in a library, instead focus on the methods the provide the _most_ insights into what typically causes performance problems for applications, e.g. I/O and network calls.
+Avoid instrumenting _every_ method in a library and instead focus on the methods the provide the _most_ insights into what typically causes performance problems for applications, e.g. I/O and network calls. The use case for this type of low level granularity fails under the purview of profiling.
 
 In the near future, [OTel Profiling](https://opentelemetry.io/blog/2024/profiling/) will provide users an even deeper understanding of what is happening in their applications at a more granular level.
+
+Here are some examples of performance fixes that reduced object allocations and method dispatching:
+
+* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867>
+* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/723>
+* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/665>
+* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/207>
 
 #### Avoid Adding Custom Extensions
 
