@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.28.2 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.28.1 / 2024-04-10
 
 * FIXED: Analyze span names in GraphQL instrumentation

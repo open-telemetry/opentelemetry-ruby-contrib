@@ -209,6 +209,10 @@ gems:
     directory: instrumentation/all
     version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
 
+  - name: opentelemetry-processor-baggage
+    directory: processor/baggage
+    version_constant: [OpenTelemetry, Processor, Baggage, VERSION]
+
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace
     version_constant: [OpenTelemetry, Propagator, OTTrace, VERSION]

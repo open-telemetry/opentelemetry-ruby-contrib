@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-gruf
 
+### v0.2.1 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.2.0 / 2024-02-20
 
 * ADDED: Add support gruf 2.19
