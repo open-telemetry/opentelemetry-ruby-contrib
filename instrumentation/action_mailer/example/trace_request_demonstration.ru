@@ -12,7 +12,6 @@ gemfile(true) do
   gem 'rails'
   gem 'opentelemetry-sdk'
   gem 'stringio', '3.0.4'
-  gem 'psych', '5.0.1'
   gem 'opentelemetry-instrumentation-active_support', path: '../../active_support'
   gem 'opentelemetry-instrumentation-action_mailer', path: '../'
 end

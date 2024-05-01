@@ -61,17 +61,15 @@ module OpenTelemetry
 
         # email attribute key convention is obtained from: https://www.elastic.co/guide/en/ecs/8.11/ecs-email.html
         def transform_payload(payload)
-          new_payload = {
-            'email.message_id' => payload[:message_id],
-            'email.subject' => payload[:subject],
-            'email.x_mailer' => payload[:mailer],
-            'email.to.address' => payload[:to],
-            'email.from.address' => payload[:from],
-            'email.cc.address' => payload[:cc],
-            'email.bcc.address' => payload[:bcc],
-            'email.origination_timestamp' => payload[:date]
-          }
-          new_payload.compact!
+          new_payload = {}
+          new_payload['email.message_id'] = payload[:message_id] if payload[:message_id]
+          new_payload['email.subject'] = payload[:subject] if payload[:subject]
+          new_payload['email.x_mailer'] = payload[:mailer] if payload[:mailer]
+          new_payload['email.to.address'] = payload[:to] if payload[:to]
+          new_payload['email.from.address'] = payload[:from] if payload[:from]
+          new_payload['email.cc.address'] = payload[:cc] if payload[:cc]
+          new_payload['email.bcc.address'] = payload[:bcc] if payload[:bcc]
+          new_payload['email.origination_timestamp'] = payload[:date] if payload[:date]
           new_payload
         end
 
