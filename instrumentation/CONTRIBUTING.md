@@ -222,6 +222,7 @@ Here are some examples of performance fixes that reduced object allocations and 
 * <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/723>
 * <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/665>
 * <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/207>
+* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/232>
 
 #### Avoid Adding Custom Extensions
 
