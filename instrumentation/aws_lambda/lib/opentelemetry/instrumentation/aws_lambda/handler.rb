@@ -14,7 +14,7 @@ module OpenTelemetry
         attr_reader :handler_method, :handler_class
 
         # anytime when the code in a Lambda function is updated or the functional configuration is changed,
-        # the next invocation results in a cold start; therefore these instance variable will be up-to-date
+        # the next invocation results in a cold start; therefore these instance variables will be up-to-date
         def initialize
           @flush_timeout    = ENV.fetch('OTEL_INSTRUMENTATION_AWS_LAMBDA_FLUSH_TIMEOUT', '30000').to_i
           @original_handler = ENV['ORIG_HANDLER'] || ENV['_HANDLER'] || ''
