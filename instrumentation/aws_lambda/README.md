@@ -2,15 +2,11 @@
 
 The OpenTelemetry `aws-lambda` gem is a community-maintained instrumentation for [AWS Lambda functions](https://docs.aws.amazon.com/lambda/latest/dg/ruby-handler.html).
 
-## How do I get started?
+## How do I get started? 
 
-Install the gem using:
+Installation of the `opentelemetry-instrumentation-aws_lambda` gem is handled by the [OpenTelemetry Lambda Layer for Ruby](https://github.com/open-telemetry/opentelemetry-lambda/tree/main/ruby). 
 
-```
-gem install opentelemetry-instrumentation-aws_lambda
-```
-
-Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-aws_lambda` in your `Gemfile`.
+We do not advise installing the `opentelemetry-instrumentation-aws_lambda` gem directly into your Ruby lambda. Instead, clone the [OpenTelemetry Lambda Layer for Ruby](https://github.com/open-telemetry/opentelemetry-lambda/tree/main/ruby) and build the layer locally. Then, save it in your AWS account.
 
 ## Usage
 
