@@ -1,8 +1,8 @@
-name: Weekly release request
+name: Open release request - Weekly
 
 on:
   schedule:
-    - cron: "0 0 * * 0"
+    - cron: "0 15 * * 2"
 
 jobs:
   release-request:
