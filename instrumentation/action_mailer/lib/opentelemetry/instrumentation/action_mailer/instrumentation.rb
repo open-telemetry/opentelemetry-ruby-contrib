@@ -10,6 +10,8 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the ActionMailer instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('6.1.0')
+        EMAIL_ATTRIBUTE = ['email.to.address', 'email.from.address', 'email.cc.address', 'email.bcc.address']
+
         install do |_config|
           resolve_email_address
           ecs_mail_convention
@@ -35,16 +37,16 @@ module OpenTelemetry
         end
 
         def resolve_email_address
-          return unless ActionMailer::Instrumentation.instance.config[:email_address] == :omit
+          return unless _config[:email_address] == :omit
 
-          ActionMailer::Instrumentation.instance.config[:disallowed_notification_payload_keys] += ['email.to.address', 'email.from.address', 'email.cc.address', 'email.bcc.address']
+          _config[:disallowed_notification_payload_keys] += EMAIL_ATTRIBUTE
         end
 
         def ecs_mail_convention
-          if ActionMailer::Instrumentation.instance.config[:notification_payload_transform].nil?
+          if _config[:notification_payload_transform].nil?
             transform_attributes = ->(payload) { transform_payload(payload) }
           else
-            original_callable = ActionMailer::Instrumentation.instance.config[:notification_payload_transform]
+            original_callable = _config[:notification_payload_transform]
             transform_attributes = lambda do |payload|
               new_payload = transform_payload(payload)
               user_payload = original_callable.call(new_payload)
@@ -56,7 +58,11 @@ module OpenTelemetry
               end
             end
           end
-          ActionMailer::Instrumentation.instance.config[:notification_payload_transform] = transform_attributes
+          _config[:notification_payload_transform] = transform_attributes
+        end
+
+        def _config
+          ActionMailer::Instrumentation.instance.config
         end
 
         # email attribute key convention is obtained from: https://www.elastic.co/guide/en/ecs/8.11/ecs-email.html
