@@ -41,7 +41,7 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-If only want to hide certain field for email address:
+If only want to hide certain attributes from the notifications payload for email address:
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::ActionMailer', { email_address: :include, disallowed_notification_payload_keys: ['email.to.address'] }
