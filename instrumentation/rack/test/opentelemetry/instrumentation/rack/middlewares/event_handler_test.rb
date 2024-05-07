@@ -84,6 +84,25 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       _(proxy_event).must_be_nil
     end
 
+    describe 'when baggage is set' do
+      let(:headers) do
+        Hash(
+          'baggage' => 'foo=123'
+        )
+      end
+
+      let(:service) do
+        lambda do |_env|
+          _(OpenTelemetry::Baggage.raw_entries['foo'].value).must_equal('123')
+          [200, { 'Content-Type' => 'text/plain' }, response_body]
+        end
+      end
+
+      it 'sets baggage in the request context' do
+        _(rack_span.name).must_equal 'HTTP GET'
+      end
+    end
+
     describe 'when a query is passed in' do
       let(:uri) { '/endpoint?query=true' }
 
