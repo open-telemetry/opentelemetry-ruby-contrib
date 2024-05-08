@@ -67,6 +67,27 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
     instrumentation.install(config)
   end
 
+  # Simulating buggy instrumentation that starts a span, sets the ctx
+  # but fails to detach or close the span
+  describe 'broken instrumentation' do
+    let(:service) do
+      lambda do |_env|
+        span = OpenTelemetry.tracer_provider.tracer('buggy').start_span('I never close')
+        OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))
+        [200, { 'Content-Type' => 'text/plain' }, response_body]
+      end
+    end
+
+    it 'still closes the rack span' do
+      assert_raises OpenTelemetry::Context::DetachError do
+        get uri, {}, headers
+      end
+      _(finished_spans.size).must_equal 1
+      _(rack_span.name).must_equal 'HTTP GET'
+      OpenTelemetry::Context.clear
+    end
+  end
+
   describe '#call' do
     before do
       get uri, {}, headers
@@ -82,6 +103,25 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
       _(rack_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       _(rack_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
       _(proxy_event).must_be_nil
+    end
+
+    describe 'when baggage is set' do
+      let(:headers) do
+        Hash(
+          'baggage' => 'foo=123'
+        )
+      end
+
+      let(:service) do
+        lambda do |_env|
+          _(OpenTelemetry::Baggage.raw_entries['foo'].value).must_equal('123')
+          [200, { 'Content-Type' => 'text/plain' }, response_body]
+        end
+      end
+
+      it 'sets baggage in the request context' do
+        _(rack_span.name).must_equal 'HTTP GET'
+      end
     end
 
     describe 'when a query is passed in' do
