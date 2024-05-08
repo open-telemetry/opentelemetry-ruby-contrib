@@ -43,6 +43,7 @@ module OpenTelemetry
           include ::Rack::Events::Abstract
 
           OTEL_TOKEN_AND_SPAN = 'otel.rack.token_and_span'
+          UNTRACED_CTX_TOKEN = 'otel.rack.untraced_ctx_token'
           GOOD_HTTP_STATUSES = (100..499)
 
           # Creates a server span for this current request using the incoming parent context
@@ -52,7 +53,11 @@ module OpenTelemetry
           # @param [Rack::Response] This is nil in practice
           # @return [void]
           def on_start(request, _)
-            return if untraced_request?(request.env)
+            if untraced_request?(request.env)
+              ctx = OpenTelemetry::Common::Utilities.untraced
+              request.env[UNTRACED_CTX_TOKEN] = OpenTelemetry::Context.attach(ctx)
+              return
+            end
 
             parent_context = extract_remote_context(request)
             span = create_span(parent_context, request)
@@ -194,7 +199,10 @@ module OpenTelemetry
           end
 
           def detach_context(request)
-            return nil unless request.env[OTEL_TOKEN_AND_SPAN]
+            if (untracted_ctx_token = request.env[UNTRACED_CTX_TOKEN])
+              OpenTelemetry::Context.detach(untracted_ctx_token)
+              return
+            end
 
             token, span = request.env[OTEL_TOKEN_AND_SPAN]
             span.finish
