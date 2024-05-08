@@ -67,6 +67,27 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
     instrumentation.install(config)
   end
 
+  # Simulating buggy instrumentation that starts a span, sets the ctx
+  # but fails to detach or close the span
+  describe 'broken instrumentation' do
+    let(:service) do
+      lambda do |_env|
+        span = OpenTelemetry.tracer_provider.tracer('buggy').start_span('I never close')
+        OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))
+        [200, { 'Content-Type' => 'text/plain' }, response_body]
+      end
+    end
+
+    it 'still closes the rack span' do
+      assert_raises OpenTelemetry::Context::DetachError do
+        get uri, {}, headers
+      end
+      _(finished_spans.size).must_equal 1
+      _(rack_span.name).must_equal 'HTTP GET'
+      OpenTelemetry::Context.clear
+    end
+  end
+
   describe '#call' do
     before do
       get uri, {}, headers

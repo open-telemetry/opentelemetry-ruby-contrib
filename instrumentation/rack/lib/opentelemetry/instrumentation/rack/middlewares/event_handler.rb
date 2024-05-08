@@ -42,7 +42,7 @@ module OpenTelemetry
         class EventHandler
           include ::Rack::Events::Abstract
 
-          TOKEN_KEY = 'otel.context.token'
+          RACK_OTEL_CONTEXT_KEY = 'otel.rack.context.token'
           GOOD_HTTP_STATUSES = (100..499)
 
           # Creates a server span for this current request using the incoming parent context
@@ -58,7 +58,7 @@ module OpenTelemetry
             span = create_span(parent_context, request)
             span_ctx = OpenTelemetry::Trace.context_with_span(span, parent_context: parent_context)
             rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: span_ctx)
-            request.env[TOKEN_KEY] = OpenTelemetry::Context.attach(rack_ctx)
+            request.env[RACK_OTEL_CONTEXT_KEY] = [OpenTelemetry::Context.attach(rack_ctx), rack_ctx]
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
@@ -194,10 +194,11 @@ module OpenTelemetry
           end
 
           def detach_context(request)
-            return nil unless request.env[TOKEN_KEY]
+            return nil unless request.env[RACK_OTEL_CONTEXT_KEY]
 
-            OpenTelemetry::Trace.current_span.finish
-            OpenTelemetry::Context.detach(request.env[TOKEN_KEY])
+            token, rack_ctx = request.env[RACK_OTEL_CONTEXT_KEY]
+            OpenTelemetry::Trace.current_span(rack_ctx).finish
+            OpenTelemetry::Context.detach(token)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
