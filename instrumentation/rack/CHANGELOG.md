@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.24.3 / 2024-05-08
+
+* FIXED: Rack event baggage handling
+
 ### v0.24.2 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
