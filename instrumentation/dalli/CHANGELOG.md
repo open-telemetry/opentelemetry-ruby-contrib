@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.25.2 / 2024-05-09
+
+* FIXED: Untrace entire request
+
 ### v0.25.1 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
