@@ -29,9 +29,6 @@ module OpenTelemetry
             formatted_message
           end
 
-          option :name, default: OpenTelemetry::Instrumentation::Logger::NAME, validate: :string
-          option :version, default: OpenTelemetry::Instrumentation::Logger::VERSION, validate: :string
-
           private
 
           def logger_provider
@@ -39,7 +36,7 @@ module OpenTelemetry
           end
 
           def skip_instrumenting?
-            @skip_instrumenting || false # Set to a default value
+            @skip_instrumenting || false
           end
 
           def instrumentation_config

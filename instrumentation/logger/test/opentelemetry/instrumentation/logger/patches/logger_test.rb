@@ -29,10 +29,19 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
       assert_match(/DEBUG -- : #{msg}/, log_stream.string)
     end
 
-    it 'sets the OTel logger instrumentation name and version' do
+    it 'sets the OTel logger instrumentation name and version (default case)' do
       ruby_logger.debug(msg)
       assert_equal(OpenTelemetry::Instrumentation::Logger::NAME, log_record.instrumentation_scope.name)
       assert_equal(OpenTelemetry::Instrumentation::Logger::VERSION, log_record.instrumentation_scope.version)
+    end
+
+    it 'sets the OTel logger instrumentation name and version (user defined)' do
+      ruby_logger.debug(msg)
+      skip 'TODO: write tests for configuration options'
+    end
+
+    it 'accepts custom logger provider ' do
+      skip 'TODO: write tests for configuration options'
     end
 
     it 'sets log record attributes based on the Ruby log' do
