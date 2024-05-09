@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.24.3 / 2024-05-09
+
+* FIXED: Untrace entire request
+
 ### v0.24.2 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
