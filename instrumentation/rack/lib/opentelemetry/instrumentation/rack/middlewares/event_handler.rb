@@ -52,9 +52,12 @@ module OpenTelemetry
           # @param [Rack::Response] This is nil in practice
           # @return [void]
           def on_start(request, _)
-            return if untraced_request?(request.env)
+            parent_context = if untraced_request?(request.env)
+                               extract_remote_context(request, OpenTelemetry::Common::Utilities.untraced)
+                             else
+                               extract_remote_context(request)
+                             end
 
-            parent_context = extract_remote_context(request)
             span = create_span(parent_context, request)
             span_ctx = OpenTelemetry::Trace.context_with_span(span, parent_context: parent_context)
             rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: span_ctx)
@@ -173,9 +176,10 @@ module OpenTelemetry
             end
           end
 
-          def extract_remote_context(request)
+          def extract_remote_context(request, context = Context.current)
             OpenTelemetry.propagation.extract(
               request.env,
+              context: context,
               getter: OpenTelemetry::Common::Propagation.rack_env_getter
             )
           end

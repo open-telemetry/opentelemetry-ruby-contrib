@@ -134,17 +134,22 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
     end
 
     describe 'config[:untraced_endpoints]' do
+      let(:service) do
+        lambda do |_env|
+          OpenTelemetry.tracer_provider.tracer('req').in_span('in_req_span') {}
+          [200, { 'Content-Type' => 'text/plain' }, response_body]
+        end
+      end
+
       describe 'when an array is passed in' do
+        let(:uri) { '/ping' }
         let(:untraced_endpoints) { ['/ping'] }
 
         it 'does not trace paths listed in the array' do
-          get '/ping'
-
           ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/ping' }
           _(ping_span).must_be_nil
 
-          root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
-          _(root_span).wont_be_nil
+          _(finished_spans.size).must_equal 0
         end
       end
 
@@ -164,19 +169,24 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler' do
     end
 
     describe 'config[:untraced_requests]' do
+      let(:service) do
+        lambda do |_env|
+          OpenTelemetry.tracer_provider.tracer('req').in_span('in_req_span') {}
+          [200, { 'Content-Type' => 'text/plain' }, response_body]
+        end
+      end
+
       describe 'when a callable is passed in' do
+        let(:uri) { '/assets' }
         let(:untraced_requests) do
           ->(env) { env['PATH_INFO'] =~ %r{^\/assets} }
         end
 
         it 'does not trace requests in which the callable returns true' do
-          get '/assets'
-
           assets_span = finished_spans.find { |s| s.attributes['http.target'] == '/assets' }
           _(assets_span).must_be_nil
 
-          root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
-          _(root_span).wont_be_nil
+          _(finished_spans.size).must_equal 0
         end
       end
 
