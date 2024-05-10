@@ -177,6 +177,18 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
+    it 'ignores prepend comment to extract operation' do
+      client.query('/* comment */ SELECT 1')
+
+      _(span.name).must_equal 'SELECT postgres'
+      _(span.attributes['db.system']).must_equal 'postgresql'
+      _(span.attributes['db.name']).must_equal 'postgres'
+      _(span.attributes['db.statement']).must_equal '/* comment */ SELECT 1'
+      _(span.attributes['db.operation']).must_equal 'SELECT'
+      _(span.attributes['net.peer.name']).must_equal host.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_i
+    end
+
     it 'only caches 50 prepared statement names' do
       51.times { |i| client.prepare("foo#{i}", "SELECT $1 AS foo#{i}") }
       client.exec_prepared('foo0', [1])
