@@ -8,6 +8,12 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    - cron: "0 0 * * *"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true  # Cancel any previous runs of this workflow
 
 jobs:
   instrumentation:
@@ -23,6 +29,7 @@ jobs:
           - active_support
           - all
           - aws_sdk
+          - aws_lambda
           - base
           - concurrent_ruby
           - delayed_job
@@ -85,6 +92,7 @@ jobs:
           [[ "${{ matrix.gem }}" == "active_record"            ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "active_support"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "aws_sdk"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "aws_lambda"               ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "delayed_job"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "graphql"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "http"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
@@ -101,4 +109,4 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.2.0"
+          ruby: "jruby-9.4.6.0"

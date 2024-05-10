@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.21.5 / 2024-05-09
+
+* FIXED: Untrace entire request
+
+### v0.21.4 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.21.3 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)

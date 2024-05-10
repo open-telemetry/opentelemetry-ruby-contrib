@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-rdkafka
 
+### v0.4.5 / 2024-05-09
+
+* FIXED: Untrace entire request
+
+### v0.4.4 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
+### v0.4.3 / 2024-04-05
+
+* FIXED: Suppress deprecation warning in Rdkafka Instrumentation
+
 ### v0.4.2 / 2023-11-23
 
 * FIXED: Retry Release of 0.4.1 [#730](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/730)

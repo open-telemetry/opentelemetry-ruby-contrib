@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.5.2 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.5.1 / 2024-02-08
 
 * FIXED: Return nil for non-existant key in AwsSdk::MessageAttributeGetter

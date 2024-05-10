@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-lmdb
 
+### v0.22.2 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.22.1 / 2023-06-05
 
 * FIXED: Base config options 

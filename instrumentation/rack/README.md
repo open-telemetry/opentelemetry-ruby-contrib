@@ -45,7 +45,7 @@ end
 
 ## Rack Middleware vs Rack Events
 
-Since `v0.24.0`, this instrumentation uses `Rake::Events` as opposed to `Middleware` to support Requests that use Buffered Response Bodies.
+Since `v0.24.0`, this instrumentation uses `Rack::Events` as opposed to `Middleware` to support Requests that use Buffered Response Bodies.
 
 If your application does not support `Rack::Events`, you may disable it by setting `use_rack_events: false`, e.g.
 

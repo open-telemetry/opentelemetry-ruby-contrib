@@ -100,6 +100,10 @@ gems:
     directory: instrumentation/aws_sdk
     version_constant: [OpenTelemetry, Instrumentation, AwsSdk, VERSION]
 
+  - name: opentelemetry-instrumentation-aws_lambda
+    directory: instrumentation/aws_lambda
+    version_constant: [OpenTelemetry, Instrumentation, AwsLambda, VERSION]
+
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb
     version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]
@@ -208,6 +212,10 @@ gems:
   - name: opentelemetry-instrumentation-all
     directory: instrumentation/all
     version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
+
+  - name: opentelemetry-processor-baggage
+    directory: processor/baggage
+    version_constant: [OpenTelemetry, Processor, Baggage, VERSION]
 
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace

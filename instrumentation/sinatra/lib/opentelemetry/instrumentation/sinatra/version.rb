@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Sinatra
-      VERSION = '0.23.2'
+      VERSION = '0.23.4'
     end
   end
 end

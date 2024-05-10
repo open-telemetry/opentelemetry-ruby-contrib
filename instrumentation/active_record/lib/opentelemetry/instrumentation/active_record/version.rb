@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module ActiveRecord
-      VERSION = '0.7.0'
+      VERSION = '0.7.2'
     end
   end
 end
