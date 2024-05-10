@@ -81,6 +81,10 @@
       "package-name": "opentelemetry-instrumentation-aws_sdk",
       "version-file": "lib/opentelemetry/instrumentation/aws_sdk/version.rb"
     },
+    "instrumentation/aws_lambda": {
+      "package-name": "opentelemetry-instrumentation-aws_lambda",
+      "version-file": "lib/opentelemetry/instrumentation/aws_lambda/version.rb"
+    },
     "instrumentation/lmdb": {
       "package-name": "opentelemetry-instrumentation-lmdb",
       "version-file": "lib/opentelemetry/instrumentation/lmdb/version.rb"
