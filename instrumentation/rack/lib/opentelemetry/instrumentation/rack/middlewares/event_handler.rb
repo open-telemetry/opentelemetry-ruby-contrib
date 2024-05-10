@@ -42,7 +42,7 @@ module OpenTelemetry
         class EventHandler
           include ::Rack::Events::Abstract
 
-          TOKENS_KEY = 'otel.context.tokens'
+          OTEL_TOKEN_AND_SPAN = 'otel.rack.token_and_span'
           GOOD_HTTP_STATUSES = (100..499)
 
           # Creates a server span for this current request using the incoming parent context
@@ -52,11 +52,16 @@ module OpenTelemetry
           # @param [Rack::Response] This is nil in practice
           # @return [void]
           def on_start(request, _)
-            return if untraced_request?(request.env)
+            parent_context = if untraced_request?(request.env)
+                               extract_remote_context(request, OpenTelemetry::Common::Utilities.untraced)
+                             else
+                               extract_remote_context(request)
+                             end
 
-            parent_context = extract_remote_context(request)
             span = create_span(parent_context, request)
-            request.env[TOKENS_KEY] = register_current_span(span)
+            span_ctx = OpenTelemetry::Trace.context_with_span(span, parent_context: parent_context)
+            rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: span_ctx)
+            request.env[OTEL_TOKEN_AND_SPAN] = [OpenTelemetry::Context.attach(rack_ctx), span]
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
@@ -108,7 +113,7 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           ensure
-            detach_contexts(request)
+            detach_context(request)
           end
 
           private
@@ -171,9 +176,10 @@ module OpenTelemetry
             end
           end
 
-          def extract_remote_context(request)
+          def extract_remote_context(request, context = Context.current)
             OpenTelemetry.propagation.extract(
               request.env,
+              context: context,
               getter: OpenTelemetry::Common::Propagation.rack_env_getter
             )
           end
@@ -191,11 +197,12 @@ module OpenTelemetry
             attributes
           end
 
-          def detach_contexts(request)
-            request.env[TOKENS_KEY]&.reverse_each do |token|
-              OpenTelemetry::Context.detach(token)
-              OpenTelemetry::Trace.current_span.finish
-            end
+          def detach_context(request)
+            return nil unless request.env[OTEL_TOKEN_AND_SPAN]
+
+            token, span = request.env[OTEL_TOKEN_AND_SPAN]
+            span.finish
+            OpenTelemetry::Context.detach(token)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
@@ -242,15 +249,6 @@ module OpenTelemetry
 
           def config
             OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.config
-          end
-
-          def register_current_span(span)
-            ctx = OpenTelemetry::Trace.context_with_span(span)
-            rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: ctx)
-
-            contexts = [ctx, rack_ctx]
-            contexts.compact!
-            contexts.map { |context| OpenTelemetry::Context.attach(context) }
           end
 
           def create_span(parent_context, request)

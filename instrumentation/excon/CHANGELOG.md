@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-excon
 
+### v0.22.2 / 2024-05-09
+
+* FIXED: Untrace entire request
+
+### v0.22.1 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.22.0 / 2023-11-28
 
 * BREAKING CHANGE: Add a connect span to excon

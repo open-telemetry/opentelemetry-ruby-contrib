@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.0'
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
-  spec.add_dependency 'opentelemetry-common', '~> 0.20.0'
+  spec.add_dependency 'opentelemetry-common', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.1'
 
   spec.add_development_dependency 'appraisal', '~> 2.5'
@@ -34,8 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
-  spec.add_development_dependency 'redis', '~> 4.1'
-  spec.add_development_dependency 'redis-client', '~> 0.7'
   spec.add_development_dependency 'rubocop', '~> 1.62'
   spec.add_development_dependency 'rubocop-performance', '~> 1.20'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'

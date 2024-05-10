@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-koala
 
+### v0.20.4 / 2024-05-09
+
+* FIXED: Untrace entire request
+
+### v0.20.3 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.20.2 / 2023-07-21
 
 * ADDED: Update `opentelemetry-common` from [0.19.3 to 0.20.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/537)

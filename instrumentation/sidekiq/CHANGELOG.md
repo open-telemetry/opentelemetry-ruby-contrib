@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.25.4 / 2024-05-09
+
+* FIXED: Untrace entire request
+
+### v0.25.3 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.25.2 / 2024-02-08
 
 * DOCS: Fix doc for sidekiq options.

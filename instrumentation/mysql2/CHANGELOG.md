@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.27.1 / 2024-04-30
+
+* FIXED: Bundler conflict warnings
+
 ### v0.27.0 / 2024-02-15
 
 * ADDED: Instrument mysql2 prepare statement
