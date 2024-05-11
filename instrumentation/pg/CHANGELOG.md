@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.28.0 / 2024-05-11
+
+* ADDED: Support prepend SQL comment for PG instrumentation
+
 ### v0.27.2 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
