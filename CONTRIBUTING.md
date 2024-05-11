@@ -166,11 +166,11 @@ bundle install
 bundle exec rake yard
 ```
 
-## Instrumentation Authors Guide
+## Instrumentation author's guide
 
-Please make sure that you review the [Instrumentation Authors Guide](.instrumentation/CONTRIBUTING.md) before submitting a new instrumentation.
+Please make sure that you review the [Instrumentation author's guide](.instrumentation/CONTRIBUTING.md) before submitting a new instrumentation.
 
-## Create a Pull Request
+## Create a pull request
 
 You'll need to create a Pull Request once you've finished your work.
 The [Kubernetes GitHub Workflow][kube-github-workflow-pr] document has
@@ -349,7 +349,7 @@ For releases to succeed, new gems MUST include the following:
 * A `CHANGELOG.md` file.
 * A `yard` rake task.
 
-## Dependabot Updates
+## Dependabot updates
 
 This repository uses [Dependabot](https://dependabot.com/) to keep dependencies up to date, however there shared development dependencies are often scattered across multiple gems. Dependabot does not currently support the ability to group dependencies for gems in multiple subdirectories, so we use a custom script to bulk update dependencies across all gems.
 

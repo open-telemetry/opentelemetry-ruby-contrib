@@ -1,4 +1,4 @@
-# Instrumentation Authors Guide
+# Instrumentation author's guide
 
 This guide is for authors of OpenTelemetry Ruby instrumentation libraries. It provides guidance on how to contribute an instrumentation library.
 
@@ -8,11 +8,11 @@ Please make sure to read and understand the [CONTRIBUTING](../CONTRIBUTING.md) g
 
 We are a community of volunteers with a shared goal of improving observability in Ruby applications.
 
-We welcome contributions from everyone, and we want to make sure that you have a great experience contributing to this project, as well as a positive impact on the Ruby community.
+We welcome contributions from everyone. We want to make sure that you have a great experience contributing to this project, as well as a positive impact on the Ruby community.
 
 We have limited capacity to maintain instrumentation libraries, so we ask that you commit to maintaining the instrumentation library you contribute.
 
-In addition to the requirements to maintain at least community member status, contributing an instrumentation to this project requires the following:
+In addition to the requirements to maintain at least [community member status](https://github.com/open-telemetry/community/blob/main/community-membership.md), contributing an instrumentation to this project requires the following:
 
 1. Responding to issues and pull requests
 2. Performing timely code reviews and responding to issues
@@ -22,28 +22,28 @@ In addition to the requirements to maintain at least community member status, co
     * Ruby language changes
     * Instrumented library changes
 
-If you do not have the capacity to maintain the instrumentation library, please consider contributing to the OpenTelemetry Ruby project in other ways, or consider creating a separate project for the instrumentation library.
+If you do not have the capacity to maintain the instrumentation library, please consider contributing to the OpenTelemetry Ruby project in other ways or consider creating a separate project for the instrumentation library.
 
 > :warning: Libraries that do not meet these requirements may be removed from the project at any time at the discretion of OpenTelemetry Ruby Contrib Maintainers.
 
-## Contributing a New Instrumentation Library
+## Contributing a new instrumentation library
 
-Our long-term goal is to provide instrumentation for all popular Ruby libraries. Ideally we would like to have first-party instrumentation for all libraries maintained by the Gem authors to ensure compatability with upstream gems, however in many cases this is not possible.
+Our long-term goal is to provide instrumentation for all popular Ruby libraries. Ideally, we would like to have first-party instrumentation for all libraries maintained by the gem's authors to ensure compatibility with upstream gems. However, in many cases this is not possible.
 
-For this reason we welcome contributions of new instrumentation libraries that cannot be maintained by the original gem authors as first party instrumentations.
+For this reason, we welcome contributions of new instrumentation libraries that cannot be maintained by the original gem authors as first-party instrumentation.
 
 The following steps are required to contribute a new instrumentation library:
 
 1. Generate an instrumentation gem skeleton
-2. Implement the instrumentation library including comprehensive automated tests
-3. Add the instrumentation library to the appropriate CI workflow
+2. Implement the instrumentation library, including comprehensive automated tests
+3. Add the instrumentation library to the appropriate CI workflows
 4. Include documentation for your instrumentation
-    * Document all instrumentation-specific configuration options in the `README.md` and `yardoc` comments
+    * Document all instrumentation-specific configuration options in the `README.md` and `yardoc` class comments
     * Document all semantic conventions used by the instrumentation in the `README.md`
     * Provide executable examples in an `examples` directory
 5. Submit a pull request
 
-## Generate the Gem
+## Generate the gem
 
 This repository contains a script to generate a new instrumentation library.
 
@@ -90,23 +90,24 @@ The output of the generator shows that it creates a new directory in the `instru
 
 ## Implementation guidelines
 
-The original design and implementation of this project was heavily influenced by Datadog's `dd-trace-rb` project. You may refer to the [Datadog Porting Guide](datadog-porting-guide.md) as a reference for implementing instrumentations, however the following guidelines are specific to OpenTelemetry Ruby:
+The original design and implementation of this project was heavily influenced by Datadog's `dd-trace-rb` project. You may refer to the [Datadog Porting Guide](datadog-porting-guide.md) as a reference for implementing instrumentations, however, the following guidelines are specific to OpenTelemetry Ruby:
 
 * Use `OpenTelemetry::Instrumentation::Base`
 * Use the OpenTelemetry API
-* Use First Party Extension Points
+* Use first-party extension points
 * Use Semantic Conventions
 * Write comprehensive automated tests
-* Understand Performance Characteristics
+* Understand performance characteristics
 
 ### Use `OpenTelemetry::Instrumentation::Base`
 
 The entry point of your instrumentation should be implemented as a subclass of `OpenTelemetry::Instrumentation::Base`:
 
-* Implement `install` block, where all of the integration work happens
-* Implement `present` block, which is you check if the library you are instrumenting was loaded
-* Implement `compatible` block and check for at least the minumum required library version
-* Any custom `options` you want to support
+* Implement an `install` block, where all of the integration work happens
+* Implement a `present` block, which checks whether the library you are instrumenting was loaded
+* Implement a `compatible` block and check for at least the minimum required library version
+  * OpenTelemetry Ruby Contrib generally supports only versions of gems that are within the maintenance window
+* Add any custom configuration `options` you want to support
 
 The example below demonstrates how to implement the `Werewolf` instrumentation:
 
@@ -146,17 +147,17 @@ end
 ```
 
 * The `install` block lazily requires the instrumentation handlers, which subscribe to events published by the `Werewolf` event hooks.
-* The `present` block checks if the `Werewolf` and `ActiveSupport` libraries are loaded, which it will use to subscribe to events and generate spans. It will skip the installation if those dependencies were not loaded before the instrumentation was being initialized.
-* The `compatible` block checks if the `Werewolf` library version is at least `0.1.0` and will skip it if it is not.
-* The `options` section allows you to define custom options that can be passed to the instrumentation. In this example, the `transformations` option is defined with a default value of `:omit` and a validation rule that only allows `:omit` or `:include` values.
+* The `present` block checks if the `Werewolf` and `ActiveSupport` libraries are loaded, which it will use to subscribe to events and generate spans. It will skip the installation if those dependencies were not loaded before the instrumentation was initialized.
+* The `compatible` block checks if the `Werewolf` library version is at least `0.1.0` and will skip installation if it is not.
+* The `options` section allows you to define custom configuration options that can be passed to the instrumentation. In this example, the `transformations` option is defined with a default value of `:omit` and a validation rule that only allows `:omit` or `:include` values.
 
 ### Use the OpenTelemetry API
 
-Instrumentations are intended to be portable and usable with vendor distributions of the SDK. For this reason, you must use the OpenTelemetry API to create spans and add attributes, events, and links to spans and avoid using the OpenTelemetry SDK directly.
+Instrumentations are intended to be portable and usable with vendor distributions of the SDK. For this reason, you must use the [OpenTelemetry API](https://github.com/open-telemetry/opentelemetry-ruby/tree/main/api) to create spans and add attributes, events, and links to spans and avoid using the [OpenTelemetry SDK](https://github.com/open-telemetry/opentelemetry-ruby/tree/main/sdk) directly.
 
 Each instrumentation _must_ use a named tracer. Instrumentations that inherit from `OpenTelemetry::Instrumentation::Base` will get a single helper method that will automatically provide your instrumentation with a named tracer under `OpenTelemetry::Instrumentation::${Gem Name}::Instrumentation.instance.tracer`.
 
-For example, the `Werewolf` generated in the example above instrumentation is available `OpenTelemetry::Instrumentation::Werewolf::Instrumentation.instance.tracer`. You should reference this tracer in your code when creating spans like this:
+For example, the `Werewolf` module generated in the example above is available via `OpenTelemetry::Instrumentation::Werewolf::Instrumentation.instance.tracer`. You should reference this tracer in your code when creating spans like this:
 
 ```ruby
 
@@ -168,33 +169,33 @@ For example, the `Werewolf` generated in the example above instrumentation is av
 
 > :warning: This tracer is not _upgradable_ before the SDK is initialized, therefore it is important that your instrumentation _always_ use stack local references of the tracer.
 
-### Use First Party Extension Points
+### Use first-party extension points
 
 Whenever possible, use first party extension points (hooks) to instrument libraries. This ensures that the instrumentation is compatible with the latest versions of the library and that the instrumentation is maintained by the library authors. `ActiveSupport::Notifications` and `Middleware` are good examples of a first party extension points that are used by our instrumentation libraries.
 
-Monkey patching is discouraged in OpenTelemetry Ruby because it is the most common source of bugs and incompatability with the libraries we are instrumenting. If you must monkey patch, please ensure that the monkey patch is as isolated as possible and that it is clearly documented.
+Monkey patching is discouraged in OpenTelemetry Ruby because it is the most common source of bugs and incompatability with the libraries we instrument. If you must monkey patch, please ensure that the monkey patch is as isolated as possible and that it is clearly documented.
 
 ### Use Semantic Conventions
 
-Use the OpenTelemetry Semantic Conventions to ensure that the instrumentation is compatible with other OpenTelemetry libraries and that the data is useful in a distributed context.
+Use the [OpenTelemetry Semantic Conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/) to ensure the instrumentation is compatible with other OpenTelemetry libraries and that the data is useful in a distributed context.
 
 > :information_source: Privacy and security are important considerations when adding attributes to spans. Please ensure that you are not adding sensitive information to spans. If you are unsure, please ask for a review.
 
-When semantic conventions do not exist, use the [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html) and submit a Issue/PR with your attributes to the [Semantic Conventions repo](https://github.com/open-telemetry/semantic-conventions) to propose a new set of standard attributes.
+When semantic conventions do not exist, use the [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html) and submit an Issue/PR with your attributes to the [Semantic Conventions repo](https://github.com/open-telemetry/semantic-conventions) to propose a new set of standard attributes.
 
-If the attribute is specific to your instrumentation, then consider namespacing it using the `instrumentation` prefix e.g. `werewolf.bite.damage`.
+If the attribute is specific to your instrumentation, then consider namespacing it using the `instrumentation` prefix e.g. `werewolf.bite.damage` and calling it out in the instrumentation README.
 
-### Write Comprehensive Automated Tests
+### Write comprehensive automated tests
 
 Code that is not tested will not be accepted by maintainers. We understand that providing 100% test coverage is not always possible but we still ask that you provide your best effort when writing automated tests.
 
-Most of the libraries we are instrumenting introduce changes that are outside of our control. For this reason integration or state based tests are preferred over interaction (mock) tests.
+Most of the libraries instrument introduce changes outside of our control. For this reason, integration or state-based tests are preferred over interaction (mock) tests.
 
-When you do in fact run into cases where test doubles or API stubs are absolutely necessary then we recommend using the `rspec-mocks` and `webmocks` gems.
+When you do in fact run into cases where test doubles or API stubs are absolutely necessary, we recommend using the [`rspec-mocks`](https://github.com/rspec/rspec-mocks) and [`webmocks`](https://github.com/bblimke/webmock) gems.
 
-### Understand Performance Characteristics
+### Understand performance characteristics
 
-The OTel Specification describes expectations around the performance of SDKs, which you must review and apply to instrumentations: <https://opentelemetry.io/docs/specs/otel/performance/>
+The OTel Specification describes expectations around the performance of SDKs, which you must review and apply to instrumentation: <https://opentelemetry.io/docs/specs/otel/performance/>
 
 Instrumentation libraries should be as lightweight as possible and must:
 
@@ -204,15 +205,15 @@ Instrumentation libraries should be as lightweight as possible and must:
 
 #### Provide minimal solutions and code paths
 
-Instrumentations should have the minimal amount of code necessary to provide useful insights to our users. It may sound contrary to good engineering practices, but you must avoid adding lots of small methods, classes, and objects when instrumenting a library.
+Instrumentation should have the minimal amount of code necessary to provide useful insights to our users. It may sound contrary to good engineering practices, but you must avoid adding lots of small methods, classes, and objects when instrumenting a library.
 
-Though often easier to maintain and reason about; small and well factored code adds overhead to the library you are instrumenting resulting in performance degradation due to unnecessary object allocations, method dispatching, and other performance overhead.
+Though often easier to maintain and reason about; small and well-factored code adds overhead to the library you're instrumenting, resulting in performance degradation due to unnecessary object allocations, method dispatching, and other performance overhead.
 
-It will also contribute to building large backtraces that makes it more difficult for our end users to understand the essential parts of exception reports application. That will in turn likely result in additional filtering logic in the their application to avoid reporting unnecessary stack frames.
+It also contributes to building large backtraces, making it more difficult for our end users to understand the essential parts of exception reports. That will likely result in additional filtering logic in their application to avoid reporting unnecessary stack frames.
 
-In cases when code uses monkey patching, it runs the risk of _adding_ methods that conflict with the internal implementatation of the library and may result in unexpected behavior and bugs.
+In cases when code uses monkey patching, it runs the risk of _adding_ methods that conflict with the internal implementation of the library and may result in unexpected behavior and bugs.
 
-Avoid instrumenting _every_ method in a library and instead focus on the methods the provide the _most_ insights into what typically causes performance problems for applications, e.g. I/O and network calls. The use case for this type of low level granularity fails under the purview of profiling.
+Avoid instrumenting _every_ method in a library and instead focus on the methods that provide the _most_ insights into what typically causes performance problems for applications, e.g. I/O and network calls. The use case for this type of low-level granularity falls under the purview of profiling.
 
 In the near future, [OTel Profiling](https://opentelemetry.io/blog/2024/profiling/) will provide users an even deeper understanding of what is happening in their applications at a more granular level.
 
@@ -225,21 +226,21 @@ Here are some examples of performance fixes that reduced object allocations and 
 * <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/207>
 * <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/232>
 
-#### Avoid Adding Custom Extensions
+#### Avoid adding custom extensions
 
 Though your instrumentation may accept configurations options to customize the output, you should consider that the more options you add, the more complexity you will have to manage.
 
-You should _avoid_ adding options that allow custom code blocks to be executed as part of the instrumentation. It is often difficult to predict error modes and the performance impact custom code will have on your instrumentation, which in turn will impact the service being instrumented.
+You should _avoid_ adding options that allow custom code blocks (`type: :callable`) to be executed as part of the instrumentation. It is often difficult to predict error modes and the performance impact custom code will have on your instrumentation, which in turn will impact the service being instrumented.
 
-You should steer users towards post processing as part of the OTel Collector, which has a richer and more powerful toolset, and execute out of the application critical code path.
+You should steer users towards post-processing as part of the [OTel Collector](https://opentelemetry.io/docs/collector/), which has a richer and more powerful toolset, and executes out of the application's critical code path.
 
 ## Enable CI
 
-This project contains multiple CI workflows that execute tests and ensures the gems are installable.
+This project contains multiple CI workflows that execute tests and ensure the gems are installable.
 
-### Standalone Instrumentations
+### Standalone instrumentation
 
-For standalone instrumentations that do not have any external service dependencies, add the gem to the `/.github/workflows/ci-instrumentation.yml` file under `jobs/instrumentation/strategy/matrix/gem`:
+For standalone instrumentation that does not have any external service dependencies, add the gem to the `/.github/workflows/ci-instrumentation.yml` file under `jobs/instrumentation/strategy/matrix/gem`:
 
 ``` yaml
 
@@ -261,7 +262,7 @@ jobs:
 
 #### JRuby Compatibility
 
-If your gem is incompatible with `JRuby`you can exclude them from the matrix by adding an entry to the `/.github/workflows/ci-instrumentation.yml` file under `jobs/instrumentation/steps/[name="JRuby Filter"]`:
+If your gem is incompatible with `JRuby`, you can exclude it from the matrix by adding an entry to the `/.github/workflows/ci-instrumentation.yml` file under `jobs/instrumentation/steps/[name="JRuby Filter"]`:
 
 ``` yaml
       - name: "JRuby Filter"
@@ -276,9 +277,9 @@ If your gem is incompatible with `JRuby`you can exclude them from the matrix by 
           true
 ```
 
-### External Service Instrumentations
+### External service instrumentations
 
-Adding jobs for instrumentations that have external service dependencies may be a bit more difficult if the job does not already have a similar service configured.
+Adding jobs for instrumentation with external service dependencies may be a bit more difficult if the job does not already have a similar service configured.
 
 #### Using Existing Services
 
@@ -292,7 +293,7 @@ CI is currently configured to support the following services:
 * rabbitmq
 * redis
 
-If your gem depends on one of those services then great! The next step is to at the gem to matrix in the `/.github/workflows/ci-service-instrumentation.yml` file under `jobs/instrumentation_*/strategy/matrix/gem`:
+If your gem depends on one of those services, then great! The next step is to add the gem to matrix in the `/.github/workflows/ci-service-instrumentation.yml` file under `jobs/instrumentation_*/strategy/matrix/gem`:
 
 ```yaml
 
@@ -391,16 +392,18 @@ If we determine the service container slows down the test suite significantly, i
 
 ### README and Yardoc
 
-The `instrumentation_generator` will create a `README.md` file for your instrumentation. Please ensure that the `README` is up-to-date and contains the following:
+The `instrumentation_generator` creates a `README.md` file for your instrumentation. Please ensure that the `README` is up-to-date and contains the following:
 
-1. The span names, events, and semantic attributes that are emitted by the instrumentation
-2. The configuration options that are available
+1. The span names, events, and semantic attributes emitted by the instrumentation
+2. The configuration options available
 3. Any known limitations or caveats
 4. The minimum supported gem version
 
+> :information_source: See the `ActiveJob` instrumentation [`README`](./active_job/README.md) for a comprehensive example.
+
 In addition to that, there should also be redundant `yardoc` comments in the entrypoint of your gem, i.e. the subclass `OpenTelemetry::Instrumentation::Base`.
 
-> :information_source: See the `ActiveJob` instrumentation [`README`](./active_job/README.md) for a comprehensive example.
+> :information_source: See the `Sidekiq::Instrumentation` [class description](./sidekiq/lib/opentelemetry/instrumentation/sidekiq/instrumentation.rb) for a comprehensive example. 
 
 ### Examples
 
@@ -470,7 +473,7 @@ app.get('/users/1')
 
 You are encouraged to submit a `draft` pull request early in the development process to get feedback from the maintainers, run your tests via CI, and ensure that your changes are in line with the project's goals.
 
-The `CODEOWNERS` is used to notify the instrumentation authors a pull request is opened. Please add yourself to the `instrumentation` section of the `CODEOWNERS` file, e.g.
+The `CODEOWNERS` is used to notify instrumentation authors when a pull request is opened. Please add yourself to the `instrumentation` section of the `CODEOWNERS` file, e.g.
 
 ```plaintext
 
