@@ -49,6 +49,10 @@
       "package-name": "opentelemetry-instrumentation-active_support",
       "version-file": "lib/opentelemetry/instrumentation/active_support/version.rb"
     },
+    "instrumentation/action_mailer": {
+      "package-name": "opentelemetry-instrumentation-action_mailer",
+      "version-file": "lib/opentelemetry/instrumentation/action_mailer/version.rb"
+    },
     "instrumentation/action_view": {
       "package-name": "opentelemetry-instrumentation-action_view",
       "version-file": "lib/opentelemetry/instrumentation/action_view/version.rb"
