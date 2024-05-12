@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Instrumentation
-    module PG
-      VERSION = '0.27.3'
+    module AwsLambda
+      VERSION = '0.1.0'
     end
   end
 end

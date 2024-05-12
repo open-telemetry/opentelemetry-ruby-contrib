@@ -104,6 +104,10 @@ gems:
     directory: instrumentation/aws_sdk
     version_constant: [OpenTelemetry, Instrumentation, AwsSdk, VERSION]
 
+  - name: opentelemetry-instrumentation-aws_lambda
+    directory: instrumentation/aws_lambda
+    version_constant: [OpenTelemetry, Instrumentation, AwsLambda, VERSION]
+
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb
     version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]
