@@ -10,14 +10,14 @@ describe OpenTelemetry::Instrumentation::ActionMailer do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActionMailer::Instrumentation.instance }
   let(:payload) do
     {
-      :mailer => "TestMailer",
-      :message_id => "6638fab8d3cdb_f0b2c52420@8b5092010d2f.mail",
-      :subject => "Welcome to OpenTelemetry!",
-      :to => ["test_mailer@otel.org"],
-      :from => ["no-reply@example.com"],
-      :bcc => ["bcc@example.com"],
-      :cc => ["cc@example.com"],
-      :perform_deliveries => true
+      mailer: 'TestMailer',
+      message_id: '6638fab8d3cdb_f0b2c52420@8b5092010d2f.mail',
+      subject: 'Welcome to OpenTelemetry!',
+      to: ['test_mailer@otel.org'],
+      from: ['no-reply@example.com'],
+      bcc: ['bcc@example.com'],
+      cc: ['cc@example.com'],
+      perform_deliveries: true
     }
   end
 
@@ -62,14 +62,14 @@ describe OpenTelemetry::Instrumentation::ActionMailer do
   describe '#transform_payload' do
     it 'with simple payload' do
       payload = {
-        :mailer => "TestMailer",
-        :message_id => "6638fab8d3cdb_f0b2c52420@8b5092010d2f.mail",
-        :subject => "Welcome to OpenTelemetry!",
-        :to => ["test_mailer@otel.org"],
-        :from => ["no-reply@example.com"],
-        :bcc => ["bcc@example.com"],
-        :cc => ["cc@example.com"],
-        :perform_deliveries => true
+        mailer: 'TestMailer',
+        message_id: '6638fab8d3cdb_f0b2c52420@8b5092010d2f.mail',
+        subject: 'Welcome to OpenTelemetry!',
+        to: ['test_mailer@otel.org'],
+        from: ['no-reply@example.com'],
+        bcc: ['bcc@example.com'],
+        cc: ['cc@example.com'],
+        perform_deliveries: true
       }
       tranformed_payload = instrumentation.send(:transform_payload, payload)
 
@@ -85,15 +85,14 @@ describe OpenTelemetry::Instrumentation::ActionMailer do
 
   describe '#ecs_mail_convention' do
     it 'with user-defined payload' do
-
       original_config = instrumentation.instance_variable_get(:@config)
       modified_config = original_config.dup
 
-      modified_config[:notification_payload_transform] = lambda { |payload| payload['email.message_id'] = 'fake_message_id' }
+      modified_config[:notification_payload_transform] = ->(payload) { payload['email.message_id'] = 'fake_message_id' }
       instrumentation.instance_variable_set(:@config, modified_config)
 
       instrumentation.send(:ecs_mail_convention)
-      payload = { :mailer => "TestMailer"}
+      payload = { mailer: 'TestMailer' }
 
       tranformed_payload = instrumentation.config[:notification_payload_transform].call(payload)
 
@@ -103,7 +102,6 @@ describe OpenTelemetry::Instrumentation::ActionMailer do
     end
 
     it 'without user-defined payload' do
-
       tranformed_payload = instrumentation.config[:notification_payload_transform].call(payload)
 
       _(tranformed_payload['email.message_id']).must_equal '6638fab8d3cdb_f0b2c52420@8b5092010d2f.mail'
