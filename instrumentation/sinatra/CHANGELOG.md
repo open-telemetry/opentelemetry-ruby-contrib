@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.23.4 / 2024-05-09
+
+* FIXED: Untrace entire request
+
 ### v0.23.3 / 2024-04-30
 
 * FIXED: Bundler conflict warnings

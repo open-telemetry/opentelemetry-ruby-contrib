@@ -1,8 +1,8 @@
-name: Weekly release request
+name: Open release request - Weekly
 
 on:
   schedule:
-    - cron: "0 0 * * 0"
+    - cron: "0 15 * * 2"
 
 jobs:
   release-request:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.175.1
+        uses: ruby/setup-ruby@v1.176.0
         with:
           ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
