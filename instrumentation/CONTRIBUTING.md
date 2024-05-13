@@ -171,7 +171,7 @@ For example, the `Werewolf` module generated in the example above is available v
 
 ### Use first-party extension points
 
-Whenever possible, use first party extension points (hooks) to instrument libraries. This ensures that the instrumentation is compatible with the latest versions of the library and that the instrumentation is maintained by the library authors. `ActiveSupport::Notifications` and `Middleware` are good examples of a first party extension points that are used by our instrumentation libraries.
+Whenever possible, use first-party extension points (hooks) to instrument libraries. This ensures that the instrumentation is compatible with the latest versions of the library and that the instrumentation is maintained by the library authors. [`ActiveSupport::Notifications`](https://guides.rubyonrails.org/active_support_instrumentation.html) and `Middleware` are good examples of first-party extension points used by our instrumentation libraries.
 
 Monkey patching is discouraged in OpenTelemetry Ruby because it is the most common source of bugs and incompatability with the libraries we instrument. If you must monkey patch, please ensure that the monkey patch is as isolated as possible and that it is clearly documented.
 
