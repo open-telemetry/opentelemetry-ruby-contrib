@@ -17,8 +17,8 @@ module OpenTelemetry
             return formatted_message if skip_instrumenting?
 
             logger_provider.logger(
-              name: @config[:name],
-              version: @config[:version]
+              name: Instrumentation.instance.config[:name],
+              version: Instrumentation.instance.config[:version]
             ).on_emit(
               severity_text: severity,
               severity_number: severity_number(severity),
@@ -29,6 +29,14 @@ module OpenTelemetry
             formatted_message
           end
 
+          def logger_provider=(value)
+            @logger_provider = value
+          end
+
+          def skip_instrumenting=(value)
+            @skip_instrumenting = value
+          end
+
           private
 
           def logger_provider
@@ -37,13 +45,6 @@ module OpenTelemetry
 
           def skip_instrumenting?
             @skip_instrumenting || false
-          end
-
-          def instrumentation_config
-            {
-              name: @config[:name] || OpenTelemetry::Instrumentation::Logger::DEFAULT_NAME,
-              version: @config[:version] || OpenTelemetry::Instrumentation::Logger::DEFAULT_VERSION
-            }
           end
 
           def severity_number(severity)
