@@ -10,7 +10,7 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the ActionMailer instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('6.1.0')
-        EMAIL_ATTRIBUTE = ['email.to.address', 'email.from.address', 'email.cc.address', 'email.bcc.address']
+        EMAIL_ATTRIBUTE = %w[email.to.address email.from.address email.cc.address email.bcc.address].freeze
 
         install do |_config|
           resolve_email_address

@@ -21,6 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         gem:
+          - action_mailer
           - action_pack
           - action_view
           - active_job
