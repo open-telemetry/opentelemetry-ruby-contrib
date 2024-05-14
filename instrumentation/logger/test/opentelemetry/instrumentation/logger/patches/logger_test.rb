@@ -40,10 +40,6 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
       skip 'TODO: write tests for configuration options'
     end
 
-    it 'accepts custom logger provider ' do
-      skip 'TODO: write tests for configuration options'
-    end
-
     it 'sets log record attributes based on the Ruby log' do
       timestamp = Time.now
       Time.stub(:now, timestamp) do

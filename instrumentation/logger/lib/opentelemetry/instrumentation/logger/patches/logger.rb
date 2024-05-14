@@ -26,7 +26,7 @@ module OpenTelemetry
               severity_number: severity_number(severity),
               timestamp: datetime,
               body: msg, # New Relic uses formatted_message here. This also helps us with not recording progname, because it is included in the formatted message by default. Which seems more appropriate?
-              context: OpenTelemetry::Context.Current
+              context: OpenTelemetry::Context.current
             )
             formatted_message
           end
