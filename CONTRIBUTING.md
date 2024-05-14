@@ -24,7 +24,7 @@ conforms to the specification, but the interface and structure are flexible.
 It is preferable to have contributions follow the idioms of the language
 rather than conform to specific API names or argument patterns in the spec.
 
-For a deeper discussion, see: https://github.com/open-telemetry/opentelemetry-specification/issues/165
+For a deeper discussion, see: <https://github.com/open-telemetry/opentelemetry-specification/issues/165>
 
 ## Getting started
 
@@ -40,6 +40,7 @@ git clone git@github.com:YOUR_GITHUB_NAME/opentelemetry-ruby-contrib.git
 ```
 
 or
+
 ```sh
 git clone https://github.com/YOUR_GITHUB_NAME/opentelemetry-ruby-contrib.git
 ```
@@ -66,10 +67,10 @@ _Setting up a running Ruby environment is outside the scope of this document._
 
 This repository contains multiple Ruby gems:
 
- *  Various instrumentation gems located in subdirectories of `instrumentation`
- *  Various resource detector gems located in subdirectories of `resources`
- *  `opentelemetry-propagator-xray` located in the `propagator/xray` directory
- *  `opentelemetry-propagator-ottrace` located in the `propagator/ottrace` directory
+* Various instrumentation gems located in subdirectories of `instrumentation`
+* Various resource detector gems located in subdirectories of `resources`
+* `opentelemetry-propagator-xray` located in the `propagator/xray` directory
+* `opentelemetry-propagator-ottrace` located in the `propagator/ottrace` directory
 
 Each of these gems has its configuration and tests.
 
@@ -88,9 +89,9 @@ configuration details.
 
 The services provided include:
 
- *  `app` - main container environment scoped to the `/app` directory. Used
+* `app` - main container environment scoped to the `/app` directory. Used
     primarily to build and tag the `opentelemetry/opentelemetry-ruby-contrib:latest` image.
- *  `x-instrumentation-<library_name>` - container environment scoped to a specific instrumentation library. See `docker-compose.yml` for available services.
+* `x-instrumentation-<library_name>` - container environment scoped to a specific instrumentation library. See `docker-compose.yml` for available services.
 
 To test using Docker:
 
@@ -100,9 +101,9 @@ To test using Docker:
     * `docker-compose build`
     * This makes the image available locally
  4. Install dependencies for the service you want to interact with
-    *  `docker-compose run <service-name> bundle install`
+    * `docker-compose run <service-name> bundle install`
  5. Run the tests
-    *  `docker-compose run <service-name> bundle exec rake test`
+    * `docker-compose run <service-name> bundle exec rake test`
 
 ## Processing and visualizing traces locally
 
@@ -155,8 +156,8 @@ to ensure that your code complies before opening a pull request.
 We also use Yard to generate class documentation automatically. Among other
 things, this means:
 
- *  Methods and arguments should include the appropriate type annotations
- *  You can use markdown formatting in your documentation comments
+* Methods and arguments should include the appropriate type annotations
+* You can use markdown formatting in your documentation comments
 
 You can generate the docs locally to see the results, by running:
 
@@ -165,7 +166,11 @@ bundle install
 bundle exec rake yard
 ```
 
-## Create a Pull Request
+## Instrumentation author's guide
+
+Please make sure that you review the [Instrumentation author's guide](.instrumentation/CONTRIBUTING.md) before submitting a new instrumentation.
+
+## Create a pull request
 
 You'll need to create a Pull Request once you've finished your work.
 The [Kubernetes GitHub Workflow][kube-github-workflow-pr] document has
@@ -223,8 +228,8 @@ Releases are normally performed using GitHub Actions.
  2. In the GitHub UI, go to the `Actions` tab, select the
     `Open release request` workflow, and run the workflow manually using the
     dropdown in the upper right.
-     *  Releases must be run from the main branch.
-     *  If you leave the `Gems to release` field, blank, and the script will
+     * Releases must be run from the main branch.
+     * If you leave the `Gems to release` field, blank, and the script will
         find all the gems that have had conventional-commit-tagged changes since
         their last release. Alternately, you can specify which gems to release
         by including their names, space-delimited, in this this field. You can
@@ -247,9 +252,9 @@ Releases are normally performed using GitHub Actions.
     was opened; make sure the label is still there when you merge it.
  6. The automated release script will run automatically, and will release the
     gem(s) once CI has completed. This includes:
-     *  For each gem, it will create a release tag and a GitHub release.
-     *  It will build and push the gems to rubygems.
-     *  If the releases succeed, the script will update the release pull
+     * For each gem, it will create a release tag and a GitHub release.
+     * It will build and push the gems to rubygems.
+     * If the releases succeed, the script will update the release pull
         request with the results and change its label to `release: complete`.
         If something went wrong, the script will, if possible, report the error
         on the release pull request and change its label to `release: error`.
@@ -268,20 +273,20 @@ review the release logs for the GitHub Actions workflows.
 
 There are four GitHub actions workflows related to releases.
 
- *  `Open release request` is the main release entrypoint, and is used to open
-    a release pull request. If something goes wrong with this process, the logs
-    will appear in the workflow run.
- *  `Force release` is generally used only to restart a failed release.
- *  `[release hook] Update open releases` is run on pushes to the main branch,
-    and pushes warnings to open release pull requests if you make modifications
-    before triggering the release (i.e. because you might need to update the
-    changelogs.)
- *  `[release hook] Process release` is the main release automation script and
-    is run when a pull request is closed. If it determines that a release pull
-    request was merged, it kicks off the release process for the affected gems.
-    It also updates the label on a closed release pull request. Finally, it
-    deletes release branches when they are no longer being used. If something
-    goes wrong with any of these processes, the logs will appear here.
+* `Open release request` is the main release entrypoint, and is used to open
+   a release pull request. If something goes wrong with this process, the logs
+   will appear in the workflow run.
+* `Force release` is generally used only to restart a failed release.
+* `[release hook] Update open releases` is run on pushes to the main branch,
+   and pushes warnings to open release pull requests if you make modifications
+   before triggering the release (i.e. because you might need to update the
+   changelogs.)
+* `[release hook] Process release` is the main release automation script and
+   is run when a pull request is closed. If it determines that a release pull
+   request was merged, it kicks off the release process for the affected gems.
+   It also updates the label on a closed release pull request. Finally, it
+   deletes release branches when they are no longer being used. If something
+   goes wrong with any of these processes, the logs will appear here.
 
 #### Restarting a release
 
@@ -292,14 +297,14 @@ release, you can use the `Force release` workflow.
     GitHub UI.
  2. In the GitHub UI, go to the `Actions` tab, select the `Force release`
     workflow, and run it manually.
-     *  You must provide the gem name and version explicitly in the fields.
-     *  The `Extra flags` field is useful for advanced cases. For example, if
-        the GitHub release tag is already created and the gem already pushed to
-        Rubygems, but the docs still need to be built, you can pass
-        `--only=docs` to perform only that one step. You can also force a
-        release even if the build is not green or the version/changelog checks
-        are failing, by passing `--skip-checks`. For more details, install the
-        `toys` gem and run `toys release perform --help` locally.
+     * You must provide the gem name and version explicitly in the fields.
+     * The `Extra flags` field is useful for advanced cases. For example, if
+       the GitHub release tag is already created and the gem already pushed to
+       Rubygems, but the docs still need to be built, you can pass
+       `--only=docs` to perform only that one step. You can also force a
+       release even if the build is not green or the version/changelog checks
+       are failing, by passing `--skip-checks`. For more details, install the
+       `toys` gem and run `toys release perform --help` locally.
 
 #### Running releases locally
 
@@ -319,7 +324,7 @@ changed gems.
 
 To force-release, assuming the version and changelog are already modified:
 
-```
+```console
 toys release perform --rubygems-api-key=$API_KEY $GEM_NAME $GEM_VERSION
 ```
 
@@ -337,14 +342,14 @@ not correspond exactly to the gem name.
 
 For releases to succeed, new gems MUST include the following:
 
- *  The above configuration entry.
- *  The `*.gemspec` file, with the name matching the gem name.
- *  A `version.rb` file in the standard location, or in a location listed in
-    the configuration.
- *  A `CHANGELOG.md` file.
- *  A `yard` rake task.
+* The above configuration entry.
+* The `*.gemspec` file, with the name matching the gem name.
+* A `version.rb` file in the standard location, or in a location listed in
+   the configuration.
+* A `CHANGELOG.md` file.
+* A `yard` rake task.
 
-## Dependabot Updates
+## Dependabot updates
 
 This repository uses [Dependabot](https://dependabot.com/) to keep dependencies up to date, however there shared development dependencies are often scattered across multiple gems. Dependabot does not currently support the ability to group dependencies for gems in multiple subdirectories, so we use a custom script to bulk update dependencies across all gems.
 

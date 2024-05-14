@@ -16,11 +16,15 @@ Aid developers who wish to port existing datadog (dd-trace-rb) instrumentation t
 
 * Add Gemfile, opentelemetry-instrumentation-#{name}.gemspec
 * Add runnable (docker) example (using its own Gemfile)
-```
+
+```console
+
 $ docker-compose run ex-instrumentation-myinstrumentation bundle install
 $ docker-compose run ex-instrumentation-myinstrumentation
 bash-5.0$ ruby trace_demonstration.rb
+
 ```
+
 * Rakefile
 * `tests/test_helper.rb`
 * Integrate rubocop (see https://github.com/open-telemetry/opentelemetry-ruby/pull/172#pullrequestreview-349183775)
@@ -66,7 +70,7 @@ bash-5.0$ ruby trace_demonstration.rb
 ### Runtime performance considerations
 
 Watch for "low hanging fruit" performance improvements including:
-* reduce object allocations - move to a constant, or cache values that would be generated repeatedly 
+* reduce object allocations - move to a constant, or cache values that would be generated repeatedly
 * look for "easy wins" vs. "complete redesigns"
 
 ## Testing
