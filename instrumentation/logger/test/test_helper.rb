@@ -9,7 +9,7 @@ Bundler.require(:default, :development, :test)
 
 require 'simplecov'
 SimpleCov.start do
-  # enable_coverage :branch
+  enable_coverage :branch
   add_filter '/test/'
 end
 

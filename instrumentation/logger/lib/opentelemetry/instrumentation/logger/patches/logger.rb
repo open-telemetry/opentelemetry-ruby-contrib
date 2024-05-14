@@ -10,13 +10,15 @@ module OpenTelemetry
       module Patches
         # Instrumention for methods from Ruby's Logger class
         module Logger
+          attr_writer :skip_instrumenting
+
           # TODO: Make sure OTel logs aren't instrumented
           # TODO: How to pass attributes?
           def format_message(severity, datetime, progname, msg)
             formatted_message = super(severity, datetime, progname, msg)
             return formatted_message if skip_instrumenting?
 
-            logger_provider.logger(
+            OpenTelemetry.logger_provider.logger(
               name: Instrumentation.instance.config[:name],
               version: Instrumentation.instance.config[:version]
             ).on_emit(
@@ -29,19 +31,7 @@ module OpenTelemetry
             formatted_message
           end
 
-          def logger_provider=(value)
-            @logger_provider = value
-          end
-
-          def skip_instrumenting=(value)
-            @skip_instrumenting = value
-          end
-
           private
-
-          def logger_provider
-            @logger_provider ||= OpenTelemetry.logger_provider
-          end
 
           def skip_instrumenting?
             @skip_instrumenting || false
