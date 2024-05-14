@@ -1,6 +1,6 @@
 # OpenTelemetry Logger Instrumentation
 
-Todo: Add a description.
+TODO: Update description. This README is incomplete.
 
 ## How do I get started?
 
@@ -30,9 +30,11 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+TODO: Add documentation for config options.
+
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/logger/example/trace_demonstration.rb)
+TODO: Create example
 
 ## How can I get involved?
 
