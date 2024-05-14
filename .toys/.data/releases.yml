@@ -71,6 +71,10 @@ gems:
     directory: instrumentation/active_support
     version_constant: [OpenTelemetry, Instrumentation, ActiveSupport, VERSION]
 
+  - name: opentelemetry-instrumentation-action_mailer
+    directory: instrumentation/action_mailer
+    version_constant: [OpenTelemetry, Instrumentation, ActionMailer, VERSION]
+
   - name: opentelemetry-instrumentation-action_view
     directory: instrumentation/action_view
     version_constant: [OpenTelemetry, Instrumentation, ActionView, VERSION]
@@ -103,6 +107,10 @@ gems:
   - name: opentelemetry-instrumentation-aws_sdk
     directory: instrumentation/aws_sdk
     version_constant: [OpenTelemetry, Instrumentation, AwsSdk, VERSION]
+
+  - name: opentelemetry-instrumentation-aws_lambda
+    directory: instrumentation/aws_lambda
+    version_constant: [OpenTelemetry, Instrumentation, AwsLambda, VERSION]
 
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb

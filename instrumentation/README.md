@@ -10,7 +10,6 @@ Released instrumentations can be found at the [OpenTelemetry registry](https://o
 
 In-progress instrumentations can be found [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aopen+label%3Ainstrumentation+-label%3A%22help+wanted%22+).
 
-
 ## How do I get started?
 
 ### Individual instrumentation libraries
@@ -19,16 +18,20 @@ To get started with a single instrumentation library, for example `opentelemetry
 
 ### 1. Install the gem
 
-```
+```console
+
 gem install opentelemetry-instrumentation-rack
+
 ```
 
 ### 2. Configure OpenTelemetry to use the instrumentation
 
-```
+```console
+
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Rack'
 end
+
 ```
 
 Instrumentation-specific documentation can be found in each subdirectory's `README.md`.

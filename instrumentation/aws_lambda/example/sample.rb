@@ -4,10 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Instrumentation
-    module PG
-      VERSION = '0.27.3'
-    end
-  end
+def handler(event:, context:)
+  puts "Success"
 end

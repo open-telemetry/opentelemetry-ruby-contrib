@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Instrumentation
-    module PG
-      VERSION = '0.27.3'
+    module ActionMailer
+      VERSION = '0.1.0'
     end
   end
 end
