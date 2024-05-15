@@ -52,8 +52,13 @@ OpenTelemetry::SDK.configure do |c|
 
     # By default, this instrumentation obfuscate/sanitize the executed SQL as the `db.statement`
     # semantic attribute. Optionally, you may disable the inclusion of this attribute entirely by
-    # setting this option to :omit or disbale sanitization the attribute by setting to :include
+    # setting this option to :omit or disable sanitization the attribute by setting to :include
     db_statement: :include,
+
+    # Add certain commands that you do not want to produce spans within traces. This can
+    # be useful if you find something like PREPARE statements too noisy in your trace data.
+    # note: these must be uppercase to match the command.
+    untraced_commands: %w[PREPARE DEALLOCATE],
   }
 end
 ```
