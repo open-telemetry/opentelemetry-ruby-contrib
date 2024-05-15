@@ -10,6 +10,8 @@ module OpenTelemetry
       module Patches
         # Instrumention for methods from Ruby's Logger class
         module Logger
+          attr_writer :skip_instrumenting
+
           # TODO: Make sure OTel logs aren't instrumented
           # TODO: How to pass attributes?
           def format_message(severity, datetime, progname, msg)
@@ -17,24 +19,22 @@ module OpenTelemetry
             return formatted_message if skip_instrumenting?
 
             OpenTelemetry.logger_provider.logger(
-              name: OpenTelemetry::Instrumentation::Logger::NAME,
-              version: OpenTelemetry::Instrumentation::Logger::VERSION
+              name: Instrumentation.instance.config[:name],
+              version: Instrumentation.instance.config[:version]
             ).on_emit(
               severity_text: severity,
               severity_number: severity_number(severity),
               timestamp: datetime,
-              body: msg # New Relic uses formatted_message here. This also helps us with not recording progname, because it is included in the formatted message by default. Which seems more appropriate?
+              body: msg, # New Relic uses formatted_message here. This also helps us with not recording progname, because it is included in the formatted message by default. Which seems more appropriate?
+              context: OpenTelemetry::Context.current
             )
             formatted_message
           end
 
           private
 
-          # Placeholder for now
-          def instrumentation_config; end
-
           def skip_instrumenting?
-            instance_variable_get(:@skip_instrumenting)
+            @skip_instrumenting || false
           end
 
           def severity_number(severity)

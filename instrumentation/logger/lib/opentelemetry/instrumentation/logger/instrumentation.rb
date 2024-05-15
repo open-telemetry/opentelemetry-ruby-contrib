@@ -18,6 +18,9 @@ module OpenTelemetry
           defined?(::Logger)
         end
 
+        option :name, default: OpenTelemetry::Instrumentation::Logger::NAME, validate: :string
+        option :version, default: OpenTelemetry::Instrumentation::Logger::VERSION, validate: :string
+
         private
 
         def patch
