@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-grape
 
+### v0.1.8 / 2024-05-14
+
+* DOCS: Instrumentation Authors Guide
+
 ### v0.1.7 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
