@@ -26,11 +26,16 @@ end
 describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
   let(:processor) { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new }
   let(:span) { Minitest::Mock.new }
-  let(:context_with_baggage) { OpenTelemetry::Baggage.set_value('a_key', 'a_value') }
+  let(:context_with_baggage) do
+    OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |baggage|
+      baggage.set_value('a_key', 'a_value')
+      baggage.set_value('b_key', 'b_value')
+    end
+  end
 
   describe '#on_start' do
     it 'adds current baggage keys/values as attributes when a span starts' do
-      span.expect(:add_attributes, span, [{ 'a_key' => 'a_value' }])
+      span.expect(:add_attributes, span, [{ 'a_key' => 'a_value', 'b_key' => 'b_value' }])
 
       processor.on_start(span, context_with_baggage)
 
@@ -89,7 +94,7 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
 
       _(exporter.finished_spans.size).must_equal(1)
       _(exporter.finished_spans.first.name).must_equal('integration test span')
-      _(exporter.finished_spans.first.attributes).must_equal('a_key' => 'a_value')
+      _(exporter.finished_spans.first.attributes).must_equal('a_key' => 'a_value', 'b_key' => 'b_value')
     end
   end
 end
