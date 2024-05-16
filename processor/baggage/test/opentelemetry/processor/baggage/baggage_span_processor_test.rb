@@ -25,6 +25,7 @@ end
 
 describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
   let(:processor) { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new }
+  let(:filtered_processor) { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(keyfilter: ->(key) { key.start_with?('a_key') }) }
   let(:span) { Minitest::Mock.new }
   let(:context_with_baggage) do
     OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |baggage|
@@ -95,6 +96,17 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
       _(exporter.finished_spans.size).must_equal(1)
       _(exporter.finished_spans.first.name).must_equal('integration test span')
       _(exporter.finished_spans.first.attributes).must_equal('a_key' => 'a_value', 'b_key' => 'b_value')
+    end
+  end
+
+  describe 'with a keyfilter' do
+    it 'only adds attributes that pass the keyfilter' do
+      span.expect(:add_attributes, span, [{ 'a_key' => 'a_value' }])
+      span.not_expected(:add_attributes, [{ 'b_key' => 'b_value' }])
+
+      filtered_processor.on_start(span, context_with_baggage)
+
+      span.verify
     end
   end
 end

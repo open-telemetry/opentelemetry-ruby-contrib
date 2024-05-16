@@ -57,6 +57,16 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+A predicate proc that determines what baggage entries are copied can be provided as a constructor parameter.
+
+For example, to only copy baggage entries that start with `my-key`:
+
+```ruby
+OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+  keyfilter: ->(key) { key.start_with?('my-key') }
+)
+```
+
 ## How can I get involved?
 
 The `opentelemetry-processor-baggage` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.

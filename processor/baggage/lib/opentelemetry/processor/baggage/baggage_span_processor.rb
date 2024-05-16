@@ -42,6 +42,14 @@ module OpenTelemetry
       #     )
       #   end
       class BaggageSpanProcessor < OpenTelemetry::SDK::Trace::SpanProcessor
+        # Create a new BaggageSpanProcessor
+        # @param [Proc] keyfilter A proc that takes a key and returns true if the key should be added to the span.
+        # Default keyfilter adds all baggage entries to the span.
+        def initialize(keyfilter: nil)
+          @keyfilter = keyfilter || ->(_key) { true }
+          super
+        end
+
         # Called when a `Span` is started, adds Baggage keys/values to the span as attributes.
         #
         # @param [Span] span the `Span` that just started, expected to conform
@@ -51,7 +59,11 @@ module OpenTelemetry
         def on_start(span, parent_context)
           return unless span.respond_to?(:add_attributes) && parent_context.is_a?(::OpenTelemetry::Context)
 
-          span.add_attributes(::OpenTelemetry::Baggage.values(context: parent_context))
+          span.add_attributes(
+            ::OpenTelemetry::Baggage
+              .values(context: parent_context)
+              .select { |k, _v| @keyfilter.call(k) }
+          )
         end
 
         # Called when a Span is ended, does nothing.
