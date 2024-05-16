@@ -66,7 +66,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
       end
 
       describe 'when a user configures both name and version' do
-        let(:config) { { name: 'custom_logger', version: '5000'} }
+        let(:config) { { name: 'custom_logger', version: '5000' } }
 
         it 'updates both values' do
           ruby_logger.debug(msg)
