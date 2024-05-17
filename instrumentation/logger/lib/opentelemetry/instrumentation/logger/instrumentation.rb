@@ -15,7 +15,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::Logger)
+          defined?(::Logger) && defined?(::OpenTelemetry::SDK::Logs)
         end
 
         option :name, default: OpenTelemetry::Instrumentation::Logger::NAME, validate: :string
