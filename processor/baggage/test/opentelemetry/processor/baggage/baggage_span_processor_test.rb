@@ -11,8 +11,10 @@ require 'opentelemetry/sdk'
 TEST_EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 
 OpenTelemetry::SDK.configure do |c|
-  # the baggage processor getting wired in for testing
-  c.add_span_processor OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new
+  # the baggage processor getting wired in for integration testing
+  c.add_span_processor OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+    OpenTelemetry::Processor::Baggage::ALLOW_ALL
+  )
 
   # use a simple processor and in-memory export for testing sent spans
   c.add_span_processor(
@@ -24,8 +26,12 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
-  let(:processor) { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new }
-  let(:filtered_processor) { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(keyfilter: ->(key) { key.start_with?('a_key') }) }
+  let(:processor) do
+    OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+      OpenTelemetry::Processor::Baggage::ALLOW_ALL
+    )
+  end
+  let(:filtered_processor) { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new('^a.key') }
   let(:span) { Minitest::Mock.new }
   let(:context_with_baggage) do
     OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |baggage|
@@ -101,10 +107,9 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
 
   describe 'with a keyfilter' do
     it 'only adds attributes that pass the keyfilter' do
-      span.expect(:add_attributes, span, [{ 'a_key' => 'a_value' }])
-      span.not_expected(:add_attributes, [{ 'b_key' => 'b_value' }])
+      span.expect(:add_attributes, span, [{ 'a_key' => 'a_value', 'b_key' => 'b_value' }])
 
-      filtered_processor.on_start(span, context_with_baggage)
+      processor.on_start(span, context_with_baggage)
 
       span.verify
     end

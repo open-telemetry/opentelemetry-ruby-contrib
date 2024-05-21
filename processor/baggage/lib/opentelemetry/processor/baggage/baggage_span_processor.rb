@@ -10,6 +10,9 @@ require 'opentelemetry-sdk'
 module OpenTelemetry
   module Processor
     module Baggage
+      # A regex that matches all Baggage keys.
+      ALLOW_ALL = '*'
+
       # The BaggageSpanProcessor reads key/values stored in Baggage in the
       # starting span's parent context and adds them as attributes to the span.
       #
@@ -27,7 +30,9 @@ module OpenTelemetry
       # @example
       #   OpenTelemetry::SDK.configure do |c|
       #     # Add the BaggageSpanProcessor to the collection of span processors
-      #     c.add_span_processor(OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new)
+      #     c.add_span_processor(OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+      #       OpenTelemetry::Processor::Baggage::ALLOW_ALL)
+      #     )
       #
       #     # Because the span processor list is no longer empty, the SDK will not use the
       #     # values in OTEL_TRACES_EXPORTER to instantiate exporters.
@@ -42,12 +47,14 @@ module OpenTelemetry
       #     )
       #   end
       class BaggageSpanProcessor < OpenTelemetry::SDK::Trace::SpanProcessor
-        # Create a new BaggageSpanProcessor
-        # @param [Proc] keyfilter A proc that takes a key and returns true if the key should be added to the span.
-        # Default keyfilter adds all baggage entries to the span.
-        def initialize(keyfilter: nil)
-          @keyfilter = keyfilter || ->(_key) { true }
-          super
+        # Create a new BaggageSpanProcessor that reads Baggage keys and values from the parent context
+        # and adds them as attributes to the span.
+        #
+        # @param [Regexp] baggage_key_regex A regular expression that matches Baggage keys to be added as span attributes.
+        #  If the regex is '*', all Baggage keys will be added as attributes.
+        def initialize(baggage_key_regex)
+          @baggage_key_regex = baggage_key_regex
+          super()
         end
 
         # Called when a `Span` is started, adds Baggage keys/values to the span as attributes.
@@ -59,11 +66,15 @@ module OpenTelemetry
         def on_start(span, parent_context)
           return unless span.respond_to?(:add_attributes) && parent_context.is_a?(::OpenTelemetry::Context)
 
-          span.add_attributes(
-            ::OpenTelemetry::Baggage
-              .values(context: parent_context)
-              .select { |k, _v| @keyfilter.call(k) }
-          )
+          if @baggage_key_regex == ALLOW_ALL
+            span.add_attributes(::OpenTelemetry::Baggage.values(context: parent_context))
+          else
+            span.add_attributes(
+              ::OpenTelemetry::Baggage
+                .values(context: parent_context)
+                .select { |k, _v| @baggage_key_regex.match(k) }
+            )
+          end
         end
 
         # Called when a Span is ended, does nothing.
