@@ -10,8 +10,8 @@ require 'opentelemetry-sdk'
 module OpenTelemetry
   module Processor
     module Baggage
-      # A regex that matches all Baggage keys.
-      ALLOW_ALL = '*'
+      # A baggage key predicate that allows all keys to be added to the span as attributes.
+      ALLOW_ALL_BAGGAGE_KEYS = ->(_) { true }
 
       # The BaggageSpanProcessor reads key/values stored in Baggage in the
       # starting span's parent context and adds them as attributes to the span.
@@ -31,7 +31,7 @@ module OpenTelemetry
       #   OpenTelemetry::SDK.configure do |c|
       #     # Add the BaggageSpanProcessor to the collection of span processors
       #     c.add_span_processor(OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
-      #       OpenTelemetry::Processor::Baggage::ALLOW_ALL)
+      #       OpenTelemetry::Processor::Baggage::ALLOW_ALL_BAGGAGE_KEYS)
       #     )
       #
       #     # Because the span processor list is no longer empty, the SDK will not use the
@@ -50,10 +50,10 @@ module OpenTelemetry
         # Create a new BaggageSpanProcessor that reads Baggage keys and values from the parent context
         # and adds them as attributes to the span.
         #
-        # @param [Regexp] baggage_key_regex A regular expression that matches Baggage keys to be added as span attributes.
-        #  If the regex is '*', all Baggage keys will be added as attributes.
-        def initialize(baggage_key_regex)
-          @baggage_key_regex = baggage_key_regex
+        # @param [lambda] baggage_key_predicate A lambda that takes a baggage key and returns true if
+        #  the key should be added to the span as an attribute, false otherwise.
+        def initialize(baggage_key_predicate)
+          @baggage_key_predicate = baggage_key_predicate
           super()
         end
 
@@ -66,15 +66,11 @@ module OpenTelemetry
         def on_start(span, parent_context)
           return unless span.respond_to?(:add_attributes) && parent_context.is_a?(::OpenTelemetry::Context)
 
-          if @baggage_key_regex == ALLOW_ALL
-            span.add_attributes(::OpenTelemetry::Baggage.values(context: parent_context))
-          else
-            span.add_attributes(
-              ::OpenTelemetry::Baggage
-                .values(context: parent_context)
-                .select { |k, _v| @baggage_key_regex.match(k) }
-            )
-          end
+          span.add_attributes(
+            ::OpenTelemetry::Baggage
+              .values(context: parent_context)
+              .select { |k, _v| @baggage_key_predicate.call(k) }
+          )
         end
 
         # Called when a Span is ended, does nothing.

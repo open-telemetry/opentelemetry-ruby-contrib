@@ -13,7 +13,7 @@ TEST_EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 OpenTelemetry::SDK.configure do |c|
   # the baggage processor getting wired in for integration testing
   c.add_span_processor OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
-    OpenTelemetry::Processor::Baggage::ALLOW_ALL
+    OpenTelemetry::Processor::Baggage::ALLOW_ALL_BAGGAGE_KEYS
   )
 
   # use a simple processor and in-memory export for testing sent spans
@@ -28,10 +28,19 @@ end
 describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
   let(:processor) do
     OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
-      OpenTelemetry::Processor::Baggage::ALLOW_ALL
+      OpenTelemetry::Processor::Baggage::ALLOW_ALL_BAGGAGE_KEYS
     )
   end
-  let(:filtered_processor) { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new('^a.key') }
+  let(:starts_with_processor) do
+    OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+      ->(baggage_key) { baggage_key.start_with?('a') }
+    )
+  end
+  let(:regex_processor) do
+    OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+      ->(baggage_key) { baggage_key.match?(/^b_ke.+/) }
+    )
+  end
   let(:span) { Minitest::Mock.new }
   let(:context_with_baggage) do
     OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |baggage|
@@ -105,11 +114,21 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
     end
   end
 
-  describe 'with a keyfilter' do
+  describe 'with a starts_with key predicate' do
     it 'only adds attributes that pass the keyfilter' do
-      span.expect(:add_attributes, span, [{ 'a_key' => 'a_value', 'b_key' => 'b_value' }])
+      span.expect(:add_attributes, span, [{ 'a_key' => 'a_value' }])
 
-      processor.on_start(span, context_with_baggage)
+      starts_with_processor.on_start(span, context_with_baggage)
+
+      span.verify
+    end
+  end
+
+  describe 'with a regex key predicate' do
+    it 'only adds attributes that pass the keyfilter' do
+      span.expect(:add_attributes, span, [{ 'b_key' => 'b_value' }])
+
+      regex_processor.on_start(span, context_with_baggage)
 
       span.verify
     end

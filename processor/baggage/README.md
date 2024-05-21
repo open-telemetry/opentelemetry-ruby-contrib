@@ -31,7 +31,7 @@ To install the instrumentation, add the gem to your Gemfile:
 gem 'opentelemetry-processor-baggage'
 ```
 
-Then add the processor to an SDK's configuration:
+Then configure the span processor to copy all baggage entries:
 
 ```ruby
 require 'rubygems'
@@ -40,8 +40,11 @@ require 'bundler/setup'
 Bundler.require
 
 OpenTelemetry::SDK.configure do |c|
-  # Add the BaggageSpanProcessor to the collection of span processors
-  c.add_span_processor(OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new)
+  # Add the BaggageSpanProcessor to the collection of span processors and
+  # copy all baggage entries
+  c.add_span_processor(OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+    OpenTelemetry::Processor::Baggage::ALLOW_ALL_BAGGAGE_KEYS
+  ))
 
   # Because the span processor list is no longer empty, the SDK will not use the
   # values in OTEL_TRACES_EXPORTER to instantiate exporters.
@@ -57,13 +60,21 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-A predicate proc that determines what baggage entries are copied can be provided as a constructor parameter.
+Alternatively, you can provide a custom baggage key predicate to select which baggage keys you want to copy.
 
 For example, to only copy baggage entries that start with `my-key`:
 
 ```ruby
 OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
-  keyfilter: ->(key) { key.start_with?('my-key') }
+  ->(baggage_key) { baggage_key.start_with?('my-key') }
+)
+```
+
+For example, to only copy baggage entries that match the regex `^key.+`:
+
+```ruby
+OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+  ->(baggage_key) { baggage_key.match?('^key.+') }
 )
 ```
 
