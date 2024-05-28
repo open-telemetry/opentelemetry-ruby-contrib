@@ -7,6 +7,9 @@
 class ExampleController < ActionController::Base
   include ::Rails.application.routes.url_helpers
 
+  # Enable CSRF Protection
+  protect_from_forgery with: :exception
+
   def ok
     render plain: 'actually ok'
   end
