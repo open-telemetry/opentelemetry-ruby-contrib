@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.61.0 / 2024-05-28
+
+* ADDED: Add aws lambda to instrumentation-all
+* FIXED: Add action_mailer to rails and all
+
 ### v0.60.0 / 2024-02-20
 
 * ADDED: Add support gruf 2.19

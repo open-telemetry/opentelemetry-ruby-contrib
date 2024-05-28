@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.30.2 / 2024-05-28
+
+* FIXED: Add action_mailer to rails and all
+
 ### v0.30.1 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
