@@ -16,9 +16,9 @@ module OpenTelemetry
 
             def request(req, body = nil, &block)
               # Do not trace recursive call for starting the connection
-              return super(req, body, &block) unless started?
+              return super unless started?
 
-              return super(req, body, &block) if untraced?
+              return super if untraced?
 
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
@@ -35,7 +35,7 @@ module OpenTelemetry
               ) do |span|
                 OpenTelemetry.propagation.inject(req)
 
-                super(req, body, &block).tap do |response|
+                super.tap do |response|
                   annotate_span_with_response!(span, response)
                 end
               end

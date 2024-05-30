@@ -12,7 +12,7 @@ module OpenTelemetry
         module Request
           def execute(&block)
             trace_request do |_span|
-              super(&block)
+              super
             end
           end
 
