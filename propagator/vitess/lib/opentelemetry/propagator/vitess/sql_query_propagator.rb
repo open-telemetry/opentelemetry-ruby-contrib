@@ -27,14 +27,14 @@ module OpenTelemetry
         # @param [String] value The value to set
         def set(carrier, key, value)
           carrier.gsub!(/\A/, "/*#{key}=#{value}*/")
-        rescue FrozenError
+        rescue FrozenError # rubocop:disable Lint/SuppressedException
         end
       end
 
       # Propagates context using Vitess header format:
       # https://vitess.io/docs/16.0/user-guides/configuration-advanced/tracing/#instrumenting-queries
       class SqlQueryPropagator
-        VT_SPAN_CONTEXT = 'VT_SPAN_CONTEXT'.freeze
+        VT_SPAN_CONTEXT = 'VT_SPAN_CONTEXT'
         FIELDS = [VT_SPAN_CONTEXT].freeze
 
         private_constant :VT_SPAN_CONTEXT, :FIELDS
