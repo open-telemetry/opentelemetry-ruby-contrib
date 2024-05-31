@@ -20,37 +20,37 @@ module OpenTelemetry
           module ClassMethods
             ruby2_keywords def insert(*args)
               tracer.in_span("#{self}.insert") do
-                super(*args)
+                super
               end
             end
 
             ruby2_keywords def insert_all(*args)
               tracer.in_span("#{self}.insert_all") do
-                super(*args)
+                super
               end
             end
 
             ruby2_keywords def insert!(*args)
               tracer.in_span("#{self}.insert!") do
-                super(*args)
+                super
               end
             end
 
             ruby2_keywords def insert_all!(*args)
               tracer.in_span("#{self}.insert_all!") do
-                super(*args)
+                super
               end
             end
 
             ruby2_keywords def upsert(*args)
               tracer.in_span("#{self}.upsert") do
-                super(*args)
+                super
               end
             end
 
             ruby2_keywords def upsert_all(*args)
               tracer.in_span("#{self}.upsert_all") do
-                super(*args)
+                super
               end
             end
 
