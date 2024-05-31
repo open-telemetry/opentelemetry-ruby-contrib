@@ -61,6 +61,7 @@ jobs:
       matrix:
         gem:
           - ottrace
+          - vitess
           - xray
         os:
           - ubuntu-latest
