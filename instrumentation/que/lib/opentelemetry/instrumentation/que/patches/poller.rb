@@ -17,9 +17,9 @@ module OpenTelemetry
             return unless should_poll?
 
             if Que::Instrumentation.instance.config[:trace_poller]
-              Que::Instrumentation.instance.tracer.in_span('Que::Poller#poll') { super(*args, **kwargs) }
+              Que::Instrumentation.instance.tracer.in_span('Que::Poller#poll') { super }
             else
-              OpenTelemetry::Common::Utilities.untraced { super(*args, **kwargs) }
+              OpenTelemetry::Common::Utilities.untraced { super }
             end
           end
         end
