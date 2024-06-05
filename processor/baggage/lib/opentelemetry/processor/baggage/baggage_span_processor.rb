@@ -53,6 +53,8 @@ module OpenTelemetry
         # @param [lambda] baggage_key_predicate A lambda that takes a baggage key and returns true if
         #  the key should be added to the span as an attribute, false otherwise.
         def initialize(baggage_key_predicate)
+          raise ArgumentError, 'baggage_key_predicate must respond to :call (lambda/Proc)' unless baggage_key_predicate.respond_to?(:call)
+
           @baggage_key_predicate = baggage_key_predicate
           super()
         end

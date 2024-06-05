@@ -39,6 +39,14 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
     end
   end
 
+  describe '#new' do
+    it 'requires a callable baggage_key_predicate' do
+      _(-> { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new }).must_raise(ArgumentError)
+      err = _(-> { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(:not_a_callable) }).must_raise(ArgumentError)
+      _(err.message).must_match(/must respond to :call/)
+    end
+  end
+
   describe '#on_start' do
     describe 'with the ALLOW_ALL_BAGGAGE_KEYS predicate' do
       it 'adds current baggage keys/values as attributes when a span starts' do
