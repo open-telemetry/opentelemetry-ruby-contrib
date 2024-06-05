@@ -62,19 +62,22 @@ end
 
 Alternatively, you can provide a custom baggage key predicate to select which baggage keys you want to copy.
 
-For example, to only copy baggage entries that start with `my-key`:
+For example, to only copy baggage entries that start with `myapp.`:
 
 ```ruby
+OUR_BAGGAGE_KEY_PREFIX = 'myapp.'.freeze
 OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
-  ->(baggage_key) { baggage_key.start_with?('my-key') }
+  # a constant here improves performance
+  ->(baggage_key) { baggage_key.start_with?(OUR_BAGGAGE_KEY_PREFIX) }
 )
 ```
 
-For example, to only copy baggage entries that match the regex `^key.+`:
+For example, to only copy baggage entries that match `myapp.`, `myapp1.` and `myapp42.`:
 
 ```ruby
+OUR_BAGGAGE_KEY_MATCHER = /\Amyapp\d*\./
 OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
-  ->(baggage_key) { baggage_key.match?('^key.+') }
+  ->(baggage_key) { OUR_BAGGAGE_KEY_MATCHER.match?(baggage_key) }
 )
 ```
 
