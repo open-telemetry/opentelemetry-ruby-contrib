@@ -50,8 +50,8 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
       end
     end
 
-    describe 'with a starts_with key predicate' do
-      let(:starts_with_processor) do
+    describe 'with a start_with? key predicate' do
+      let(:start_with_processor) do
         OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
           ->(baggage_key) { baggage_key.start_with?('a') }
         )
@@ -60,7 +60,7 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
       it 'only adds attributes that pass the keyfilter' do
         span.expect(:add_attributes, span, [{ 'a_key' => 'a_value' }])
 
-        starts_with_processor.on_start(span, context_with_baggage)
+        start_with_processor.on_start(span, context_with_baggage)
 
         span.verify
       end
