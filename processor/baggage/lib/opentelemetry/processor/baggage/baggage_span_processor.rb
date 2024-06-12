@@ -20,7 +20,7 @@ module OpenTelemetry
       # Keys and values added to Baggage will appear on all subsequent child spans,
       # not the current active span, for a trace within this service *and* will be
       # propagated to external services via propagation headers.
-      # 
+      #
       # If the external services also have a Baggage span processor, the keys and
       # values will appear in those child spans as well.
       #
