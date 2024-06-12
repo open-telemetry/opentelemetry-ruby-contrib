@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.21.6 / 2024-06-12
+
+* FIXED: Add net.peer.name to ethon
+
 ### v0.21.5 / 2024-05-09
 
 * FIXED: Untrace entire request
