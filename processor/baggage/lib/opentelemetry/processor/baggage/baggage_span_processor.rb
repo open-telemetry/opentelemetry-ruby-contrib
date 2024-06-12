@@ -17,11 +17,12 @@ module OpenTelemetry
       # starting span's parent context and adds them as attributes to the span,
       # if a key matches a provided predicate lambda.
       #
-      # Keys and values added to Baggage will appear on all subsequent child spans
-      # for a trace within this service *and* will be propagated to external services
-      # via propagation headers. If the external services also have a Baggage span
-      # processor, the keys and values will appear in those child spans as well provided
-      # that the keys match any predicate method configured there.
+      # Keys and values added to Baggage will appear on all subsequent child spans,
+      # not the current active span, for a trace within this service *and* will be
+      # propagated to external services via propagation headers.
+      # 
+      # If the external services also have a Baggage span processor, the keys and
+      # values will appear in those child spans as well.
       #
       # ⚠️
       # To repeat: a consequence of adding data to Baggage is that the keys and
