@@ -151,7 +151,7 @@ module OpenTelemetry
             end
           end
 
-          def set_attributes_after_request(span, status, headers, _response)
+          def set_attributes_after_request(span, status, headers, response)
             span.status = OpenTelemetry::Trace::Status.error unless (100..499).cover?(status.to_i)
             span.set_attribute('http.status_code', status)
 
@@ -160,6 +160,10 @@ module OpenTelemetry
             # e.g., "/users/:userID?
 
             allowed_response_headers(headers).each { |k, v| span.set_attribute(k, v) }
+
+            return unless (implementation = config[:after_request])
+
+            implementation.call(span, status, headers, response)
           end
 
           def allowed_request_headers(env)

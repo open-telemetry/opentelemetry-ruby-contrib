@@ -281,6 +281,20 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
     end
+
+    describe 'config[:after_request]' do
+      describe 'when a callable is passed in' do
+        let(:after_request_callable) do
+          ->(span, _status, _headers, _response) { span.set_attribute('after_request.called', true) }
+        end
+
+        let(:config) { default_config.merge(after_request: after_request_callable) }
+
+        it 'ran the callable' do
+          _(first_span.attributes['after_request.called']).must_equal true
+        end
+      end
+    end
   end
 
   describe 'config[:quantization]' do
