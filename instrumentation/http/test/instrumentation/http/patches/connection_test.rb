@@ -41,6 +41,9 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
       _(span.attributes['net.peer.port']).must_equal(port)
+      _(span.attributes['server.address']).must_equal('localhost')
+      _(span.attributes['server.port']).wont_be_nil
+      _(span.attributes['server.port']).must_equal(port)
     ensure
       WebMock.disable_net_connect!
     end

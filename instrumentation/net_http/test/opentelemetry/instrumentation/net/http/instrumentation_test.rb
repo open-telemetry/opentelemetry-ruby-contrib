@@ -45,11 +45,17 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 80
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes['url.full']).must_equal 'http://example.com/success'
+      _(span.attributes['url.scheme']).must_equal 'http'
       assert_requested(
         :get,
         'http://example.com/success',
@@ -63,11 +69,17 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP POST'
       _(span.attributes['http.method']).must_equal 'POST'
+      _(span.attributes['http.request.method']).must_equal 'POST'
+      _(span.attributes['http.response.status_code']).must_equal 500
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.target']).must_equal '/failure'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 80
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes['url.full']).must_equal 'http://example.com/failure'
+      _(span.attributes['url.scheme']).must_equal 'http'
       assert_requested(
         :post,
         'http://example.com/failure',
@@ -83,11 +95,17 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_be_nil
       _(span.attributes['http.scheme']).must_equal 'https'
       _(span.attributes['http.status_code']).must_be_nil
       _(span.attributes['http.target']).must_equal '/timeout'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 443
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 443
+      _(span.attributes['url.full']).must_equal 'https://example.com/timeout'
+      _(span.attributes['url.scheme']).must_equal 'https'
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -109,17 +127,31 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal 'REDACTED'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 80
       _(span.attributes['peer.service']).must_equal 'foo'
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes['url.full']).must_equal 'http://example.com/success'
+      _(span.attributes['url.scheme']).must_equal 'http'
       assert_requested(
         :get,
         'http://example.com/success',
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
+    end
+
+    it 'includes the query string' do
+      stub_request(:get, 'http://example.com/success?ok=true').to_return(status: 200)
+
+      Net::HTTP.get('example.com', '/success?ok=true')
+
+      _(span.attributes['url.full']).must_equal 'http://example.com/success?ok=true'
     end
   end
 
@@ -163,7 +195,9 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'HTTP GET'
         _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['http.request.method']).must_equal 'GET'
         _(span.attributes['net.peer.name']).must_equal 'example.com'
+        _(span.attributes['server.address']).must_equal 'example.com'
       end
 
       it 'creates a span on connect for a non-ignored request' do
@@ -176,6 +210,8 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         _(span.kind).must_equal(:internal)
         _(span.attributes['net.peer.name']).must_equal('example.com')
         _(span.attributes['net.peer.port']).must_equal(80)
+        _(span.attributes['server.address']).must_equal('example.com')
+        _(span.attributes['server.port']).must_equal(80)
       end
     end
 
@@ -228,6 +264,9 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
       _(span.attributes['net.peer.port']).must_equal(port)
+      _(span.attributes['server.address']).must_equal('localhost')
+      _(span.attributes['server.port']).wont_be_nil
+      _(span.attributes['server.port']).must_equal(port)
     ensure
       WebMock.disable_net_connect!
     end
@@ -243,6 +282,8 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.name).must_equal 'connect'
       _(span.attributes['net.peer.name']).must_equal('invalid.com')
       _(span.attributes['net.peer.port']).must_equal(99_999)
+      _(span.attributes['server.address']).must_equal('invalid.com')
+      _(span.attributes['server.port']).must_equal(99_999)
 
       span_event = span.events.first
 
@@ -273,6 +314,8 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.kind).must_equal(:client)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
+      _(span.attributes['server.address']).must_equal('localhost')
+      _(span.attributes['server.port']).must_equal(443)
     ensure
       WebMock.disable_net_connect!
     end
@@ -297,6 +340,8 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
+      _(span.attributes['server.address']).must_equal('localhost')
+      _(span.attributes['server.port']).must_equal(443)
     ensure
       WebMock.disable_net_connect!
     end

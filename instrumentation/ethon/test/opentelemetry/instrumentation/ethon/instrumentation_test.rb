@@ -69,9 +69,15 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
               _(span.name).must_equal 'HTTP N/A'
               _(span.attributes['http.method']).must_equal 'N/A'
+              _(span.attributes['http.request.method']).must_equal 'N/A'
+              _(span.attributes['http.response.status_code']).must_be_nil
               _(span.attributes['http.status_code']).must_be_nil
               _(span.attributes['http.url']).must_equal 'http://example.com/test'
               _(span.attributes['net.peer.name']).must_equal 'example.com'
+              _(span.attributes['server.address']).must_equal 'example.com'
+              _(span.attributes['server.port']).must_equal 80
+              _(span.attributes['url.full']).must_equal 'http://example.com/test'
+              _(span.attributes['url.scheme']).must_equal 'http'
             end
           end
         end
@@ -92,8 +98,11 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           stub_response(response_code: 200) do
             _(span.name).must_equal 'HTTP N/A'
             _(span.attributes['http.method']).must_equal 'N/A'
+            _(span.attributes['http.request.method']).must_equal 'N/A'
+            _(span.attributes['http.response.status_code']).must_equal 200
             _(span.attributes['http.status_code']).must_equal 200
             _(span.attributes['http.url']).must_equal 'http://example.com/test'
+            _(span.attributes['url.full']).must_equal 'http://example.com/test'
             _(easy.instance_eval { @otel_span }).must_be_nil
             _(
               easy.instance_eval { @otel_original_headers['traceparent'] }
@@ -105,8 +114,11 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           stub_response(response_code: 500) do
             _(span.name).must_equal 'HTTP N/A'
             _(span.attributes['http.method']).must_equal 'N/A'
+            _(span.attributes['http.request.method']).must_equal 'N/A'
+            _(span.attributes['http.response.status_code']).must_equal 500
             _(span.attributes['http.status_code']).must_equal 500
             _(span.attributes['http.url']).must_equal 'http://example.com/test'
+            _(span.attributes['url.full']).must_equal 'http://example.com/test'
             _(easy.instance_eval { @otel_span }).must_be_nil
             _(
               easy.instance_eval { @otel_original_headers['traceparent'] }
@@ -118,8 +130,11 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           stub_response(response_code: 0, return_code: :operation_timedout) do
             _(span.name).must_equal 'HTTP N/A'
             _(span.attributes['http.method']).must_equal 'N/A'
+            _(span.attributes['http.request.method']).must_equal 'N/A'
+            _(span.attributes['http.response.status_code']).must_be_nil
             _(span.attributes['http.status_code']).must_be_nil
             _(span.attributes['http.url']).must_equal 'http://example.com/test'
+            _(span.attributes['url.full']).must_equal 'http://example.com/test'
             _(span.status.code).must_equal(
               OpenTelemetry::Trace::Status::ERROR
             )
@@ -140,8 +155,10 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
             stub_response(response_code: 200) do
               _(span.attributes['http.method']).must_equal 'OVERRIDE'
+              _(span.attributes['http.request.method']).must_equal 'N/A'
               _(span.attributes['http.url']).must_equal 'http://example.com/test'
               _(span.attributes['test.attribute']).must_equal 'test.value'
+              _(span.attributes['url.full']).must_equal 'http://example.com/test'
             end
           end
         end
@@ -278,8 +295,12 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             _(exporter.finished_spans.size).must_equal 2
             _(exporter.finished_spans[0].attributes['http.url']).must_be_nil
             _(exporter.finished_spans[0].attributes['net.peer.name']).must_be_nil
+            _(exporter.finished_spans[0].attributes['server.address']).must_be_nil
+            _(exporter.finished_spans[0].attributes['url.full']).must_be_nil
             _(exporter.finished_spans[1].attributes['http.url']).must_equal 'test'
             _(exporter.finished_spans[1].attributes['net.peer.name']).must_be_nil
+            _(exporter.finished_spans[1].attributes['server.address']).must_be_nil
+            _(exporter.finished_spans[1].attributes['url.full']).must_equal 'test'
           end
         end
       end

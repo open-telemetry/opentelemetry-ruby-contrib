@@ -41,6 +41,7 @@ module OpenTelemetry
                 message = return_code ? ::Ethon::Curl.easy_strerror(return_code) : 'unknown reason'
                 @otel_span.status = OpenTelemetry::Trace::Status.error("Request has failed: #{message}")
               else
+                @otel_span.set_attribute('http.response.status_code', response_code)
                 @otel_span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response_code)
                 @otel_span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(response_code.to_i)
               end
@@ -85,12 +86,17 @@ module OpenTelemetry
           def span_creation_attributes(method)
             instrumentation_attrs = {
               OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => method
+              'http.request.method' => method
             }
 
             uri = _otel_cleanse_uri(url)
             if uri
               instrumentation_attrs[OpenTelemetry::SemanticConventions::Trace::HTTP_URL] = uri.to_s
               instrumentation_attrs[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME] = uri.host if uri.host
+              instrumentation_attrs['server.address'] = uri.host if uri.host
+              instrumentation_attrs['server.port'] = uri.port if uri.port
+              instrumentation_attrs['url.full'] = uri.to_s
+              instrumentation_attrs['url.scheme'] = uri.scheme if uri.scheme
             end
 
             config = Ethon::Instrumentation.instance.config

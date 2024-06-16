@@ -29,10 +29,15 @@ module OpenTelemetry
             attributes = {
               OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => datum[:host],
               OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => http_method,
+              'http.request.method' => http_method,
               OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => datum[:scheme],
               OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => datum[:path],
               OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => datum[:hostname],
-              OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => datum[:port]
+              OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => datum[:port],
+              'server.address' => datum[:hostname],
+              'server.port' => datum[:port],
+              'url.full' => OpenTelemetry::Common::Utilities.cleanse_url(::Excon::Utils.request_uri(datum)),
+              'url.scheme' => datum[:scheme]
             }
 
             peer_service = Excon::Instrumentation.instance.config[:peer_service]
@@ -82,6 +87,7 @@ module OpenTelemetry
 
               if datum.key?(:response)
                 response = datum[:response]
+                span.set_attribute('http.response.status_code', response[:status])
                 span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response[:status])
                 span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(response[:status].to_i)
               end

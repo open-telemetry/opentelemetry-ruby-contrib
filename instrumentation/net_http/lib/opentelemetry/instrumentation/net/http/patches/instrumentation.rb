@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'uri'
+
 module OpenTelemetry
   module Instrumentation
     module Net
@@ -13,6 +15,7 @@ module OpenTelemetry
           module Instrumentation
             HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
             USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
+            USE_SSL_TO_URI = { false => URI::HTTP, true => URI::HTTPS }.freeze
 
             def request(req, body = nil, &block)
               # Do not trace recursive call for starting the connection
@@ -20,12 +23,19 @@ module OpenTelemetry
 
               return super if untraced?
 
+              url = URI.join(USE_SSL_TO_URI[use_ssl?].build(host: @address, port: @port), req.path)
+
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
+                'http.request.method' => req.method,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
                 OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
-                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
+                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port,
+                'server.address' => @address,
+                'server.port' => @port,
+                'url.full' => OpenTelemetry::Common::Utilities.cleanse_url(url.to_s),
+                'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?]
               }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
               tracer.in_span(
@@ -56,7 +66,9 @@ module OpenTelemetry
 
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => conn_address,
-                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port
+                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port,
+                'server.address' => conn_address,
+                'server.port' => conn_port
               }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
               if use_ssl? && proxy?
@@ -77,6 +89,7 @@ module OpenTelemetry
 
               status_code = response.code.to_i
 
+              span.set_attribute('http.response.status_code', status_code)
               span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code)
               span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(status_code.to_i)
             end

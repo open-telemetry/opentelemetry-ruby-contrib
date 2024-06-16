@@ -40,9 +40,15 @@ describe OpenTelemetry::Instrumentation::HTTPX::Plugin do
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes['url.full']).must_equal 'http://example.com/success'
+      _(span.attributes['url.scheme']).must_equal 'http'
       assert_requested(
         :get,
         'http://example.com/success',
@@ -57,9 +63,15 @@ describe OpenTelemetry::Instrumentation::HTTPX::Plugin do
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_equal 500
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.target']).must_equal '/failure'
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes['url.full']).must_equal 'http://example.com/failure'
+      _(span.attributes['url.scheme']).must_equal 'http'
       assert_requested(
         :get,
         'http://example.com/failure',
@@ -76,8 +88,13 @@ describe OpenTelemetry::Instrumentation::HTTPX::Plugin do
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.target']).must_equal '/timeout'
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes['url.full']).must_equal 'http://example.com/timeout'
+      _(span.attributes['url.scheme']).must_equal 'http'
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -104,10 +121,16 @@ describe OpenTelemetry::Instrumentation::HTTPX::Plugin do
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'OVERRIDE'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 80
       _(span.attributes['test.attribute']).must_equal 'test.value'
+      _(span.attributes['url.full']).must_equal 'http://example.com/success'
+      _(span.attributes['url.scheme']).must_equal 'http'
       assert_requested(
         :get,
         'http://example.com/success',
