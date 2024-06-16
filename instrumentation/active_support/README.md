@@ -1,4 +1,5 @@
 # OpenTelemetry ActiveSupport Instrumentation
+
 The Active Support instrumentation is a community-maintained instrumentation for the Active Support portion of the [Ruby on Rails][rails-home] web-application framework.
 
 ## How do I get started?
