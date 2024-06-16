@@ -27,7 +27,6 @@ module OpenTelemetry
           # @param payload [Hash] containing job run information
           # @return [Hash] with the span and generated context tokens
           def start_span(name, _id, payload)
-            tokens = []
             job = payload.fetch(:job)
             parent_context = OpenTelemetry.propagation.extract(job.__otel_headers)
 
@@ -36,7 +35,6 @@ module OpenTelemetry
             # TODO: Refactor into a propagation strategy
             propagation_style = @config[:propagation_style]
             if propagation_style == :child
-              tokens << OpenTelemetry::Context.attach(parent_context)
               span = tracer.start_span(span_name, kind: :consumer, attributes: @mapper.call(payload))
             else
               span_context = OpenTelemetry::Trace.current_span(parent_context).context
@@ -44,9 +42,7 @@ module OpenTelemetry
               span = tracer.start_root_span(span_name, kind: :consumer, attributes: @mapper.call(payload), links: links)
             end
 
-            tokens.concat(attach_consumer_context(span))
-
-            { span: span, ctx_tokens: tokens }
+            { span: span, ctx_token: attach_consumer_context(span) }
           end
 
           # This method attaches a span to multiple contexts:
@@ -54,12 +50,12 @@ module OpenTelemetry
           #    This is used later to enrich the ingress span in children, e.g. setting span status to error when a child event like `discard` terminates due to an error
           # 2. Registers the ingress span as the "active" span, which is the default behavior of the SDK.
           # @param span [OpenTelemetry::Trace::Span] the currently active span used to record the exception and set the status
-          # @return [Array] Context tokens that must be detached when finished
+          # @return [Numeric] Context token that must be detached when finished
           def attach_consumer_context(span)
             consumer_context = OpenTelemetry::Trace.context_with_span(span)
             internal_context = OpenTelemetry::Instrumentation::ActiveJob.context_with_span(span, parent_context: consumer_context)
 
-            [consumer_context, internal_context].map { |context| OpenTelemetry::Context.attach(context) }
+            OpenTelemetry::Context.attach(internal_context)
           end
         end
       end

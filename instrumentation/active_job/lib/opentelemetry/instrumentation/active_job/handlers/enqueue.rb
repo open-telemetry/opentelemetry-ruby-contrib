@@ -29,9 +29,8 @@ module OpenTelemetry
           def start_span(name, _id, payload)
             job = payload.fetch(:job)
             span = tracer.start_span(@span_name_formatter.call(job), kind: :producer, attributes: @mapper.call(payload))
-            tokens = [OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))]
             OpenTelemetry.propagation.inject(job.__otel_headers) # This must be transmitted over the wire
-            { span: span, ctx_tokens: tokens }
+            { span: span, ctx_token: OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span)) }
           end
         end
       end
