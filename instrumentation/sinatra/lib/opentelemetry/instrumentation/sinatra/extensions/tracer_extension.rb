@@ -28,8 +28,8 @@ module OpenTelemetry
                 end
               end
             end
-            app.use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args)
-            app.use(Middlewares::TracerMiddleware)
+
+            Instrumentation.instance.install_middleware(app)
           end
         end
       end
