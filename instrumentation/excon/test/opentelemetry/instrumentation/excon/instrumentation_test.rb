@@ -53,6 +53,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
+      _(span.attributes['http.url']).must_equal 'http://example.com/success'
       assert_requested(
         :get,
         'http://example.com/success',
@@ -76,6 +77,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.target']).must_equal '/failure'
+      _(span.attributes['http.url']).must_equal 'http://example.com/failure'
       assert_requested(
         :get,
         'http://example.com/failure',
@@ -94,6 +96,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.target']).must_equal '/timeout'
+      _(span.attributes['http.url']).must_equal 'http://example.com/timeout'
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -124,6 +127,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
+      _(span.attributes['http.url']).must_equal 'http://example.com/success'
       _(span.attributes['test.attribute']).must_equal 'test.value'
       assert_requested(
         :get,
@@ -235,7 +239,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['net.peer.port']).wont_be_nil
       _(span.attributes['net.peer.port']).must_equal(port)
 
-      assert_http_spans(target: '/example', exception: 'Excon::Error::Timeout')
+      assert_http_spans(port: port, target: '/example', exception: 'Excon::Error::Timeout')
     end
 
     it 'captures errors' do
@@ -251,7 +255,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       # Depending on the Ruby and Excon Version this will be a SocketError, Socket::ResolutionError or Resolv::ResolvError
       _(span_event.attributes['exception.type']).must_match(/(Socket|Resolv)/)
 
-      assert_http_spans(host: 'invalid.com', target: '/example')
+      assert_http_spans(host: 'invalid.com', port: 99_999, target: '/example')
     end
 
     it '[BUG] fails to emit an HTTP CONNECT span when connecting through an SSL proxy for an HTTP service' do
@@ -299,13 +303,14 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
     end
   end
 
-  def assert_http_spans(scheme: 'http', host: 'localhost', target: '/', exception: nil)
+  def assert_http_spans(scheme: 'http', host: 'localhost', port: nil, target: '/', exception: nil)
     exporter.finished_spans[1..].each do |http_span|
       _(http_span.name).must_equal 'HTTP GET'
       _(http_span.attributes['http.host']).must_equal host
       _(http_span.attributes['http.method']).must_equal 'GET'
       _(http_span.attributes['http.scheme']).must_equal scheme
       _(http_span.attributes['http.target']).must_equal target
+      _(http_span.attributes['http.url']).must_equal "#{scheme}://#{host}#{port&.to_s&.prepend(':')}#{target}"
       _(http_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )

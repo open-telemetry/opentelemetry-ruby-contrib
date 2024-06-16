@@ -31,6 +31,7 @@ module OpenTelemetry
               OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => http_method,
               OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => datum[:scheme],
               OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => datum[:path],
+              OpenTelemetry::SemanticConventions::Trace::HTTP_URL => OpenTelemetry::Common::Utilities.cleanse_url(::Excon::Utils.request_uri(datum)),
               OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => datum[:hostname],
               OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => datum[:port]
             }
