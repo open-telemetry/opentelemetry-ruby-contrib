@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-require_relative '../../lib/opentelemetry/instrumentation/httpx'
-require_relative '../../lib/opentelemetry/instrumentation/httpx/plugin'
+require_relative '../../../lib/opentelemetry/instrumentation/httpx'
+require_relative '../../../lib/opentelemetry/instrumentation/httpx/plugin'
 
 describe OpenTelemetry::Instrumentation::HTTPX::Plugin do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTPX::Instrumentation.instance }
