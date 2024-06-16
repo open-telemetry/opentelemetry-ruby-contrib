@@ -24,6 +24,8 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
 
   describe '#connect' do
     it 'emits span on connect' do
+      port = nil
+
       WebMock.allow_net_connect!
       TCPServer.open('localhost', 0) do |server|
         Thread.start { server.accept }
@@ -38,6 +40,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
       _(span.name).must_equal 'HTTP CONNECT'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
+      _(span.attributes['net.peer.port']).must_equal(port)
     ensure
       WebMock.disable_net_connect!
     end
