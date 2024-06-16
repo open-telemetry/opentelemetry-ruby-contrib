@@ -140,8 +140,8 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
             stub_response(response_code: 200) do
               _(span.attributes['http.method']).must_equal 'OVERRIDE'
-              _(span.attributes['test.attribute']).must_equal 'test.value'
               _(span.attributes['http.url']).must_equal 'http://example.com/test'
+              _(span.attributes['test.attribute']).must_equal 'test.value'
             end
           end
         end

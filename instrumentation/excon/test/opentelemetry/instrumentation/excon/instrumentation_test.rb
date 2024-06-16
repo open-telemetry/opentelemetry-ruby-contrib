@@ -48,10 +48,10 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['http.method']).must_equal 'GET'
-      _(span.attributes['http.status_code']).must_equal 200
-      _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
       assert_requested(
         :get,
@@ -71,10 +71,10 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['http.method']).must_equal 'GET'
-      _(span.attributes['http.status_code']).must_equal 500
-      _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.target']).must_equal '/failure'
       assert_requested(
         :get,
@@ -90,9 +90,9 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
+      _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
-      _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.target']).must_equal '/timeout'
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
@@ -119,10 +119,10 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['http.method']).must_equal 'OVERRIDE'
-      _(span.attributes['http.status_code']).must_equal 200
-      _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['http.method']).must_equal 'OVERRIDE'
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
       _(span.attributes['test.attribute']).must_equal 'test.value'
       assert_requested(
@@ -186,8 +186,8 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['http.method']).must_equal 'GET'
     end
 
     it 'creates a span on connect for a non-ignored request' do
@@ -299,9 +299,9 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
   def assert_http_spans(scheme: 'http', host: 'localhost', target: '/', exception: nil)
     exporter.finished_spans[1..].each do |http_span|
       _(http_span.name).must_equal 'HTTP GET'
+      _(http_span.attributes['http.host']).must_equal host
       _(http_span.attributes['http.method']).must_equal 'GET'
       _(http_span.attributes['http.scheme']).must_equal scheme
-      _(http_span.attributes['http.host']).must_equal host
       _(http_span.attributes['http.target']).must_equal target
       _(http_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR

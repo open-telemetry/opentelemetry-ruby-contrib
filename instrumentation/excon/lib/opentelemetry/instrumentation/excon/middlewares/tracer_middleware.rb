@@ -27,10 +27,10 @@ module OpenTelemetry
             http_method = HTTP_METHODS_TO_UPPERCASE[datum[:method]]
 
             attributes = {
+              OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => datum[:host],
               OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => http_method,
               OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => datum[:scheme],
               OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => datum[:path],
-              OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => datum[:host],
               OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => datum[:hostname],
               OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => datum[:port]
             }
