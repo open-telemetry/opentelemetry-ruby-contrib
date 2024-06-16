@@ -215,6 +215,8 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
     end
 
     it 'emits span on connect' do
+      port = nil
+
       TCPServer.open('localhost', 0) do |server|
         Thread.start do
           server.accept
@@ -231,6 +233,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.name).must_equal 'connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
+      _(span.attributes['net.peer.port']).must_equal(port)
 
       assert_http_spans(target: '/example', exception: 'Excon::Error::Timeout')
     end
