@@ -14,7 +14,9 @@ module OpenTelemetry
             site = @proxy || @dest
             url = site.addr
 
-            attributes = { OpenTelemetry::SemanticConventions::Trace::HTTP_URL => url }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+            attributes = {
+              OpenTelemetry::SemanticConventions::Trace::HTTP_URL => url
+            }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
             tracer.in_span('HTTP CONNECT', attributes: attributes) do
               super
             end

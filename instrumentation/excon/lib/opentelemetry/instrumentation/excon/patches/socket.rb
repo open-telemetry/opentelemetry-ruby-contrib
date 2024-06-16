@@ -23,7 +23,10 @@ module OpenTelemetry
               conn_port = @port
             end
 
-            attributes = { OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => conn_address, OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+            attributes = {
+              OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => conn_address,
+              OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port
+            }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
             if is_a?(::Excon::SSLSocket) && @data[:proxy]
               span_name = 'HTTP CONNECT'
