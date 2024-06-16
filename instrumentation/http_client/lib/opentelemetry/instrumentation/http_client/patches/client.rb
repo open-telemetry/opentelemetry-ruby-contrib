@@ -18,12 +18,12 @@ module OpenTelemetry
             request_method = req.header.request_method
 
             attributes = {
-              'http.method' => request_method,
-              'http.scheme' => uri.scheme,
-              'http.target' => uri.path,
-              'http.url' => url,
-              'net.peer.name' => uri.host,
-              'net.peer.port' => uri.port
+              OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => request_method,
+              OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => uri.scheme,
+              OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => uri.path,
+              OpenTelemetry::SemanticConventions::Trace::HTTP_URL => url,
+              OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => uri.host,
+              OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => uri.port
             }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
@@ -41,7 +41,7 @@ module OpenTelemetry
 
             status_code = response.status_code.to_i
 
-            span.set_attribute('http.status_code', status_code)
+            span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code)
             span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(status_code.to_i)
           end
 

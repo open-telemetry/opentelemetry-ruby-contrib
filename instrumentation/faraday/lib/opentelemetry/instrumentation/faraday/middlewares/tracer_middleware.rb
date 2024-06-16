@@ -47,12 +47,12 @@ module OpenTelemetry
 
           def span_creation_attributes(http_method:, url:, config:)
             instrumentation_attrs = {
-              'http.method' => http_method,
-              'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url.to_s),
+              OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => http_method,
+              OpenTelemetry::SemanticConventions::Trace::HTTP_URL => OpenTelemetry::Common::Utilities.cleanse_url(url.to_s),
               'faraday.adapter.name' => app.class.name
             }
-            instrumentation_attrs['net.peer.name'] = url.host if url.host
-            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
+            instrumentation_attrs[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME] = url.host if url.host
+            instrumentation_attrs[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
 
             instrumentation_attrs.merge!(
               OpenTelemetry::Common::HTTP::ClientContext.attributes
@@ -67,7 +67,7 @@ module OpenTelemetry
           end
 
           def trace_response(span, status)
-            span.set_attribute('http.status_code', status)
+            span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status)
             span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(status.to_i)
           end
         end
