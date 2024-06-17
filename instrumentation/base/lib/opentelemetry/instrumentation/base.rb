@@ -327,8 +327,8 @@ module OpenTelemetry
       end
 
       # Checks to see if the user has passed any environment variables that set options
-      # for instrumentation. By convention, the environment variable will be the name 
-      # of the instrumentation, uppercased, with '::' replaced by underscores, 
+      # for instrumentation. By convention, the environment variable will be the name
+      # of the instrumentation, uppercased, with '::' replaced by underscores,
       # OPENTELEMETRY shortened to OTEL_{LANG}, and _CONFIG_OPTS appended.
       # For example, the environment variable name for OpenTelemetry::Instrumentation::Faraday
       # will be OTEL_RUBY_INSTRUMENTATION_FARADAY_CONFIG_OPTS. A value of 'peer_service=new_service;'
