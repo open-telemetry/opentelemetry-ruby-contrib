@@ -29,7 +29,7 @@ module OpenTelemetry
               end
             end
 
-            Instrumentation.instance.install_middleware(app)
+            Sinatra::Instrumentation.instance.install_middleware(app)
           end
         end
       end

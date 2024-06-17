@@ -201,10 +201,8 @@ module OpenTelemetry
             return nil unless request.env[OTEL_TOKEN_AND_SPAN]
 
             token, span = request.env[OTEL_TOKEN_AND_SPAN]
-            if span.recording?
-              span.finish
-              OpenTelemetry::Context.detach(token)
-            end
+            span.finish
+            OpenTelemetry::Context.detach(token)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
