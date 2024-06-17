@@ -190,9 +190,6 @@ describe OpenTelemetry::Instrumentation::Sinatra do
     describe 'when rack is manully installed' do
       let(:app) do
         apps_to_build = apps
-
-        OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install
-
         Rack::Builder.new do
           use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args)
 
@@ -204,8 +201,12 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         end.to_app
       end
 
+      before do
+        OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install
+      end
+
       it 'creates a span for sinatra 2 or older' do
-        skip 'This behavior is different in versions newer than Sinatra 3' if Gem::Version.new(Sinatra::VERSION) > Gem::Version.new('2')
+        skip 'This behavior is different in versions newer than Sinatra 3' if Gem::Version.new(Sinatra::VERSION) > Gem::Version.new('3')
 
         puts 'GD %%%%%%%%'
         puts Sinatra::VERSION
@@ -224,7 +225,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       end
 
       it 'creates a span for sinatra 3 or new' do
-        skip 'This behavior is different in versions newer than Sinatra 3' if Gem::Version.new(Sinatra::VERSION) <= Gem::Version.new('2')
+        skip 'This behavior is different in versions newer than Sinatra 3' if Gem::Version.new(Sinatra::VERSION) <= Gem::Version.new('3')
         puts 'WTF %%%%%%%%'
         puts Sinatra::VERSION
         puts '%%%%%% WTF'
