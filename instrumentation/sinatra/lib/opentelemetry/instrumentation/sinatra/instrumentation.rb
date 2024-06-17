@@ -27,7 +27,6 @@ module OpenTelemetry
         def install_middleware(app)
           app.use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args) if config[:install_rack]
           app.use(Middlewares::TracerMiddleware)
-          pp app
         end
       end
     end
