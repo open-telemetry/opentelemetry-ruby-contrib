@@ -18,7 +18,7 @@ module OpenTelemetry
               attributes = {
                 SemanticConventions::Trace::MESSAGING_SYSTEM => 'sidekiq',
                 'messaging.sidekiq.job_class' => job['wrapped']&.to_s || job['class'],
-                'messaging.sidekiq.retry' => job['retry'].to_s,
+                'messaging.sidekiq.retry' => job['retry'],
                 'messaging.sidekiq.args' => job['args'].join(', '),
                 SemanticConventions::Trace::MESSAGING_MESSAGE_ID => job['jid'],
                 SemanticConventions::Trace::MESSAGING_DESTINATION => job['queue'],
