@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-excon
 
+## [0.22.3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-excon/v0.22.2...opentelemetry-instrumentation-excon/v0.22.3) (2024-06-18)
+
+
+### Bug Fixes
+
+* Add `http.url` to Excon instrumentation ([#1020](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1020)) ([2fe3930](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/2fe3930e8bf7d7eaad29817b03618932ef77ec95))
+
 ### v0.22.2 / 2024-05-09
 
 * FIXED: Untrace entire request

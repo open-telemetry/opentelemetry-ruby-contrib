@@ -28,7 +28,7 @@
   "instrumentation/dalli": "0.25.2",
   "instrumentation/delayed_job": "0.22.2",
   "instrumentation/ethon": "0.21.6",
-  "instrumentation/excon": "0.22.2",
+  "instrumentation/excon": "0.22.3",
   "instrumentation/faraday": "0.24.3",
   "instrumentation/mongo": "0.22.3",
   "instrumentation/mysql2": "0.27.1",
