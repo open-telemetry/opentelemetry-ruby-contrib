@@ -57,3 +57,8 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
+
+### v0.22.4 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+* DOCS: Add function doc for config_overrides_from_env

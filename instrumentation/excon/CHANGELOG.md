@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-excon
 
+### v0.22.3 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+* FIXED: Add `http.url` to Excon instrumentation
+
 ### v0.22.2 / 2024-05-09
 
 * FIXED: Untrace entire request

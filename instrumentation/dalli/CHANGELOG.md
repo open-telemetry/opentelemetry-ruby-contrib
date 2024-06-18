@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.25.3 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+
 ### v0.25.2 / 2024-05-09
 
 * FIXED: Untrace entire request
