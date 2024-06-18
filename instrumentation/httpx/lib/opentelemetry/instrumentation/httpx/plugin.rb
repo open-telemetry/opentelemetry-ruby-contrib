@@ -25,11 +25,16 @@ module OpenTelemetry
             attributes = {
               OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => uri.host,
               OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => request_method,
+              'http.request.method' => request_method,
               OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => uri.scheme,
               OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => uri.path,
               OpenTelemetry::SemanticConventions::Trace::HTTP_URL => "#{uri.scheme}://#{uri.host}",
               OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => uri.host,
-              OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => uri.port
+              OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => uri.port,
+              'server.address' => uri.host,
+              'server.port' => uri.port,
+              'url.full' => OpenTelemetry::Common::Utilities.cleanse_url(uri.to_s),
+              'url.scheme' => uri.scheme
             }
             config = HTTPX::Instrumentation.instance.config
             attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
@@ -53,6 +58,7 @@ module OpenTelemetry
               @span.record_exception(response.error)
               @span.status = Trace::Status.error("Unhandled exception of type: #{response.error.class}")
             else
+              @span.set_attribute('http.response.status_code', response.status)
               @span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response.status)
               @span.status = Trace::Status.error unless (100..399).cover?(response.status)
             end

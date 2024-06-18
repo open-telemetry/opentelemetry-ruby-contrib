@@ -47,11 +47,17 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 80
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes['url.full']).must_equal 'http://example.com/success'
+      _(span.attributes['url.scheme']).must_equal 'http'
       assert_requested(
         :get,
         'http://example.com/success',
@@ -65,11 +71,17 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP POST'
       _(span.attributes['http.method']).must_equal 'POST'
+      _(span.attributes['http.request.method']).must_equal 'POST'
+      _(span.attributes['http.response.status_code']).must_equal 500
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.target']).must_equal '/failure'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 80
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes['url.full']).must_equal 'http://example.com/failure'
+      _(span.attributes['url.scheme']).must_equal 'http'
       assert_requested(
         :post,
         'http://example.com/failure',
@@ -85,11 +97,17 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_be_nil
       _(span.attributes['http.scheme']).must_equal 'https'
       _(span.attributes['http.status_code']).must_be_nil
       _(span.attributes['http.target']).must_equal '/timeout'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 443
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 443
+      _(span.attributes['url.full']).must_equal 'https://example.com/timeout'
+      _(span.attributes['url.scheme']).must_equal 'https'
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -111,12 +129,18 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 80
       _(span.attributes['peer.service']).must_equal 'foo'
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes['url.full']).must_equal 'http://example.com/success'
+      _(span.attributes['url.scheme']).must_equal 'http'
       assert_requested(
         :get,
         'http://example.com/success',
@@ -140,12 +164,18 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'HTTP GET /success miniswan'
         _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['http.request.method']).must_equal 'GET'
+        _(span.attributes['http.response.status_code']).must_equal 200
         _(span.attributes['http.scheme']).must_equal 'http'
         _(span.attributes['http.status_code']).must_equal 200
         _(span.attributes['http.target']).must_equal '/success'
         _(span.attributes['net.peer.name']).must_equal 'example.com'
         _(span.attributes['net.peer.port']).must_equal 80
         _(span.attributes['peer.service']).must_equal 'foo'
+        _(span.attributes['server.address']).must_equal 'example.com'
+        _(span.attributes['server.port']).must_equal 80
+        _(span.attributes['url.full']).must_equal 'http://example.com/success'
+        _(span.attributes['url.scheme']).must_equal 'http'
         assert_requested(
           :get,
           'http://example.com/success',
@@ -169,12 +199,18 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'HTTP GET'
         _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['http.request.method']).must_equal 'GET'
+        _(span.attributes['http.response.status_code']).must_equal 200
         _(span.attributes['http.scheme']).must_equal 'http'
         _(span.attributes['http.status_code']).must_equal 200
         _(span.attributes['http.target']).must_equal '/success'
         _(span.attributes['net.peer.name']).must_equal 'example.com'
         _(span.attributes['net.peer.port']).must_equal 80
         _(span.attributes['peer.service']).must_equal 'foo'
+        _(span.attributes['server.address']).must_equal 'example.com'
+        _(span.attributes['server.port']).must_equal 80
+        _(span.attributes['url.full']).must_equal 'http://example.com/success'
+        _(span.attributes['url.scheme']).must_equal 'http'
         assert_requested(
           :get,
           'http://example.com/success',
