@@ -2,7 +2,7 @@
 
 This is an OpenTelemetry [span processor](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-processor) that reads key/values stored in [Baggage](https://opentelemetry.io/docs/specs/otel/baggage/api/) in the starting span's parent context and adds them as attributes to the span.
 
-Keys and values added to Baggage will appear on all subsequent child spans for a trace within this service *and* will be propagated to external services via propagation headers.
+Keys and values added to Baggage will appear on all subsequent child spans, not the current active span, for a trace within this service *and* will be propagated to external services via propagation headers.
 If the external services also have a Baggage span processor, the keys and values will appear in those child spans as well.
 
 ⚠️ Waning ⚠️
@@ -31,7 +31,7 @@ To install the instrumentation, add the gem to your Gemfile:
 gem 'opentelemetry-processor-baggage'
 ```
 
-Then add the processor to an SDK's configuration:
+Then configure the span processor to copy all baggage entries:
 
 ```ruby
 require 'rubygems'
@@ -40,8 +40,11 @@ require 'bundler/setup'
 Bundler.require
 
 OpenTelemetry::SDK.configure do |c|
-  # Add the BaggageSpanProcessor to the collection of span processors
-  c.add_span_processor(OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new)
+  # Add the BaggageSpanProcessor to the collection of span processors and
+  # copy all baggage entries
+  c.add_span_processor(OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+    OpenTelemetry::Processor::Baggage::ALLOW_ALL_BAGGAGE_KEYS
+  ))
 
   # Because the span processor list is no longer empty, the SDK will not use the
   # values in OTEL_TRACES_EXPORTER to instantiate exporters.
@@ -55,6 +58,27 @@ OpenTelemetry::SDK.configure do |c|
     )
   )
 end
+```
+
+Alternatively, you can provide a custom baggage key predicate to select which baggage keys you want to copy.
+
+For example, to only copy baggage entries that start with `myapp.`:
+
+```ruby
+OUR_BAGGAGE_KEY_PREFIX = 'myapp.'.freeze
+OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+  # a constant here improves performance
+  ->(baggage_key) { baggage_key.start_with?(OUR_BAGGAGE_KEY_PREFIX) }
+)
+```
+
+For example, to only copy baggage entries that match `myapp.`, `myapp1.` and `myapp42.`:
+
+```ruby
+OUR_BAGGAGE_KEY_MATCHER = /\Amyapp\d*\./
+OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+  ->(baggage_key) { OUR_BAGGAGE_KEY_MATCHER.match?(baggage_key) }
+)
 ```
 
 ## How can I get involved?

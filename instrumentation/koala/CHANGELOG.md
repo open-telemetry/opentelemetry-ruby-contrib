@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-koala
 
+### v0.20.5 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+
 ### v0.20.4 / 2024-05-09
 
 * FIXED: Untrace entire request

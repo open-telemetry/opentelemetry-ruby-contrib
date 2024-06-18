@@ -11,8 +11,10 @@ require 'opentelemetry/sdk'
 TEST_EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 
 OpenTelemetry::SDK.configure do |c|
-  # the baggage processor getting wired in for testing
-  c.add_span_processor OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new
+  # the baggage processor getting wired in for integration testing
+  c.add_span_processor OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+    OpenTelemetry::Processor::Baggage::ALLOW_ALL_BAGGAGE_KEYS
+  )
 
   # use a simple processor and in-memory export for testing sent spans
   c.add_span_processor(
@@ -24,17 +26,68 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
-  let(:processor) { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new }
+  let(:processor) do
+    OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+      OpenTelemetry::Processor::Baggage::ALLOW_ALL_BAGGAGE_KEYS
+    )
+  end
   let(:span) { Minitest::Mock.new }
-  let(:context_with_baggage) { OpenTelemetry::Baggage.set_value('a_key', 'a_value') }
+  let(:context_with_baggage) do
+    OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |baggage|
+      baggage.set_value('a_key', 'a_value')
+      baggage.set_value('b_key', 'b_value')
+    end
+  end
+
+  describe '#new' do
+    it 'requires a callable baggage_key_predicate' do
+      _(-> { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new }).must_raise(ArgumentError)
+      err = _(-> { OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(:not_a_callable) }).must_raise(ArgumentError)
+      _(err.message).must_match(/must respond to :call/)
+    end
+  end
 
   describe '#on_start' do
-    it 'adds current baggage keys/values as attributes when a span starts' do
-      span.expect(:add_attributes, span, [{ 'a_key' => 'a_value' }])
+    describe 'with the ALLOW_ALL_BAGGAGE_KEYS predicate' do
+      it 'adds current baggage keys/values as attributes when a span starts' do
+        span.expect(:add_attributes, span, [{ 'a_key' => 'a_value', 'b_key' => 'b_value' }])
 
-      processor.on_start(span, context_with_baggage)
+        processor.on_start(span, context_with_baggage)
 
-      span.verify
+        span.verify
+      end
+    end
+
+    describe 'with a start_with? key predicate' do
+      let(:start_with_processor) do
+        OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+          ->(baggage_key) { baggage_key.start_with?('a') }
+        )
+      end
+
+      it 'only adds attributes that pass the keyfilter' do
+        span.expect(:add_attributes, span, [{ 'a_key' => 'a_value' }])
+
+        start_with_processor.on_start(span, context_with_baggage)
+
+        span.verify
+      end
+    end
+
+    describe 'with a regex key predicate' do
+      let(:regex_processor) do
+        OpenTelemetry::Processor::Baggage::BaggageSpanProcessor.new(
+          ->(baggage_key) { baggage_key.match?(/^b_ke.+/) }
+        )
+      end
+
+      it 'only adds attributes that pass the keyfilter' do
+        span.expect(:add_attributes, span, [{ 'b_key' => 'b_value' }])
+
+        regex_processor.on_start(span, context_with_baggage)
+
+        span.verify
+      end
     end
 
     it 'does not blow up when given nil context' do
@@ -89,7 +142,7 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
 
       _(exporter.finished_spans.size).must_equal(1)
       _(exporter.finished_spans.first.name).must_equal('integration test span')
-      _(exporter.finished_spans.first.attributes).must_equal('a_key' => 'a_value')
+      _(exporter.finished_spans.first.attributes).must_equal('a_key' => 'a_value', 'b_key' => 'b_value')
     end
   end
 end
