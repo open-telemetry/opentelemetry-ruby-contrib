@@ -1,5 +1,5 @@
 {
-  "bootstrap-sha": "e70ed65ab9adf56c0325b3910af5b4c21d0846d8",
+  "bootstrap-sha": "c7686e532a7348b504ad43024735b12d795756cd",
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "draft": true,
@@ -8,7 +8,7 @@
   "include-v-in-tag": true,
   "prerelease": true,
   "release-type": "ruby",
-  "separate-pull-requests": true,
+  "separate-pull-requests": false,
   "sequential-calls": true,
   "signoff": "OpenTelemetry Bot <107717825+opentelemetrybot@users.noreply.github.com>",
   "skip-github-release": false,
