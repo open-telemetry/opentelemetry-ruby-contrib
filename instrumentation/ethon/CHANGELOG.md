@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.21.7 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+
 ### v0.21.6 / 2024-06-12
 
 * FIXED: Add net.peer.name to ethon

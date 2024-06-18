@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.24.4 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+
 ### v0.24.3 / 2024-05-09
 
 * FIXED: Untrace entire request
