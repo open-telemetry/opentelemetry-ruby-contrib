@@ -43,7 +43,7 @@
   "instrumentation/rspec": "0.3.3",
   "instrumentation/ruby_kafka": "0.21.1",
   "instrumentation/sidekiq": "0.25.4",
-  "instrumentation/sinatra": "0.61.4",
+  "instrumentation/sinatra": "0.23.4",
   "instrumentation/all": "0.56.0",
   "processor/baggage": "0.1.0",
   "propagator/ottrace": "0.21.2",
