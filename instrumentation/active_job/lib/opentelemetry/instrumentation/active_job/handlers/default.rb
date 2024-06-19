@@ -67,7 +67,7 @@ module OpenTelemetry
           # Finishes the provided spans and also detaches the associated contexts
           #
           # @param span [OpenTelemetry::Trace::Span]
-          # @param tokens [Numeric] to unregister
+          # @param token [Numeric] to unregister
           def finish_span(span, token)
             # closes the span after all attributes have been finalized
             begin
