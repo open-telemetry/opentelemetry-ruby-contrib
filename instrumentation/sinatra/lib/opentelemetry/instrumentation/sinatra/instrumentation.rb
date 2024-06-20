@@ -9,8 +9,30 @@ require_relative 'extensions/tracer_extension'
 module OpenTelemetry
   module Instrumentation
     module Sinatra
-      # The Instrumentation class contains logic to detect and install the Sinatra
-      # instrumentation
+      # The {OpenTelemetry::Instrumentation::Sinatra::Instrumentation} class contains logic to detect and install the Sinatra instrumentation
+      #
+      # Installation and configuration of this instrumentation is done within the
+      # {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry/SDK#configure-instance_method OpenTelemetry::SDK#configure}
+      # block, calling {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry%2FSDK%2FConfigurator:use use()}
+      # or {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry%2FSDK%2FConfigurator:use_all use_all()}.
+      #
+      # ## Configuration keys and options
+      #
+      # ### `:install_rack`
+      #
+      # Default is `true`. Specifies whether or not to install the Rack instrumentation as part of installing the Sinatra instrumentation.
+      # This is useful in cases where you have multiple Rack applications but want to manually specify where to instert the tracing middleware.
+      #
+      # @example Manually install Rack instrumentation.
+      #   OpenTelemetry::SDK.configure do |c|
+      #     c.use_all({
+      #       'OpenTelemetry::Instrumentation::Rack' => { },
+      #       'OpenTelemetry::Instrumentation::Sinatra' => {
+      #         install_rack: false
+      #       },
+      #     })
+      #   end
+      #
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |config|
           OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install({}) if config[:install_rack]
