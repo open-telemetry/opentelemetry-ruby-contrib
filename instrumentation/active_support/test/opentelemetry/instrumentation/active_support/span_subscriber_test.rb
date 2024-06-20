@@ -223,6 +223,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
       _(last_span).wont_be_nil
       _(last_span.name).must_equal('foo bar')
       _(last_span.attributes['extra']).must_equal('context')
+      _(last_span.kind).must_equal(:internal)
     end
 
     it 'finishes spans even when block subscribers blow up' do
