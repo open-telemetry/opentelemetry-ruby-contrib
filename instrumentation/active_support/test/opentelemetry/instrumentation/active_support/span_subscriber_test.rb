@@ -255,7 +255,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
 
       describe 'when using a invalid formatter' do
         it 'defaults to the notification name' do
-          OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, ->(_) {})
+          OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: ->(_) {})
           ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
 
           _(last_span).wont_be_nil
@@ -268,7 +268,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
         it 'defaults to the notification name' do
           allow(OpenTelemetry).to receive(:handle_error).with(exception: RuntimeError, message: String)
 
-          OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, ->(_) { raise 'boom' })
+          OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: ->(_) { raise 'boom' })
           ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
 
           _(last_span).wont_be_nil
@@ -319,7 +319,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
       ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
 
       _(last_span).wont_be_nil
-      _(last_span.name).must_equal('foo bar')
+      _(last_span.name).must_equal('bar.foo')
       _(last_span.attributes['extra']).must_equal('context')
       _(last_span.kind).must_equal(:client)
     end
