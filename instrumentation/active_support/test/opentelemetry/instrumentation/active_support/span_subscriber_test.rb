@@ -11,10 +11,12 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
   let(:tracer) { instrumentation.tracer }
   let(:exporter) { EXPORTER }
   let(:last_span) { exporter.finished_spans.last }
+  let(:span_kind) { nil }
   let(:subscriber) do
     OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
       name: 'bar.foo',
-      tracer: tracer
+      tracer: tracer,
+      kind: span_kind
     )
   end
 
@@ -76,6 +78,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
     )
 
     _(last_span).wont_be_nil
+    _(last_span.kind).must_equal(:internal)
     _(last_span.attributes['string']).must_equal('keys_are_present')
     _(last_span.attributes['numeric_is_fine']).must_equal(1)
     _(last_span.attributes['boolean_okay?']).must_equal(true)
@@ -179,6 +182,24 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
 
       _(last_span).wont_be_nil
       _(last_span.attributes['thing']).must_equal('optimus prime')
+    end
+  end
+
+  describe 'given a span kind' do
+    let(:span_kind) { :client }
+
+    it 'sets the kind on the span' do
+      span, token = subscriber.start('hai', 'abc', {})
+      # We only use the finished attributes - could change in the future, perhaps.
+      subscriber.finish(
+        'hai',
+        'abc',
+        __opentelemetry_span: span,
+        __opentelemetry_ctx_token: token
+      )
+
+      _(last_span).wont_be_nil
+      _(last_span.kind).must_equal(:client)
     end
   end
 

@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.22.4 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+* DOCS: Add function doc for config_overrides_from_env
+
 ### v0.22.3 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)

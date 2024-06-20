@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rdkafka
 
+### v0.4.6 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+
 ### v0.4.5 / 2024-05-09
 
 * FIXED: Untrace entire request
