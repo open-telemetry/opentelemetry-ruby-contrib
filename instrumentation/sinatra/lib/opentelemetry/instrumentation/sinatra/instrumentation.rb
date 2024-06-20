@@ -37,6 +37,10 @@ module OpenTelemetry
         install do |config|
           OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install({}) if config[:install_rack]
 
+          unless OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.installed?
+            OpenTelemetry.logger.warn('Rack instrumentation is required for Sinatra but not installed. Please see the docs for more details: https://opentelemetry.io/docs/languages/ruby/libraries/')
+          end
+
           ::Sinatra::Base.register Extensions::TracerExtension
         end
 
