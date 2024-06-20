@@ -21,7 +21,7 @@ module OpenTelemetry
         tracer,
         pattern,
         notification_payload_transform = nil,
-        disallowed_notification_payload_keys = [],
+        disallowed_notification_payload_keys = nil,
         kind: nil,
         span_name_formatter: nil
       )
@@ -61,11 +61,11 @@ module OpenTelemetry
       class SpanSubscriber
         ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
-        def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: [], kind: nil, span_name_formatter: nil)
+        def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: nil, kind: nil, span_name_formatter: nil)
           @span_name = safe_span_name_for(span_name_formatter, name).dup.freeze
           @tracer = tracer
           @notification_payload_transform = notification_payload_transform
-          @disallowed_notification_payload_keys = disallowed_notification_payload_keys
+          @disallowed_notification_payload_keys = Array(disallowed_notification_payload_keys)
           @kind = kind || :internal
         end
 

@@ -6,8 +6,10 @@ The Active Support instrumentation is a community-maintained instrumentation for
 
 Install the gem using:
 
-```
+```console
+
 gem install opentelemetry-instrumentation-active_support
+
 ```
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-active_support` in your `Gemfile`.
@@ -18,21 +20,24 @@ To use the instrumentation, call `use` with the name of the instrumentation and 
 to desired ActiveSupport notification:
 
 ```ruby
+
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::ActiveSupport'
 end
 
-
 tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
 ::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, 'bar.foo')
+
 ```
 
 Alternatively, you can also call `use_all` to install all the available instrumentation.
 
 ```ruby
+
 OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
+
 ```
 
 ## Examples
