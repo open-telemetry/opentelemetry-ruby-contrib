@@ -11,10 +11,12 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
   let(:tracer) { instrumentation.tracer }
   let(:exporter) { EXPORTER }
   let(:last_span) { exporter.finished_spans.last }
+  let(:span_kind) { nil }
   let(:subscriber) do
     OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
       name: 'bar.foo',
-      tracer: tracer
+      tracer: tracer,
+      kind: span_kind
     )
   end
 
@@ -76,6 +78,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
     )
 
     _(last_span).wont_be_nil
+    _(last_span.kind).must_equal(:internal)
     _(last_span.attributes['string']).must_equal('keys_are_present')
     _(last_span.attributes['numeric_is_fine']).must_equal(1)
     _(last_span.attributes['boolean_okay?']).must_equal(true)
@@ -182,6 +185,24 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
     end
   end
 
+  describe 'given a span kind' do
+    let(:span_kind) { :client }
+
+    it 'sets the kind on the span' do
+      span, token = subscriber.start('hai', 'abc', {})
+      # We only use the finished attributes - could change in the future, perhaps.
+      subscriber.finish(
+        'hai',
+        'abc',
+        __opentelemetry_span: span,
+        __opentelemetry_ctx_token: token
+      )
+
+      _(last_span).wont_be_nil
+      _(last_span.kind).must_equal(:client)
+    end
+  end
+
   describe 'instrument' do
     before do
       ActiveSupport::Notifications.unsubscribe('bar.foo')
@@ -202,6 +223,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
       _(last_span).wont_be_nil
       _(last_span.name).must_equal('foo bar')
       _(last_span.attributes['extra']).must_equal('context')
+      _(last_span.kind).must_equal(:internal)
     end
 
     it 'finishes spans even when block subscribers blow up' do
@@ -238,6 +260,16 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
 
       _(obj.class).must_equal(ActiveSupport::Notifications::Fanout::Subscribers::Evented)
       _(last_span).must_be_nil
+    end
+
+    it 'supports setting the span kind' do
+      OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, 'bar.foo', nil, [], kind: :client)
+      ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
+
+      _(last_span).wont_be_nil
+      _(last_span.name).must_equal('foo bar')
+      _(last_span.attributes['extra']).must_equal('context')
+      _(last_span.kind).must_equal(:client)
     end
   end
 end

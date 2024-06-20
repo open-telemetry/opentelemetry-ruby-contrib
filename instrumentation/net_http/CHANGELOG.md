@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.22.6 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+
 ### v0.22.5 / 2024-05-09
 
 * FIXED: Untrace entire request
