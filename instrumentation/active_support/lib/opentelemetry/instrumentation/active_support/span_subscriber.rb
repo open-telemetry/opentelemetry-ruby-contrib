@@ -20,14 +20,14 @@ module OpenTelemetry
         pattern,
         notification_payload_transform = nil,
         disallowed_notification_payload_keys = [],
-        kind = nil
+        kind: nil
       )
         subscriber = OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
           name: pattern,
           tracer: tracer,
           notification_payload_transform: notification_payload_transform,
           disallowed_notification_payload_keys: disallowed_notification_payload_keys,
-          kind: nil
+          kind: kind
         )
 
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
