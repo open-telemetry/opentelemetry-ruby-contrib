@@ -223,6 +223,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
       _(last_span).wont_be_nil
       _(last_span.name).must_equal('foo bar')
       _(last_span.attributes['extra']).must_equal('context')
+      _(last_span.kind).must_equal(:internal)
     end
 
     it 'finishes spans even when block subscribers blow up' do
@@ -259,6 +260,16 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
 
       _(obj.class).must_equal(ActiveSupport::Notifications::Fanout::Subscribers::Evented)
       _(last_span).must_be_nil
+    end
+
+    it 'supports setting the span kind' do
+      OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, 'bar.foo', nil, [], kind: :client)
+      ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
+
+      _(last_span).wont_be_nil
+      _(last_span.name).must_equal('foo bar')
+      _(last_span.attributes['extra']).must_equal('context')
+      _(last_span.kind).must_equal(:client)
     end
   end
 end
