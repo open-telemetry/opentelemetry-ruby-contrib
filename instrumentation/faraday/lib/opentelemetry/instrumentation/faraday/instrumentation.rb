@@ -27,6 +27,7 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'middlewares/tracer_middleware'
+          require_relative 'patches/connection'
           require_relative 'patches/rack_builder'
         end
 
@@ -37,7 +38,11 @@ module OpenTelemetry
         end
 
         def use_middleware_by_default
-          ::Faraday::RackBuilder.prepend(Patches::RackBuilder)
+          if Gem::Version.new(::Faraday::VERSION) >= Gem::Version.new('1')
+            ::Faraday::Connection.prepend(Patches::Connection)
+          else
+            ::Faraday::RackBuilder.prepend(Patches::RackBuilder)
+          end
         end
       end
     end
