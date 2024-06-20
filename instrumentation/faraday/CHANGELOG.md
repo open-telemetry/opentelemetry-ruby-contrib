@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.24.5 / 2024-06-20
+
+* FIXED: Compatibility with Faraday v1
+
 ### v0.24.4 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints
