@@ -21,7 +21,7 @@ module OpenTelemetry
       # ### `:install_rack`
       #
       # Default is `true`. Specifies whether or not to install the Rack instrumentation as part of installing the Sinatra instrumentation.
-      # This is useful in cases where you have multiple Rack applications but want to manually specify where to instert the tracing middleware.
+      # This is useful in cases where you have multiple Rack applications but want to manually specify where to insert the tracing middleware.
       #
       # @example Manually install Rack instrumentation.
       #   OpenTelemetry::SDK.configure do |c|
