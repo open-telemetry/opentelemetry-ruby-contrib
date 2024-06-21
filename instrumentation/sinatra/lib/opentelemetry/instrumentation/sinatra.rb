@@ -9,7 +9,7 @@ require 'opentelemetry-instrumentation-base'
 
 module OpenTelemetry
   module Instrumentation
-    # Contains the OpenTelemetry instrumentation for the Sinatra gem
+    # (see OpenTelemetry::Instrumentation::Sinatra::Instrumentation)
     module Sinatra
     end
   end
