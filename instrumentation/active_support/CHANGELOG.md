@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+### v0.5.3 / 2024-06-20
+
+* FIXED: Include span kind in ActiveSupport Instrumentation helper
+
 ### v0.5.2 / 2024-06-20
 
 * ADDED: ActiveSupport user specified span kind
