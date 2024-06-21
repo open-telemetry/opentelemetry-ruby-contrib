@@ -189,7 +189,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       end
     end
 
-    describe 'when rack is manully installed' do
+    describe 'when rack is manually installed' do
       let(:app) do
         apps_to_build = apps
         Rack::Builder.new do
