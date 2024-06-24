@@ -49,7 +49,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
           'graphql.validate',
           'graphql.analyze_query',
           'graphql.analyze_multiplex',
-          'graphql.execute_query',
+          'query',
           'graphql.execute_query_lazy',
           'graphql.execute_multiplex'
         ]
@@ -76,7 +76,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
 
         SomeGraphQLAppSchema.execute('query SimpleQuery{ simpleField }')
 
-        span = spans.find { |s| s.name == 'graphql.execute_query' }
+        span = spans.find { |s| s.name == 'query SimpleQuery' }
         _(span).wont_be_nil
         _(span.attributes.to_h).must_equal(expected_attributes)
       end
@@ -89,7 +89,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
 
         SomeGraphQLAppSchema.execute('{ simpleField }')
 
-        span = spans.find { |s| s.name == 'graphql.execute_query' }
+        span = spans.find { |s| s.name == 'query' }
         _(span).wont_be_nil
         _(span.attributes.to_h).must_equal(expected_attributes)
       end

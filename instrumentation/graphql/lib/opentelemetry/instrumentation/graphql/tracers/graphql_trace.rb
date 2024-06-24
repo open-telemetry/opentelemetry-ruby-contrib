@@ -98,11 +98,15 @@ module OpenTelemetry
 
           def execute_query(query:, &block)
             attributes = {}
-            attributes['graphql.operation.name'] = query.selected_operation_name if query.selected_operation_name
-            attributes['graphql.operation.type'] = query.selected_operation.operation_type
+            operation_type = query.selected_operation.operation_type
+            operation_name = query.selected_operation_name
+
+            attributes['graphql.operation.name'] = operation_name if operation_name
+            attributes['graphql.operation.type'] = operation_type
             attributes['graphql.document'] = query.query_string
 
-            tracer.in_span('graphql.execute_query', attributes: attributes, &block)
+            span_name = operation_name ? "#{operation_type} #{operation_name}" : operation_type
+            tracer.in_span(span_name, attributes: attributes, &block)
           end
 
           def execute_query_lazy(query:, multiplex:, &block)

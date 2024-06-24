@@ -29,7 +29,7 @@ module OpenTelemetry
           def platform_trace(platform_key, key, data)
             return yield if platform_key.nil?
 
-            tracer.in_span(platform_key, attributes: attributes_for(key, data)) do |span|
+            tracer.in_span(span_name(platform_key, data), attributes: attributes_for(key, data)) do |span|
               yield.tap do |response|
                 next unless key == 'validate'
 
@@ -142,6 +142,18 @@ module OpenTelemetry
             end
             cache_h.compare_by_identity
             cache_h
+          end
+
+          def span_name(key, data)
+            case key
+            when @platform_keys['execute_query']
+              operation_type = data[:query].selected_operation.operation_type
+              operation_name = data[:query].selected_operation_name
+
+              operation_name ? "#{operation_type} #{operation_name}" : operation_type
+            else
+              key
+            end
           end
         end
       end
