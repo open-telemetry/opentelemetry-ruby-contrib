@@ -31,8 +31,8 @@ module OpenTelemetry
       #
       # - `boolean`  **default** `false`
       #
-      # Specifies whether spans names should use the legacy format where the subscription was reverse ordered and white space separated.
-      # If set to `true`, the span name will match the name of the notification itself.
+      # Specifies whether spans names should use the legacy format where the subscription was reverse ordered and white space separated. (Ex. `action_view render_template`)
+      # If set to `true`, the span name will match the name of the notification itself. (Ex. `render_template.action_view`)
       #
       # @example An explicit default configuration
       #   OpenTelemetry::SDK.configure do |c|
