@@ -116,6 +116,14 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['net.peer.name']).must_equal host.to_s
         _(span.attributes['net.peer.port']).must_equal port.to_i
       end
+
+      describe 'untraced commands' do
+        let(:config) { { untraced_commands: ['SELECT'] } }
+
+        it 'does not produce a span' do
+          _(span).must_be_nil
+        end
+      end
     end
 
     %i[exec_params async_exec_params sync_exec_params].each do |method|
@@ -129,6 +137,14 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
         _(span.attributes['net.peer.port']).must_equal port.to_i
+      end
+
+      describe 'untraced commands' do
+        let(:config) { { untraced_commands: ['SELECT'] } }
+
+        it 'does not produce a span' do
+          _(span).must_be_nil
+        end
       end
     end
 
@@ -144,6 +160,14 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo'
         _(span.attributes['net.peer.name']).must_equal host.to_s
         _(span.attributes['net.peer.port']).must_equal port.to_i
+      end
+
+      describe 'untraced commands' do
+        let(:config) { { untraced_commands: ['PREPARE'] } }
+
+        it 'does not produce a span' do
+          _(span).must_be_nil
+        end
       end
     end
 
@@ -161,6 +185,14 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(last_span.attributes['net.peer.name']).must_equal host.to_s
         _(last_span.attributes['net.peer.port']).must_equal port.to_i
       end
+
+      describe 'untraced commands' do
+        let(:config) { { untraced_commands: ['EXECUTE'] } }
+
+        it 'does not produce a span' do
+          _(span).must_be_nil
+        end
+      end
     end
 
     %i[exec query sync_exec async_exec].each do |method|
@@ -174,6 +206,14 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.operation']).must_equal 'SELECT'
         _(span.attributes['net.peer.name']).must_equal host.to_s
         _(span.attributes['net.peer.port']).must_equal port.to_i
+      end
+
+      describe 'untraced commands' do
+        let(:config) { { untraced_commands: ['SELECT'] } }
+
+        it 'does not produce a span' do
+          _(span).must_be_nil
+        end
       end
     end
 
