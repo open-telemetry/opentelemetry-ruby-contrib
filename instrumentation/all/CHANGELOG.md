@@ -57,11 +57,11 @@
 
 ### v0.50.1 / 2023-09-07
 
-* FIXED: Align messaging instrumentation operation names (Resque)
+* BREAKING CHANGE: Align messaging instrumentation operation names (Resque)
 
 ### v0.50.0 / 2023-09-07
 
-* FIXED: Align messaging instrumentation operation names
+* BREAKING CHANGE: Align messaging instrumentation operation names [#648](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/648)
 
 ### v0.40.0 / 2023-08-07
 
