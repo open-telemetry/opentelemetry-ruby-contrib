@@ -24,6 +24,7 @@ module OpenTelemetry
 
         option :disallowed_notification_payload_keys, default: [],  validate: :array
         option :notification_payload_transform,       default: nil, validate: :callable
+        option :legacy_span_names,                    default: false, validate: :boolean
 
         private
 
