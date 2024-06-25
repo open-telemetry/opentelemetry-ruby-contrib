@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.25.6 / 2024-06-25
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.25.5 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints

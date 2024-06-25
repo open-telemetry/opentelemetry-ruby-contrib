@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.61.1 / 2024-06-25
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.61.0 / 2024-06-04
 
 * ADDED: Add aws lambda to instrumentation-all

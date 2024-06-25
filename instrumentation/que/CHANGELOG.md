@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.8.2 / 2024-06-25
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.8.1 / 2024-04-30
 
 * FIXED: Bundler conflict warnings

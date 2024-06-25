@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+### v0.22.3 / 2024-06-25
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.22.2 / 2024-04-30
 
 * FIXED: Bundler conflict warnings

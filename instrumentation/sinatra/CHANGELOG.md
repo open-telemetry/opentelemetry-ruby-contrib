@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.24.0 / 2024-06-25
+
+* ADDED: Make Rack install optional for sinatra
+
 ### v0.23.5 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints
