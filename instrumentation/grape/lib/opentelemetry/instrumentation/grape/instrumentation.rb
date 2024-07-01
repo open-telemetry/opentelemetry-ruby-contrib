@@ -8,6 +8,16 @@ module OpenTelemetry
   module Instrumentation
     module Grape
       # The Instrumentation class contains logic to detect and install the Grape instrumentation
+      # # Configuration keys and options
+      # ## `:ignored_events`
+      #
+      # Default is `[]`. Specifies which ActiveSupport::Notifications events published by Grape to ignore.
+      # Ignored events will not be published as Span events.
+      #
+      # ## `:install_rack`
+      #
+      # Default is `true`. Specifies whether or not to install the Rack instrumentation as part of installing the Grape instrumentation.
+      # This is useful in cases where you have multiple Rack applications but want to manually specify where to insert the tracing middleware.
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         # Minimum Grape version needed for compatibility with this instrumentation
         MINIMUM_VERSION = Gem::Version.new('1.2.0')
@@ -26,16 +36,7 @@ module OpenTelemetry
           !defined?(::ActiveSupport::Notifications).nil? && gem_version >= MINIMUM_VERSION
         end
 
-        # # Configuration keys and options
-        # ## `:ignored_events`
-        #
-        # Default is `[]`. Specifies which ActiveSupport::Notifications events published by Grape to ignore.
-        # Ignored events will not be published as Span events.
         option :ignored_events, default: [], validate: :array
-        # ## `:install_rack`
-        #
-        # Default is `true`. Specifies whether or not to install the Rack instrumentation as part of installing the Grape instrumentation.
-        # This is useful in cases where you have multiple Rack applications but want to manually specify where to insert the tracing middleware.
         option :install_rack, default: true, validate: :boolean
 
         private
