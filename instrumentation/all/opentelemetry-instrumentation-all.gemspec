@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-ethon', '~> 0.21.1'
   spec.add_dependency 'opentelemetry-instrumentation-excon', '~> 0.22.0'
   spec.add_dependency 'opentelemetry-instrumentation-faraday', '~> 0.24.0'
-  spec.add_dependency 'opentelemetry-instrumentation-grape', '~> 0.1.3'
+  spec.add_dependency 'opentelemetry-instrumentation-grape', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-instrumentation-graphql', '~> 0.28.0'
   spec.add_dependency 'opentelemetry-instrumentation-gruf', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-instrumentation-http', '~> 0.23.1'
@@ -58,7 +58,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-restclient', '~> 0.22.1'
   spec.add_dependency 'opentelemetry-instrumentation-ruby_kafka', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.25.0'
-  spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.23.1'
+  spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.24.0'
   spec.add_dependency 'opentelemetry-instrumentation-trilogy', '~> 0.59.0'
 
   spec.add_development_dependency 'active_model_serializers'
