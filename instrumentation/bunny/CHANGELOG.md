@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-bunny
 
+### v0.21.4 / 2024-07-02
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.21.3 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
