@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+## [0.7.2](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-active_job/v0.7.1...opentelemetry-instrumentation-active_job/v0.7.2) (2024-07-02)
+
+
+### Performance Improvements
+
+* Reduce Context Allocations in ActiveJob ([#1018](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1018)) ([989da17](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/989da17c33c345ad285f70a0821078a6e21d389d))
+
 ### v0.7.1 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
