@@ -3,6 +3,9 @@
 ### v0.62.0 / 2024-07-02
 
 * DOCS: Fix CHANGELOGs to reflect a past breaking change
+* CHANGED: Update Rails Instrumentation
+* CHANGED: Update Grape Instrumentation
+* CHANGED: Update Sinatra Instrumentation
 
 ### v0.61.0 / 2024-06-04
 
@@ -29,7 +32,7 @@
 
 ### v0.56.0 / 2024-01-09
 
-* BREAKING CHANGE: Use ActiveSupport instead of patches #703 
+* BREAKING CHANGE: Use ActiveSupport instead of patches #703
 
 ### v0.55.0 / 2024-01-06
 
@@ -37,7 +40,7 @@
 
 ### v0.54.0 / 2023-11-28
 
-* ADDED: Updated excon to include connect spans 
+* ADDED: Updated excon to include connect spans
 
 ### v0.53.0 / 2023-11-28
 
