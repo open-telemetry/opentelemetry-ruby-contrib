@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.31.0 / 2024-07-02
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+* CHANGED: Update ActiveSupport Instrumentation
+
 ### v0.30.2 / 2024-06-04
 
 * FIXED: Add action_mailer to rails and all
@@ -10,7 +15,7 @@
 
 ### v0.30.0 / 2024-01-09
 
-* BREAKING CHANGE: Use ActiveSupport instead of patches #703 
+* BREAKING CHANGE: Use ActiveSupport instead of patches #703
 
 ### v0.29.1 / 2023-11-23
 
