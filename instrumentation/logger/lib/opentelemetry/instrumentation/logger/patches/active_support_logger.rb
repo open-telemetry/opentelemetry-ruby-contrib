@@ -13,6 +13,7 @@ module OpenTelemetry
           # The ActiveSupport::Logger.broadcast method emits identical logs to
           # multiple destinations. This instance variable will prevent the broadcasted
           # destinations from generating OpenTelemetry log record objects.
+          # Available in Rails 7.0 and below
           def broadcast(logger)
             logger.instance_variable_set(:@skip_instrumenting, true)
             super

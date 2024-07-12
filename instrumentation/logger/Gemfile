@@ -20,3 +20,6 @@ group :test do
   gem 'opentelemetry-logs-sdk', git: 'https://github.com/kaylareopelle/opentelemetry-ruby', branch: 'log-record-processor3', glob: 'logs_sdk/*.gemspec'
   gem 'opentelemetry-sdk', git: 'https://github.com/kaylareopelle/opentelemetry-ruby', branch: 'log-record-processor3', glob: 'sdk/*.gemspec'
 end
+
+# Temporary for testing, Appraisal does not work with gems installed from git source
+gem 'rails', '~> 7.0.0'

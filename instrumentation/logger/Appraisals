@@ -5,6 +5,8 @@
 # # SPDX-License-Identifier: Apache-2.0
 
 # # TOOD: Re-enable before release, along with active_support_logger tests
+# # Appraisals wont work with gems installed by a branch, so we can't
+# # set this up until there's a release of the otel logs gems
 # appraise 'rails-6.0' do
 #   gem 'rails', '~> 6.0.0'
 # end
