@@ -10,7 +10,7 @@
 
 ### v0.5.1 / 2024-02-08
 
-* FIXED: Return nil for non-existant key in AwsSdk::MessageAttributeGetter
+* FIXED: Return nil for non-existent key in AwsSdk::MessageAttributeGetter
 
 ### v0.5.0 / 2023-09-07
 

@@ -26,7 +26,7 @@
 
 ### v0.4.1 / 2023-11-22
 
-* FIXED: Get Rdkafka version from VERSION contant
+* FIXED: Get Rdkafka version from VERSION constant
 
 ### v0.4.0 / 2023-09-07
 

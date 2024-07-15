@@ -42,7 +42,7 @@
 
 ### v0.19.0 / 2021-09-29
 
-* ADDED: Add suport for `Concurrent::Promises::Future` 
+* ADDED: Add support for `Concurrent::Promises::Future` 
 
 ### v0.18.2 / 2021-08-12
 
@@ -54,7 +54,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 
 ### v0.17.0 / 2021-04-22
 
@@ -104,7 +104,7 @@
 ### v0.7.0 / 2020-10-07
 
 * DOCS: Added README for concurrent ruby
-* DOCS: Standardize toplevel docs structure and readme
+* DOCS: Standardize top-level docs structure and readme
 
 ### v0.6.0 / 2020-09-10
 
