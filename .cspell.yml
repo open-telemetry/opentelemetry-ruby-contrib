@@ -3,9 +3,6 @@
 # https://www.streetsidesoftware.com/vscode-spell-checker/docs/configuration/
 version: '0.2'
 caseSensitive: false
-# words here are only listed for their spelling, if there is a certain way
-# to write a word (e.g. OpenTelemetry vs Opentelemetry or cloud native vs
-# cloud-native), edit the text-lint rules in .textlintrc.yml
 patterns:
   - name: CodeBlock
     pattern: |
