@@ -87,7 +87,7 @@
 
 ### v0.20.0 / 2021-12-01
 
-* ADDED: Move activesupport notification subsciber out of action_view gem
+* ADDED: Move activesupport notification subscriber out of action_view gem
 * FIXED: Instrumentation of Rails 7
 
 ### v0.19.4 / 2021-10-06
@@ -123,7 +123,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 
 ### v0.17.0 / 2021-04-22
 
