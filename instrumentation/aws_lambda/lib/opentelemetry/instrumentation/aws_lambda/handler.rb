@@ -47,6 +47,9 @@ module OpenTelemetry
               kind: span_kind
             )
 
+            trace_ctx = OpenTelemetry::Trace.context_with_span(span)
+            @trace_token = OpenTelemetry::Context.attach(trace_ctx)
+
             begin
               response = call_original_handler(event: event, context: context)
               status_code = response['statusCode'] || response[:statusCode] if response.is_a?(Hash)
@@ -63,6 +66,7 @@ module OpenTelemetry
               span&.record_exception(original_handler_error)
               span&.status = OpenTelemetry::Trace::Status.error(original_handler_error.message)
             end
+            OpenTelemetry::Context.detach(@trace_token) if @trace_token
             span&.finish
             OpenTelemetry.tracer_provider.force_flush(timeout: @flush_timeout)
           end
