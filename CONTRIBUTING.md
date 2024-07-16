@@ -208,11 +208,21 @@ merge. You'll probably get some feedback from these fine folks which helps to
 make the project that much better. Respond to the feedback and work with your
 reviewer(s) to resolve any issues.
 
+The some of the things the code owners are looking for include:
+* a signed [CNCF CLA][cncf-cla]
+* a passing CI build
+* adherence to the principles and features outlined in the
+  [instrumentation author's guide](.instrumentation/CONTRIBUTING.md)
+
 Reviewers are responsible for ensuring that each merged PR's commit message
 conforms to [conventional commits](https://conventionalcommits.org). This may
-mean editing the commit message when you merge the pull request. Alternately,
-the reviewer may ask the pull request submitter to amend the commit message of
-their initial commit.
+mean editing the commit message or the pull request title when you merge the
+pull request. Alternately, the reviewer may ask the pull request submitter
+to amend the commit message of their initial commit.
+
+In addition, when a change is complex or a reviewer is unfamiliar with the code,
+the reviewer may seek additional reviews from people more familiar with the
+change before merging a PR.
 
 ## Releases
 
