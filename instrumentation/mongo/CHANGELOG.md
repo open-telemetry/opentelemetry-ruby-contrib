@@ -57,7 +57,7 @@
 
 * BREAKING CHANGE: Replace Time.now with Process.clock_gettime
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 * FIXED: Replace Time.now with Process.clock_gettime
 * FIXED: Mongodb test asserting error message
 
