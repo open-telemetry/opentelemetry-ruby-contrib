@@ -39,6 +39,7 @@ module OpenTelemetry
 
           original_handler_error = nil
           original_response = nil
+          trace_token = nil
           OpenTelemetry::Context.with_current(parent_context) do
             span_attributes = otel_attributes(event, context)
             span = tracer.start_span(
@@ -48,7 +49,7 @@ module OpenTelemetry
             )
 
             trace_ctx = OpenTelemetry::Trace.context_with_span(span)
-            @trace_token = OpenTelemetry::Context.attach(trace_ctx)
+            trace_token = OpenTelemetry::Context.attach(trace_ctx)
 
             begin
               response = call_original_handler(event: event, context: context)
@@ -66,7 +67,7 @@ module OpenTelemetry
               span&.record_exception(original_handler_error)
               span&.status = OpenTelemetry::Trace::Status.error(original_handler_error.message)
             end
-            OpenTelemetry::Context.detach(@trace_token) if @trace_token
+            OpenTelemetry::Context.detach(trace_token) if trace_token
             span&.finish
             OpenTelemetry.tracer_provider.force_flush(timeout: @flush_timeout)
           end
