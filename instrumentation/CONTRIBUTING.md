@@ -173,7 +173,7 @@ For example, the `Werewolf` module generated in the example above is available v
 
 Whenever possible, use first-party extension points (hooks) to instrument libraries. This ensures that the instrumentation is compatible with the latest versions of the library and that the instrumentation is maintained by the library authors. [`ActiveSupport::Notifications`](https://guides.rubyonrails.org/active_support_instrumentation.html) and `Middleware` are good examples of first-party extension points used by our instrumentation libraries.
 
-Monkey patching is discouraged in OpenTelemetry Ruby because it is the most common source of bugs and incompatability with the libraries we instrument. If you must monkey patch, please ensure that the monkey patch is as isolated as possible and that it is clearly documented.
+Monkey patching is discouraged in OpenTelemetry Ruby because it is the most common source of bugs and incompatibility with the libraries we instrument. If you must monkey patch, please ensure that the monkey patch is as isolated as possible and that it is clearly documented.
 
 ### Use Semantic Conventions
 
@@ -337,7 +337,7 @@ Add the service container to `jobs/instrumentation_with_services/services` and a
 
 > :information_source: Please refer to the official [GitHub Actions Documentation](https://docs.github.com/en/actions/using-containerized-services/about-service-containers) for more information on how to add a service container.
 
-If we determine the service container slows down the test suite significantly, it may make sense to copy the marix and steps stanzas from an existing instrumentation and update it to use the new service container as a dependency:
+If we determine the service container slows down the test suite significantly, it may make sense to copy the matrix and steps stanzas from an existing instrumentation and update it to use the new service container as a dependency:
 
 ```yaml
 
@@ -407,7 +407,7 @@ In addition to that, there should also be redundant `yardoc` comments in the ent
 
 ### Examples
 
-Executuable examples should be included in the `examples` directory that demonstrate how to use the instrumentation in a real-world scenario.
+Executable examples should be included in the `examples` directory that demonstrate how to use the instrumentation in a real-world scenario.
 
 We recommend using [Bundler's inline gemfile](https://bundler.io/guides/bundler_in_a_single_file_ruby_script.html) to run the examples. Here is an example from the `grape` instrumentation:
 

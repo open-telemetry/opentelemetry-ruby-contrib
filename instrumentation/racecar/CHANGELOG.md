@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-racecar
 
+### v0.3.4 / 2024-07-09
+
+* FIXED: Suppress header access with symbol key deprecation warning in Racecar Instrumentation
+
 ### v0.3.3 / 2024-07-02
 
 * DOCS: Fix CHANGELOGs to reflect a past breaking change
