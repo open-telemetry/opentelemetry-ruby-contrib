@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.7.3 / 2024-07-22
+
+* FIXED: ActiveJob::Handlers.unsubscribe
+
 ### v0.7.2 / 2024-07-02
 
 * DOCS: Fix CHANGELOGs to reflect a past breaking change
