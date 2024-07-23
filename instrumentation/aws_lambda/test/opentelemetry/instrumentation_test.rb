@@ -214,4 +214,25 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
       end
     end
   end
+
+  describe 'validate_if_span_is_registered' do
+    it 'add_span_attributes_to_lambda_span' do
+      stub = proc do
+        span = OpenTelemetry::Trace.current_span
+        span.set_attribute('test.attribute', 320)
+      end
+
+      otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
+      otel_wrapper.stub(:call_original_handler, stub) do
+        otel_wrapper.call_wrapped(event: sqs_record, context: context)
+
+        _(last_span.name).must_equal 'sample.test'
+        _(last_span.kind).must_equal :consumer
+        _(last_span.status.code).must_equal 1
+        _(last_span.hex_parent_span_id).must_equal '0000000000000000'
+
+        _(last_span.attributes['test.attribute']).must_equal 320
+      end
+    end
+  end
 end
