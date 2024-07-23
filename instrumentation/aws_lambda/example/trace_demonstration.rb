@@ -97,6 +97,6 @@ event = {
    "version" => "1.0"
 }
 
-context = MockLambdaContext.new(aws_request_id: "aws_request_id",invoked_function_arn: "invoked_function_arn",function_name: "function")
+context = MockLambdaContext.new(aws_request_id: "aws_request_id",invoked_function_arn: "arn:aws:lambda:us-west-2:123456789012:function:HelloWorld",function_name: "function")
 
 otel_wrapper(event: event, context: context) # you should see Success before the trace
