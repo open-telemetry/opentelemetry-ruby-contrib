@@ -49,7 +49,7 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-If you wish the job will be executed in the same logicial trace as a direct
+If you wish the job will be executed in the same logical trace as a direct
 child of the span that enqueued the job then set propagation_style to `child`. By
 default the jobs are just linked together.
 

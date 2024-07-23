@@ -179,7 +179,7 @@
 
 ### v0.22.0 / 2021-12-01
 
-* ADDED: Move activesupport notification subsciber out of action_view gem
+* ADDED: Move activesupport notification subscriber out of action_view gem
 
 ### v0.21.3 / 2021-10-07
 
@@ -270,7 +270,7 @@
 
 ### v0.7.0 / 2020-10-07
 
-* DOCS: Standardize toplevel docs structure and readme
+* DOCS: Standardize top-level docs structure and readme
 
 ### v0.6.0 / 2020-09-10
 
