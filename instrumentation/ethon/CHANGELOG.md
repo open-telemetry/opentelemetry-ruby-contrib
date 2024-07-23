@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.21.8 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.21.7 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints

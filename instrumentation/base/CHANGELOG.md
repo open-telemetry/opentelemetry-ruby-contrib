@@ -62,3 +62,7 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
+
+### v0.22.5 / 2024-07-23
+
+* DOCS: Add cspell to CI

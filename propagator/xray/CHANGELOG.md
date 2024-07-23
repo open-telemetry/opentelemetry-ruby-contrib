@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-xray
 
+### v0.22.2 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.22.1 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
