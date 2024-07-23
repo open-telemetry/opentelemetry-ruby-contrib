@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.22.5 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.22.4 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints
@@ -62,7 +66,3 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
-
-### v0.22.5 / 2024-07-23
-
-* DOCS: Add cspell to CI
