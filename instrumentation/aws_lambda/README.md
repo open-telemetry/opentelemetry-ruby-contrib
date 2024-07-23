@@ -36,6 +36,7 @@ To run the example:
 	* `bundle install`
 2. Run the sample client script
 	* `ruby trace_demonstration.rb`
+	* or `bundle exec ruby trace_demonstration.rb`
 
 This will run SNS publish command, printing OpenTelemetry traces to the console as it goes.
 
