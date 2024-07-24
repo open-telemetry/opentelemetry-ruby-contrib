@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.25.4 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.25.3 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints

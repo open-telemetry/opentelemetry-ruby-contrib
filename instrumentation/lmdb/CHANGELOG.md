@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-lmdb
 
+### v0.22.3 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.22.2 / 2024-04-30
 
 * FIXED: Bundler conflict warnings

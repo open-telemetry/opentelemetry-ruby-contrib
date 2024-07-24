@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.24.1 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.24.0 / 2024-07-02
 
 * ADDED: Make Rack install optional for sinatra

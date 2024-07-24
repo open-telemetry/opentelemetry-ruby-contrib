@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.23.4 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.23.3 / 2024-04-30
 
 * FIXED: Bundler conflict warnings

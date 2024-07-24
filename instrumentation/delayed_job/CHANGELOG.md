@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+### v0.22.4 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.22.3 / 2024-07-02
 
 * DOCS: Fix CHANGELOGs to reflect a past breaking change
