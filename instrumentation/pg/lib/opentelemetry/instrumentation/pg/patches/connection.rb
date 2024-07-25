@@ -86,11 +86,13 @@ module OpenTelemetry
           # module size limit! We can't win here unless we want to start
           # abstracting things into a million pieces.
           def span_attrs(kind, *args)
+            text = args[0]
+
             if kind == :query
-              operation = extract_operation(args[0])
-              sql = obfuscate_sql(args[0]).to_s
+              operation = extract_operation(text)
+              sql = obfuscate_sql(text).to_s
             else
-              statement_name = args[0]
+              statement_name = text
 
               if kind == :prepare
                 sql = obfuscate_sql(args[1]).to_s
@@ -104,6 +106,7 @@ module OpenTelemetry
 
             attrs = { 'db.operation' => validated_operation(operation), 'db.postgresql.prepared_statement_name' => statement_name }
             attrs['db.statement'] = sql unless config[:db_statement] == :omit
+            attrs['db.collection.name'] = collection_name(text)
             attrs.merge!(OpenTelemetry::Instrumentation::PG.attributes)
             attrs.compact!
 
@@ -123,6 +126,13 @@ module OpenTelemetry
 
           def validated_operation(operation)
             operation if PG::Constants::SQL_COMMANDS.include?(operation)
+          end
+
+          def collection_name(text)
+            # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
+            pattern = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE\s+IF\s+EXISTS)\s+([\w\.]+)/i
+
+            text.scan(pattern).flatten[0]
           end
 
           def client_attributes

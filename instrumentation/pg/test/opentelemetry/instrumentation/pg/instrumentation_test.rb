@@ -12,13 +12,16 @@ require_relative '../../../../lib/opentelemetry/instrumentation/pg'
 require_relative '../../../../lib/opentelemetry/instrumentation/pg/patches/connection'
 
 # This test suite requires a running postgres container and dedicated test container
-# To run tests:
+# To run tests locally:
 # 1. Build the opentelemetry/opentelemetry-ruby-contrib image
 # - docker-compose build
 # 2. Bundle install
 # - docker-compose run ex-instrumentation-pg-test bundle install
-# 3. Run test suite
-# - docker-compose run ex-instrumentation-pg-test bundle exec rake test
+# 3. Install the dependencies for each Appraisal (https://github.com/thoughtbot/appraisal)
+# - docker-compose run ex-instrumentation-pg-test bundle exec appraisal install
+# 4. Run test suite with Appraisal
+# - docker-compose run ex-instrumentation-pg-test bundle exec appraisal rake test
+
 describe OpenTelemetry::Instrumentation::PG::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::PG::Instrumentation.instance }
   let(:exporter) { EXPORTER }
@@ -33,6 +36,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
   after do
     # Force re-install of instrumentation
     instrumentation.instance_variable_set(:@installed, false)
+    client&.close
   end
 
   describe 'tracing' do
@@ -76,7 +80,8 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
           'db.operation' => 'PREPARE FOR SELECT 1',
           'db.postgresql.prepared_statement_name' => 'bar',
           'net.peer.ip' => '192.168.0.1',
-          'peer.service' => 'example:custom'
+          'peer.service' => 'example:custom',
+          'db.collection.name' => 'test_table'
         }
       end
 
@@ -263,6 +268,13 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       assert(!span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
+    it 'extracts table name' do
+      client.query('CREATE TABLE test_table (personid int, name VARCHAR(50))')
+
+      _(span.attributes['db.collection.name']).must_equal 'test_table'
+      client.query('DROP TABLE test_table') # Drop table to avoid conflicts
+    end
+
     describe 'when db_statement is obfuscate' do
       let(:config) { { db_statement: :obfuscate } }
 
@@ -359,6 +371,22 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
 
         _(span.attributes['net.peer.name']).must_equal host
         _(span.attributes['net.peer.port']).must_equal port.to_i if PG.const_defined?(:DEF_PORT)
+      end
+    end
+
+    def self.load_fixture
+      data = File.read("#{Dir.pwd}/test/fixtures/sql_table_name.json")
+      JSON.parse(data)
+    end
+
+    load_fixture.each do |test_case|
+      name = test_case['name']
+      query = test_case['sql']
+
+      define_method(:"test_sql_table_name_#{name}") do
+        table_name = client.send(:collection_name, query)
+
+        assert('test_table', table_name)
       end
     end
   end unless ENV['OMIT_SERVICES']
