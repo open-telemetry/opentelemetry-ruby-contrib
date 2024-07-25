@@ -261,4 +261,22 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
       _(CallbacksJob.context_after).must_be :valid?
     end
   end
+
+  describe 'with a configuration modified after installation' do
+    let(:job_class) { TestJob }
+    let(:publish_span) { spans.find { |s| s.name == "#{job_class.name} publish" } }
+    let(:process_span) { spans.find { |s| s.name == "#{job_class.name} process" } }
+
+    before do
+      instance_config = instrumentation.instance_variable_get(:@config)
+      instance_config[:span_naming] = :job_class
+    end
+
+    it 'uses the updated configuration' do
+      TestJob.perform_later
+
+      _(publish_span).wont_be_nil
+      _(process_span).wont_be_nil
+    end
+  end
 end

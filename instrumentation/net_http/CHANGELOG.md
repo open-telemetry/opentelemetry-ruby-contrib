@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.22.7 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.22.6 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints

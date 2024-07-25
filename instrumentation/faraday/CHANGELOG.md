@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.24.6 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.24.5 / 2024-06-20
 
 * FIXED: Compatibility with Faraday v1

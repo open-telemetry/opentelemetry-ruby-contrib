@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-concurrent_ruby
 
+### v0.21.4 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.21.3 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
