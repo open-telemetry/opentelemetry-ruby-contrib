@@ -1,0 +1,58 @@
+[
+    {
+      "name": "from",
+      "sql": "SELECT * FROM test_table"
+    },
+    {
+      "name": "select_count_from",
+      "sql": "SELECT COUNT(*) FROM table_name WHERE condition"
+    },
+    {
+      "name": "from_with_subquery",
+      "sql": "SELECT * FROM (SELECT * FROM table_name) AS table_alias"
+    },
+    {
+      "name": "insert_into",
+      "sql": "INSERT INTO table_name (column1, column2) VALUES (value1, value2)"
+    },
+    {
+      "name": "drop_table",
+      "sql": "DROP TABLE table_name"
+    },
+    {
+      "name": "update",
+      "sql": "UPDATE table_name SET column1 = value1 WHERE condition"
+    },
+    {
+      "name": "delete_from",
+      "sql": "DELETE FROM table_name WHERE condition"
+    },
+    {
+      "name": "create_table",
+      "sql": "CREATE TABLE table_name (column1 datatype, column2 datatype)"
+    },
+    {
+      "name": "create_table_if_not_exists",
+      "sql": "CREATE TABLE IF NOT EXISTS table_name (column1 datatype, column2 datatype)"
+    },
+    {
+      "name": "alter_table",
+      "sql": "ALTER TABLE table_name ADD column_name datatype"
+    },
+    {
+      "name": "drop_table",
+      "sql": "DROP TABLE table_name"
+    },
+    {
+      "name": "drop_table_if_exists",
+      "sql": "DROP TABLE IF EXISTS table_name"
+    },
+    {
+      "name": "insert_into",
+      "sql": "INSERT INTO X values('', 'a''b c',0, 1 , 'd''e f''s h')"
+    },
+    {
+      "name": "from_with_join",
+      "sql": "SELECT columns FROM table1 JOIN table2 ON table1.column = table2.column"
+    }
+  ]

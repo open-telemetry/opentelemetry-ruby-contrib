@@ -18,8 +18,17 @@ conn = PG::Connection.open(
   password: ENV.fetch('TEST_POSTGRES_PASSWORD') { 'postgres' }
 )
 
-# Spans will be printed to your terminal when this statement executes:
+# Create a table
+conn.exec('CREATE TABLE test_table (id SERIAL PRIMARY KEY, name VARCHAR(50), age INT)')
+# Insert data into the table
+conn.exec("INSERT INTO test_table (name, age) VALUES ('Peter', 60), ('Paul', 25), ('Mary', 45)")
+
+# Spans will be printed to your terminal when these statement execute:
 conn.exec('SELECT 1 AS a, 2 AS b, NULL AS c').each_row { |r| puts r.inspect }
+conn.exec('SELECT * FROM test_table').each_row { |r| puts r.inspect }
+
+# Drop table when done querying
+conn.exec('DROP TABLE test_table')
 
 # You can use parameterized queries like so:
 # conn.exec_params('SELECT $1 AS a, $2 AS b, $3 AS c', [1, 2, nil]).each_row { |r| puts r.inspect }
