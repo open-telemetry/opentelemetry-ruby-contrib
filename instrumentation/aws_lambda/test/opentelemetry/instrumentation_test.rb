@@ -71,7 +71,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
 
         _(last_span.instrumentation_scope).must_be_kind_of OpenTelemetry::SDK::InstrumentationScope
         _(last_span.instrumentation_scope.name).must_equal 'OpenTelemetry::Instrumentation::AwsLambda'
-        _(last_span.instrumentation_scope.version).must_equal '0.1.0'
+        _(last_span.instrumentation_scope.version).must_equal OpenTelemetry::Instrumentation::AwsLambda::VERSION
 
         _(last_span.hex_span_id.size).must_equal 16
         _(last_span.hex_trace_id.size).must_equal 32
