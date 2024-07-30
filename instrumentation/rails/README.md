@@ -55,6 +55,7 @@ gem "opentelemetry-instrumentation-rails", require: "opentelemetry/instrumentati
 The Rails instrumentation attempts to mirror the structure of the Ruby on Rails.  It is a collection of instrumentation gems for components of Rails such as Action View, Active Record, Action Pack, etc...
 
 You may want to include all of the Rails instrumentation but disable a single instrumentation gem that it includes.  Here is an example of how you can disable Active Record when using this instrumentation gem.
+
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use_all({ 'OpenTelemetry::Instrumentation::ActiveRecord' => { enabled: false } })
@@ -69,7 +70,7 @@ Example usage can be seen in the `./example/trace_demonstration.rb` file [here](
 
 The `opentelemetry-instrumentation-rails` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
@@ -81,4 +82,5 @@ The `opentelemetry-instrumentation-rails` gem is distributed under the Apache 2.
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
+[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions

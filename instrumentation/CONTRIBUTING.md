@@ -403,7 +403,7 @@ The `instrumentation_generator` creates a `README.md` file for your instrumentat
 
 In addition to that, there should also be redundant `yardoc` comments in the entrypoint of your gem, i.e. the subclass `OpenTelemetry::Instrumentation::Base`.
 
-> :information_source: See the `Sidekiq::Instrumentation` [class description](./sidekiq/lib/opentelemetry/instrumentation/sidekiq/instrumentation.rb) for a comprehensive example. 
+> :information_source: See the `Sidekiq::Instrumentation` [class description](./sidekiq/lib/opentelemetry/instrumentation/sidekiq/instrumentation.rb) for a comprehensive example.
 
 ### Examples
 

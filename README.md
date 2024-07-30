@@ -60,6 +60,7 @@ multiple instrumentation libraries.
 
 - [MySQL](helpers/mysql/)
 - [SQL Obfuscation](helpers/sql-obfuscation/)
+
 ## Additional Libraries
 
 This repository also contains libraries to aid with interoperability with vendor specific tracing solutions:
@@ -103,17 +104,14 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [otel-ruby]: https://github.com/open-telemetry/opentelemetry-ruby
 [otel-ruby-releases]: https://github.com/open-telemetry/opentelemetry-ruby/releases
 [otel-ruby-contrib-releases]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/releases
-[ci-image]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/workflows/CI/badge.svg?event=push
-[examples-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/examples
+[ci-image]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/workflows/CI%20Contrib/badge.svg?event=push
 [getting-started]: https://opentelemetry.io/docs/languages/ruby/getting-started/
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 [issues-help-wanted]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 [license-image]: https://img.shields.io/badge/license-Apache_2.0-green.svg?style=flat
 [license-url]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[opentelemetry-instrumentation-all-publishing]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/all#publishing
 [slack-image]: https://img.shields.io/badge/slack-@cncf/otel/ruby-brightgreen.svg?logo=slack
 [slack-url]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [otel-versioning]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/versioning-and-stability.md
-[otel-specification]: https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification
