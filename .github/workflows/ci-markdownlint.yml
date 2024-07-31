@@ -1,4 +1,4 @@
-name: Markdown Lint & Link Check
+name: Markdown Lint Check
 
 on:
   pull_request:
