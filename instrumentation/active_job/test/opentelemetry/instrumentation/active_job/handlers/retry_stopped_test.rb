@@ -15,7 +15,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveJob::Handlers::RetryStopped' do
   let(:spans) { exporter.finished_spans }
   let(:publish_span) { spans.find { |s| s.name == 'default publish' } }
   let(:process_span) { spans.find { |s| s.name == 'default process' } }
-  let(:retry_span) { spans.find { |s| s.name == 'retry_stopped.active_job' } }
+  let(:retry_span) { spans.find { |s| s.name == 'default retry_stopped' } }
 
   before do
     OpenTelemetry::Instrumentation::ActiveJob::Handlers.unsubscribe
