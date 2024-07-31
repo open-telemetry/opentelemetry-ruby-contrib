@@ -1,5 +1,16 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.62.1 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
+### v0.62.0 / 2024-07-02
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+* CHANGED: Update Rails Instrumentation
+* CHANGED: Update Grape Instrumentation
+* CHANGED: Update Sinatra Instrumentation
+
 ### v0.61.0 / 2024-06-04
 
 * ADDED: Add aws lambda to instrumentation-all
@@ -25,7 +36,7 @@
 
 ### v0.56.0 / 2024-01-09
 
-* BREAKING CHANGE: Use ActiveSupport instead of patches #703 
+* BREAKING CHANGE: Use ActiveSupport instead of patches #703
 
 ### v0.55.0 / 2024-01-06
 
@@ -33,7 +44,7 @@
 
 ### v0.54.0 / 2023-11-28
 
-* ADDED: Updated excon to include connect spans 
+* ADDED: Updated excon to include connect spans
 
 ### v0.53.0 / 2023-11-28
 
@@ -172,7 +183,7 @@
 
 ### v0.22.0 / 2021-12-01
 
-* ADDED: Move activesupport notification subsciber out of action_view gem
+* ADDED: Move activesupport notification subscriber out of action_view gem
 
 ### v0.21.3 / 2021-10-07
 
@@ -263,7 +274,7 @@
 
 ### v0.7.0 / 2020-10-07
 
-* DOCS: Standardize toplevel docs structure and readme
+* DOCS: Standardize top-level docs structure and readme
 
 ### v0.6.0 / 2020-09-10
 

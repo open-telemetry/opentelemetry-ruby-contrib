@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+### v0.20.2 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.20.1 / 2023-06-05
 
 * FIXED: Base config options 
@@ -43,7 +47,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 
 ### v0.17.0 / 2021-04-22
 

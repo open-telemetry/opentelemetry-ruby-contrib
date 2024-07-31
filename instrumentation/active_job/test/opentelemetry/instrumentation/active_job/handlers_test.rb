@@ -50,4 +50,14 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers do
       _(MixedArgsJob.perform_now('arg1', 'arg2', keyword2: :keyword2)).must_be_nil # Make sure this runs without raising an error
     end
   end
+
+  describe 'usage' do
+    it 'can unsubscribe' do
+      _(OpenTelemetry::Instrumentation::ActiveJob::Handlers.instance_variable_get(:@subscriptions)).wont_be_empty
+
+      OpenTelemetry::Instrumentation::ActiveJob::Handlers.unsubscribe
+
+      _(OpenTelemetry::Instrumentation::ActiveJob::Handlers.instance_variable_get(:@subscriptions)).must_be_nil
+    end
+  end
 end

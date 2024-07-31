@@ -1,5 +1,14 @@
 # Release History: opentelemetry-instrumentation-rdkafka
 
+### v0.4.8 / 2024-07-23
+
+* DOCS: Link to rdkafka example
+* DOCS: Add cspell to CI
+
+### v0.4.7 / 2024-07-02
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.4.6 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints
@@ -22,7 +31,7 @@
 
 ### v0.4.1 / 2023-11-22
 
-* FIXED: Get Rdkafka version from VERSION contant
+* FIXED: Get Rdkafka version from VERSION constant
 
 ### v0.4.0 / 2023-09-07
 

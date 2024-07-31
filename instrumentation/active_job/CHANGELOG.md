@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.7.4 / 2024-07-30
+
+* FIXED: Honour dynamic changes in configuration
+
+### v0.7.3 / 2024-07-22
+
+* FIXED: ActiveJob::Handlers.unsubscribe
+
+### v0.7.2 / 2024-07-02
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.7.1 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)

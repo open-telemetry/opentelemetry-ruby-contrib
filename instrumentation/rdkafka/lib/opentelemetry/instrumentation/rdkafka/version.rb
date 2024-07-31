@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Rdkafka
-      VERSION = '0.4.6'
+      VERSION = '0.4.8'
     end
   end
 end

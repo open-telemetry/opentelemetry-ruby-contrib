@@ -1,5 +1,14 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.31.1 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
+### v0.31.0 / 2024-07-02
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+* CHANGED: Update ActiveSupport Instrumentation
+
 ### v0.30.2 / 2024-06-04
 
 * FIXED: Add action_mailer to rails and all
@@ -10,7 +19,7 @@
 
 ### v0.30.0 / 2024-01-09
 
-* BREAKING CHANGE: Use ActiveSupport instead of patches #703 
+* BREAKING CHANGE: Use ActiveSupport instead of patches #703
 
 ### v0.29.1 / 2023-11-23
 
@@ -82,7 +91,7 @@
 
 ### v0.20.0 / 2021-12-01
 
-* ADDED: Move activesupport notification subsciber out of action_view gem
+* ADDED: Move activesupport notification subscriber out of action_view gem
 * FIXED: Instrumentation of Rails 7
 
 ### v0.19.4 / 2021-10-06
@@ -118,7 +127,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 
 ### v0.17.0 / 2021-04-22
 

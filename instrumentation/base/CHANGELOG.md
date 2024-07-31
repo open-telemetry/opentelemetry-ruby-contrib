@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.22.5 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.22.4 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints
@@ -56,7 +60,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 * FIXED: Missing instrumentation classes during configuration
 
 ### v0.17.0 / 2021-04-22

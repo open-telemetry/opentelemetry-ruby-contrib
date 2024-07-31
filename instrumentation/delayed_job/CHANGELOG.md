@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+### v0.22.4 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
+### v0.22.3 / 2024-07-02
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.22.2 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
@@ -61,7 +69,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 * BREAKING CHANGE: Replace Time.now with Process.clock_gettime
 
 ### v0.17.0 / 2021-04-22

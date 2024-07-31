@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.27.4 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.27.3 / 2024-05-11
 
 * ADDED: Support prepend SQL comment for PG instrumentation
@@ -104,7 +108,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 * ADDED: Add option to postgres instrumentation to disable db.statement
 
 ### v0.17.1 / 2021-04-23

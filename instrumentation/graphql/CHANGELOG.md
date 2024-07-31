@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.28.4 / 2024-07-30
+
+* FIXED: Add super calls to GraphqlTrace
+
+### v0.28.3 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.28.2 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
@@ -116,7 +124,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 
 ### v0.17.0 / 2021-04-22
 

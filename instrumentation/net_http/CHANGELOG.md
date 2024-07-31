@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.22.7 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.22.6 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints
@@ -76,7 +80,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 
 ### v0.17.0 / 2021-04-22
 
@@ -126,7 +130,7 @@
 ### v0.7.0 / 2020-10-07
 
 * DOCS: Added documentation for net_http gem in instrumentation
-* DOCS: Standardize toplevel docs structure and readme
+* DOCS: Standardize top-level docs structure and readme
 
 ### v0.6.0 / 2020-09-10
 

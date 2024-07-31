@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.24.6 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.24.5 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints
@@ -80,7 +84,7 @@
 
 ### v0.20.1 / 2021-12-01
 
-* FIXED: [Instruentation Rack] Log content type http header 
+* FIXED: [Instrumentation Rack] Log content type http header 
 * FIXED: Use monotonic clock where possible 
 * FIXED: Rack to stop using api env getter 
 
@@ -115,7 +119,7 @@ forwards the uri path.  More details on this is available in the readme.
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 * FIXED: Removed http.status_text attribute #750
 
 ### v0.17.0 / 2021-04-22
@@ -181,7 +185,7 @@ forwards the uri path.  More details on this is available in the readme.
 
 * FIXED: Remove superfluous file from Rack gem
 * DOCS: Added README for Rack Instrumentation
-* DOCS: Standardize toplevel docs structure and readme
+* DOCS: Standardize top-level docs structure and readme
 
 ### v0.6.0 / 2020-09-10
 

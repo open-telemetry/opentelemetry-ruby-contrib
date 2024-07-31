@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.25.7 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
+### v0.25.6 / 2024-07-02
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.25.5 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints
@@ -99,7 +107,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 * TEST: update test for redis instrumentation refactor [#760](https://github.com/open-telemetry/opentelemetry-ruby/pull/760)
 * BREAKING CHANGE: Remove optional parent_context from in_span
 
@@ -157,7 +165,7 @@
 
 * DOCS: Adding README for Sidekiq instrumentation
 * DOCS: Remove duplicate reference in Sidekiq README
-* DOCS: Standardize toplevel docs structure and readme
+* DOCS: Standardize top-level docs structure and readme
 
 ### v0.6.0 / 2020-09-10
 

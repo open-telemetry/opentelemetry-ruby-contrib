@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-ottrace
 
+### v0.21.3 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.21.2 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
@@ -46,7 +50,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 
 ### v0.17.0 / 2021-04-22
 
