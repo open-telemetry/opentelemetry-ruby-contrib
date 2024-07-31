@@ -51,6 +51,7 @@ jobs:
           - restclient
           - rspec
           - sinatra
+          - <instrumentation_name>
         os:
           - ubuntu-latest
 
