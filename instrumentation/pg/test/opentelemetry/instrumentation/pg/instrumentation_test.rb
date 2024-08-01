@@ -374,19 +374,21 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    def self.load_fixture
-      data = File.read("#{Dir.pwd}/test/fixtures/sql_table_name.json")
-      JSON.parse(data)
-    end
+    describe '#connection_name' do
+      def self.load_fixture
+        data = File.read("#{Dir.pwd}/test/fixtures/sql_table_name.json")
+        JSON.parse(data)
+      end
 
-    load_fixture.each do |test_case|
-      name = test_case['name']
-      query = test_case['sql']
+      load_fixture.each do |test_case|
+        name = test_case['name']
+        query = test_case['sql']
 
-      define_method(:"test_sql_table_name_#{name}") do
-        table_name = client.send(:collection_name, query)
+        define_method(:"test_sql_table_name_#{name}") do
+          table_name = client.send(:collection_name, query)
 
-        assert('test_table', table_name)
+          assert_equal('table_name', table_name) # TODO: use an expected name from fixtures or update fixtures to always use "table_name"
+        end
       end
     end
   end unless ENV['OMIT_SERVICES']
