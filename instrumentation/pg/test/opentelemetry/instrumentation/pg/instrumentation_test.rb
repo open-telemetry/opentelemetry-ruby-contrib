@@ -387,7 +387,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         define_method(:"test_sql_table_name_#{name}") do
           table_name = client.send(:collection_name, query)
 
-          assert_equal('table_name', table_name) # TODO: use an expected name from fixtures or update fixtures to always use "table_name"
+          assert_equal('test_table', table_name) # TODO: use an expected name from fixtures or update fixtures to always use "table_name"
         end
       end
     end

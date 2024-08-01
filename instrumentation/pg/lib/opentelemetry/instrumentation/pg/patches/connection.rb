@@ -14,6 +14,9 @@ module OpenTelemetry
       module Patches
         # Module to prepend to PG::Connection for instrumentation
         module Connection # rubocop:disable Metrics/ModuleLength
+          # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
+          TABLE_NAME = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE(?:\s+IF\s+EXISTS)?)\s+([\w\.]+)/i
+
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args, &block|
               span_name, attrs = span_attrs(:query, *args)
@@ -129,10 +132,7 @@ module OpenTelemetry
           end
 
           def collection_name(text)
-            # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
-            pattern = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE\s+IF\s+EXISTS)\s+([\w\.]+)/i
-
-            text.scan(pattern).flatten[0]
+            text.scan(TABLE_NAME).flatten[0]
           end
 
           def client_attributes
