@@ -30,7 +30,7 @@ Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open
 - [Josef Šimánek](https://github.com/simi)
 - [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 
-*Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
+*Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).*
 
 Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-maintainers)):
 
@@ -44,7 +44,7 @@ Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
 - [Sam Handler](https://github.com/plantfansam), Shopify
 
-*Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#maintainer).*
+*Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).*
 
 ## Instrumentation Libraries
 

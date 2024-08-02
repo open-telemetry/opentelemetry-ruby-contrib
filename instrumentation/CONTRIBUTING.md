@@ -12,7 +12,7 @@ We welcome contributions from everyone. We want to make sure that you have a gre
 
 We have limited capacity to maintain instrumentation libraries, so we ask that you commit to maintaining the instrumentation library you contribute.
 
-In addition to the requirements to maintain at least [community member status](https://github.com/open-telemetry/community/blob/main/community-membership.md), contributing an instrumentation to this project requires the following:
+In addition to the requirements to maintain at least [community member status](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md), contributing an instrumentation to this project requires the following:
 
 1. Responding to issues and pull requests
 2. Performing timely code reviews and responding to issues
