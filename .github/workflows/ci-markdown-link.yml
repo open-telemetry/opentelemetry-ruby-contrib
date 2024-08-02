@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: "MarkDown Link Check"
+      - name: "Markdown Link Check"
         uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           config-file: '.markdown-link-check.json'
