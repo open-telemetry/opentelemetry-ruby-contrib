@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
 
       # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md"  --config .markdownlint.json
-      - name: "MarkDown Lint Check"
+      - name: "Markdown Lint Check"
         uses: DavidAnson/markdownlint-cli2-action@v16
         with:
           fix: false
