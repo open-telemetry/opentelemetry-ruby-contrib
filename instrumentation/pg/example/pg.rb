@@ -23,7 +23,7 @@ conn.exec('CREATE TABLE test_table (id SERIAL PRIMARY KEY, name VARCHAR(50), age
 # Insert data into the table
 conn.exec("INSERT INTO test_table (name, age) VALUES ('Peter', 60), ('Paul', 25), ('Mary', 45)")
 
-# Spans will be printed to your terminal when these statement execute:
+# Spans will be printed to your terminal when these statements execute:
 conn.exec('SELECT 1 AS a, 2 AS b, NULL AS c').each_row { |r| puts r.inspect }
 conn.exec('SELECT * FROM test_table').each_row { |r| puts r.inspect }
 
