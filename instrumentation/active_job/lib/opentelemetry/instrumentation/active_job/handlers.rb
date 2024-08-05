@@ -14,6 +14,8 @@ module OpenTelemetry
     module ActiveJob
       # Module that contains custom event handlers, which are used to generate spans per event
       module Handlers
+        EVENT_NAMESPACE = 'active_job'
+
         module_function
 
         # Subscribes Event Handlers to relevant ActiveJob notifications
@@ -57,7 +59,7 @@ module OpenTelemetry
           }
 
           @subscriptions = handlers_by_pattern.map do |key, handler|
-            ::ActiveSupport::Notifications.subscribe("#{key}.active_job", handler)
+            ::ActiveSupport::Notifications.subscribe("#{key}.#{EVENT_NAMESPACE}", handler)
           end
         end
 

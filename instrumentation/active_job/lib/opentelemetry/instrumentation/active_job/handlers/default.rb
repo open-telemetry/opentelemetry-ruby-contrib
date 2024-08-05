@@ -40,7 +40,10 @@ module OpenTelemetry
           # @param payload [Hash] containing job run information
           # @return [Hash] with the span and generated context tokens
           def start_span(name, _id, payload)
-            span = tracer.start_span(name, attributes: @mapper.call(payload))
+            job = payload.fetch(:job)
+            event_name = name.delete_suffix(".#{EVENT_NAMESPACE}")
+            span_name = span_name(job, event_name)
+            span = tracer.start_span(span_name, attributes: @mapper.call(payload))
             token = OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))
 
             { span: span, ctx_token: token }
@@ -105,6 +108,18 @@ module OpenTelemetry
 
           def tracer
             OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.tracer
+          end
+
+          private
+
+          def span_name(job, event_name)
+            prefix = if @config[:span_naming] == :job_class
+                       job.class.name
+                     else
+                       job.queue_name
+                     end
+
+            "#{prefix} #{event_name}"
           end
         end
       end
