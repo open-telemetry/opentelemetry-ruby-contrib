@@ -49,6 +49,6 @@
     },
     {
       "name": "from_with_join",
-      "sql": "SELECT columns FROM test_table JOIN table2 ON table1.column = table2.column"
+      "sql": "SELECT columns FROM test_table JOIN table2 ON test_table.column = table2.column"
     }
   ]
