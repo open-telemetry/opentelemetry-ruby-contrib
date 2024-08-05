@@ -361,6 +361,41 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
           _(custom_events).must_equal(true)
         end
       end
+
+      module CustomTrace
+        def execute_multiplex(multiplex:)
+          multiplex.context[:custom_trace_execute_multiplex_ran] = true
+          super
+        end
+
+        def execute_query(query:)
+          query.context[:custom_trace_execute_query_ran] = true
+          super
+        end
+      end
+
+      it 'works with other trace modules' do
+        [GraphQL::Schema, SomeOtherGraphQLAppSchema, SomeGraphQLAppSchema].each(&:_reset_tracer_for_testing)
+        instrumentation.instance_variable_set(:@installed, false)
+
+        custom_trace_schema = Class.new(GraphQL::Schema) do
+          query(Class.new(GraphQL::Schema::Object) do
+            graphql_name 'Query'
+            field :int, Integer, fallback_value: 5
+          end)
+
+          trace_with(CustomTrace)
+        end
+
+        instrumentation.install({ schemas: [custom_trace_schema] })
+        res = custom_trace_schema.execute('{ int }')
+        assert_equal 5, res['data']['int'], 'The query ran successfully'
+
+        assert res.context[:custom_trace_execute_query_ran], 'The custom execute_query hook ran'
+        assert res.query.multiplex.context[:custom_trace_execute_multiplex_ran], 'The custom execute_multiplex hook ran'
+
+        assert spans.find { |s| s.name == 'graphql.execute_query' }, 'OpenTelementry ran'
+      end
     end
   end
 end
