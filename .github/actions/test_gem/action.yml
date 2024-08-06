@@ -100,7 +100,7 @@ runs:
             echo "::group::🔎 Appraising ${i}"
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test
+            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test || exit
             echo "::endgroup::"
           done
         else
