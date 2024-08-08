@@ -13,7 +13,7 @@ module OpenTelemetry
 
         install do |_config|
           require_dependencies
-          patch
+          patch_activerecord
         end
 
         present do
@@ -30,27 +30,8 @@ module OpenTelemetry
           ::ActiveRecord.version
         end
 
-        def patch
-          # The original approach taken here was to patch each individual module of interest.
-          # However the patches are applied too late in some applications and as a result the
-          # Active Record models will not have the instrumentation patches applied.
-          # Prepending the ActiveRecord::Base class is more consistent in applying
-          # the patches regardless of initialization order.
-          #
-          # Modules to prepend to ActiveRecord::Base are still grouped by the source
-          # module that they are defined in.
-          # Example: Patches::PersistenceClassMethods refers to https://github.com/rails/rails/blob/v6.1.0/activerecord/lib/active_record/persistence.rb#L10
-          ::ActiveRecord::Base.prepend(Patches::Querying)
-          ::ActiveRecord::Base.prepend(Patches::Persistence)
-          ::ActiveRecord::Base.prepend(Patches::PersistenceClassMethods)
-          ::ActiveRecord::Base.prepend(Patches::PersistenceInsertClassMethods)
-          ::ActiveRecord::Base.prepend(Patches::TransactionsClassMethods)
-          ::ActiveRecord::Base.prepend(Patches::Validations)
-
-          ::ActiveRecord::Relation.prepend(Patches::RelationPersistence)
-        end
-
         def require_dependencies
+          require 'active_support/lazy_load_hooks'
           require_relative 'patches/querying'
           require_relative 'patches/persistence'
           require_relative 'patches/persistence_class_methods'
@@ -58,6 +39,23 @@ module OpenTelemetry
           require_relative 'patches/transactions_class_methods'
           require_relative 'patches/validations'
           require_relative 'patches/relation_persistence'
+        end
+
+        def patch_activerecord
+          ActiveSupport.on_load(:active_record) do
+            # Modules to prepend to ActiveRecord::Base are grouped by the source
+            # module that they are defined in as they are included into ActiveRecord::Base
+            # Example: Patches::PersistenceClassMethods refers to https://github.com/rails/rails/blob/v6.1.0/activerecord/lib/active_record/persistence.rb#L10
+            #   which is included into ActiveRecord::Base in https://github.com/rails/rails/blob/914caca2d31bd753f47f9168f2a375921d9e91cc/activerecord/lib/active_record/base.rb#L283
+            ::ActiveRecord::Base.prepend(Patches::Querying)
+            ::ActiveRecord::Base.prepend(Patches::Persistence)
+            ::ActiveRecord::Base.prepend(Patches::PersistenceClassMethods)
+            ::ActiveRecord::Base.prepend(Patches::PersistenceInsertClassMethods)
+            ::ActiveRecord::Base.prepend(Patches::TransactionsClassMethods)
+            ::ActiveRecord::Base.prepend(Patches::Validations)
+
+            ::ActiveRecord::Relation.prepend(Patches::RelationPersistence)
+          end
         end
       end
     end
