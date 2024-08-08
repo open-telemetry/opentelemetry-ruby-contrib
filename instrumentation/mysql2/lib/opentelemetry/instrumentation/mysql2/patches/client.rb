@@ -13,6 +13,10 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Mysql2::Client for instrumentation
         module Client
+
+          # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
+          TABLE_NAME = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE(?:\s+IF\s+EXISTS)?)\s+([\w\.]+)/i
+
           def query(sql, options = {})
             tracer.in_span(
               _otel_span_name(sql),
@@ -47,7 +51,7 @@ module OpenTelemetry
           end
 
           def _otel_span_attributes(sql)
-            attributes = _otel_client_attributes
+            attributes = _otel_client_attributes(sql)
             case config[:db_statement]
             when :include
               attributes[SemanticConventions::Trace::DB_STATEMENT] = sql
@@ -68,7 +72,7 @@ module OpenTelemetry
             (query_options[:database] || query_options[:dbname] || query_options[:db])&.to_s
           end
 
-          def _otel_client_attributes
+          def _otel_client_attributes(sql)
             # The client specific attributes can be found via the query_options instance variable
             # exposed on the mysql2 Client
             # https://github.com/brianmario/mysql2/blob/ca08712c6c8ea672df658bb25b931fea22555f27/lib/mysql2/client.rb#L25-L26
@@ -83,7 +87,16 @@ module OpenTelemetry
 
             attributes[SemanticConventions::Trace::DB_NAME] = _otel_database_name
             attributes[SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service]
+            attributes['db.collection.name'] = collection_name(sql)
+
             attributes
+          end
+
+          def collection_name(sql)
+            sql.scan(TABLE_NAME).flatten[0]
+
+          rescue StandardError
+            nil
           end
 
           def tracer

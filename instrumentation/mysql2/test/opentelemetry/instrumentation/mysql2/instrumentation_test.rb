@@ -15,9 +15,9 @@ require_relative '../../../../lib/opentelemetry/instrumentation/mysql2/patches/c
 # 1. Build the opentelemetry/opentelemetry-ruby-contrib image
 # - docker-compose build
 # 2. Bundle install
-# - docker-compose run ex-instrumentation-mysql2-test bundle install
+# - docker-compose run ex-instrumentation-mysql2-test bundle exec appraisal install
 # 3. Run test suite
-# - docker-compose run ex-instrumentation-mysql2-test bundle exec rake test
+# - docker-compose run ex-instrumentation-mysql2-test bundle exec appraisal rake test
 describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Mysql2::Instrumentation.instance }
   let(:exporter) { EXPORTER }
@@ -470,6 +470,25 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
               _(span.name).must_equal 'mysql'
             end
+          end
+        end
+      end
+
+      describe '#connection_name' do
+
+        def self.load_fixture
+          data = File.read("#{Dir.pwd}/test/fixtures/sql_table_name.json")
+          JSON.parse(data)
+        end
+
+        load_fixture.each do |test_case|
+          name = test_case['name']
+          query = test_case['sql']
+
+          it "returns the table name for #{name}" do
+            table_name = client.send(:collection_name, query)
+
+            expect(table_name).must_equal('test_table')
           end
         end
       end
