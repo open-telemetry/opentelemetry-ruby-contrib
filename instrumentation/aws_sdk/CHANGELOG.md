@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.5.4 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.5.3 / 2024-07-02
 
 * DOCS: Fix CHANGELOGs to reflect a past breaking change

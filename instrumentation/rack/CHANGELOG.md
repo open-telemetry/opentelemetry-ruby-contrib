@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.24.6 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.24.5 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints

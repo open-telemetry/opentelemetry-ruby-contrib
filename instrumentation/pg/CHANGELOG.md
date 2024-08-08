@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.27.4 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.27.3 / 2024-05-11
 
 * ADDED: Support prepend SQL comment for PG instrumentation
