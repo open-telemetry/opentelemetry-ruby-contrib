@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+## [0.7.1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-action_view/v0.7.0...opentelemetry-instrumentation-action_view/v0.7.1) (2024-08-08)
+
+
+### Features
+
+* Use Default Span Name Format ([#1039](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1039)) ([f999e70](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/f999e702430a55bc9f0fdf7b4748dc2f9b6341b8))
+
+
+### Reverts
+
+* "feat: Use Default Span Name Format ([#1039](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1039))" ([#1107](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1107)) ([7e5c376](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7e5c376cf8e3cfee28416b7854606a9ac3a6f964))
+
 ### v0.7.1 / 2024-07-23
 
 * DOCS: Add cspell to CI
