@@ -10,6 +10,10 @@ appraise 'pg-1.3' do
   gem 'pg', '~> 1.3.5'
 end
 
+appraise 'pg-1.4' do
+  gem 'pg', '~> 1.4.5'
+end
+
 appraise 'pg-latest' do
   gem 'pg'
 end
