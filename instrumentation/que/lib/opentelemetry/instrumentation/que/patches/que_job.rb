@@ -19,6 +19,10 @@ module OpenTelemetry
           # Module to prepend to Que singleton class
           module ClassMethods
             def enqueue(*args, job_options: {}, **arg_opts)
+              # In Que version 2.1.0 `bulk_enqueue` was introduced.
+              # In that case, the span is created inside the `bulk_enqueue` method.
+              return super(*args, **arg_opts) if gem_version >= Gem::Version.new('2.1.0') && Thread.current[:que_jobs_to_bulk_insert]
+
               tracer = Que::Instrumentation.instance.tracer
               otel_config = Que::Instrumentation.instance.config
 
@@ -43,19 +47,8 @@ module OpenTelemetry
                   OpenTelemetry.propagation.inject(tags, setter: TagSetter)
                 end
 
-                # In Que version 2.1.0 `bulk_enqueue` was introduced and in order
-                # for it to work, we must pass `job_options` to `bulk_enqueue` instead of enqueue.
-                if gem_version >= Gem::Version.new('2.1.0') && Thread.current[:que_jobs_to_bulk_insert]
-                  Thread.current[:que_jobs_to_bulk_insert][:job_options] = Thread.current[:que_jobs_to_bulk_insert][:job_options]&.merge(tags: tags) do |_, a, b|
-                    a.is_a?(Array) && b.is_a?(Array) ? a.concat(b) : b
-                  end
-
-                  job = super(*args, **arg_opts)
-                  job_attrs = Thread.current[:que_jobs_to_bulk_insert][:jobs_attrs].last
-                else
-                  job = super(*args, job_options: job_options.merge(tags: tags), **arg_opts)
-                  job_attrs = job.que_attrs
-                end
+                job = super(*args, job_options: job_options.merge(tags: tags), **arg_opts)
+                job_attrs = job.que_attrs
 
                 span.name = "#{job_attrs[:job_class]} publish"
                 span.add_attributes(QueJob.job_attributes(job_attrs))
@@ -66,6 +59,32 @@ module OpenTelemetry
 
             def gem_version
               @gem_version ||= Gem.loaded_specs['que'].version
+            end
+
+            if Gem.loaded_specs['que'].version >= Gem::Version.new('2.1.0')
+              def bulk_enqueue(**_kwargs, &block)
+                tracer = Que::Instrumentation.instance.tracer
+                otel_config = Que::Instrumentation.instance.config
+
+                tracer.in_span('publish', kind: :producer) do |span|
+                  super do
+                    yield
+
+                    job_attrs = Thread.current[:que_jobs_to_bulk_insert][:jobs_attrs]
+
+                    unless job_attrs.empty?
+                      span.name = "#{job_attrs.first[:job_class]} publish"
+                      span.add_attributes(QueJob.job_attributes(job_attrs.first))
+                    end
+
+                    if otel_config[:propagation_style] != :none
+                      job_options = Thread.current[:que_jobs_to_bulk_insert][:job_options]
+                      job_options[:tags] ||= []
+                      OpenTelemetry.propagation.inject(job_options[:tags], setter: TagSetter)
+                    end
+                  end
+                end
+              end
             end
           end
 
