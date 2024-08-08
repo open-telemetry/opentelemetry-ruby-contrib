@@ -304,7 +304,7 @@ module OpenTelemetry
           h[option_name] = option[:default]
         end
 
-        dropped_config_keys = user_config.keys - validated_config.keys
+        dropped_config_keys = user_config.keys - validated_config.keys - [:enabled]
         OpenTelemetry.logger.warn("Instrumentation #{name} ignored the following unknown configuration options #{dropped_config_keys}") unless dropped_config_keys.empty?
 
         validated_config

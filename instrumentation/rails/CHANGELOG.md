@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.31.1 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.31.0 / 2024-07-02
 
 * DOCS: Fix CHANGELOGs to reflect a past breaking change

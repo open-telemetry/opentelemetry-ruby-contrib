@@ -60,7 +60,7 @@ This gem can be used with any OpenTelemetry SDK implementation. This can be the 
 
 Install the gem using:
 
-```
+```console
 gem install opentelemetry-propagator-ottrace
 ```
 
@@ -68,7 +68,7 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-propagator-ottrac
 
 Configure your application to use this propagator by setting the following [environment variable][envars]:
 
-```
+```console
 OTEL_PROPAGATORS=ottrace
 ```
 
@@ -76,7 +76,7 @@ OTEL_PROPAGATORS=ottrace
 
 The `opentelemetry-propagator-ottrace` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
@@ -88,8 +88,9 @@ The `opentelemetry-propagator-ottrace` gem is distributed under the Apache 2.0 l
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
+[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [ottrace-spec]: https://github.com/opentracing/specification/blob/master/rfc/trace_identifiers.md
 [rfc7230-url]: https://tools.ietf.org/html/rfc7230#section-3.2
 [fields-spec-url]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/context/api-propagators.md#fields
-[envars]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/sdk-environment-variables.md#general-sdk-configuration
+[envars]: https://github.com/open-telemetry/opentelemetry-specification/blob/v1.20.0/specification/sdk-environment-variables.md#general-sdk-configuration

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.27.2 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.27.1 / 2024-04-30
 
 * FIXED: Bundler conflict warnings

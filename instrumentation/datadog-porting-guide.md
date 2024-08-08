@@ -27,7 +27,7 @@ bash-5.0$ ruby trace_demonstration.rb
 
 * Rakefile
 * `tests/test_helper.rb`
-* Integrate rubocop (see https://github.com/open-telemetry/opentelemetry-ruby/pull/172#pullrequestreview-349183775)
+* Integrate rubocop (see <https://github.com/open-telemetry/opentelemetry-ruby/pull/172#pullrequestreview-349183775>)
 
 ## Examples and template instrumentation
 
@@ -52,14 +52,14 @@ bash-5.0$ ruby trace_demonstration.rb
 
 ### otel: span.name (dd-trace-rb: 'resource')
 
-* Prefer "low-cardinality" names (see https://github.com/open-telemetry/opentelemetry-specification/pull/416)
+* Prefer "low-cardinality" names (see <https://github.com/open-telemetry/opentelemetry-specification/pull/416>)
 
 ### otel: span.attributes (dd-trace-rb: 'tags')
 
 * `Span` attribute keys should be strings, *not* symbols
 * `Span` attribute values should be strings, *not* symbols
 * Prefer to populate span attributes via method arguments (e.g., `tracer.in_span(attributes: ...`) instead of `span.set_attribute`
-* Some `Span` attribute naming is based on [semantic conventions](https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md), for example [HTTP semantic conventions](https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md)
+* Some `Span` attribute naming is based on [semantic conventions](https://github.com/open-telemetry/opentelemetry-specification/blob/0.3/specification/data-semantic-conventions.md), for example [HTTP semantic conventions](https://github.com/open-telemetry/opentelemetry-specification/blob/0.3/specification/data-http.md)
   * When opening a PR, it would be useful to note which attributes come from which semantic conventions, and which ones could not be found
 * `Span` `:kind` defaults to `:internal` (other available options include `:client` or `:server`)
 
@@ -70,6 +70,7 @@ bash-5.0$ ruby trace_demonstration.rb
 ### Runtime performance considerations
 
 Watch for "low hanging fruit" performance improvements including:
+
 * reduce object allocations - move to a constant, or cache values that would be generated repeatedly
 * look for "easy wins" vs. "complete redesigns"
 

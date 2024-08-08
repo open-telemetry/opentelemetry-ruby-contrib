@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-rdkafka
 
+### v0.4.8 / 2024-07-23
+
+* DOCS: Link to rdkafka example
+* DOCS: Add cspell to CI
+
 ### v0.4.7 / 2024-07-02
 
 * DOCS: Fix CHANGELOGs to reflect a past breaking change
