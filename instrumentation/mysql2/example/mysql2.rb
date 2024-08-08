@@ -21,3 +21,6 @@ client = Mysql2::Client.new(
 client.query("SELECT * from information_schema.INNODB_TABLES; /**DÃ©**/").each do |row|
   puts row
 end
+
+client.query('CREATE TABLE test_table (id SERIAL PRIMARY KEY, name VARCHAR(50), age INT)')
+client.query('DROP TABLE test_table')

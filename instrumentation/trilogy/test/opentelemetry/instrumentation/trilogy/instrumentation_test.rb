@@ -9,6 +9,16 @@ require 'test_helper'
 require_relative '../../../../lib/opentelemetry/instrumentation/trilogy'
 require_relative '../../../../lib/opentelemetry/instrumentation/trilogy/patches/client'
 
+# This test suite requires a running mysql container and dedicated test container. We can use the same
+# docker-compose file as the mysql2 instrumentation tests. The test container should have the mysql client.
+# To run tests locally:
+# 1. Build the opentelemetry/opentelemetry-ruby-contrib image
+# - docker-compose build
+# 2. Open a bash shell in the test container and cd to the trilogy directory
+# - docker-compose run ex-instrumentation-mysql2-test bash -c 'cd ../trilogy && bash'
+# 3. Bundle install and run tests with the Appraisals gem
+# - bundle exec appraisal install && bundle exec appraisal rake test
+
 describe OpenTelemetry::Instrumentation::Trilogy do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance }
   let(:exporter) { EXPORTER }
@@ -623,6 +633,24 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
             _(span.name).must_equal 'mysql'
           end
+        end
+      end
+    end
+
+    describe '#connection_name' do
+      def self.load_fixture
+        data = File.read("#{Dir.pwd}/test/fixtures/sql_table_name.json")
+        JSON.parse(data)
+      end
+
+      load_fixture.each do |test_case|
+        name = test_case['name']
+        query = test_case['sql']
+
+        it "returns the table name for #{name}" do
+          table_name = client.send(:collection_name, query)
+
+          expect(table_name).must_equal('test_table')
         end
       end
     end
