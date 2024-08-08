@@ -16,8 +16,7 @@ module OpenTelemetry
         module Connection # rubocop:disable Metrics/ModuleLength
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args, &block|
-              span_name, attrs = span_attrs(:query, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
+              within_span(:query, args) do
                 if block
                   block.call(super(*args))
                 else
@@ -29,8 +28,7 @@ module OpenTelemetry
 
           PG::Constants::PREPARE_ISH_METHODS.each do |method|
             define_method method do |*args|
-              span_name, attrs = span_attrs(:prepare, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
+              within_span(:prepare, args) do
                 super(*args)
               end
             end
@@ -38,8 +36,7 @@ module OpenTelemetry
 
           PG::Constants::EXEC_PREPARED_ISH_METHODS.each do |method|
             define_method method do |*args, &block|
-              span_name, attrs = span_attrs(:execute, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
+              within_span(:execute, args) do
                 if block
                   block.call(super(*args))
                 else
@@ -50,6 +47,16 @@ module OpenTelemetry
           end
 
           private
+
+          def within_span(kind, args, &block)
+            span_name, attrs = span_attrs(kind, *args)
+
+            if config[:untraced_commands].include?(attrs['db.operation'])
+              yield
+            else
+              tracer.in_span(span_name, attributes: attrs, kind: :client, &block)
+            end
+          end
 
           def obfuscate_sql(sql)
             return sql unless config[:db_statement] == :obfuscate
