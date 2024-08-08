@@ -133,6 +133,9 @@ module OpenTelemetry
 
           def collection_name(text)
             text.scan(TABLE_NAME).flatten[0]
+
+          rescue
+            return nil
           end
 
           def client_attributes
