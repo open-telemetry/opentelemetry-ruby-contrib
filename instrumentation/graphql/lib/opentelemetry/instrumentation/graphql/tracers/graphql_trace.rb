@@ -60,15 +60,15 @@ module OpenTelemetry
           end
 
           def execute_multiplex(multiplex:, &block)
-            tracer.in_span('graphql.execute_multiplex', &block)
+            tracer.in_span('graphql.execute_multiplex') { super }
           end
 
           def lex(query_string:, &block)
-            tracer.in_span('graphql.lex', &block)
+            tracer.in_span('graphql.lex') { super }
           end
 
           def parse(query_string:, &block)
-            tracer.in_span('graphql.parse', &block)
+            tracer.in_span('graphql.parse') { super }
           end
 
           def validate(query:, validate:, &block)
@@ -89,11 +89,11 @@ module OpenTelemetry
           end
 
           def analyze_multiplex(multiplex:, &block)
-            tracer.in_span('graphql.analyze_multiplex', &block)
+            tracer.in_span('graphql.analyze_multiplex') { super }
           end
 
           def analyze_query(query:, &block)
-            tracer.in_span('graphql.analyze_query', &block)
+            tracer.in_span('graphql.analyze_query') { super }
           end
 
           def execute_query(query:, &block)
@@ -102,11 +102,13 @@ module OpenTelemetry
             attributes['graphql.operation.type'] = query.selected_operation.operation_type
             attributes['graphql.document'] = query.query_string
 
-            tracer.in_span('graphql.execute_query', attributes: attributes, &block)
+            tracer.in_span('graphql.execute_query', attributes: attributes) do
+              super
+            end
           end
 
           def execute_query_lazy(query:, multiplex:, &block)
-            tracer.in_span('graphql.execute_query_lazy', &block)
+            tracer.in_span('graphql.execute_query_lazy') { super }
           end
 
           def execute_field(field:, query:, ast_node:, arguments:, object:, &block)
@@ -133,7 +135,7 @@ module OpenTelemetry
 
             attributes = @_otel_type_attrs_cache[type]
 
-            tracer.in_span(platform_key, attributes: attributes, &block)
+            tracer.in_span(platform_key, attributes: attributes) { super }
           end
 
           def authorized_lazy(query:, type:, object:, &block)
@@ -141,19 +143,19 @@ module OpenTelemetry
             return super unless platform_key
 
             attributes = @_otel_lazy_type_attrs_cache[type]
-            tracer.in_span(platform_key, attributes: attributes, &block)
+            tracer.in_span(platform_key, attributes: attributes) { super }
           end
 
           def resolve_type(query:, type:, object:, &block)
             platform_key = @_otel_resolve_type_key_cache[type]
             attributes = @_otel_type_attrs_cache[type]
-            tracer.in_span(platform_key, attributes: attributes, &block)
+            tracer.in_span(platform_key, attributes: attributes) { super }
           end
 
           def resolve_type_lazy(query:, type:, object:, &block)
             platform_key = @_otel_resolve_type_key_cache[type]
             attributes = @_otel_lazy_type_attrs_cache[type]
-            tracer.in_span(platform_key, attributes: attributes, &block)
+            tracer.in_span(platform_key, attributes: attributes) { super }
           end
 
           private
