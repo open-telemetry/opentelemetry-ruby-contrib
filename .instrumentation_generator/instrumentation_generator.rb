@@ -67,6 +67,19 @@ class InstrumentationGenerator < Thor::Group
     insert_into_file("#{instrumentation_all_path}/lib/opentelemetry/instrumentation/all.rb", all_rb_text, after: "# SPDX-License-Identifier: Apache-2.0\n")
   end
 
+  def update_ci_workflow
+    ci_file = '.github/workflows/ci-instrumentation.yml'
+    dependabot_file = '.github/dependabot.yml'
+
+    # Update the CI workflow file
+    insert_into_file(ci_file, "          - #{instrumentation_name}\n", after: "        gem:\n")
+
+    # Update the Dependabot configuration file
+    insert_into_file(dependabot_file, "  - package-ecosystem: 'bundler'\n    directory: '/instrumentation/#{instrumentation_name}'\n", after: "updates:\n")
+
+    puts "Updated #{ci_file} and #{dependabot_file} successfully."
+  end
+
   private
 
   def opentelemetry_version

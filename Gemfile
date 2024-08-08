@@ -9,3 +9,5 @@ source 'https://rubygems.org'
 gem 'rake', '~> 13.0'
 gem 'rubocop', '~> 1.64.0'
 gem 'rubocop-performance', '~> 1.21.0'
+gem 'minitest', '~> 5.14'
+gem 'mocha', '~> 1.12', require: false
