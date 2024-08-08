@@ -94,7 +94,6 @@ module OpenTelemetry
 
           def collection_name(sql)
             sql.scan(TABLE_NAME).flatten[0]
-
           rescue StandardError
             nil
           end
