@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-# 1.2.3 appears to be the most popular version at RubyGems.org
-appraise 'pg-1.2' do
-  gem 'pg', '~> 1.2.3'
-end
-
-# 1.3.0 significantly changed connecting and the handling of connection strings
 appraise 'pg-1.3' do
   gem 'pg', '~> 1.3.5'
 end
