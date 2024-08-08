@@ -475,7 +475,6 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       end
 
       describe '#connection_name' do
-
         def self.load_fixture
           data = File.read("#{Dir.pwd}/test/fixtures/sql_table_name.json")
           JSON.parse(data)

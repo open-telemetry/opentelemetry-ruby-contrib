@@ -13,7 +13,6 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Trilogy for instrumentation
         module Client
-
           # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
           TABLE_NAME = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE(?:\s+IF\s+EXISTS)?)\s+([\w\.]+)/i
 
