@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-pg
 
+## [0.27.4](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-pg/v0.27.3...opentelemetry-instrumentation-pg/v0.27.4) (2024-08-08)
+
+
+### Bug Fixes
+
+* **pg:** update versions to be tested (includes drop support for pg 1.2) ([#1108](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1108)) ([19c86ca](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/19c86ca72ae338fab29311c8a6fdcdac4410e636))
+
 ### v0.27.4 / 2024-07-23
 
 * DOCS: Add cspell to CI
