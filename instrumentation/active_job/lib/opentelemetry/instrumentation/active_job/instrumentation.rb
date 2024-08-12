@@ -63,14 +63,17 @@ module OpenTelemetry
         end
 
         def require_dependencies
+          require 'active_support/lazy_load_hooks'
           require_relative 'patches/base'
           require_relative 'handlers'
         end
 
         def patch_activejob
-          ::ActiveJob::Base.prepend(Patches::Base) unless ::ActiveJob::Base <= Patches::Base
-
           Handlers.subscribe
+
+          ActiveSupport.on_load(:active_job) do
+            ::ActiveJob::Base.prepend(Patches::Base) unless ::ActiveJob::Base <= Patches::Base
+          end
         end
       end
     end
