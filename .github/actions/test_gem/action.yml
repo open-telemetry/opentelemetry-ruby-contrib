@@ -82,6 +82,13 @@ runs:
         ruby-version: "${{ inputs.ruby }}"
         bundler:  "latest"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
+    # Perms workaround. See https://github.com/actions/runner-images/issues/10215
+    - name: Fix GEM_HOME permissions on GitHub Actions Runner
+      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
+      shell: bash
+      run: |
+        # 🛠️😭 Fix GEM_HOME permissions 😭🛠️
+        chmod -R o-w $(gem env home)
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
@@ -100,7 +107,7 @@ runs:
             echo "::group::🔎 Appraising ${i}"
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test
+            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test || exit
             echo "::endgroup::"
           done
         else

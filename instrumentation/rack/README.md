@@ -6,7 +6,7 @@ The Rack instrumentation is a community-maintained instrumentation for the [Rack
 
 Install the gem using:
 
-```
+```console
 gem install opentelemetry-instrumentation-rack
 ```
 
@@ -67,7 +67,7 @@ By default we will set the rack span name to match the format "HTTP #{method}" (
 
 We surface a hook to easily retrieve the rack span within the context of a request so that you can add information to or rename your server span.
 
-This is how the rails controller instrumentation is able to rename the span names to match the controller and action that process the request. See https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_pack/lib/opentelemetry/instrumentation/action_pack/patches/action_controller/metal.rb#L15-L16 for an example.
+This is how the rails controller instrumentation is able to rename the span names to match the controller and action that process the request. See <https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/opentelemetry-instrumentation-action_pack/v0.9.0/instrumentation/action_pack/lib/opentelemetry/instrumentation/action_pack/handlers/action_controller.rb#L29> for an example.
 
 ### High cardinality example
 
@@ -87,7 +87,7 @@ Example usage can be seen in the `./example/trace_demonstration.rb` file [here](
 
 The `opentelemetry-instrumentation-rack` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
@@ -99,4 +99,5 @@ The `opentelemetry-instrumentation-rack` gem is distributed under the Apache 2.0
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
+[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
