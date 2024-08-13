@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module PG
-      VERSION = '0.27.4'
+      VERSION = '0.27.5'
     end
   end
 end

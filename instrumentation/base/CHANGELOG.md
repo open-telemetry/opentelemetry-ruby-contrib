@@ -66,3 +66,7 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
+
+### v0.22.6 / 2024-08-13
+
+* FIXED: Fix the issue of wrong log msg

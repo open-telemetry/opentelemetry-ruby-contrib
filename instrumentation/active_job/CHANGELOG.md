@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.7.5 / 2024-08-13
+
+* FIXED: Use Active Support Lazy Load Hooks to avoid prematurely initializing ActiveRecord::Base and ActiveJob::Base
+
 ### v0.7.4 / 2024-07-30
 
 * FIXED: Honour dynamic changes in configuration

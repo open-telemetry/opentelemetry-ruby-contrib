@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.31.2 / 2024-08-13
+
+* FIXED: Rails instrumentation should load ActiveJob instrumentation
+
 ### v0.31.1 / 2024-07-23
 
 * DOCS: Add cspell to CI

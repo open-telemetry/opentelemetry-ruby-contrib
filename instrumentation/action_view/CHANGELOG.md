@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.8.0 / 2024-08-13
+
+* ADDED: Use Default Span Name Format
+
 ### v0.7.1 / 2024-07-23
 
 * DOCS: Add cspell to CI
