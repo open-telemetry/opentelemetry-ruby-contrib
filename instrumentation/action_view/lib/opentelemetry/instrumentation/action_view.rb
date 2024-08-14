@@ -9,7 +9,7 @@ require 'opentelemetry-instrumentation-base'
 
 module OpenTelemetry
   module Instrumentation
-    # (see OpenTelemetry::Instrumentation::ActionView::Instrumentation)
+    # Contains the OpenTelemetry instrumentation for the ActionView gem
     module ActionView
     end
   end
