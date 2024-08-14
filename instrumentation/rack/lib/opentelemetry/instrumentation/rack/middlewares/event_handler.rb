@@ -158,6 +158,43 @@ module OpenTelemetry
             false
           end
 
+          def record_http_server_request_duration_metric(span)
+            return unless metrics_enabled? && http_server_duration_histogram
+            # find span duration
+            # end - start / a billion to convert nanoseconds to seconds
+            duration = (span.end_timestamp - span.start_timestamp) / 10**9
+            # Create attributes
+            #
+            attrs = {}
+            # pattern below goes
+            # stable convention
+            # current span convention
+
+            # attrs['http.request.method']
+            attrs['http.method'] = span.attributes['http.method']
+
+            # attrs['url.scheme']
+            attrs['http.scheme'] = span.attributes['http.scheme']
+
+            # same in stable semconv
+            attrs['http.route'] = span.attributes['http.route']
+
+            # attrs['http.response.status.code']
+            attrs['http.status_code'] = span.attributes['http.status_code']
+
+            # attrs['server.address'] ???
+            # attrs['server.port'] ???
+            # span includes host and port
+            attrs['http.host'] = span.attributes['http.host']
+
+            # attrs not currently in span payload
+            # attrs['network.protocol.version']
+            # attrs['network.protocol.name']
+            attrs['error.type'] = span.status.description if span.status.code == OpenTelemetry::Trace::Status::ERROR
+
+            http_server_duration_histogram.record(duration, attributes: attrs)
+          end
+
           # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
           #
           # recommendation: span.name(s) should be low-cardinality (e.g.,
@@ -203,6 +240,7 @@ module OpenTelemetry
             token, span = request.env[OTEL_TOKEN_AND_SPAN]
             span.finish
             OpenTelemetry::Context.detach(token)
+            record_http_server_request_duration_metric(span)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
@@ -245,6 +283,26 @@ module OpenTelemetry
 
           def tracer
             OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.tracer
+          end
+
+          def metrics_enabled?
+            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.metrics_enabled?
+          end
+
+          def meter
+            # warn if no meter?
+            return @meter if defined?(@meter)
+            @meter = metrics_enabled? ? OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.meter : nil
+          end
+
+          def http_server_duration_histogram
+            # only want to make the view and the histogram once
+            # OpenTelemetry.meter_provider.add_view('http.server.request.duration', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(boundaries: [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]))
+            # Meter might be nil if metrics API isn't installed or isn't configured to send data
+            return @http_server_duration_histogram if defined?(@http_server_duration_histogram)
+
+            @http_server_duration_histogram = nil unless meter
+            @http_server_duration_histogram = meter.create_histogram('http.server.request.duration', unit: 's', description: 'Duration of HTTP server requests.')
           end
 
           def config
