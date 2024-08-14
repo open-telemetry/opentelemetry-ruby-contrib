@@ -1,6 +1,6 @@
 # Release History: opentelemetry-instrumentation-rails
 
-### v0.31.2 / 2024-08-13
+### v0.31.2 / 2024-08-14
 
 * FIXED: Rails instrumentation should load ActiveJob instrumentation
 
