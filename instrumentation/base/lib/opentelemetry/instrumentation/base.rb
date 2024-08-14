@@ -214,9 +214,7 @@ module OpenTelemetry
         # We need the API as a dependency to call metrics
         # But, we can check for the SDK before we do any metrics-y things
         # might be able to shore this up to run only on init to preven re-eval
-        result = defined?(OpenTelemetry::Metrics) && @config[:send_metrics]
-        puts "***** metrics_enabled? result = #{result.inspect}"
-        result
+        defined?(OpenTelemetry::Metrics) && @config[:send_metrics]
       end
 
       # Install instrumentation with the given config. The present? and compatible?
