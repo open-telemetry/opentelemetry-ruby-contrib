@@ -1,8 +1,8 @@
 # Release History: opentelemetry-instrumentation-action_view
 
-### v0.8.0 / 2024-08-15
+### v0.7.2 / 2024-08-15
 
-* ADDED: Use Default Span Name Format
+* (No Significant Changes)
 
 ### v0.7.1 / 2024-07-23
 
