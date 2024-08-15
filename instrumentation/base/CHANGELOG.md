@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.22.6 / 2024-08-15
+
+* FIXED: Fix the issue of wrong log msg
+
 ### v0.22.5 / 2024-07-23
 
 * DOCS: Add cspell to CI
