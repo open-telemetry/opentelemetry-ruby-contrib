@@ -206,15 +206,17 @@ module OpenTelemetry
         @options = options
         @tracer = OpenTelemetry::Trace::Tracer.new
         # Do we want to conditionally create a meter overall?
-        @meter = OpenTelemetry::Metrics::Meter.new if metrics_enabled?
+        # @meter = OpenTelemetry::Metrics::Meter.new if metrics_enabled?
       end
       # rubocop:enable Metrics/ParameterLists
 
       def metrics_enabled?
-        # We need the API as a dependency to call metrics
-        # But, we can check for the SDK before we do any metrics-y things
-        # might be able to shore this up to run only on init to preven re-eval
-        defined?(OpenTelemetry::Metrics) && @config[:send_metrics]
+        # We need the API as a dependency to call metrics-y things in instrumentation
+        # However, the user needs to install it separately from base, because we
+        # do not want base to rely on experimental code
+        return @metrics_enabled if defined?(@metrics_enabled)
+
+        @metrics_enabled ||= defined?(OpenTelemetry::Metrics) && @config[:send_metrics]
       end
 
       # Install instrumentation with the given config. The present? and compatible?
@@ -224,6 +226,7 @@ module OpenTelemetry
       # @param [Hash] config The config for this instrumentation
       def install(config = {})
         return true if installed?
+
         @config = config_options(config)
         return false unless installable?(config)
 

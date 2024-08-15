@@ -160,9 +160,10 @@ module OpenTelemetry
 
           def record_http_server_request_duration_metric(span)
             return unless metrics_enabled? && http_server_duration_histogram
+
             # find span duration
             # end - start / a billion to convert nanoseconds to seconds
-            duration = (span.end_timestamp - span.start_timestamp) / 10**9
+            duration = (span.end_timestamp - span.start_timestamp) / (10**9)
             # Create attributes
             #
             attrs = {}
@@ -292,12 +293,18 @@ module OpenTelemetry
           def meter
             # warn if no meter?
             return @meter if defined?(@meter)
+
             @meter = metrics_enabled? ? OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.meter : nil
           end
 
           def http_server_duration_histogram
             # only want to make the view and the histogram once
-            # OpenTelemetry.meter_provider.add_view('http.server.request.duration', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(boundaries: [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]))
+            # OpenTelemetry.meter_provider.add_view(
+            #   'http.server.request.duration',
+            #   aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(
+            #     boundaries: [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]
+            #     )
+            #   )
             # Meter might be nil if metrics API isn't installed or isn't configured to send data
             return @http_server_duration_histogram if defined?(@http_server_duration_histogram)
 
