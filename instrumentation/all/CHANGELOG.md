@@ -2,7 +2,7 @@
 
 ### v0.63.0 / 2024-08-15
 
-* (No significant changes)
+* ADDED: Collect pg db.collection_name attribute
 
 ### v0.62.1 / 2024-07-23
 
