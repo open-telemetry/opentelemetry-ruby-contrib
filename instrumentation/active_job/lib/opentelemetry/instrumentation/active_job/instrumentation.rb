@@ -71,7 +71,7 @@ module OpenTelemetry
         def patch_activejob
           Handlers.subscribe
 
-          ActiveSupport.on_load(:active_job) do
+          ::ActiveSupport.on_load(:active_job) do
             ::ActiveJob::Base.prepend(Patches::Base) unless ::ActiveJob::Base <= Patches::Base
           end
         end
