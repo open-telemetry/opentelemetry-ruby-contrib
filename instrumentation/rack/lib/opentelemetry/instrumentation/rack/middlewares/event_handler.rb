@@ -163,7 +163,7 @@ module OpenTelemetry
 
             # find span duration
             # end - start / a billion to convert nanoseconds to seconds
-            duration = (span.end_timestamp - span.start_timestamp) / (10**9)
+            duration = (span.end_timestamp - span.start_timestamp) / Float(10**9)
             # Create attributes
             #
             attrs = {}
