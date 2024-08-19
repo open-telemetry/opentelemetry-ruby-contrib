@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.7.4 / 2024-08-19
+
+* FIXED: Use ActiveSupport from top-level namespace
+
 ### v0.7.3 / 2024-08-15
 
 * FIXED: Use Active Support Lazy Load Hooks to avoid prematurely initializing ActiveRecord::Base and ActiveJob::Base
