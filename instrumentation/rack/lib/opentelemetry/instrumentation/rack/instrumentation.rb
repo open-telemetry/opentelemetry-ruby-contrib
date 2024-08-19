@@ -30,6 +30,7 @@ module OpenTelemetry
         option :response_propagators,     default: [],    validate: :array
         # This option is only valid for applications using Rack 2.0 or greater
         option :use_rack_events,          default: true,  validate: :boolean
+        # TODO: This option currently exclusively uses the event handler, should we support old and new Rack?
         option :send_metrics,             default: false, validate: :boolean
         # Temporary Helper for Sinatra and ActionPack middleware to use during installation
         #
@@ -47,10 +48,16 @@ module OpenTelemetry
           end
         end
 
+        # def metrics_enabled?
+        #   super
+        #   # other conditions unique to Rack? Like Events also being available?
+        # end
+
         private
 
         def require_dependencies
           require_relative 'middlewares/event_handler' if defined?(::Rack::Events)
+          require_relative 'middlewares/metrics_patch' if metrics_enabled?
           require_relative 'middlewares/tracer_middleware'
         end
 

@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# TODO: Maybe add an env var for globally enabling metrics as second switch?
+require_relative 'metrics_patch' if defined?(OpenTelemetry::Metrics)
+
 module OpenTelemetry
   module Instrumentation
     # The Base class holds all metadata and configuration for an
@@ -205,19 +208,12 @@ module OpenTelemetry
         @installed = false
         @options = options
         @tracer = OpenTelemetry::Trace::Tracer.new
-        # Do we want to conditionally create a meter overall?
-        # @meter = OpenTelemetry::Metrics::Meter.new if metrics_enabled?
+        create_meter
       end
       # rubocop:enable Metrics/ParameterLists
 
-      def metrics_enabled?
-        # We need the API as a dependency to call metrics-y things in instrumentation
-        # However, the user needs to install it separately from base, because we
-        # do not want base to rely on experimental code
-        return @metrics_enabled if defined?(@metrics_enabled)
-
-        @metrics_enabled ||= defined?(OpenTelemetry::Metrics) && @config[:send_metrics]
-      end
+      # no-op, overridden in metrics patch
+      def create_meter; end
 
       # Install instrumentation with the given config. The present? and compatible?
       # will be run first, and install will return false if either fail. Will
@@ -232,8 +228,16 @@ module OpenTelemetry
 
         instance_exec(@config, &@install_blk)
         @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
-        @meter = OpenTelemetry.meter_provider.meter(name, version: version) if metrics_enabled?
+        install_meter
         @installed = true
+      end
+
+      # no-op, defined in metrics patch to use if metrics installed
+      def install_meter; end
+
+      # Metrics should not be enabled if we're trying to load them directly from base
+      def metrics_enabled?
+        false
       end
 
       # Whether or not this instrumentation is installable in the current process. Will
