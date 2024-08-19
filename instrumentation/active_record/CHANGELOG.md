@@ -2,7 +2,7 @@
 
 ### v0.7.4 / 2024-08-19
 
-* FIXED: Use ActiveSupport from top-level namespace
+* FIXED: Use ActiveSupport from top-level namespace (NoMethodError on_load) 
 
 ### v0.7.3 / 2024-08-15
 
