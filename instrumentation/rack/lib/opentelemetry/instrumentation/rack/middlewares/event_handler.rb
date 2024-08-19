@@ -158,6 +158,8 @@ module OpenTelemetry
             false
           end
 
+          # TODO: This one is long because I wanted to keep the stable semantic
+          # conventions, and (for now) emit attributes that matched the span
           def record_http_server_request_duration_metric(span)
             return unless metrics_enabled? && http_server_duration_histogram
 
@@ -169,7 +171,7 @@ module OpenTelemetry
             attrs = {}
             # pattern below goes
             # stable convention
-            # current span convention
+            # attribute that matches rack spans (old convention)
 
             # attrs['http.request.method']
             attrs['http.method'] = span.attributes['http.method']
@@ -298,14 +300,8 @@ module OpenTelemetry
           end
 
           def http_server_duration_histogram
-            # only want to make the view and the histogram once
-            # OpenTelemetry.meter_provider.add_view(
-            #   'http.server.request.duration',
-            #   aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(
-            #     boundaries: [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]
-            #     )
-            #   )
-            # Meter might be nil if metrics API isn't installed or isn't configured to send data
+            # Only want to make the histogram once
+            # Need to implement advice so we can update the buckets to match seconds instead of ms
             return @http_server_duration_histogram if defined?(@http_server_duration_histogram)
 
             @http_server_duration_histogram = nil unless meter
