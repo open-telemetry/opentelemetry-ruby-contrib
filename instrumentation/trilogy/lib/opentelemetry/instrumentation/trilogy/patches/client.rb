@@ -79,7 +79,8 @@ module OpenTelemetry
             attributes['db.instance.id'] = @connected_host unless @connected_host.nil?
 
             if sql
-              attributes['db.collection.name'] = collection_name(sql)
+              collection_name = collection_name(sql)
+              attributes['db.collection.name'] = collection_name if collection_name
 
               case config[:db_statement]
               when :obfuscate
@@ -89,7 +90,7 @@ module OpenTelemetry
                 attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] = sql
               end
             end
-            attributes.compact!
+
             attributes
           end
 
