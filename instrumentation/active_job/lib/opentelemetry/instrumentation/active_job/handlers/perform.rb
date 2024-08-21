@@ -27,7 +27,7 @@ module OpenTelemetry
             # TODO: Refactor into a propagation strategy
             propagation_style = @config[:propagation_style]
             if propagation_style == :child
-              span = tracer.start_span(span_name, kind: :consumer, attributes: @mapper.call(payload))
+              span = tracer.start_span(span_name, with_parent: parent_context, kind: :consumer, attributes: @mapper.call(payload))
             else
               span_context = OpenTelemetry::Trace.current_span(parent_context).context
               links = [OpenTelemetry::Trace::Link.new(span_context)] if span_context.valid? && propagation_style == :link
