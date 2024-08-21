@@ -51,14 +51,19 @@ module OpenTelemetry
 
           def _otel_span_attributes(sql)
             attributes = _otel_client_attributes(sql)
-            case config[:db_statement]
-            when :include
-              attributes[SemanticConventions::Trace::DB_STATEMENT] = sql
-            when :obfuscate
-              attributes[SemanticConventions::Trace::DB_STATEMENT] =
-                OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(
-                  sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql
-                )
+
+            if sql
+              attributes[SemanticConventions::Trace::DB_SQL_TABLE] = collection_name(sql)
+
+              case config[:db_statement]
+              when :include
+                attributes[SemanticConventions::Trace::DB_STATEMENT] = sql
+              when :obfuscate
+                attributes[SemanticConventions::Trace::DB_STATEMENT] =
+                  OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(
+                    sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql
+                  )
+              end
             end
 
             attributes.merge!(OpenTelemetry::Instrumentation::Mysql2.attributes)
@@ -86,7 +91,6 @@ module OpenTelemetry
 
             attributes[SemanticConventions::Trace::DB_NAME] = _otel_database_name
             attributes[SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service]
-            attributes['db.collection.name'] = collection_name(sql)
 
             attributes
           end
