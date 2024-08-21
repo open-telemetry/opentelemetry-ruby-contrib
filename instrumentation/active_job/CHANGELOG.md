@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.7.7 / 2024-08-21
+
+* FIXED: Propagate context between enqueue and perform
+
 ### v0.7.6 / 2024-08-15
 
 * FIXED: Prefix ::ActiveSupport when installing the instrumentation
