@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         # ATTENTION: Dependabot does not know how to update shared actions file.
         # If you see it update setup-ruby here also update it as part of actions/test_gem/action.yml
-      - uses: ruby/setup-ruby@v1.187.0
+      - uses: ruby/setup-ruby@v1.190.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
       - name: "Install Latest Gem Versions on ${{ matrix.ruby-version }}"

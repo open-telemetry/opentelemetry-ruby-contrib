@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.28.0 / 2024-08-15
+
+* ADDED: Collect pg db.collection_name attribute
+* FIXED: Update versions to be tested (includes drop support for pg 1.2)
+
 ### v0.27.4 / 2024-07-23
 
 * DOCS: Add cspell to CI

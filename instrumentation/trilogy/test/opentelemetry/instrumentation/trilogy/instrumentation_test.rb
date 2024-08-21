@@ -9,8 +9,8 @@ require 'test_helper'
 require_relative '../../../../lib/opentelemetry/instrumentation/trilogy'
 require_relative '../../../../lib/opentelemetry/instrumentation/trilogy/patches/client'
 
-# This test suite requires a running mysql container and dedicated test container. We can use the same
-# docker-compose file as the mysql2 instrumentation tests. The test container should have the mysql client.
+# This test suite requires a running mysql service within a dedicated test container. We can use the same
+# docker-compose service as the mysql2 instrumentation tests. The test container should run the mysql client.
 # To run tests locally:
 # 1. Build the opentelemetry/opentelemetry-ruby-contrib image
 # - docker-compose build
