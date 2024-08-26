@@ -96,7 +96,7 @@ module OpenTelemetry
           end
 
           def collection_name(sql)
-            Regexp.last_match[1] if sql =~ TABLE_NAME
+            Regexp.last_match(1) if sql =~ TABLE_NAME
           rescue StandardError
             nil
           end
