@@ -53,7 +53,7 @@ module OpenTelemetry
             attributes = _otel_client_attributes(sql)
 
             if sql
-              attributes[SemanticConventions::Trace::DB_SQL_TABLE] = collection_name(sql)
+              attributes[SemanticConventions::Trace::DB_SQL_TABLE] = collection_name(sql) if config[:db_collection_name] == :include
 
               case config[:db_statement]
               when :include
