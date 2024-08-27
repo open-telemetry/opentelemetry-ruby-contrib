@@ -80,7 +80,7 @@ module OpenTelemetry
 
             if sql
               collection_name = collection_name(sql)
-              attributes[SemanticConventions::Trace::DB_SQL_TABLE] = collection_name && config[:db_collection_name] == :include
+              attributes[SemanticConventions::Trace::DB_SQL_TABLE] = collection_name if collection_name && config[:db_collection_name] == :include
 
               case config[:db_statement]
               when :obfuscate
