@@ -62,6 +62,8 @@ module OpenTelemetry
                       hexadecimal_literals comments multi_line_comments]
       }.freeze
 
+      PREPENDED_COMMENT_REGEX = %r{^/\*.*\*/}
+
       PLACEHOLDER = '?'
 
       # We use these to check whether the query contains any quote characters
@@ -127,6 +129,8 @@ module OpenTelemetry
 
       # @api private
       def truncate_statement(sql, regex, limit)
+        sql = sql.gsub(PREPENDED_COMMENT_REGEX, PLACEHOLDER) if sql.match?(PREPENDED_COMMENT_REGEX)
+
         first_match_index = sql.index(regex)
         truncation_message = "SQL truncated (> #{limit} characters)"
         return truncation_message unless first_match_index
