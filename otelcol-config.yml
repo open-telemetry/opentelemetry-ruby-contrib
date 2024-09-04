@@ -8,7 +8,7 @@ exporters:
     endpoint: "jaeger:14250"
     tls:
       insecure: true
-  logging:
+  debug:
 
 processors:
   batch:
@@ -18,4 +18,4 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, jaeger]
+      exporters: [debug, jaeger]
