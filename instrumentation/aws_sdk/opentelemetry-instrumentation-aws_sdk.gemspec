@@ -30,10 +30,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.1'
 
   spec.add_development_dependency 'appraisal', '~> 2.5'
-  spec.add_development_dependency 'aws-sdk-dynamodb'
-  spec.add_development_dependency 'aws-sdk-s3'
-  spec.add_development_dependency 'aws-sdk-sns'
-  spec.add_development_dependency 'aws-sdk-sqs'
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
