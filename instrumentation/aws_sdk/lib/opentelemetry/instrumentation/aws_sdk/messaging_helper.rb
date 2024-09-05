@@ -45,7 +45,6 @@ module OpenTelemetry
             end
           end
 
-          # def apply_span_attributes(attrs, context, service_id, client_method)
           def apply_span_attributes(context, attrs, client_method, service_id)
             case service_id
             when 'SQS'
