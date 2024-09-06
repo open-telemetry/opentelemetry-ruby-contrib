@@ -62,8 +62,6 @@ module OpenTelemetry
                       hexadecimal_literals comments multi_line_comments]
       }.freeze
 
-      PREPENDED_COMMENT_REGEX = %r{^/\*.*\*/}
-
       PLACEHOLDER = '?'
 
       # We use these to check whether the query contains any quote characters
@@ -116,8 +114,8 @@ module OpenTelemetry
         # Original MySQL UTF-8 Encoding Fixes:
         # https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/160
         # https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/345
+        return "SQL truncated (> #{obfuscation_limit} characters)" if sql.size > obfuscation_limit
         sql = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
-        return truncate_statement(sql, regex, obfuscation_limit) if sql.size > obfuscation_limit
 
         sql = sql.gsub(regex, PLACEHOLDER)
         return 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if CLEANUP_REGEX[adapter].match(sql)
@@ -125,18 +123,6 @@ module OpenTelemetry
         sql
       rescue StandardError => e
         OpenTelemetry.handle_error(message: 'Failed to obfuscate SQL', exception: e)
-      end
-
-      # @api private
-      def truncate_statement(sql, regex, limit)
-        sql = sql.gsub(PREPENDED_COMMENT_REGEX, PLACEHOLDER) if sql.match?(PREPENDED_COMMENT_REGEX)
-
-        first_match_index = sql.index(regex)
-        truncation_message = "SQL truncated (> #{limit} characters)"
-        return truncation_message unless first_match_index
-
-        truncated_sql = sql[..first_match_index - 1]
-        "#{truncated_sql}...\n#{truncation_message}"
       end
     end
   end
