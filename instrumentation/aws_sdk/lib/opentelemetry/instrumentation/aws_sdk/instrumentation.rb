@@ -66,7 +66,7 @@ module OpenTelemetry
           !::Aws.autoload?(constant) &&
             service_module.is_a?(Module) &&
             service_module.const_defined?(:Client) &&
-            (service_module.const_get(:Client).superclass == Seahorse::Client::Base)
+            (service_module.const_get(:Client).superclass == Seahorse::Client::Base || Aws::Client)
         end
       end
     end
