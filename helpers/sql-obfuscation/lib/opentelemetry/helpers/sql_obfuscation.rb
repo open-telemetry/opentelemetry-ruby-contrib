@@ -20,7 +20,7 @@ module OpenTelemetry
     #    `option :db_statement, default: :include, validate: %I[omit include obfuscate]`
     #  * `:obfuscation_limit`
     #    Example:
-    #    `option :obfuscation_limit, default: 2000, validate: :integer`
+    #    `option :obfuscation_limit, default: 16384, validate: :integer`
     #
     # If you want to add support for a new adapter, update the following
     # constants to include keys for your adapter:
