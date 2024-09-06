@@ -102,6 +102,8 @@ module OpenTelemetry
       #
       # @api public
       def obfuscate_sql(sql, obfuscation_limit: 2000, adapter: :default)
+        return "SQL truncated (> #{obfuscation_limit} characters)" if sql.size > obfuscation_limit
+
         regex = case adapter
                 when :mysql
                   MYSQL_COMPONENTS_REGEX
@@ -114,7 +116,6 @@ module OpenTelemetry
         # Original MySQL UTF-8 Encoding Fixes:
         # https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/160
         # https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/345
-        return "SQL truncated (> #{obfuscation_limit} characters)" if sql.size > obfuscation_limit
         sql = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
 
         sql = sql.gsub(regex, PLACEHOLDER)
