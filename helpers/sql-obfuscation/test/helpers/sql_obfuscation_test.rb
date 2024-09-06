@@ -20,7 +20,7 @@ class SqlObfuscationTest < Minitest::Test
 
   def test_obfuscation_returns_message_when_limit_is_reached
     sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-    expected = "SQL not obfuscated, query exceeds 42 characters"
+    expected = 'SQL not obfuscated, query exceeds 42 characters'
     result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: 42)
 
     assert_equal(expected, result)

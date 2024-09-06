@@ -299,7 +299,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
 
         it 'returns a message when the limit is reached' do
           sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-          obfuscated_sql = "SQL not obfuscated, query exceeds 10 characters"
+          obfuscated_sql = 'SQL not obfuscated, query exceeds 10 characters'
           expect do
             client.exec(sql)
           end.must_raise PG::UndefinedTable
