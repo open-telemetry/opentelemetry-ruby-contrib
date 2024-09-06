@@ -94,7 +94,7 @@ module OpenTelemetry
       # This is a SQL obfuscation utility intended for use in database adapter instrumentation.
       #
       # @param sql [String] The SQL to obfuscate.
-      # @param obfuscation_limit [optional Integer] The maximum length of an obfuscated sql statement.
+      # @param obfuscation_limit [optional Integer] the length at which the SQL string will not be obfuscated
       # @param adapter [optional Symbol] the type of database adapter calling the method. `:default`, `:mysql` and `:postgres` are supported.
       # @return [String] The SQL query string where the values are replaced with "?". When the sql statement exceeds the obufscation limit
       #  the first matched pair from the SQL statement will be returned, with an appended truncation message. If trunaction is unsuccessful,
@@ -102,7 +102,7 @@ module OpenTelemetry
       #
       # @api public
       def obfuscate_sql(sql, obfuscation_limit: 2000, adapter: :default)
-        return "SQL truncated (> #{obfuscation_limit} characters)" if sql.size > obfuscation_limit
+        return "SQL not obfuscated, query exceeds #{obfuscation_limit} characters" if sql.size > obfuscation_limit
 
         regex = case adapter
                 when :mysql

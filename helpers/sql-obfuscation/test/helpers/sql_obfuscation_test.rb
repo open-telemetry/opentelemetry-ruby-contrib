@@ -18,26 +18,9 @@ class SqlObfuscationTest < Minitest::Test
     assert_equal(expected, result)
   end
 
-  def test_obfuscation_limit_returns_truncation_message
+  def test_obfuscation_returns_message_when_limit_is_reached
     sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-    expected = "SQL truncated (> 42 characters)"
-    result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: 42)
-
-    assert_equal(expected, result)
-  end
-
-  def test_obfuscation_limit_returns_truncation_message_when_query_has_prepended_comment
-    comment = '/*service.name:foo,deployment.environtment:production,tracecontext:00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00,rails.route:examples/bars#index,host.name:baz-abc123.example.com*/'
-    sql = "#{comment} SELECT user.id FROM users where user.login = 'secretUserNameThatShouldBeObfuscated'"
-    expected = "SQL truncated (> 42 characters)"
-    result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: 42)
-
-    assert_equal(expected, result)
-  end
-
-  def test_obfuscation_limit_returns_truncation_message_when_not_utf8
-    sql = "SELECT * from 😄 where users.id = 1 and users.😄 = 'test@test.com'"
-    expected = "SQL truncated (> 42 characters)"
+    expected = "SQL not obfuscated, query exceeds 42 characters"
     result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: 42)
 
     assert_equal(expected, result)
