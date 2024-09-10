@@ -25,7 +25,7 @@ end
 
 Make sure the `Instrumentation` class for your gem contains configuration options for:
 
-- `:obfuscation_limit`: the length at which the obfuscated SQL string will be truncated.
+- `:obfuscation_limit`: the length at which the SQL string will not be obfuscated
   Example: `option :obfuscation_limit, default: 2000, validate: :integer`
 
 If you want to add support for a new adapter, update the following constants to include keys for your adapter:

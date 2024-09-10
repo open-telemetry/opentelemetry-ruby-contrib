@@ -19,13 +19,16 @@ module OpenTelemetry
         config.after_initialize do
           ::OpenTelemetry::Instrumentation::ActiveSupport::Instrumentation.instance.install({})
 
+          instance = ::OpenTelemetry::Instrumentation::ActionView::Instrumentation.instance
+          span_name_formatter = instance.config[:legacy_span_names] ? ::OpenTelemetry::Instrumentation::ActiveSupport::LEGACY_NAME_FORMATTER : nil
+
           SUBSCRIPTIONS.each do |subscription_name|
-            config = ActionView::Instrumentation.instance.config
             ::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(
-              ActionView::Instrumentation.instance.tracer,
+              instance.tracer,
               subscription_name,
-              config[:notification_payload_transform],
-              config[:disallowed_notification_payload_keys]
+              instance.config[:notification_payload_transform],
+              instance.config[:disallowed_notification_payload_keys],
+              span_name_formatter: span_name_formatter
             )
           end
         end
