@@ -65,7 +65,7 @@ class SqlObfuscationTest < Minitest::Test
   FAILED_TO_OBFUSCATE_MESSAGE = 'Failed to obfuscate SQL query - quote characters remained after obfuscation'
 
   def build_failure_message(statement, dialect, acceptable_outputs, actual_output)
-    msg = +"Failed to obfuscate #{dialect} query correctly.\n"
+    msg = "Failed to obfuscate #{dialect} query correctly.\n"
     msg << "Input:    #{statement}\n"
     if acceptable_outputs.size == 1
       msg << "Expected: #{acceptable_outputs.first}\n"
