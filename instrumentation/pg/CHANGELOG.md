@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.29.0 / 2024-09-10
+
+* BREAKING CHANGE: Return message when sql is over the obfuscation limit
+
+* FIXED: Return message when sql is over the obfuscation limit
+
 ### v0.28.0 / 2024-08-15
 
 * ADDED: Collect pg db.collection_name attribute
