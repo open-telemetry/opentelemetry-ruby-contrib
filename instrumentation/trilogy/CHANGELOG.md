@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.60.0 / 2024-09-10
+
+* BREAKING CHANGE: Return message when sql is over the obfuscation limit
+
+* FIXED: Return message when sql is over the obfuscation limit
+
 ### v0.59.3 / 2024-04-30
 
 * FIXED: Bundler conflict warnings

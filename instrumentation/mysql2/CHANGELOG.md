@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.28.0 / 2024-09-10
+
+* BREAKING CHANGE: Return message when sql is over the obfuscation limit
+
+* FIXED: Return message when sql is over the obfuscation limit
+
 ### v0.27.2 / 2024-07-23
 
 * DOCS: Add cspell to CI
