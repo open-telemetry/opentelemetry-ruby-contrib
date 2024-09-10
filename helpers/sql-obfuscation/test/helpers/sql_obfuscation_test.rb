@@ -18,17 +18,9 @@ class SqlObfuscationTest < Minitest::Test
     assert_equal(expected, result)
   end
 
-  def test_obfuscation_limit_truncates_query_after_first_match
+  def test_obfuscation_returns_message_when_limit_is_reached
     sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-    expected = "SELECT * from users where users.id = ...\nSQL truncated (> 42 characters)"
-    result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: 42)
-
-    assert_equal(expected, result)
-  end
-
-  def test_obfuscation_limit_truncates_when_query_not_encoded_with_utf8
-    sql = "SELECT * from 😄 where users.id = 1 and users.😄 = 'test@test.com'"
-    expected = "SELECT * from  where users.id = ...\nSQL truncated (> 42 characters)"
+    expected = 'SQL not obfuscated, query exceeds 42 characters'
     result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: 42)
 
     assert_equal(expected, result)
