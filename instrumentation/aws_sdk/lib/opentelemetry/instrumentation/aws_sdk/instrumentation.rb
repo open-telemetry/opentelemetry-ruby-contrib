@@ -62,6 +62,11 @@ module OpenTelemetry
           end
         end
 
+        # This check does the following:
+        # 1 - Checks if the service client is autoload or not
+        # 2 - Validates whether if is a service client
+        # note that Seahorse::Client::Base is a superclass for V3 clients
+        # but for V2, it is Aws::Client
         def loaded_service?(constant, service_module)
           !::Aws.autoload?(constant) &&
             service_module.is_a?(Module) &&
