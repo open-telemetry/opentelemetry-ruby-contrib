@@ -1,10 +1,8 @@
 # Release History: opentelemetry-instrumentation-pg
 
-### v0.29.0 / 2024-09-10
+### v0.29.0 / 2024-09-12
 
-* BREAKING CHANGE: Return message when sql is over the obfuscation limit
-
-* FIXED: Return message when sql is over the obfuscation limit
+* BREAKING CHANGE: Return message when sql is over the obfuscation limit. Fixes a bug where sql statements with prepended comments that hit the obfuscation limit would be sent unsanitized.
 
 ### v0.28.0 / 2024-08-15
 
@@ -48,30 +46,30 @@
 
 ### v0.25.2 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.25.1 / 2023-06-01
 
-* FIXED: Regex non-match with obfuscation limit (issue #486) 
+* FIXED: Regex non-match with obfuscation limit (issue #486)
 
 ### v0.25.0 / 2023-05-25
 
-* ADDED: Add config[:obfuscation_limit] to pg and mysql2 
+* ADDED: Add config[:obfuscation_limit] to pg and mysql2
 
 ### v0.24.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.23.0 / 2023-01-14
 
-* BREAKING CHANGE: Removed deprecated instrumentation options 
+* BREAKING CHANGE: Removed deprecated instrumentation options
 
-* ADDED: Removed deprecated instrumentation options 
-* FIXED: Reduce Hash Allocations in PG Instrumentation 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* ADDED: Removed deprecated instrumentation options
+* FIXED: Reduce Hash Allocations in PG Instrumentation
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.22.3 / 2022-12-06
 
@@ -87,18 +85,18 @@
 
 ### v0.22.0 / 2022-10-04
 
-* ADDED: Add `with_attributes` context propagation for PG instrumentation 
+* ADDED: Add `with_attributes` context propagation for PG instrumentation
 
 ### v0.21.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.20.0 / 2022-05-02
 
-* ADDED: Validate Using Enums 
-* FIXED: Update pg instrumentation to handle non primitive argument 
-* FIXED: RubyGems Fallback 
+* ADDED: Validate Using Enums
+* FIXED: Update pg instrumentation to handle non primitive argument
+* FIXED: RubyGems Fallback
 
 ### v0.19.2 / 2021-12-02
 
@@ -110,8 +108,8 @@
 
 ### v0.19.0 / 2021-08-12
 
-* ADDED: Add db_statement toggle for postgres 
-* DOCS: Update docs to rely more on environment variable configuration 
+* ADDED: Add db_statement toggle for postgres
+* DOCS: Update docs to rely more on environment variable configuration
 
 ### v0.18.1 / 2021-06-23
 

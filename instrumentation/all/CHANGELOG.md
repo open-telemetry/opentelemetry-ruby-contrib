@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.64.0 / 2024-09-12
+
+* BREAKING CHANGE: Return message when sql is over the obfuscation limit. Fixes a bug where sql statements with prepended comments that hit the obfuscation limit would be sent unsanitized.
+
 ### v0.63.0 / 2024-08-15
 
 * ADDED: Collect pg db.collection_name attribute

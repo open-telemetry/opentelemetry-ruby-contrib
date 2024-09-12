@@ -1,10 +1,8 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
-### v0.28.0 / 2024-09-10
+### v0.28.0 / 2024-09-12
 
-* BREAKING CHANGE: Return message when sql is over the obfuscation limit
-
-* FIXED: Return message when sql is over the obfuscation limit
+* BREAKING CHANGE: Return message when sql is over the obfuscation limit. Fixes a bug where sql statements with prepended comments that hit the obfuscation limit would be sent unsanitized.
 
 ### v0.27.2 / 2024-07-23
 
@@ -39,7 +37,7 @@
 
 ### v0.24.2 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.24.1 / 2023-06-01
 
