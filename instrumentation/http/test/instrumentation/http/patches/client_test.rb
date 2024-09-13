@@ -20,7 +20,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
   end
   let(:span_name_formatter) { nil }
 
-  before do
+  def reset
     exporter.reset
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
@@ -31,6 +31,10 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'https://example.com/timeout').to_timeout
+  end
+
+  before do
+    reset
   end
 
   after do
@@ -180,6 +184,46 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
           'http://example.com/success',
           headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
         )
+      end
+    end
+
+    describe 'Semantic conventions http stability' do
+      it 'reports stable http attributes when OTEL_SEMCONV_STABILITY_OPT_IN = `http`' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http') do
+          reset
+          HTTP.get('http://example.com/success')
+
+          _(exporter.finished_spans.size).must_equal(1)
+          _(span.name).must_equal 'HTTP GET'
+          _(span.attributes['http.request.method']).must_equal 'GET'
+          _(span.attributes['url.scheme']).must_equal 'http'
+          _(span.attributes['http.response.status_code']).must_equal 200
+          _(span.attributes['url.path']).must_equal '/success'
+          _(span.attributes['server.address']).must_equal 'example.com'
+          _(span.attributes['server.port']).must_equal 80
+        end
+      end
+
+      it 'reports stable http attributes when OTEL_SEMCONV_STABILITY_OPT_IN = `http/dup`' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http/dup') do
+          reset
+          HTTP.get('http://example.com/success')
+
+          _(exporter.finished_spans.size).must_equal(1)
+          _(span.name).must_equal 'HTTP GET'
+          _(span.attributes['http.method']).must_equal 'GET'
+          _(span.attributes['http.request.method']).must_equal 'GET'
+          _(span.attributes['http.scheme']).must_equal 'http'
+          _(span.attributes['url.scheme']).must_equal 'http'
+          _(span.attributes['http.status_code']).must_equal 200
+          _(span.attributes['http.response.status_code']).must_equal 200
+          _(span.attributes['http.target']).must_equal '/success'
+          _(span.attributes['url.path']).must_equal '/success'
+          _(span.attributes['net.peer.name']).must_equal 'example.com'
+          _(span.attributes['server.address']).must_equal 'example.com'
+          _(span.attributes['net.peer.port']).must_equal 80
+          _(span.attributes['server.port']).must_equal 80
+        end
       end
     end
   end

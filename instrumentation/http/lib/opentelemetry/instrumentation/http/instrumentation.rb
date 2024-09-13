@@ -9,9 +9,12 @@ module OpenTelemetry
     module HTTP
       # The Instrumentation class contains logic to detect and install the Http instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        attr_reader :sem_conv
+
         install do |_config|
           require_dependencies
           patch
+          @sem_conv = OpenTelemetry::SemanticConventions::StabilityMode.new
         end
 
         present do
