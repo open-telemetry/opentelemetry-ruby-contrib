@@ -80,6 +80,12 @@ For example, to test `opentelemetry-instrumentation-action_pack` you would:
  2. Install the bundle with `bundle install`
  3. Run the tests with `bundle exec rake`
 
+Note: Some test suites make use of [Appraisal](https://github.com/thoughtbot/appraisal), a library for testing against different versions of dependencies. To run tests in suites that use Appraisal:
+
+ 1. Change directory to `instrumentation/action_pack`
+ 2. Install the bundle with `bundle exec appraisal install`
+ 3. Run the tests with `bundle exec appraisal rake test`
+
 ### Docker setup
 
 We use Docker Compose to configure and build services used in development and
