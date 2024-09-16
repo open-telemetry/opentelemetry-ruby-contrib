@@ -16,12 +16,14 @@ module OpenTelemetry
             span_name = create_request_span_name(request_method, uri.path)
 
             attributes = {}
-            sem_conv.set_http_method(attributes, request_method)
-            sem_conv.set_http_scheme(attributes, uri.scheme)
-            sem_conv.set_http_target(attributes, uri.path, uri.query)
-            sem_conv.set_http_url(attributes, "#{uri.scheme}://#{uri.host}")
-            sem_conv.set_http_net_peer_name_client(attributes, uri.host)
-            sem_conv.set_http_peer_port_client(attributes, uri.port)
+            attributes.tap do |attrs|
+              sem_conv.set_http_method(attrs, request_method)
+              sem_conv.set_http_scheme(attrs, uri.scheme)
+              sem_conv.set_http_target(attrs, uri.path, uri.query)
+              sem_conv.set_http_url(attrs, "#{uri.scheme}://#{uri.host}")
+              sem_conv.set_http_net_peer_name_client(attrs, uri.host)
+              sem_conv.set_http_peer_port_client(attrs, uri.port)
+            end
 
             attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
