@@ -204,7 +204,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
         end
       end
 
-      it 'reports stable http attributes when OTEL_SEMCONV_STABILITY_OPT_IN = `http/dup`' do
+      it 'reports stable http attributes and old http attributes when OTEL_SEMCONV_STABILITY_OPT_IN = `http/dup`' do
         OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http/dup') do
           reset
           HTTP.get('http://example.com/success')
