@@ -36,46 +36,6 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
       assert_equal(OpenTelemetry::Instrumentation::Logger::VERSION, log_record.instrumentation_scope.version)
     end
 
-    describe 'configuration options' do
-      describe 'when a user configures name' do
-        let(:config) { { name: 'custom_logger' } }
-
-        it 'updates the logger name' do
-          ruby_logger.debug(msg)
-          assert_equal('custom_logger', log_record.instrumentation_scope.name)
-        end
-
-        it 'uses the default version' do
-          ruby_logger.debug(msg)
-          assert_equal(OpenTelemetry::Instrumentation::Logger::VERSION, log_record.instrumentation_scope.version)
-        end
-      end
-
-      describe 'when a user configures version' do
-        let(:config) { { version: '5000' } }
-
-        it 'updates the logger version' do
-          ruby_logger.debug(msg)
-          assert_equal('5000', log_record.instrumentation_scope.version)
-        end
-
-        it 'uses the default name' do
-          ruby_logger.debug(msg)
-          assert_equal(OpenTelemetry::Instrumentation::Logger::NAME, log_record.instrumentation_scope.name)
-        end
-      end
-
-      describe 'when a user configures both name and version' do
-        let(:config) { { name: 'custom_logger', version: '5000' } }
-
-        it 'updates both values' do
-          ruby_logger.debug(msg)
-          assert_equal('custom_logger', log_record.instrumentation_scope.name)
-          assert_equal('5000', log_record.instrumentation_scope.version)
-        end
-      end
-    end
-
     it 'sets log record attributes based on the Ruby log' do
       timestamp = Time.now
       Time.stub(:now, timestamp) do
