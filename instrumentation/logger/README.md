@@ -6,7 +6,7 @@ TODO: Update description. This README is incomplete.
 
 Install the gem using:
 
-```
+```shell
 gem install opentelemetry-instrumentation-logger
 ```
 
