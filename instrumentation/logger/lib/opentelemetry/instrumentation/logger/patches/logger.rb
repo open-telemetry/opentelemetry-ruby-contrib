@@ -12,15 +12,13 @@ module OpenTelemetry
         module Logger
           attr_writer :skip_instrumenting
 
-          # TODO: Make sure OTel logs aren't instrumented
-          # TODO: How to pass attributes?
           def format_message(severity, datetime, progname, msg)
             formatted_message = super(severity, datetime, progname, msg)
             return formatted_message if skip_instrumenting?
 
             OpenTelemetry.logger_provider.logger(
-              name: Instrumentation.instance.config[:name],
-              version: Instrumentation.instance.config[:version]
+              name: OpenTelemetry::Instrumentation::Logger::NAME,
+              version: OpenTelemetry::Instrumentation::Logger::VERSION
             ).on_emit(
               severity_text: severity,
               severity_number: severity_number(severity),
