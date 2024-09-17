@@ -14,6 +14,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportLogger do
   let(:broadcasted_logger) { ActiveSupport::Logger.new(BROADCASTED_STREAM) }
 
   before do
+    skip unless defined?(::ActiveSupport::Logger) && !defined?(::ActiveSupport::BroadcastLogger)
     EXPORTER.reset
     Rails.logger = main_logger.extend(ActiveSupport::Logger.broadcast(broadcasted_logger))
     instrumentation.install

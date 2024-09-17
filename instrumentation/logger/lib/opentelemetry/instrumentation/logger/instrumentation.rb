@@ -29,6 +29,7 @@ module OpenTelemetry
 
         def patch
           ::Logger.prepend(Patches::Logger)
+          active_support_broadcast_logger_patch
           active_support_patch
         end
 
@@ -37,10 +38,17 @@ module OpenTelemetry
         end
 
         def active_support_patch
-          return unless defined?(::ActiveSupport::Logger)
+          return unless defined?(::ActiveSupport::Logger) && !defined?(::ActiveSupport::BroadcastLogger)
 
           require_relative 'patches/active_support_logger'
           ::ActiveSupport::Logger.singleton_class.prepend(Patches::ActiveSupportLogger)
+        end
+
+        def active_support_broadcast_logger_patch
+          return unless defined?(::ActiveSupport::BroadcastLogger)
+
+          require_relative 'patches/active_support_broadcast_logger'
+          ::ActiveSupport::BroadcastLogger.prepend(Patches::ActiveSupportBroadcastLogger)
         end
       end
     end

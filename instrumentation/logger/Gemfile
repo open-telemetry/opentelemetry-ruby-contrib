@@ -22,4 +22,4 @@ group :test do
 end
 
 # Temporary for testing, Appraisal does not work with gems installed from git source
-gem 'rails', '~> 7.0.0'
+gem 'rails', '~> 7.1.0'
