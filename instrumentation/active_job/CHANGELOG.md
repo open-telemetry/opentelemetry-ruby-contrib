@@ -1,5 +1,29 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.7.7 / 2024-08-21
+
+* FIXED: Propagate context between enqueue and perform
+
+### v0.7.6 / 2024-08-15
+
+* FIXED: Prefix ::ActiveSupport when installing the instrumentation
+
+### v0.7.5 / 2024-08-15
+
+* FIXED: Use Active Support Lazy Load Hooks to avoid prematurely initializing ActiveRecord::Base and ActiveJob::Base
+
+### v0.7.4 / 2024-07-30
+
+* FIXED: Honour dynamic changes in configuration
+
+### v0.7.3 / 2024-07-22
+
+* FIXED: ActiveJob::Handlers.unsubscribe
+
+### v0.7.2 / 2024-07-02
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.7.1 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
@@ -20,7 +44,7 @@
 
 ### v0.6.0 / 2023-09-07
 
-* FIXED: Align messaging instrumentation operation names
+* BREAKING CHANGE: Align messaging instrumentation operation names [#648](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/648)
 
 ### v0.5.2 / 2023-08-03
 

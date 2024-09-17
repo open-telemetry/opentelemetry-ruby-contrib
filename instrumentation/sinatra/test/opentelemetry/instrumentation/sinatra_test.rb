@@ -11,6 +11,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
 
   let(:instrumentation) { OpenTelemetry::Instrumentation::Sinatra::Instrumentation.instance }
   let(:exporter) { EXPORTER }
+  let(:config) { {} }
 
   class CustomError < StandardError; end
 
@@ -66,7 +67,14 @@ describe OpenTelemetry::Instrumentation::Sinatra do
   end
 
   before do
-    instrumentation.install
+    Sinatra::Base.reset!
+
+    OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.instance_variable_set(:@installed, false)
+    OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.config.clear
+
+    instrumentation.instance_variable_set(:@installed, false)
+    instrumentation.config.clear
+    instrumentation.install(config)
     exporter.reset
   end
 
@@ -167,6 +175,50 @@ describe OpenTelemetry::Instrumentation::Sinatra do
 
       _(exporter.finished_spans.first.events[0].attributes['exception.type']).must_equal('CustomError')
       _(exporter.finished_spans.first.events[0].attributes['exception.message']).must_equal('custom message')
+    end
+  end
+
+  describe 'when install_rack is set to false' do
+    let(:config) { { install_rack: false } }
+
+    describe 'missing rack installation' do
+      it 'disables tracing' do
+        get '/one/endpoint'
+
+        _(exporter.finished_spans).must_be_empty
+      end
+    end
+
+    describe 'when rack is manually installed' do
+      let(:app) do
+        apps_to_build = apps
+        Rack::Builder.new do
+          use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args)
+
+          apps_to_build.each do |root, app|
+            map root do
+              run app
+            end
+          end
+        end.to_app
+      end
+
+      before do
+        OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install
+      end
+
+      it 'creates a span' do
+        get '/one/endpoint'
+
+        _(exporter.finished_spans.first.attributes).must_equal(
+          'http.method' => 'GET',
+          'http.host' => 'example.org',
+          'http.scheme' => 'http',
+          'http.target' => '/one/endpoint',
+          'http.route' => '/endpoint',
+          'http.status_code' => 200
+        )
+      end
     end
   end
 end

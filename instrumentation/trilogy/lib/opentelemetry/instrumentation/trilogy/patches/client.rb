@@ -58,7 +58,7 @@ module OpenTelemetry
                 propagator.inject(sql, context: context)
               end
 
-              super(sql)
+              super
             end
           end
 

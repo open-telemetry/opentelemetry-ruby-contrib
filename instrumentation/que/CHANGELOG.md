@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.8.3 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
+### v0.8.2 / 2024-07-02
+
+* DOCS: Fix CHANGELOGs to reflect a past breaking change
+
 ### v0.8.1 / 2024-04-30
 
 * FIXED: Bundler conflict warnings
@@ -15,7 +23,7 @@
 
 ### v0.7.0 / 2023-09-07
 
-* FIXED: Align messaging instrumentation operation names
+* BREAKING CHANGE: Align messaging instrumentation operation names [#648](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/648)
 
 ### v0.6.2 / 2023-08-07
 

@@ -28,7 +28,7 @@ module OpenTelemetry
             OpenTelemetry::Instrumentation::Bunny::PatchHelpers.with_send_span(self, tracer, exchange, routing_key) do
               OpenTelemetry::Instrumentation::Bunny::PatchHelpers.inject_context_into_property(opts, :headers)
 
-              super(payload, exchange, routing_key, opts)
+              super
             end
           end
 

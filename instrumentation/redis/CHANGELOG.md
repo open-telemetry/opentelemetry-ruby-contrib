@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.25.7 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
+### v0.25.6 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+
 ### v0.25.5 / 2024-05-09
 
 * FIXED: Untrace entire request
@@ -78,7 +86,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 refactor: redis attribute utils [#760](https://github.com/open-telemetry/opentelemetry-ruby/pull/760)
 refactor: simplify redis attribute assignment [#758](https://github.com/open-telemetry/opentelemetry-ruby/pull/758)
 test: split redis instrumentation test [#754](https://github.com/open-telemetry/opentelemetry-ruby/pull/754)
@@ -141,7 +149,7 @@ test: split redis instrumentation test [#754](https://github.com/open-telemetry/
 ### v0.7.0 / 2020-10-07
 
 * DOCS: Added redis documentation
-* DOCS: Standardize toplevel docs structure and readme
+* DOCS: Standardize top-level docs structure and readme
 
 ### v0.6.0 / 2020-09-10
 

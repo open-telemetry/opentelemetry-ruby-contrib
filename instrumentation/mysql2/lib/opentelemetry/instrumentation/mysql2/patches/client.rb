@@ -19,7 +19,7 @@ module OpenTelemetry
               attributes: _otel_span_attributes(sql),
               kind: :client
             ) do
-              super(sql, options)
+              super
             end
           end
 
@@ -29,7 +29,7 @@ module OpenTelemetry
               attributes: _otel_span_attributes(sql),
               kind: :client
             ) do
-              super(sql)
+              super
             end
           end
 

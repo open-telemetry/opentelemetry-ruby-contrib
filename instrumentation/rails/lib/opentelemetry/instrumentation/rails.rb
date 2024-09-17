@@ -18,6 +18,8 @@ end
 require 'opentelemetry-instrumentation-action_pack'
 require 'opentelemetry-instrumentation-active_support'
 require 'opentelemetry-instrumentation-action_view'
+require 'opentelemetry-instrumentation-action_mailer'
 require 'opentelemetry-instrumentation-active_record'
+require 'opentelemetry-instrumentation-active_job'
 require_relative 'rails/instrumentation'
 require_relative 'rails/version'

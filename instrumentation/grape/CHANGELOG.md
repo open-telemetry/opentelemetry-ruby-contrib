@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-grape
 
+### v0.2.0 / 2024-07-02
+
+* ADDED: Make the install of rack instrumentation by grape instrumentation optional
+
+### v0.1.8 / 2024-05-14
+
+* DOCS: Instrumentation Authors Guide
+
 ### v0.1.7 / 2024-04-30
 
 * FIXED: Bundler conflict warnings

@@ -198,5 +198,18 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
       end
     end
+
+    describe 'when explicitly adding the tracer middleware' do
+      let(:client) do
+        Faraday.new do |builder|
+          builder.use :open_telemetry
+        end
+      end
+
+      it 'only adds the middleware once' do
+        tracers = client.builder.handlers.count(OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware)
+        _(tracers).must_equal 1
+      end
+    end
   end
 end

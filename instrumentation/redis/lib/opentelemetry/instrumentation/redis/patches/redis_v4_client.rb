@@ -43,7 +43,7 @@ module OpenTelemetry
                         end
 
             instrumentation_tracer.in_span(span_name, attributes: attributes, kind: :client) do |s|
-              super(commands).tap do |reply|
+              super.tap do |reply|
                 if reply.is_a?(::Redis::CommandError)
                   s.record_exception(reply)
                   s.status = Trace::Status.error(reply.message)

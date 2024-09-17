@@ -236,20 +236,9 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       describe 'with obfuscation_limit' do
         let(:config) { { db_statement: :obfuscate, obfuscation_limit: 10 } }
 
-        it 'truncates SQL using config limit' do
+        it 'returns a message when the limit is reached' do
           sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-          obfuscated_sql = "SELECT * from users where users.id = ...\nSQL truncated (> 10 characters)"
-          expect do
-            client.query(sql)
-          end.must_raise Mysql2::Error
-
-          _(span.attributes['db.statement']).must_equal obfuscated_sql
-        end
-
-        it 'handles regex non-matches' do
-          sql = 'ALTER TABLE my_table DISABLE TRIGGER ALL;'
-          obfuscated_sql = 'SQL truncated (> 10 characters)'
-
+          obfuscated_sql = 'SQL not obfuscated, query exceeds 10 characters'
           expect do
             client.query(sql)
           end.must_raise Mysql2::Error
