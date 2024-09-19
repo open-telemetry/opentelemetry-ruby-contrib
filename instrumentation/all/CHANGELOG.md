@@ -2,7 +2,7 @@
 
 ### v0.64.1 / 2024-09-19
 
-* (No significant changes)
+* ADDED: All AWS services emit traces
 
 ### v0.64.0 / 2024-09-12
 
