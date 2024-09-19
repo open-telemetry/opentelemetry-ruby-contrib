@@ -1,6 +1,6 @@
 # Release History: opentelemetry-instrumentation-all
 
-### v0.64.1 / 2024-09-19
+### v0.65.0 / 2024-09-19
 
 * ADDED: All AWS services emit traces
 
