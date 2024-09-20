@@ -1,9 +1,18 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 module OpenTelemetry
   module Instrumentation
     module Rack
       module Middlewares
+        # MetricsPatch is a module that provides functionality to record metrics
+        # if both the opentelemetry-metrics-api is present and the rack
+        # instrumentation is configured to emit metrics by setting
+        # :send_metrics to true
         module MetricsPatch
-          # Don't check in here to see if metrics is enabled, trust that if it's required, metrics will be enabled
           def meter
             OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.meter
           end
@@ -14,6 +23,7 @@ module OpenTelemetry
             @http_server_request_duration_histogram ||= meter.create_histogram('http.server.request.duration', unit: 's', description: 'Duration of HTTP server requests.')
           end
 
+          # TODO: Update this to define attributes based on SEMCONV_STABILITY_OPT_IN once available
           def record_http_server_request_duration_metric(span)
             # find span duration
             # end - start / a billion to convert nanoseconds to seconds
@@ -21,8 +31,8 @@ module OpenTelemetry
             # Create attributes
             #
             attrs = {}
-            # pattern below goes
-            # stable convention
+            # pattern below goes:
+            # # stable convention
             # current span convention
 
             # attrs['http.request.method']
