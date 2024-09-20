@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.7.3 / 2024-08-23
+
+* FIXED: ActionView Support Legacy Formats
+
+### v0.7.2 / 2024-08-15
+
+* (No Significant Changes)
+
 ### v0.7.1 / 2024-07-23
 
 * DOCS: Add cspell to CI

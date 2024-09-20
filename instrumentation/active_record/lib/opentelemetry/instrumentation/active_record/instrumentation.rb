@@ -42,7 +42,7 @@ module OpenTelemetry
         end
 
         def patch_activerecord
-          ActiveSupport.on_load(:active_record) do
+          ::ActiveSupport.on_load(:active_record) do
             # Modules to prepend to ActiveRecord::Base are grouped by the source
             # module that they are defined in as they are included into ActiveRecord::Base
             # Example: Patches::PersistenceClassMethods refers to https://github.com/rails/rails/blob/v6.1.0/activerecord/lib/active_record/persistence.rb#L10
