@@ -13,7 +13,7 @@ module OpenTelemetry
 
         install do |_config|
           require_dependencies
-          add_plugin(Seahorse::Client::Base, *loaded_constants)
+          add_plugins(Seahorse::Client::Base, *loaded_service_clients)
         end
 
         present do
@@ -41,30 +41,38 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'handler'
-          require_relative 'services'
           require_relative 'message_attributes'
           require_relative 'messaging_helper'
         end
 
-        def add_plugin(*targets)
+        def add_plugins(*targets)
           targets.each { |klass| klass.add_plugin(AwsSdk::Plugin) }
         end
 
-        def loaded_constants
-          # Cross-check services against loaded AWS constants
-          # Module#const_get can return a constant from ancestors when there's a miss.
-          # If this conincidentally matches another constant, it will attempt to patch
-          # the wrong constant, resulting in patch failure.
-          available_services = ::Aws.constants & SERVICES.map(&:to_sym)
-          available_services.each_with_object([]) do |service, constants|
-            next if ::Aws.autoload?(service)
+        def loaded_service_clients
+          ::Aws.constants.each_with_object([]) do |c, constants|
+            m = ::Aws.const_get(c)
+            next unless loaded_service?(c, m)
 
             begin
-              constants << ::Aws.const_get(service, false).const_get(:Client, false)
+              constants << m.const_get(:Client)
             rescue StandardError => e
               OpenTelemetry.logger.warn("Constant could not be loaded: #{e}")
             end
           end
+        end
+
+        # This check does the following:
+        # 1 - Checks if the service client is autoload or not
+        # 2 - Validates whether if is a service client
+        # note that Seahorse::Client::Base is a superclass for V3 clients
+        # but for V2, it is Aws::Client
+        def loaded_service?(constant, service_module)
+          !::Aws.autoload?(constant) &&
+            service_module.is_a?(Module) &&
+            service_module.const_defined?(:Client) &&
+            (service_module.const_get(:Client).superclass == Seahorse::Client::Base ||
+              service_module.const_get(:Client).superclass == Aws::Client)
         end
       end
     end

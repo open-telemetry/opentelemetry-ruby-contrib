@@ -71,7 +71,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
 
         _(last_span.instrumentation_scope).must_be_kind_of OpenTelemetry::SDK::InstrumentationScope
         _(last_span.instrumentation_scope.name).must_equal 'OpenTelemetry::Instrumentation::AwsLambda'
-        _(last_span.instrumentation_scope.version).must_equal '0.1.0'
+        _(last_span.instrumentation_scope.version).must_equal OpenTelemetry::Instrumentation::AwsLambda::VERSION
 
         _(last_span.hex_span_id.size).must_equal 16
         _(last_span.hex_trace_id.size).must_equal 32
@@ -211,6 +211,27 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
             _(response['test']).must_equal 'ok'
           end
         end
+      end
+    end
+  end
+
+  describe 'validate_if_span_is_registered' do
+    it 'add_span_attributes_to_lambda_span' do
+      stub = proc do
+        span = OpenTelemetry::Trace.current_span
+        span.set_attribute('test.attribute', 320)
+      end
+
+      otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
+      otel_wrapper.stub(:call_original_handler, stub) do
+        otel_wrapper.call_wrapped(event: sqs_record, context: context)
+
+        _(last_span.name).must_equal 'sample.test'
+        _(last_span.kind).must_equal :consumer
+        _(last_span.status.code).must_equal 1
+        _(last_span.hex_parent_span_id).must_equal '0000000000000000'
+
+        _(last_span.attributes['test.attribute']).must_equal 320
       end
     end
   end

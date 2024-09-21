@@ -4,6 +4,13 @@ module OpenTelemetry
   module Instrumentation
     # This class contains the ASN subsciber that instruments message processing
     class ProcessMessageSubscriber
+      GETTER = if Gem::Version.new(::Rdkafka::VERSION) >= Gem::Version.new('0.13.0')
+                 Context::Propagation.text_map_getter
+               else
+                 OpenTelemetry::Common::Propagation.symbol_key_getter
+               end
+      private_constant :GETTER
+
       def tracer
         Racecar::Instrumentation.instance.tracer
       end
@@ -11,7 +18,7 @@ module OpenTelemetry
       def start(_name, _id, payload)
         attrs = attributes(payload)
 
-        parent_context = OpenTelemetry.propagation.extract(payload[:headers], getter: OpenTelemetry::Common::Propagation.symbol_key_getter)
+        parent_context = OpenTelemetry.propagation.extract(payload[:headers], getter: GETTER)
         parent_token = OpenTelemetry::Context.attach(parent_context)
 
         span_context = OpenTelemetry::Trace.current_span(parent_context).context

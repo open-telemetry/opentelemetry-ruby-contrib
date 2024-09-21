@@ -162,6 +162,12 @@ services:
     command: ./start_server.sh
     working_dir: /app/instrumentation/sinatra/example
 
+  processor-baggage-test:
+    <<: *base
+    working_dir: /app/processor/baggage
+    command: |
+      bash -c "bundle install && rake"
+
   mongo:
     image: mongo:4.4
     expose:

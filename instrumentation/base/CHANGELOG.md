@@ -1,5 +1,18 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.22.6 / 2024-08-15
+
+* FIXED: Fix the issue of wrong log msg
+
+### v0.22.5 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
+### v0.22.4 / 2024-06-18
+
+* FIXED: Relax otel common gem constraints
+* DOCS: Add function doc for config_overrides_from_env
+
 ### v0.22.3 / 2023-11-23
 
 * CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
@@ -51,7 +64,7 @@
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Updated API depedency for 1.0.0.rc1
+* ADDED: Updated API dependency for 1.0.0.rc1
 * FIXED: Missing instrumentation classes during configuration
 
 ### v0.17.0 / 2021-04-22

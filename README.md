@@ -30,7 +30,7 @@ Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open
 - [Josef Šimánek](https://github.com/simi)
 - [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 
-*Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
+*Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).*
 
 Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-maintainers)):
 
@@ -44,7 +44,7 @@ Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
 - [Sam Handler](https://github.com/plantfansam), Shopify
 
-*Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#maintainer).*
+*Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).*
 
 ## Instrumentation Libraries
 
@@ -60,9 +60,10 @@ multiple instrumentation libraries.
 
 - [MySQL](helpers/mysql/)
 - [SQL Obfuscation](helpers/sql-obfuscation/)
+
 ## Additional Libraries
 
-This repository also contains libraries to aid with interoperablity with vendor specific tracing solutions:
+This repository also contains libraries to aid with interoperability with vendor specific tracing solutions:
 
 - [Context Propagation](propagator/): OTTrace and Amazon X-Ray
 - [Resource Detectors](resources/):
@@ -74,18 +75,18 @@ This repository also contains libraries to aid with interoperablity with vendor 
 
 OpenTelemetry Ruby follows the [versioning and stability document][otel-versioning] in the OpenTelemetry specification. Notably, we adhere to the outlined version numbering exception, which states that experimental signals may have a `0.x` version number.
 
-### Library Compatability
+### Library Compatibility
 
-This project is managed on a volunteer basis and therefore we have limited capacity to support compatability with unmaintained or EOL libraries.
+This project is managed on a volunteer basis and therefore we have limited capacity to support compatibility with unmaintained or EOL libraries.
 
-We will regularly review the instrumentations to drop compatability for any versions of Ruby or gems that reach EOL or no longer receive regular maintenance.
+We will regularly review the instrumentations to drop compatibility for any versions of Ruby or gems that reach EOL or no longer receive regular maintenance.
 
 Should you need instrumentation for _older_ versions of a library then you must pin to a specific version of the instrumentation that supports it,
 however, you will no longer receive any updates for the instrumentation from this repository.
 
 > When a release series is no longer supported, it's your own responsibility to deal with bugs and security issues. We may provide backports of the fixes and publish them to git, however there will be no new versions released. If you are not comfortable maintaining your own versions, you should upgrade to a supported version. <https://guides.rubyonrails.org/maintenance_policy.html#security-issues>
 
-Consult instrumentation gem's README file and gemspec for details about library compatability.
+Consult instrumentation gem's README file and gemspec for details about library compatibility.
 
 ### Releases
 
@@ -103,17 +104,14 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [otel-ruby]: https://github.com/open-telemetry/opentelemetry-ruby
 [otel-ruby-releases]: https://github.com/open-telemetry/opentelemetry-ruby/releases
 [otel-ruby-contrib-releases]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/releases
-[ci-image]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/workflows/CI/badge.svg?event=push
-[examples-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/examples
+[ci-image]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/workflows/CI%20Contrib/badge.svg?event=push
 [getting-started]: https://opentelemetry.io/docs/languages/ruby/getting-started/
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 [issues-help-wanted]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 [license-image]: https://img.shields.io/badge/license-Apache_2.0-green.svg?style=flat
 [license-url]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[opentelemetry-instrumentation-all-publishing]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/all#publishing
 [slack-image]: https://img.shields.io/badge/slack-@cncf/otel/ruby-brightgreen.svg?logo=slack
 [slack-url]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [otel-versioning]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/versioning-and-stability.md
-[otel-specification]: https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification

@@ -40,10 +40,13 @@ module OpenTelemetry
           # @param payload [Hash] containing job run information
           # @return [Hash] with the span and generated context tokens
           def start_span(name, _id, payload)
-            span = tracer.start_span(name, attributes: @mapper.call(payload))
-            tokens = [OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))]
+            job = payload.fetch(:job)
+            event_name = name.delete_suffix(".#{EVENT_NAMESPACE}")
+            span_name = span_name(job, event_name)
+            span = tracer.start_span(span_name, attributes: @mapper.call(payload))
+            token = OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))
 
-            { span: span, ctx_tokens: tokens }
+            { span: span, ctx_token: token }
           end
 
           # Creates a span and registers it with the current context
@@ -55,20 +58,20 @@ module OpenTelemetry
           def finish(_name, _id, payload)
             otel = payload.delete(:__otel)
             span = otel&.fetch(:span)
-            tokens = otel&.fetch(:ctx_tokens)
+            token = otel&.fetch(:ctx_token)
 
             on_exception((payload[:error] || payload[:exception_object]), span)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           ensure
-            finish_span(span, tokens)
+            finish_span(span, token)
           end
 
           # Finishes the provided spans and also detaches the associated contexts
           #
           # @param span [OpenTelemetry::Trace::Span]
-          # @param tokens [Array] to unregister
-          def finish_span(span, tokens)
+          # @param token [Numeric] to unregister
+          def finish_span(span, token)
             # closes the span after all attributes have been finalized
             begin
               if span&.recording?
@@ -79,8 +82,7 @@ module OpenTelemetry
               OpenTelemetry.handle_error(exception: e)
             end
 
-            # pops the context stack
-            tokens&.reverse_each do |token|
+            begin
               OpenTelemetry::Context.detach(token)
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
@@ -106,6 +108,18 @@ module OpenTelemetry
 
           def tracer
             OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.tracer
+          end
+
+          private
+
+          def span_name(job, event_name)
+            prefix = if @config[:span_naming] == :job_class
+                       job.class.name
+                     else
+                       job.queue_name
+                     end
+
+            "#{prefix} #{event_name}"
           end
         end
       end

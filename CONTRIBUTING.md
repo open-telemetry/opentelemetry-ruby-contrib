@@ -168,7 +168,7 @@ bundle exec rake yard
 
 ## Instrumentation author's guide
 
-Please make sure that you review the [Instrumentation author's guide](.instrumentation/CONTRIBUTING.md) before submitting a new instrumentation.
+Please make sure that you review the [Instrumentation author's guide](instrumentation/CONTRIBUTING.md) before submitting a new instrumentation.
 
 ## Create a pull request
 
@@ -208,11 +208,22 @@ merge. You'll probably get some feedback from these fine folks which helps to
 make the project that much better. Respond to the feedback and work with your
 reviewer(s) to resolve any issues.
 
+The some of the things the code owners are looking for include:
+
+* a signed [CNCF CLA][cncf-cla]
+* a passing CI build
+* adherence to the principles and features outlined in the
+  [instrumentation author's guide](instrumentation/CONTRIBUTING.md)
+
 Reviewers are responsible for ensuring that each merged PR's commit message
 conforms to [conventional commits](https://conventionalcommits.org). This may
-mean editing the commit message when you merge the pull request. Alternately,
-the reviewer may ask the pull request submitter to amend the commit message of
-their initial commit.
+mean editing the commit message or the pull request title when you merge the
+pull request. Alternately, the reviewer may ask the pull request submitter
+to amend the commit message of their initial commit.
+
+In addition, when a change is complex or a reviewer is unfamiliar with the code,
+the reviewer may seek additional reviews from people more familiar with the
+change before merging a PR.
 
 ## Releases
 
@@ -404,7 +415,7 @@ index e29acbfc..85622d25 100644
 [cncf-cla]: https://identity.linuxfoundation.org/projects/cncf
 [github-draft]: https://github.blog/2019-02-14-introducing-draft-pull-requests/
 [kube-github-workflow-pr]: https://github.com/kubernetes/community/blob/master/contributors/guide/github-workflow.md#7-create-a-pull-request
-[otel-contributor-guide]: https://github.com/open-telemetry/community/blob/master/CONTRIBUTING.md
-[otel-github-workflow]: https://github.com/open-telemetry/community/blob/master/CONTRIBUTING.md#github-workflow
+[otel-contributor-guide]: https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md
+[otel-github-workflow]: https://github.com/open-telemetry/community/blob/main/guides/contributor/processes.md#workflows
 [otel-lib-guidelines]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/library-guidelines.md
 [otel-specification]: https://github.com/open-telemetry/opentelemetry-specification

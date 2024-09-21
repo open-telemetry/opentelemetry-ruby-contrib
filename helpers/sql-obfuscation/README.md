@@ -24,7 +24,8 @@ end
 ```
 
 Make sure the `Instrumentation` class for your gem contains configuration options for:
-- `:obfuscation_limit`: the length at which the obfuscated SQL string will be truncated.
+
+- `:obfuscation_limit`: the length at which the SQL string will not be obfuscated
   Example: `option :obfuscation_limit, default: 2000, validate: :integer`
 
 If you want to add support for a new adapter, update the following constants to include keys for your adapter:
@@ -48,7 +49,7 @@ OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: con
 
 The `opentelemetry-helpers-sql-obfuscation` gem source is [on github][repo-github], along with related gems including `opentelemetry-instrumentation-pg` and `opentelemetry-instrumentation-trilogy`.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us on our [gitter channel][ruby-gitter] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
@@ -59,4 +60,5 @@ The `opentelemetry-helpers-sql-obfuscation` gem is distributed under the Apache 
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby
+[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
+[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions

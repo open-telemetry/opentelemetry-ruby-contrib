@@ -15,7 +15,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveJob::Handlers::Discard' do
   let(:spans) { exporter.finished_spans }
   let(:publish_span) { spans.find { |s| s.name == 'default publish' } }
   let(:process_span) { spans.find { |s| s.name == 'default process' } }
-  let(:discard_span) { spans.find { |s| s.name == 'discard.active_job' } }
+  let(:discard_span) { spans.find { |s| s.name == 'default discard' } }
 
   before do
     OpenTelemetry::Instrumentation::ActiveJob::Handlers.unsubscribe

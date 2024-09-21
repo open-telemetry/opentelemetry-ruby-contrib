@@ -9,3 +9,7 @@
     gem 'activejob', "~> #{version}"
   end
 end
+
+appraise 'activejob-latest' do
+  gem 'activejob'
+end
