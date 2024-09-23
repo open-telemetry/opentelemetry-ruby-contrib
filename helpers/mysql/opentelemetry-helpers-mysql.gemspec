@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rubocop', '~> 1.66.0'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.21.0'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.22.1'
   spec.add_development_dependency 'simplecov', '~> 0.22.0'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
