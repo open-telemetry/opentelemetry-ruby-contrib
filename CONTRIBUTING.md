@@ -82,7 +82,7 @@ For example, to test `opentelemetry-instrumentation-action_pack` you would:
 
 Note: Some test suites make use of [Appraisal](https://github.com/thoughtbot/appraisal), a library for testing against different versions of dependencies. To run tests in suites that use Appraisal:
 
- 1. Change directory to `instrumentation/action_pack`
+ 1. Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
  2. Install the bundle with `bundle exec appraisal install`
  3. Run the tests with `bundle exec appraisal rake test`
 
