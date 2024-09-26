@@ -21,7 +21,7 @@ To use the instrumentation, call `use` with the name of the instrumentation:
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
-  # Use only the ActionMailer instrumentation 
+  # Use only the ActionMailer instrumentation
   c.use 'OpenTelemetry::Instrumentation::ActionMailer'
   # Use the ActionMailer instrumentation along with the rest of the Rails-related instrumentation
   c.use 'OpenTelemetry::Instrumentation::Rails'
@@ -44,8 +44,8 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 
 | Event Name | Creates Span? | Notes |
 | - | - | - |
-| `deliver.action_mailer` | :white_check_mark: | Creates an span with kind `internal` and email content and status|
-| `process.action_mailer` | :x: | Lack of useful info so ignored |
+| `deliver.action_mailer` | :white_check_mark: | Creates a span with kind `internal` and email content and status |
+| `process.action_mailer` | :white_check_mark: | Creates a span with kind `internal` that will include email rendering spans |
 
 ### Options
 
@@ -67,9 +67,9 @@ end
 
 ## Semantic Conventions
 
-Internal spans are named using the name of the `ActiveSupport` event that was provided (e.g. `action_mailer deliver`).
+Internal spans are named using the name of the `ActiveSupport` event that was provided (e.g. `deliver.action_mailer`).
 
-The following attributes from the notification payload for the `deliver.action_mailer` event are attached to `action_mailer deliver` spans:
+The following attributes from the notification payload for the `deliver.action_mailer` event are attached:
 
 | Attribute Name | Type | Notes |
 | - | - | - |

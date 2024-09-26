@@ -27,7 +27,9 @@ module OpenTelemetry
         end
 
         option :disallowed_notification_payload_keys, default: [], validate: :array
+        option :disallowed_process_payload_keys,      default: [], validate: :array
         option :notification_payload_transform,       default: nil, validate: :callable
+        option :process_payload_transform,            default: nil, validate: :callable
         option :email_address,                        default: :omit, validate: %I[omit include]
 
         private
