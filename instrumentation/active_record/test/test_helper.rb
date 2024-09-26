@@ -34,8 +34,14 @@ ActiveRecord::Base.establish_connection(
   database: 'db/development.sqlite3'
 )
 
-# Create User model
+# Create ActiveRecord models
+class Account < ActiveRecord::Base
+  has_many :users
+end
+
 class User < ActiveRecord::Base
+  belongs_to :account
+
   validate :name_if_present
 
   scope :recently_created, -> { where('created_at > ?', Time.now - 3600) }
@@ -54,9 +60,14 @@ migration_version = "#{segments[0]}.#{segments[1]}".to_f
 # Simple migration to create a table to test against
 class CreateUserTable < ActiveRecord::Migration[migration_version]
   def change
+    create_table :accounts do
+      t.timestamps
+    end
+
     create_table :users do |t|
       t.string 'name'
       t.integer 'counter'
+      t.references 'account'
       t.timestamps
     end
 
