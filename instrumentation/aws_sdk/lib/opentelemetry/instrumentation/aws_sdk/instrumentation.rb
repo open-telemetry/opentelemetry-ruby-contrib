@@ -13,6 +13,7 @@ module OpenTelemetry
 
         install do |_config|
           require_dependencies
+          patch if telemetry_plugin?
           add_plugins(Seahorse::Client::Base, *loaded_service_clients)
         end
 
@@ -43,10 +44,25 @@ module OpenTelemetry
           require_relative 'handler'
           require_relative 'message_attributes'
           require_relative 'messaging_helper'
+          require_relative 'patches/telemetry'
         end
 
         def add_plugins(*targets)
-          targets.each { |klass| klass.add_plugin(AwsSdk::Plugin) }
+          targets.each do |klass|
+            if telemetry_plugin?
+              klass.add_plugin(AwsSdk::Plugin) unless klass.plugins.include?(Aws::Plugins::Telemetry)
+            else
+              klass.add_plugin(AwsSdk::Plugin)
+            end
+          end
+        end
+
+        def telemetry_plugin?
+          ::Aws.const_defined?('Plugins::Telemetry')
+        end
+
+        def patch
+          ::Aws::Plugins::Telemetry::Handler.prepend(Patches::Handler)
         end
 
         def loaded_service_clients

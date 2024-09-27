@@ -32,6 +32,33 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+### Configuration options
+This instrumentation offers the following configuration options: 
+* `:inject_messaging_context` (default: `false`): When set to `true`, adds context key/value 
+ to Message Attributes for SQS/SNS messages.
+* `suppress_internal_instrumentation` (default: `false`): When set to `true`, any spans with 
+ span kind of `internal` are suppressed from traces.
+
+## Integration with SDK V3's Telemetry support
+AWS SDK for Ruby V3 added support for Observability which includes a configuration, 
+`telemetry_provider` and an OpenTelemetry-based telemetry provider. Only applies to
+AWS service gems released after 2024-09-03. 
+
+Using the OTel telemetry provider will give you insights about specific handlers 
+during the SDK request/response lifecycle.
+
+```ruby
+# configures the OpenTelemetry SDK with instrumentation defaults
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::AwsSdk'
+end
+
+# create otel provider and pass to client config
+otel_provider = Aws::Telemetry::OTelProvider.new
+client = Aws::S3::Client.new(telemetry_provider: otel_provider)
+```
+
+
 
 ## Example
 

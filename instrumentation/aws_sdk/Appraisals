@@ -4,56 +4,25 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'aws-sdk-3.1' do
-  gem 'aws-sdk', '~> 3.1'
+appraise 'aws-sdk-3' do
+  gem 'aws-sdk-core', '~> 3'
+  gem 'aws-sdk-lambda', '~> 1'
+  gem 'aws-sdk-dynamodb', '~> 1'
+  gem 'aws-sdk-sns', '~> 1'
+  gem 'aws-sdk-sqs', '~> 1'
 end
 
-appraise 'aws-sdk-3.0' do
-  gem 'aws-sdk', '~> 3.0'
+# pre-Observability support in V3 SDK
+appraise 'aws-sdk-3.2' do
+  gem 'aws-sdk-core', '~> 3.202'
+  gem 'aws-sdk-lambda', '~> 1.127'
+  gem 'aws-sdk-dynamodb', '~> 1.118'
+  gem 'aws-sdk-sns', '~> 1.82'
+  gem 'aws-sdk-sqs', '~> 1.80'
 end
 
 appraise 'aws-sdk-2.11' do
   gem 'aws-sdk', '~> 2.11'
-end
-
-appraise 'aws-sdk-2.10' do
-  gem 'aws-sdk', '~> 2.10'
-end
-
-appraise 'aws-sdk-2.9' do
-  gem 'aws-sdk', '~> 2.9'
-end
-
-appraise 'aws-sdk-2.8' do
-  gem 'aws-sdk', '~> 2.8'
-end
-
-appraise 'aws-sdk-2.7' do
-  gem 'aws-sdk', '~> 2.7'
-end
-
-appraise 'aws-sdk-2.6' do
-  gem 'aws-sdk', '~> 2.6'
-end
-
-appraise 'aws-sdk-2.5' do
-  gem 'aws-sdk', '~> 2.5'
-end
-
-appraise 'aws-sdk-2.4' do
-  gem 'aws-sdk', '~> 2.4'
-end
-
-appraise 'aws-sdk-2.3' do
-  gem 'aws-sdk', '~> 2.3'
-end
-
-appraise 'aws-sdk-2.2' do
-  gem 'aws-sdk', '~> 2.2'
-end
-
-appraise 'aws-sdk-2.1' do
-  gem 'aws-sdk', '~> 2.1'
 end
 
 appraise 'aws-sdk-2.0' do

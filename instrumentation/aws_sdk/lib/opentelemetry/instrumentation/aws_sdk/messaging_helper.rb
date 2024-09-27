@@ -34,6 +34,17 @@ module OpenTelemetry
             'unknown'
           end
 
+          def span_name(context, client_method)
+            case client_method
+            when SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH
+              "#{client_method}.#{queue_name(context)}.Publish"
+            when SQS_RECEIVE_MESSAGE
+              "#{client_method}.#{queue_name(context)}.Receive"
+            else
+              client_method
+            end
+          end
+
           def legacy_span_name(context, client_method)
             case client_method
             when SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH
