@@ -80,16 +80,16 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       it 'creates spans with all the non-stubbed parameters' do
         skip unless TestHelper.telemetry_plugin?(service_name)
         WebMock.disable_net_connect!
-        stub_request(:get, 'http://169.254.169.254/latest/api/token')
+        stub_request(:put, 'http://169.254.169.254/latest/api/token')
           .with(
             headers: {
               'Accept' => '*/*',
               'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-              'Host' => '169.254.169.254',
-              'Metadata' => 'true',
-              'User-Agent' => 'Ruby'
+              'User-Agent' => 'aws-sdk-ruby3/3.209.1',
+              'X-Aws-Ec2-Metadata-Token-Ttl-Seconds' => '21600'
             }
-          ).to_return(status: 200, body: '', headers: {})
+          )
+          .to_return(status: 200, body: '', headers: {})
 
         client = Aws::Lambda::Client.new(telemetry_provider: otel_provider)
         client.list_functions
