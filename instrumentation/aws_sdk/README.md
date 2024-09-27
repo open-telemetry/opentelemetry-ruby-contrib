@@ -58,8 +58,6 @@ otel_provider = Aws::Telemetry::OTelProvider.new
 client = Aws::S3::Client.new(telemetry_provider: otel_provider)
 ```
 
-
-
 ## Example
 
 To run the example:

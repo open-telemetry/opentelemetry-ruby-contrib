@@ -49,12 +49,15 @@ module OpenTelemetry
 
         def add_plugins(*targets)
           targets.each do |klass|
-            if telemetry_plugin?
-              klass.add_plugin(AwsSdk::Plugin) unless klass.plugins.include?(Aws::Plugins::Telemetry)
-            else
-              klass.add_plugin(AwsSdk::Plugin)
-            end
+            next if supports_telemetry_plugin?(klass)
+
+            klass.add_plugin(AwsSdk::Plugin)
           end
+        end
+
+        def supports_telemetry_plugin?(klass)
+          telemetry_plugin? &&
+            klass.plugins.include?(Aws::Plugins::Telemetry)
         end
 
         def telemetry_plugin?

@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module AwsSdk
       module Patches
-        # TODO
+        # Patch for Telemetry Plugin Handler in V3 SDK
         module Handler
           def call(context)
             span_wrapper(context) { @handler.call(context) }
