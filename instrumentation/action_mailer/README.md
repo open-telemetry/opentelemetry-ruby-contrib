@@ -50,6 +50,7 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 ### Options
 
 ActionMailer instrumentation doesn't expose email addresses by default, but if email addresses are needed, simply use `:email_address` option:
+
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::ActionMailer', { email_address: :include }
@@ -57,6 +58,7 @@ end
 ```
 
 If only want to hide certain attributes from the notifications payload for email address:
+
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::ActionMailer', { email_address: :include, disallowed_notification_payload_keys: ['email.to.address'] }
@@ -78,16 +80,16 @@ The following attributes from the notification payload for the `deliver.action_m
 | `email.from.address` | Array | Sender for mail (omit by default, include when `email_address` set to `:include`) |
 | `email.cc.address` | Array | mail CC (omit by default, include when `email_address` set to `:include`) |
 | `email.bcc.address` | Array | mail BCC (omit by default, include when `email_address` set to `:include`)  |
+
 ## Examples
 
 Example usage can be seen in the `./example/trace_request_demonstration.ru` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_mailer/example/trace_request_demonstration.ru)
-
 
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-action_mailer` gem source is [on GitHub][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
@@ -99,4 +101,5 @@ The `opentelemetry-instrumentation-action_mailer` gem is distributed under the A
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
+[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
