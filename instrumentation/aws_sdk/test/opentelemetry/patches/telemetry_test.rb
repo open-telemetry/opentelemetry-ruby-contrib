@@ -34,7 +34,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
     before do
       exporter.reset
-      WebMock.disable_net_connect!
     end
 
     describe 'Lambda' do
@@ -85,7 +84,11 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         skip unless TestHelper.telemetry_plugin?(service_name)
         stub_request(:get, 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/')
 
-        client = Aws::Lambda::Client.new(telemetry_provider: otel_provider)
+        client = Aws::Lambda::Client.new(
+          telemetry_provider: otel_provider,
+          credentials: Aws::Credentials.new('akid', 'secret'),
+          region: 'us-east-1'
+        )
         client.list_functions
 
         _(client_span.name).must_equal('Lambda.ListFunctions')
