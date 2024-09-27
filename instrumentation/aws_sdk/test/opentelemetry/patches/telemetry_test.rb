@@ -34,10 +34,14 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
     before do
       exporter.reset
+      WebMock.disable_net_connect!
     end
 
     describe 'Lambda' do
       let(:service_name) { 'Lambda' }
+      let(:service_uri) do
+        'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/'
+      end
       let(:client) do
         Aws::Lambda::Client.new(
           telemetry_provider: otel_provider,
@@ -79,17 +83,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
       it 'creates spans with all the non-stubbed parameters' do
         skip unless TestHelper.telemetry_plugin?(service_name)
-        WebMock.disable_net_connect!
-        stub_request(:put, 'http://169.254.169.254/latest/api/token')
-          .with(
-            headers: {
-              'Accept' => '*/*',
-              'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-              'User-Agent' => 'aws-sdk-ruby3/3.209.1',
-              'X-Aws-Ec2-Metadata-Token-Ttl-Seconds' => '21600'
-            }
-          )
-          .to_return(status: 200, body: '', headers: {})
+        stub_request(:get, 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/')
 
         client = Aws::Lambda::Client.new(telemetry_provider: otel_provider)
         client.list_functions
