@@ -13,7 +13,7 @@ appraise 'aws-sdk-3' do
 end
 
 # pre-Observability support in V3 SDK
-appraise 'aws-sdk-3.2' do
+appraise 'aws-sdk-3.202' do
   gem 'aws-sdk-core', '~> 3.202'
   gem 'aws-sdk-lambda', '~> 1.127'
   gem 'aws-sdk-dynamodb', '~> 1.118'

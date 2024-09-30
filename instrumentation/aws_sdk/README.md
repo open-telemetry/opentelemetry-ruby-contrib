@@ -40,20 +40,19 @@ This instrumentation offers the following configuration options:
  span kind of `internal` are suppressed from traces.
 
 ## Integration with SDK V3's Telemetry support
-AWS SDK for Ruby V3 added support for Observability which includes a configuration, 
+AWS SDK for Ruby V3 added support for Observability which includes a new configuration, 
 `telemetry_provider` and an OpenTelemetry-based telemetry provider. Only applies to
 AWS service gems released after 2024-09-03. 
 
-Using the OTel telemetry provider will give you insights about specific handlers 
-during the SDK request/response lifecycle.
-
+Using later versions of these gems will give more details on the internal spans. 
+See below for example usage:
 ```ruby
 # configures the OpenTelemetry SDK with instrumentation defaults
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::AwsSdk'
 end
 
-# create otel provider and pass to client config
+# create open-telemetry provider and pass to client config
 otel_provider = Aws::Telemetry::OTelProvider.new
 client = Aws::S3::Client.new(telemetry_provider: otel_provider)
 ```

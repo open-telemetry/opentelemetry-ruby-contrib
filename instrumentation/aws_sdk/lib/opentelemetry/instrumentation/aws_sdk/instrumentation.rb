@@ -13,7 +13,7 @@ module OpenTelemetry
 
         install do |_config|
           require_dependencies
-          patch if telemetry_plugin?
+          patch_telemetry_plugin if telemetry_plugin?
           add_plugins(Seahorse::Client::Base, *loaded_service_clients)
         end
 
@@ -61,10 +61,13 @@ module OpenTelemetry
         end
 
         def telemetry_plugin?
-          ::Aws.const_defined?('Plugins::Telemetry')
+          ::Aws::Plugins.const_defined?(:Telemetry)
         end
 
-        def patch
+        # Patches AWS SDK V3's telemetry plugin for integration
+        # This patch supports configuration set by this gem and
+        # additional span attributes that was not provided by the plugin
+        def patch_telemetry_plugin
           ::Aws::Plugins::Telemetry::Handler.prepend(Patches::Handler)
         end
 
