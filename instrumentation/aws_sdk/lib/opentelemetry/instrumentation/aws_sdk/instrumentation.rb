@@ -42,6 +42,7 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'handler'
+          require_relative 'handler_helper'
           require_relative 'message_attributes'
           require_relative 'messaging_helper'
           require_relative 'patches/telemetry'

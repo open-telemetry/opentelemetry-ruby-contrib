@@ -10,11 +10,16 @@ module OpenTelemetry
       # An utility class to help SQS/SNS-related span attributes/context injection
       class MessagingHelper
         class << self
+          SUPPORTED_SERVICES = %w[SQS SNS].freeze
           SQS_SEND_MESSAGE = 'SQS.SendMessage'
           SQS_SEND_MESSAGE_BATCH = 'SQS.SendMessageBatch'
           SQS_RECEIVE_MESSAGE = 'SQS.ReceiveMessage'
           SNS_PUBLISH = 'SNS.Publish'
           SEND_MESSAGE_CLIENT_METHODS = [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].freeze
+
+          def supported_services
+            SUPPORTED_SERVICES
+          end
 
           def queue_name(context)
             topic_arn = context.params[:topic_arn]
@@ -73,6 +78,13 @@ module OpenTelemetry
               OpenTelemetry::Trace::SpanKind::CONSUMER
             else
               OpenTelemetry::Trace::SpanKind::CLIENT
+            end
+          end
+
+          def inject_context_if_supported(context, client_method, service_id)
+            if HandlerHelper.instrumentation_config[:inject_messaging_context] &&
+               SUPPORTED_SERVICES.include?(service_id)
+              inject_context(context, client_method)
             end
           end
 
