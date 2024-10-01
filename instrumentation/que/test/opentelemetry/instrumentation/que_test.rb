@@ -304,6 +304,74 @@ describe OpenTelemetry::Instrumentation::Que do
         end
       end
 
+      describe 'enqueueing multiple jobs' do
+        it 'creates a span' do
+          Que.bulk_enqueue do
+            10.times { TestJobAsync.enqueue }
+          end
+
+          _(finished_spans.size).must_equal(1)
+
+          span = finished_spans.last
+          _(span.kind).must_equal(:producer)
+        end
+
+        it 'names the created span' do
+          Que.bulk_enqueue do
+            10.times { TestJobAsync.enqueue }
+          end
+
+          span = finished_spans.last
+          _(span.name).must_equal('TestJobAsync publish')
+        end
+
+        it 'links spans together' do
+          bulk_jobs = Que.bulk_enqueue do
+            10.times { TestJobAsync.enqueue }
+          end
+
+          bulk_jobs.each { |job| Que.run_job_middleware(job) { job.tap(&:_run) } }
+
+          _(finished_spans.size).must_equal(11)
+
+          publish_span = finished_spans.first
+
+          process_spans = finished_spans.drop(1)
+
+          process_spans.each do |process_span|
+            _(publish_span.trace_id).wont_equal(process_span.trace_id)
+
+            _(process_span.total_recorded_links).must_equal(1)
+            _(process_span.links[0].span_context.trace_id).must_equal(publish_span.trace_id)
+            _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
+          end
+        end
+
+        it 'records attributes' do
+          Que.bulk_enqueue do
+            10.times { TestJobAsync.enqueue }
+          end
+
+          attributes = finished_spans.last.attributes
+          _(attributes['messaging.system']).must_equal('que')
+          _(attributes['messaging.destination']).must_equal('default')
+          _(attributes['messaging.destination_kind']).must_equal('queue')
+          _(attributes['messaging.operation']).must_equal('publish')
+          _(attributes['messaging.que.job_class']).must_equal('TestJobAsync')
+          _(attributes['messaging.que.priority']).must_equal(100)
+          _(attributes.key?('messaging.message_id')).must_equal(false)
+        end
+      end
+
+      describe 'enqueueing zero jobs' do
+        it 'creates a span' do
+          Que.bulk_enqueue do
+          end
+
+          _(finished_spans.size).must_equal(1)
+        end
+      end
+
       describe 'processing a job' do
         before do
           bulk_job = Que.bulk_enqueue do
@@ -363,10 +431,10 @@ describe OpenTelemetry::Instrumentation::Que do
 
           _(finished_spans.size).must_equal(2)
 
-          span1 = finished_spans.first
+          span1 = finished_spans.last
           _(span1.kind).must_equal(:producer)
 
-          span2 = finished_spans.last
+          span2 = finished_spans.first
           _(span2.kind).must_equal(:consumer)
         end
 
@@ -375,10 +443,10 @@ describe OpenTelemetry::Instrumentation::Que do
             TestJobSync.enqueue
           end
 
-          span1 = finished_spans.first
+          span1 = finished_spans.last
           _(span1.name).must_equal('TestJobSync publish')
 
-          span2 = finished_spans.last
+          span2 = finished_spans.first
           _(span2.name).must_equal('TestJobSync process')
         end
 
@@ -387,7 +455,7 @@ describe OpenTelemetry::Instrumentation::Que do
             TestJobSync.enqueue
           end
 
-          attributes = finished_spans.last.attributes
+          attributes = finished_spans.first.attributes
           _(attributes['messaging.system']).must_equal('que')
           _(attributes['messaging.destination']).must_equal('default')
           _(attributes['messaging.destination_kind']).must_equal('queue')
