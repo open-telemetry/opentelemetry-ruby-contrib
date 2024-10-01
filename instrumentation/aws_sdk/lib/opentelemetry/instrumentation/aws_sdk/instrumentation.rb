@@ -7,7 +7,32 @@
 module OpenTelemetry
   module Instrumentation
     module AwsSdk
-      # Instrumentation class that detects and installs the AwsSdk instrumentation
+      # The `OpenTelemetry::Instrumentation::AwsSdk::Instrumentation` class contains
+      # logic to detect and install the AwsSdk instrumentation.
+      #
+      # ## Configuration keys and options
+      #
+      # ### `:inject_messaging_context`
+      #
+      # Allows adding of context key/value to Message Attributes for SQS/SNS messages.
+      #
+      # - `false` **(default)** - Context key/value will not be added.
+      # - `true` - Context key/value will be added.
+      #
+      # ### `:suppress_internal_instrumentation`
+      #
+      # Disables tracing of spans of `internal` span kind.
+      #
+      # - `false` **(default)** - Internal spans are traced.
+      # - `true` - Internal spans are not traced.
+      #
+      # @example An explicit default configuration
+      #   OpenTelemetry::SDK.configure do |c|
+      #     c.use 'OpenTelemetry::Instrumentation::AwsSdk', {
+      #       inject_messaging_context: false,
+      #       suppress_internal_instrumentation: false
+      #     }
+      #   end
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('2.0.0')
 
