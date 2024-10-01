@@ -30,7 +30,7 @@ module OpenTelemetry
               attrs[OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE] = 'Aws::Plugins::AwsSdk' if legacy
 
               attrs[SemanticConventions::Trace::DB_SYSTEM] = 'dynamodb' if service_id == 'DynamoDB'
-              MessagingHelper.apply_span_attributes(context, attrs, client_method, service_id) if %w[SQS SNS].include?(service_id)
+              MessagingHelper.apply_span_attributes(context, attrs, client_method, service_id) if MessagingHelper.supported_services.include?(service_id)
             end
           end
 
