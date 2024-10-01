@@ -60,7 +60,7 @@ migration_version = "#{segments[0]}.#{segments[1]}".to_f
 # Simple migration to create a table to test against
 class CreateUserTable < ActiveRecord::Migration[migration_version]
   def change
-    create_table :accounts do
+    create_table :accounts do |t|
       t.timestamps
     end
 
