@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.65.0 / 2024-09-19
+
+* ADDED: All AWS services emit traces
+
 ### v0.64.0 / 2024-09-12
 
 - BREAKING CHANGE: Return message when sql is over the obfuscation limit. Fixes a bug where sql statements with prepended comments that hit the obfuscation limit would be sent raw.
