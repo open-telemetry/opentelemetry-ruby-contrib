@@ -28,15 +28,15 @@ module OpenTelemetry
               OpenTelemetry::SemanticConventions::Trace::RPC_SYSTEM => 'aws-api'
             }.tap do |attrs|
               attrs[OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE] = 'Aws::Plugins::AwsSdk' if legacy
-
               attrs[SemanticConventions::Trace::DB_SYSTEM] = 'dynamodb' if service_id == 'DynamoDB'
-              MessagingHelper.apply_span_attributes(context, attrs, client_method, service_id) if MessagingHelper.supported_services.include?(service_id)
+
+              MessagingHelper.apply_span_attributes(context, attrs, client_method, service_id) if MessagingHelper::SUPPORTED_SERVICES.include?(service_id)
             end
           end
 
           def span_kind(client_method, service_id)
             case service_id
-            when *MessagingHelper.supported_services
+            when *MessagingHelper::SUPPORTED_SERVICES
               MessagingHelper.span_kind(client_method)
             else
               OpenTelemetry::Trace::SpanKind::CLIENT
@@ -45,7 +45,7 @@ module OpenTelemetry
 
           def span_name(context, client_method, service_id, legacy: false)
             case service_id
-            when *MessagingHelper.supported_services
+            when *MessagingHelper::SUPPORTED_SERVICES
               if legacy
                 MessagingHelper.legacy_span_name(context, client_method)
               else

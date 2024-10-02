@@ -9,8 +9,8 @@ module OpenTelemetry
     module AwsSdk
       # An utility class to help SQS/SNS-related span attributes/context injection
       class MessagingHelper
+        SUPPORTED_SERVICES = %w[SQS SNS].freeze
         class << self
-          SUPPORTED_SERVICES = %w[SQS SNS].freeze
           SQS_SEND_MESSAGE = 'SQS.SendMessage'
           SQS_SEND_MESSAGE_BATCH = 'SQS.SendMessageBatch'
           SQS_RECEIVE_MESSAGE = 'SQS.ReceiveMessage'

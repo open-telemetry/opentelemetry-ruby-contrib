@@ -7,7 +7,8 @@
 module OpenTelemetry
   module Instrumentation
     module AwsSdk
-      # Generates Spans for all interactions with AwsSdk
+      # This handler supports specifically supports V2 and V3
+      # prior to Observability support released on 2024-09-03.
       class Handler < Seahorse::Client::Handler
         def call(context)
           return super unless context
