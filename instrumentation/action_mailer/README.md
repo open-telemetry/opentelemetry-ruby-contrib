@@ -69,7 +69,7 @@ end
 
 Internal spans are named using the name of the `ActiveSupport` event that was provided (e.g. `deliver.action_mailer`).
 
-The following attributes from the notification payload for the `deliver.action_mailer` event are attached:
+### Attributes attached to the `deliver.action_mailer` event payload
 
 | Attribute Name | Type | Notes |
 | - | - | - |
@@ -79,7 +79,15 @@ The following attributes from the notification payload for the `deliver.action_m
 | `email.to.address` | Array | Receiver for mail (omit by default, include when `email_address` set to `:include`) |
 | `email.from.address` | Array | Sender for mail (omit by default, include when `email_address` set to `:include`) |
 | `email.cc.address` | Array | mail CC (omit by default, include when `email_address` set to `:include`) |
-| `email.bcc.address` | Array | mail BCC (omit by default, include when `email_address` set to `:include`)  |
+| `email.bcc.address` | Array | mail BCC (omit by default, include when `email_address` set to `:include`) |
+
+### Attributes attached to the `process.action_mailer` event payload
+
+| Attribute Name | Type | Notes |
+| - | - | - |
+| `mailer` | String | Mailer class that is used to render the mail |
+| `action` | String | Method from the mailer class called to render the mail |
+| `args` | Array | Arguments passed to the method to render the email |
 
 ## Examples
 
