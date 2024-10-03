@@ -14,22 +14,32 @@ module OpenTelemetry
       class Railtie < ::Rails::Railtie
         config.after_initialize do
           ::OpenTelemetry::Instrumentation::ActiveSupport::Instrumentation.instance.install({})
+          subscribe_to_deliver
+          subscribe_to_process
+        end
 
-          config = ActionMailer::Instrumentation.instance.config
+        class << self
+          def subscribe_to_deliver
+            ::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(
+              ActionMailer::Instrumentation.instance.tracer,
+              DELIVER_SUBSCRIPTION,
+              config[:notification_payload_transform],
+              config[:disallowed_notification_payload_keys]
+            )
+          end
 
-          ::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(
-            ActionMailer::Instrumentation.instance.tracer,
-            DELIVER_SUBSCRIPTION,
-            config[:notification_payload_transform],
-            config[:disallowed_notification_payload_keys]
-          )
+          def subscribe_to_process
+            ::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(
+              ActionMailer::Instrumentation.instance.tracer,
+              PROCESS_SUBSCRIPTION,
+              config[:process_payload_transform],
+              config[:disallowed_process_payload_keys]
+            )
+          end
 
-          ::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(
-            ActionMailer::Instrumentation.instance.tracer,
-            PROCESS_SUBSCRIPTION,
-            config[:process_payload_transform],
-            config[:disallowed_process_payload_keys]
-          )
+          def config
+            ActionMailer::Instrumentation.instance.config
+          end
         end
       end
     end
