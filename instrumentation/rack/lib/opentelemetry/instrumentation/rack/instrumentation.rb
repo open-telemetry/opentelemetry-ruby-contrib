@@ -48,16 +48,11 @@ module OpenTelemetry
           end
         end
 
-        # def metrics_enabled?
-        #   super
-        #   # other conditions unique to Rack? Like Events also being available?
-        # end
 
         private
 
         def require_dependencies
           require_relative 'middlewares/event_handler' if defined?(::Rack::Events)
-          require_relative 'middlewares/metrics_patch' if metrics_enabled?
           require_relative 'middlewares/tracer_middleware'
         end
 

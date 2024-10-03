@@ -158,8 +158,6 @@ module OpenTelemetry
             false
           end
 
-          # no-op, defined in MetricsPatch and required if metrics enabled
-          def record_http_server_request_duration_metric(span); end
 
           # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
           #
@@ -251,12 +249,6 @@ module OpenTelemetry
             OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.tracer
           end
 
-          # no-op, overwritten by metrics patch if metrics is enabled
-          def meter; end
-
-          # no-op, overwritten by metrics patch if metrics is enabled
-          def http_server_request_duration_histogram; end
-
           def config
             OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.config
           end
@@ -271,6 +263,41 @@ module OpenTelemetry
             request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
             span.add_event('http.proxy.request.started', timestamp: request_start_time) unless request_start_time.nil?
             span
+          end
+
+          # Metrics stuff
+          def metrics_enabled?
+            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.metrics_enabled?
+          end
+
+          def meter
+            return unless metrics_enabled?
+
+            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.meter
+          end
+
+          def http_server_request_duration_histogram
+            return unless metrics_enabled?
+
+            @http_server_request_duration_histogram ||= meter.create_histogram('http.server.request.duration', unit: 's', description: 'Duration of HTTP server requests.')
+          end
+
+          def record_http_server_request_duration_metric(span)
+            return unless metrics_enabled?
+            # find span duration
+            # end - start / a billion to convert nanoseconds to seconds
+            duration = (span.end_timestamp - span.start_timestamp) / Float(10**9)
+            # Create attributes
+            #
+            attrs = {}
+            attrs['http.method'] = span.attributes['http.method']
+            attrs['http.scheme'] = span.attributes['http.scheme']
+            attrs['http.route'] = span.attributes['http.route']
+            attrs['http.status_code'] = span.attributes['http.status_code']
+            attrs['http.host'] = span.attributes['http.host']
+            attrs['error.type'] = span.status.description if span.status.code == OpenTelemetry::Trace::Status::ERROR
+
+            http_server_request_duration_histogram.record(duration, attributes: attrs)
           end
         end
       end

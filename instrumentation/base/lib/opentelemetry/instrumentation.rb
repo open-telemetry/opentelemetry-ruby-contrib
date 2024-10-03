@@ -7,7 +7,6 @@
 require 'opentelemetry'
 require 'opentelemetry-registry'
 require 'opentelemetry/instrumentation/base'
-require 'opentelemetry/instrumentation/metrics_patch' if defined?(OpenTelemetry::Metrics) # maybe also add Env var check?
 
 module OpenTelemetry
   # The instrumentation module contains functionality to register and install
