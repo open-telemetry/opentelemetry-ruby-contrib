@@ -266,6 +266,8 @@ module OpenTelemetry
           end
 
           # Metrics stuff
+          HTTP_SERVER_REQUEST_DURATION_ATTRS_FROM_SPAN = %w[http.method http.scheme http.route http.status_code http.host].freeze
+
           def metrics_enabled?
             OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.metrics_enabled?
           end
@@ -287,14 +289,9 @@ module OpenTelemetry
             # find span duration
             # end - start / a billion to convert nanoseconds to seconds
             duration = (span.end_timestamp - span.start_timestamp) / Float(10**9)
-            # Create attributes
-            #
-            attrs = {}
-            attrs['http.method'] = span.attributes['http.method']
-            attrs['http.scheme'] = span.attributes['http.scheme']
-            attrs['http.route'] = span.attributes['http.route']
-            attrs['http.status_code'] = span.attributes['http.status_code']
-            attrs['http.host'] = span.attributes['http.host']
+            # glean attributes
+            attrs = span.attributes.select {|k, _v| HTTP_SERVER_REQUEST_DURATION_ATTRS_FROM_SPAN.include?(k) }
+            # set error
             attrs['error.type'] = span.status.description if span.status.code == OpenTelemetry::Trace::Status::ERROR
 
             http_server_request_duration_histogram.record(duration, attributes: attrs)
