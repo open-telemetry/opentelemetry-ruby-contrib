@@ -15,15 +15,15 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Querying do
 
   before { exporter.reset }
 
-  describe 'find_by_sql' do
+  describe 'query' do
     it 'traces' do
       Account.create!
 
       User.find_by_sql('SELECT * FROM users')
       Account.first.users.to_a
 
-      user_find_spans = spans.select { |s| s.name == 'User.find_by_sql' }
-      account_find_span = spans.find { |s| s.name == 'Account.find_by_sql' }
+      user_find_spans = spans.select { |s| s.name == 'User query' }
+      account_find_span = spans.find { |s| s.name == 'Account query' }
 
       _(user_find_spans.length).must_equal(2)
       _(account_find_span).wont_be_nil

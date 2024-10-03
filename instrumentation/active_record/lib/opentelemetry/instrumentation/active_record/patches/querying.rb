@@ -20,13 +20,13 @@ module OpenTelemetry
           module ClassMethods
             if ::ActiveRecord.version >= Gem::Version.new('7.0.0')
               def _query_by_sql(...)
-                tracer.in_span("#{self}.find_by_sql") do
+                tracer.in_span("#{self} query") do
                   super
                 end
               end
             else
               def find_by_sql(...)
-                tracer.in_span("#{self}.find_by_sql") do
+                tracer.in_span("#{self} query") do
                   super
                 end
               end
