@@ -158,7 +158,6 @@ module OpenTelemetry
             false
           end
 
-
           # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
           #
           # recommendation: span.name(s) should be low-cardinality (e.g.,
@@ -281,7 +280,11 @@ module OpenTelemetry
           def http_server_request_duration_histogram
             return unless metrics_enabled?
 
-            @http_server_request_duration_histogram ||= meter.create_histogram('http.server.request.duration', unit: 's', description: 'Duration of HTTP server requests.')
+            @http_server_request_duration_histogram ||= meter.create_histogram(
+              'http.server.request.duration', 
+              unit: 's', 
+              description: 'Duration of HTTP server requests.'
+            )
           end
 
           def record_http_server_request_duration_metric(span)
@@ -290,7 +293,7 @@ module OpenTelemetry
             # end - start / a billion to convert nanoseconds to seconds
             duration = (span.end_timestamp - span.start_timestamp) / Float(10**9)
             # glean attributes
-            attrs = span.attributes.select {|k, _v| HTTP_SERVER_REQUEST_DURATION_ATTRS_FROM_SPAN.include?(k) }
+            attrs = span.attributes.select { |k, _v| HTTP_SERVER_REQUEST_DURATION_ATTRS_FROM_SPAN.include?(k) }
             # set error
             attrs['error.type'] = span.status.description if span.status.code == OpenTelemetry::Trace::Status::ERROR
 

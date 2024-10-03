@@ -32,6 +32,7 @@ module OpenTelemetry
         option :use_rack_events,          default: true,  validate: :boolean
         # TODO: This option currently exclusively uses the event handler, should we support old and new Rack?
         option :send_metrics,             default: false, validate: :boolean
+
         # Temporary Helper for Sinatra and ActionPack middleware to use during installation
         #
         # @example Default usage
@@ -47,7 +48,6 @@ module OpenTelemetry
             [OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware]
           end
         end
-
 
         private
 
