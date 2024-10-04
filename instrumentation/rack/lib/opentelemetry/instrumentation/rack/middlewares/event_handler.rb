@@ -281,14 +281,15 @@ module OpenTelemetry
             return unless metrics_enabled?
 
             @http_server_request_duration_histogram ||= meter.create_histogram(
-              'http.server.request.duration', 
-              unit: 's', 
+              'http.server.request.duration',
+              unit: 's',
               description: 'Duration of HTTP server requests.'
             )
           end
 
           def record_http_server_request_duration_metric(span)
             return unless metrics_enabled?
+
             # find span duration
             # end - start / a billion to convert nanoseconds to seconds
             duration = (span.end_timestamp - span.start_timestamp) / Float(10**9)
