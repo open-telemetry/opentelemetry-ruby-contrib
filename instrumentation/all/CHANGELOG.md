@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.66.0 / 2024-10-08
+
+* ADDED: Integration with V3 telemetry provider for the aws-sdk
+
 ### v0.65.0 / 2024-09-19
 
 * ADDED: All AWS services emit traces

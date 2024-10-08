@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.8.4 / 2024-10-08
+
+* FIXED: Fix bulk_enqueue when enqueuing more than 5 jobs
+
 ### v0.8.3 / 2024-07-23
 
 * DOCS: Add cspell to CI
