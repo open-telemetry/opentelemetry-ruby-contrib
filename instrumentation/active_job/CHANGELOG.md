@@ -1,5 +1,22 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+## [0.7.2](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-active_job/v0.7.1...opentelemetry-instrumentation-active_job/v0.7.2) (2024-10-08)
+
+
+### Bug Fixes
+
+* **active-job:** honour dynamic changes in configuration ([df6e43f](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/df6e43f9a350afeca3066e2ceba0ed5112d9d47f))
+* **active-job:** Honour dynamic changes in configuration ([#1079](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1079)) ([df6e43f](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/df6e43f9a350afeca3066e2ceba0ed5112d9d47f))
+* **active-job:** Prefix ::ActiveSupport when installing the instrumentation ([#1120](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1120)) ([c51c0ee](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/c51c0eed894429d33a4de3b8a981a84971c19611))
+* **active-job:** Propagate context between enqueue and perform ([#1132](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1132)) ([9927df8](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/9927df8012a51a34653c36f373a2e8d9b19ed7cf))
+* ActiveJob::Handlers.unsubscribe ([#1078](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1078)) ([8b9aba3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/8b9aba33e51f95255c9440f74664ca29ef08aed6))
+* Use Active Support Lazy Load Hooks to avoid prematurely initializing ActiveRecord::Base and ActiveJob::Base ([#1104](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1104)) ([a9e6e1a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/a9e6e1a898f89ac6574a85f3f64429fbf4b457db))
+
+
+### Performance Improvements
+
+* Reduce Context Allocations in ActiveJob ([#1018](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1018)) ([989da17](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/989da17c33c345ad285f70a0821078a6e21d389d))
+
 ### v0.7.7 / 2024-08-21
 
 * FIXED: Propagate context between enqueue and perform

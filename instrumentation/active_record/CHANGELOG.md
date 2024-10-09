@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+## [0.7.3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-active_record/v0.7.2...opentelemetry-instrumentation-active_record/v0.7.3) (2024-10-08)
+
+
+### Bug Fixes
+
+* Use Active Support Lazy Load Hooks to avoid prematurely initializing ActiveRecord::Base and ActiveJob::Base ([#1104](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1104)) ([a9e6e1a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/a9e6e1a898f89ac6574a85f3f64429fbf4b457db))
+* use ActiveSupport from top-level namespace ([#1123](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1123)) ([9ce7e39](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/9ce7e3932293259e6c82cbf008722b57e4e7b41c))
+
 ### v0.7.4 / 2024-08-19
 
 * FIXED: Use ActiveSupport from top-level namespace (NoMethodError on_load) 
