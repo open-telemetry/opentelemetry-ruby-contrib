@@ -18,17 +18,11 @@ module OpenTelemetry
 
           # Contains ActiveRecord::Querying to be patched
           module ClassMethods
-            if ::ActiveRecord.version >= Gem::Version.new('7.0.0')
-              def _query_by_sql(...)
-                tracer.in_span("#{self} query") do
-                  super
-                end
-              end
-            else
-              def find_by_sql(...)
-                tracer.in_span("#{self} query") do
-                  super
-                end
+            method_name = ::ActiveRecord.version >= Gem::Version.new('7.0.0') ? :_query_by_sql : :find_by_sql
+
+            define_method(method_name) do |*args, **kwargs|
+              tracer.in_span("#{self} query") do
+                super(*args, **kwargs)
               end
             end
 
