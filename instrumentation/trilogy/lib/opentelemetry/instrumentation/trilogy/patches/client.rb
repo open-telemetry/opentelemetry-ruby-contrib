@@ -79,8 +79,8 @@ module OpenTelemetry
             attributes['db.instance.id'] = @connected_host unless @connected_host.nil?
 
             if sql
-              collection_name = collection_name(sql)
-              attributes[SemanticConventions::Trace::DB_SQL_TABLE] = collection_name if collection_name && config[:db_collection_name] == :include
+              sql_table_name = db_sql_table_name(sql)
+              attributes[SemanticConventions::Trace::DB_SQL_TABLE] = sql_table_name if sql_table_name && config[:db_sql_table] == :include
 
               case config[:db_statement]
               when :obfuscate
@@ -94,7 +94,7 @@ module OpenTelemetry
             attributes
           end
 
-          def collection_name(sql)
+          def db_sql_table_name(sql)
             Regexp.last_match(1) if sql =~ TABLE_NAME
           rescue StandardError
             nil

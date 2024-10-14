@@ -485,7 +485,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
           query = test_case['sql']
 
           it "returns the table name for #{name}" do
-            table_name = client.send(:collection_name, query)
+            table_name = client.send(:db_sql_table_name, query)
 
             expect(table_name).must_equal('test_table')
           end

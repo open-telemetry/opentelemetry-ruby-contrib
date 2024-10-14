@@ -28,7 +28,7 @@ module OpenTelemetry
         option :span_name, default: :statement_type, validate: %I[statement_type db_name db_operation_and_name]
         option :obfuscation_limit, default: 2000, validate: :integer
         option :propagator, default: nil, validate: :string
-        option :db_collection_name, default: :include, validate: %I[omit include]
+        option :db_sql_table, default: :omit, validate: %I[omit include]
 
         attr_reader :propagator
 
