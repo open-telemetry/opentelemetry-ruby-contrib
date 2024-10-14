@@ -14,7 +14,7 @@ module OpenTelemetry
         # Module to prepend to Trilogy for instrumentation
         module Client
           # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
-          TABLE_NAME = /\b(?:(?:FROM|INTO|UPDATE)|(?:(?:CREATE|DROP|ALTER)\s+TABLE(?:\s+IF\s+(?:NOT\s+)?EXISTS)?))\s+["']?([\w.]+)["']?/i
+          TABLE_NAME = /\b(?:(?:FROM|INTO|UPDATE)|(?:(?:CREATE|DROP|ALTER)\s+TABLE(?:\s+IF\s+(?:NOT\s+)?EXISTS)?))\s+["]?([\w.]+)["]?/i
 
           def initialize(options = {})
             @connection_options = options # This is normally done by Trilogy#initialize

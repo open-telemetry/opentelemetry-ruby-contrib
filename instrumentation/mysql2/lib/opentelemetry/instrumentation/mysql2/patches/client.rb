@@ -14,7 +14,7 @@ module OpenTelemetry
         # Module to prepend to Mysql2::Client for instrumentation
         module Client
           # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
-          TABLE_NAME = /\b(?:(?:FROM|INTO|UPDATE)|(?:(?:CREATE|DROP|ALTER)\s+TABLE(?:\s+IF\s+(?:NOT\s+)?EXISTS)?))\s+["']?([\w.]+)["']?/i
+          TABLE_NAME = /\b(?:(?:FROM|INTO|UPDATE)|(?:(?:CREATE|DROP|ALTER)\s+TABLE(?:\s+IF\s+(?:NOT\s+)?EXISTS)?))\s+["]?([\w.]+)["]?/i
 
           def query(sql, options = {})
             tracer.in_span(

@@ -50,5 +50,9 @@
     {
       "name": "from_with_join",
       "sql": "SELECT columns FROM test_table JOIN table2 ON test_table.column = table2.column"
+    },
+    {
+      "name": "table_name_with_double_quotes",
+      "sql": "SELECT columns FROM \"test_table\""
     }
   ]
