@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.20.1'
   spec.add_dependency 'opentelemetry-instrumentation-aws_lambda', '~> 0.1.0'
-  spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.6.0'
+  spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.7.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.21.1'
   spec.add_dependency 'opentelemetry-instrumentation-dalli', '~> 0.25.0'
@@ -67,7 +67,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rubocop', '~> 1.66.0'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.20'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.22.0'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'yard', '~> 0.9'
 
