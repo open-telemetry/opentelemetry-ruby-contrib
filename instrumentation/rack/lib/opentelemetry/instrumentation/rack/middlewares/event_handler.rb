@@ -43,7 +43,6 @@ module OpenTelemetry
           include ::Rack::Events::Abstract
 
           OTEL_TOKEN_AND_SPAN = 'otel.rack.token_and_span'
-          GOOD_HTTP_STATUSES = (100..499)
 
           # Creates a server span for this current request using the incoming parent context
           # and registers them as the {current_span}
@@ -208,7 +207,7 @@ module OpenTelemetry
           end
 
           def add_response_attributes(span, response)
-            span.status = OpenTelemetry::Trace::Status.error unless GOOD_HTTP_STATUSES.include?(response.status.to_i)
+            span.status = OpenTelemetry::Trace::Status.error if response.server_error?
             attributes = extract_response_attributes(response)
             span.add_attributes(attributes)
           rescue StandardError => e
