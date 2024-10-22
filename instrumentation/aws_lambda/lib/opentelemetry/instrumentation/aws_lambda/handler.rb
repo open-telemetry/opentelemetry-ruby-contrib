@@ -40,32 +40,24 @@ module OpenTelemetry
           original_handler_error = nil
           original_response = nil
           OpenTelemetry::Context.with_current(parent_context) do
-            span_attributes = otel_attributes(event, context)
-            span = tracer.start_span(
-              @original_handler,
-              attributes: span_attributes,
-              kind: span_kind
-            )
-
-            begin
-              response = call_original_handler(event: event, context: context)
-              status_code = response['statusCode'] || response[:statusCode] if response.is_a?(Hash)
-              span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code) if status_code
-            rescue StandardError => e
-              original_handler_error = e
-            ensure
-              original_response = response
+            tracer.in_span(@original_handler, attributes: otel_attributes(event, context), kind: span_kind) do |span|
+              begin
+                response = call_original_handler(event: event, context: context)
+                status_code = response['statusCode'] || response[:statusCode] if response.is_a?(Hash)
+                span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code) if status_code
+              rescue StandardError => e
+                original_handler_error = e
+              ensure
+                original_response = response
+              end
+              if original_handler_error
+                span.record_exception(original_handler_error)
+                span.status = OpenTelemetry::Trace::Status.error(original_handler_error.message)
+              end
             end
-          rescue StandardError => e
-            OpenTelemetry.logger.error("aws-lambda instrumentation #{e.class}: #{e.message}")
-          ensure
-            if original_handler_error
-              span&.record_exception(original_handler_error)
-              span&.status = OpenTelemetry::Trace::Status.error(original_handler_error.message)
-            end
-            span&.finish
-            OpenTelemetry.tracer_provider.force_flush(timeout: @flush_timeout)
           end
+
+          OpenTelemetry.tracer_provider.force_flush(timeout: @flush_timeout)
 
           raise original_handler_error if original_handler_error
 

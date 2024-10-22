@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.7.3 / 2024-08-23
+
+* FIXED: ActionView Support Legacy Formats
+
+### v0.7.2 / 2024-08-15
+
+* (No Significant Changes)
+
+### v0.7.1 / 2024-07-23
+
+* DOCS: Add cspell to CI
+
 ### v0.7.0 / 2023-11-22
 
 * BREAKING CHANGE: Drop Rails 6.0 EOL
@@ -43,7 +55,7 @@
 
 ### v0.2.0 / 2021-12-01
 
-* ADDED: Move activesupport notification subsciber out of action_view gem 
+* ADDED: Move activesupport notification subscriber out of action_view gem 
 * FIXED: Instrumentation of Rails 7 
 
 ### v0.1.3 / 2021-10-06

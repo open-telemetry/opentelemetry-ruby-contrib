@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.7.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_job', '~> 0.7.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.7.0'
-  spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.5.0'
+  spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.6.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.1'
 
   spec.add_development_dependency 'appraisal', '~> 2.5'
@@ -41,10 +41,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
   spec.add_development_dependency 'rack-test', '~> 2.1.0'
   spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rubocop', '~> 1.62'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.20'
+  spec.add_development_dependency 'rubocop', '~> 1.66.0'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.22.0'
   spec.add_development_dependency 'simplecov', '~> 0.22.0'
-  spec.add_development_dependency 'webmock', '~> 3.19'
+  spec.add_development_dependency 'webmock', '~> 3.24.0'
   spec.add_development_dependency 'yard', '~> 0.9'
 
   spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/rails' if spec.respond_to?(:metadata)

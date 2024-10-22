@@ -55,7 +55,7 @@ module OpenTelemetry
         end
 
         def config_options(user_config)
-          config = super(user_config)
+          config = super
           config[:allowed_rack_request_headers] = config[:allowed_request_headers].compact.each_with_object({}) do |header, memo|
             key = header.to_s.upcase.gsub(/[-\s]/, '_')
             case key

@@ -40,7 +40,7 @@ describe OpenTelemetry::Propagator::Vitess::SqlQueryPropagator do
   end
 
   let(:base64_encoded_jaeger_context) do
-    Base64.strict_encode64({'uber-trace-id' => "#{trace_id}:#{span_id}:0:#{trace_flags.sampled? ? 1 : 0}"}.to_json)
+    Base64.strict_encode64({ 'uber-trace-id' => "#{trace_id}:#{span_id}:0:#{trace_flags.sampled? ? 1 : 0}" }.to_json)
   end
 
   let(:carrier) do

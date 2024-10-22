@@ -71,6 +71,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
               _(span.attributes['http.method']).must_equal 'N/A'
               _(span.attributes['http.status_code']).must_be_nil
               _(span.attributes['http.url']).must_equal 'http://example.com/test'
+              _(span.attributes['net.peer.name']).must_equal 'example.com'
             end
           end
         end
@@ -275,8 +276,10 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             multi.perform
 
             _(exporter.finished_spans.size).must_equal 2
-            _(exporter.finished_spans[0].attributes['http.url']).must_equal nil
+            _(exporter.finished_spans[0].attributes['http.url']).must_be_nil
+            _(exporter.finished_spans[0].attributes['net.peer.name']).must_be_nil
             _(exporter.finished_spans[1].attributes['http.url']).must_equal 'test'
+            _(exporter.finished_spans[1].attributes['net.peer.name']).must_be_nil
           end
         end
       end

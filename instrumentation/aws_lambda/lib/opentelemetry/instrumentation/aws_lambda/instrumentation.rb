@@ -15,7 +15,7 @@ module OpenTelemetry
 
         # determine if current environment is lambda by checking _HANLDER or ORIG_HANDLER
         present do
-          (ENV.key?('_HANDLER') || ENV.key?('ORIG_HANDLER'))
+          ENV.key?('_HANDLER') || ENV.key?('ORIG_HANDLER')
         end
 
         private

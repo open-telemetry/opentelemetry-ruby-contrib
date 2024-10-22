@@ -6,7 +6,7 @@ The OpenTelemetry `aws-sdk` gem is a community maintained instrumentation for [a
 
 Install the gem using:
 
-```
+```console
 gem install opentelemetry-instrumentation-aws_sdk
 ```
 
@@ -32,6 +32,30 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+### Configuration options
+This instrumentation offers the following configuration options: 
+* `:inject_messaging_context` (default: `false`): When set to `true`, adds context key/value 
+ to Message Attributes for SQS/SNS messages.
+* `suppress_internal_instrumentation` (default: `false`): When set to `true`, any spans with 
+ span kind of `internal` are suppressed from traces.
+
+## Integration with SDK V3's Telemetry support
+AWS SDK for Ruby V3 added support for Observability which includes a new configuration, 
+`telemetry_provider` and an OpenTelemetry-based telemetry provider. Only applies to
+AWS service gems released after 2024-09-03. 
+
+Using later versions of these gems will give more details on the internal spans. 
+See below for example usage:
+```ruby
+# configures the OpenTelemetry SDK with instrumentation defaults
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::AwsSdk'
+end
+
+# create open-telemetry provider and pass to client config
+otel_provider = Aws::Telemetry::OTelProvider.new
+client = Aws::S3::Client.new(telemetry_provider: otel_provider)
+```
 
 ## Example
 
@@ -49,7 +73,7 @@ This will run SNS publish command, printing OpenTelemetry traces to the console 
 
 The `opentelemetry-instrumentation-aws_sdk` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
@@ -61,4 +85,5 @@ Apache 2.0 license. See [LICENSE][license-github] for more information.
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
+[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
