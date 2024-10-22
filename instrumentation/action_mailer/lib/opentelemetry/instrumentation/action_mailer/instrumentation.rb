@@ -7,7 +7,53 @@
 module OpenTelemetry
   module Instrumentation
     module ActionMailer
-      # The Instrumentation class contains logic to detect and install the ActionMailer instrumentation
+      # The {OpenTelemetry::Instrumentation::ActionMailer::Instrumentation} class contains logic to detect and install the ActionMailer instrumentation
+      #
+      # Installation and configuration of this instrumentation is done within the
+      # {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry/SDK#configure-instance_method OpenTelemetry::SDK#configure}
+      # block, calling {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry%2FSDK%2FConfigurator:use use()}
+      # or {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry%2FSDK%2FConfigurator:use_all use_all()}.
+      #
+      # ## Configuration keys and options
+      #
+      # ### `:disallowed_notification_payload_keys`
+      #
+      # Specifies an array of keys that should be excluded from the `deliver.action_mailer` notification payload as span attributes.
+      #
+      # ### `:disallowed_process_payload_keys`
+      #
+      # Specifies an array of keys that should be excluded from the `process.action_mailer` notification payload as span attributes.
+      #
+      # ### `:notification_payload_transform`
+      #
+      # - `proc` **default** `nil`
+      #
+      # Specifies custom proc used to extract span attributes form the `deliver.action_mailer` notification payload. Use this to rename keys, extract nested values, or perform any other custom logic.
+      #
+      # ### `:process_payload_transform`
+      #
+      # - `proc` **default** `nil`
+      #
+      # Specifies custom proc used to extract span attributes form the `process.action_mailer` notification payload. Use this to rename keys, extract nested values, or perform any other custom logic.
+      #
+      # ### `:email_address`
+      #
+      # - `symbol` **default** `:omit`
+      #
+      # Specifies whether to include email addresses in the notification payload. Valid values are `:omit` and `:include`.
+      #
+      # @example An explicit default configuration
+      #   OpenTelemetry::SDK.configure do |c|
+      #     c.use_all({
+      #       'OpenTelemetry::Instrumentation::ActionMailer' => {
+      #         disallowed_notification_payload_keys: [],
+      #         disallowed_process_payload_keys: [],
+      #         notification_payload_transform: nil,
+      #         process_payload_transform: nil,
+      #         email_address: :omit,
+      #       },
+      #     })
+      #   end
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('6.1.0')
         EMAIL_ATTRIBUTE = %w[email.to.address email.from.address email.cc.address email.bcc.address].freeze
@@ -27,7 +73,9 @@ module OpenTelemetry
         end
 
         option :disallowed_notification_payload_keys, default: [], validate: :array
+        option :disallowed_process_payload_keys,      default: [], validate: :array
         option :notification_payload_transform,       default: nil, validate: :callable
+        option :process_payload_transform,            default: nil, validate: :callable
         option :email_address,                        default: :omit, validate: %I[omit include]
 
         private
