@@ -3,7 +3,6 @@
 ### v0.8.0 / 2024-10-22
 
 * BREAKING CHANGE: Rename Active Record find_by_sql spans to query
-
 * FIXED: Emit Active Record query spans for Rails 7.0+
 
 ### v0.7.4 / 2024-08-19
