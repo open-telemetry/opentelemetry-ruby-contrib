@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.8.0 / 2024-10-22
+
+* BREAKING CHANGE: Activerecord find_by_sql spans on Rails 7.0+
+
+* FIXED: Activerecord find_by_sql spans on Rails 7.0+
+
 ### v0.7.4 / 2024-08-19
 
 * FIXED: Use ActiveSupport from top-level namespace (NoMethodError on_load) 
