@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.25.0 / 2024-10-23
+
+* ADDED: Set span error only for 5xx response range
+
 ### v0.24.6 / 2024-07-23
 
 * DOCS: Add cspell to CI
