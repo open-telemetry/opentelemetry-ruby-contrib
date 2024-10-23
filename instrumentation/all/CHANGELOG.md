@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.67.0 / 2024-10-22
+
+* BREAKING CHANGE: Rename Active Record find_by_sql spans to query
+* FIXED: Emit Active Record query spans for Rails 7.0+
+* ADDED: Subscribe to process.action_mailer notifications
+
 ### v0.66.0 / 2024-10-08
 
 * ADDED: Integration with V3 telemetry provider for the aws-sdk
