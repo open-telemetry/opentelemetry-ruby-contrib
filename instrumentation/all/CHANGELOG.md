@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.68.0 / 2024-10-23
+
+* ADDED: Set span error only for 5xx response range
+
 ### v0.67.0 / 2024-10-22
 
 * BREAKING CHANGE: Rename Active Record find_by_sql spans to query
