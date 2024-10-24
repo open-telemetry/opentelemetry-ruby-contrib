@@ -1,0 +1,25 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+source 'https://rubygems.org'
+
+### TODO: Ignore the below comment during development, fix before release ###
+# DO NOT ADD DEPENDENCIES HERE!
+# Please declare a minimum development dependency in the gemspec,
+# then target specific versions in the Appraisals file.
+
+gemspec
+
+group :test do
+  gem 'opentelemetry-instrumentation-base', path: '../base'
+  gem 'opentelemetry-api', git: 'https://github.com/kaylareopelle/opentelemetry-ruby', branch: 'log-record-processor3', glob: 'api/*.gemspec'
+  gem 'opentelemetry-logs-api', git: 'https://github.com/kaylareopelle/opentelemetry-ruby', branch: 'log-record-processor3', glob: 'logs_api/*.gemspec'
+  gem 'opentelemetry-logs-sdk', git: 'https://github.com/kaylareopelle/opentelemetry-ruby', branch: 'log-record-processor3', glob: 'logs_sdk/*.gemspec'
+  gem 'opentelemetry-sdk', git: 'https://github.com/kaylareopelle/opentelemetry-ruby', branch: 'log-record-processor3', glob: 'sdk/*.gemspec'
+end
+
+# Temporary for testing, Appraisal does not work with gems installed from git source
+gem 'rails', '~> 7.1.0'
