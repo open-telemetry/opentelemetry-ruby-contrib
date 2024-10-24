@@ -127,6 +127,7 @@ module OpenTelemetry
           end
 
           def extract_response_attributes(response)
+            # TODO: Rack spec states status should always be an integer, so we might not need to coerce
             attributes = { 'http.status_code' => response.status.to_i }
             attributes.merge!(extract_response_headers(response.headers))
             attributes
