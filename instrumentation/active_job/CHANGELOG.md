@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.7.8 / 2024-10-24
+
+* FIXED: ActiveJob Propagate baggage information properly when performing
+
 ### v0.7.7 / 2024-08-21
 
 * FIXED: Propagate context between enqueue and perform

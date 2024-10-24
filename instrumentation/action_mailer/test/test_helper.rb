@@ -22,3 +22,23 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::ActionMailer'
   c.add_span_processor span_processor
 end
+
+OpenTelemetry::Instrumentation::ActiveSupport::Instrumentation.instance.install({})
+OpenTelemetry::Instrumentation::ActionMailer::Instrumentation.instance.install({})
+
+ActionMailer::Base.delivery_method = :test
+
+class TestMailer < ActionMailer::Base
+  FROM = 'from@example.com'
+  TO = 'to@example.com'
+  CC = 'cc@example.com'
+  BCC = 'bcc@example.com'
+
+  def hello_world(message = 'Hello world')
+    @message = message
+    mail from: FROM, to: TO, cc: CC, bcc: BCC do |format|
+      format.html { render inline: '<h1><%= @message %></h1>' }
+      format.text { render inline: '<%= @message %>' }
+    end
+  end
+end
