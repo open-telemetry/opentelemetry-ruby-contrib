@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module ActiveJob
-      VERSION = '0.7.7'
+      VERSION = '0.7.2'
     end
   end
 end
