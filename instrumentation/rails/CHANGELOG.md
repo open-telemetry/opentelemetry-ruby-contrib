@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-rails
 
+## [0.30.3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-rails/v0.30.2...opentelemetry-instrumentation-rails/v0.30.3) (2024-10-24)
+
+
+### Bug Fixes
+
+* **rails:** Rails instrumentation should load ActiveJob instrumentation ([#1099](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1099)) ([e8536cf](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e8536cf77f14f2a336033165248facaafdde9b9c))
+
 ### v0.32.0 / 2024-10-22
 
 * BREAKING CHANGE: Rename Active Record find_by_sql spans to query
