@@ -41,7 +41,7 @@ Naming/FileName:
 ### TODO: Enable this is a separate PR
 Naming/BlockForwarding:
   Enabled: false
-Style/BlockForwarding:
+Style/ArgumentsForwarding:
   Enabled: false
 #######################
 Style/Documentation:
