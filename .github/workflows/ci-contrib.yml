@@ -44,12 +44,6 @@ jobs:
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "3.0"
           yard: true
           rubocop: true
           build: true
@@ -89,12 +83,6 @@ jobs:
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "3.0"
           yard: true
           rubocop: true
           build: true
@@ -134,15 +122,9 @@ jobs:
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-${{ matrix.gem }}"
           yard: true
           rubocop: true
           build: true
-          ruby: "3.0"
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
@@ -177,12 +159,6 @@ jobs:
         with:
           gem:  "opentelemetry-processor-${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "3.0"
           yard: true
           rubocop: true
           build: true
