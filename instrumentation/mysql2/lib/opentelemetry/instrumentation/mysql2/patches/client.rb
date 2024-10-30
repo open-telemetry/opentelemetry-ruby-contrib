@@ -53,7 +53,7 @@ module OpenTelemetry
             attributes = _otel_client_attributes(sql)
 
             if sql
-              attributes[SemanticConventions::Trace::DB_SQL_TABLE] = db_sql_table_name(sql) if config[:db_sql_table] == :include
+              attributes[SemanticConventions::Trace::DB_SQL_TABLE] = db_sql_table_name(sql) if db_sql_table_name(sql) && config[:db_sql_table] == :include
 
               case config[:db_statement]
               when :include
@@ -98,6 +98,7 @@ module OpenTelemetry
           def db_sql_table_name(sql)
             Regexp.last_match(1) if sql =~ TABLE_NAME
           rescue StandardError
+            OpenTelemetry.handle_error(message: 'Error extracting collection name', exception: e)
             nil
           end
 
