@@ -90,7 +90,6 @@ jobs:
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.1"
-
           yard: true
           rubocop: true
           build: true
