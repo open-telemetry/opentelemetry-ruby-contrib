@@ -1,5 +1,3 @@
-version: "3.5"
-
 x-shared-config:
   base: &base
     command: /bin/bash
