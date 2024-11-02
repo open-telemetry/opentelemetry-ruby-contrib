@@ -17,6 +17,8 @@ module OpenTelemetry
           patch
         end
 
+        option :span_naming, default: :semconv, validate: %i[semconv class]
+
         present do
           defined?(::ActionController)
         end
