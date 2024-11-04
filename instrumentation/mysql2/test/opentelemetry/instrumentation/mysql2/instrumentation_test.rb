@@ -139,7 +139,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
           stmt = client.prepare('SELECT ?')
 
           args = ['abc']
-          kwargs = {'foo' => 'bar'}
+          kwargs = { 'foo' => 'bar' }
 
           stmt.execute(*args, **kwargs)
           finished_spans = exporter.finished_spans

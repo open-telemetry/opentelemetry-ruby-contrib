@@ -24,7 +24,7 @@ module OpenTelemetry
 
           def _otel_execute_attributes(args, kwargs)
             if config[:db_statement] == :include
-              {'args' => args.to_s, 'kwargs' => kwargs.to_s}
+              { 'args' => args.to_s, 'kwargs' => kwargs.to_s }
             else
               {}
             end
