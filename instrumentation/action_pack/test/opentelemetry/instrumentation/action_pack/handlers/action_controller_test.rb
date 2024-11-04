@@ -146,7 +146,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
           skip "Rails #{Rails.version} uses ActionDispatch::Request#route_uri_pattern" if Rails.version >= Gem::Version.new('7.1')
           get '/ok'
 
-          _(span.name).must_equal 'GET example/ok'
+          _(span.name).must_equal 'GET /example/ok'
         end
 
         it 'uses the Rails route' do
@@ -163,7 +163,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
 
           get 'internal_server_error'
 
-          _(span.name).must_equal 'GET example/internal_server_error'
+          _(span.name).must_equal 'GET /example/internal_server_error'
         end
 
         it 'uses the Rails route for server side errors' do

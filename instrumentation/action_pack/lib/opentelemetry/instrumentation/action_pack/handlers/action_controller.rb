@@ -32,7 +32,7 @@ module OpenTelemetry
                           if http_route
                             "#{request.method} #{http_route.gsub('(.:format)', '')}"
                           else
-                            "#{request.method} #{payload.dig(:params, :controller)}/#{payload.dig(:params, :action)}"
+                            "#{request.method} /#{payload.dig(:params, :controller)}/#{payload.dig(:params, :action)}"
                           end
                         else
                           "#{payload[:controller]}##{payload[:action]}"
