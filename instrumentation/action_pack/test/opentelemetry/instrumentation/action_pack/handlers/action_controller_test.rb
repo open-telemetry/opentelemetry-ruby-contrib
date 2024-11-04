@@ -143,14 +143,14 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     describe 'when using the default span_naming configuration' do
       describe 'successful requests' do
         it 'uses the http method controller and action name' do
-          skip "Rails #{Rails.version} uses ActionDispatch::Request#route_uri_pattern" if Rails.version >= Gem::Version.new('7.1')
+          skip "Rails #{Rails.gem_version} uses ActionDispatch::Request#route_uri_pattern" if Rails.gem_version >= Gem::Version.new('7.1')
           get '/ok'
 
           _(span.name).must_equal 'GET /example/ok'
         end
 
         it 'uses the Rails route' do
-          skip "Rails #{Rails.version} does not define ActionDispatch::Request#route_uri_pattern" if Rails.version < Gem::Version.new('7.1')
+          skip "Rails #{Rails.gem_version} does not define ActionDispatch::Request#route_uri_pattern" if Rails.gem_version < Gem::Version.new('7.1')
           get '/ok'
 
           _(span.name).must_equal 'GET /ok'
@@ -159,7 +159,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
 
       describe 'server errors' do
         it 'uses the http method controller and action name for server side errors' do
-          skip "Rails #{Rails.version} uses ActionDispatch::Request#route_uri_pattern" if Rails.version >= Gem::Version.new('7.1')
+          skip "Rails #{Rails.gem_version} uses ActionDispatch::Request#route_uri_pattern" if Rails.gem_version >= Gem::Version.new('7.1')
 
           get 'internal_server_error'
 
@@ -167,7 +167,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
         end
 
         it 'uses the Rails route for server side errors' do
-          skip "Rails #{Rails.version} uses ActionDispatch::Request#route_uri_pattern" if Rails.version < Gem::Version.new('7.1')
+          skip "Rails #{Rails.gem_version} uses ActionDispatch::Request#route_uri_pattern" if Rails.gem_version < Gem::Version.new('7.1')
 
           get 'internal_server_error'
 
