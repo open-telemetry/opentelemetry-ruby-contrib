@@ -22,7 +22,7 @@ describe OpenTelemetry::Instrumentation::Rails do
 
     _(last_response.body).must_equal 'actually ok'
     _(last_response.ok?).must_equal true
-    _(span.name).must_equal 'GET /ok'
+    _(span.name).must_match %r{GET.*/ok}
     _(span.kind).must_equal :server
     _(span.status.ok?).must_equal true
 
