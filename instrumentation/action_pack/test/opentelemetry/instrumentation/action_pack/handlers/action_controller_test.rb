@@ -153,7 +153,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
           skip "Rails #{Rails.version} does not define ActionDispatch::Request#route_uri_pattern" if Rails.version < Gem::Version.new('7.1')
           get '/ok'
 
-          _(span.name).must_equal 'GET /ok(.:format)'
+          _(span.name).must_equal 'GET /ok'
         end
       end
 
@@ -171,7 +171,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
 
           get 'internal_server_error'
 
-          _(span.name).must_equal 'GET /internal_server_error(.:format)'
+          _(span.name).must_equal 'GET /internal_server_error'
         end
       end
     end
