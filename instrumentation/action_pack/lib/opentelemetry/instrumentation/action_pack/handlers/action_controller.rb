@@ -23,28 +23,10 @@ module OpenTelemetry
           # @param payload [Hash] the payload passed as a method argument
           # @return [Hash] the payload passed as a method argument
           def start(_name, _id, payload)
+            span_name, attributes = to_span_name_and_attributes(payload)
+
             span = OpenTelemetry::Instrumentation::Rack.current_span
-            request = payload[:request]
-            http_route = request.route_uri_pattern if request.respond_to?(:route_uri_pattern)
-            # This is a mess
-            # I will refactor it to use a strategy pattern if we are happy with the span name
-            span.name = if @span_naming == :semconv
-                          if http_route
-                            "#{request.method} #{http_route.gsub('(.:format)', '')}"
-                          else
-                            "#{request.method} /#{payload.dig(:params, :controller)}/#{payload.dig(:params, :action)}"
-                          end
-                        else
-                          "#{payload[:controller]}##{payload[:action]}"
-                        end
-
-            attributes = {
-              OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => String(payload[:controller]),
-              OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(payload[:action])
-            }
-            attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE] = http_route if http_route
-            attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = request.filtered_path if request.filtered_path != request.fullpath
-
+            span.name = span_name
             span.add_attributes(attributes)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
@@ -61,6 +43,32 @@ module OpenTelemetry
             span.record_exception(payload[:exception_object]) if payload[:exception_object]
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
+          end
+
+          private
+
+          # Extracts the span name and attributes from the payload
+          #
+          # @param payload [Hash] the payload passed from ActiveSupport::Notifications
+          # @return [Array<String, Hash>] the span name and attributes
+          def to_span_name_and_attributes(payload)
+            request = payload[:request]
+            http_route = request.route_uri_pattern if request.respond_to?(:route_uri_pattern)
+
+            attributes = {
+              OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => String(payload[:controller]),
+              OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(payload[:action])
+            }
+            attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE] = http_route if http_route
+            attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = request.filtered_path if request.filtered_path != request.fullpath
+
+            if @span_naming == :semconv
+              return ["#{request.method} #{http_route.gsub('(.:format)', '')}", attributes] if http_route
+
+              return ["#{request.method} /#{payload.dig(:params, :controller)}/#{payload.dig(:params, :action)}", attributes]
+            end
+
+            ["#{payload[:controller]}##{payload[:action]}", attributes]
           end
         end
       end
