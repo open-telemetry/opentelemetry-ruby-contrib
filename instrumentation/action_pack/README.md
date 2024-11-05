@@ -46,7 +46,7 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 
 This instrumentation generally uses [HTTP server semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/http-spans/) to update the existing Rack span.
 
-For Rails 7.1+, the span name is updated to match the HTTP method and route that was matched for the request using [`ActionDispath::Request#route_uri_pattern`](https://api.rubyonrails.org/classes/ActionDispatch/Request.html#method-i-route_uri_pattern), e.g.: `GET /users/(:id)`
+For Rails 7.1+, the span name is updated to match the HTTP method and route that was matched for the request using [`ActionDispath::Request#route_uri_pattern`](https://api.rubyonrails.org/classes/ActionDispatch/Request.html#method-i-route_uri_pattern), e.g.: `GET /users/:id`
 
 For older versions of Rails the span name is updated to match the HTTP method, controller, and action name that was the tartget of the request, e.g.: `GET /example/index`
 

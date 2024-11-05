@@ -142,18 +142,36 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
   describe 'span naming' do
     describe 'when using the default span_naming configuration' do
       describe 'successful requests' do
-        it 'uses the http method controller and action name' do
-          skip "Rails #{Rails.gem_version} uses ActionDispatch::Request#route_uri_pattern" if Rails.gem_version >= Gem::Version.new('7.1')
-          get '/ok'
+        describe 'Rails Version < 7.1' do
+          it 'uses the http method controller and action name' do
+            skip "Rails #{Rails.gem_version} uses ActionDispatch::Request#route_uri_pattern" if Rails.gem_version >= Gem::Version.new('7.1')
+            get '/ok'
 
-          _(span.name).must_equal 'GET /example/ok'
+            _(span.name).must_equal 'GET /example/ok'
+          end
+
+          it 'excludes route params' do
+            skip "Rails #{Rails.gem_version} uses ActionDispatch::Request#route_uri_pattern" if Rails.gem_version >= Gem::Version.new('7.1')
+            get '/items/1234'
+
+            _(span.name).must_equal 'GET /example/item'
+          end
         end
 
-        it 'uses the Rails route' do
-          skip "Rails #{Rails.gem_version} does not define ActionDispatch::Request#route_uri_pattern" if Rails.gem_version < Gem::Version.new('7.1')
-          get '/ok'
+        describe 'Rails Version >= 7.1' do
+          it 'uses the Rails route' do
+            skip "Rails #{Rails.gem_version} does not define ActionDispatch::Request#route_uri_pattern" if Rails.gem_version < Gem::Version.new('7.1')
+            get '/ok'
 
-          _(span.name).must_equal 'GET /ok'
+            _(span.name).must_equal 'GET /ok'
+          end
+
+          it 'includes route params' do
+            skip "Rails #{Rails.gem_version} does not define ActionDispatch::Request#route_uri_pattern" if Rails.gem_version < Gem::Version.new('7.1')
+            get '/items/1234'
+
+            _(span.name).must_equal 'GET /items/:id'
+          end
         end
       end
 

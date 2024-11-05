@@ -20,7 +20,7 @@ module OpenTelemetry
       #
       # Specifies how the span names are set. Can be one of:
       #
-      # - `:semconv` **(default)** - The span name will use HTTP semantic conventions '{method http.route}', for example `GET /users/(:id)`
+      # - `:semconv` **(default)** - The span name will use HTTP semantic conventions '{method http.route}', for example `GET /users/:id`
       # - `:class` - The span name will appear as '<ActionController class name>#<action>',
       #   for example `UsersController#show`.
       #
