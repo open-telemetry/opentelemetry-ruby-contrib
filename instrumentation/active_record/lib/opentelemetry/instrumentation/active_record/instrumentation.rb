@@ -9,7 +9,7 @@ module OpenTelemetry
     module ActiveRecord
       # The Instrumentation class contains logic to detect and install the ActiveRecord instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('6.1.0')
+        MINIMUM_VERSION = Gem::Version.new('7')
 
         install do |_config|
           require_dependencies
@@ -45,7 +45,7 @@ module OpenTelemetry
           ::ActiveSupport.on_load(:active_record) do
             # Modules to prepend to ActiveRecord::Base are grouped by the source
             # module that they are defined in as they are included into ActiveRecord::Base
-            # Example: Patches::PersistenceClassMethods refers to https://github.com/rails/rails/blob/v6.1.0/activerecord/lib/active_record/persistence.rb#L10
+            # Example: Patches::PersistenceClassMethods refers to https://github.com/rails/rails/blob/v7.0.0/activerecord/lib/active_record/persistence.rb#L10
             #   which is included into ActiveRecord::Base in https://github.com/rails/rails/blob/914caca2d31bd753f47f9168f2a375921d9e91cc/activerecord/lib/active_record/base.rb#L283
             ::ActiveRecord::Base.prepend(Patches::Querying)
             ::ActiveRecord::Base.prepend(Patches::Persistence)
