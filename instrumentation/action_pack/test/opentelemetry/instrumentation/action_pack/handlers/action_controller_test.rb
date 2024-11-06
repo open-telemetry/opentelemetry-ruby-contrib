@@ -64,7 +64,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
 
     _(last_response.body).must_equal 'created new item'
     _(last_response.ok?).must_equal true
-    # _(span.name).must_equal 'GET example/new_item'
+    _(span.name).must_match(/^GET/)
     _(span.kind).must_equal :server
     _(span.status.ok?).must_equal true
 
@@ -211,7 +211,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     it 'does not overwrite the span name from the controller that raised' do
       get 'internal_server_error'
 
-      # _(span.name).must_equal 'GET example/show'
+      _(span.name).must_match(/^GET/)
       _(span.kind).must_equal :server
       _(span.status.ok?).must_equal false
 
