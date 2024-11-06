@@ -59,4 +59,4 @@
       "name": "table_name_with_double_quotes",
       "sql": "SELECT columns FROM \"test_table\""
     }
-  ]
+]
