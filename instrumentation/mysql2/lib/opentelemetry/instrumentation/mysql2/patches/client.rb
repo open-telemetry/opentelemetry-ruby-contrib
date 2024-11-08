@@ -97,7 +97,7 @@ module OpenTelemetry
 
           def db_sql_table_name(sql)
             Regexp.last_match(1) if sql =~ TABLE_NAME
-          rescue StandardError
+          rescue StandardError => e
             OpenTelemetry.handle_error(message: 'Error extracting collection name', exception: e)
             nil
           end
