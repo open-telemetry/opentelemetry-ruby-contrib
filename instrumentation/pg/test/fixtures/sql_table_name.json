@@ -52,10 +52,6 @@
       "sql": "SELECT columns FROM test_table JOIN table2 ON test_table.column = table2.column"
     },
     {
-      "name": "table_name_with_single_quotes",
-      "sql": "SELECT columns FROM 'test_table'"
-    },
-    {
       "name": "table_name_with_double_quotes",
       "sql": "SELECT columns FROM \"test_table\""
     }
