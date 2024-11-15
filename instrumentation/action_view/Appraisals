@@ -11,5 +11,5 @@
 end
 
 appraise 'action_view-latest' do
-  gem 'action_view', "~> #{version}"
+  gem 'action_view'
 end

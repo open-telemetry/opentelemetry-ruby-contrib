@@ -11,5 +11,5 @@
 end
 
 appraise 'action_mailer-latest' do
-  gem 'action_mailer', "~> #{version}"
+  gem 'action_mailer'
 end
