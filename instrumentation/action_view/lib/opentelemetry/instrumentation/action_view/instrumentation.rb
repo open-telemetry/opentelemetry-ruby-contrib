@@ -44,7 +44,7 @@ module OpenTelemetry
       #     })
       #   end
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('6.1.0')
+        MINIMUM_VERSION = Gem::Version.new('7')
         install do |_config|
           require_dependencies
         end
