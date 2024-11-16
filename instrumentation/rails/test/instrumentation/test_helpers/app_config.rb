@@ -28,7 +28,7 @@ module AppConfig
     case Rails.version
     when /^6\.1/
       apply_rails_6_1_configs(new_app)
-    when /^7\./
+    when /^7|8\./
       apply_rails_7_configs(new_app)
     end
 
