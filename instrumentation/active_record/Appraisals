@@ -18,6 +18,7 @@ if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.1.0')
   end
 
   appraise 'activerecord-latest' do
+    gem 'sqlite3', '>= 2.1'
     gem 'activerecord'
   end
 end
