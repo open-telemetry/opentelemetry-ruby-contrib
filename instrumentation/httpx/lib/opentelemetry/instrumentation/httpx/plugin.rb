@@ -12,7 +12,7 @@ module OpenTelemetry
         # an OTEL trace.
         class RequestTracer
           # Constant for the HTTP status range
-          HTTP_STATUS_SUCCESS_RANGE = (100..399).freeze
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
           def initialize(request)
             @request = request

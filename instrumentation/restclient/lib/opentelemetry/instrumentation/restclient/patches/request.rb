@@ -11,7 +11,7 @@ module OpenTelemetry
         # Module to prepend to RestClient::Request for instrumentation
         module Request
           # Constant for the HTTP status range
-          HTTP_STATUS_SUCCESS_RANGE = (100..399).freeze
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
           def execute(&block)
             trace_request do |_span|

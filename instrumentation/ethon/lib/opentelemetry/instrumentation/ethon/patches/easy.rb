@@ -17,7 +17,7 @@ module OpenTelemetry
           HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
 
           # Constant for the HTTP status range
-          HTTP_STATUS_SUCCESS_RANGE = (100..399).freeze
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
           def http_request(url, action_name, options = {})
             @otel_method = ACTION_NAMES_TO_HTTP_METHODS[action_name]

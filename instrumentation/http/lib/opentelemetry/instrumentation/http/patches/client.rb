@@ -11,7 +11,7 @@ module OpenTelemetry
         # Module to prepend to HTTP::Client for instrumentation
         module Client
           # Constant for the HTTP status range
-          HTTP_STATUS_SUCCESS_RANGE = (100..399).freeze
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
           def perform(req, options)
             uri = req.uri

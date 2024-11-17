@@ -15,7 +15,7 @@ module OpenTelemetry
             USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
             # Constant for the HTTP status range
-            HTTP_STATUS_SUCCESS_RANGE = (100..399).freeze
+            HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def request(req, body = nil, &block)
               # Do not trace recursive call for starting the connection

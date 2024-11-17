@@ -24,7 +24,7 @@ module OpenTelemetry
           }.freeze
 
           # Constant for the HTTP status range
-          HTTP_STATUS_SUCCESS_RANGE = (100..399).freeze
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
           def call(env)
             http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]

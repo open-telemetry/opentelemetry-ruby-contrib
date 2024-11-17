@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -21,7 +22,7 @@ module OpenTelemetry
           end.freeze
 
           # Constant for the HTTP status range
-          HTTP_STATUS_SUCCESS_RANGE = (100..399).freeze
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
           def request_call(datum)
             return @stack.request_call(datum) if untraced?(datum)
