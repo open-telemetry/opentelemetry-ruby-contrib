@@ -94,7 +94,6 @@ runs:
       shell: bash
       run: |
         # 💎 Install dependencies and generate appraisals 💎
-        bundle update --bundler
         bundle install --quiet --jobs=3 --retry=4
         bundle exec appraisal generate
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
