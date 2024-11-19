@@ -95,6 +95,7 @@ runs:
       run: |
         # 💎 Install dependencies and generate appraisals 💎
         bundle install --quiet --jobs=3 --retry=4
+        bundle exec appraisal clean
         bundle exec appraisal generate
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
@@ -105,7 +106,7 @@ runs:
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
             echo "::group::🔎 Appraising ${i}"
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --full-index --quiet --jobs=3 --retry=4 && \
+            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test || exit
             echo "::endgroup::"
