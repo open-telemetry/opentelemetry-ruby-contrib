@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.33.0 / 2024-11-19
+
+* ADDED: Use Semconv Naming For ActionPack
+
 ### v0.32.0 / 2024-10-22
 
 * BREAKING CHANGE: Rename Active Record find_by_sql spans to query
