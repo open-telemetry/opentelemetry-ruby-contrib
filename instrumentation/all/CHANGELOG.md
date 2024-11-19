@@ -2,7 +2,7 @@
 
 ### v0.69.0 / 2024-11-19
 
-* (No significant changes)
+* ADDED: Use Semconv Naming For ActionPack
 
 ### v0.68.0 / 2024-10-23
 
