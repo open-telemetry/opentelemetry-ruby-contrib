@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-class Application < Rails::Application; end
 require 'action_controller/railtie'
+class Application < Rails::Application; end
 require_relative 'middlewares'
 require_relative 'controllers'
 require_relative 'routes'
