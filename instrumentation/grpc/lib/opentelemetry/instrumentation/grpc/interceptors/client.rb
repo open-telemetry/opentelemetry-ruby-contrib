@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Grpc
       module Interceptors
-        class Client < ::GRPC::ClientInterceptor
+        class Client
           def request_response(request: nil, call: nil, method: nil, metadata: nil, &blk)
             call(type: "request_response", requests: [request], call: call, method: method, metadata: metadata, &blk)
           end

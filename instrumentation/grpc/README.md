@@ -8,15 +8,22 @@ OpenTelemetry instrumentation for users of the `grpc` gem
 > [!WARNING]
 > Right now, the gem only instruments outbound requests to gRPC services
 
+> [!WARNING]
+> This gem is not ready for release by the open-telemetry org yet, but other versions are available on RubyGems
+
 ## Installation
 
 Install the gem and add to the application's Gemfile by executing:
 
-    $ bundle add opentelemetry-instrumentation-grpc
+```sh
+  $ bundle add opentelemetry-instrumentation-grpc
+```
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
-    $ gem install opentelemetry-instrumentation-grpc
+```sh
+  $ gem install opentelemetry-instrumentation-grpc
+```
 
 ## Usage
 

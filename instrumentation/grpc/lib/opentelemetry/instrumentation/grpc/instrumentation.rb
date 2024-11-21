@@ -11,6 +11,7 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
           require_dependencies
+          patch
         end
 
         option :allowed_metadata_headers, default: [], validate: :array
@@ -21,6 +22,10 @@ module OpenTelemetry
         end
 
         private
+
+        def patch
+          ::GRPC::ClientInterceptor.prepend(Interceptors::Client)
+        end
 
         def require_dependencies
           require_relative "interceptors/client"
