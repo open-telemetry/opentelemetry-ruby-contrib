@@ -2,7 +2,7 @@
 
 ### v0.8.1 / 2024-11-21
 
-* FIXED: Pass block argument in ActiveRecord `find_by_sql` patch
+* FIXED: Pass block argument in ActiveRecord `find_by_sql` patch.
 
 ### v0.8.0 / 2024-10-22
 
