@@ -10,7 +10,7 @@ require "active_support/inflector"
 
 module OpenTelemetry
   module Instrumentation
-    # Contains the OpenTelemetry instrumentation for the Gruf gem
+    # Contains the OpenTelemetry instrumentation for the gRPC gem
     module Grpc
       class Error < StandardError; end
 
