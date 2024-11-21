@@ -13,6 +13,9 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Trilogy for instrumentation
         module Client
+          # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
+          TABLE_NAME = /\b(?:(?:FROM|INTO|UPDATE)|(?:(?:CREATE|DROP|ALTER)\s+TABLE(?:\s+IF\s+(?:NOT\s+)?EXISTS)?))\s+["]?([\w.]+)["]?/i
+
           def initialize(options = {})
             @connection_options = options # This is normally done by Trilogy#initialize
 
@@ -76,6 +79,9 @@ module OpenTelemetry
             attributes['db.instance.id'] = @connected_host unless @connected_host.nil?
 
             if sql
+              sql_table_name = db_sql_table_name(sql)
+              attributes[SemanticConventions::Trace::DB_SQL_TABLE] = sql_table_name if sql_table_name && config[:db_sql_table] == :include
+
               case config[:db_statement]
               when :obfuscate
                 attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] =
@@ -86,6 +92,12 @@ module OpenTelemetry
             end
 
             attributes
+          end
+
+          def db_sql_table_name(sql)
+            Regexp.last_match(1) if sql =~ TABLE_NAME
+          rescue StandardError
+            nil
           end
 
           def database_name
