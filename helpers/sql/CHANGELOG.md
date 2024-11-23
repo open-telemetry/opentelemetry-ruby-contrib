@@ -1,1 +1,1 @@
-# Release History: opentelemetry-instrumentation-sql
+# Release History: opentelemetry-helpers-sql
