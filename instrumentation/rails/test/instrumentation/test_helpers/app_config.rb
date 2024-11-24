@@ -4,8 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-class Application < Rails::Application; end
 require 'action_controller/railtie'
+class Application < Rails::Application; end
+
 require_relative 'middlewares'
 require_relative 'controllers'
 require_relative 'routes'
@@ -28,7 +29,7 @@ module AppConfig
     case Rails.version
     when /^6\.1/
       apply_rails_6_1_configs(new_app)
-    when /^7\./
+    when /^7|8\./
       apply_rails_7_configs(new_app)
     end
 
@@ -46,9 +47,7 @@ module AppConfig
   private
 
   def remove_rack_middleware(application)
-    application.middleware.delete(
-      OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
-    )
+    application.middleware.delete(Rack::Events)
   end
 
   def add_exceptions_app(application)

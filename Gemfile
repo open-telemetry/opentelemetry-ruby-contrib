@@ -7,5 +7,5 @@
 source 'https://rubygems.org'
 
 gem 'rake', '~> 13.0'
-gem 'rubocop', '~> 1.67.0'
+gem 'rubocop', '~> 1.68.0'
 gem 'rubocop-performance', '~> 1.21.0'
