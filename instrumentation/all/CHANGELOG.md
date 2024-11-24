@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.69.0 / 2024-11-19
+
+* ADDED: Use Semconv Naming For ActionPack
+
 ### v0.68.0 / 2024-10-23
 
 * ADDED: Set span error only for 5xx response range

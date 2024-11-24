@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.10.0 / 2024-11-19
+
+* ADDED: Use Semconv Naming For ActionPack
+
 ### v0.9.0 / 2024-01-09
 
 * BREAKING CHANGE: Use ActiveSupport instead of patches #703 
