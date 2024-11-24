@@ -13,7 +13,7 @@ module OpenTelemetry
         module Connection
           # Wraps Faraday::Connection#initialize:
           # https://github.com/lostisland/faraday/blob/ff9dc1d1219a1bbdba95a9a4cf5d135b97247ee2/lib/faraday/connection.rb#L62-L92
-          def initialize(*args)
+          def initialize(...)
             super.tap do
               use(:open_telemetry) unless builder.handlers.any? do |handler|
                 handler.klass == Middlewares::TracerMiddleware
