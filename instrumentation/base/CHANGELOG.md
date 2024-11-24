@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-base
 
+## [0.22.5](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-base/v0.22.4...opentelemetry-instrumentation-base/v0.22.5) (2024-11-24)
+
+
+### Bug Fixes
+
+* fix the issue of wrong log msg ([#1105](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1105)) ([6dab627](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/6dab627424e88238d162dd21af8bf35e8a6174e3))
+
 ### v0.22.6 / 2024-08-15
 
 * FIXED: Fix the issue of wrong log msg

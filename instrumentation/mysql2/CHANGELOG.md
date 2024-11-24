@@ -1,5 +1,16 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+## [0.28.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-mysql2/v0.27.1...opentelemetry-instrumentation-mysql2/v0.28.0) (2024-11-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Return message when sql is over the obfuscation limit ([#1149](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1149))
+
+### Bug Fixes
+
+* Return message when sql is over the obfuscation limit ([#1149](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1149)) ([8e778ba](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/8e778ba768f8fb43779efadaa4223e300aff34ab))
+
 ### v0.28.0 / 2024-09-12
 
 - BREAKING CHANGE: Return message when sql is over the obfuscation limit. Fixes a bug where sql statements with prepended comments that hit the obfuscation limit would be sent raw.

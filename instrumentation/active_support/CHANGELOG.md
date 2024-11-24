@@ -1,5 +1,22 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+## [0.6.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-active_support/v0.5.1...opentelemetry-instrumentation-active_support/v0.6.0) (2024-11-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Custom ActiveSupport Span Names ([#1014](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1014))
+
+### Features
+
+* ActiveSupport user specified span kind ([#1016](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1016)) ([a9c45e7](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/a9c45e7c36ffd769bb89207572ca5ebd3aa9852d))
+* Custom ActiveSupport Span Names ([#1014](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1014)) ([e14d6b0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e14d6b0e69a27fd22d9bacabef3a99c32ce1fde9))
+
+
+### Bug Fixes
+
+* Include span kind in ActiveSupport Instrumentation helper ([#1036](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1036)) ([a324938](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/a3249381392bbfdb7ce06a69bcc6840a0d955c7b))
+
 ### v0.6.0 / 2024-07-02
 
 * BREAKING CHANGE: Custom ActiveSupport Span Names

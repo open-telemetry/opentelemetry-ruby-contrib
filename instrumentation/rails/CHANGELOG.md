@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-rails
 
+## [0.30.3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-rails/v0.30.2...opentelemetry-instrumentation-rails/v0.30.3) (2024-11-24)
+
+
+### Features
+
+* Use Semconv Naming For ActionPack ([#1224](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1224)) ([acac4fd](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/acac4fd6b835b4ad8023e3bc6d8b454bc922c726))
+
+
+### Bug Fixes
+
+* **rails:** Rails instrumentation should load ActiveJob instrumentation ([#1099](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1099)) ([e8536cf](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e8536cf77f14f2a336033165248facaafdde9b9c))
+
 ### v0.33.0 / 2024-11-19
 
 * ADDED: Use Semconv Naming For ActionPack

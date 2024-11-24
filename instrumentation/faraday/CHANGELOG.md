@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+## [0.24.5](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-faraday/v0.24.4...opentelemetry-instrumentation-faraday/v0.24.5) (2024-11-24)
+
+
+### Bug Fixes
+
+* compatibility with Faraday v1 ([#1032](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1032)) ([76c37d7](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/76c37d75191dd3f9f26e08bf71ad9c5f90242540))
+
 ### v0.24.6 / 2024-07-23
 
 * DOCS: Add cspell to CI

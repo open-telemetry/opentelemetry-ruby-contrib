@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+## [0.9.1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-action_pack/v0.9.0...opentelemetry-instrumentation-action_pack/v0.9.1) (2024-11-24)
+
+
+### Features
+
+* Use Semconv Naming For ActionPack ([#1224](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1224)) ([acac4fd](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/acac4fd6b835b4ad8023e3bc6d8b454bc922c726))
+
 ### v0.10.0 / 2024-11-19
 
 * ADDED: Use Semconv Naming For ActionPack

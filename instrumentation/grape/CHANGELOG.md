@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-grape
 
+## [0.1.9](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-grape/v0.1.8...opentelemetry-instrumentation-grape/v0.1.9) (2024-11-24)
+
+
+### Features
+
+* make the install of rack instrumentation by grape instrumentation optional ([#1043](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1043)) ([7dd1c5d](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7dd1c5d3bd4c6e94268f46365343b58cb848fce1))
+
 ### v0.2.0 / 2024-07-02
 
 * ADDED: Make the install of rack instrumentation by grape instrumentation optional

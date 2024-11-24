@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+## [0.28.3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-graphql/v0.28.2...opentelemetry-instrumentation-graphql/v0.28.3) (2024-11-24)
+
+
+### Bug Fixes
+
+* Add super calls to GraphqlTrace ([#1090](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1090)) ([117733a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/117733a1f42b14631be3e92d4aadd092e3178da2))
+* **graphql:** Add super calls to GraphqlTrace ([117733a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/117733a1f42b14631be3e92d4aadd092e3178da2))
+
 ### v0.28.4 / 2024-07-30
 
 * FIXED: Add super calls to GraphqlTrace

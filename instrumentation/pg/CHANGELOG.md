@@ -1,5 +1,23 @@
 # Release History: opentelemetry-instrumentation-pg
 
+## [0.28.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-pg/v0.27.3...opentelemetry-instrumentation-pg/v0.28.0) (2024-11-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Return message when sql is over the obfuscation limit ([#1149](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1149))
+
+### Features
+
+* collect pg db.collection_name attribute ([#1087](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1087)) ([70fdad6](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/70fdad63cda07b976b0d0ce9c9566d5a93d1b978))
+
+
+### Bug Fixes
+
+* get correct table name if table name is quoted ([#1234](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1234)) ([192b262](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/192b26280794ffa572e9c891053adeac5c729277))
+* **pg:** update versions to be tested (includes drop support for pg 1.2) ([#1108](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1108)) ([19c86ca](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/19c86ca72ae338fab29311c8a6fdcdac4410e636))
+* Return message when sql is over the obfuscation limit ([#1149](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1149)) ([8e778ba](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/8e778ba768f8fb43779efadaa4223e300aff34ab))
+
 ### v0.29.0 / 2024-09-12
 
 - BREAKING CHANGE: Return message when sql is over the obfuscation limit. Fixes a bug where sql statements with prepended comments that hit the obfuscation limit would be sent raw.

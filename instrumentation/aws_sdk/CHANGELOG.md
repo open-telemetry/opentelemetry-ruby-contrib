@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+## [0.5.3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-aws_sdk/v0.5.2...opentelemetry-instrumentation-aws_sdk/v0.5.3) (2024-11-24)
+
+
+### Features
+
+* All AWS services emit traces ([#1150](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1150)) ([7671f4e](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/7671f4ee9dd37692e5f0e006ab2a263f7992dd0d))
+* Integration with V3 telemetry provider ([#1186](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1186)) ([a71d905](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/a71d905979982e74810e49372864580a165f08b4))
+
 ### v0.7.0 / 2024-10-08
 
 * ADDED: Integration with V3 telemetry provider

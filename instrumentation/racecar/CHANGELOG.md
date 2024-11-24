@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-racecar
 
+## [0.3.3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-racecar/v0.3.2...opentelemetry-instrumentation-racecar/v0.3.3) (2024-11-24)
+
+
+### Bug Fixes
+
+* suppress header access with symbol key deprecation warning in Racecar Instrumentation ([#1040](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1040)) ([08f11ae](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/08f11aecd7e19bc50024f1979c3e6af4101b220a))
+
 ### v0.3.4 / 2024-07-09
 
 * FIXED: Suppress header access with symbol key deprecation warning in Racecar Instrumentation

@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-rack
 
+## [0.24.6](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-rack/v0.24.5...opentelemetry-instrumentation-rack/v0.24.6) (2024-11-24)
+
+
+### Features
+
+* Set span error only for 5xx response range ([#1196](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1196)) ([5c647b5](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/5c647b56c2794c137c77a28c17b4bac1ec82a5bc))
+
 ### v0.25.0 / 2024-10-23
 
 * ADDED: Set span error only for 5xx response range

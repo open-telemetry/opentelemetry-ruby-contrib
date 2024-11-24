@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-que
 
+## [0.8.2](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-que/v0.8.1...opentelemetry-instrumentation-que/v0.8.2) (2024-11-24)
+
+
+### Bug Fixes
+
+* **que:** Fix bulk_enqueue when enqueuing more than 5 jobs ([#1074](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1074)) ([dd0084b](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/dd0084bc1b9d696533ea0ee22dbcab470ee3827f))
+
 ### v0.8.4 / 2024-10-08
 
 * FIXED: Fix bulk_enqueue when enqueuing more than 5 jobs

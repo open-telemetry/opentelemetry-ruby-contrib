@@ -1,5 +1,19 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+## [0.8.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-active_record/v0.7.2...opentelemetry-instrumentation-active_record/v0.8.0) (2024-11-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* activerecord find_by_sql spans on Rails 7.0+ ([#1184](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1184))
+
+### Bug Fixes
+
+* activerecord find_by_sql spans on Rails 7.0+ ([#1184](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1184)) ([392b35e](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/392b35e78eddef5970e39e13e4cfbcbbaceb6878))
+* pass block argument in ActiveRecord `find_by_sql` patch ([#1259](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1259)) ([16bef85](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/16bef8547c533e8691ef446244ba6603650e4018))
+* Use Active Support Lazy Load Hooks to avoid prematurely initializing ActiveRecord::Base and ActiveJob::Base ([#1104](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1104)) ([a9e6e1a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/a9e6e1a898f89ac6574a85f3f64429fbf4b457db))
+* use ActiveSupport from top-level namespace ([#1123](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1123)) ([9ce7e39](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/9ce7e3932293259e6c82cbf008722b57e4e7b41c))
+
 ### v0.8.1 / 2024-11-21
 
 * FIXED: Pass block argument in ActiveRecord `find_by_sql` patch.

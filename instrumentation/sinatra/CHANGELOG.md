@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+## [0.23.6](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-sinatra/v0.23.5...opentelemetry-instrumentation-sinatra/v0.23.6) (2024-11-24)
+
+
+### Features
+
+* Make Rack install optional for sinatra ([#1019](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1019)) ([08fad6e](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/08fad6e6e56c3f1ef350f75bf17a175038d177eb))
+
 ### v0.24.1 / 2024-07-23
 
 * DOCS: Add cspell to CI
