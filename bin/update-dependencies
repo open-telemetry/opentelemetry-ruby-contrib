@@ -10,7 +10,7 @@ fi
 
 for gemspec in $(git ls-files \*.gemspec)
 do
-  sed -i -E "s/'$1', '~> [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+'/'$1', '~> $2'/" "$gemspec"
+  sed -i '' -E "s/'$1', '~> [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+'/'$1', '~> $2'/" "$gemspec"
 done
 
 echo "Review your changes and commit"
