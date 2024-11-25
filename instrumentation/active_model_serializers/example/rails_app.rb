@@ -30,7 +30,7 @@ at_exit do
 end
 
 # TraceRequestApp is a minimal Rails application inspired by the Rails
-# bug report template for action controller.
+# bug report template for Action Controller.
 # The configuration is compatible with Rails 6.0
 class TraceRequestApp < Rails::Application
   config.root = __dir__
@@ -44,7 +44,7 @@ class TraceRequestApp < Rails::Application
 end
 
 # Rails app initialization will pick up the instrumentation Railtie
-# and subscribe to ActiveSupport notifications
+# and subscribe to Active Support notifications
 TraceRequestApp.initialize!
 
 ExampleAppTracer = OpenTelemetry.tracer_provider.tracer('example_app')
