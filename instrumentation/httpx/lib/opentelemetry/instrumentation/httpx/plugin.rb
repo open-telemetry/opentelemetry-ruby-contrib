@@ -11,6 +11,9 @@ module OpenTelemetry
         # Instruments around HTTPX's request/response lifecycle in order to generate
         # an OTEL trace.
         class RequestTracer
+          # Constant for the HTTP status range
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
+
           def initialize(request)
             @request = request
           end
@@ -54,7 +57,7 @@ module OpenTelemetry
               @span.status = Trace::Status.error("Unhandled exception of type: #{response.error.class}")
             else
               @span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response.status)
-              @span.status = Trace::Status.error unless (100..399).cover?(response.status)
+              @span.status = Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(response.status)
             end
 
             OpenTelemetry::Context.detach(@trace_token) if @trace_token
