@@ -12,6 +12,7 @@
 
 # Appraisals
 instrumentation/**/gemfiles
+instrumentation/**/tmp/**/*
 
 # Sqlite file for tests
 instrumentation/active_record/db
@@ -26,3 +27,4 @@ instrumentation/active_record/db
 .ruby-version
 
 tags
+!**/*/.gitkeep

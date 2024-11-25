@@ -7,13 +7,39 @@
 module OpenTelemetry
   module Instrumentation
     module AwsSdk
-      # Instrumentation class that detects and installs the AwsSdk instrumentation
+      # The `OpenTelemetry::Instrumentation::AwsSdk::Instrumentation` class contains
+      # logic to detect and install the AwsSdk instrumentation.
+      #
+      # ## Configuration keys and options
+      #
+      # ### `:inject_messaging_context`
+      #
+      # Allows adding of context key/value to Message Attributes for SQS/SNS messages.
+      #
+      # - `false` **(default)** - Context key/value will not be added.
+      # - `true` - Context key/value will be added.
+      #
+      # ### `:suppress_internal_instrumentation`
+      #
+      # Disables tracing of spans of `internal` span kind.
+      #
+      # - `false` **(default)** - Internal spans are traced.
+      # - `true` - Internal spans are not traced.
+      #
+      # @example An explicit default configuration
+      #   OpenTelemetry::SDK.configure do |c|
+      #     c.use 'OpenTelemetry::Instrumentation::AwsSdk', {
+      #       inject_messaging_context: false,
+      #       suppress_internal_instrumentation: false
+      #     }
+      #   end
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('2.0.0')
 
         install do |_config|
           require_dependencies
-          add_plugin(Seahorse::Client::Base, *loaded_constants)
+          patch_telemetry_plugin if telemetry_plugin?
+          add_plugins(Seahorse::Client::Base, *loaded_service_clients)
         end
 
         present do
@@ -41,30 +67,60 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'handler'
-          require_relative 'services'
+          require_relative 'handler_helper'
           require_relative 'message_attributes'
           require_relative 'messaging_helper'
+          require_relative 'patches/telemetry'
         end
 
-        def add_plugin(*targets)
-          targets.each { |klass| klass.add_plugin(AwsSdk::Plugin) }
+        def add_plugins(*targets)
+          targets.each do |klass|
+            next if supports_telemetry_plugin?(klass)
+
+            klass.add_plugin(AwsSdk::Plugin)
+          end
         end
 
-        def loaded_constants
-          # Cross-check services against loaded AWS constants
-          # Module#const_get can return a constant from ancestors when there's a miss.
-          # If this conincidentally matches another constant, it will attempt to patch
-          # the wrong constant, resulting in patch failure.
-          available_services = ::Aws.constants & SERVICES.map(&:to_sym)
-          available_services.each_with_object([]) do |service, constants|
-            next if ::Aws.autoload?(service)
+        def supports_telemetry_plugin?(klass)
+          telemetry_plugin? &&
+            klass.plugins.include?(Aws::Plugins::Telemetry)
+        end
+
+        def telemetry_plugin?
+          ::Aws::Plugins.const_defined?(:Telemetry)
+        end
+
+        # Patches AWS SDK V3's telemetry plugin for integration
+        # This patch supports configuration set by this gem and
+        # additional span attributes that was not provided by the plugin
+        def patch_telemetry_plugin
+          ::Aws::Plugins::Telemetry::Handler.prepend(Patches::Handler)
+        end
+
+        def loaded_service_clients
+          ::Aws.constants.each_with_object([]) do |c, constants|
+            m = ::Aws.const_get(c)
+            next unless loaded_service?(c, m)
 
             begin
-              constants << ::Aws.const_get(service, false).const_get(:Client, false)
+              constants << m.const_get(:Client)
             rescue StandardError => e
               OpenTelemetry.logger.warn("Constant could not be loaded: #{e}")
             end
           end
+        end
+
+        # This check does the following:
+        # 1 - Checks if the service client is autoload or not
+        # 2 - Validates whether if is a service client
+        # note that Seahorse::Client::Base is a superclass for V3 clients
+        # but for V2, it is Aws::Client
+        def loaded_service?(constant, service_module)
+          !::Aws.autoload?(constant) &&
+            service_module.is_a?(Module) &&
+            service_module.const_defined?(:Client) &&
+            (service_module.const_get(:Client).superclass == Seahorse::Client::Base ||
+              service_module.const_get(:Client).superclass == Aws::Client)
         end
       end
     end

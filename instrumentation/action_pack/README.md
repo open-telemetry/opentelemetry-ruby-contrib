@@ -42,6 +42,25 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 | - | - | - | - |
 | `process_action.action_controller` | :white_check_mark: | :x: | It modifies the existing Rack span |
 
+## Semantic Conventions
+
+This instrumentation generally uses [HTTP server semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/http-spans/) to update the existing Rack span.
+
+For Rails 7.1+, the span name is updated to match the HTTP method and route that was matched for the request using [`ActionDispatch::Request#route_uri_pattern`](https://api.rubyonrails.org/classes/ActionDispatch/Request.html#method-i-route_uri_pattern), e.g.: `GET /users/:id`
+
+For older versions of Rails the span name is updated to match the HTTP method, controller, and action name that was the target of the request, e.g.: `GET /example/index`
+
+> ![NOTE]: Users may override the `span_naming` option to default to Legacy Span Naming Behavior that uses the controller's class name and action in Ruby documentation syntax, e.g. `ExampleController#index`.
+
+This instrumentation does not emit any custom attributes.
+
+| Attribute Name | Type | Notes |
+| - | - | - |
+| `code.namespace` | String | `ActionController` class name |
+| `code.function` | String | `ActionController` action name e.g. `index`, `show`, `edit`, etc... |
+| `http.route` | String | (Rails 7.1+) the route that was matched for the request |
+| `http.target` | String | The `request.filtered_path` |
+
 ### Error Handling for Action Controller
 
 If an error is triggered by Action Controller (such as a 500 internal server error), Action Pack will typically employ the default `ActionDispatch::PublicExceptions.new(Rails.public_path)` as the `exceptions_app`, as detailed in the [documentation](https://guides.rubyonrails.org/configuring.html#config-exceptions-app).

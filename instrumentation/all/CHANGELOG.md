@@ -1,5 +1,27 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.69.0 / 2024-11-19
+
+* ADDED: Use Semconv Naming For ActionPack
+
+### v0.68.0 / 2024-10-23
+
+* ADDED: Set span error only for 5xx response range
+
+### v0.67.0 / 2024-10-22
+
+* BREAKING CHANGE: Rename Active Record find_by_sql spans to query
+* FIXED: Emit Active Record query spans for Rails 7.0+
+* ADDED: Subscribe to process.action_mailer notifications
+
+### v0.66.0 / 2024-10-08
+
+* ADDED: Integration with V3 telemetry provider for the aws-sdk
+
+### v0.65.0 / 2024-09-19
+
+* ADDED: All AWS services emit traces
+
 ### v0.64.0 / 2024-09-12
 
 - BREAKING CHANGE: Return message when sql is over the obfuscation limit. Fixes a bug where sql statements with prepended comments that hit the obfuscation limit would be sent raw.
