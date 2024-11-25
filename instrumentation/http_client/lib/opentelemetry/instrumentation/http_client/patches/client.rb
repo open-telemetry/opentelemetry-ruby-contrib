@@ -10,6 +10,9 @@ module OpenTelemetry
       module Patches
         # Module to prepend to HTTPClient for instrumentation
         module Client
+          # Constant for the HTTP status range
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
+
           private
 
           def do_get_block(req, proxy, conn, &block)
@@ -42,7 +45,7 @@ module OpenTelemetry
             status_code = response.status_code.to_i
 
             span.set_attribute('http.status_code', status_code)
-            span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(status_code.to_i)
+            span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
           end
 
           def tracer

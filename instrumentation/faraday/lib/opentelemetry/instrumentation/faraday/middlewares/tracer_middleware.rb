@@ -9,7 +9,7 @@ module OpenTelemetry
     module Faraday
       module Middlewares
         # TracerMiddleware propagates context and instruments Faraday requests
-        # by way of its middlware system
+        # by way of its middleware system
         class TracerMiddleware < ::Faraday::Middleware
           HTTP_METHODS_SYMBOL_TO_STRING = {
             connect: 'CONNECT',
@@ -22,6 +22,9 @@ module OpenTelemetry
             put: 'PUT',
             trace: 'TRACE'
           }.freeze
+
+          # Constant for the HTTP status range
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
           def call(env)
             http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
@@ -68,7 +71,7 @@ module OpenTelemetry
 
           def trace_response(span, status)
             span.set_attribute('http.status_code', status)
-            span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(status.to_i)
+            span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status.to_i)
           end
         end
       end
