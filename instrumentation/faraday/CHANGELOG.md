@@ -2,7 +2,7 @@
 
 ### v0.24.7 / 2024-11-26
 
-* (No significant changes)
+* CHANGED: Performance Freeze all range objects #1222
 
 ### v0.24.6 / 2024-07-23
 
