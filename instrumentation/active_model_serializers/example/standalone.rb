@@ -17,6 +17,7 @@ gemfile(true) do
   gem 'opentelemetry-exporter-otlp'
 end
 
+ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
 OpenTelemetry::SDK.configure do |c|
   c.service_name = 'active_model_serializers_example'
   c.use_all
