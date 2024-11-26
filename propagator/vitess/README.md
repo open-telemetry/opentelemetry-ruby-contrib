@@ -40,7 +40,7 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-propagator-vitess
 Configure your application to use this propagator with the Trilogy client instrumentation by setting the following [environment variable][envars]:
 
 ```console
-OTEL_RUBY_INSTRUMENTATION_TRILOGY_PROPAGATOR=vitess
+OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS=propagator=vitess
 ```
 
 ## How can I get involved?

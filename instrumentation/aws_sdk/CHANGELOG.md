@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.7.0 / 2024-10-08
+
+* ADDED: Integration with V3 telemetry provider
+
+### v0.6.0 / 2024-09-19
+
+* ADDED: All AWS services emit traces
+
 ### v0.5.4 / 2024-07-23
 
 * DOCS: Add cspell to CI

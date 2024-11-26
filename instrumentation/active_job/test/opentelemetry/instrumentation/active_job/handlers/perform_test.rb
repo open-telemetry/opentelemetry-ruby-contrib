@@ -176,10 +176,9 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
         _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
       end
 
-      it 'propagates baggage' do
-        ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
-        OpenTelemetry::Context.with_current(ctx) do
-          BaggageJob.perform_later
+      it 'does not interfere with an outer span' do
+        instrumentation.tracer.in_span('outer span') do
+          TestJob.perform_later
         end
 
         _(publish_span.trace_id).wont_equal(process_span.trace_id)
@@ -187,8 +186,45 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
         _(process_span.total_recorded_links).must_equal(1)
         _(process_span.links[0].span_context.trace_id).must_equal(publish_span.trace_id)
         _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
+      end
 
-        _(process_span.attributes['success']).must_equal(true)
+      describe 'with an async queue adapter' do
+        before do
+          begin
+            ActiveJob::Base.queue_adapter.shutdown
+          rescue StandardError
+            nil
+          end
+
+          singleton_class.include ActiveJob::TestHelper
+          ActiveJob::Base.queue_adapter = :test
+        end
+
+        it 'creates span links in separate traces' do
+          TestJob.perform_later
+          perform_enqueued_jobs
+
+          _(publish_span.trace_id).wont_equal(process_span.trace_id)
+
+          _(process_span.total_recorded_links).must_equal(1)
+          _(process_span.links[0].span_context.trace_id).must_equal(publish_span.trace_id)
+          _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
+        end
+
+        it 'propagates baggage' do
+          ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
+          OpenTelemetry::Context.with_current(ctx) do
+            BaggageJob.perform_later
+          end
+          perform_enqueued_jobs
+
+          _(publish_span.trace_id).wont_equal(process_span.trace_id)
+
+          _(process_span.total_recorded_links).must_equal(1)
+          _(process_span.links[0].span_context.trace_id).must_equal(publish_span.trace_id)
+          _(process_span.links[0].span_context.span_id).must_equal(publish_span.span_id)
+          _(process_span.attributes['success']).must_equal(true)
+        end
       end
     end
 
@@ -204,16 +240,52 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
         _(process_span.parent_span_id).must_equal(publish_span.span_id)
       end
 
-      it 'propagates baggage' do
-        ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
-        OpenTelemetry::Context.with_current(ctx) do
-          BaggageJob.perform_later
+      it 'does not interfere with an outer span' do
+        instrumentation.tracer.in_span('outer span') do
+          TestJob.perform_later
         end
+
         _(process_span.total_recorded_links).must_equal(0)
 
         _(publish_span.trace_id).must_equal(process_span.trace_id)
         _(process_span.parent_span_id).must_equal(publish_span.span_id)
-        _(process_span.attributes['success']).must_equal(true)
+      end
+
+      describe 'with an async queue adapter' do
+        before do
+          begin
+            ActiveJob::Base.queue_adapter.shutdown
+          rescue StandardError
+            nil
+          end
+
+          singleton_class.include ActiveJob::TestHelper
+          ActiveJob::Base.queue_adapter = :test
+        end
+
+        it 'creates a parent/child relationship' do
+          TestJob.perform_later
+          perform_enqueued_jobs
+
+          _(process_span.total_recorded_links).must_equal(0)
+
+          _(publish_span.trace_id).must_equal(process_span.trace_id)
+          _(process_span.parent_span_id).must_equal(publish_span.span_id)
+        end
+
+        it 'propagates baggage' do
+          ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
+          OpenTelemetry::Context.with_current(ctx) do
+            BaggageJob.perform_later
+          end
+          perform_enqueued_jobs
+
+          _(process_span.total_recorded_links).must_equal(0)
+
+          _(publish_span.trace_id).must_equal(process_span.trace_id)
+          _(process_span.parent_span_id).must_equal(publish_span.span_id)
+          _(process_span.attributes['success']).must_equal(true)
+        end
       end
     end
 
