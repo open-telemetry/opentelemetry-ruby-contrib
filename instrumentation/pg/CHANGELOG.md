@@ -2,7 +2,7 @@
 
 ### v0.29.1 / 2024-11-26
 
-* FIXED: Get correct table name if table name is quoted
+* FIXED: Get correct table name if table name is quoted.
 
 ### v0.29.0 / 2024-09-12
 
