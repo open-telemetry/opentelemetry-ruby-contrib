@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-restclient
 
+### v0.22.8 / 2024-11-26
+
+* (No significant changes)
+
 ### v0.22.7 / 2024-07-23
 
 * DOCS: Add cspell to CI

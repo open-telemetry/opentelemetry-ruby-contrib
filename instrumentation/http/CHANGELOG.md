@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.23.5 / 2024-11-26
+
+* (No significant changes)
+
 ### v0.23.4 / 2024-07-23
 
 * DOCS: Add cspell to CI
