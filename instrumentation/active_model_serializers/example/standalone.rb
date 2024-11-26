@@ -52,5 +52,6 @@ class TestModel
 end
 
 model = TestModel.new(name: 'test object')
+serialized_model = ActiveModelSerializers::SerializableResource.new(model).serializable_hash
 
-puts ActiveModelSerializers::SerializableResource.new(model).serializable_hash
+puts "\n*** The serialized object: #{serialized_model}"
