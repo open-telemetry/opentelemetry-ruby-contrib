@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.21.9 / 2024-11-26
+
+* CHANGED: Performance Freeze all range objects #1222
+
 ### v0.21.8 / 2024-07-23
 
 * DOCS: Add cspell to CI
