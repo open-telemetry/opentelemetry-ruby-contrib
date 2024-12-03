@@ -2,7 +2,7 @@
 
 ### v0.20.3 / 2024-12-03
 
-* FIXED: Use AS::N subscriber for serialize events
+* FIXED: Use ActiveSupport::Notifications subscriber to serialize events.
 
 ### v0.20.2 / 2024-07-23
 
