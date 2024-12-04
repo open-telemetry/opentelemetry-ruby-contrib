@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+## [0.20.3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-active_model_serializers/v0.20.2...opentelemetry-instrumentation-active_model_serializers/v0.20.3) (2024-12-04)
+
+
+### Bug Fixes
+
+* use AS::N subscriber for serialize events ([#1075](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1075)) ([92d59eb](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/92d59eb33cf7fd58242cde22a7346960078ff29f))
+
 ### v0.20.3 / 2024-12-04
 
 * FIXED: Use ActiveSupport::Notifications subscriber to serialize events.
