@@ -49,7 +49,7 @@ module OpenTelemetry
                 OpenTelemetry::Instrumentation::Trilogy.attributes
               ),
               kind: :client
-            ) do |_span, context|
+            ) do |span, context|
               if propagator && sql.frozen?
                 sql = +sql
                 propagator.inject(sql, context: context)
@@ -58,7 +58,12 @@ module OpenTelemetry
                 propagator.inject(sql, context: context)
               end
 
-              super
+              result = super
+
+              span.set_attribute('db.response.returned_rows', result.count)
+              span.set_attribute('db.response.affected_rows', result.affected_rows) unless result.affected_rows.nil?
+
+              result
             end
           end
 
