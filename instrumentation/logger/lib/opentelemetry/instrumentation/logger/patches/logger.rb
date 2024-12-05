@@ -10,11 +10,11 @@ module OpenTelemetry
       module Patches
         # Instrumention for methods from Ruby's Logger class
         module Logger
-          attr_writer :skip_instrumenting
+          attr_writer :skip_otel_emit
 
           def format_message(severity, datetime, progname, msg)
             formatted_message = super
-            return formatted_message if skip_instrumenting?
+            return formatted_message if skip_otel_emit?
 
             OpenTelemetry.logger_provider.logger(
               name: OpenTelemetry::Instrumentation::Logger::NAME,
@@ -31,8 +31,8 @@ module OpenTelemetry
 
           private
 
-          def skip_instrumenting?
-            @skip_instrumenting || false
+          def skip_otel_emit?
+            @skip_otel_emit || false
           end
 
           def severity_number(severity)

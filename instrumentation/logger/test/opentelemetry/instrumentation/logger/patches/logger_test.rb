@@ -49,8 +49,8 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
       end
     end
 
-    it 'does not emit when @skip_instrumenting is true' do
-      ruby_logger.instance_variable_set(:@skip_instrumenting, true)
+    it 'does not emit when @skip_otel_emit is true' do
+      ruby_logger.instance_variable_set(:@skip_otel_emit, true)
       ruby_logger.debug(msg)
       assert_nil(log_record)
     end

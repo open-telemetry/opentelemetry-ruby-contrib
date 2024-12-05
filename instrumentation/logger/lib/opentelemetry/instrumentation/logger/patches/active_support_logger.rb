@@ -15,7 +15,7 @@ module OpenTelemetry
           # destinations from generating OpenTelemetry log record objects.
           # Available in Rails 7.0 and below
           def broadcast(logger)
-            logger.instance_variable_set(:@skip_instrumenting, true)
+            logger.instance_variable_set(:@skip_otel_emit, true)
             super
           end
         end

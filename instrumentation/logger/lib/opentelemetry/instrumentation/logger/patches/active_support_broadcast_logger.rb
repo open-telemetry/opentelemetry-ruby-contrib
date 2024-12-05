@@ -41,12 +41,12 @@ module OpenTelemetry
           private
 
           # Emit logs from only one of the loggers in the broadcast.
-          # Set @skip_instrumenting to `true` to the rest of the loggers before emitting the logs.
-          # Set @skip_instrumenting to `false` after the log is emitted.
+          # Set @skip_otel_emit to `true` to the rest of the loggers before emitting the logs.
+          # Set @skip_otel_emit to `false` after the log is emitted.
           def emit_one_broadcast(*args)
-            broadcasts[1..-1].each { |broadcasted_logger| broadcasted_logger.instance_variable_set(:@skip_instrumenting, true) }
+            broadcasts[1..-1].each { |broadcasted_logger| broadcasted_logger.instance_variable_set(:@skip_otel_emit, true) }
             yield
-            broadcasts.each { |broadcasted_logger| broadcasted_logger.instance_variable_set(:@skip_instrumenting, false) }
+            broadcasts.each { |broadcasted_logger| broadcasted_logger.instance_variable_set(:@skip_otel_emit, false) }
           end
         end
       end

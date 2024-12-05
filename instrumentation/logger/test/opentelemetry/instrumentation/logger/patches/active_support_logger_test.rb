@@ -45,12 +45,12 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportLogger do
       assert_match(/#{msg}/, log_record.body)
     end
 
-    it 'does not add @skip_instrumenting to the initial logger' do
-      refute Rails.logger.instance_variable_defined?(:@skip_instrumenting)
+    it 'does not add @skip_otel_emit to the initial logger' do
+      refute Rails.logger.instance_variable_defined?(:@skip_otel_emit)
     end
 
-    it 'adds @skip_instrumenting to broadcasted loggers' do
-      assert broadcasted_logger.instance_variable_defined?(:@skip_instrumenting)
+    it 'adds @skip_otel_emit to broadcasted loggers' do
+      assert broadcasted_logger.instance_variable_defined?(:@skip_otel_emit)
     end
   end
 end
