@@ -7,8 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Logger
-      # TODO: Update me when ready to release
-      VERSION = '0.0.0'
+      VERSION = '0.1.0'
     end
   end
 end

@@ -1,22 +1,15 @@
 # frozen_string_literal: true
 
-# # Copyright The OpenTelemetry Authors
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
 
-# # TOOD: Re-enable before release, along with active_support_logger tests
-# # Appraisals wont work with gems installed by a branch, so we can't
-# # set this up until there's a release of the otel logs gems
-# # Only test Rails versions that are still in support
+%w[7.0.0 7.1.0].each do |version|
+  appraise "rails-#{version}" do
+    gem 'rails', "~> #{version}"
+  end
+end
 
-# appraise 'rails-7.0' do
-#   gem 'rails', '~> 7.0.0'
-# end
-
-# appraise 'rails-7.1' do
-#   gem 'rails', '~> 7.1.0'
-# end
-
-# appraise 'rails-7.2' do
-#   gem 'rails', '~> 7.2.0'
-# end
+appraise 'rails-latest' do
+  gem 'rails'
+end

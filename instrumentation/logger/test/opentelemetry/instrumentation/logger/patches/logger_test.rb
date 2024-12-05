@@ -38,12 +38,14 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
 
     it 'sets log record attributes based on the Ruby log' do
       timestamp = Time.now
+      nano_timestamp = OpenTelemetry::SDK::Logs::LogRecord.new.send(:to_integer_nanoseconds, timestamp)
+
       Time.stub(:now, timestamp) do
         ruby_logger.debug(msg)
         assert_equal(msg, log_record.body)
         assert_equal('DEBUG', log_record.severity_text)
         assert_equal(5, log_record.severity_number)
-        assert_equal(timestamp, log_record.timestamp)
+        assert_equal(nano_timestamp, log_record.timestamp)
       end
     end
 

@@ -11,6 +11,7 @@
 # The OpenTelemetry module provides global accessors for telemetry objects.
 # See the documentation for the `opentelemetry-api` gem for details.
 module OpenTelemetry
+  # The Instrumentation module is a namespace for all OpenTelemetry Instrumentation libraries
   module Instrumentation
   end
 end

@@ -13,7 +13,7 @@ module OpenTelemetry
           attr_writer :skip_instrumenting
 
           def format_message(severity, datetime, progname, msg)
-            formatted_message = super(severity, datetime, progname, msg)
+            formatted_message = super
             return formatted_message if skip_instrumenting?
 
             OpenTelemetry.logger_provider.logger(
@@ -23,7 +23,7 @@ module OpenTelemetry
               severity_text: severity,
               severity_number: severity_number(severity),
               timestamp: datetime,
-              body: msg, # New Relic uses formatted_message here. This also helps us with not recording progname, because it is included in the formatted message by default. Which seems more appropriate?
+              body: msg,
               context: OpenTelemetry::Context.current
             )
             formatted_message

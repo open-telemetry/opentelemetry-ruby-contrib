@@ -25,19 +25,18 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.0'
 
-  spec.add_dependency 'opentelemetry-api', '~> 1.2'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22'
+  spec.add_dependency 'opentelemetry-logs-api', '~> 0.1'
 
-  spec.add_development_dependency 'appraisal', '~> 2.2.0'
+  spec.add_development_dependency 'appraisal', '~> 2.5.0'
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0'
+  spec.add_development_dependency 'opentelemetry-logs-sdk', '~> 0.1'
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
   spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rubocop', '~> 1.62.1'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.20.2'
+  spec.add_development_dependency 'rubocop', '~> 1.69.1'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
   spec.add_development_dependency 'simplecov'
-  spec.add_development_dependency 'webmock', '~> 3.7.6'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 

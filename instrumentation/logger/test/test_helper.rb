@@ -16,8 +16,6 @@ end
 SimpleCov.minimum_coverage 85
 
 require 'minitest/autorun'
-require 'webmock/minitest'
-require 'opentelemetry/sdk/logs'
 require 'test_helpers/app_config'
 
 EXPORTER = OpenTelemetry::SDK::Logs::Export::InMemoryLogRecordExporter.new

@@ -15,7 +15,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
   let(:broadcast) { ActiveSupport::BroadcastLogger.new(logger, logger2) }
 
   before do
-    skip unless defined?(::ActiveSupport::BroadcastLogger)
+    skip unless defined?(ActiveSupport::BroadcastLogger)
     EXPORTER.reset
     instrumentation.install
   end
@@ -24,7 +24,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
 
   describe '#add' do
     it 'emits the log to the broadcasted loggers' do
-      body = "Ground control to Major Tom"
+      body = 'Ground control to Major Tom'
       broadcast.add(Logger::DEBUG, body)
 
       assert_includes(LOG_STREAM.string, body)
@@ -32,7 +32,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
     end
 
     it 'emits only one OpenTelemetry log record' do
-      body = "Wake up, you sleepyhead"
+      body = 'Wake up, you sleepyhead'
       broadcast.add(Logger::DEBUG, body)
       log_records = EXPORTER.emitted_log_records
 
@@ -44,7 +44,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
 
   describe '#unknown' do
     it 'emits the log to the broadcasted loggers' do
-      body = "I know when to go out"
+      body = 'I know when to go out'
       broadcast.unknown(body)
 
       assert_includes(LOG_STREAM.string, body)

@@ -22,7 +22,7 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-Alternatively, you can also call `use_all` to install all the available instrumentation.
+Alternatively, you can call `use_all` to install all the available instrumentation.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
@@ -40,6 +40,7 @@ The test suite leverages [appraisal][appraisal] to verify the integration across
 
 ```shell
 cd instrumentation/logger
+bundle exec appraisal generate
 bundle exec appraisal install
 bundle exec appraisal rake test
 ```
