@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Propagator
     module XRay
-      VERSION = '0.22.2'
+      VERSION = '0.22.3'
     end
   end
 end

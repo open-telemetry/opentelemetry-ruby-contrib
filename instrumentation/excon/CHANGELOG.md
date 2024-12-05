@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-excon
 
+### v0.22.5 / 2024-11-26
+
+* CHANGED: Performance Freeze all range objects #1222
+
 ### v0.22.4 / 2024-07-23
 
 * DOCS: Add cspell to CI
