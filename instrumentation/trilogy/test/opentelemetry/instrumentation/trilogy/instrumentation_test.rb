@@ -164,6 +164,12 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'DESELECT ?'
       end
+
+      it 'includes row count' do
+        client.query('SELECT 1')
+
+        _(span.attributes['db.response.returned_rows']).must_equal(1)
+      end
     end
 
     describe 'when connecting' do
