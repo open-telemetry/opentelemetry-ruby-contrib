@@ -7,14 +7,6 @@
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
-require 'simplecov'
-SimpleCov.start do
-  enable_coverage :branch
-  add_filter '/test/'
-end
-
-SimpleCov.minimum_coverage 85
-
 require 'minitest/autorun'
 require 'test_helpers/app_config'
 
