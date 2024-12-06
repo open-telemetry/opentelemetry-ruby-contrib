@@ -23,21 +23,21 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportLogger do
   after { instrumentation.instance_variable_set(:@installed, false) }
 
   describe '#broadcast' do
-    it 'emits the log to the Rails.logger' do
+    it 'streams the log to the Rails.logger' do
       msg = "spruce #{rand(6)}"
       Rails.logger.debug(msg)
 
       assert_match(/#{msg}/, LOG_STREAM.string)
     end
 
-    it 'emits the broadcasted log' do
+    it 'streams the broadcasted log' do
       msg = "willow #{rand(6)}"
       Rails.logger.debug(msg)
 
       assert_match(/#{msg}/, BROADCASTED_STREAM.string)
     end
 
-    it 'records the log record' do
+    it 'emits the log record' do
       msg = "hemlock #{rand(6)}"
       Rails.logger.debug(msg)
       log_record = EXPORTER.emitted_log_records.first
@@ -45,12 +45,12 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportLogger do
       assert_match(/#{msg}/, log_record.body)
     end
 
-    it 'does not add @skip_otel_emit to the initial logger' do
-      refute Rails.logger.instance_variable_defined?(:@skip_otel_emit)
-    end
+    it 'emits the log record only once' do
+      msg = "juniper #{rand(6)}"
+      Rails.logger.debug(msg)
 
-    it 'adds @skip_otel_emit to broadcasted loggers' do
-      assert broadcasted_logger.instance_variable_defined?(:@skip_otel_emit)
+      assert_equal 1, EXPORTER.emitted_log_records.size
+      assert_match(/#{msg}/, log_record.body)
     end
   end
 end
