@@ -49,8 +49,9 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportLogger do
       msg = "juniper #{rand(6)}"
       Rails.logger.debug(msg)
 
-      assert_equal 1, EXPORTER.emitted_log_records.size
-      assert_match(/#{msg}/, log_record.body)
+      log_records = EXPORTER.emitted_log_records
+      assert_equal 1, log_records.size
+      assert_match(/#{msg}/, log_records.first.body)
     end
   end
 end
