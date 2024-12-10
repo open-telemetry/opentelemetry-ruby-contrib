@@ -201,7 +201,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
 
   describe 'instrument' do
     after do
-      ActiveSupport::Notifications.notifier.all_listeners_for(notification_name).each do |listener|
+      ActiveSupport::Notifications.notifier.listeners_for(notification_name).each do |listener|
         ActiveSupport::Notifications.unsubscribe(listener)
       end
     end
@@ -396,6 +396,12 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
       end
 
       it 'finishes spans even when block subscribers blow up' do
+        # This scenario cannot be exercised reliably on Active Support < 7.0 since the #finish method
+        # will never be called by the notifier if another subscriber raises an error.
+        #
+        # See this PR for additional details: https://github.com/rails/rails/pull/43282
+        skip 'Notifications will be broken in this scenario on Active Support < 7.0' if ActiveSupport.version < Gem::Version.new("7.0")
+
         ActiveSupport::Notifications.subscribe(notification_pattern) { raise 'boom' }
         OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern)
 
@@ -409,6 +415,12 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
       end
 
       it 'finishes spans even when complex subscribers blow up' do
+        # This scenario cannot be exercised reliably on Active Support < 7.0 since the #finish method
+        # will never be called by the notifier if another subscriber raises an error.
+        #
+        # See this PR for additional details: https://github.com/rails/rails/pull/43282
+        skip 'Notifications will be broken in this scenario on Active Support < 7.0' if ActiveSupport.version < Gem::Version.new("7.0")
+
         ActiveSupport::Notifications.subscribe(notification_pattern, CrashingEndSubscriber.new)
         OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern)
 
