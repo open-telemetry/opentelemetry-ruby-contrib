@@ -35,11 +35,6 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
     instrumentation.install({})
   end
 
-  it 'memoizes the span name' do
-    span, = subscriber.start('oh.hai', 'abc', {})
-    _(span.name).must_equal(notification_name)
-  end
-
   it 'uses the provided tracer' do
     subscriber = OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
       name: 'oh.hai',

@@ -75,7 +75,7 @@ module OpenTelemetry
         # rubocop:enable Metrics/ParameterLists
 
         def start(name, id, payload)
-          span = @tracer.start_span(span_name(name).dup.freeze, kind: @kind)
+          span = @tracer.start_span(safe_span_name_for(name), kind: @kind)
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
@@ -135,15 +135,6 @@ module OpenTelemetry
             value.to_s
           else
             value
-          end
-        end
-
-        def span_name(name)
-          case @name
-          when Regexp
-            safe_span_name_for(name)
-          else
-            @span_name ||= safe_span_name_for(@name)
           end
         end
 
