@@ -15,7 +15,7 @@ module OpenTelemetry
   module Processor
     # Namespace for OpenTelemetry Baggage processor
     module Baggage
-      VERSION = '0.2.0'
+      VERSION = '0.2.1'
     end
   end
 end
