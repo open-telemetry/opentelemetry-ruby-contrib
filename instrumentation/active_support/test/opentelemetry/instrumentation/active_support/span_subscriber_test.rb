@@ -400,7 +400,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
         # will never be called by the notifier if another subscriber raises an error.
         #
         # See this PR for additional details: https://github.com/rails/rails/pull/43282
-        skip 'Notifications will be broken in this scenario on Active Support < 7.0' if ActiveSupport.version < Gem::Version.new("7.0")
+        skip 'Notifications will be broken in this scenario on Active Support < 7.0' if ActiveSupport.version < Gem::Version.new('7.0')
 
         ActiveSupport::Notifications.subscribe(notification_pattern) { raise 'boom' }
         OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern)
@@ -419,7 +419,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
         # will never be called by the notifier if another subscriber raises an error.
         #
         # See this PR for additional details: https://github.com/rails/rails/pull/43282
-        skip 'Notifications will be broken in this scenario on Active Support < 7.0' if ActiveSupport.version < Gem::Version.new("7.0")
+        skip 'Notifications will be broken in this scenario on Active Support < 7.0' if ActiveSupport.version < Gem::Version.new('7.0')
 
         ActiveSupport::Notifications.subscribe(notification_pattern, CrashingEndSubscriber.new)
         OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern)
