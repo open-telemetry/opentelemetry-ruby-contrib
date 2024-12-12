@@ -65,7 +65,7 @@ module OpenTelemetry
 
         # rubocop:disable Metrics/ParameterLists
         def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: nil, kind: nil, span_name_formatter: nil)
-          @name = name
+          @pattern = name
           @tracer = tracer
           @notification_payload_transform = notification_payload_transform
           @disallowed_notification_payload_keys = Array(disallowed_notification_payload_keys)
