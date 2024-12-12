@@ -4,14 +4,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'faraday-0.17' do
-  gem 'faraday', '~> 0.17.6'
+%w[0.17.6 1.0 2.0].each do |version|
+  appraise "faraday-#{version}" do
+    gem 'faraday', "~> #{version}"
+  end
 end
 
-appraise 'faraday-1.x' do
-  gem 'faraday', '~> 1.0'
-end
-
-appraise 'faraday-2.x' do
-  gem 'faraday', '~> 2.0'
+appraise 'faraday-latest' do
+  gem 'faraday'
 end
