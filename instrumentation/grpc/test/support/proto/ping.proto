@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package support.proto;
+
+service PingServer {
+  rpc RequestResponsePing(PingRequest) returns (PingResponse) {}
+  rpc ClientStreamerPing(stream PingRequest) returns (PingResponse) {}
+  rpc ServerStreamerPing(PingRequest) returns (stream PingResponse) {}
+  rpc BidiStreamerPing(stream PingRequest) returns (stream PingResponse) {}
+}
+
+message PingRequest {
+  string value = 1;
+  uint32 error_code = 2;
+}
+
+message PingResponse {
+  string value = 1;
+}
