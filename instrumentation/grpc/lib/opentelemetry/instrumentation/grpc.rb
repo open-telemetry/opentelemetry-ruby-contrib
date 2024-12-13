@@ -6,7 +6,6 @@
 
 require "opentelemetry"
 require "opentelemetry-instrumentation-base"
-require "active_support/inflector"
 
 module OpenTelemetry
   module Instrumentation
