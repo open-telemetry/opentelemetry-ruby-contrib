@@ -27,7 +27,7 @@ module OpenTelemetry
         span_name_formatter: nil
       )
         subscriber = OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-          name: pattern,
+          pattern: pattern,
           tracer: tracer,
           notification_payload_transform: notification_payload_transform,
           disallowed_notification_payload_keys: disallowed_notification_payload_keys,
@@ -64,8 +64,8 @@ module OpenTelemetry
         ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
         # rubocop:disable Metrics/ParameterLists
-        def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: nil, kind: nil, span_name_formatter: nil)
-          @pattern = name
+        def initialize(pattern:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: nil, kind: nil, span_name_formatter: nil)
+          @pattern = pattern
           @tracer = tracer
           @notification_payload_transform = notification_payload_transform
           @disallowed_notification_payload_keys = Array(disallowed_notification_payload_keys)
