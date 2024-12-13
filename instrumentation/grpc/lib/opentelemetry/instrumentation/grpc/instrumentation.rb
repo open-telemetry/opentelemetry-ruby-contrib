@@ -24,11 +24,12 @@ module OpenTelemetry
         private
 
         def patch
-          ::GRPC::ClientInterceptor.prepend(Interceptors::Client)
+          ::GRPC::ClientStub.prepend(Patches::ClientStub)
         end
 
         def require_dependencies
-          require_relative "interceptors/client"
+          require_relative 'interceptors/client_tracer'
+          require_relative 'patches/client_stub'
         end
       end
     end
