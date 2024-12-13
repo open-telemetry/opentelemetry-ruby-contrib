@@ -39,6 +39,7 @@ jobs:
           - faraday
           - grape
           - graphql
+          - grpc
           - gruf
           - http
           - http_client
