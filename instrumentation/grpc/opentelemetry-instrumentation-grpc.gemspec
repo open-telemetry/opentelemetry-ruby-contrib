@@ -33,7 +33,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
-  spec.add_dependency 'activesupport', '>= 4'
   spec.add_dependency 'opentelemetry-api', '~> 1.2'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.4'
 
