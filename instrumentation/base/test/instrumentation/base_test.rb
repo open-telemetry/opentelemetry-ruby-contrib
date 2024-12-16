@@ -59,8 +59,52 @@ describe OpenTelemetry::Instrumentation::Base do
   end
 
   describe '.instance' do
+    let(:instrumentation) do
+      Class.new(OpenTelemetry::Instrumentation::Base) do
+        instrumentation_name 'test_instrumentation'
+        instrumentation_version '0.1.1'
+
+        def initialize(*args)
+          # Simulate latency by hinting the VM should switch tasks
+          # (this can also be accomplished by something like `sleep(0.1)`).
+          # This replicates the worst-case scenario when using default assignment
+          # to obtain a singleton, i.e. that the scheduler switches threads between
+          # the nil check and object initialization.
+          Thread.pass
+          super
+        end
+      end
+    end
+
+    let(:other_instrumentation) do
+      aux_instrumentation = instrumentation
+      Class.new(OpenTelemetry::Instrumentation::Base) do
+        instrumentation_name 'test_instrumentation'
+        instrumentation_version '0.1.1'
+
+        define_method(:aux_instrumentation) { aux_instrumentation }
+
+        def initialize(*)
+          aux_instrumentation.instance
+
+          super
+        end
+      end
+    end
+
     it 'returns an instance' do
       _(instrumentation.instance).must_be_instance_of(instrumentation)
+    end
+
+    it 'returns the same singleton instance to every thread' do
+      object_ids = Array.new(2).map { Thread.new { instrumentation.instance } }
+                        .map { |thr| thr.join.value }
+
+      _(object_ids.uniq.count).must_equal(1)
+    end
+
+    it 'can refer to other instances in initialize without deadlocking' do
+      other_instrumentation.instance
     end
   end
 

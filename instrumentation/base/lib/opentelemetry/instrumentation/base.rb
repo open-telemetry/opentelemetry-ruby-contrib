@@ -60,6 +60,8 @@ module OpenTelemetry
     # '::' replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG}, and '_ENABLED' appended.
     # For example: OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED = false.
     class Base
+      @singleton_mutex = Thread::Mutex.new
+
       class << self
         NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/
         VALIDATORS = {
@@ -75,6 +77,7 @@ module OpenTelemetry
         private :new
 
         def inherited(subclass) # rubocop:disable Lint/MissingSuper
+          subclass.instance_exec { @singleton_mutex = Thread::Mutex.new }
           OpenTelemetry::Instrumentation.registry.register(subclass)
         end
 
@@ -163,8 +166,10 @@ module OpenTelemetry
         end
 
         def instance
-          @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
-                            present_blk, compatible_blk, options)
+          @instance || @singleton_mutex.synchronize do
+            @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
+                              present_blk, compatible_blk, options)
+          end
         end
 
         private
