@@ -69,8 +69,9 @@ module OpenTelemetry
           integer: ->(v) { v.is_a?(Integer) },
           string: ->(v) { v.is_a?(String) }
         }.freeze
+        SINGLETON_MUTEX = Thread::Mutex.new
 
-        private_constant :NAME_REGEX, :VALIDATORS
+        private_constant :NAME_REGEX, :VALIDATORS, :SINGLETON_MUTEX
 
         private :new
 
@@ -163,8 +164,10 @@ module OpenTelemetry
         end
 
         def instance
-          @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
-                            present_blk, compatible_blk, options)
+          @instance || SINGLETON_MUTEX.synchronize do
+            @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
+                              present_blk, compatible_blk, options)
+          end
         end
 
         private
