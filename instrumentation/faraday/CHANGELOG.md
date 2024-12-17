@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.24.8 / 2024-12-17
+
+* FIXED: Share Faraday Attrs with Adapter Spans
+
 ### v0.24.7 / 2024-11-26
 
 * CHANGED: Performance Freeze all range objects #1222
