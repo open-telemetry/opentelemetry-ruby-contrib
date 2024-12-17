@@ -7,3 +7,7 @@
 appraise 'grpc-1.68' do
   gem 'grpc', '~> 1.68.0'
 end
+
+appraise 'grpc-latest' do
+  gem 'grpc'
+end
