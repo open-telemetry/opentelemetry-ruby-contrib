@@ -48,7 +48,7 @@ instrumentation.
 
 ## Development
 
-Integration tests relay on a real gRPC server which is started by relevant tests. The proto definition is located in `test/support/proto/ping.proto`. Making changes to the proto definition requires re-creating grpc-generated code. To do this, run the following command:
+Integration tests rely on a real gRPC server that is started by relevant tests. The proto definition is located in `test/support/proto/ping.proto`. Making changes to the proto definition requires re-creating gRPC-generated code. To do this, run the following command:
 
 ```sh
 bundle exec grpc_tools_ruby_protoc --ruby_out=. --grpc_out=. test/support/proto/ping.proto
