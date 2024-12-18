@@ -33,6 +33,23 @@ module OpenTelemetry
                 OpenTelemetry.propagation.inject(job)
                 span.add_event('created_at', timestamp: job['created_at'])
                 yield
+              end.tap do
+                # FIXME: is it possible to detect failures here? Does sidekiq bubble them up the middlewares?
+                if instrumentation_config[:metrics]
+                  begin
+                    counter_attributes = {
+                      'messaging.operation.name' => 'enqueue', # FIXME: metrics semconv
+                      'messaging.system' => 'sidekiq', # FIXME: metrics semconv
+                      'messaging.destination.name' => job['queue'] # FIXME: metrics semconv
+                      # server.address => # FIXME: required if available
+                      # messaging.destination.partition.id => FIXME: recommended
+                      # server.port => # FIXME: recommended
+                    }
+
+                    counter = meter.create_counter('messaging.client.sent.messages')
+                    counter.add(1, attributes: counter_attributes)
+                  end
+                end
               end
             end
 
@@ -44,6 +61,10 @@ module OpenTelemetry
 
             def tracer
               Sidekiq::Instrumentation.instance.tracer
+            end
+
+            def meter
+              Sidekiq::Instrumentation.instance.meter
             end
           end
         end

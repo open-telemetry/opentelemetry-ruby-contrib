@@ -192,7 +192,7 @@ module OpenTelemetry
         end
       end
 
-      attr_reader :name, :version, :config, :installed, :tracer
+      attr_reader :name, :version, :config, :installed, :tracer, :meter
 
       alias installed? installed
 
@@ -207,7 +207,8 @@ module OpenTelemetry
         @config = {}
         @installed = false
         @options = options
-        @tracer = OpenTelemetry::Trace::Tracer.new
+        @tracer = OpenTelemetry::Trace::Tracer.new # default no-op tracer
+        @meter = OpenTelemetry::Metrics::Meter.new # default no-op meter
       end
       # rubocop:enable Metrics/ParameterLists
 
@@ -224,7 +225,11 @@ module OpenTelemetry
 
         instance_exec(@config, &@install_blk)
         @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
+
         @installed = true
+
+        return unless config[:metrics]
+        @meter = OpenTelemetry.meter_provider.meter(name, version: version)
       end
 
       # Whether or not this instrumentation is installable in the current process. Will
