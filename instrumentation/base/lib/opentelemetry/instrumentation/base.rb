@@ -472,6 +472,16 @@ module OpenTelemetry
           end
       end
 
+      def metrics_enabled_by_env_var?
+        var_name = name.dup
+        var_name.upcase!
+        var_name.gsub!('::', '_')
+        var_name.gsub!('OPENTELEMETRY_', 'OTEL_RUBY_')
+        var_name << '_METRICS_ENABLED'
+
+        ENV.key?(var_name) && ENV[var_name] != 'false'
+      end
+
       # Checks to see if the user has passed any environment variables that set options
       # for instrumentation. By convention, the environment variable will be the name
       # of the instrumentation, uppercased, with '::' replaced by underscores,
