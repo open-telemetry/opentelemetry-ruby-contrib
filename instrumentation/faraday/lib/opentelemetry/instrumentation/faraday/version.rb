@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Faraday
-      VERSION = '0.24.6'
+      VERSION = '0.24.8'
     end
   end
 end

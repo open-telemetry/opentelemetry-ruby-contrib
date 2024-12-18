@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.33.1 / 2024-11-26
+
+* (No significant changes)
+
 ### v0.33.0 / 2024-11-19
 
 * ADDED: Use Semconv Naming For ActionPack

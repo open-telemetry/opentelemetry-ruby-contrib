@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+### v0.20.3 / 2024-12-04
+
+* FIXED: Use ActiveSupport::Notifications subscriber to serialize events.
+
 ### v0.20.2 / 2024-07-23
 
 * DOCS: Add cspell to CI
