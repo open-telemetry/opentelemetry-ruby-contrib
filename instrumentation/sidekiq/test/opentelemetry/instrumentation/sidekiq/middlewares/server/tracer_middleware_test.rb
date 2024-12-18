@@ -17,12 +17,22 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
   let(:root_span) { spans.find { |s| s.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID } }
   let(:config) { {} }
 
+  with_metrics_sdk do
+    let(:metric_snapshots) do
+      metrics_exporter.tap(&:pull)
+                      .metric_snapshots.select { |snapshot| snapshot.data_points.any? }
+                      .group_by(&:name)
+    end
+  end
+
   before do
     instrumentation.install(config)
     exporter.reset
   end
 
-  after { instrumentation.instance_variable_set(:@installed, false) }
+  after do
+    instrumentation.instance_variable_set(:@installed, false)
+  end
 
   describe 'enqueue spans' do
     it 'before performing any jobs' do
@@ -47,6 +57,54 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
       _(job_span.events.size).must_equal(2)
       _(job_span.events[0].name).must_equal('created_at')
       _(job_span.events[1].name).must_equal('enqueued_at')
+    end
+
+    with_metrics_sdk do
+      # FIXME: still seeing order-dependent failure here
+      it 'yields no metrics if config is not set' do
+        _(OpenTelemetry::Instrumentation::Sidekiq::Instrumentation.instance.metrics_enabled?).must_equal false
+        SimpleJob.perform_async
+        SimpleJob.drain
+
+        _(exporter.finished_spans.size).must_equal 2
+        _(metric_snapshots).must_be_empty
+      end
+
+      describe 'with metrics enabled' do
+        let(:config) { { metrics: true } }
+
+        it 'metrics processing' do
+          _(instrumentation.metrics_enabled?).must_equal true
+          SimpleJob.perform_async
+          SimpleJob.drain
+
+          queue_latency = metric_snapshots['messaging.queue.latency']
+          _(queue_latency.count).must_equal 1
+          _(queue_latency.first.data_points.count).must_equal 1
+          queue_latency_attributes = queue_latency.first.data_points.first.attributes
+          _(queue_latency_attributes['messaging.system']).must_equal 'sidekiq'
+          _(queue_latency_attributes['messaging.destination.name']).must_equal 'default' # FIXME: newer semconv specifies this key
+
+          process_duration = metric_snapshots['messaging.process.duration']
+          _(process_duration.count).must_equal 1
+          _(process_duration.first.data_points.count).must_equal 1
+          process_duration_attributes = process_duration.first.data_points.first.attributes
+          _(process_duration_attributes['messaging.system']).must_equal 'sidekiq'
+          _(process_duration_attributes['messaging.operation.name']).must_equal 'process'
+          _(process_duration_attributes['messaging.destination.name']).must_equal 'default'
+
+          process_duration_data_point = process_duration.first.data_points.first
+          _(process_duration_data_point.count).must_equal 1
+
+          consumed_messages = metric_snapshots['messaging.client.consumed.messages']
+          _(consumed_messages.count).must_equal 1
+          _(consumed_messages.first.data_points.count).must_equal 1
+          consumed_messages_attributes = queue_latency.first.data_points.first.attributes
+          _(consumed_messages_attributes['messaging.system']).must_equal 'sidekiq'
+          _(consumed_messages_attributes['messaging.destination.name']).must_equal 'default' # FIXME: newer semconv specifies this key
+          _(consumed_messages.first.data_points.first.value).must_equal 1
+        end
+      end
     end
 
     it 'traces when enqueued with Active Job' do

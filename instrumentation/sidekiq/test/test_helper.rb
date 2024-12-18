@@ -21,6 +21,15 @@ else
   require 'helpers/mock_loader'
 end
 
+# speed up tests that rely on empty queues
+Sidekiq::BasicFetch::TIMEOUT =
+  if Gem.loaded_specs['sidekiq'].version < Gem::Version.new('6.5.0')
+    # Redis 4.8 has trouble with float timeouts given as positional arguments
+    1
+  else
+    0.1
+  end
+
 # OpenTelemetry SDK config for testing
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
@@ -29,6 +38,7 @@ OpenTelemetry::SDK.configure do |c|
   c.error_handler = ->(exception:, message:) { raise(exception || message) }
   c.add_span_processor span_processor
 end
+require 'opentelemetry-metrics-test-helpers'
 
 # Sidekiq redis configuration
 ENV['TEST_REDIS_HOST'] ||= '127.0.0.1'

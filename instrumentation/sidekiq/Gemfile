@@ -6,10 +6,13 @@
 
 source 'https://rubygems.org'
 
+gem 'opentelemetry-metrics-api', '~> 0.2.0'
+
 gemspec
 
 group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-instrumentation-redis', path: '../redis'
-  gem 'pry-byebug'
+  gem 'opentelemetry-metrics-sdk'
+  gem 'opentelemetry-metrics-test-helpers', path: '../../helpers/metrics-test-helpers', require: false
 end
