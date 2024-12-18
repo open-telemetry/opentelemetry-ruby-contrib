@@ -1,24 +1,39 @@
 # frozen_string_literal: true
 
-appraise 'sidekiq-7.0' do
-  gem 'sidekiq', '~> 7.0'
-end
+{
+  'sidekiq-7.0' => [['sidekiq', '~> 7.0']],
+  'sidekiq-6.5' => [['sidekiq', '>= 6.5', '< 7.0']],
+  'sidekiq-6.0' => [
+    ['sidekiq', '>= 6.0', '< 6.5'],
+    ['redis', '< 4.8']
+  ],
+  'sidekiq-5.2' => [
+    ['sidekiq', '~> 5.2'],
+    ['redis', '< 4.8']
+  ],
+  'sidekiq-4.2' => [
+    ['sidekiq', '~> 4.2'],
+    ['redis', '< 4.8']
+  ]
+}.each do |gemfile_name, specs|
+  appraise gemfile_name do
+    specs.each do |spec|
+      gem(*spec)
+      remove_gem 'opentelemetry-metrics-api'
+      remove_gem 'opentelemetry-metrics-sdk'
+    end
+  end
 
-appraise 'sidekiq-6.5' do
-  gem 'sidekiq', '>= 6.5', '< 7.0'
-end
+  appraise "#{gemfile_name}-metrics-api" do
+    specs.each do |spec|
+      gem(*spec)
+      remove_gem 'opentelemetry-metrics-sdk'
+    end
+  end
 
-appraise 'sidekiq-6.0' do
-  gem 'sidekiq', '>= 6.0', '< 6.5'
-  gem 'redis', '< 4.8'
-end
-
-appraise 'sidekiq-5.2' do
-  gem 'sidekiq', '~> 5.2'
-  gem 'redis', '< 4.8'
-end
-
-appraise 'sidekiq-4.2' do
-  gem 'sidekiq', '~> 4.2'
-  gem 'redis', '< 4.8'
+  appraise "#{gemfile_name}-metrics-sdk" do
+    specs.each do |spec|
+      gem(*spec)
+    end
+  end
 end
