@@ -109,7 +109,20 @@ module OpenTelemetry
         option :peer_service,                default: nil,   validate: :string
         option :metrics,                     default: false, validate: :boolean
 
+        # FIXME: upstream
+        def get_counter(name, description: nil)
+          return unless metrics_enabled?
+
+          binding.pry
+          # FIXME: structural keys
+          # FIXME: mutex counter creation (& reads?)
+          INSTRUMENTS[[name, description]] ||= meter.create_counter(name, description: description)
+        end
+
         private
+
+        # FIXME: upstream
+        INSTRUMENTS = {}
 
         def gem_version
           Gem::Version.new(::Sidekiq::VERSION)

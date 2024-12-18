@@ -35,36 +35,50 @@ module OpenTelemetry
                 yield
               end.tap do
                 # FIXME: is it possible to detect failures here? Does sidekiq bubble them up the middlewares?
-                if instrumentation_config[:metrics]
-                  begin
-                    counter_attributes = {
-                      'messaging.operation.name' => 'enqueue', # FIXME: metrics semconv
-                      'messaging.system' => 'sidekiq', # FIXME: metrics semconv
-                      'messaging.destination.name' => job['queue'] # FIXME: metrics semconv
+                with_meter do |meter|
+                  counter_attributes = metrics_attributes(job).merge(
+                    {
+                      'messaging.operation.name' => 'enqueue' # FIXME: metrics semconv
                       # server.address => # FIXME: required if available
                       # messaging.destination.partition.id => FIXME: recommended
                       # server.port => # FIXME: recommended
                     }
+                  )
 
-                    counter = meter.create_counter('messaging.client.sent.messages')
-                    counter.add(1, attributes: counter_attributes)
-                  end
+                  # FIXME: avoid create_counter repetition?
+                  binding.pry
+                  counter = instrumentation.get_counter('messaging.client.sent.messages')
+                  counter.add(1, attributes: counter_attributes)
                 end
               end
             end
 
             private
 
+            def instrumentation
+              Sidekiq::Instrumentation.instance
+            end
+
             def instrumentation_config
-              Sidekiq::Instrumentation.instance.config
+              instrumentation.config
             end
 
             def tracer
-              Sidekiq::Instrumentation.instance.tracer
+              instrumentation.tracer
             end
 
-            def meter
-              Sidekiq::Instrumentation.instance.meter
+            def with_meter(&block)
+              instrumentation.with_meter(&block)
+            end
+
+            def metrics_attributes(job)
+              {
+                'messaging.system' => 'sidekiq', # FIXME: metrics semconv
+                'messaging.destination.name' => job['queue'] # FIXME: metrics semconv
+                # server.address => # FIXME: required if available
+                # messaging.destination.partition.id => FIXME: recommended
+                # server.port => # FIXME: recommended
+              }
             end
           end
         end
