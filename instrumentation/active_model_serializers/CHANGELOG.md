@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+### v0.20.4 / 2024-12-19
+
+* (No significant changes)
+
 ### v0.20.3 / 2024-12-04
 
 * FIXED: Use ActiveSupport::Notifications subscriber to serialize events.

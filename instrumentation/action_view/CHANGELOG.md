@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.7.4 / 2024-12-19
+
+* (No significant changes)
+
 ### v0.7.3 / 2024-08-23
 
 * FIXED: ActionView Support Legacy Formats
