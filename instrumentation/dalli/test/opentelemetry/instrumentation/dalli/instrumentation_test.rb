@@ -127,6 +127,14 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span.name).must_equal 'set'
       _(span.attributes['db.statement']).must_equal 'set ?'
     end
+
+    it 'supports gat' do
+      dalli.gat('foo')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'gat'
+      _(span.attributes['db.statement']).must_equal 'gat foo 0'
+    end
   end
 
   # Dalli 3.x has different behavior than 2.x versions and attempts to retry on network errors
