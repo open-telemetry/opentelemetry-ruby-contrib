@@ -46,18 +46,13 @@ instrumentation.
   end
 ```
 
-You *also* need to make sure your stubs are using the interceptor, e.g.
-
-```ruby
-  otel = OpenTelemetry::Instrumentation::Grpc.client_interceptor
-  SomeService::Stub.new(host, credentials, *args, **kwargs, interceptors: [otel])
-```
-
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Integration tests rely on a real gRPC server that is started by relevant tests. The proto definition is located in `test/support/proto/ping.proto`. Making changes to the proto definition requires re-creating gRPC-generated code. To do this, run the following command:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```sh
+bundle exec grpc_tools_ruby_protoc --ruby_out=. --grpc_out=. test/support/proto/ping.proto
+```
 
 ## Contributing
 
