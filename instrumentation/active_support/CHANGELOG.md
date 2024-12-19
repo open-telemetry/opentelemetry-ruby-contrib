@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+### v0.7.0 / 2024-12-19
+
+* ADDED: Enable support for `Regexp` patterns when subscribing to Active Support's instrumentation Events
+
 ### v0.6.0 / 2024-07-02
 
 * BREAKING CHANGE: Custom ActiveSupport Span Names
