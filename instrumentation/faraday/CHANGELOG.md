@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+## [0.24.7](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-faraday/v0.24.6...opentelemetry-instrumentation-faraday/v0.24.7) (2024-12-19)
+
+
+### Bug Fixes
+
+* Share Faraday Attrs with Adapter Spans ([#1266](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1266)) ([8def74b](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/8def74bdce00565fc9805eb601f74763cebc224e))
+
 ### v0.24.8 / 2024-12-17
 
 * FIXED: Share Faraday Attrs with Adapter Spans
