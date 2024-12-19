@@ -1,8 +1,8 @@
 # Release History: opentelemetry-instrumentation-action_mailer
 
-### v0.2.1 / 2024-12-19
+### v0.3.0 / 2024-12-19
 
-* (No significant changes)
+* ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
 
 ### v0.2.0 / 2024-10-22
 
