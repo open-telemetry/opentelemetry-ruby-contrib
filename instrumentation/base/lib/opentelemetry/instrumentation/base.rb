@@ -166,13 +166,44 @@ module OpenTelemetry
         def instance
           @instance || SINGLETON_MUTEX.synchronize do
             @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
-                              present_blk, compatible_blk, options)
+                              present_blk, compatible_blk, options, instrument_configs)
           end
+        end
+
+        if defined?(OpenTelemetry::Metrics)
+          %i[
+            counter asynchronous_counter
+            histogram gauge asynchronous_gauge
+            updown_counter asynchronous_updown_counter
+          ].each do |instrument_kind|
+            define_method(instrument_kind) do |name, **opts|
+              register_instrument(instrument_kind, name, **opts)
+            end
+          end
+
+          def register_instrument(kind, name, **opts)
+            @instrument_configs ||= {}
+
+            key = [kind, name]
+            if @instrument_configs.key?(key)
+              warn("Duplicate instrument configured for #{self}: #{key.inspect}")
+            else
+              @instrument_configs[key] = opts
+            end
+          end
+        else
+          def counter(*, **); end
+          def asynchronous_counter(*, **); end
+          def histogram(*, **); end
+          def gauge(*, **); end
+          def asynchronous_gauge(*, **); end
+          def updown_counter(*, **); end
+          def asynchronous_updown_counter(*, **); end
         end
 
         private
 
-        attr_reader :install_blk, :present_blk, :compatible_blk, :options
+        attr_reader :install_blk, :present_blk, :compatible_blk, :options, :instrument_configs
 
         def infer_name
           @inferred_name ||= if (md = name.match(NAME_REGEX)) # rubocop:disable Naming/MemoizedInstanceVariableName
@@ -192,13 +223,13 @@ module OpenTelemetry
         end
       end
 
-      attr_reader :name, :version, :config, :installed, :tracer, :meter
+      attr_reader :name, :version, :config, :installed, :tracer, :meter, :instrument_configs
 
       alias installed? installed
 
       # rubocop:disable Metrics/ParameterLists
       def initialize(name, version, install_blk, present_blk,
-                     compatible_blk, options)
+                     compatible_blk, options, instrument_configs)
         @name = name
         @version = version
         @install_blk = install_blk
@@ -209,7 +240,8 @@ module OpenTelemetry
         @options = options
         @tracer = OpenTelemetry::Trace::Tracer.new # default no-op tracer
 
-        @meter = OpenTelemetry::Metrics::Meter.new if defined?(OpenTelemetry::Meter) # default no-op meter
+        @meter = OpenTelemetry::Metrics::Meter.new if defined?(OpenTelemetry::Metrics::Meter) # default no-op meter
+        @instrument_configs = instrument_configs || {}
       end
       # rubocop:enable Metrics/ParameterLists
 
@@ -277,6 +309,7 @@ module OpenTelemetry
       end
 
       # @api private
+      # ONLY yields if the meter is enabled.
       def with_meter
         yield @meter if metrics_enabled?
       end

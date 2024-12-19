@@ -34,26 +34,40 @@ module OpenTelemetry
                 span.add_event('created_at', timestamp: job['created_at'])
                 yield
               end.tap do
-                # FIXME: is it possible to detect failures here? Does sidekiq bubble them up the middlewares?
-                with_meter do |meter|
-                  counter_attributes = metrics_attributes(job).merge(
-                    {
-                      'messaging.operation.name' => 'enqueue' # FIXME: metrics semconv
-                      # server.address => # FIXME: required if available
-                      # messaging.destination.partition.id => FIXME: recommended
-                      # server.port => # FIXME: recommended
-                    }
-                  )
-
-                  # FIXME: avoid create_counter repetition?
-                  binding.pry
-                  counter = instrumentation.get_counter('messaging.client.sent.messages')
-                  counter.add(1, attributes: counter_attributes)
-                end
+                # FIXME: is it possible/necessary to detect failures here? Does sidekiq bubble them up the middlewares?
+                count_sent_message(job)
               end
             end
 
             private
+
+            def count_sent_message(job)
+              with_meter do |_meter|
+                counter_attributes = metrics_attributes(job).merge(
+                  {
+                    'messaging.operation.name' => 'create'
+                    # server.address => # FIXME: required if available
+                    # messaging.destination.partition.id => FIXME: recommended
+                    # server.port => # FIXME: recommended
+                  }
+                )
+
+                counter = messaging_client_sent_messages_counter
+                counter.add(1, attributes: counter_attributes)
+              end
+            end
+
+            def messaging_client_sent_messages_counter
+              instrumentation.counter('messaging.client.sent.messages')
+            end
+
+            def messaging_client_operation_duration_histogram
+              instrumentation.histogram('messaging.client.operation.duration')
+            end
+
+            def messaging_client_consumed_messages_counter
+              instrumentation.counter('messaging.client.consumed.messages')
+            end
 
             def instrumentation
               Sidekiq::Instrumentation.instance
