@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-koala
 
+## [0.20.6](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-koala/v0.20.5...opentelemetry-instrumentation-koala/v0.20.6) (2024-12-19)
+
+
+### Bug Fixes
+
+* loosen koala pin to ~&gt; 3.0 ([e3975ae](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e3975ae11779779757fa78b6c701b3435bb24b70))
+* loosen the koala pin to ~&gt; 3.0 ([#1309](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1309)) ([e3975ae](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e3975ae11779779757fa78b6c701b3435bb24b70))
+
 ### v0.20.5 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints

@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+## [0.6.1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-active_support/v0.6.0...opentelemetry-instrumentation-active_support/v0.6.1) (2024-12-19)
+
+
+### Features
+
+* Enable support for `Regexp` patterns when subscribing to Active Support's instrumentation Events ([#1296](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1296)) ([e745deb](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e745deb683add11358ae3418c609236fe9d5f3b6))
+
 ### v0.6.0 / 2024-07-02
 
 * BREAKING CHANGE: Custom ActiveSupport Span Names
