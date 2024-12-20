@@ -8,6 +8,7 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'opentelemetry-instrumentation-active_storage', path: '../active_storage'
 group :test do
   Dir.entries('../../helpers')
      .select { |entry| File.directory?(File.join('../../helpers', entry)) }
