@@ -30,6 +30,49 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor span_processor
 end
 
+module LoadedMetricsFeatures
+  OTEL_METRICS_API_LOADED = !Gem.loaded_specs['opentelemetry-metrics-api'].nil?
+  OTEL_METRICS_SDK_LOADED = !Gem.loaded_specs['opentelemetry-metrics-sdk'].nil?
+
+  extend self
+
+  def api_loaded?
+    OTEL_METRICS_API_LOADED
+  end
+
+  def sdk_loaded?
+    OTEL_METRICS_SDK_LOADED
+  end
+end
+
+if LoadedMetricsFeatures.sdk_loaded?
+  METRICS_EXPORTER = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+  OpenTelemetry.meter_provider.add_metric_reader(METRICS_EXPORTER)
+end
+
+module ConditionalEvaluation
+  def self.included(base)
+    base.extend(self)
+  end
+
+  def self.prepended(base)
+    base.extend(self)
+  end
+
+  def with_metrics
+    yield if LoadedMetricsFeatures.sdk_loaded?
+  end
+
+  def it(desc = 'anonymous', with_metrics: false, &block)
+    return super(desc, &block) unless with_metrics
+    return unless LoadedMetricsFeatures.sdk_loaded?
+
+    super(desc, &block)
+  end
+end
+
+Minitest::Spec.prepend(ConditionalEvaluation)
+
 # Sidekiq redis configuration
 ENV['TEST_REDIS_HOST'] ||= '127.0.0.1'
 ENV['TEST_REDIS_PORT'] ||= '16379'

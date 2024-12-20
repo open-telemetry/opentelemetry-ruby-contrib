@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../common'
+
 module OpenTelemetry
   module Instrumentation
     module Sidekiq
@@ -12,7 +14,7 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Sidekiq requests
           # by way of its middleware system
           class TracerMiddleware
-            include OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Common
+            include Common
             include ::Sidekiq::ServerMiddleware if defined?(::Sidekiq::ServerMiddleware)
 
             def call(_worker, msg, _queue)
@@ -60,6 +62,8 @@ module OpenTelemetry
                     end
                   end
                 end
+
+                count_consumed_message(msg)
               end
             end
 
@@ -91,6 +95,16 @@ module OpenTelemetry
 
             def messaging_process_duration_histogram
               instrumentation.histogram('messaging.process.duration')
+            end
+
+            def count_consumed_message(msg)
+              with_meter do
+                messaging_client_consumed_messages_counter.add(1, attributes: metrics_attributes(msg))
+              end
+            end
+
+            def messaging_client_consumed_messages_counter
+              instrumentation.counter('messaging.client.consumed.messages')
             end
 
             def queue_latency_gauge

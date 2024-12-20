@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../common'
+
 module OpenTelemetry
   module Instrumentation
     module Sidekiq
@@ -12,6 +14,7 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Sidekiq client
           # by way of its middleware system
           class TracerMiddleware
+            include Common
             include ::Sidekiq::ClientMiddleware if defined?(::Sidekiq::ClientMiddleware)
 
             def call(_worker_class, job, _queue, _redis_pool)
@@ -59,22 +62,6 @@ module OpenTelemetry
 
             def messaging_client_sent_messages_counter
               instrumentation.counter('messaging.client.sent.messages')
-            end
-
-            def messaging_client_operation_duration_histogram
-              instrumentation.histogram('messaging.client.operation.duration')
-            end
-
-            def messaging_client_consumed_messages_counter
-              instrumentation.counter('messaging.client.consumed.messages')
-            end
-
-            def instrumentation
-              Sidekiq::Instrumentation.instance
-            end
-
-            def instrumentation_config
-              instrumentation.config
             end
 
             def tracer

@@ -2,23 +2,45 @@
 
 appraise 'sidekiq-7.0' do
   gem 'sidekiq', '~> 7.0'
+
+  remove_gem 'opentelemetry-metrics-sdk'
+  remove_gem 'opentelemetry-metrics-api'
+end
+
+appraise 'sidekiq-7.0-metrics-sdk' do
+  gem 'sidekiq', '~> 7.0'
+end
+
+# explicitly test without SDK
+appraise 'sidekiq-7.0-metrics-api' do
+  gem 'sidekiq', '~> 7.0'
+
+  remove_gem 'opentelemetry-metrics-sdk'
 end
 
 appraise 'sidekiq-6.5' do
   gem 'sidekiq', '>= 6.5', '< 7.0'
+  remove_gem 'opentelemetry-metrics-api'
+  remove_gem 'opentelemetry-metrics-sdk'
 end
 
 appraise 'sidekiq-6.0' do
   gem 'sidekiq', '>= 6.0', '< 6.5'
   gem 'redis', '< 4.8'
+  remove_gem 'opentelemetry-metrics-api'
+  remove_gem 'opentelemetry-metrics-sdk'
 end
 
 appraise 'sidekiq-5.2' do
   gem 'sidekiq', '~> 5.2'
   gem 'redis', '< 4.8'
+  remove_gem 'opentelemetry-metrics-api'
+  remove_gem 'opentelemetry-metrics-sdk'
 end
 
 appraise 'sidekiq-4.2' do
   gem 'sidekiq', '~> 4.2'
   gem 'redis', '< 4.8'
+  remove_gem 'opentelemetry-metrics-api'
+  remove_gem 'opentelemetry-metrics-sdk'
 end
