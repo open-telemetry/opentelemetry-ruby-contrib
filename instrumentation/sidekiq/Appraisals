@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 {
-  'sidekiq-7' => [['sidekiq', '~> 7.0']],
+  'sidekiq-7.0' => [['sidekiq', '~> 7.0']],
   'sidekiq-6.5' => [['sidekiq', '>= 6.5', '< 7.0']],
   'sidekiq-6.0' => [
     ['sidekiq', '>= 6.0', '< 6.5'],

@@ -10,8 +10,11 @@ Bundler.require(:default, :development, :test)
 require 'active_job'
 
 require 'minitest/autorun'
+require 'minitest/reporters'
 require 'rspec/mocks/minitest_integration'
 require 'sidekiq/testing'
+
+Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
 
 if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.0.0')
   require 'helpers/mock_loader_for_7.0'
@@ -20,6 +23,14 @@ elsif Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('6.5.0')
 else
   require 'helpers/mock_loader'
 end
+
+# speed up tests that rely on empty queues
+Sidekiq::BasicFetch::TIMEOUT = if Gem.loaded_specs['sidekiq'].version < Gem::Version.new('6.5.0')
+                                 # Redis 4.8 has trouble with float timeouts given as positional arguments
+                                 1
+                               else
+                                 0.1
+                               end
 
 # OpenTelemetry SDK config for testing
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
