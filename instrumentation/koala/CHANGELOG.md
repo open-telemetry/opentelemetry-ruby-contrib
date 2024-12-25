@@ -2,7 +2,7 @@
 
 ### v0.20.6 / 2024-12-24
 
-* FIXED: Loosen the koala pin to ~> 3.0
+* FIXED: Loosen koala restrictions ~> 3.0
 
 ### v0.20.5 / 2024-06-18
 
