@@ -57,6 +57,6 @@
     },
     {
       "name": "merge",
-      "sql": "MERGE into test_table using other_table on other_table.id = test_table.id WHEN matched then update set x = test_table.x + 1 when not matched then insert (id,x,status) values (other_table.id,other_table.x,other_table.status)"
+      "sql": "MERGE INTO test_table AS t USING other_table AS o ON (o.id = t.id) WHEN MATCHED THEN UPDATE SET x = t.x + 1 WHEN NOT MATCHED THEN INSERT (id, x, status) VALUES (o.id, o.x, o.status)"
     }
 ]
