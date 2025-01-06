@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.0'
 
-  spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.20.1'
+  spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_lambda', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.7.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.21.0'
@@ -50,7 +50,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.8.0'
   spec.add_dependency 'opentelemetry-instrumentation-racecar', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.25.0'
-  spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.33.0'
+  spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.34.0'
   spec.add_dependency 'opentelemetry-instrumentation-rake', '~> 0.2.1'
   spec.add_dependency 'opentelemetry-instrumentation-rdkafka', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.25.1'

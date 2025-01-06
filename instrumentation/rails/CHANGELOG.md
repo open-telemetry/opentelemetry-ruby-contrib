@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.34.0 / 2024-12-19
+
+* ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
+
 ### v0.33.1 / 2024-11-26
 
 * (No significant changes)
