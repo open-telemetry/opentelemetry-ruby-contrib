@@ -10,10 +10,16 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Faraday
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        MINIMUM_VERSION = Gem::Version.new('1.0')
+
         install do |_config|
           require_dependencies
           register_tracer_middleware
           use_middleware_by_default
+        end
+
+        compatible do
+          gem_version >= MINIMUM_VERSION
         end
 
         present do
@@ -25,10 +31,13 @@ module OpenTelemetry
 
         private
 
+        def gem_version
+          Gem::Version.new(::Faraday::VERSION)
+        end
+
         def require_dependencies
           require_relative 'middlewares/tracer_middleware'
           require_relative 'patches/connection'
-          require_relative 'patches/rack_builder'
         end
 
         def register_tracer_middleware
@@ -38,11 +47,7 @@ module OpenTelemetry
         end
 
         def use_middleware_by_default
-          if Gem::Version.new(::Faraday::VERSION) >= Gem::Version.new('1')
-            ::Faraday::Connection.prepend(Patches::Connection)
-          else
-            ::Faraday::RackBuilder.prepend(Patches::RackBuilder)
-          end
+          ::Faraday::Connection.prepend(Patches::Connection)
         end
       end
     end
