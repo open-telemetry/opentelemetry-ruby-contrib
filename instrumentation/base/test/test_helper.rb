@@ -12,3 +12,6 @@ require 'opentelemetry-instrumentation-base'
 require 'minitest/autorun'
 
 OpenTelemetry.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
+
+OpenTelemetry::SDK.configure if defined?(OpenTelemetry::SDK)
+require 'opentelemetry/test_helpers/metrics'
