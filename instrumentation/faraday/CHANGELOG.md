@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.25.0 / 2025-01-07
+
+* ADDED: Faraday Minimum v1.0
+
 ### v0.24.8 / 2024-12-17
 
 * FIXED: Share Faraday Attrs with Adapter Spans
