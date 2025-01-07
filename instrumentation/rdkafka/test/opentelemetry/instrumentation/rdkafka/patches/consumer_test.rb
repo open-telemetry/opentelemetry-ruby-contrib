@@ -33,7 +33,7 @@ unless ENV['OMIT_SERVICES']
 
     describe '#each' do
       it 'traces each call' do
-        skip "#{Rdkafka::VERSION} is not supported" unless instrumentation.installed?
+        skip "#{Rdkafka::VERSION} is not supported" unless instrumentation.compatible?
 
         rand_hash = SecureRandom.hex(10)
         topic_name = "consumer-patch-trace-#{rand_hash}"
@@ -114,7 +114,7 @@ unless ENV['OMIT_SERVICES']
       end
 
       it 'encodes messages keys depending on input format' do
-        skip "#{Rdkafka::VERSION} is not supported" unless instrumentation.installed?
+        skip "#{Rdkafka::VERSION} is not supported" unless instrumentation.compatible?
 
         rand_hash = SecureRandom.hex(10)
         topic_name = "consumer-patch-trace-#{rand_hash}"
@@ -168,7 +168,7 @@ unless ENV['OMIT_SERVICES']
 
     describe '#each_batch' do
       it 'traces each_batch call' do
-        skip "#{Rdkafka::VERSION} is not supported" unless instrumentation.installed?
+        skip "#{Rdkafka::VERSION} is not supported" unless instrumentation.compatible?
 
         rand_hash = SecureRandom.hex(10)
         topic_name = "consumer-patch-batch-trace-#{rand_hash}"

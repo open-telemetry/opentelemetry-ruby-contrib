@@ -32,7 +32,7 @@ unless ENV['OMIT_SERVICES']
 
     describe 'tracing' do
       it 'traces sync produce calls' do
-        skip "#{Rdkafka::VERSION} is not supported" unless instrumentation.installed?
+        skip "#{Rdkafka::VERSION} is not supported" unless instrumentation.compatible?
         topic_name = 'producer-patch-trace'
         config = { 'bootstrap.servers': "#{host}:#{port}" }
 
