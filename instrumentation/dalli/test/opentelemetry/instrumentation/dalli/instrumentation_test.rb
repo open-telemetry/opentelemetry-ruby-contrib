@@ -129,6 +129,8 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
     end
 
     it 'supports gat' do
+      skip unless dalli.respond_to?(:gat)
+
       dalli.gat('foo')
 
       _(exporter.finished_spans.size).must_equal 1
