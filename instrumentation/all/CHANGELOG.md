@@ -2,7 +2,7 @@
 
 ### v0.71.0 / 2025-01-07
 
-* (No significant changes)
+* ADDED: Faraday Minimum v1.0
 
 ### v0.70.0 / 2024-12-19
 
