@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rdkafka
 
+### v0.4.9 / 2025-01-07
+
+* FIXED: Strict rdkafka support to v0.14
+
 ### v0.4.8 / 2024-07-23
 
 * DOCS: Link to rdkafka example
