@@ -4,11 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+require 'simplecov'
 
 SimpleCov.start
 SimpleCov.minimum_coverage 85
+
+require 'bundler/setup'
+Bundler.require(:default, :development, :test)
 
 require 'opentelemetry-instrumentation-base'
 require 'minitest/autorun'
