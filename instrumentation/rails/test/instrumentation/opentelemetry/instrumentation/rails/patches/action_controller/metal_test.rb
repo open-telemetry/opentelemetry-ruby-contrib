@@ -12,7 +12,7 @@ describe OpenTelemetry::Instrumentation::Rails do
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:span) { exporter.finished_spans.last }
-  let(:rails_app) { DEFAULT_RAILS_APP }
+  let(:rails_app) { AppConfig.initialize_app }
 
   # Clear captured spans
   before { exporter.reset }

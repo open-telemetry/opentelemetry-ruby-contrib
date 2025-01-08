@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.29.2 / 2025-01-07
+
+* FIXED: Update instrumentation pg to support merge statements
+
+### v0.29.1 / 2024-11-26
+
+* FIXED: Get correct table name if table name is quoted
+
 ### v0.29.0 / 2024-09-12
 
 - BREAKING CHANGE: Return message when sql is over the obfuscation limit. Fixes a bug where sql statements with prepended comments that hit the obfuscation limit would be sent raw.

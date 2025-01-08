@@ -3,6 +3,7 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
+ENV['APP_ENV'] = 'test'
 
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)

@@ -16,6 +16,9 @@ module OpenTelemetry
           end
           HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
 
+          # Constant for the HTTP status range
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
+
           def http_request(url, action_name, options = {})
             @otel_method = ACTION_NAMES_TO_HTTP_METHODS[action_name]
             super
@@ -42,7 +45,7 @@ module OpenTelemetry
                 @otel_span.status = OpenTelemetry::Trace::Status.error("Request has failed: #{message}")
               else
                 @otel_span.set_attribute('http.status_code', response_code)
-                @otel_span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(response_code.to_i)
+                @otel_span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(response_code.to_i)
               end
             ensure
               @otel_span&.finish
