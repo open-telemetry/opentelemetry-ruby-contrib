@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-gem 'mutex_m' if Gem::Requirement.new('>= 3.4').satisfied_by?(RUBY_VERSION)
+gem 'mutex_m' if Gem::Requirement.new('>= 3.4').satisfied_by?(Gem::Version.new(RUBY_VERSION))
 
 gem 'aws_sdk'
 gem 'bunny'
