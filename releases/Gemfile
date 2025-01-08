@@ -2,6 +2,8 @@
 
 source 'https://rubygems.org'
 
+gem 'mutex_m' if Gem::Requirements.new('>= 3.4').satisfied_by?(RUBY_VERSION)
+
 gem 'aws_sdk'
 gem 'bunny'
 gem 'concurrent-ruby'
