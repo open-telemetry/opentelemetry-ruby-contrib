@@ -15,9 +15,10 @@ group :test do
      .sort
      .each { |dir| gem "opentelemetry-helpers-#{dir}", path: "../../helpers/#{dir}" }
 
+  excluded_instrumentations = %w[. .. all grpc]
   Dir.entries('../')
      .select { |entry| File.directory?(File.join('../', entry)) }
-     .reject { |entry| %w[. .. all].include?(entry) } # rubocop:disable Performance/CollectionLiteralInLoop
+     .reject { |entry| excluded_instrumentations.include?(entry) }
      .sort
      .each { |dir| gem "opentelemetry-instrumentation-#{dir}", path: "../#{dir}" }
 end
