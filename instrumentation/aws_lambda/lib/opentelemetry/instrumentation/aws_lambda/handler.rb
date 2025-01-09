@@ -30,7 +30,6 @@ module OpenTelemetry
         def call_wrapped(event:, context:)
           parent_context = extract_parent_context(event)
 
-          span_kind = nil
           span_kind = if event['Records'] && AWS_TRIGGERS.include?(event['Records'].dig(0, 'eventSource'))
                         :consumer
                       else

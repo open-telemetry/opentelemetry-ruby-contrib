@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Ethon
-      VERSION = '0.21.8'
+      VERSION = '0.21.9'
     end
   end
 end

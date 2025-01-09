@@ -7,7 +7,31 @@
 module OpenTelemetry
   module Instrumentation
     module ActionPack
-      # The Instrumentation class contains logic to detect and install the ActionPack instrumentation
+      # The {OpenTelemetry::Instrumentation::ActionPack::Instrumentation} class contains logic to detect and install the ActionPack instrumentation
+      #
+      # Installation and configuration of this instrumentation is done within the
+      # {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry/SDK#configure-instance_method OpenTelemetry::SDK#configure}
+      # block, calling {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry%2FSDK%2FConfigurator:use use()}
+      # or {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry%2FSDK%2FConfigurator:use_all use_all()}.
+      #
+      # ## Configuration keys and options
+      #
+      # ### `:span_naming`
+      #
+      # Specifies how the span names are set. Can be one of:
+      #
+      # - `:semconv` **(default)** - The span name will use HTTP semantic conventions '{method http.route}', for example `GET /users/:id`
+      # - `:class` - The span name will appear as '<ActionController class name>#<action>',
+      #   for example `UsersController#show`.
+      #
+      # @example An explicit default configuration
+      #   OpenTelemetry::SDK.configure do |c|
+      #     c.use_all({
+      #       'OpenTelemetry::Instrumentation::ActionPack' => {
+      #         span_naming: :class
+      #       },
+      #     })
+      #   end
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('6.1.0')
 
@@ -16,6 +40,8 @@ module OpenTelemetry
           require_dependencies
           patch
         end
+
+        option :span_naming, default: :semconv, validate: %i[semconv class]
 
         present do
           defined?(::ActionController)

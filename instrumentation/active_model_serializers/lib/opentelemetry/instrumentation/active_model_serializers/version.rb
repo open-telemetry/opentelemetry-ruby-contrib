@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module ActiveModelSerializers
-      VERSION = '0.20.2'
+      VERSION = '0.21.1'
     end
   end
 end

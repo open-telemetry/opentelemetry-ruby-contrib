@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.25.0 / 2025-01-07
+
+* ADDED: Faraday Minimum v1.0
+
+### v0.24.8 / 2024-12-17
+
+* FIXED: Share Faraday Attrs with Adapter Spans
+
+### v0.24.7 / 2024-11-26
+
+* CHANGED: Performance Freeze all range objects #1222
+
 ### v0.24.6 / 2024-07-23
 
 * DOCS: Add cspell to CI

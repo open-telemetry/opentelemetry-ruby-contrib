@@ -56,7 +56,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.8.0"
+          ruby: "jruby-9.4.9.0"
     services:
       memcached:
         image: memcached:alpine

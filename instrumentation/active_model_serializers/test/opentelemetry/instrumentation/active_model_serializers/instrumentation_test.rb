@@ -7,9 +7,9 @@
 require_relative '../../../test_helper'
 
 # require instrumentation so we do not have to depend on the install hook being called
-require_relative '../../../../lib/opentelemetry/instrumentation/active_model_serializers/event_handler'
+require_relative '../../../../lib/opentelemetry/instrumentation/active_model_serializers/instrumentation'
 
-describe OpenTelemetry::Instrumentation::ActiveModelSerializers::EventHandler do
+describe OpenTelemetry::Instrumentation::ActiveModelSerializers::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveModelSerializers::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::ActiveModelSerializers::EventHandler do
 
   before do
     instrumentation.install
+    instrumentation.subscribe
     exporter.reset
 
     # this is currently a noop but this will future proof the test
@@ -38,7 +39,7 @@ describe OpenTelemetry::Instrumentation::ActiveModelSerializers::EventHandler do
       _(exporter.finished_spans.size).must_equal 1
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
-      _(span.name).must_equal 'ModelSerializer render'
+      _(span.name).must_equal 'render.active_model_serializers'
       _(span.attributes['serializer.name']).must_equal 'TestHelper::ModelSerializer'
       _(span.attributes['serializer.renderer']).must_equal 'active_model_serializers'
       _(span.attributes['serializer.format']).must_equal 'ActiveModelSerializers::Adapter::Attributes'
@@ -54,7 +55,7 @@ describe OpenTelemetry::Instrumentation::ActiveModelSerializers::EventHandler do
       _(exporter.finished_spans.size).must_equal 1
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
-      _(span.name).must_equal 'ModelSerializer render'
+      _(span.name).must_equal 'render.active_model_serializers'
       _(span.attributes['serializer.name']).must_equal 'TestHelper::ModelSerializer'
       _(span.attributes['serializer.renderer']).must_equal 'active_model_serializers'
       _(span.attributes['serializer.format']).must_equal 'TestHelper::Model'

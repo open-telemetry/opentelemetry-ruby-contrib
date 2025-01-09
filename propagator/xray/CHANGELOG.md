@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-xray
 
+### v0.22.3 / 2024-11-26
+
+* (No significant changes)
+
 ### v0.22.2 / 2024-07-23
 
 * DOCS: Add cspell to CI

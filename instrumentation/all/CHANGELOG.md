@@ -1,5 +1,21 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.71.0 / 2025-01-07
+
+* ADDED: Faraday Minimum v1.0
+
+### v0.70.0 / 2024-12-19
+
+* ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
+
+### v0.69.1 / 2024-11-26
+
+* (No significant changes)
+
+### v0.69.0 / 2024-11-19
+
+* ADDED: Use Semconv Naming For ActionPack
+
 ### v0.68.0 / 2024-10-23
 
 * ADDED: Set span error only for 5xx response range

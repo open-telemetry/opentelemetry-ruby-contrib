@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-ottrace
 
+### v0.21.4 / 2024-11-26
+
+* (No significant changes)
+
 ### v0.21.3 / 2024-07-23
 
 * DOCS: Add cspell to CI

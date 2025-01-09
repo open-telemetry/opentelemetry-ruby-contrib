@@ -9,7 +9,7 @@ module OpenTelemetry
     module Faraday
       module Middlewares
         # TracerMiddleware propagates context and instruments Faraday requests
-        # by way of its middlware system
+        # by way of its middleware system
         class TracerMiddleware < ::Faraday::Middleware
           HTTP_METHODS_SYMBOL_TO_STRING = {
             connect: 'CONNECT',
@@ -23,6 +23,9 @@ module OpenTelemetry
             trace: 'TRACE'
           }.freeze
 
+          # Constant for the HTTP status range
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
+
           def call(env)
             http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
             config = Faraday::Instrumentation.instance.config
@@ -30,31 +33,34 @@ module OpenTelemetry
             attributes = span_creation_attributes(
               http_method: http_method, url: env.url, config: config
             )
-            tracer.in_span(
-              "HTTP #{http_method}", attributes: attributes, kind: config.fetch(:span_kind)
-            ) do |span|
-              OpenTelemetry.propagation.inject(env.request_headers)
 
-              app.call(env).on_complete { |resp| trace_response(span, resp.status) }
-            rescue ::Faraday::Error => e
-              trace_response(span, e.response[:status]) if e.response
+            OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
+              tracer.in_span(
+                "HTTP #{http_method}", attributes: attrs, kind: config.fetch(:span_kind)
+              ) do |span|
+                OpenTelemetry.propagation.inject(env.request_headers)
 
-              raise
+                app.call(env).on_complete { |resp| trace_response(span, resp.status) }
+              rescue ::Faraday::Error => e
+                trace_response(span, e.response[:status]) if e.response
+
+                raise
+              end
             end
           end
 
           private
 
           def span_creation_attributes(http_method:, url:, config:)
-            instrumentation_attrs = {
+            attrs = {
               'http.method' => http_method,
               'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url.to_s),
               'faraday.adapter.name' => app.class.name
             }
-            instrumentation_attrs['net.peer.name'] = url.host if url.host
-            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
+            attrs['net.peer.name'] = url.host if url.host
+            attrs['peer.service'] = config[:peer_service] if config[:peer_service]
 
-            instrumentation_attrs.merge!(
+            attrs.merge!(
               OpenTelemetry::Common::HTTP::ClientContext.attributes
             )
           end
@@ -68,7 +74,7 @@ module OpenTelemetry
 
           def trace_response(span, status)
             span.set_attribute('http.status_code', status)
-            span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(status.to_i)
+            span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status.to_i)
           end
         end
       end

@@ -14,6 +14,9 @@ module OpenTelemetry
             HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
             USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
+            # Constant for the HTTP status range
+            HTTP_STATUS_SUCCESS_RANGE = (100..399)
+
             def request(req, body = nil, &block)
               # Do not trace recursive call for starting the connection
               return super unless started?
@@ -78,7 +81,7 @@ module OpenTelemetry
               status_code = response.code.to_i
 
               span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code)
-              span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(status_code.to_i)
+              span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
             end
 
             def tracer

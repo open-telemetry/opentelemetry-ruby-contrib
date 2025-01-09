@@ -12,17 +12,17 @@ describe OpenTelemetry::Instrumentation::Rails do
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:span) { exporter.finished_spans.last }
-  let(:rails_app) { DEFAULT_RAILS_APP }
+  let(:rails_app) { AppConfig.initialize_app }
 
   # Clear captured spans
   before { exporter.reset }
 
-  it 'sets the span name to the format: HTTP_METHOD /rails/route(.:format)' do
+  it 'sets the span name to the format: HTTP_METHOD /rails/route' do
     get '/ok'
 
     _(last_response.body).must_equal 'actually ok'
     _(last_response.ok?).must_equal true
-    _(span.name).must_equal 'ExampleController#ok'
+    _(span.name).must_match %r{GET.*/ok}
     _(span.kind).must_equal :server
     _(span.status.ok?).must_equal true
 
