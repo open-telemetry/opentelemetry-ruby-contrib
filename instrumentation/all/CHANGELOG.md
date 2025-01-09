@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.71.0 / 2025-01-07
+
+* ADDED: Faraday Minimum v1.0
+
 ### v0.70.0 / 2024-12-19
 
 * ADDED: Upgrade ActiveSupport Instrumentation 0.7.0

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+### v0.21.1 / 2025-01-07
+
+* DOCS: Update action for link check and fix one broken link
+
 ### v0.21.0 / 2024-12-19
 
 * ADDED: Upgrade ActiveSupport Instrumentation 0.7.0

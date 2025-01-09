@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.8.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.7.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.1'
+  spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.21.4'
 
   spec.add_development_dependency 'appraisal', '~> 2.5'
   spec.add_development_dependency 'bundler', '~> 2.4'

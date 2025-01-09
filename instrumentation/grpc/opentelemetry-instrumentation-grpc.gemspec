@@ -33,9 +33,21 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
-  spec.add_dependency "opentelemetry-instrumentation-base", "~> 0.22.4"
-  spec.add_dependency "opentelemetry-api", "~> 1.2"
-  spec.add_runtime_dependency "activesupport", ">= 4"
+  spec.add_dependency 'opentelemetry-api', '~> 1.2'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.4'
+
+  spec.add_development_dependency 'appraisal', '~> 2.5'
+  spec.add_development_dependency 'bundler', '~> 2.4'
+  spec.add_development_dependency 'google-protobuf', '~> 4.29'
+  spec.add_development_dependency 'grpc-tools', '~> 1.64'
+  spec.add_development_dependency 'minitest', '~> 5.0'
+  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
+  spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.4'
+  spec.add_development_dependency 'rake', '~> 13.2'
+  spec.add_development_dependency 'rubocop', '~> 1.69.1'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
+  spec.add_development_dependency 'simplecov', '~> 0.17.1'
+  spec.add_development_dependency 'yard', '~> 0.9'
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
