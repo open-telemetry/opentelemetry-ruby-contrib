@@ -30,7 +30,7 @@ end
 
 ### Alternative Usage
 
-If using a Lambda Layer is not an option for your given setup, you can programatically instrument a handler by using the `OpenTelemetry::Instrumentation::AwsLambda::Wrap` module.
+If using a Lambda Layer is not an option for your given setup, you can programmatically instrument a handler by using the `OpenTelemetry::Instrumentation::AwsLambda::Wrap` module.
 
 ```ruby
 require 'opentelemetry/sdk'
