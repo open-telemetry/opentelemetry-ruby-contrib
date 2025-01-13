@@ -21,7 +21,7 @@ module OpenTelemetry
           handler = "#{name}.#{method}"
 
           define_singleton_method(method) do |event:, context:|
-            wrap_lambda(event:, context:, handler:, flush_timeout:) { public_send(uninstrumented_method, event:, context:) }
+            wrap_lambda(event: event, context: context, handler: handler, flush_timeout: flush_timeout) { public_send(uninstrumented_method, event: event, context: context) }
           end
         end
 
