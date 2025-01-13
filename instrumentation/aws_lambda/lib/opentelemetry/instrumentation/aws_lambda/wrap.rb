@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module AwsLambda
       # Helper module that can be used to wrap a lambda handler method
-      module Wrap
+      module Wrap # rubocop:disable Metrics/ModuleLength
         AWS_TRIGGERS = ['aws:sqs', 'aws:s3', 'aws:sns', 'aws:dynamodb'].freeze
         DEFAULT_FLUSH_TIMEOUT = ENV.fetch('OTEL_INSTRUMENTATION_AWS_LAMBDA_FLUSH_TIMEOUT', '30000').to_i
 
