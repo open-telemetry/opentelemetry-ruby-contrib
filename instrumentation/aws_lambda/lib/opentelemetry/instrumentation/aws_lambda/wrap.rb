@@ -60,7 +60,7 @@ module OpenTelemetry
           end
 
           OpenTelemetry.tracer_provider.force_flush(timeout: flush_timeout)
-          OpenTelemetry.meter_provider.force_flush(timeout: flush_timeout)
+          OpenTelemetry.meter_provider.force_flush(timeout: flush_timeout) if OpenTelemetry.respond_to?(:meter_provider)
 
           raise original_handler_error if original_handler_error
 
