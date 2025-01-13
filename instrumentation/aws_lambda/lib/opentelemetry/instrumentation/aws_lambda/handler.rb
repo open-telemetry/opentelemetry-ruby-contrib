@@ -28,7 +28,7 @@ module OpenTelemetry
         # Try to record and re-raise any exception from the wrapped function handler
         # Instrumentation should never raise its own exception
         def call_wrapped(event:, context:)
-          self.class.wrap_lambda(event:, context:, handler: @original_handler, flush_timeout: @flush_timeout) do
+          self.class.wrap_lambda(event: event, context: context, handler: @original_handler, flush_timeout: @flush_timeout) do
             call_original_handler(event: event, context: context)
           end
         end
