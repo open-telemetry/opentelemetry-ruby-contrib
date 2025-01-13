@@ -8,7 +8,8 @@ module OpenTelemetry
   module Instrumentation
     module Grpc
       module Interceptors
-        class Client
+        # ClientTracer is a gRPC client interceptor which instrument gRPC calls with OpenTelemetry tracing
+        class ClientTracer < ::GRPC::ClientInterceptor
           def request_response(request: nil, call: nil, method: nil, metadata: nil, &blk)
             call(type: "request_response", requests: [request], call: call, method: method, metadata: metadata, &blk)
           end

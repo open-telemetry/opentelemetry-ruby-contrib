@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-koala
 
+### v0.20.6 / 2025-01-07
+
+* FIXED: Loosen the koala pin to ~> 3.0
+
 ### v0.20.5 / 2024-06-18
 
 * FIXED: Relax otel common gem constraints

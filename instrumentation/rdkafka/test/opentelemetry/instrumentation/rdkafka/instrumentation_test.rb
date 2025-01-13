@@ -22,6 +22,7 @@ describe OpenTelemetry::Instrumentation::Rdkafka do
 
   describe '#install' do
     it 'accepts argument' do
+      skip "#{Rdkafka::VERSION} is not supported" unless instrumentation.compatible?
       _(instrumentation.install({})).must_equal(true)
       instrumentation.instance_variable_set(:@installed, false)
     end

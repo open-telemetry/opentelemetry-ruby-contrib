@@ -40,9 +40,9 @@ module OpenTelemetry
           LISTEN
           LOAD
           LOCK
+          MERGE
           MOVE
           NOTIFY
-          PREPARE
           PREPARE
           REASSIGN
           REFRESH
@@ -53,7 +53,6 @@ module OpenTelemetry
           ROLLBACK
           SAVEPOINT
           SECURITY
-          SELECT
           SELECT
           SET
           SHOW

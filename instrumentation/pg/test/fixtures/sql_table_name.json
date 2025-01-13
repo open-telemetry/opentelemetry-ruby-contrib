@@ -54,5 +54,9 @@
     {
       "name": "table_name_with_double_quotes",
       "sql": "SELECT columns FROM \"test_table\""
+    },
+    {
+      "name": "merge",
+      "sql": "MERGE INTO test_table AS t USING other_table AS o ON (o.id = t.id) WHEN MATCHED THEN UPDATE SET x = t.x + 1 WHEN NOT MATCHED THEN INSERT (id, x, status) VALUES (o.id, o.x, o.status)"
     }
 ]
