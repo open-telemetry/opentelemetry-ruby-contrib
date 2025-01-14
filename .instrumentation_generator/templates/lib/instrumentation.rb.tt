@@ -16,4 +16,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './instrumentation/<%= instrumentation_name %>'
+require_relative 'instrumentation/<%= instrumentation_name %>'
