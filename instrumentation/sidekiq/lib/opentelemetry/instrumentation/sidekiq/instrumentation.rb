@@ -107,14 +107,63 @@ module OpenTelemetry
         option :trace_poller_wait,           default: false, validate: :boolean
         option :trace_processor_process_one, default: false, validate: :boolean
         option :peer_service,                default: nil,   validate: :string
+        option :metrics,                     default: false, validate: :boolean
+
+        # FIXME: descriptions?
+
+        if defined?(OpenTelemetry::Metrics)
+          counter 'messaging.client.sent.messages'
+          histogram 'messaging.client.operation.duration', unit: 's' # FIXME: UCUM::S
+          counter 'messaging.client.consumed.messages'
+          histogram 'messaging.process.duration', unit: 's'
+
+          # FIXME: not semconv
+          gauge 'messaging.queue.latency', unit: 's'
+        end
+
+        # FIXME: upstream
+        def counter(name)
+          get_instrument(:counter, name)
+        end
+
+        # FIXME: upstream
+        def histogram(name)
+          get_instrument(:histogram, name)
+        end
+
+        # FIXME: upstream
+        def gauge(name)
+          get_instrument(:gauge, name)
+        end
 
         private
+
+        def get_instrument(kind, name)
+          return unless metrics_enabled?
+
+          @instruments ||= {}
+          @instruments[[kind, name]] ||= create_configured_instrument(kind, name)
+        end
+
+        def create_configured_instrument(kind, name)
+          config = @instrument_configs[[kind, name]]
+
+          if config.nil?
+            Kernel.warn("unconfigured instrument requested: #{kind} of '#{name}'")
+            return
+          end
+
+          # FIXME: some of these have different opts;
+          # should verify that they work before this point.
+          meter.public_send(:"create_#{kind}", name, **config)
+        end
 
         def gem_version
           Gem::Version.new(::Sidekiq::VERSION)
         end
 
         def require_dependencies
+          require_relative 'middlewares/common'
           require_relative 'middlewares/client/tracer_middleware'
           require_relative 'middlewares/server/tracer_middleware'
 

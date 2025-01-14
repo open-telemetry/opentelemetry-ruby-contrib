@@ -8,8 +8,22 @@ source 'https://rubygems.org'
 
 gemspec
 
+# FIXME: the metrics-api is behind the metrics-sdk gem for some reason; bundle from git for now
+OTEL_RUBY_GEM = lambda do |short_name|
+  short_name = short_name.split(/-|_/)
+  long_name = ['opentelemetry', *short_name].join('-')
+
+  gem long_name,
+      git: 'https://www.github.com/open-telemetry/opentelemetry-ruby',
+      glob: "#{short_name.join('_')}/*.gemspec",
+      ref: '035c32ad9791f6200733e087f2ee49e0a615879a'
+end
+
+OTEL_RUBY_GEM['metrics-api']
+
 group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-instrumentation-redis', path: '../redis'
+  OTEL_RUBY_GEM['metrics-sdk']
   gem 'pry-byebug'
 end
