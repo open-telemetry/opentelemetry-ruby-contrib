@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.72.0 / 2025-01-14
+
+* ADDED: Parts of the gRPC istrumentation
+
 ### v0.71.0 / 2025-01-07
 
 * ADDED: Faraday Minimum v1.0

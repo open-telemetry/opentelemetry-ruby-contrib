@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.34.1 / 2025-01-14
+
+* FIXED: Add Concurrent Ruby dependency to Rails
+
 ### v0.34.0 / 2024-12-19
 
 * ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
