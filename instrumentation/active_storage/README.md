@@ -87,6 +87,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special int
 
 The `opentelemetry-instrumentation-active_storage` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
+[rails-home]: https://github.com/rails/rails
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
