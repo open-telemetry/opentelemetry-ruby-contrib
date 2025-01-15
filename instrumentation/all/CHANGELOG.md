@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.71.1 / 2025-01-14
+
+* No Significant Changes
+
 ### v0.71.0 / 2025-01-07
 
 * ADDED: Faraday Minimum v1.0
