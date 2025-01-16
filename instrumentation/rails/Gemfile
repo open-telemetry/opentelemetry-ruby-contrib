@@ -11,6 +11,7 @@ gemspec
 group :test, :development do
   gem 'pry-byebug'
   gem 'opentelemetry-instrumentation-base', path: '../base'
+  gem 'opentelemetry-instrumentation-concurrent_ruby', path: '../concurrent_ruby'
   gem 'opentelemetry-instrumentation-active_job', path: '../active_job'
   gem 'opentelemetry-instrumentation-action_mailer', path: '../action_mailer'
   gem 'opentelemetry-instrumentation-action_pack', path: '../action_pack'
