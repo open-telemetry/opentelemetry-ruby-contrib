@@ -1,5 +1,23 @@
 # Release History: opentelemetry-instrumentation-pg
 
+## [0.30.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-pg/v0.29.0...opentelemetry-instrumentation-pg/v0.30.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+* Drop Support for EoL Rails 6.1 ([#1231](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1231))
+
+### Features
+
+* Drop Support for EoL Rails 6.1 ([#1231](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1231)) ([717f1c3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/717f1c39bf231d8901c7b9d3d62e0ce20a955819))
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
+
+### Bug Fixes
+
+* Update instrumentation pg to support merge statements ([#1317](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1317)) ([4f926f1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4f926f103ff7232b30bb4f3d4a45db0ad7fe01c5))
+
 ### v0.29.2 / 2025-01-07
 
 * FIXED: Update instrumentation pg to support merge statements

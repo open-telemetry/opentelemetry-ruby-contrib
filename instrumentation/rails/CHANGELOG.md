@@ -1,5 +1,23 @@
 # Release History: opentelemetry-instrumentation-rails
 
+## [0.34.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-rails/v0.33.0...opentelemetry-instrumentation-rails/v0.34.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+* Drop Support for EoL Rails 6.1 ([#1231](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1231))
+
+### Features
+
+* Drop Support for EoL Rails 6.1 ([#1231](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1231)) ([717f1c3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/717f1c39bf231d8901c7b9d3d62e0ce20a955819))
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
+
+### Bug Fixes
+
+* Add Concurrent Ruby dependency to Rails ([#1331](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1331)) ([8bf09af](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/8bf09af970863c40d4cba5498d703ef33a601108))
+
 ### v0.34.1 / 2025-01-14
 
 * FIXED: Add Concurrent Ruby dependency to Rails

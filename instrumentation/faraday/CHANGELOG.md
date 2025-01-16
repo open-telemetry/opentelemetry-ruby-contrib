@@ -1,5 +1,22 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+## [0.25.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-faraday/v0.24.6...opentelemetry-instrumentation-faraday/v0.25.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+
+### Features
+
+* Faraday Minimum v1.0 ([#1267](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1267)) ([97955b0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/97955b0df84fc26b847449a70999df223eccd0cc))
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
+
+### Bug Fixes
+
+* Share Faraday Attrs with Adapter Spans ([#1266](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1266)) ([8def74b](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/8def74bdce00565fc9805eb601f74763cebc224e))
+
 ### v0.25.0 / 2025-01-07
 
 * ADDED: Faraday Minimum v1.0
