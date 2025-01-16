@@ -1,1 +1,0 @@
-Ruby 3.0 has reached EoL 2024-04-23. OTel Ruby Contrib gems will no longer accept new features or bug fixes for Ruby 3.0 after 2025-01-15. Please upgrade to Ruby 3.1 or higher to continue receiving updates.
