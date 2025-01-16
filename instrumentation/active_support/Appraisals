@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-
 %w[7.0.0 7.1.0].each do |version|
   appraise "activesupport-#{version}" do
     gem 'activesupport', "~> #{version}"
