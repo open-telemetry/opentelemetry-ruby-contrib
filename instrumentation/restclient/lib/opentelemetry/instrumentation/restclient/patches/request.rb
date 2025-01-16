@@ -10,6 +10,9 @@ module OpenTelemetry
       module Patches
         # Module to prepend to RestClient::Request for instrumentation
         module Request
+          # Constant for the HTTP status range
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
+
           def execute(&block)
             trace_request do |_span|
               super
@@ -49,13 +52,12 @@ module OpenTelemetry
               # If so, add additional attributes.
               if response.is_a?(::RestClient::Response)
                 span.set_attribute('http.status_code', response.code)
-                span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(response.code.to_i)
+                span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(response.code.to_i)
               end
             end
           rescue ::RestClient::ExceptionWithResponse => e
             span.set_attribute('http.status_code', e.http_code)
-            span.status = OpenTelemetry::Trace::Status.error unless (100..399).cover?(e.http_code.to_i)
-
+            span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(e.http_code.to_i)
             raise e
           ensure
             span.finish

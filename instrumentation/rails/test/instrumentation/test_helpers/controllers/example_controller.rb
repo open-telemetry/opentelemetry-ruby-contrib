@@ -12,6 +12,6 @@ class ExampleController < ActionController::Base
   end
 
   def internal_server_error
-    raise :internal_server_error
+    raise 'internal_server_error'
   end
 end

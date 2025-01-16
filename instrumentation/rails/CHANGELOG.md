@@ -1,5 +1,21 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.34.1 / 2025-01-14
+
+* FIXED: Add Concurrent Ruby dependency to Rails
+
+### v0.34.0 / 2024-12-19
+
+* ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
+
+### v0.33.1 / 2024-11-26
+
+* (No significant changes)
+
+### v0.33.0 / 2024-11-19
+
+* ADDED: Use Semconv Naming For ActionPack
+
 ### v0.32.0 / 2024-10-22
 
 * BREAKING CHANGE: Rename Active Record find_by_sql spans to query

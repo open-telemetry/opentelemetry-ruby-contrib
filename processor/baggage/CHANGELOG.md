@@ -1,5 +1,9 @@
 # Release History: opentelemetry-processor-baggage
 
+### v0.2.1 / 2024-11-26
+
+* (No significant changes)
+
 ### v0.2.0 / 2024-06-18
 
 * BREAKING CHANGE: Add baggage key predicate func to baggage span processor

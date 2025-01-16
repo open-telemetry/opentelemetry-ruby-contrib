@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Rails
-      VERSION = '0.32.0'
+      VERSION = '0.34.1'
     end
   end
 end

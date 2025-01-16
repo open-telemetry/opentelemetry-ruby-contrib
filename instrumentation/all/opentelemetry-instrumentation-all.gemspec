@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.1'
 
-  spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.20.1'
+  spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_lambda', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.7.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.21.0'
@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-delayed_job', '~> 0.22.0'
   spec.add_dependency 'opentelemetry-instrumentation-ethon', '~> 0.21.1'
   spec.add_dependency 'opentelemetry-instrumentation-excon', '~> 0.22.0'
-  spec.add_dependency 'opentelemetry-instrumentation-faraday', '~> 0.24.0'
+  spec.add_dependency 'opentelemetry-instrumentation-faraday', '~> 0.25.0'
   spec.add_dependency 'opentelemetry-instrumentation-grape', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-instrumentation-graphql', '~> 0.28.0'
   spec.add_dependency 'opentelemetry-instrumentation-gruf', '~> 0.2.0'
@@ -50,7 +50,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.8.0'
   spec.add_dependency 'opentelemetry-instrumentation-racecar', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.25.0'
-  spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.32.0'
+  spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.34.0'
   spec.add_dependency 'opentelemetry-instrumentation-rake', '~> 0.2.1'
   spec.add_dependency 'opentelemetry-instrumentation-rdkafka', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.25.1'
@@ -66,8 +66,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rubocop', '~> 1.67.0'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.22.0'
+  spec.add_development_dependency 'rubocop', '~> 1.69.1'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'yard', '~> 0.9'
 
@@ -77,4 +77,6 @@ Gem::Specification.new do |spec|
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
     spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
+
+  spec.post_install_message = File.read(File.expand_path('../../POST_INSTALL_MESSAGE', __dir__))
 end

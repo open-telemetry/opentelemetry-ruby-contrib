@@ -20,9 +20,9 @@ module OpenTelemetry
           module ClassMethods
             method_name = ::ActiveRecord.version >= Gem::Version.new('7.0.0') ? :_query_by_sql : :find_by_sql
 
-            define_method(method_name) do |*args, **kwargs|
+            define_method(method_name) do |*args, **kwargs, &block|
               tracer.in_span("#{self} query") do
-                super(*args, **kwargs)
+                super(*args, **kwargs, &block)
               end
             end
 

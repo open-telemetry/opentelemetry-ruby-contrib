@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
 
   let(:app_one) do
     Class.new(Sinatra::Application) do
+      set :raise_errors, false
       get '/endpoint' do
         '1'
       end
@@ -41,6 +42,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
 
   let(:app_two) do
     Class.new(Sinatra::Application) do
+      set :raise_errors, false
       get '/endpoint' do
         '2'
       end
@@ -165,7 +167,8 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.method' => 'GET',
         'http.route' => '/error',
         'http.scheme' => 'http',
-        'http.target' => '/error'
+        'http.target' => '/error',
+        'http.status_code' => 500
       )
       _(exporter.finished_spans.flat_map(&:events).map(&:name)).must_equal(['exception'])
     end
