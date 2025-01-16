@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-bunny
 
+### v0.22.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.21.4 / 2024-07-02
 
 * DOCS: Fix CHANGELOGs to reflect a past breaking change

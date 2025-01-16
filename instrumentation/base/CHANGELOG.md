@@ -70,3 +70,9 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
+
+### v0.23.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
