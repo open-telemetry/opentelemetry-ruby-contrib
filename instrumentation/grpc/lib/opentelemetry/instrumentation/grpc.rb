@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require "opentelemetry"
-require "opentelemetry-instrumentation-base"
+require 'opentelemetry'
+require 'opentelemetry-instrumentation-base'
 
 module OpenTelemetry
   module Instrumentation
@@ -16,6 +16,6 @@ module OpenTelemetry
   end
 end
 
-require_relative "grpc/instrumentation"
-require_relative "grpc/version"
+require_relative 'grpc/instrumentation'
+require_relative 'grpc/version'
 require_relative 'grpc/interceptors/client_tracer'
