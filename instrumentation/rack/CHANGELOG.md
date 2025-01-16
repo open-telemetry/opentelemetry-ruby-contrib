@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.26.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.25.0 / 2024-10-23
 
 * ADDED: Set span error only for 5xx response range

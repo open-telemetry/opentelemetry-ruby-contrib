@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-grape
 
+### v0.3.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.2.0 / 2024-07-02
 
 * ADDED: Make the install of rack instrumentation by grape instrumentation optional

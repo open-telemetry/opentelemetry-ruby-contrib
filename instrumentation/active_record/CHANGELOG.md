@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.9.0 / 2025-01-16
+
+* BREAKING CHANGE: Drop Support for EoL Rails 6.1
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Drop Support for EoL Rails 6.1
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.8.1 / 2024-11-21
 
 * FIXED: Pass block argument in ActiveRecord `find_by_sql` patch.

@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-resque
 
+### v0.6.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.5.2 / 2024-04-30
 
 * FIXED: Bundler conflict warnings

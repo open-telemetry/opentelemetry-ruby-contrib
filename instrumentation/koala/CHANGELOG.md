@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-koala
 
+### v0.21.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.20.6 / 2025-01-07
 
 * FIXED: Loosen the koala pin to ~> 3.0

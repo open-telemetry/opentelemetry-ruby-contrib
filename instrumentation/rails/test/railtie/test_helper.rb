@@ -8,6 +8,7 @@
 ENV['RACK_ENV'] = 'test'
 ENV['RAILS_ENV'] = 'test'
 
+require 'logger'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 

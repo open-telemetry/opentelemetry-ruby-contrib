@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Excon
-      VERSION = '0.22.5'
+      VERSION = '0.23.0'
     end
   end
 end

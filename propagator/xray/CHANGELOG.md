@@ -1,5 +1,11 @@
 # Release History: opentelemetry-propagator-xray
 
+### v0.23.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.22.3 / 2024-11-26
 
 * (No significant changes)

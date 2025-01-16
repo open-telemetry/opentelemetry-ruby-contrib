@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+### v0.22.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.21.1 / 2025-01-07
 
 * DOCS: Update action for link check and fix one broken link

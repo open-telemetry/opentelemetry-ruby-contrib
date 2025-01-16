@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.8.0 / 2025-01-16
+
+* BREAKING CHANGE: Drop Support for EoL Rails 6.1
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Drop Support for EoL Rails 6.1
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.7.8 / 2024-10-24
 
 * FIXED: ActiveJob Propagate baggage information properly when performing

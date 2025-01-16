@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
-  spec.required_ruby_version = '>= 3.0.0'
+  spec.required_ruby_version = '>= 3.1'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   spec.add_dependency 'opentelemetry-api', '~> 1.2'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.4'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
 
   spec.add_development_dependency 'appraisal', '~> 2.5'
   spec.add_development_dependency 'bundler', '~> 2.4'
