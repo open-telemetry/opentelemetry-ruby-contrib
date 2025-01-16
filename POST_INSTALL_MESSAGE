@@ -1,1 +1,0 @@
-Rails 6.1 has reached EoL 2024-10-01. OTel Ruby Contrib gems will no longer accept new features or bug fixes for Rails 6.1 after 2025-01-15. Please upgrade to Rails 7.0 or higher to continue receiving updates.
