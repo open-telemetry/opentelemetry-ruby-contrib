@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   spec.add_dependency 'opentelemetry-api', '~> 1.2'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.4'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
 
   spec.add_development_dependency 'appraisal', '~> 2.5'
   spec.add_development_dependency 'bundler', '~> 2.4'
