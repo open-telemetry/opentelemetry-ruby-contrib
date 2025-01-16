@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-racecar
 
+### v0.4.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.3.4 / 2024-07-09
 
 * FIXED: Suppress header access with symbol key deprecation warning in Racecar Instrumentation

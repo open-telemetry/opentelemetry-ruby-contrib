@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.8.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.7.0 / 2024-10-08
 
 * ADDED: Integration with V3 telemetry provider

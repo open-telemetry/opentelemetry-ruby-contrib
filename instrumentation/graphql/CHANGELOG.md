@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.29.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.28.4 / 2024-07-30
 
 * FIXED: Add super calls to GraphqlTrace
