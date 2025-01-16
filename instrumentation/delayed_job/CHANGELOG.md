@@ -1,5 +1,18 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+## [0.23.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-delayed_job/v0.22.4...opentelemetry-instrumentation-delayed_job/v0.23.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+* Drop Support for EoL Rails 6.1 ([#1231](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1231))
+
+### Features
+
+* Drop Support for EoL Rails 6.1 ([#1231](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1231)) ([717f1c3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/717f1c39bf231d8901c7b9d3d62e0ce20a955819))
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
 ### v0.22.4 / 2024-07-23
 
 * DOCS: Add cspell to CI

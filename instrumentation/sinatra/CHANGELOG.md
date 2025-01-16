@@ -1,5 +1,16 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+## [0.25.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-sinatra/v0.24.1...opentelemetry-instrumentation-sinatra/v0.25.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+
+### Features
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
 ### v0.24.1 / 2024-07-23
 
 * DOCS: Add cspell to CI

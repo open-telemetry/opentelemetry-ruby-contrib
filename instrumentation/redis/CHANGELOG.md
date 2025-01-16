@@ -1,5 +1,16 @@
 # Release History: opentelemetry-instrumentation-redis
 
+## [0.26.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-redis/v0.25.7...opentelemetry-instrumentation-redis/v0.26.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+
+### Features
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
 ### v0.25.7 / 2024-07-23
 
 * DOCS: Add cspell to CI

@@ -1,5 +1,18 @@
 # Release History: opentelemetry-instrumentation-que
 
+## [0.9.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-que/v0.8.4...opentelemetry-instrumentation-que/v0.9.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+* Drop Support for EoL Rails 6.1 ([#1231](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1231))
+
+### Features
+
+* Drop Support for EoL Rails 6.1 ([#1231](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1231)) ([717f1c3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/717f1c39bf231d8901c7b9d3d62e0ce20a955819))
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
 ### v0.8.4 / 2024-10-08
 
 * FIXED: Fix bulk_enqueue when enqueuing more than 5 jobs

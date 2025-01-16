@@ -1,5 +1,21 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+## [0.26.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-dalli/v0.25.4...opentelemetry-instrumentation-dalli/v0.26.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+
+### Features
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
+
+### Bug Fixes
+
+* Format gat commands ([#1312](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1312)) ([06c8de0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/06c8de064bec05c787f053967689bcfcd447c840))
+
 ### v0.25.4 / 2024-07-23
 
 * DOCS: Add cspell to CI

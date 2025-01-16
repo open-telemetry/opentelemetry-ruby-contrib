@@ -1,5 +1,22 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+## [0.21.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-active_model_serializers/v0.20.2...opentelemetry-instrumentation-active_model_serializers/v0.21.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+
+### Features
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
+
+### Bug Fixes
+
+* update action for link check and fix one broken link ([67c9a02](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/67c9a02329a1ebdef2899e5147c419ad5ca9dd9f))
+* use AS::N subscriber for serialize events ([#1075](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1075)) ([92d59eb](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/92d59eb33cf7fd58242cde22a7346960078ff29f))
+
 ### v0.21.1 / 2025-01-07
 
 * DOCS: Update action for link check and fix one broken link

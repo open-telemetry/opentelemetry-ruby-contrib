@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-all
 
+## [0.70.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-all/v0.69.0...opentelemetry-instrumentation-all/v0.70.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+
+### Features
+
+* parts of the gRPC istrumentation ([#1330](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1330)) ([e3c020f](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e3c020f263c72387dae0987d9a080854b360b7b0))
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
 ### v0.71.1 / 2025-01-14
 
 * No Significant Changes

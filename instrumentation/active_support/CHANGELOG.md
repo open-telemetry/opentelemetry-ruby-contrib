@@ -1,5 +1,19 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+## [0.7.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-active_support/v0.6.0...opentelemetry-instrumentation-active_support/v0.7.0) (2025-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216))
+* Drop Support for EoL Rails 6.1 ([#1231](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1231))
+
+### Features
+
+* Drop Support for EoL Rails 6.1 ([#1231](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1231)) ([717f1c3](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/717f1c39bf231d8901c7b9d3d62e0ce20a955819))
+* Enable support for `Regexp` patterns when subscribing to Active Support's instrumentation Events ([#1296](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1296)) ([e745deb](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/e745deb683add11358ae3418c609236fe9d5f3b6))
+* Set minimum supported version to Ruby 3.1 ([#1216](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1216)) ([4780480](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/4780480ce3f25ac3984a0af6ec40fcfe31d014a8))
+
 ### v0.7.0 / 2024-12-19
 
 * ADDED: Enable support for `Regexp` patterns when subscribing to Active Support's instrumentation Events
