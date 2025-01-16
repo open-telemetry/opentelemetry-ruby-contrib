@@ -68,20 +68,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
       _(process_span.events.first.attributes['exception.message']).must_equal 'This job raises an exception'
     end
 
-    it 'captures errors that were handled by rescue_from in versions earlier than Rails 7' do
-      skip 'rescue_from jobs behave differently in Rails 7 and newer' if ActiveJob.version >= Gem::Version.new('7')
-      RescueFromJob.perform_later
-
-      _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-      _(process_span.status.description).must_equal 'Unexpected ActiveJob Error RescueFromJob::RescueFromError'
-
-      _(process_span.events.first.name).must_equal 'exception'
-      _(process_span.events.first.attributes['exception.type']).must_equal 'RescueFromJob::RescueFromError'
-      _(process_span.events.first.attributes['exception.message']).must_equal 'I was handled by rescue_from'
-    end
-
     it 'ignores errors that were handled by rescue_from in versions of Rails 7 or newer' do
-      skip 'rescue_from jobs behave differently in Rails 7 and newer' if ActiveJob.version < Gem::Version.new('7')
       RescueFromJob.perform_later
 
       _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::OK
@@ -318,7 +305,6 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
 
   describe 'active_job callbacks' do
     it 'makes the tracing context available in before_perform callbacks' do
-      skip "ActiveJob #{ActiveJob.version} subscribers do not include timing information for callbacks" if ActiveJob.version < Gem::Version.new('7')
       CallbacksJob.perform_now
 
       _(CallbacksJob.context_before).wont_be_nil
@@ -326,7 +312,6 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
     end
 
     it 'makes the tracing context available in after_perform callbacks' do
-      skip "ActiveJob #{ActiveJob.version} subscribers do not include timing information for callbacks" if ActiveJob.version < Gem::Version.new('7')
       CallbacksJob.perform_now
 
       _(CallbacksJob.context_after).wont_be_nil
