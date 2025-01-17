@@ -47,8 +47,10 @@ Dir['../propagator/**/version.rb'].each do |f|
   gem "opentelemetry-propagator-#{name}", version
 end
 
+excluded_instrumentations = %w[grpc]
 Dir['../instrumentation/**/version.rb'].each do |f|
   name = f.match(%r{instrumentation/(\w+)/lib})[1]
+  next if excluded_instrumentations.include?(name)
 
   version = File.read(f).match(/VERSION = '([\d\.]+)'/)[1]
   gem "opentelemetry-instrumentation-#{name}", version
