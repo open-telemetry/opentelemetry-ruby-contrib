@@ -53,14 +53,85 @@ describe OpenTelemetry::Instrumentation::Base do
     end
   end
 
+  let(:instrumentation_with_metrics) do
+    Class.new(OpenTelemetry::Instrumentation::Base) do
+      instrumentation_name 'test_instrumentation'
+      instrumentation_version '0.1.1'
+
+      option :metrics, default: false, validate: :boolean
+
+      if defined?(OpenTelemetry::Metrics)
+        counter 'example.counter'
+        asynchronous_counter 'example.asynchronous_counter'
+        histogram 'example.histogram'
+        gauge 'example.gauge'
+        asynchronous_gauge 'example.asynchronous_gauge'
+        updown_counter 'example.updown_counter'
+        asynchronous_updown_counter 'example.asynchronous_updown_counter'
+      end
+
+      def example_counter
+        counter 'example.counter'
+      end
+
+      def example_asynchronous_counter
+        asynchronous_counter 'example.asynchronous_counter'
+      end
+
+      def example_histogram
+        histogram 'example.histogram'
+      end
+
+      def example_gauge
+        gauge 'example.gauge'
+      end
+
+      def example_asynchronous_gauge
+        asynchronous_gauge 'example.asynchronous_gauge'
+      end
+
+      def example_updown_counter
+        updown_counter 'example.updown_counter'
+      end
+
+      def example_asynchronous_updown_counter
+        asynchronous_updown_counter 'example.asynchronous_updown_counter'
+      end
+    end
+  end
+
   it 'is auto-registered' do
     instance = instrumentation.instance
     _(OpenTelemetry::Instrumentation.registry.lookup('test_instrumentation')).must_equal(instance)
   end
 
   describe '.instance' do
+    let(:instrumentation) do
+      Class.new(OpenTelemetry::Instrumentation::Base) do
+        instrumentation_name 'test_instrumentation'
+        instrumentation_version '0.1.1'
+
+        def initialize(*args)
+          # Simulate latency by hinting the VM should switch tasks
+          # (this can also be accomplished by something like `sleep(0.1)`).
+          # This replicates the worst-case scenario when using default assignment
+          # to obtain a singleton, i.e. that the scheduler switches threads between
+          # the nil check and object initialization.
+          Thread.pass
+          super
+        end
+      end
+    end
+
     it 'returns an instance' do
       _(instrumentation.instance).must_be_instance_of(instrumentation)
+    end
+
+    it 'returns the same singleton instance to every thread' do
+      object_ids = Array.new(2).map { Thread.new { instrumentation.instance } }
+                        .map { |thr| thr.join.value }
+
+      _(object_ids.uniq.count).must_equal(1)
     end
   end
 
@@ -438,6 +509,55 @@ describe OpenTelemetry::Instrumentation::Base do
       it 'defaults to the version constant' do
         instance = OTel::Instrumentation::Sinatra::Instrumentation.instance
         _(instance.version).must_equal(OTel::Instrumentation::Sinatra::VERSION)
+      end
+    end
+  end
+
+  describe 'metrics' do
+    let(:config) { {} }
+    let(:instance) { instrumentation_with_metrics.instance }
+
+    before do
+      instance.install(config)
+    end
+
+    if defined?(OpenTelemetry::Metrics)
+      describe 'with the metrics api' do
+        it 'is disabled by default' do
+          _(instance.metrics_enabled?).must_equal false
+        end
+
+        it 'returns a no-op counter' do
+          counter = instance.example_counter
+          _(counter).must_be_kind_of(OpenTelemetry::Metrics::Instrument::Counter)
+        end
+
+        describe 'with the option enabled' do
+          let(:config) { { metrics: true } }
+
+          it 'will be enabled' do
+            _(instance.metrics_enabled?).must_equal true
+          end
+
+          it 'returns a no-op counter' do
+            counter = instance.example_counter
+            _(counter).must_be_kind_of(OpenTelemetry::Metrics::Instrument::Counter)
+          end
+        end
+      end
+    else
+      describe 'without the metrics api' do
+        it 'will not be enabled' do
+          _(instance.metrics_enabled?).must_equal false
+        end
+
+        describe 'with the option enabled' do
+          let(:config) { { metrics: true } }
+
+          it 'will not be enabled' do
+            _(instance.metrics_enabled?).must_equal false
+          end
+        end
       end
     end
   end

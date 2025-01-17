@@ -1,0 +1,6 @@
+appraise "base" do
+  remove_gem "opentelemetry-metrics-api"
+end
+
+appraise "metrics-api" do
+end
