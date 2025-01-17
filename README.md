@@ -75,7 +75,9 @@ This repository also contains libraries to aid with interoperability with vendor
 
 OpenTelemetry Ruby follows the [versioning and stability document][otel-versioning] in the OpenTelemetry specification. Notably, we adhere to the outlined version numbering exception, which states that experimental signals may have a `0.x` version number.
 
-### Library Compatibility
+### Ruby and Library Compatibility
+
+All libraries in this repository require Ruby Versions 3.1 or newer.
 
 This project is managed on a volunteer basis and therefore we have limited capacity to support compatibility with unmaintained or EOL libraries.
 

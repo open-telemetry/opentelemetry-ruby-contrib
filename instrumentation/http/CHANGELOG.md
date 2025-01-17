@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.24.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.23.5 / 2024-11-26
 
 * CHANGED: Performance Freeze all range objects #1222
