@@ -115,13 +115,15 @@ module OpenTelemetry
         # 2 - Validates whether if is a service client
         # note that Seahorse::Client::Base is a superclass for V3 clients
         # but for V2, it is Aws::Client
+        # rubocop:disable Style/MultipleComparison
         def loaded_service?(constant, service_module)
           !::Aws.autoload?(constant) &&
             service_module.is_a?(Module) &&
             service_module.const_defined?(:Client) &&
             (service_module.const_get(:Client).superclass == Seahorse::Client::Base ||
-              service_module.const_get(:Client).superclass == Aws::Client) # rubocop:disable Style/MultipleComparison
+              service_module.const_get(:Client).superclass == Aws::Client)
         end
+        # rubocop:enable Style/MultipleComparison
       end
     end
   end
