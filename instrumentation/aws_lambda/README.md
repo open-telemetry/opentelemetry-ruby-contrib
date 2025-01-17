@@ -28,6 +28,32 @@ def otel_wrapper(event:, context:)
 end
 ```
 
+### Alternative Usage
+
+If using a Lambda Layer is not an option for your given setup, you can programmatically instrument a handler by using the `OpenTelemetry::Instrumentation::AwsLambda::Wrap` module.
+
+```ruby
+require 'opentelemetry/sdk'
+require 'opentelemetry/instrumentation/aws_lambda'
+
+OpenTelemetry::SDK.configure do |c|
+  c.service_name = '<YOUR_SERVICE_NAME>'
+  c.use 'OpenTelemetry::Instrumentation::AwsLambda'
+end
+
+# Lambda Handler
+module Example
+  class Handler
+    extend OpenTelemetry::Instrumentation::AwsLambda::Wrap
+
+    def self.process(event:, context:)
+      puts event.inspect
+    end
+    instrument_handler :process
+  end
+end
+```
+
 ## Example
 
 To run the example:
