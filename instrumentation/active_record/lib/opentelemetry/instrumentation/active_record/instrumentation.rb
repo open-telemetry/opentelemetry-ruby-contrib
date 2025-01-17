@@ -7,6 +7,8 @@
 module OpenTelemetry
   module Instrumentation
     module ActiveRecord
+      QUERY_SPAN_NAME_KEY = OpenTelemetry::Context.create_key('async_query_span_name')
+
       # The Instrumentation class contains logic to detect and install the ActiveRecord instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('7')
@@ -39,6 +41,7 @@ module OpenTelemetry
           require_relative 'patches/transactions_class_methods'
           require_relative 'patches/validations'
           require_relative 'patches/relation_persistence'
+          require_relative 'patches/async_query_context_propagation'
         end
 
         def patch_activerecord
@@ -55,6 +58,10 @@ module OpenTelemetry
             ::ActiveRecord::Base.prepend(Patches::Validations)
 
             ::ActiveRecord::Relation.prepend(Patches::RelationPersistence)
+
+            ::ActiveRecord::ConnectionAdapters::ConnectionPool.prepend(Patches::AsyncQueryContextPropagation) unless defined?(OpenTelemetry::Instrumentation::ConcurrentRuby::Instrumentation)
+
+            ::ActiveRecord::FutureResult.prepend(Patches::FutureResultExtensions)
           end
         end
       end

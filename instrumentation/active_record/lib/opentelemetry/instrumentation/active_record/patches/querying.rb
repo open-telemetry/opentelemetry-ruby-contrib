@@ -21,8 +21,11 @@ module OpenTelemetry
             method_name = ::ActiveRecord.version >= Gem::Version.new('7.0.0') ? :_query_by_sql : :find_by_sql
 
             define_method(method_name) do |*args, **kwargs, &block|
-              tracer.in_span("#{self} query") do
-                super(*args, **kwargs, &block)
+              query_span_name = "#{self} query"
+              OpenTelemetry::Context.with_value(QUERY_SPAN_NAME_KEY, query_span_name) do
+                tracer.in_span(kwargs[:async] ? "schedule #{query_span_name}" : query_span_name) do
+                  super(*args, **kwargs, &block)
+                end
               end
             end
 
