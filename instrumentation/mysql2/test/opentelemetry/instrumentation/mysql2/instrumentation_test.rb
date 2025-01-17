@@ -133,6 +133,27 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
         _(span.events[0].attributes['exception.message'].slice(0, 37)).must_equal 'You have an error in your SQL syntax;'
       end
+
+      describe 'execute statement' do
+        it 'simple execute statement' do
+          stmt = client.prepare('SELECT ?')
+
+          args = ['abc']
+          kwargs = { 'foo' => 'bar' }
+
+          stmt.execute(*args, **kwargs)
+          finished_spans = exporter.finished_spans
+
+          _(finished_spans[0].name).must_equal 'select'
+          _(finished_spans[0].attributes['db.system']).must_equal 'mysql'
+          _(finished_spans[0].attributes['db.name']).must_equal 'mysql'
+          _(finished_spans[0].attributes['db.statement']).must_equal 'SELECT ?'
+
+          _(finished_spans[1].name).must_equal 'execute'
+          _(finished_spans[1].attributes['args']).must_equal '["abc"]'
+          _(finished_spans[1].attributes['kwargs']).must_equal '{"foo"=>"bar"}'
+        end
+      end
     end
 
     it 'after requests' do
