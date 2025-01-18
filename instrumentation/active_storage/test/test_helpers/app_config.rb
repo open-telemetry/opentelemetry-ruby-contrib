@@ -52,7 +52,11 @@ module AppConfig
     new_app.config.active_storage.service = :test
     new_app.config.active_storage.previewers = [TestPreviewer]
 
-    apply_rails_7_configs(new_app) if /^7|8\./.match?(Rails.version)
+    # Unfreeze values which may have been frozen on previous initializations.
+    ActiveSupport::Dependencies.autoload_paths =
+      ActiveSupport::Dependencies.autoload_paths.dup
+    ActiveSupport::Dependencies.autoload_once_paths =
+      ActiveSupport::Dependencies.autoload_once_paths.dup
 
     new_app.initialize!
 
@@ -80,11 +84,9 @@ module AppConfig
       end
     end
 
-    case Rails.version
-    when /^7\./
-      ActiveStorage::Current.url_options = { host: 'http://example.com' }
-    when /^8\./
-      ActiveStorage::Current.url_options = { host: 'http://example.com' }
+    ActiveStorage::Current.url_options = { host: 'http://example.com' }
+
+    if /^8\./.match?(Rails.version)
       # Since Rails 8.0, route drawing has been deferred to the first request.
       # See https://github.com/rails/rails/pull/52353
       # This forces route drawing to include ActiveStorage default routes.
@@ -92,17 +94,5 @@ module AppConfig
     end
 
     new_app
-  end
-
-  private
-
-  def apply_rails_7_configs(application)
-    # Required in Rails 7
-
-    # Unfreeze values which may have been frozen on previous initializations.
-    ActiveSupport::Dependencies.autoload_paths =
-      ActiveSupport::Dependencies.autoload_paths.dup
-    ActiveSupport::Dependencies.autoload_once_paths =
-      ActiveSupport::Dependencies.autoload_once_paths.dup
   end
 end
