@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-instrumentation-active_storage'
 require 'opentelemetry-instrumentation-gruf'
 require 'opentelemetry-instrumentation-trilogy'
 require 'opentelemetry-instrumentation-active_support'
