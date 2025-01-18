@@ -81,8 +81,6 @@ module AppConfig
     end
 
     case Rails.version
-    when /^6\.1/
-      ActiveStorage::Current.host = 'http://example.com'
     when /^7\./
       ActiveStorage::Current.url_options = { host: 'http://example.com' }
     when /^8\./
