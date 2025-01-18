@@ -62,6 +62,14 @@ runs:
           fi
         fi
 
+    # Install ImageMagick for active_storage testing.
+    # Unfortunately, as of ubuntu-24.04, ImageMagick is no longer pre-installed in Github Actions.
+    # See https://github.com/actions/runner-images/issues/10772
+    - name: Install ImageMagick for active_storage testing
+      if: "${{ inputs.gem == 'opentelemetry-instrumentation-active_storage' }}"
+      shell: bash
+      run: sudo apt update && sudo apt install -y imagemagick
+
     # Install ruby and bundle dependencies and cache!
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
