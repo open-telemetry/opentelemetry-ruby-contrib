@@ -18,6 +18,8 @@ module OpenTelemetry
       #
       # ### `:disallowed_notification_payload_keys`
       #
+      # - `array` **default** `[]`
+      #
       # Specifies an array of keys that should be excluded from the notification payload as span attributes.
       #
       # ### `:notification_payload_transform`
