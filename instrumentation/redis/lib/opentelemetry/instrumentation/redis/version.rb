@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Redis
-      VERSION = '0.25.7'
+      VERSION = '0.26.0'
     end
   end
 end

@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.9.0 / 2025-01-16
+
+* BREAKING CHANGE: Drop Support for EoL Rails 6.1
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Drop Support for EoL Rails 6.1
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.8.4 / 2024-10-08
 
 * FIXED: Fix bulk_enqueue when enqueuing more than 5 jobs

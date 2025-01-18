@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.61.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.60.0 / 2024-09-12
 
 - BREAKING CHANGE: Return message when sql is over the obfuscation limit. Fixes a bug where sql statements with prepended comments that hit the obfuscation limit would be sent raw.
