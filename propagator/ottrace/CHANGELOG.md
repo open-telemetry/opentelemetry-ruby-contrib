@@ -1,5 +1,15 @@
 # Release History: opentelemetry-propagator-ottrace
 
+### v0.22.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
+### v0.21.4 / 2024-11-26
+
+* (No significant changes)
+
 ### v0.21.3 / 2024-07-23
 
 * DOCS: Add cspell to CI

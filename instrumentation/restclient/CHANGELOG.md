@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-restclient
 
+### v0.23.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
+### v0.22.8 / 2024-11-26
+
+* CHANGED: Performance Freeze all range objects #1222
+
 ### v0.22.7 / 2024-07-23
 
 * DOCS: Add cspell to CI

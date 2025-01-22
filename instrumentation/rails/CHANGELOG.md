@@ -1,5 +1,25 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.35.0 / 2025-01-16
+
+* BREAKING CHANGE: Drop Support for EoL Rails 6.1
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Drop Support for EoL Rails 6.1
+* ADDED: Set minimum supported version to Ruby 3.1
+
+### v0.34.1 / 2025-01-14
+
+* FIXED: Add Concurrent Ruby dependency to Rails
+
+### v0.34.0 / 2024-12-19
+
+* ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
+
+### v0.33.1 / 2024-11-26
+
+* (No significant changes)
+
 ### v0.33.0 / 2024-11-19
 
 * ADDED: Use Semconv Naming For ActionPack

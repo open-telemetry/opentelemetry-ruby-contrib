@@ -1,5 +1,27 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.72.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
+### v0.71.1 / 2025-01-14
+
+* No Significant Changes
+
+### v0.71.0 / 2025-01-07
+
+* ADDED: Faraday Minimum v1.0
+
+### v0.70.0 / 2024-12-19
+
+* ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
+
+### v0.69.1 / 2024-11-26
+
+* (No significant changes)
+
 ### v0.69.0 / 2024-11-19
 
 * ADDED: Use Semconv Naming For ActionPack
