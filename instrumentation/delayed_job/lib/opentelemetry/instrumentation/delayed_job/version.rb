@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module DelayedJob
-      VERSION = '0.22.4'
+      VERSION = '0.23.0'
     end
   end
 end

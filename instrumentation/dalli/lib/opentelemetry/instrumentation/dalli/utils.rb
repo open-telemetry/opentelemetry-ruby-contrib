@@ -41,7 +41,8 @@ module OpenTelemetry
         'multi_add' => 'addq',
         'multi_replace' => 'replaceq',
         'multi_delete' => 'deleteq',
-        'touch' => 'touch'
+        'touch' => 'touch',
+        'gat' => 'gat'
         # 'sasl_authentication' => 'auth_negotiation',
         # 'sasl_authentication' => 'auth_request',
       }.freeze

@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+### v0.8.0 / 2025-01-16
+
+* BREAKING CHANGE: Drop Support for EoL Rails 6.1
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Drop Support for EoL Rails 6.1
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.7.0 / 2024-12-19
 
 * ADDED: Enable support for `Regexp` patterns when subscribing to Active Support's instrumentation Events
