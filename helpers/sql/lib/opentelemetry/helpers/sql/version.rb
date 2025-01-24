@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Helpers
     module Sql
-      VERSION = '0.0.0'
+      VERSION = '0.1.0'
     end
   end
 end
