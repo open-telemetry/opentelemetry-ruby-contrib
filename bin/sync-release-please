@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'json'
 
@@ -8,7 +9,7 @@ def extract_version(file_path)
   File.open(file_path, 'r') do |file|
     file.each_line do |line|
       if line =~ /VERSION\s*=\s*['"]([^'"]+)['"]/
-        version = $1
+        version = Regexp.last_match(1)
         break
       end
     end
