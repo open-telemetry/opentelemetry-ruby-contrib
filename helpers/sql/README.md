@@ -16,7 +16,7 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-helpers-sql` in y
 
 This gem is intended to be used by the instrumentation libraries to provide a common set of helpers for SQL-related spans. It is not intended to be used directly by applications.
 
-Some Database libraries do not have enough context to add sufficient details to client spans. In these cases, you can use the `OpenTelemetry::Helpers::Sql.with_attributes` to create a set of shared attributes to amend to a database span.
+Some database libraries do not have enough context to add sufficient details to client spans. In these cases, you can use the `OpenTelemetry::Helpers::Sql.with_attributes` to create a set of shared attributes to amend to a database span.
 
 ```ruby
 # Higher-level instrumentation e.g. ORM

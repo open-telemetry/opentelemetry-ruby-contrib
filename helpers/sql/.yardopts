@@ -1,9 +1,9 @@
 --no-private
---title=OpenTelemetry Sql Instrumentation
+--title=OpenTelemetry Sql Helpers
 --markup=markdown
 --main=README.md
-./lib/opentelemetry/instrumentation/**/*.rb
-./lib/opentelemetry/instrumentation.rb
+./lib/opentelemetry/helpers/**/*.rb
+./lib/opentelemetry/helpers.rb
 -
 README.md
 CHANGELOG.md

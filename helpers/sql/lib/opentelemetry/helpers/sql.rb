@@ -8,7 +8,7 @@ require 'opentelemetry'
 
 module OpenTelemetry
   module Helpers
-    # Contains the OpenTelemetry instrumentation for the Sql gem
+    # Contains helpers for OpenTelemetry instrumentation related to SQL
     module Sql
       extend self
 
@@ -16,7 +16,7 @@ module OpenTelemetry
 
       private_constant :CURRENT_ATTRIBUTES_KEY
 
-      # Returns the attributes hash representing the Trilogy context found
+      # Returns the attributes hash representing the SQL adapter context found
       # in the optional context or the current context if none is provided.
       #
       # @param [optional Context] context The context to lookup the current

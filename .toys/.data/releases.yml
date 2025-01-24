@@ -32,7 +32,7 @@ commit_lint:
 gems:
   - name: opentelemetry-helpers-sql
     directory: helpers/sql
-    version_constant: [OpenTelemetry, helpers, Sql, VERSION]
+    version_constant: [OpenTelemetry, Helpers, Sql, VERSION]
 
   - name: opentelemetry-instrumentation-gruf
     directory: instrumentation/gruf

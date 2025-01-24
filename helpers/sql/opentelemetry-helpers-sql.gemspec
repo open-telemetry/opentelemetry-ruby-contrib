@@ -14,8 +14,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'Sql helpers for the OpenTelemetry framework'
-  spec.description = 'Sql helpers for the OpenTelemetry framework'
+  spec.summary     = 'SQL helpers for the OpenTelemetry framework'
+  spec.description = 'SQL helpers for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.0'
+  spec.required_ruby_version = '>= 3.1'
 
   spec.add_dependency 'opentelemetry-api', '~> 1.4.0'
 
@@ -32,8 +32,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
   spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rubocop', '~> 1.68.0'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.22.0'
+  spec.add_development_dependency 'rubocop', '~> 1.71.0'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'yard', '~> 0.9'
 
