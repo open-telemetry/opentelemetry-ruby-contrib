@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec-mocks'
-  spec.add_development_dependency 'rubocop', '~> 1.70.0'
+  spec.add_development_dependency 'rubocop', '~> 1.71.0'
   spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'webmock', '~> 3.24.0'
