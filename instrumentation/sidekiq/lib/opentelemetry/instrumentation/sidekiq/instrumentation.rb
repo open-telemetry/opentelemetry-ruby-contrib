@@ -107,6 +107,15 @@ module OpenTelemetry
         option :trace_poller_wait,           default: false, validate: :boolean
         option :trace_processor_process_one, default: false, validate: :boolean
         option :peer_service,                default: nil,   validate: :string
+        option :metrics,                     default: false, validate: :boolean
+
+        counter 'messaging.client.sent.messages'
+        histogram 'messaging.client.operation.duration', unit: 's'
+        counter 'messaging.client.consumed.messages'
+        histogram 'messaging.process.duration', unit: 's'
+
+        # TODO: https://github.com/open-telemetry/semantic-conventions/pull/1812
+        gauge 'messaging.queue.latency', unit: 's'
 
         private
 
@@ -115,6 +124,7 @@ module OpenTelemetry
         end
 
         def require_dependencies
+          require_relative 'middlewares/common'
           require_relative 'middlewares/client/tracer_middleware'
           require_relative 'middlewares/server/tracer_middleware'
 
