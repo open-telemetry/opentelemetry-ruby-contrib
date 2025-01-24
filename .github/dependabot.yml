@@ -10,6 +10,10 @@ updates:
   schedule:
     interval: weekly
 - package-ecosystem: bundler
+  directory: "/helpers/sql"
+  schedule:
+    interval: weekly
+- package-ecosystem: bundler
   directory: "/helpers/mysql"
   schedule:
     interval: weekly
