@@ -72,10 +72,11 @@ jobs:
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
       - name: "JRuby Filter"
         id: jruby_skip

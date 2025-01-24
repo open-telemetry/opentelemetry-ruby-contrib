@@ -46,6 +46,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
       - name: "Test JRuby"
         uses: ./.github/actions/test_gem
@@ -92,6 +93,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
     services:
       mysql:
@@ -129,6 +131,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
     services:
       zookeeper:
@@ -182,6 +185,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
     services:
       redis:
@@ -226,6 +230,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
     services:
       postgres:
@@ -267,6 +272,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
     services:
       rabbitmq:

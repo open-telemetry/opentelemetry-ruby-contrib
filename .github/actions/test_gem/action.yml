@@ -19,6 +19,16 @@ inputs:
     required: false
     type: boolean
     default: false
+  coverage:
+    description: Enforce test coverage
+    required: false
+    type: boolean
+    default: false
+  minimum_coverage:
+    description: Minimum test coverage
+    required: false
+    type: string
+    default: 85
   build:
     description: Build gem
     required: false
@@ -151,6 +161,14 @@ runs:
       run: |
         # 🤖 Rubocop 🤖
         bundle exec rake rubocop
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
+    - name: Coverage
+      shell: bash
+      if: "${{ inputs.coverage == 'true' }}"
+      # This starts a new simplecov run which tracks nothing of its own,
+      # but merges with the existing coverage reports generated during testing.
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }})'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem
