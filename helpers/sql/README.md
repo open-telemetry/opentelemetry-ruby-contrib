@@ -1,20 +1,28 @@
 # OpenTelemetry Sql Helpers
 
-Todo: Add a description.
+This gem is intended to be used by the instrumentation libraries to provide a common set of helpers for SQL-related spans. It is not intended to be used directly by applications.
 
-## How do I get started?
+## Installation
 
-Install the gem using:
+Add a line similar to this in your `gemspec`:
 
-```console
-gem install opentelemetry-helpers-sql
+```ruby
+
+  spec.add_dependency 'opentelemetry-helpers-sql', '~> 0.3' # Use the approprite version
+
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-helpers-sql` in your `Gemfile`.
+Update your `Gemfile` to use the latest version of the gem in the contrib, e.g.
+
+```ruby
+
+group :test do
+  gem 'opentelemetry-helpers-sql', path: '../../helpers/sql' # Use the approprite path
+end
+
+```
 
 ## Usage
-
-This gem is intended to be used by the instrumentation libraries to provide a common set of helpers for SQL-related spans. It is not intended to be used directly by applications.
 
 Some database libraries do not have enough context to add sufficient details to client spans. In these cases, you can use the `OpenTelemetry::Helpers::Sql.with_attributes` to create a set of shared attributes to amend to a database span.
 
@@ -44,7 +52,6 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special int
 
 The `opentelemetry-helpers-sql` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
-[bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
