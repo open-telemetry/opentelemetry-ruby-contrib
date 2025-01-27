@@ -250,7 +250,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         end
       end
     end
-    
+
     after do
       Object.send(:remove_const, :Handler)
     end
@@ -268,12 +268,12 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
             _(handler).must_equal expected_handler
             _(flush_timeout).must_equal expected_flush_timeout
           end
-  
+
           Handler.stub(:wrap_lambda, args_checker) do
             Handler.process(event: event_v1, context: context)
           end
         end
-  
+
         it 'calls the original method with correct arguments' do
           args_checker = proc do |event:, context:|
             _(event).must_equal event_v1
@@ -285,7 +285,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
           end
         end
       end
-      
+
       describe 'when a flush_timeout is provided' do
         let(:expected_flush_timeout) { 10_000 }
 
@@ -300,18 +300,18 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
             _(handler).must_equal expected_handler
             _(flush_timeout).must_equal expected_flush_timeout
           end
-  
+
           Handler.stub(:wrap_lambda, args_checker) do
             Handler.process(event: event_v1, context: context)
           end
         end
-  
+
         it 'calls the original method with correct arguments' do
           args_checker = proc do |event:, context:|
             _(event).must_equal event_v1
             _(context).must_equal context
           end
-  
+
           Handler.stub(:process_without_instrumentation, args_checker) do
             Handler.process(event: event_v1, context: context)
           end
