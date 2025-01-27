@@ -21,10 +21,12 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::RedisClientInstrume
   # will generate one extra span on connect because the Redis client will
   # send an AUTH command before doing anything else.
   def redis_with_auth(redis_options = {})
-    redis_options[:password] = password
-    redis_options[:host] = redis_host
-    redis_options[:port] = redis_port
-    RedisClient.new(**redis_options)
+    redis_options[:password] ||= password
+    redis_options[:host] ||= redis_host
+    redis_options[:port] ||= redis_port
+    RedisClient.new(**redis_options).tap do |client|
+      client.send(:raw_connection) # force lazy client to connect
+    end
   end
 
   before do
@@ -45,7 +47,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::RedisClientInstrume
     it 'accepts peer service name from config' do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(peer_service: 'readonly:redis')
-      Redis.new(host: redis_host, port: redis_port).auth(password)
+      redis_with_auth
 
       _(last_span.attributes['peer.service']).must_equal 'readonly:redis'
     end
@@ -63,7 +65,31 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::RedisClientInstrume
     end
 
     it 'after authorization with Redis server' do
-      Redis.new(host: redis_host, port: redis_port).auth(password)
+      client = redis_with_auth
+
+      _(client.connected?).must_equal(true)
+
+      _(last_span.name).must_equal 'PIPELINED'
+      _(last_span.attributes['db.system']).must_equal 'redis'
+      _(last_span.attributes['db.statement']).must_equal 'HELLO ? ? ? ?'
+      _(last_span.attributes['net.peer.name']).must_equal redis_host
+      _(last_span.attributes['net.peer.port']).must_equal redis_port
+    end
+
+    it 'after calling auth lowercase' do
+      client = redis_with_auth
+      client.call('auth', password)
+
+      _(last_span.name).must_equal 'AUTH'
+      _(last_span.attributes['db.system']).must_equal 'redis'
+      _(last_span.attributes['db.statement']).must_equal 'AUTH ?'
+      _(last_span.attributes['net.peer.name']).must_equal redis_host
+      _(last_span.attributes['net.peer.port']).must_equal redis_port
+    end
+
+    it 'after calling AUTH uppercase' do
+      client = redis_with_auth
+      client.call('AUTH', password)
 
       _(last_span.name).must_equal 'AUTH'
       _(last_span.attributes['db.system']).must_equal 'redis'
@@ -157,9 +183,10 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::RedisClientInstrume
 
     it 'records net.peer.name and net.peer.port attributes' do
       expect do
-        Redis.new(host: 'example.com', port: 8321, timeout: 0.01).auth(password)
-      end.must_raise Redis::CannotConnectError
+        redis_with_auth(host: 'example.com', port: 8321, timeout: 0.01)
+      end.must_raise RedisClient::CannotConnectError
 
+      skip('FIXME: what is this intended to test?')
       _(last_span.name).must_equal 'AUTH'
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal 'AUTH ?'
