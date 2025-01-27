@@ -15,7 +15,7 @@ module OpenTelemetry
             context = OpenTelemetry::Context.current
             return super unless context
 
-            super(*args, **kwargs) do
+            super(*args, **kwargs) do # rubocop:disable Style/SuperArguments
               OpenTelemetry::Context.with_current(context) do
                 yield(*args, **kwargs)
               end

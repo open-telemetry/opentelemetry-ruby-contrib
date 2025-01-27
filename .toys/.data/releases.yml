@@ -34,6 +34,10 @@ gems:
     directory: instrumentation/active_storage
     version_constant: [OpenTelemetry, Instrumentation, ActiveStorage, VERSION]
 
+  - name: opentelemetry-helpers-sql
+    directory: helpers/sql
+    version_constant: [OpenTelemetry, Helpers, Sql, VERSION]
+
   - name: opentelemetry-instrumentation-gruf
     directory: instrumentation/gruf
     version_constant: [OpenTelemetry, Instrumentation, Gruf, VERSION]
