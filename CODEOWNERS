@@ -16,6 +16,8 @@
 
 resources/container/ @scbjans @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @xuan-cao-swi
 
+instrumentation/active_storage/ @ymtdzzz @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @xuan-cao-swi
+
 instrumentation/aws_sdk/ @jterapin @alextwoods @NathanielRN @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @xuan-cao-swi
 
 instrumentation/grape/ @muripic @open-telemetry/ruby-contrib-maintainers @open-telemetry/ruby-contrib-approvers @fbogsany @mwear @robertlaurin @dazuma @ericmustin @arielvalentin @ahayworth @plantfansam @robbkidd @simi @kaylareopelle @xuan-cao-swi
