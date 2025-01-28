@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-helpers-mysql'
+  spec.add_dependency 'opentelemetry-helpers-sql'
   spec.add_dependency 'opentelemetry-helpers-sql-obfuscation'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
   spec.add_dependency 'opentelemetry-semantic_conventions', '>= 1.8.0'
@@ -34,7 +35,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'appraisal', '~> 2.5'
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-propagator-vitess', '~> 0.1'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
   spec.add_development_dependency 'pry'
