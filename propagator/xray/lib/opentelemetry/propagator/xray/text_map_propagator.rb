@@ -85,6 +85,12 @@ module OpenTelemetry
 
           xray_value = "Root=#{xray_trace_id};Parent=#{parent_id};Sampled=#{sampling_state}"
 
+          # Add lineage to xray_value if present in baggage
+          baggage = OpenTelemetry::Baggage.values(context: context)
+          if baggage.key?('Lineage')
+            xray_value += ";Lineage=#{baggage['Lineage']}"
+          end
+
           setter.set(carrier, XRAY_CONTEXT_KEY, xray_value)
           nil
         end
