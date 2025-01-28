@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.35.1 / 2025-01-28
+
+* DOCS: Required version in Rails README from 0.24 to 0.34
+
 ### v0.35.0 / 2025-01-16
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1
