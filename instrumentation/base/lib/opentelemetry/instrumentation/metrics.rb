@@ -77,7 +77,7 @@ module OpenTelemetry
       # No-op instance methods for metrics instruments.
       module NoopExtensions
         METER_TYPES.each do |kind|
-          define_method(kind) {} # rubocop: disable Lint/EmptyBlock
+          define_method(kind) { |*, **| } # rubocop: disable Lint/EmptyBlock
         end
 
         def with_meter; end
