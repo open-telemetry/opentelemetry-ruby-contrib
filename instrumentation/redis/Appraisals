@@ -1,5 +1,23 @@
 # frozen_string_literal: true
 
+appraise 'redis-4.x-metrics-sdk' do
+  gem 'redis-client', '~> 0.22'
+  gem 'redis', '~> 4.8'
+  gem 'opentelemetry-metrics-sdk', github: "zvkemp/opentelemetry-ruby", glob: 'metrics_sdk/*.gemspec', ref: "metrics-kwargs"
+  gem 'opentelemetry-metrics-api', github: "zvkemp/opentelemetry-ruby", glob: 'metrics_api/*.gemspec', ref: "metrics-kwargs"
+end
+
+appraise 'redis-5.x-metrics-sdk' do
+  gem 'redis', '~> 5.0'
+  gem 'opentelemetry-metrics-sdk', github: "zvkemp/opentelemetry-ruby", glob: 'metrics_sdk/*.gemspec', ref: "metrics-kwargs"
+  gem 'opentelemetry-metrics-api', github: "zvkemp/opentelemetry-ruby", glob: 'metrics_api/*.gemspec', ref: "metrics-kwargs"
+end
+
+appraise 'redis-5.x-metrics-api' do
+  gem 'redis', '~> 5.0'
+  gem 'opentelemetry-metrics-api', github: "zvkemp/opentelemetry-ruby", glob: 'metrics_api/*.gemspec', ref: "metrics-kwargs"
+end
+
 appraise 'redis-4.x' do
   gem 'redis-client', '~> 0.22'
   gem 'redis', '~> 4.8'

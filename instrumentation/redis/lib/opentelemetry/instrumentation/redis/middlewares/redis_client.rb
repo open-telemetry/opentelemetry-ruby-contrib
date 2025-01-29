@@ -49,6 +49,7 @@ module OpenTelemetry
 
             attributes['db.redis.database_index'] = redis_config.db unless redis_config.db.zero?
             attributes['peer.service'] = instrumentation.config[:peer_service] if instrumentation.config[:peer_service]
+
             attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
             attributes
           end
