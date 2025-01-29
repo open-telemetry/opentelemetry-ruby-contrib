@@ -47,6 +47,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
@@ -125,6 +126,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
@@ -162,6 +164,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
