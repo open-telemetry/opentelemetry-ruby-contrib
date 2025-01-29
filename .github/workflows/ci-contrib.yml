@@ -168,3 +168,40 @@ jobs:
         with:
           gem: "opentelemetry-processor-${{ matrix.gem }}"
           ruby: "jruby-9.4.9.0"
+
+  zero-code-instrumentation:
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - zero-code-instrumentation
+        os:
+          - ubuntu-latest
+    name: "${{ matrix.gem }} / ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.3"
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.2"
+      - name: "Test Ruby 3.1"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "${{ matrix.gem }}"
+          ruby: "3.1"
+          yard: true
+          rubocop: true
+          build: true
+      - name: "Test JRuby"
+        if: "${{ matrix.os == 'ubuntu-latest'"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "jruby-9.4.9.0"

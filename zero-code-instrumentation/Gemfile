@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+source 'https://rubygems.org'
+
+# avoid use gemspec to avoid circular load
+
+gem 'opentelemetry-sdk'
+gem 'opentelemetry-instrumentation-all'
+gem 'opentelemetry-exporter-otlp'
+gem 'opentelemetry-test-helpers'
+gem 'opentelemetry-resource-detector-container', path: '../resources/container'
+
+gem 'bundler'
+gem 'minitest'
+gem 'rake' 
+gem 'rubocop'
+gem 'rubocop-performance'
+gem 'simplecov' 
+gem 'yard'
