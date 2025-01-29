@@ -7,7 +7,6 @@
 require 'test_helper'
 
 describe 'ZeroCodeInstrumentation' do
-
   before do
     OpenTelemetry::TestHelpers.reset_opentelemetry
   end
@@ -23,7 +22,6 @@ describe 'ZeroCodeInstrumentation' do
   end
 
   it 'simple_load_test' do
-
     load './lib/zero-code-instrumentation.rb'
     Bundler.require
 
@@ -42,7 +40,6 @@ describe 'ZeroCodeInstrumentation' do
   end
 
   it 'simple_load_with_net_http_disabled' do
-
     ENV['OTEL_RUBY_INSTRUMENTATION_NET_HTTP_ENABLED'] = 'false'
 
     load './lib/zero-code-instrumentation.rb'
@@ -57,7 +54,6 @@ describe 'ZeroCodeInstrumentation' do
   end
 
   it 'simple_load_with_desired_instrument_only' do
-
     ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'] = 'net_http'
 
     load './lib/zero-code-instrumentation.rb'
@@ -72,7 +68,6 @@ describe 'ZeroCodeInstrumentation' do
   end
 
   it 'simple_load_with_additional_resource' do
-
     ENV['OTEL_RUBY_RESOURCE_DETECTORS'] = 'container'
 
     load './lib/zero-code-instrumentation.rb'
