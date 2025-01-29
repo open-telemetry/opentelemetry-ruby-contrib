@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Instrumentation
-    module Rails
-      VERSION = '0.35.1'
+    module ActiveStorage
+      VERSION = '0.1.0'
     end
   end
 end

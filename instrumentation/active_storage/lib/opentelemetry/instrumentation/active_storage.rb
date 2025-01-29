@@ -6,16 +6,14 @@
 
 require 'opentelemetry'
 require 'opentelemetry-instrumentation-base'
-require 'opentelemetry-helpers-sql'
 
 module OpenTelemetry
   module Instrumentation
-    # Contains the OpenTelemetry instrumentation for the Trilogy gem
-    module Trilogy
-      extend ::OpenTelemetry::Helpers::Sql
+    # Contains the OpenTelemetry instrumentation for the ActiveStorage gem
+    module ActiveStorage
     end
   end
 end
 
-require_relative 'trilogy/instrumentation'
-require_relative 'trilogy/version'
+require_relative 'active_storage/instrumentation'
+require_relative 'active_storage/version'

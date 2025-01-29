@@ -4,10 +4,4 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Instrumentation
-    module Rails
-      VERSION = '0.35.1'
-    end
-  end
-end
+require_relative 'opentelemetry/instrumentation'
