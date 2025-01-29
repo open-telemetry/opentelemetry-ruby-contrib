@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+appraise 'base' do
+  remove_gem 'opentelemetry-metrics-api'
+  remove_gem 'opentelemetry-metrics-sdk'
+end
+
+appraise 'metrics-api' do
+  remove_gem 'opentelemetry-metrics-sdk'
+end
+
+appraise 'metrics-sdk' do # rubocop: disable Lint/EmptyBlock
+end

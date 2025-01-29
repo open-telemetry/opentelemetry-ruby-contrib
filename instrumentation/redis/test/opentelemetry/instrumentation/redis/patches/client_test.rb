@@ -10,6 +10,8 @@ require_relative '../../../../../lib/opentelemetry/instrumentation/redis'
 require_relative '../../../../../lib/opentelemetry/instrumentation/redis/patches/redis_v4_client'
 
 describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
+  # NOTE: These tests should be run for redis v4 and redis v5, even though the patches won't be installed on v5.
+  # Perhaps these tests should live in a different file?
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:password) { 'passw0rd' }
@@ -21,10 +23,22 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
   # will generate one extra span on connect because the Redis client will
   # send an AUTH command before doing anything else.
   def redis_with_auth(redis_options = {})
-    redis_options[:password] = password
-    redis_options[:host] = redis_host
-    redis_options[:port] = redis_port
+    redis_options[:password] ||= password
+    redis_options[:host] ||= redis_host
+    redis_options[:port] ||= redis_port
     Redis.new(redis_options)
+  end
+
+  def redis_version
+    Gem.loaded_specs['redis']&.version
+  end
+
+  def redis_version_major
+    redis_version&.segments&.first
+  end
+
+  def redis_gte_5?
+    redis_version_major&.>=(5)
   end
 
   before do
@@ -98,16 +112,27 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
       redis = redis_with_auth(db: 1)
       redis.get('K')
 
-      _(exporter.finished_spans.size).must_equal 3
+      if redis_gte_5?
+        _(exporter.finished_spans.size).must_equal 2
+        select_span = exporter.finished_spans.first
+        get_span = exporter.finished_spans.last
+        _(select_span.name).must_equal 'PIPELINED'
+        _(select_span.attributes['db.statement']).must_equal("AUTH ?\nSELECT 1")
+      else
+        _(exporter.finished_spans.size).must_equal 3
 
-      select_span = exporter.finished_spans[1]
-      _(select_span.name).must_equal 'SELECT'
+        select_span = exporter.finished_spans[1]
+        _(select_span.name).must_equal 'SELECT'
+        _(select_span.attributes['db.statement']).must_equal('SELECT 1')
+
+        get_span = exporter.finished_spans.last
+      end
+
       _(select_span.attributes['db.system']).must_equal 'redis'
-      _(select_span.attributes['db.statement']).must_equal('SELECT 1')
       _(select_span.attributes['net.peer.name']).must_equal redis_host
       _(select_span.attributes['net.peer.port']).must_equal redis_port
+      _(select_span.attributes['db.redis.database_index']).must_equal 1
 
-      get_span = exporter.finished_spans.last
       _(get_span.name).must_equal 'GET'
       _(get_span.attributes['db.system']).must_equal 'redis'
       _(get_span.attributes['db.statement']).must_equal('GET K')
@@ -150,21 +175,35 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
       _(last_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
-      _(last_span.status.description.tr('`', "'")).must_include(
-        "ERR unknown command 'THIS_IS_NOT_A_REDIS_FUNC', with args beginning with: 'THIS_IS_NOT_A_VALID_ARG"
-      )
+
+      if redis_gte_5?
+        _(last_span.status.description.tr('`', "'")).must_include(
+          'Unhandled exception of type: RedisClient::CommandError'
+        )
+      else
+        _(last_span.status.description.tr('`', "'")).must_include(
+          "ERR unknown command 'THIS_IS_NOT_A_REDIS_FUNC', with args beginning with: 'THIS_IS_NOT_A_VALID_ARG"
+        )
+      end
     end
 
     it 'records net.peer.name and net.peer.port attributes' do
-      expect do
-        Redis.new(host: 'example.com', port: 8321, timeout: 0.01).auth(password)
-      end.must_raise Redis::CannotConnectError
+      client = Redis.new(host: 'example.com', port: 8321, timeout: 0.01)
+      expect { client.auth(password) }.must_raise Redis::CannotConnectError
 
-      _(last_span.name).must_equal 'AUTH'
-      _(last_span.attributes['db.system']).must_equal 'redis'
-      _(last_span.attributes['db.statement']).must_equal 'AUTH ?'
-      _(last_span.attributes['net.peer.name']).must_equal 'example.com'
-      _(last_span.attributes['net.peer.port']).must_equal 8321
+      if redis_gte_5?
+        skip(
+          'Redis 5 is a wrapper around RedisClient, which calls' \
+          '`ensure_connected` before any of the middlewares are invoked.' \
+          'This is more appropriately instrumented via a `#connect` hook in the middleware.'
+        )
+      else
+        _(last_span.name).must_equal 'AUTH'
+        _(last_span.attributes['db.system']).must_equal 'redis'
+        _(last_span.attributes['db.statement']).must_equal 'AUTH ?'
+        _(last_span.attributes['net.peer.name']).must_equal 'example.com'
+        _(last_span.attributes['net.peer.port']).must_equal 8321
+      end
     end
 
     it 'traces pipelined commands' do
@@ -185,10 +224,11 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
 
     it 'traces pipelined commands on commit' do
       redis = redis_with_auth
-      redis.queue([:set, 'v1', '0'])
-      redis.queue([:incr, 'v1'])
-      redis.queue([:get, 'v1'])
-      redis.commit
+      redis.pipelined do |pipeline|
+        pipeline.set('v1', '0')
+        pipeline.incr('v1')
+        pipeline.get('v1')
+      end
 
       _(exporter.finished_spans.size).must_equal 2
       _(last_span.name).must_equal 'PIPELINED'
@@ -225,16 +265,17 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
     it 'truncates long db.statements' do
       redis = redis_with_auth
       the_long_value = 'y' * 100
-      redis.queue([:set, 'v1', the_long_value])
-      redis.queue([:set, 'v1', the_long_value])
-      redis.queue([:set, 'v1', the_long_value])
-      redis.queue([:set, 'v1', the_long_value])
-      redis.queue([:set, 'v1', the_long_value])
-      redis.queue([:set, 'v1', the_long_value])
-      redis.queue([:set, 'v1', the_long_value])
-      redis.queue([:set, 'v1', the_long_value])
-      redis.queue([:set, 'v1', the_long_value])
-      redis.commit
+      redis.pipelined do |pipeline|
+        pipeline.set('v1', the_long_value)
+        pipeline.set('v1', the_long_value)
+        pipeline.set('v1', the_long_value)
+        pipeline.set('v1', the_long_value)
+        pipeline.set('v1', the_long_value)
+        pipeline.set('v1', the_long_value)
+        pipeline.set('v1', the_long_value)
+        pipeline.set('v1', the_long_value)
+        pipeline.set('v1', the_long_value)
+      end
 
       expected_db_statement = <<~HEREDOC.chomp
         SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
@@ -297,7 +338,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
         _(exporter.finished_spans.size).must_equal 3
 
         set_span = exporter.finished_spans[0]
-        _(set_span.name).must_equal 'AUTH'
+        _(set_span.name).must_equal(redis_gte_5? ? 'PIPELINED' : 'AUTH')
         _(set_span.attributes['db.system']).must_equal 'redis'
         _(set_span.attributes).wont_include('db.statement')
 
@@ -326,7 +367,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
         _(exporter.finished_spans.size).must_equal 3
 
         set_span = exporter.finished_spans[0]
-        _(set_span.name).must_equal 'AUTH'
+        _(set_span.name).must_equal(redis_gte_5? ? 'PIPELINED' : 'AUTH')
         _(set_span.attributes['db.system']).must_equal 'redis'
         _(set_span.attributes['db.statement']).must_equal(
           'AUTH ?'

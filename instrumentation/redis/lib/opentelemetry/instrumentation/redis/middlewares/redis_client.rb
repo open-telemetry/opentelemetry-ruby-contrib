@@ -49,6 +49,7 @@ module OpenTelemetry
 
             attributes['db.redis.database_index'] = redis_config.db unless redis_config.db.zero?
             attributes['peer.service'] = instrumentation.config[:peer_service] if instrumentation.config[:peer_service]
+
             attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
             attributes
           end
@@ -58,7 +59,7 @@ module OpenTelemetry
 
             serialized_commands = commands.map do |command|
               # If we receive an authentication request command we want to obfuscate it
-              if obfuscate || command[0].match?(/\A(AUTH|HELLO)\z/)
+              if obfuscate || command[0].match?(/\A(AUTH|HELLO)\z/i)
                 command[0].to_s.upcase + (' ?' * (command.size - 1))
               else
                 command_copy = command.dup
