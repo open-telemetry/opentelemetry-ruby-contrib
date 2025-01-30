@@ -57,7 +57,7 @@ runs:
         # of the benefits of bundler caching.
         rm -f "${dir}/Gemfile.lock"
 
-        echo "cache_key=mri" >> $GITHUB_OUTPUT
+        echo "cache_key=cruby" >> $GITHUB_OUTPUT
         if [[ "${{ inputs.ruby }}" == "jruby" ]]; then
           echo "cache_key=jruby" >> $GITHUB_OUTPUT
         elif [[ "${{ inputs.ruby }}" == "truffleruby" ]]; then
@@ -80,57 +80,49 @@ runs:
       shell: bash
       run: sudo apt update && sudo apt install -y imagemagick
 
-    # Install ruby and bundle dependencies and cache!
-    # ...but not for appraisals, sadly.
-    - name: Install Ruby ${{ inputs.ruby }} with dependencies
-      if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@v1.214.0
-      with:
-        ruby-version: "${{ inputs.ruby }}"
-        working-directory: "${{ steps.setup.outputs.gem_dir }}"
-        bundler:  "latest"
-        bundler-cache: true
-        cache-version: "${{ inputs.ruby }}-${{ steps.setup.outputs.cache_key }}"
-
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
-      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       uses: ruby/setup-ruby@v1.214.0
       with:
+        bundler: "latest"
         ruby-version: "${{ inputs.ruby }}"
-        bundler:  "latest"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-    # Perms workaround. See https://github.com/actions/runner-images/issues/10215
-    - name: Fix GEM_HOME permissions on GitHub Actions Runner
-      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
+
+    - name: Install dependencies
       shell: bash
       run: |
-        # 🛠️😭 Fix GEM_HOME permissions 😭🛠️
-        chmod -R o-w $(gem env home)
+        echo "::group:: 💎 Install dependencies and generate appraisals 💎"
+        bundle install
+
+        echo "::endgroup::"
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
       run: |
-        # 💎 Install dependencies and generate appraisals 💎
-        bundle install --quiet --jobs=3 --retry=4
+        echo "::group:: 💎 Install dependencies and generate appraisals 💎"
+
         bundle exec appraisal clean
         bundle exec appraisal generate
+
+        echo "::endgroup::"
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Test Gem
       shell: bash
       run: |
-        # 🍿 Test Gem 🍿
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
             echo "::group::🔎 Appraising ${i}"
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test || exit
+            bundle install --gemfile=gemfiles/${i}.gemfile --jobs=3 --retry=4
+            bundle exec --gemfile=gemfiles/${i}.gemfile rake test
             echo "::endgroup::"
           done
         else
+          echo "::group::🔎 Running Tests Standalone"
           bundle exec rake test
+          echo "::endgroup::"
         fi
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
       env:
