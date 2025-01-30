@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+appraise 'metrics-sdk' do
+  gem 'opentelemetry-metrics-sdk'
+end
+
+appraise 'metrics-api' do
+  gem 'opentelemetry-metrics-api'
+end
+
+appraise 'base' do # rubocop: disable Lint/EmptyBlock
+end
