@@ -26,14 +26,15 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.1'
 
-  spec.add_dependency 'opentelemetry-exporter-otlp', '~> 0.29.1'
-  spec.add_dependency 'opentelemetry-helpers-mysql', '~> 0.2.0'
-  spec.add_dependency 'opentelemetry-helpers-sql-obfuscation', '~> 0.3.0'
-  spec.add_dependency 'opentelemetry-instrumentation-all', '~> 0.72.0'
-  spec.add_dependency 'opentelemetry-resource-detector-azure', '~> 0.2.0'
-  spec.add_dependency 'opentelemetry-resource-detector-container', '~> 0.2.0'
-  spec.add_dependency 'opentelemetry-resource-detector-google_cloud_platform', '~> 0.2.0'
-  spec.add_dependency 'opentelemetry-sdk', '~> 1.0'
+  spec.add_dependency 'opentelemetry-api', '1.4.0'
+  spec.add_dependency 'opentelemetry-exporter-otlp', '0.29.1'
+  spec.add_dependency 'opentelemetry-helpers-mysql', '0.2.0'
+  spec.add_dependency 'opentelemetry-helpers-sql-obfuscation', '0.3.0'
+  spec.add_dependency 'opentelemetry-instrumentation-all', '0.72.0'
+  spec.add_dependency 'opentelemetry-resource-detector-azure', '0.2.0'
+  spec.add_dependency 'opentelemetry-resource-detector-container', '0.2.0'
+  spec.add_dependency 'opentelemetry-resource-detector-google_cloud_platform', '0.2.0'
+  spec.add_dependency 'opentelemetry-sdk', '1.6.0'
 
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
