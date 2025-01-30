@@ -21,6 +21,7 @@ group :test, :development do
   gem 'opentelemetry-instrumentation-rack', path: '../rack'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
+    gem 'drb'
     gem 'mutex_m'
   end
 end

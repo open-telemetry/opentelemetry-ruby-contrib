@@ -13,6 +13,7 @@ require 'simplecov'
 
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
+require 'drb'
 
 require_relative '../../test/railtie/dummy/config/environment'
 require 'rails/test_help'
