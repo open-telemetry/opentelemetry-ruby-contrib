@@ -128,15 +128,15 @@ module OpenTelemetry
           lineageSubstrings = lineage.split(':')
           return false unless lineageSubstrings.length == 3
 
-          requestCounter = lineageSubstrings[0].to_i
-          hashedResourceId = lineageSubstrings[1]
-          loopCounter = lineageSubstrings[2].to_i
+          lineageCounter1 = lineageSubstrings[0].to_i
+          hashedString = lineageSubstrings[1]
+          lineageCounter2 = lineageSubstrings[2].to_i
 
-          hashedResourceId.match?(/\A[a-zA-Z0-9]{8}\z/) &&
-            requestCounter >= 0 &&
-            requestCounter <= 32767 &&
-            loopCounter >= 0 &&
-            loopCounter <= 255
+          hashedString.match?(/\A[a-zA-Z0-9]{8}\z/) &&
+            lineageCounter1 >= 0 &&
+            lineageCounter1 <= 32767 &&
+            lineageCounter2 >= 0 &&
+            lineageCounter2 <= 255
         end
       end
     end
