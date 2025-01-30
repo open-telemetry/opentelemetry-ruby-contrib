@@ -12,4 +12,6 @@ group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
 end
 
+gem 'opentelemetry-test-helpers', github: 'zvkemp/opentelemetry-ruby', glob: 'test_helpers/*.gemspec', require: false, ref: 'test-helpers-metrics'
+
 gem 'pry-byebug'

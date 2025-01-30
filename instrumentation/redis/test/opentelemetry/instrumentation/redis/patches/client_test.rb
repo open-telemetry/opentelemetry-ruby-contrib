@@ -41,9 +41,10 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
     redis_version_major&.>=(5)
   end
 
+  let(:config) { { db_statement: :include } }
+
   before do
     # ensure obfuscation is off if it was previously set in a different test
-    config = { db_statement: :include }
     instrumentation.install(config)
     exporter.reset
   end
@@ -386,6 +387,99 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
         _(set_span.attributes['db.statement']).must_equal(
           'GET ?'
         )
+      end
+    end
+  end
+
+  if defined?(OpenTelemetry::Metrics)
+    describe 'metrics not enabled' do
+      it 'will not be enabled' do
+        assert(instrumentation.metrics_defined?)
+        refute(instrumentation.metrics_enabled?)
+      end
+    end
+
+    describe 'metrics enabled' do
+      let(:config) { { db_statement: :include, metrics: true } }
+      let(:metric_snapshot) do
+        metrics_exporter.pull
+        metrics_exporter.metric_snapshots.last
+      end
+
+      it 'will be enabled' do
+        assert(instrumentation.metrics_defined?)
+        assert(instrumentation.metrics_enabled?)
+      end
+
+      it 'works', with_metrics_sdk: true do
+        skip if redis_gte_5?
+
+        redis = redis_with_auth
+        key = SecureRandom.hex
+        10.times { redis.incr(key) }
+        redis.expire(key, 1)
+
+        _(metric_snapshot.data_points.length).must_equal(3)
+
+        metric_snapshot.data_points.each do |data_point|
+          _(data_point.attributes['db.system']).must_equal('redis')
+        end
+
+        by_operation_name = metric_snapshot.data_points.each_with_object({}) { |d, res| res[d.attributes['db.operation.name']] = d }
+        _(by_operation_name.keys.sort).must_equal(%w[auth expire incr])
+
+        _(by_operation_name['auth'].count).must_equal(1)
+        _(by_operation_name['incr'].count).must_equal(10)
+        _(by_operation_name['expire'].count).must_equal(1)
+      end
+
+      it 'works v5', with_metrics_sdk: true do
+        skip unless redis_gte_5?
+
+        redis = redis_with_auth
+        key = SecureRandom.hex
+        10.times { redis.incr(key) }
+        redis.expire(key, 1)
+
+        _(metric_snapshot.data_points.length).must_equal(3)
+
+        metric_snapshot.data_points.each do |data_point|
+          _(data_point.attributes['db.system']).must_equal('redis')
+        end
+
+        by_operation_name = metric_snapshot.data_points.each_with_object({}) { |d, res| res[d.attributes['db.operation.name']] = d }
+        _(by_operation_name.keys.sort).must_equal(%w[PIPELINED expire incr])
+
+        _(by_operation_name['PIPELINED'].count).must_equal(1)
+        _(by_operation_name['incr'].count).must_equal(10)
+        _(by_operation_name['expire'].count).must_equal(1)
+      end
+
+      it 'adds errors', with_metrics_sdk: true do
+        skip if redis_gte_5?
+
+        redis = redis_with_auth
+        key = SecureRandom.hex
+        redis.setex(key, 100, 'string_value')
+        expect { redis.incr(key) }.must_raise(Redis::CommandError)
+
+        last_data_point = metric_snapshot.data_points.last
+        _(last_data_point.attributes['db.operation.name']).must_equal('incr')
+        _(last_data_point.attributes['error.type']).must_be_instance_of(String)
+        _(last_data_point.attributes['error.type']).must_equal('Redis::CommandError')
+      end
+
+      it 'adds errors v5', with_metrics_sdk: true do
+        skip unless redis_gte_5?
+
+        redis = redis_with_auth
+        key = SecureRandom.hex
+        redis.setex(key, 100, 'string_value')
+        expect { redis.incr(key) }.must_raise(Redis::CommandError)
+
+        last_data_point = metric_snapshot.data_points.last
+        _(last_data_point.attributes['db.operation.name']).must_equal('incr')
+        _(last_data_point.attributes['error.type']).must_equal('RedisClient::CommandError')
       end
     end
   end

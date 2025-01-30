@@ -21,3 +21,4 @@ OpenTelemetry::SDK.configure do |c|
   c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
   c.add_span_processor span_processor
 end
+require 'opentelemetry/test_helpers/metrics'

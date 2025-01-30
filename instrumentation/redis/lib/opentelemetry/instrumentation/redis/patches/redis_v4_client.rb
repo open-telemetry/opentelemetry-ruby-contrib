@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative 'metrics_helpers'
+
 module OpenTelemetry
   module Instrumentation
     module Redis
@@ -16,18 +18,7 @@ module OpenTelemetry
           def process(commands)
             return super unless instrumentation_config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
 
-            host = options[:host]
-            port = options[:port]
-
-            attributes = {
-              'db.system' => 'redis',
-              'net.peer.name' => host,
-              'net.peer.port' => port
-            }
-
-            attributes['db.redis.database_index'] = options[:db] unless options[:db].zero?
-            attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
-            attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
+            attributes = otel_base_attributes
 
             unless instrumentation_config[:db_statement] == :omit
               parsed_commands = parse_commands(commands)
@@ -87,6 +78,26 @@ module OpenTelemetry
 
           def instrumentation_config
             Redis::Instrumentation.instance.config
+          end
+
+          def instrumentation
+            Redis::Instrumentation.instance
+          end
+
+          def otel_base_attributes
+            host = options[:host]
+            port = options[:port]
+
+            attributes = {
+              'db.system' => 'redis',
+              'net.peer.name' => host,
+              'net.peer.port' => port
+            }
+
+            attributes['db.redis.database_index'] = options[:db] unless options[:db].zero?
+            attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
+            attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
+            attributes
           end
         end
       end

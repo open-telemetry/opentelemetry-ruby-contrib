@@ -26,9 +26,9 @@ module OpenTelemetry
 
         # https://opentelemetry.io/docs/specs/semconv/database/database-metrics/#metric-dbclientoperationduration
         histogram 'db.client.operation.duration',
-                  attributes: { 'db.system.name' => 'redis' },
+                  attributes: { 'db.system' => 'redis' },
                   unit: 's',
-                  boundaries: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10]
+                  explicit_bucket_boundaries: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10]
 
         def client_operation_duration_histogram
           histogram('db.client.operation.duration')
@@ -37,8 +37,18 @@ module OpenTelemetry
         private
 
         def require_dependencies
-          require_relative 'patches/redis_v4_client' if defined?(::Redis) && ::Redis::VERSION < '5'
+          require_redis_client_dependencies
+          require_redis_v4_dependencies
+        end
 
+        def require_redis_v4_dependencies
+          return unless defined?(::Redis) && Gem::Version.new(Redis::VERSION) < Gem::Version.new('5.0.0')
+
+          require_relative 'patches/redis_v4_client'
+          require_relative 'patches/redis_v4_client_metrics'
+        end
+
+        def require_redis_client_dependencies
           return unless defined?(::RedisClient)
 
           require_relative 'middlewares/redis_client'
@@ -46,9 +56,23 @@ module OpenTelemetry
         end
 
         def patch_client
-          ::RedisClient.register(Middlewares::RedisClientInstrumentation) if defined?(::RedisClient)
-          ::RedisClient.register(Middlewares::RedisClientMetrics) if defined?(::RedisClient)
-          ::Redis::Client.prepend(Patches::RedisV4Client) if defined?(::Redis) && ::Redis::VERSION < '5'
+          patch_redis_v4_client
+          patch_redis_client
+        end
+
+        def patch_redis_v4_client
+          return unless defined?(::Redis) && Gem::Version.new(Redis::VERSION) < Gem::Version.new('5.0.0')
+
+          ::Redis::Client.prepend(Patches::RedisV4Client)
+          ::Redis::Client.prepend(Patches::RedisV4ClientMetrics) if metrics_defined?
+        end
+
+        # Applies to redis-client or redis >= 5
+        def patch_redis_client
+          return unless defined?(::RedisClient)
+
+          ::RedisClient.register(Middlewares::RedisClientInstrumentation)
+          ::RedisClient.register(Middlewares::RedisClientMetrics) if metrics_defined?
         end
       end
     end
