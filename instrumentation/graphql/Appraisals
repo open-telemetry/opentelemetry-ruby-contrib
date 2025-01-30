@@ -13,7 +13,9 @@
 end
 
 (0..1).each do |minor_version|
-  gem 'graphql-c_parser', "~> 1.#{minor_version}.0"
+  appraise "graphql-c_parser-1.#{minor_version}.x" do
+    gem 'graphql-c_parser', "~> 1.#{minor_version}.0"
+  end
 end
 
 appraise 'graphql-c_parser-latest' do
