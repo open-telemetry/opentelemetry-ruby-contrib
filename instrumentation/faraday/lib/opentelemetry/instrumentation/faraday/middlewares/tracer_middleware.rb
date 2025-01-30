@@ -35,9 +35,14 @@ module OpenTelemetry
             )
 
             OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
-              tracer.in_span(
-                "HTTP #{http_method}", attributes: attrs, kind: config.fetch(:span_kind)
-              ) do |span|
+              span_name = case config.fetch(:span_naming)
+                          when :host
+                            ['HTTP', http_method, env.url.host].compact.join(' ')
+                          else
+                            "HTTP #{http_method}"
+                          end
+
+              tracer.in_span(span_name, attributes: attrs, kind: config.fetch(:span_kind)) do |span|
                 OpenTelemetry.propagation.inject(env.request_headers)
 
                 app.call(env).on_complete { |resp| trace_response(span, resp.status) }

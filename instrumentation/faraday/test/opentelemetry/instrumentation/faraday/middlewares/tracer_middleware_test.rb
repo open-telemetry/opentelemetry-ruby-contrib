@@ -121,6 +121,24 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         _(span.attributes['peer.service']).must_equal 'example:faraday'
       end
 
+      it 'defaults to span naming by http method' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install
+
+        client.get('/success')
+
+        _(span.name).must_equal 'HTTP GET'
+      end
+
+      it 'allows including the host in the span name' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(span_naming: :host)
+
+        client.get('/success')
+
+        _(span.name).must_equal 'HTTP GET example.com'
+      end
+
       it 'defaults to span kind client' do
         instrumentation.instance_variable_set(:@installed, false)
         instrumentation.install
