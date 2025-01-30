@@ -19,6 +19,16 @@ inputs:
     required: false
     type: boolean
     default: false
+  coverage:
+    description: Enforce test coverage
+    required: false
+    type: boolean
+    default: false
+  minimum_coverage:
+    description: Minimum test coverage
+    required: false
+    type: string
+    default: 85
   build:
     description: Build gem
     required: false
@@ -74,7 +84,7 @@ runs:
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@v1.213.0
+      uses: ruby/setup-ruby@v1.214.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
@@ -85,7 +95,7 @@ runs:
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@v1.213.0
+      uses: ruby/setup-ruby@v1.214.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         bundler:  "latest"
@@ -159,6 +169,14 @@ runs:
       run: |
         # 🤖 Rubocop 🤖
         bundle exec rake rubocop
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
+    - name: Coverage
+      shell: bash
+      if: "${{ inputs.coverage == 'true' }}"
+      # This starts a new simplecov run which tracks nothing of its own,
+      # but merges with the existing coverage reports generated during testing.
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }})'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem
