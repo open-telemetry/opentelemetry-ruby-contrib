@@ -13,6 +13,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
+  gem 'activesupport'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
