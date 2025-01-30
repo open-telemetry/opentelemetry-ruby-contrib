@@ -21,6 +21,7 @@ module OpenTelemetry
         private
 
         def require_dependencies
+          require_relative 'wrap'
           require_relative 'handler'
         end
       end

@@ -235,4 +235,98 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
       end
     end
   end
+
+  describe 'validate_instrument_handler' do
+    let(:expected_flush_timeout) { 30_000 }
+    let(:expected_handler) { 'Handler.process' }
+    let(:method_name) { :process }
+
+    before do
+      Handler = Class.new do
+        extend OpenTelemetry::Instrumentation::AwsLambda::Wrap
+
+        def self.process(event:, context:)
+          { 'statusCode' => 200 }
+        end
+      end
+    end
+
+    after do
+      Object.send(:remove_const, :Handler)
+    end
+
+    describe 'when handler method is defined' do
+      describe 'when a flush_timeout is not provided' do
+        before do
+          Handler.instrument_handler(method_name)
+        end
+
+        it 'calls wrap_lambda with correct arguments' do
+          args_checker = proc do |event:, context:, handler:, flush_timeout:|
+            _(event).must_equal event_v1
+            _(context).must_equal context
+            _(handler).must_equal expected_handler
+            _(flush_timeout).must_equal expected_flush_timeout
+          end
+
+          Handler.stub(:wrap_lambda, args_checker) do
+            Handler.process(event: event_v1, context: context)
+          end
+        end
+
+        it 'calls the original method with correct arguments' do
+          args_checker = proc do |event:, context:|
+            _(event).must_equal event_v1
+            _(context).must_equal context
+          end
+
+          Handler.stub(:process_without_instrumentation, args_checker) do
+            Handler.process(event: event_v1, context: context)
+          end
+        end
+      end
+
+      describe 'when a flush_timeout is provided' do
+        let(:expected_flush_timeout) { 10_000 }
+
+        before do
+          Handler.instrument_handler(:process, flush_timeout: expected_flush_timeout)
+        end
+
+        it 'calls wrap_lambda with correct arguments' do
+          args_checker = proc do |event:, context:, handler:, flush_timeout:|
+            _(event).must_equal event_v1
+            _(context).must_equal context
+            _(handler).must_equal expected_handler
+            _(flush_timeout).must_equal expected_flush_timeout
+          end
+
+          Handler.stub(:wrap_lambda, args_checker) do
+            Handler.process(event: event_v1, context: context)
+          end
+        end
+
+        it 'calls the original method with correct arguments' do
+          args_checker = proc do |event:, context:|
+            _(event).must_equal event_v1
+            _(context).must_equal context
+          end
+
+          Handler.stub(:process_without_instrumentation, args_checker) do
+            Handler.process(event: event_v1, context: context)
+          end
+        end
+      end
+    end
+
+    describe 'when handler method is not defined' do
+      let(:method_name) { :dummy }
+
+      it 'raises ArgumentError' do
+        assert_raises ArgumentError, "#{method_name} is not a method of Handler" do
+          Handler.instrument_handler(method_name)
+        end
+      end
+    end
+  end
 end
