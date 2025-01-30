@@ -9,6 +9,8 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
+  gem 'mutex_m' if RUBY_VERSION >= '3.4'
+
   Dir.entries('../../helpers')
      .select { |entry| File.directory?(File.join('../../helpers', entry)) }
      .reject { |entry| %w[. ..].include?(entry) } # rubocop:disable Performance/CollectionLiteralInLoop

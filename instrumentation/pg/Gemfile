@@ -13,4 +13,5 @@ group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
   gem 'opentelemetry-helpers-sql-obfuscation', path: '../../helpers/sql-obfuscation'
+  gem 'mutex_m' if RUBY_VERSION >= '3.4'
 end

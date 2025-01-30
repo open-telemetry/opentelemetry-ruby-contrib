@@ -4,3 +4,7 @@ source 'https://rubygems.org'
 
 # Specify your gem's dependencies in opentelemetry-propragator-vitess.gemspec
 gemspec
+
+group :test do
+  gem 'mutex_m' if RUBY_VERSION >= '3.4'
+end

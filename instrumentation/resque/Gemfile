@@ -12,4 +12,5 @@ group :test do
   gem 'activejob'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'pry-byebug'
+  gem 'mutex_m' if RUBY_VERSION >= '3.4'
 end

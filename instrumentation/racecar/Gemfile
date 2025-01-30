@@ -13,6 +13,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem 'activesupport', '~> 6' # used to test against JRuby which is only MRI 2.6 compatibile
   gem 'opentelemetry-instrumentation-base', path: '../base'
+  gem 'mutex_m' if RUBY_VERSION >= '3.4'
 end
