@@ -32,7 +32,7 @@ jobs:
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
@@ -84,7 +84,7 @@ jobs:
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
@@ -127,7 +127,7 @@ jobs:
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
@@ -186,7 +186,7 @@ jobs:
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
@@ -236,7 +236,7 @@ jobs:
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
@@ -283,7 +283,7 @@ jobs:
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
