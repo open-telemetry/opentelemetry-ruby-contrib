@@ -11,5 +11,8 @@ gemspec
 group :development, :test do
   gem 'byebug' unless RUBY_PLATFORM == 'java'
   gem 'pry'
-  gem 'mutex_m' if RUBY_VERSION >= '3.4'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+  end
 end
