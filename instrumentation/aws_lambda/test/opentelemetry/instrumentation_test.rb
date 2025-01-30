@@ -76,7 +76,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.hex_span_id.size).must_equal 16
         _(last_span.hex_trace_id.size).must_equal 32
         _(last_span.trace_flags.sampled?).must_equal true
-        _(last_span.tracestate.to_h.to_s).must_equal '{}'
+        _(last_span.tracestate.to_h.to_json).must_equal '{}'
       end
     end
 
@@ -95,7 +95,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.hex_span_id.size).must_equal 16
         _(last_span.hex_trace_id.size).must_equal 32
         _(last_span.trace_flags.sampled?).must_equal true
-        _(last_span.tracestate.to_h.to_s).must_equal '{"otel"=>"ff40ea9699e62af2-01"}'
+        _(last_span.tracestate.to_h.to_json).must_equal '{"otel":"ff40ea9699e62af2-01"}'
       end
       event_v1['headers'].delete('traceparent')
       event_v1['headers'].delete('tracestate')
@@ -195,7 +195,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.hex_span_id.size).must_equal 16
         _(last_span.hex_trace_id.size).must_equal 32
         _(last_span.trace_flags.sampled?).must_equal true
-        _(last_span.tracestate.to_h.to_s).must_equal '{}'
+        _(last_span.tracestate.to_h.to_json).must_equal '{}'
       end
     end
 
