@@ -9,10 +9,10 @@ ENV['RACK_ENV'] = 'test'
 ENV['RAILS_ENV'] = 'test'
 
 require 'logger'
+require 'simplecov'
+
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
 require_relative '../../test/railtie/dummy/config/environment'
 require 'rails/test_help'
-
-SimpleCov.start

@@ -11,5 +11,6 @@ gemspec
 group :test do
   gem 'activerecord', '>= 7.0.0'
   gem 'opentelemetry-instrumentation-base', path: '../base'
+  gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
   gem 'opentelemetry-helpers-sql-obfuscation', path: '../../helpers/sql-obfuscation'
 end
