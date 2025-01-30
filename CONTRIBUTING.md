@@ -392,7 +392,7 @@ index 42c5ecba..74fcc743 100644
 --- a/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
 +++ b/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
 @@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
-
+   spec.add_development_dependency 'bundler', '~> 2.4'
    spec.add_development_dependency 'minitest', '~> 5.0'
    spec.add_development_dependency 'rake', '~> 13.0'
 -  spec.add_development_dependency 'rubocop', '~> 1.50.0'
@@ -407,7 +407,7 @@ index e29acbfc..85622d25 100644
 --- a/propagator/xray/opentelemetry-propagator-xray.gemspec
 +++ b/propagator/xray/opentelemetry-propagator-xray.gemspec
 @@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
-
+   spec.add_development_dependency 'bundler', '~> 2.4'
    spec.add_development_dependency 'minitest', '~> 5.0'
    spec.add_development_dependency 'rake', '~> 13.0'
 -  spec.add_development_dependency 'rubocop', '~> 1.50.0'

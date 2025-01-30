@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'activesupport'
   spec.add_development_dependency 'appraisal', '~> 2.5'
-
+  spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk'
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
