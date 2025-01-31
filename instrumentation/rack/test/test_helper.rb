@@ -18,6 +18,17 @@ require 'webmock/minitest'
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
 
+METRICS_EXPORTER = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+
+module MetricsPatch
+  def metrics_configuration_hook
+    OpenTelemetry.meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new(resource: @resource)
+    OpenTelemetry.meter_provider.add_metric_reader(METRICS_EXPORTER)
+  end
+end
+
+OpenTelemetry::SDK::Configurator.prepend(MetricsPatch)
+
 OpenTelemetry::SDK.configure do |c|
   c.error_handler = ->(exception:, message:) { raise(exception || message) }
   c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
