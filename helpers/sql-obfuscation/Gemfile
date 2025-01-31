@@ -7,3 +7,10 @@
 source 'https://rubygems.org'
 
 gemspec
+
+group :test do
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+  end
+end

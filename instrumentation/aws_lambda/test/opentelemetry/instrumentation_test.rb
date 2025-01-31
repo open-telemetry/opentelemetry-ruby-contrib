@@ -96,8 +96,7 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         _(last_span.hex_span_id.size).must_equal 16
         _(last_span.hex_trace_id.size).must_equal 32
         _(last_span.trace_flags.sampled?).must_equal true
-
-        assert_equal last_span.tracestate, { 'otel' => 'ff40ea9699e62af2-01' }
+        _(last_span.tracestate.to_h).must_equal({ 'otel' => 'ff40ea9699e62af2-01' })
       end
       event_v1['headers'].delete('traceparent')
       event_v1['headers'].delete('tracestate')

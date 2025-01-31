@@ -54,7 +54,7 @@ describe OpenTelemetry::Instrumentation::GraphQL do
           OpenTelemetry::TestHelpers.with_test_logger do |log|
             instrumentation.install(config)
             _(log.string).must_match(
-              /undefined method `trace_with'.*Old::Truck/
+              /undefined method.*trace_with.*Old::Truck/
             )
           end
         end
@@ -90,7 +90,7 @@ describe OpenTelemetry::Instrumentation::GraphQL do
             instrumentation.install(config)
 
             _(log.string).must_match(
-              /undefined method `use'.*Old::Truck/
+              /undefined method.*use.*Old::Truck/
             )
           end
         end

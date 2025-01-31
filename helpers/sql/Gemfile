@@ -11,3 +11,10 @@ source 'https://rubygems.org'
 # then target specific versions in the Appraisals file.
 
 gemspec
+
+group :test do
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+  end
+end
