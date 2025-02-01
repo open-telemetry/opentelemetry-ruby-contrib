@@ -16,6 +16,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
   before do
     exporter.reset
+    WebMock.disable_net_connect!
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'https://example.com/timeout').to_timeout
@@ -28,6 +29,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
   end
 
   after do
+    WebMock.enable_net_connect!
     # Force re-install of instrumentation
     instrumentation.instance_variable_set(:@installed, false)
 
@@ -225,8 +227,6 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.name).must_equal 'connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
-    ensure
-      WebMock.disable_net_connect!
     end
 
     it 'captures errors' do
@@ -246,8 +246,6 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span_event.name).must_equal 'exception'
       _(span_event.attributes['exception.type']).wont_be_nil
       _(span_event.attributes['exception.message']).must_match(/Failed to open TCP connection to invalid.com:99999/)
-    ensure
-      WebMock.disable_net_connect!
     end
 
     it 'emits an HTTP CONNECT span when connecting through an SSL proxy' do
@@ -270,8 +268,6 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.kind).must_equal(:client)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
-    ensure
-      WebMock.disable_net_connect!
     end
 
     it 'emits a "connect" span when connecting through an non-ssl proxy' do
@@ -294,8 +290,6 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
-    ensure
-      WebMock.disable_net_connect!
     end
   end
 end
