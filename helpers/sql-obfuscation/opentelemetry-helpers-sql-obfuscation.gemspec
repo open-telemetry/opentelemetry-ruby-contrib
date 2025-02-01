@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = ">= #{File.read(File.expand_path('../../RUBY_REQUIREMENT', __dir__))}"
+  spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
 
   spec.add_dependency 'opentelemetry-common', '~> 0.21'
 
@@ -44,5 +44,5 @@ Gem::Specification.new do |spec|
     spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
 
-  spec.post_install_message = File.read(File.expand_path('../../POST_INSTALL_MESSAGE', __dir__))
+  spec.post_install_message = File.read(File.expand_path('../../gemspecs/POST_INSTALL_MESSAGE', __dir__))
 end
