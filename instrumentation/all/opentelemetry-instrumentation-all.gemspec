@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = ">= #{File.read(File.expand_path('../../RUBY_REQUIREMENT', __dir__))}"
 
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.22.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_lambda', '~> 0.2.0'
