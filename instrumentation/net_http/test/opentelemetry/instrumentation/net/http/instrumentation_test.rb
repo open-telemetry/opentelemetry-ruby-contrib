@@ -16,20 +16,24 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
   before do
     exporter.reset
-    WebMock.disable_net_connect!
-    stub_request(:get, 'http://example.com/success').to_return(status: 200)
-    stub_request(:post, 'http://example.com/failure').to_return(status: 500)
-    stub_request(:get, 'https://example.com/timeout').to_timeout
 
-    # this is currently a noop but this will future proof the test
+    # ORDER MATTERS!
+    # Reinstalling the instrumentation results in overriding the Webmock patches, which results in real HTTP requests being made.
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
     OpenTelemetry.propagation = propagator
     instrumentation.install
+
+    WebMock.enable!
+    WebMock.disable_net_connect!
+    stub_request(:get, 'http://example.com/success').to_return(status: 200)
+    stub_request(:post, 'http://example.com/failure').to_return(status: 500)
+    stub_request(:get, 'https://example.com/timeout').to_timeout
   end
 
   after do
     WebMock.enable_net_connect!
+    WebMock.disable!
     # Force re-install of instrumentation
     instrumentation.instance_variable_set(:@installed, false)
 
