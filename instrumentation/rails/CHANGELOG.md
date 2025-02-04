@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.36.0 / 2025-02-04
+
+* ADDED: Add active_storage instrumentation to `rails`
+* ADDED: Strip Rails `(.:format)` suffix from `http.route` (action_pack)
+
 ### v0.35.1 / 2025-01-28
 
 * DOCS: Required version in Rails README from 0.24 to 0.34.
