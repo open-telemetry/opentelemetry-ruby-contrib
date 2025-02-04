@@ -29,6 +29,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -46,12 +51,13 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
       - name: "Test JRuby"
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.9.0"
+          ruby: "jruby-9.4.10.0"
     services:
       memcached:
         image: memcached:alpine
@@ -75,6 +81,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -92,6 +103,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
     services:
       mysql:
@@ -112,6 +124,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -129,6 +146,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
     services:
       zookeeper:
@@ -165,6 +183,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -182,6 +205,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
     services:
       redis:
@@ -209,6 +233,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -226,6 +255,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
     services:
       postgres:
@@ -250,6 +280,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -267,6 +302,7 @@ jobs:
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
     services:
       rabbitmq:

@@ -27,6 +27,7 @@ jobs:
           - active_job
           - active_model_serializers
           - active_record
+          - active_storage
           - active_support
           - all
           - aws_sdk
@@ -59,6 +60,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -72,10 +78,11 @@ jobs:
       - name: "Test Ruby 3.1"
         uses: ./.github/actions/test_gem
         with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.1"
           yard: true
           rubocop: true
+          coverage: true
           build: true
       - name: "JRuby Filter"
         id: jruby_skip
@@ -86,6 +93,7 @@ jobs:
           [[ "${{ matrix.gem }}" == "action_view"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "active_model_serializers" ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "active_record"            ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "active_storage"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "active_support"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "aws_sdk"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "aws_lambda"               ]] && echo "skip=true" >> $GITHUB_OUTPUT
@@ -106,4 +114,4 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.9.0"
+          ruby: "jruby-9.4.10.0"

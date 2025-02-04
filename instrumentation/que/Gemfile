@@ -10,7 +10,12 @@ gemspec
 
 group :test do
   gem 'pg'
+  gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
   gem 'opentelemetry-helpers-sql-obfuscation', path: '../../helpers/sql-obfuscation'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-instrumentation-pg', path: '../pg'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+  end
 end

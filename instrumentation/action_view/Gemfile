@@ -12,4 +12,8 @@ group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-instrumentation-active_support', path: '../active_support'
   gem 'pry-byebug'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+  end
 end
