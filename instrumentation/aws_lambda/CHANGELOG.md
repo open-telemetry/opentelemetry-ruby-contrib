@@ -2,7 +2,7 @@
 
 ### v0.3.0 / 2025-02-04
 
-* ADDED: AWS Lambda programatic wrap
+* ADDED: AWS Lambda programmatic wrap
 * FIXED: AWS Lambda test fix
 
 ### v0.2.0 / 2025-01-16
