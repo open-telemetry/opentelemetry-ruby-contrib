@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.73.0 / 2025-02-04
+
+* ADDED: Strip Rails `(.:format)` suffix from `http.route`
+* ADDED: AWS Lambda programmatic wrap
+* FIXED: AWS Lambda test fix
+* ADDED: Add active_storage instrumentation to `rails`
+* FIXED: Do not expose auth params with Redis 5
+
 ### v0.72.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
