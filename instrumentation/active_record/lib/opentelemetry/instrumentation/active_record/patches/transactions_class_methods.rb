@@ -18,7 +18,7 @@ module OpenTelemetry
 
           # Contains ActiveRecord::Transactions::ClassMethods to be patched
           module ClassMethods
-            def transaction(**options, &block)
+            def transaction(**options, &)
               tracer.in_span('ActiveRecord.transaction', attributes: { 'code.namespace' => name }) do
                 super
               end

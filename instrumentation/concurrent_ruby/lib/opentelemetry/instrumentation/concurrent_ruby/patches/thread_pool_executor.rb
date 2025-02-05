@@ -11,7 +11,7 @@ module OpenTelemetry
         # Concurrent::ThreadPoolExecutor patch for instrumentation
         module ThreadPoolExecutor
           # @see Concurrent::ExecutorService#post
-          def post(*args, **kwargs, &task)
+          def post(*args, **kwargs, &)
             context = OpenTelemetry::Context.current
             return super unless context
 

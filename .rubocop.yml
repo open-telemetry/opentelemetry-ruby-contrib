@@ -38,11 +38,10 @@ Metrics/PerceivedComplexity:
 Naming/FileName:
   Exclude:
     - '**/opentelemetry-*'
-### TODO: Enable this is a separate PR
 Naming/BlockForwarding:
-  Enabled: false
+  Enabled: true
 Style/ArgumentsForwarding:
-  Enabled: false
+  Enabled: true
 #######################
 Style/Documentation:
   Exclude:

@@ -18,13 +18,13 @@ module OpenTelemetry
 
           # Contains ActiveRecord::Persistence::ClassMethods to be patched
           module ClassMethods
-            def create(attributes = nil, &block)
+            def create(attributes = nil, &)
               tracer.in_span("#{self}.create") do
                 super
               end
             end
 
-            def create!(attributes = nil, &block)
+            def create!(attributes = nil, &)
               tracer.in_span("#{self}.create!") do
                 super
               end
