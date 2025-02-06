@@ -17,7 +17,7 @@
 
 ### v0.1.1 / 2024-06-26
 
-* Fix `uninitialized constant Interceptors` error
+* FIXED: Fix `uninitialized constant Interceptors` error
 
 ### v0.1.0 / 2024-06-18
 
