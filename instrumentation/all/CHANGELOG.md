@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.73.1 / 2025-02-05
+
+* FIXED: Add require active_storage instrumentation to `all`
+
 ### v0.73.0 / 2025-02-04
 
 * CHANGED: opentelemetry-instrumentation-redis v0.26.1
