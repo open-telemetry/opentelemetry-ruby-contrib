@@ -17,6 +17,7 @@ group :test, :development do
   gem 'opentelemetry-instrumentation-action_pack', path: '../action_pack'
   gem 'opentelemetry-instrumentation-active_record', path: '../active_record'
   gem 'opentelemetry-instrumentation-active_support', path: '../active_support'
+  gem 'opentelemetry-instrumentation-active_storage', path: '../active_storage'
   gem 'opentelemetry-instrumentation-action_view', path: '../action_view'
   gem 'opentelemetry-instrumentation-rack', path: '../rack'
   if RUBY_VERSION >= '3.4'

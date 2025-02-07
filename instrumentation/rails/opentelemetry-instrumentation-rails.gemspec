@@ -27,10 +27,11 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-instrumentation-action_mailer', '~> 0.4.0'
-  spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.11.0'
+  spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.12.0'
   spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.9.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_job', '~> 0.8.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.9.0'
+  spec.add_dependency 'opentelemetry-instrumentation-active_storage', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.8.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
   spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.22.0'

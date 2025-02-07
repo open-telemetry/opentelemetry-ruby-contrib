@@ -201,3 +201,7 @@ updates:
   directory: "/resources/google_cloud_platform"
   schedule:
     interval: weekly
+- package-ecosystem: bundler
+  directory: "/instrumentation/grpc"
+  schedule:
+    interval: weekly

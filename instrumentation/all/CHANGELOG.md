@@ -1,5 +1,16 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.73.1 / 2025-02-05
+
+* FIXED: Add require active_storage instrumentation to `all`
+
+### v0.73.0 / 2025-02-04
+
+* CHANGED: opentelemetry-instrumentation-redis v0.26.1
+* CHANGED: opentelemetry-instrumentation-rails v0.36.0
+* CHANGED: opentelemetry-instrumentation-aws_lambda v0.3.0
+* CHANGED: opentelemetry-instrumentation-action_pack v0.12.0
+
 ### v0.72.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
