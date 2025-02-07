@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
 
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.22.0'
-  spec.add_dependency 'opentelemetry-instrumentation-aws_lambda', '~> 0.2.0'
+  spec.add_dependency 'opentelemetry-instrumentation-aws_lambda', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.8.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.22.0'
   spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.22.0'
@@ -50,10 +50,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.9.0'
   spec.add_dependency 'opentelemetry-instrumentation-racecar', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.26.0'
-  spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.35.0'
+  spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.36.0'
   spec.add_dependency 'opentelemetry-instrumentation-rake', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-rdkafka', '~> 0.5.0'
-  spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.26.0'
+  spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.26.1'
   spec.add_dependency 'opentelemetry-instrumentation-resque', '~> 0.6.0'
   spec.add_dependency 'opentelemetry-instrumentation-restclient', '~> 0.23.0'
   spec.add_dependency 'opentelemetry-instrumentation-ruby_kafka', '~> 0.22.0'

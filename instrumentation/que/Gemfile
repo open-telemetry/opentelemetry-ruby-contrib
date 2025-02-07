@@ -9,7 +9,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'activerecord', '< 7.2.0', '> 7.0.0'
   gem 'pg'
   gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
   gem 'opentelemetry-helpers-sql-obfuscation', path: '../../helpers/sql-obfuscation'
