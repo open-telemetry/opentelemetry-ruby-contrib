@@ -42,9 +42,8 @@ module OpenTelemetry
 
             @span = tracer.start_span(span_name, attributes: attributes, kind: :client)
             trace_ctx = OpenTelemetry::Trace.context_with_span(@span)
-            @trace_token = OpenTelemetry::Context.attach(trace_ctx)
 
-            OpenTelemetry.propagation.inject(@request.headers)
+            OpenTelemetry.propagation.inject(@request.headers, context: trace_ctx)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
@@ -60,7 +59,6 @@ module OpenTelemetry
               @span.status = Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(response.status)
             end
 
-            OpenTelemetry::Context.detach(@trace_token) if @trace_token
             @span.finish
           end
 
