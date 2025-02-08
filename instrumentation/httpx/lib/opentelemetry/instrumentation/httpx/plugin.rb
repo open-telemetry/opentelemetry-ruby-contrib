@@ -41,9 +41,9 @@ module OpenTelemetry
             )
 
             @span = tracer.start_span(span_name, attributes: attributes, kind: :client)
-            trace_ctx = OpenTelemetry::Trace.context_with_span(@span)
-
-            OpenTelemetry.propagation.inject(@request.headers, context: trace_ctx)
+            OpenTelemetry::Trace.with_span(@span) do
+              OpenTelemetry.propagation.inject(@request.headers)
+            end
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
