@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
   spec.add_development_dependency 'simplecov', '~> 0.22.0'
   spec.add_development_dependency 'sqlite3'
-  spec.add_development_dependency 'webmock', '~> 3.24.0'
+  spec.add_development_dependency 'webmock', '~> 3.24'
   spec.add_development_dependency 'yard', '~> 0.9'
 
   if spec.respond_to?(:metadata)
