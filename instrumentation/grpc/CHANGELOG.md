@@ -1,10 +1,14 @@
 # Release History: opentelemetry-instrumentation-grpc
 
-### v0.2.0 / 2025-01-16
+### v0.2.0 / 2025-02-11
+
+* First release of the gem after the donation
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
 
-* ADDED: Set minimum supported version to Ruby 3.1
+* BREAKING CHANGE: Manual stub instrumentation via interceptor setup is now obsolete. After OpenTelemetry is installed, every new stub instance is automatically instrumented. This aligns the instrumentation behavior with other libraries, eliminating the need for users to manually add interceptors.
+
+* FIXED: Refactored instrumentation from patch-style to use interceptors.
 
 ### v0.1.3 / 2024-09-11
 
