@@ -255,3 +255,7 @@ gems:
     directory: resources/google_cloud_platform
     version_rb_path: lib/opentelemetry/resource/detector/google_cloud_platform/version.rb
     version_constant: [OpenTelemetry, Resource, Detector, GoogleCloudPlatform, VERSION]
+
+  - name: opentelemetry-instrumentation-grpc
+    directory: instrumentation/grpc
+    version_constant: [OpenTelemetry, Instrumentation, Grpc, VERSION]
