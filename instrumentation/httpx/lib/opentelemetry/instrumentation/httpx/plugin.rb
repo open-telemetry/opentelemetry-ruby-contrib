@@ -16,10 +16,15 @@ module OpenTelemetry
 
           def initialize(request)
             @request = request
+
+            # the span is initialized when the request is buffered in the parser, which is the closest
+            # one gets to actually sending the request.
+            request.on(:headers) { call }
           end
 
-          def call
-            @request.on(:response, &method(:finish)) # rubocop:disable Performance/MethodObjectAsBlock
+          # sets up the span, while preparing the on response callback.
+          def call(start_time = Time.now)
+            return if @span
 
             uri = @request.uri
             request_method = @request.verb
@@ -40,14 +45,21 @@ module OpenTelemetry
               OpenTelemetry::Common::HTTP::ClientContext.attributes
             )
 
-            @span = tracer.start_span(span_name, attributes: attributes, kind: :client)
+            @span = tracer.start_span(span_name, attributes: attributes, kind: :client, start_timestamp: start_time)
+
             OpenTelemetry::Trace.with_span(@span) do
               OpenTelemetry.propagation.inject(@request.headers)
             end
+
+            @request.once(:response, &method(:finish))
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
 
+          private
+
+          # finishes the span to what the +response+ state contains.
+          # it also resets internal state to allow this object to be reused.
           def finish(response)
             return unless @span
 
@@ -60,9 +72,9 @@ module OpenTelemetry
             end
 
             @span.finish
+          ensure
+            @span = nil
           end
-
-          private
 
           def tracer
             HTTPX::Instrumentation.instance.tracer
@@ -71,18 +83,38 @@ module OpenTelemetry
 
         # HTTPX::Request overrides
         module RequestMethods
-          def __otel_enable_trace!
-            return if @__otel_enable_trace
+          # intercepts request initialization to inject the tracing logic.
+          def initialize(*)
+            super
 
-            RequestTracer.new(self).call
-            @__otel_enable_trace = true
+            RequestTracer.new(self)
           end
         end
 
         # HTTPX::Connection overrides
         module ConnectionMethods
-          def send(request)
-            request.__otel_enable_trace!
+          attr_reader :init_time
+
+          def initialize(*)
+            super
+
+            @init_time = Time.now
+          end
+
+          # handles the case when the +error+ happened during name resolution, which meanns
+          # that the tracing logic hasn't been injected yet; in such cases, the approximate
+          # initial resolving time is collected from the connection, and used as span start time,
+          # and the tracing object in inserted before the on response callback is called.
+          def handle_error(error, request = nil)
+            return super unless error.respond_to?(:connection)
+
+            @pending.each do |req|
+              next if request and request == req
+
+              RequestTracer.new(req).call(error.connection.init_time)
+            end
+
+            RequestTracer.new(request).call(error.connection.init_time) if request
 
             super
           end
