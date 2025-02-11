@@ -15,8 +15,6 @@ module OpenTelemetry
 
           # initializes tracing on the +request+.
           def call(request)
-            return unless configuration(request).enabled
-
             span = nil
 
             # request objects are reused, when already buffered requests get rerouted to a different
