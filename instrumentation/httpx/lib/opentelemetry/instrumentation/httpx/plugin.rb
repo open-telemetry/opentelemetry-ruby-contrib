@@ -67,7 +67,7 @@ module OpenTelemetry
             span.finish
           end
 
-          # return a span initialized with the +@request+ state.
+          # return a span initialized with the +request+ state.
           def initialize_span(request, start_time = ::Time.now)
             verb = request.verb
             uri = request.uri
@@ -89,8 +89,8 @@ module OpenTelemetry
 
             span = tracer.start_span("HTTP #{verb}", attributes: attributes, kind: :client, start_timestamp: start_time)
 
-            OpenTelemetry::Trace.with_span(@span) do
-              OpenTelemetry.propagation.inject(@request.headers)
+            OpenTelemetry::Trace.with_span(span) do
+              OpenTelemetry.propagation.inject(request.headers)
             end
 
             span
