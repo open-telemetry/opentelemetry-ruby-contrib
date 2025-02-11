@@ -210,6 +210,10 @@
       "package-name": "opentelemetry-propagator-xray",
       "version-file": "lib/opentelemetry/propagator/xray/version.rb"
     },
+    "propagator/google_cloud_platform": {
+      "package-name": "opentelemetry-propagator-google_cloud_platform",
+      "version-file": "lib/opentelemetry/propagator/google_cloud_platform/version.rb"
+    },
     "resources/azure": {
       "package-name": "opentelemetry-resource-detector-azure",
       "version-file": "lib/opentelemetry/resource/detector/azure/version.rb"
