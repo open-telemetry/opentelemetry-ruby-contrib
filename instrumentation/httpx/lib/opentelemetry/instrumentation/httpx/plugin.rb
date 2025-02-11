@@ -49,12 +49,17 @@ module OpenTelemetry
           end
 
           def finish(response, span)
-            span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response.status)
-            response.raise_for_status
-          rescue ::HTTPX::Error => err
-            span.record_exception(err)
-            span.status = Trace::Status.error(err.to_s)
-          ensure
+            if response.is_a?(::HTTPX::ErrorResponse)
+              if response.response
+                span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response.response.status)
+              end
+
+              span.record_exception(response.error)
+              span.status = Trace::Status.error(response.error.to_s)
+            else
+              span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response.status)
+            end
+
             span.finish
           end
 
