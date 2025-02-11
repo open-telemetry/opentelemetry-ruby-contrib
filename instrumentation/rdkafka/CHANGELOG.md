@@ -2,7 +2,7 @@
 
 ### v0.6.0 / 2025-02-11
 
-* ADDED: Rdkafka support to v0.19 including
+* ADDED: Rdkafka support to v0.19 including.
 
 ### v0.5.0 / 2025-01-16
 
