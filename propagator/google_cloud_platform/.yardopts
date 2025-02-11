@@ -1,9 +1,9 @@
 --no-private
---title=OpenTelemetry Propagator GCP
+--title=OpenTelemetry Propagator Google Cloud Platform
 --markup=markdown
 --main=README.md
-./lib/opentelemetry/propagator/gcp/**/*.rb
-./lib/opentelemetry/propagator/gcp.rb
+./lib/opentelemetry/propagator/google_cloud_platform/**/*.rb
+./lib/opentelemetry/propagator/google_cloud_platform.rb
 -
 README.md
 CHANGELOG.md
