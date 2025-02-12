@@ -13,7 +13,7 @@ module OpenTelemetry
           # Constant for the HTTP status range
           HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
-          def execute(&block)
+          def execute(&)
             trace_request do |_span|
               super
             end

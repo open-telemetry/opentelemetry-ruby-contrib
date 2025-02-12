@@ -18,31 +18,31 @@ module OpenTelemetry
 
           # Contains ActiveRecord::Persistence::ClassMethods to be patched
           module ClassMethods
-            def create(attributes = nil, &block)
+            def create(...)
               tracer.in_span("#{self}.create") do
                 super
               end
             end
 
-            def create!(attributes = nil, &block)
+            def create!(...)
               tracer.in_span("#{self}.create!") do
                 super
               end
             end
 
-            def update(id = :all, attributes) # rubocop:disable Style/OptionalArguments
+            def update(...)
               tracer.in_span("#{self}.update") do
                 super
               end
             end
 
-            def destroy(id)
+            def destroy(...)
               tracer.in_span("#{self}.destroy") do
                 super
               end
             end
 
-            def delete(id_or_array)
+            def delete(...)
               tracer.in_span("#{self}.delete") do
                 super
               end

@@ -62,7 +62,7 @@ module OpenTelemetry
             end
 
             if Gem.loaded_specs['que'].version >= Gem::Version.new('2.1.0')
-              def bulk_enqueue(**_kwargs, &block)
+              def bulk_enqueue(**_kwargs, &)
                 tracer = Que::Instrumentation.instance.tracer
                 otel_config = Que::Instrumentation.instance.config
 

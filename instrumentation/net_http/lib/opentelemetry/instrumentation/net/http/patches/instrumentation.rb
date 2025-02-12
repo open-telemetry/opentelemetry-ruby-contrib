@@ -17,7 +17,7 @@ module OpenTelemetry
             # Constant for the HTTP status range
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
-            def request(req, body = nil, &block)
+            def request(req, body = nil, &)
               # Do not trace recursive call for starting the connection
               return super unless started?
 

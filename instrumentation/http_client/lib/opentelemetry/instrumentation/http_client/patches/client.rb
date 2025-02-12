@@ -15,7 +15,7 @@ module OpenTelemetry
 
           private
 
-          def do_get_block(req, proxy, conn, &block)
+          def do_get_block(req, proxy, conn, &)
             uri = req.header.request_uri
             url = "#{uri.scheme}://#{uri.host}"
             request_method = req.header.request_method

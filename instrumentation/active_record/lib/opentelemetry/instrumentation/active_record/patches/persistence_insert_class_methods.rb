@@ -18,37 +18,37 @@ module OpenTelemetry
 
           # Contains ActiveRecord::Persistence::ClassMethods to be patched
           module ClassMethods
-            ruby2_keywords def insert(*args)
+            def insert(...)
               tracer.in_span("#{self}.insert") do
                 super
               end
             end
 
-            ruby2_keywords def insert_all(*args)
+            def insert_all(...)
               tracer.in_span("#{self}.insert_all") do
                 super
               end
             end
 
-            ruby2_keywords def insert!(*args)
+            def insert!(...)
               tracer.in_span("#{self}.insert!") do
                 super
               end
             end
 
-            ruby2_keywords def insert_all!(*args)
+            def insert_all!(...)
               tracer.in_span("#{self}.insert_all!") do
                 super
               end
             end
 
-            ruby2_keywords def upsert(*args)
+            def upsert(...)
               tracer.in_span("#{self}.upsert") do
                 super
               end
             end
 
-            ruby2_keywords def upsert_all(*args)
+            def upsert_all(...)
               tracer.in_span("#{self}.upsert_all") do
                 super
               end

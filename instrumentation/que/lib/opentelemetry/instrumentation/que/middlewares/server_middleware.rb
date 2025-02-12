@@ -10,7 +10,7 @@ module OpenTelemetry
       module Middlewares
         # Server middleware to trace Que jobs
         class ServerMiddleware
-          def self.call(job, &block)
+          def self.call(job, &)
             job_class = job_class(job)
             span_name = "#{job_class} process"
             attributes = attributes_before_job_completion(job, job_class)
