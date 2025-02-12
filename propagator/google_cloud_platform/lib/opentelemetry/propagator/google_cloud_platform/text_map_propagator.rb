@@ -17,6 +17,8 @@ module OpenTelemetry
     module GoogleCloudPlatform
       class CloudTraceContext
         class << self
+          CLOUD_TRACE_CONTEXT_REGEX = /\A(?<trace_id>[a-f0-9]{32})\/(?<span_id>[0-9]+)(?:;o=(?<options>[01]))?\Z/i
+
           # Creates a new {CloudTraceContext} from a supplied {Trace::SpanContext}
           # @param [SpanContext] ctx The span context
           # @return [CloudTraceContext] a trace parent
@@ -28,10 +30,10 @@ module OpenTelemetry
           # @param [String] string The serialized trace parent
           # @return [CloudTraceContext] a trace_parent
           def from_string(string)
-            return unless matches = /^(?<trace_id>[a-f0-9]{32})\/(?<span_id>[0-9]+)(?:;o=(?<options>[01]))?$/i.match(string)
+            return unless matches = CLOUD_TRACE_CONTEXT_REGEX.match(string)
 
             trace_id = Array(matches[:trace_id].downcase).pack('H*')
-            span_id = Array(matches[:span_id].downcase.to_i.to_s(16)).pack('H*')
+            span_id = Array(matches[:span_id].to_i.to_s(16)).pack('H*')
             flags = matches[:options] == '1' ? Trace::TraceFlags::SAMPLED : Trace::TraceFlags::DEFAULT
 
             new(trace_id: trace_id, span_id: span_id, flags: flags)
