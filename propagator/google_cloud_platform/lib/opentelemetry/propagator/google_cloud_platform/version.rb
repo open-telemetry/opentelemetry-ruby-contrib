@@ -15,7 +15,7 @@ module OpenTelemetry
   module Propagator
     # Namespace for OpenTelemetry GoogleCloudPlatform propagation
     module GoogleCloudPlatform
-      VERSION = '0.0.1'
+      VERSION = '0.0.0'
     end
   end
 end
