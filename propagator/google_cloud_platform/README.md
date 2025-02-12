@@ -9,7 +9,7 @@ The `X-Cloud-Trace-Context` header that is used by Google Cloud predates the W3C
 
 The `X-Cloud-Trace-Context` header has the following format:
 
-```
+```yaml
 X-Cloud-Trace-Context: TRACE_ID/SPAN_ID;o=OPTIONS
 ```
 
