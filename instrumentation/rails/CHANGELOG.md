@@ -1,5 +1,18 @@
 # Release History: opentelemetry-instrumentation-rails
 
+## [0.35.1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-rails/v0.35.0...opentelemetry-instrumentation-rails/v0.35.1) (2025-02-12)
+
+
+### Features
+
+* add active_storage instrumentation to `rails` ([#1391](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1391)) ([7949291](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/79492915fad7222ee9b81f66c18a8e177927bb94))
+* add active_storage instrumentation to rails (and implicitly to all) ([7949291](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/79492915fad7222ee9b81f66c18a8e177927bb94))
+
+
+### Bug Fixes
+
+* Change required version in Rails README from 0.24 to 0.34 ([a08467a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/a08467abe1ba51c32bdcb1162008b7cf1eaf598b))
+
 ### v0.36.0 / 2025-02-04
 
 * ADDED: Add active_storage instrumentation to `rails`

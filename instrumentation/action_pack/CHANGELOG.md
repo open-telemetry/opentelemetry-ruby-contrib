@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+## [0.11.1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-action_pack/v0.11.0...opentelemetry-instrumentation-action_pack/v0.11.1) (2025-02-12)
+
+
+### Features
+
+* Strip Rails `(.:format)` suffix from `http.route` ([#1375](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1375)) ([1e9853a](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/1e9853aa5ff5358aca0c572dafa5db40c2168442))
+
 ### v0.12.0 / 2025-02-04
 
 * ADDED: Strip Rails `(.:format)` suffix from `http.route`
