@@ -2,7 +2,6 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in opentelemetry-propragator-google_cloud_platform.gemspec
 gemspec
 
 group :test do
