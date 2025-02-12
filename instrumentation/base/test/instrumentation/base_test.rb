@@ -7,7 +7,7 @@
 require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::Base do
-  after { OpenTelemetry::Instrumentation.instance_variable_set(:@registry, nil) }
+  before { OpenTelemetry::Instrumentation.instance_variable_set(:@registry, nil) }
 
   let(:instrumentation) do
     Class.new(OpenTelemetry::Instrumentation::Base) do
@@ -59,8 +59,36 @@ describe OpenTelemetry::Instrumentation::Base do
   end
 
   describe '.instance' do
+    let(:instrumentation) do
+      Class.new(OpenTelemetry::Instrumentation::Base) do
+        instrumentation_name 'test_instrumentation'
+        instrumentation_version '0.1.1'
+
+        def initialize(*args)
+          # Simulate latency by hinting the VM should switch tasks
+          # (this can also be accomplished by something like `sleep(0.1)`).
+          # This replicates the worst-case scenario when using default assignment
+          # to obtain a singleton, i.e. that the scheduler switches threads between
+          # the nil check and object initialization.
+          Thread.pass
+          super
+        end
+      end
+    end
+
     it 'returns an instance' do
       _(instrumentation.instance).must_be_instance_of(instrumentation)
+    end
+
+    it 'returns the same singleton instance to every thread' do
+      # let blocks are not synchronized in minitest, so we need to evaluate
+      # it before spawning the threads
+      inst = instrumentation
+
+      object_ids = Array.new(2).map { Thread.new { inst.instance } }
+                        .map { |thr| thr.join.value }
+
+      _(object_ids.uniq.count).must_equal(1)
     end
   end
 

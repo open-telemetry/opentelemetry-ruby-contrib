@@ -69,8 +69,9 @@ module OpenTelemetry
           integer: ->(v) { v.is_a?(Integer) },
           string: ->(v) { v.is_a?(String) }
         }.freeze
+        SINGLETON_MUTEX = Thread::Mutex.new
 
-        private_constant :NAME_REGEX, :VALIDATORS
+        private_constant :NAME_REGEX, :VALIDATORS, :SINGLETON_MUTEX
 
         private :new
 
@@ -163,8 +164,10 @@ module OpenTelemetry
         end
 
         def instance
-          @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
-                            present_blk, compatible_blk, options)
+          @instance || SINGLETON_MUTEX.synchronize do
+            @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
+                              present_blk, compatible_blk, options)
+          end
         end
 
         private
@@ -189,13 +192,15 @@ module OpenTelemetry
         end
       end
 
-      attr_reader :name, :version, :config, :installed, :tracer
+      attr_reader :name, :version, :config, :installed, :tracer, :meter
 
       alias installed? installed
 
+      require_relative 'metrics'
+      prepend(OpenTelemetry::Instrumentation::Metrics)
+
       # rubocop:disable Metrics/ParameterLists
-      def initialize(name, version, install_blk, present_blk,
-                     compatible_blk, options)
+      def initialize(name, version, install_blk, present_blk, compatible_blk, options)
         @name = name
         @version = version
         @install_blk = install_blk
@@ -204,7 +209,8 @@ module OpenTelemetry
         @config = {}
         @installed = false
         @options = options
-        @tracer = OpenTelemetry::Trace::Tracer.new
+        @tracer = OpenTelemetry::Trace::Tracer.new # default no-op tracer
+        @meter = OpenTelemetry::Metrics::Meter.new if defined?(OpenTelemetry::Metrics::Meter) # default no-op meter
       end
       # rubocop:enable Metrics/ParameterLists
 
@@ -217,10 +223,12 @@ module OpenTelemetry
         return true if installed?
 
         @config = config_options(config)
+
         return false unless installable?(config)
 
+        prepare_install
         instance_exec(@config, &@install_blk)
-        @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
+
         @installed = true
       end
 
@@ -262,6 +270,10 @@ module OpenTelemetry
       end
 
       private
+
+      def prepare_install
+        @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
+      end
 
       # The config_options method is responsible for validating that the user supplied
       # config hash is valid.
@@ -317,13 +329,17 @@ module OpenTelemetry
       # will be OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED. A value of 'false' will disable
       # the instrumentation, all other values will enable it.
       def enabled_by_env_var?
+        !disabled_by_env_var?
+      end
+
+      def disabled_by_env_var?
         var_name = name.dup.tap do |n|
           n.upcase!
           n.gsub!('::', '_')
           n.gsub!('OPENTELEMETRY_', 'OTEL_RUBY_')
           n << '_ENABLED'
         end
-        ENV[var_name] != 'false'
+        ENV[var_name] == 'false'
       end
 
       # Checks to see if the user has passed any environment variables that set options
