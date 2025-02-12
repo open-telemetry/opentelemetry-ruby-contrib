@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-api'
 require 'opentelemetry/propagator/google_cloud_platform/version'
 require 'opentelemetry/propagator/google_cloud_platform/text_map_propagator'
 
