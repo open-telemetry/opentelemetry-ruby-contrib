@@ -111,19 +111,17 @@ container = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('container')
 google_cloud_platform = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('google_cloud_platform')
 azure = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('azure')
 
-if ENV['USE_BUNDLE_EXEC'].to_s == 'true'
+# set OTEL_OPERATOR to true if in autoinstrumentation-ruby image
+# /otel-auto-instrumentation-ruby is set in operator ruby.go
+operator_gem_path = ENV['OTEL_OPERATOR'].to_s == 'true' ? '/otel-auto-instrumentation-ruby' : nil
+additional_gem_path = operator_gem_path || ENV['ADDITIONAL_GEM_PATH'] || Gem.dir
+puts "Loading the additional gem path from #{additional_gem_path}"
 
-  # assume the operator ruby image will amount the additional otel gem to this folder
-  operator_gem_path = ENV['OTEL_OPERATOR'].to_s == 'true' ? '/otel-auto-instrumentation-ruby' : nil
-  additional_gem_path = operator_gem_path || ENV['ADDITIONAL_GEM_PATH'] || Gem.dir
-  OpenTelemetry.logger.info { "Loading the additional gem path from #{additional_gem_path}" }
-
-  # google-protobuf is used for otel trace exporter
-  Dir.glob("#{additional_gem_path}/gems/*").each do |file|
-    if file.include?('opentelemetry') || file.include?('google')
-      puts file.inspect
-      $LOAD_PATH.unshift("#{file}/lib")
-    end
+# google-protobuf is used for otel trace exporter
+Dir.glob("#{additional_gem_path}/gems/*").each do |file|
+  if file.include?('opentelemetry') || file.include?('google')
+    puts "Unshift #{file.inspect}"
+    $LOAD_PATH.unshift("#{file}/lib")
   end
 end
 

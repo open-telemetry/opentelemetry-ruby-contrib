@@ -84,7 +84,6 @@ Instrument Rails application with `bundle exec`
 Since installing the `zero-code-instrumentation` gem through `gem install`, anything related to the OpenTelemetry gem won't be stored in Bundler's gem path. Therefore, users need to add an additional gem path that contains these gems prior to initialization.
 
 ```console
-export GEM_PATH=<the gem path that contain otel-related gem>
 RUBYOPT="-r {PUT YOUR GEM PATH}/gems/zero-code-instrumentation-0.1.0/lib/zero-code-instrumentation" bundle exec rails server
 ```
 
