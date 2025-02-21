@@ -28,12 +28,12 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
 
-  spec.add_development_dependency 'activejob', '>= 6.0'
   spec.add_development_dependency 'appraisal', '~> 2.5'
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
+  spec.add_development_dependency 'rails', '>= 7.0'
   spec.add_development_dependency 'rspec-mocks'
   spec.add_development_dependency 'rubocop', '~> 1.71.0'
   spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
