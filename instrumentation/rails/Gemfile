@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-group :test, :development do
+group :test do
   gem 'pry-byebug'
   gem 'appraisal', '~> 2.5'
   gem 'bundler', '~> 2.4'

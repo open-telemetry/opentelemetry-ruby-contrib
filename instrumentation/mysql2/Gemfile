@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-group :test, :development do
+group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
   gem 'opentelemetry-helpers-mysql', path: '../../helpers/mysql'
