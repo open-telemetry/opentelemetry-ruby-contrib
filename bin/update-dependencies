@@ -8,7 +8,7 @@ if [ -z "$2" ] ; then
   echo "gem version is required!" && exit 2;
 fi
 
-for gemspec in $(git ls-files \*.gemspec)
+for gemspec in $(git ls-files \*Gemfile)
 do
   sed -i -E "s/'$1', '~> [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+'/'$1', '~> $2'/" "$gemspec"
 done
