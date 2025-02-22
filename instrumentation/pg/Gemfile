@@ -18,8 +18,6 @@ group :test do
   gem 'rubocop-performance', '~> 1.23.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'yard', '~> 0.9'
-  gem 'pry'
-  gem 'pry-byebug'
   gem 'activerecord', '>= 7.0.0'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
