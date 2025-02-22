@@ -29,21 +29,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.21'
 
-  spec.add_development_dependency 'activesupport'
-  spec.add_development_dependency 'appraisal', '~> 2.5'
-  spec.add_development_dependency 'bundler', '~> 2.4'
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0'
-  spec.add_development_dependency 'opentelemetry-test-helpers'
-  spec.add_development_dependency 'rack-test'
-  spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rspec-mocks'
-  spec.add_development_dependency 'rubocop', '~> 1.72.2'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
-  spec.add_development_dependency 'simplecov', '~> 0.22.0'
-  spec.add_development_dependency 'webmock', '~> 3.24'
-  spec.add_development_dependency 'yard', '~> 0.9'
-
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/grape'
