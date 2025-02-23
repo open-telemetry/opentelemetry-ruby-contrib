@@ -24,7 +24,7 @@ group :test do
   gem 'rspec-mocks'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'rack-test', '~> 2.1.0'
-    if RUBY_VERSION >= '3.4'
+  if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'mutex_m'
   end
