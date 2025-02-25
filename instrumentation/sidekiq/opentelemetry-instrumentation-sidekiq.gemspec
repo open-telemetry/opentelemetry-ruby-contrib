@@ -23,17 +23,17 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
 
-  spec.add_development_dependency 'activejob', '>= 6.0'
   spec.add_development_dependency 'appraisal', '~> 2.5'
   spec.add_development_dependency 'bundler', '~> 2.4'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
   spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
+  spec.add_development_dependency 'rails', '>= 7.0'
   spec.add_development_dependency 'rspec-mocks'
   spec.add_development_dependency 'rubocop', '~> 1.71.0'
   spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
