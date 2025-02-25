@@ -6,6 +6,8 @@
 
 source 'https://rubygems.org'
 
+gem 'opentelemetry-test-helpers', github: 'zvkemp/opentelemetry-ruby', ref: 'test-helpers-metrics'
+
 gemspec
 
 group :test do
