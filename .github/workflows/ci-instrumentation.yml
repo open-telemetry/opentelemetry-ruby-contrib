@@ -114,4 +114,4 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.10.0"
+          ruby: "jruby-9.4.12.0"
