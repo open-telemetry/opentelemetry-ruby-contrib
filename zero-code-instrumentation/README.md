@@ -23,16 +23,17 @@ gem install zero-code-instrumentation
 ```
 
 Install zero-code-instrumentation will automatically install following gems:
-
-	opentelemetry-sdk
-	opentelemetry-api
-	opentelemetry-instrumentation-all
-	opentelemetry-exporter-otlp
-	opentelemetry-helpers-mysql
-	opentelemetry-helpers-sql-obfuscation
-	opentelemetry-resource-detector-google_cloud_platform
-	opentelemetry-resource-detector-azure
-	opentelemetry-resource-detector-container
+```console
+opentelemetry-sdk
+opentelemetry-api
+opentelemetry-instrumentation-all
+opentelemetry-exporter-otlp
+opentelemetry-helpers-mysql
+opentelemetry-helpers-sql-obfuscation
+opentelemetry-resource-detector-google_cloud_platform
+opentelemetry-resource-detector-azure
+opentelemetry-resource-detector-container
+```
 
 Instrument your application:
 
@@ -87,7 +88,7 @@ Since installing the `zero-code-instrumentation` gem through `gem install`, anyt
 RUBYOPT="-r {PUT YOUR GEM PATH}/gems/zero-code-instrumentation-0.1.0/lib/zero-code-instrumentation" bundle exec rails server
 ```
 
-Instrument Sinatra application with rackup:
+Instrument Sinatra application with `rackup`:
 
 If you are using a Gemfile to install the required gems but without `Bundler.require`, set `REQUIRE_BUNDLER` to true. This way, `zero-code-instrumentation` will call `Bundler.require` to initialize the required gems prior to SDK initialization.
 
@@ -147,5 +148,4 @@ The `zero-code-instrumentation` gem is distributed under the Apache 2.0 license.
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
-[k8sattributesprocessor-url]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/k8sattributesprocessor/README.md
 [opentelemetry-operator]: https://github.com/open-telemetry/opentelemetry-operator
