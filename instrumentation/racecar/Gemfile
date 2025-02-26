@@ -23,7 +23,7 @@ group :test do
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '~> 13.0'
   gem 'rspec-mocks'
-  gem 'rubocop', '~> 1.72.2'
+  gem 'rubocop', '~> 1.72.0'
   gem 'rubocop-performance', '~> 1.23.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'

@@ -13,7 +13,7 @@ group :test do
   gem 'minitest', '~> 5.0'
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '~> 13.0'
-  gem 'rubocop', '~> 1.72.2'
+  gem 'rubocop', '~> 1.72.0'
   gem 'rubocop-performance', '~> 1.23.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'yard', '~> 0.9'
