@@ -154,6 +154,10 @@
       "package-name": "opentelemetry-instrumentation-net_http",
       "version-file": "lib/opentelemetry/instrumentation/net/http/version.rb"
     },
+    "instrumentation/net_ldap": {
+      "package-name": "opentelemetry-instrumentation-net_ldap",
+      "version-file": "lib/opentelemetry/instrumentation/net/ldap/version.rb"
+    },
     "instrumentation/pg": {
       "package-name": "opentelemetry-instrumentation-pg",
       "version-file": "lib/opentelemetry/instrumentation/pg/version.rb"
