@@ -88,7 +88,7 @@ Since installing the `zero-code-instrumentation` gem through `gem install`, anyt
 RUBYOPT="-r {PUT YOUR GEM PATH}/gems/zero-code-instrumentation-0.1.0/lib/zero-code-instrumentation" bundle exec rails server
 ```
 
-Instrument Sinatra application with `rackup`:
+Instrument Sinatra application with rackup:
 
 If you are using a Gemfile to install the required gems but without `Bundler.require`, set `REQUIRE_BUNDLER` to true. This way, `zero-code-instrumentation` will call `Bundler.require` to initialize the required gems prior to SDK initialization.
 
