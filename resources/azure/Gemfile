@@ -8,9 +8,16 @@ source 'https://rubygems.org'
 
 gemspec
 
-group :development, :test do
-  gem 'byebug' unless RUBY_PLATFORM == 'java'
-  gem 'pry'
+group :test do
+  gem 'bundler', '~> 2.4'
+  gem 'minitest', '~> 5.0'
+  gem 'rake', '~> 13.0'
+  gem 'rubocop', '~> 1.72.0'
+  gem 'rubocop-performance', '~> 1.23.0'
+  gem 'simplecov', '~> 0.22.0'
+  gem 'webmock', '~> 3.24'
+  gem 'yard', '~> 0.9'
+
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'mutex_m'

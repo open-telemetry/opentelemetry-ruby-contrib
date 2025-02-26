@@ -12,7 +12,7 @@ AllCops:
 Bundler/OrderedGems:
   Enabled: false
 Gemspec/DevelopmentDependencies:
-  Enabled: false
+  Enabled: true
 Gemspec/RequiredRubyVersion:
   Enabled: false
 Lint/ConstantDefinitionInBlock:
