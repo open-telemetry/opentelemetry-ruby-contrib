@@ -11,4 +11,8 @@ gemspec
 group :test do
   gem 'rspec', '~> 3.0'
   gem 'opentelemetry-instrumentation-base', path: '../base'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+  end
 end

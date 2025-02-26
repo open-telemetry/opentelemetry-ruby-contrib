@@ -14,13 +14,13 @@ module OpenTelemetry
         # https://github.com/rails/rails/blob/v5.2.4.5/activerecord/lib/active_record/validations.rb#L42-L53
         # Contains the ActiveRecord::Validations methods to be patched
         module Validations
-          def save(**options)
+          def save(...)
             tracer.in_span("#{self.class}#save") do
               super
             end
           end
 
-          def save!(**options)
+          def save!(...)
             tracer.in_span("#{self.class}#save!") do
               super
             end

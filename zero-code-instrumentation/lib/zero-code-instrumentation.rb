@@ -115,12 +115,12 @@ azure = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('azure')
 # /otel-auto-instrumentation-ruby is set in operator ruby.go
 operator_gem_path = ENV['OTEL_OPERATOR'].to_s == 'true' ? '/otel-auto-instrumentation-ruby' : nil
 additional_gem_path = operator_gem_path || ENV['ADDITIONAL_GEM_PATH'] || Gem.dir
-puts "Loading the additional gem path from #{additional_gem_path}"
+puts "Loading the additional gem path from #{additional_gem_path}" if ENV['ZERO_CODE_DEBUG'] == 'true'
 
 # google-protobuf is used for otel trace exporter
 Dir.glob("#{additional_gem_path}/gems/*").each do |file|
   if file.include?('opentelemetry') || file.include?('google')
-    puts "Unshift #{file.inspect}"
+    puts "Unshift #{file.inspect}" if ENV['ZERO_CODE_DEBUG'] == 'true'
     $LOAD_PATH.unshift("#{file}/lib")
   end
 end

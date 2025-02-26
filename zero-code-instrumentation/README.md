@@ -131,6 +131,7 @@ These environment variables are not standard OpenTelemetry environment variables
 | `OTEL_OPERATOR` | Set to `true` to set the binding path for the OpenTelemetry Operator. | `/otel-auto-instrumentation-ruby` | N/A |
 | `OTEL_RUBY_RESOURCE_DETECTORS` | Determine what kind of resource detector is needed. Currently supports `container`, `azure`, and `google_cloud_platform`. Use commas to separate multiple detectors. | nil | `container,azure` |
 | `OTEL_RUBY_ENABLED_INSTRUMENTATIONS` | Shortcut used when you only want to instrument one or a couple of particular libraries. | nil | `redis,active_record` |
+| `ZERO_CODE_DEBUG` | Set to `true` if want to see some debug information. This to avoid preload logger gem | nil | N/A |
 
 ## How can I get involved?
 

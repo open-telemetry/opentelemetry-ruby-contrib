@@ -6,7 +6,7 @@ require 'rspec/core/dsl'
 module RSpec
   module Core
     module DSL
-      def self.change_global_dsl(&blk)
+      def self.change_global_dsl(&)
         nil
       end
     end

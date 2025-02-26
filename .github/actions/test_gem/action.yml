@@ -19,6 +19,16 @@ inputs:
     required: false
     type: boolean
     default: false
+  coverage:
+    description: Enforce test coverage
+    required: false
+    type: boolean
+    default: false
+  minimum_coverage:
+    description: Minimum test coverage
+    required: false
+    type: string
+    default: 85
   build:
     description: Build gem
     required: false
@@ -62,11 +72,19 @@ runs:
           fi
         fi
 
+    # Install ImageMagick for active_storage testing.
+    # Unfortunately, as of ubuntu-24.04, ImageMagick is no longer pre-installed in Github Actions.
+    # See https://github.com/actions/runner-images/issues/10772
+    - name: Install ImageMagick for active_storage testing
+      if: "${{ inputs.gem == 'opentelemetry-instrumentation-active_storage' }}"
+      shell: bash
+      run: sudo apt update && sudo apt install -y imagemagick
+
     # Install ruby and bundle dependencies and cache!
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@v1.207.0
+      uses: ruby/setup-ruby@v1.221.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
@@ -77,7 +95,7 @@ runs:
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@v1.207.0
+      uses: ruby/setup-ruby@v1.221.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         bundler:  "latest"
@@ -151,6 +169,14 @@ runs:
       run: |
         # 🤖 Rubocop 🤖
         bundle exec rake rubocop
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
+    - name: Coverage
+      shell: bash
+      if: "${{ inputs.coverage == 'true' }}"
+      # This starts a new simplecov run which tracks nothing of its own,
+      # but merges with the existing coverage reports generated during testing.
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }})'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem

@@ -16,4 +16,8 @@ group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-instrumentation-rack', path: '../rack'
   gem 'builder'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+  end
 end

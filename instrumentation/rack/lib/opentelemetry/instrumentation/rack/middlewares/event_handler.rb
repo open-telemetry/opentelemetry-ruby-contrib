@@ -43,6 +43,7 @@ module OpenTelemetry
           include ::Rack::Events::Abstract
 
           OTEL_TOKEN_AND_SPAN = 'otel.rack.token_and_span'
+          EMPTY_HASH = {}.freeze
 
           # Creates a server span for this current request using the incoming parent context
           # and registers them as the {current_span}
@@ -117,7 +118,6 @@ module OpenTelemetry
 
           private
 
-          EMPTY_HASH = {}.freeze
           def extract_request_headers(env)
             return EMPTY_HASH if allowed_request_headers.empty?
 
