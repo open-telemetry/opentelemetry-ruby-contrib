@@ -341,7 +341,7 @@ describe OpenTelemetry::Instrumentation::ActiveStorage do
   # NOTE: The test for service_update_metadata.active_storage is skipped because this event is only for GCS service.
   # https://github.com/rails/rails/blob/fa9cf269191c5077de1abdd1e3f934fbeaf2a5d0/guides/source/active_support_instrumentation.md?plain=1#L928
 
-  def with_configuration(values, &block)
+  def with_configuration(values, &)
     original_config = instrumentation.instance_variable_get(:@config)
     modified_config = original_config.merge(values)
     instrumentation.instance_variable_set(:@config, modified_config)
@@ -351,7 +351,7 @@ describe OpenTelemetry::Instrumentation::ActiveStorage do
     instrumentation.instance_variable_set(:@config, original_config)
   end
 
-  def with_subscription(&block)
+  def with_subscription(&)
     OpenTelemetry::Instrumentation::ActiveStorage::Railtie.subscribe
     yield
   ensure

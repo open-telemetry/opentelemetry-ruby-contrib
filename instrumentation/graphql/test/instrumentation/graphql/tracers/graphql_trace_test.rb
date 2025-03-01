@@ -302,32 +302,32 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
             super
           end
 
-          def platform_execute_field(platform_key, &block)
+          def platform_execute_field(platform_key, &)
             @events << platform_key
             yield
           end
 
-          def platform_execute_field_lazy(platform_key, &block)
+          def platform_execute_field_lazy(platform_key, &)
             @events << platform_key
             yield
           end
 
-          def platform_authorized(platform_key, &block)
+          def platform_authorized(platform_key, &)
             @events << platform_key
             yield
           end
 
-          def platform_authorized_lazy(platform_key, &block)
+          def platform_authorized_lazy(platform_key, &)
             @events << platform_key
             yield
           end
 
-          def platform_resolve_type(platform_key, &block)
+          def platform_resolve_type(platform_key, &)
             @events << platform_key
             yield
           end
 
-          def platform_resolve_type_lazy(platform_key, &block)
+          def platform_resolve_type_lazy(platform_key, &)
             @events << platform_key
             yield
           end
