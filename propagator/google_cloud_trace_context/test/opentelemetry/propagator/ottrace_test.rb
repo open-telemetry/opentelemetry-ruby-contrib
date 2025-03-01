@@ -6,12 +6,12 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Propagator::GoogleCloudPlatform do
+describe OpenTelemetry::Propagator::GoogleCloudTraceContext do
   describe '#text_map_propagator' do
     it 'returns an instance of TextMapPropagator' do
-      propagator = OpenTelemetry::Propagator::GoogleCloudPlatform.text_map_propagator
+      propagator = OpenTelemetry::Propagator::GoogleCloudTraceContext.text_map_propagator
       _(propagator).must_be_instance_of(
-        OpenTelemetry::Propagator::GoogleCloudPlatform::TextMapPropagator
+        OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator
       )
     end
   end

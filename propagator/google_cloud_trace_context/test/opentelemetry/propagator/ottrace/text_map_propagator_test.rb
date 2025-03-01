@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Propagator::GoogleCloudPlatform::TextMapPropagator do
+describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator do
   class FakeGetter
     def get(carrier, key)
       '7ffe3d75a2b8ef468ab34365ee891f08/2141054039718851918;o=0'
@@ -48,7 +48,7 @@ describe OpenTelemetry::Propagator::GoogleCloudPlatform::TextMapPropagator do
   end
 
   let(:propagator) do
-    OpenTelemetry::Propagator::GoogleCloudPlatform::TextMapPropagator.new
+    OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator.new
   end
 
   let(:parent_context) do

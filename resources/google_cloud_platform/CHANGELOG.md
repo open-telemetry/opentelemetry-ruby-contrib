@@ -1,4 +1,4 @@
-# Release History: opentelemetry-resource-detector-google_cloud_platform
+# Release History: opentelemetry-resource-detector-google_cloud_trace_context
 
 ### v0.2.0 / 2025-01-16
 

@@ -1,6 +1,6 @@
 # OpenTelemetry::Resource::Detector::GoogleCloudPlatform
 
-The `opentelemetry-resource-detector-google_cloud_platform` gem provides a Google Cloud Platform resource detector for OpenTelemetry.
+The `opentelemetry-resource-detector-google_cloud_trace_context` gem provides a Google Cloud Platform resource detector for OpenTelemetry.
 
 ## What is OpenTelemetry?
 
@@ -10,7 +10,7 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 ## How does this gem fit in?
 
-The `opentelemetry-resource-detector-google_cloud_platform` gem provides a means of retrieving a resource for supported environments following the resource semantic conventions.
+The `opentelemetry-resource-detector-google_cloud_trace_context` gem provides a means of retrieving a resource for supported environments following the resource semantic conventions.
 
 ## How do I get started?
 
@@ -18,10 +18,10 @@ Install the gem using:
 
 ```console
 gem install opentelemetry-sdk
-gem install opentelemetry-resource-detector-google_cloud_platform
+gem install opentelemetry-resource-detector-google_cloud_trace_context
 ```
 
-Or, if you use Bundler, include `opentelemetry-sdk` and `opentelemetry-resource-detector-google_cloud_platform` in your `Gemfile`.
+Or, if you use Bundler, include `opentelemetry-sdk` and `opentelemetry-resource-detector-google_cloud_trace_context` in your `Gemfile`.
 
 ```rb
 require 'opentelemetry/sdk'
@@ -59,13 +59,13 @@ This will populate the following resource attributes for compute running on Goog
 
 ## How can I get involved?
 
-The `opentelemetry-resource-detector-google_cloud_platform` gem source is on GitHub, along with related gems.
+The `opentelemetry-resource-detector-google_cloud_trace_context` gem source is on GitHub, along with related gems.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
-The `opentelemetry-resource-detector-google_cloud_platform` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
+The `opentelemetry-resource-detector-google_cloud_trace_context` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
 
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings

@@ -4,9 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/propagator/google_cloud_platform/version'
-require 'opentelemetry/propagator/google_cloud_platform/text_map_propagator'
-
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
 # of cloud-native software, frameworks, and libraries.
@@ -16,19 +13,9 @@ require 'opentelemetry/propagator/google_cloud_platform/text_map_propagator'
 module OpenTelemetry
   # Namespace for OpenTelemetry propagator extension libraries
   module Propagator
-    # Namespace for OpenTelemetry GoogleCloudPlatform propagation
-    module GoogleCloudPlatform
-      extend self
-
-      TEXT_MAP_PROPAGATOR = TextMapPropagator.new
-
-      private_constant :TEXT_MAP_PROPAGATOR
-
-      # Returns a text map propagator that propagates context using the
-      # GoogleCloudPlatform format.
-      def text_map_propagator
-        TEXT_MAP_PROPAGATOR
-      end
+    # Namespace for OpenTelemetry GoogleCloudTraceContext propagation
+    module GoogleCloudTraceContext
+      VERSION = '0.0.0'
     end
   end
 end

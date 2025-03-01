@@ -13,8 +13,8 @@
 module OpenTelemetry
   # Namespace for OpenTelemetry propagator extension libraries
   module Propagator
-    # Namespace for OpenTelemetry GoogleCloudPlatform propagation
-    module GoogleCloudPlatform
+    # Namespace for OpenTelemetry GoogleCloudTraceContext propagation
+    module GoogleCloudTraceContext
       class CloudTraceContext
         class << self
           CLOUD_TRACE_CONTEXT_REGEX = /\A(?<trace_id>[a-f0-9]{32})\/(?<span_id>[0-9]+)(?:;o=(?<options>[01]))?\Z/i
@@ -59,7 +59,7 @@ module OpenTelemetry
         end
       end
 
-      # Propagates context using GoogleCloudPlatform header format
+      # Propagates context using GoogleCloudTraceContext header format
       class TextMapPropagator
         CLOUD_TRACE_CONTEXT_KEY = 'x-cloud-trace-context'
         FIELDS = [CLOUD_TRACE_CONTEXT_KEY].freeze

@@ -4,16 +4,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative 'lib/opentelemetry/propagator/google_cloud_platform/version'
+require_relative 'lib/opentelemetry/propagator/google_cloud_trace_context/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'opentelemetry-propagator-google_cloud_platform'
-  spec.version       = OpenTelemetry::Propagator::GoogleCloudPlatform::VERSION
+  spec.name          = 'opentelemetry-propagator-google_cloud_trace_context'
+  spec.version       = OpenTelemetry::Propagator::GoogleCloudTraceContext::VERSION
   spec.authors       = ['OpenTelemetry Authors']
   spec.email         = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'GoogleCloudPlatform Context Propagation Extension for the OpenTelemetry framework'
-  spec.description = 'GoogleCloudPlatform Context Propagation Extension for the OpenTelemetry framework'
+  spec.summary     = 'GoogleCloudTraceContext Context Propagation Extension for the OpenTelemetry framework'
+  spec.description = 'GoogleCloudTraceContext Context Propagation Extension for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/propagator/google_cloud_platform'
+    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/propagator/google_cloud_trace_context'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
     spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end

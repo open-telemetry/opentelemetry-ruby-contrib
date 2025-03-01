@@ -1,6 +1,6 @@
-# opentelemetry-propagator-google_cloud_platform
+# opentelemetry-propagator-google_cloud_trace_context
 
-The `opentelemetry-propagator-google_cloud_platform` gem contains injectors and extractors for the
+The `opentelemetry-propagator-google_cloud_trace_context` gem contains injectors and extractors for the
 [Google Cloud Platform X-Cloud-Trace-Context format][gcp-spec].
 
 ## X-Cloud-Trace-Context header
@@ -34,26 +34,26 @@ This gem can be used with any OpenTelemetry SDK implementation. This can be the 
 Install the gem using:
 
 ```console
-gem install opentelemetry-propagator-google_cloud_platform
+gem install opentelemetry-propagator-google_cloud_trace_context
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-propagator-google_cloud_platform` in your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-propagator-google_cloud_trace_context` in your `Gemfile`.
 
 Configure your application to use this propagator by setting the following [environment variable][envars]:
 
 ```console
-OTEL_PROPAGATORS=google_cloud_platform
+OTEL_PROPAGATORS=google_cloud_trace_context
 ```
 
 ## How can I get involved?
 
-The `opentelemetry-propagator-google_cloud_platform` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
+The `opentelemetry-propagator-google_cloud_trace_context` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
-The `opentelemetry-propagator-google_cloud_platform` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
+The `opentelemetry-propagator-google_cloud_trace_context` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
 [opentelemetry-home]: https://opentelemetry.io
 [bundler-home]: https://bundler.io
