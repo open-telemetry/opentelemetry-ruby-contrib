@@ -18,7 +18,7 @@ module OpenTelemetry
       # Propagates context in carriers in the xray single header format
       class TextMapPropagator
         XRAY_CONTEXT_KEY = 'X-Amzn-Trace-Id'
-        XRAY_CONTEXT_REGEX = /\ARoot=(?<trace_id>([a-z0-9\-]{35}))(?:;Parent=(?<span_id>([a-z0-9]{16})))?(?:;Sampled=(?<sampling_state>[01d](?![0-9a-f])))?(?:;(?<trace_state>.*))?\Z/ # rubocop:disable Lint/MixedRegexpCaptureTypes
+        XRAY_CONTEXT_REGEX = /\A(?:(?:Root=(?<trace_id>[a-z0-9\-]{35})|Parent=(?<span_id>[a-z0-9]{16})|Sampled=(?<sampling_state>[01d](?![0-9a-f]))|Lineage=(?<lineage>[^;]+))(?:;|$)){1,4}\Z/ # rubocop:disable Lint/MixedRegexpCaptureTypes
         SAMPLED_VALUES = %w[1 d].freeze
         FIELDS = [XRAY_CONTEXT_KEY].freeze
 
@@ -47,12 +47,14 @@ module OpenTelemetry
             trace_id: to_trace_id(match['trace_id']),
             span_id: to_span_id(match['span_id']),
             trace_flags: to_trace_flags(match['sampling_state']),
-            tracestate: to_trace_state(match['trace_state']),
             remote: true
           )
 
           span = OpenTelemetry::Trace.non_recording_span(span_context)
           context = XRay.context_with_debug(context) if match['sampling_state'] == 'd'
+          if match['lineage'] && is_valid_lineage?(match['lineage'])
+            context = OpenTelemetry::Baggage.set_value('Lineage', match['lineage'])
+          end
           Trace.context_with_span(span, parent_context: context)
         rescue OpenTelemetry::Error
           context
@@ -82,6 +84,12 @@ module OpenTelemetry
           parent_id = span_context.hex_span_id
 
           xray_value = "Root=#{xray_trace_id};Parent=#{parent_id};Sampled=#{sampling_state}"
+
+          # Add lineage to xray_value if present in baggage
+          baggage = OpenTelemetry::Baggage.values(context: context)
+          if baggage.key?('Lineage')
+            xray_value += ";Lineage=#{baggage['Lineage']}"
+          end
 
           setter.set(carrier, XRAY_CONTEXT_KEY, xray_value)
           nil
@@ -116,10 +124,19 @@ module OpenTelemetry
           end
         end
 
-        def to_trace_state(trace_state)
-          return nil unless trace_state
+        def is_valid_lineage?(lineage)
+          lineageSubstrings = lineage.split(':')
+          return false unless lineageSubstrings.length == 3
 
-          Trace::Tracestate.from_string(trace_state.tr(';', ','))
+          lineageCounter1 = lineageSubstrings[0].to_i
+          hashedString = lineageSubstrings[1]
+          lineageCounter2 = lineageSubstrings[2].to_i
+
+          hashedString.match?(/\A[a-zA-Z0-9]{8}\z/) &&
+            lineageCounter1 >= 0 &&
+            lineageCounter1 <= 32767 &&
+            lineageCounter2 >= 0 &&
+            lineageCounter2 <= 255
         end
       end
     end
