@@ -13,7 +13,7 @@ module OpenTelemetry
         # Delayed Job plugin that instruments invoke_job and other hooks
         class TracerPlugin < Delayed::Plugin
           class << self
-            def instrument_enqueue(job, &block)
+            def instrument_enqueue(job, &)
               return yield(job) unless enabled?
 
               attributes = build_attributes(job)
@@ -27,7 +27,7 @@ module OpenTelemetry
               end
             end
 
-            def instrument_invoke(job, &block)
+            def instrument_invoke(job, &)
               return yield(job) unless enabled?
 
               attributes = build_attributes(job)
