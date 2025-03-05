@@ -17,7 +17,7 @@ jobs:
     name: Process Release
     runs-on: ubuntu-latest
     steps:
-      - uses: googleapis/release-please-action@v4.1.4
+      - uses: googleapis/release-please-action@v4.1.5
         id: prepare
         # with:
         #   token: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
