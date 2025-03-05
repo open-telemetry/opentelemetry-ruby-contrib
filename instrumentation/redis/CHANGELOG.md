@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-redis
 
+## [0.26.1](https://github.com/open-telemetry/opentelemetry-ruby-contrib/compare/opentelemetry-instrumentation-redis/v0.26.0...opentelemetry-instrumentation-redis/v0.26.1) (2025-02-12)
+
+
+### Bug Fixes
+
+* do not expose auth params with Redis 5 ([#1370](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1370)) ([5c0b75b](https://github.com/open-telemetry/opentelemetry-ruby-contrib/commit/5c0b75bc22f17e6f36d763fa39a43655e2b6fd4e))
+
 ### v0.26.1 / 2025-02-04
 
 * FIXED: Do not expose auth params with Redis 5
