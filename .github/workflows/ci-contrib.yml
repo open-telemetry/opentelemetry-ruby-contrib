@@ -21,6 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         gem:
+          - sql
           - mysql
           - sql-obfuscation
         os:
@@ -29,6 +30,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-helpers-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -44,21 +50,16 @@ jobs:
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "3.0"
           yard: true
           rubocop: true
+          coverage: true
           build: true
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "jruby-9.4.9.0"
+          ruby: "jruby-9.4.12.0"
 
   propagators:
     strategy:
@@ -74,6 +75,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-propagator-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -89,12 +95,6 @@ jobs:
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "3.0"
           yard: true
           rubocop: true
           build: true
@@ -103,7 +103,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "jruby-9.4.9.0"
+          ruby: "jruby-9.4.12.0"
 
   resource-detectors:
     strategy:
@@ -119,6 +119,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -134,21 +139,16 @@ jobs:
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-${{ matrix.gem }}"
           yard: true
           rubocop: true
+          coverage: true
           build: true
-          ruby: "3.0"
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "jruby-9.4.9.0"
+          ruby: "jruby-9.4.12.0"
 
   processors:
     strategy:
@@ -162,6 +162,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-processor-${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -177,18 +182,13 @@ jobs:
         with:
           gem:  "opentelemetry-processor-${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "3.0"
           yard: true
           rubocop: true
+          coverage: true
           build: true
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "jruby-9.4.9.0"
+          ruby: "jruby-9.4.12.0"

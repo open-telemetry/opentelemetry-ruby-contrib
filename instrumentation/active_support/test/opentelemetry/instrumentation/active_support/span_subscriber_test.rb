@@ -15,7 +15,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
   let(:notification_name) { 'bar.foo' }
   let(:subscriber) do
     OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-      name: notification_name,
+      pattern: notification_name,
       tracer: tracer,
       kind: span_kind
     )
@@ -35,14 +35,9 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
     instrumentation.install({})
   end
 
-  it 'memoizes the span name' do
-    span, = subscriber.start('oh.hai', 'abc', {})
-    _(span.name).must_equal(notification_name)
-  end
-
   it 'uses the provided tracer' do
     subscriber = OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-      name: 'oh.hai',
+      pattern: 'oh.hai',
       tracer: OpenTelemetry.tracer_provider.tracer('foo')
     )
     span, = subscriber.start('oh.hai', 'abc', {})
@@ -116,7 +111,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
   describe 'instrumentation option - disallowed_notification_payload_keys' do
     let(:subscriber) do
       OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-        name: notification_name,
+        pattern: notification_name,
         tracer: tracer,
         notification_payload_transform: nil,
         disallowed_notification_payload_keys: [:foo]
@@ -154,7 +149,7 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
     let(:transformer_proc) { ->(v) { v.transform_values { 'optimus prime' } } }
     let(:subscriber) do
       OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-        name: notification_name,
+        pattern: notification_name,
         tracer: tracer,
         notification_payload_transform: transformer_proc,
         disallowed_notification_payload_keys: [:foo]
@@ -205,123 +200,238 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
   end
 
   describe 'instrument' do
-    before do
-      ActiveSupport::Notifications.unsubscribe(notification_name)
-    end
-
-    it 'does not trace an event by default' do
-      ActiveSupport::Notifications.subscribe(notification_name) do
-        # pass
-      end
-      ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
-      _(last_span).must_be_nil
-    end
-
-    it 'traces an event when a span subscriber is used' do
-      OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name)
-      ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
-
-      _(last_span).wont_be_nil
-      _(last_span.name).must_equal(notification_name)
-      _(last_span.attributes['extra']).must_equal('context')
-      _(last_span.kind).must_equal(:internal)
-    end
-
-    describe 'when using a custom span name formatter' do
-      describe 'when using the LEGACY_NAME_FORMATTER' do
-        let(:span_name_formatter) { OpenTelemetry::Instrumentation::ActiveSupport::LEGACY_NAME_FORMATTER }
-        it 'uses the user supplied formatter' do
-          OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: span_name_formatter)
-          ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
-
-          _(last_span).wont_be_nil
-          _(last_span.name).must_equal('foo bar')
-          _(last_span.attributes['extra']).must_equal('context')
-        end
-      end
-
-      describe 'when using a custom formatter' do
-        let(:span_name_formatter) { ->(name) { "custom.#{name}" } }
-
-        it 'uses the user supplied formatter' do
-          OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: span_name_formatter)
-          ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
-
-          _(last_span).wont_be_nil
-          _(last_span.name).must_equal('custom.bar.foo')
-          _(last_span.attributes['extra']).must_equal('context')
-        end
-      end
-
-      describe 'when using a invalid formatter' do
-        it 'defaults to the notification name' do
-          OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: ->(_) {})
-          ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
-
-          _(last_span).wont_be_nil
-          _(last_span.name).must_equal(notification_name)
-          _(last_span.attributes['extra']).must_equal('context')
-        end
-      end
-
-      describe 'when using a unstable formatter' do
-        it 'defaults to the notification name' do
-          allow(OpenTelemetry).to receive(:handle_error).with(exception: RuntimeError, message: String)
-
-          OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: ->(_) { raise 'boom' })
-          ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
-
-          _(last_span).wont_be_nil
-          _(last_span.name).must_equal(notification_name)
-          _(last_span.attributes['extra']).must_equal('context')
-        end
+    after do
+      ActiveSupport::Notifications.notifier.listeners_for(notification_name).each do |listener|
+        ActiveSupport::Notifications.unsubscribe(listener)
       end
     end
 
-    it 'finishes spans even when block subscribers blow up' do
-      ActiveSupport::Notifications.subscribe(notification_name) { raise 'boom' }
-      OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name)
-
-      expect do
+    describe 'when subscribing to events directly' do
+      it 'does not trace an event by default' do
+        ActiveSupport::Notifications.subscribe(notification_name) do
+          # pass
+        end
         ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
-      end.must_raise RuntimeError
+        _(last_span).must_be_nil
+      end
 
-      _(last_span).wont_be_nil
-      _(last_span.name).must_equal(notification_name)
-      _(last_span.attributes['extra']).must_equal('context')
-    end
-
-    it 'finishes spans even when complex subscribers blow up' do
-      ActiveSupport::Notifications.subscribe(notification_name, CrashingEndSubscriber.new)
-      OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name)
-
-      expect do
+      it 'traces an event when a span subscriber is used' do
+        OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name)
         ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
-      end.must_raise RuntimeError
 
-      _(last_span).wont_be_nil
-      _(last_span.name).must_equal(notification_name)
-      _(last_span.attributes['extra']).must_equal('context')
+        _(last_span).wont_be_nil
+        _(last_span.name).must_equal(notification_name)
+        _(last_span.attributes['extra']).must_equal('context')
+        _(last_span.kind).must_equal(:internal)
+      end
+
+      describe 'when using a custom span name formatter' do
+        describe 'when using the LEGACY_NAME_FORMATTER' do
+          let(:span_name_formatter) { OpenTelemetry::Instrumentation::ActiveSupport::LEGACY_NAME_FORMATTER }
+          it 'uses the user supplied formatter' do
+            OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: span_name_formatter)
+            ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+
+            _(last_span).wont_be_nil
+            _(last_span.name).must_equal('foo bar')
+            _(last_span.attributes['extra']).must_equal('context')
+          end
+        end
+
+        describe 'when using a custom formatter' do
+          let(:span_name_formatter) { ->(name) { "custom.#{name}" } }
+
+          it 'uses the user supplied formatter' do
+            OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: span_name_formatter)
+            ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+
+            _(last_span).wont_be_nil
+            _(last_span.name).must_equal('custom.bar.foo')
+            _(last_span.attributes['extra']).must_equal('context')
+          end
+        end
+
+        describe 'when using a invalid formatter' do
+          it 'defaults to the notification name' do
+            OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: ->(_) {})
+            ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+
+            _(last_span).wont_be_nil
+            _(last_span.name).must_equal(notification_name)
+            _(last_span.attributes['extra']).must_equal('context')
+          end
+        end
+
+        describe 'when using a unstable formatter' do
+          it 'defaults to the notification name' do
+            allow(OpenTelemetry).to receive(:handle_error).with(exception: RuntimeError, message: String)
+
+            OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: ->(_) { raise 'boom' })
+            ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+
+            _(last_span).wont_be_nil
+            _(last_span.name).must_equal(notification_name)
+            _(last_span.attributes['extra']).must_equal('context')
+          end
+        end
+      end
+
+      it 'finishes spans even when block subscribers blow up' do
+        ActiveSupport::Notifications.subscribe(notification_name) { raise 'boom' }
+        OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name)
+
+        expect do
+          ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+        end.must_raise RuntimeError
+
+        _(last_span).wont_be_nil
+        _(last_span.name).must_equal(notification_name)
+        _(last_span.attributes['extra']).must_equal('context')
+      end
+
+      it 'finishes spans even when complex subscribers blow up' do
+        ActiveSupport::Notifications.subscribe(notification_name, CrashingEndSubscriber.new)
+        OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name)
+
+        expect do
+          ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+        end.must_raise RuntimeError
+
+        _(last_span).wont_be_nil
+        _(last_span.name).must_equal(notification_name)
+        _(last_span.attributes['extra']).must_equal('context')
+      end
+
+      it 'supports unsubscribe' do
+        obj = OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name)
+        ActiveSupport::Notifications.unsubscribe(obj)
+
+        ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+
+        _(obj.class).must_equal(ActiveSupport::Notifications::Fanout::Subscribers::Evented)
+        _(last_span).must_be_nil
+      end
+
+      it 'supports setting the span kind' do
+        OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, 'bar.foo', nil, [], kind: :client)
+        ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
+
+        _(last_span).wont_be_nil
+        _(last_span.name).must_equal('bar.foo')
+        _(last_span.attributes['extra']).must_equal('context')
+        _(last_span.kind).must_equal(:client)
+      end
     end
 
-    it 'supports unsubscribe' do
-      obj = OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name)
-      ActiveSupport::Notifications.unsubscribe(obj)
+    describe 'when subscribing to events matching a regular expression' do
+      let(:notification_pattern) { /.*\.foo/ }
 
-      ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+      it 'does not trace an event by default' do
+        ActiveSupport::Notifications.subscribe(notification_pattern) do
+          # pass
+        end
+        ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+        _(last_span).must_be_nil
+      end
 
-      _(obj.class).must_equal(ActiveSupport::Notifications::Fanout::Subscribers::Evented)
-      _(last_span).must_be_nil
-    end
+      it 'traces an event when a span subscriber is used' do
+        OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern)
+        ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
 
-    it 'supports setting the span kind' do
-      OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, 'bar.foo', nil, [], kind: :client)
-      ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
+        _(last_span).wont_be_nil
+        _(last_span.name).must_equal(notification_name)
+        _(last_span.attributes['extra']).must_equal('context')
+        _(last_span.kind).must_equal(:internal)
+      end
 
-      _(last_span).wont_be_nil
-      _(last_span.name).must_equal('bar.foo')
-      _(last_span.attributes['extra']).must_equal('context')
-      _(last_span.kind).must_equal(:client)
+      describe 'when using a custom span name formatter' do
+        describe 'when using the LEGACY_NAME_FORMATTER' do
+          let(:span_name_formatter) { OpenTelemetry::Instrumentation::ActiveSupport::LEGACY_NAME_FORMATTER }
+          it 'uses the user supplied formatter' do
+            OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern, nil, nil, span_name_formatter: span_name_formatter)
+            ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+
+            _(last_span).wont_be_nil
+            _(last_span.name).must_equal('foo bar')
+            _(last_span.attributes['extra']).must_equal('context')
+          end
+        end
+
+        describe 'when using a custom formatter' do
+          let(:span_name_formatter) { ->(name) { "custom.#{name}" } }
+
+          it 'uses the user supplied formatter' do
+            OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern, nil, nil, span_name_formatter: span_name_formatter)
+            ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+
+            _(last_span).wont_be_nil
+            _(last_span.name).must_equal('custom.bar.foo')
+            _(last_span.attributes['extra']).must_equal('context')
+          end
+        end
+
+        describe 'when using a invalid formatter' do
+          it 'defaults to the notification name' do
+            OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern, nil, nil, span_name_formatter: ->(_) {})
+            ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+
+            _(last_span).wont_be_nil
+            _(last_span.name).must_equal(notification_name)
+            _(last_span.attributes['extra']).must_equal('context')
+          end
+        end
+
+        describe 'when using a unstable formatter' do
+          it 'defaults to the notification name' do
+            allow(OpenTelemetry).to receive(:handle_error).with(exception: RuntimeError, message: String)
+
+            OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern, nil, nil, span_name_formatter: ->(_) { raise 'boom' })
+            ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+
+            _(last_span).wont_be_nil
+            _(last_span.name).must_equal(notification_name)
+            _(last_span.attributes['extra']).must_equal('context')
+          end
+        end
+      end
+
+      it 'finishes spans even when block subscribers blow up' do
+        # This scenario cannot be exercised reliably on Active Support < 7.0 since the #finish method
+        # will never be called by the notifier if another subscriber raises an error.
+        #
+        # See this PR for additional details: https://github.com/rails/rails/pull/43282
+        skip 'Notifications will be broken in this scenario on Active Support < 7.0' if ActiveSupport.version < Gem::Version.new('7.0')
+
+        ActiveSupport::Notifications.subscribe(notification_pattern) { raise 'boom' }
+        OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern)
+
+        expect do
+          ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+        end.must_raise RuntimeError
+
+        _(last_span).wont_be_nil
+        _(last_span.name).must_equal(notification_name)
+        _(last_span.attributes['extra']).must_equal('context')
+      end
+
+      it 'finishes spans even when complex subscribers blow up' do
+        # This scenario cannot be exercised reliably on Active Support < 7.0 since the #finish method
+        # will never be called by the notifier if another subscriber raises an error.
+        #
+        # See this PR for additional details: https://github.com/rails/rails/pull/43282
+        skip 'Notifications will be broken in this scenario on Active Support < 7.0' if ActiveSupport.version < Gem::Version.new('7.0')
+
+        ActiveSupport::Notifications.subscribe(notification_pattern, CrashingEndSubscriber.new)
+        OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern)
+
+        expect do
+          ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
+        end.must_raise RuntimeError
+
+        _(last_span).wont_be_nil
+        _(last_span.name).must_equal(notification_name)
+        _(last_span.attributes['extra']).must_equal('context')
+      end
     end
   end
 end

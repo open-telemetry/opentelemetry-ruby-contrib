@@ -23,23 +23,10 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.7.6'
+  spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
 
   spec.add_dependency 'opentelemetry-api', '>=  1.0.0'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.22.1'
-
-  spec.add_development_dependency 'appraisal', '~> 2.5'
-  spec.add_development_dependency 'bundler', '>= 1.17'
-  spec.add_development_dependency 'grpc_mock'
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0'
-  spec.add_development_dependency 'opentelemetry-test-helpers'
-  spec.add_development_dependency 'rake', '~> 12.3.3'
-  spec.add_development_dependency 'rubocop', '~> 1.68.0'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
-  spec.add_development_dependency 'simplecov', '~> 0.17.1'
-  spec.add_development_dependency 'webmock', '~> 3.24.0'
-  spec.add_development_dependency 'yard', '~> 0.9'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-gruf/v#{OpenTelemetry::Instrumentation::Gruf::VERSION}/file.CHANGELOG.html"

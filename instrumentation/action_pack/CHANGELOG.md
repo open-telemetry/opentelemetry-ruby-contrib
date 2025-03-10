@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.12.0 / 2025-02-04
+
+* ADDED: Strip Rails `(.:format)` suffix from `http.route`
+
+### v0.11.0 / 2025-01-16
+
+* BREAKING CHANGE: Drop Support for EoL Rails 6.1
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Drop Support for EoL Rails 6.1
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.10.0 / 2024-11-19
 
 * ADDED: Use Semconv Naming For ActionPack

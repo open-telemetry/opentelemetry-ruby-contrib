@@ -1,28 +1,25 @@
-# OpenTelemetry::Instrumentation::Grpc
+# OpenTelemetry gRPC Instrumentation
 > [!CAUTION]
 > This gem is not ready for release by the open-telemetry org yet, but other versions are available on RubyGems
 
 [![Gem Version](https://badge.fury.io/rb/opentelemetry-instrumentation-grpc.svg)](https://badge.fury.io/rb/opentelemetry-instrumentation-grpc)
 [![GitHub Actions CI Status](https://github.com/hibachrach/opentelemetry-instrumentation-grpc/actions/workflows/main.yml/badge.svg)](https://github.com/hibachrach/opentelemetry-instrumentation-grpc/actions?query=branch%3Amain)
 
-OpenTelemetry instrumentation for users of the `grpc` gem
+OpenTelemetry instrumentation for users of the [gRPC](https://github.com/grpc/grpc/tree/master/src/ruby) gem.
 
 > [!WARNING]
 > Right now, the gem only instruments outbound requests to gRPC services
 
-## Installation
+## How do I get started?
 
-Install the gem and add to the application's Gemfile by executing:
+Install the gem using:
 
-```sh
-  $ bundle add opentelemetry-instrumentation-grpc
+```console
+gem install opentelemetry-instrumentation-grpc
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-grpc` to your `Gemfile`.
 
-```sh
-  $ gem install opentelemetry-instrumentation-grpc
-```
 
 ## Usage
 
@@ -46,27 +43,33 @@ instrumentation.
   end
 ```
 
-You *also* need to make sure your stubs are using the interceptor, e.g.
+## Examples
 
-```ruby
-  otel = OpenTelemetry::Instrumentation::Grpc.client_interceptor
-  SomeService::Stub.new(host, credentials, *args, **kwargs, interceptors: [otel])
-```
+Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/grpc/example/trace_demonstration.rb)
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Integration tests rely on a real gRPC server that is started by relevant tests. The proto definition is located in `test/support/proto/ping.proto`. Making changes to the proto definition requires re-creating gRPC-generated code. To do this, run the following command:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```sh
+bundle exec grpc_tools_ruby_protoc --ruby_out=. --grpc_out=. test/support/proto/ping.proto
+```
 
-## Contributing
+## How can I get involved?
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/open-telemetry/opentelemetry-ruby-contrib. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/CODE_OF_CONDUCT.md).
+The `opentelemetry-instrumentation-grpc` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
+
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The `opentelemetry-instrumentation-grpc` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
-## Code of Conduct
-
-Everyone interacting in the OpenTelemetry::Instrumentation::Grpc project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/CODE_OF_CONDUCT.md).
+[grpc-home]: https://github.com/grpc/grpc
+[bundler-home]: https://bundler.io
+[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
+[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
+[community-meetings]: https://github.com/open-telemetry/community#community-meetings
+[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
+[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions

@@ -16,7 +16,7 @@ module OpenTelemetry
 
           private
 
-          def span_wrapper(context, &block)
+          def span_wrapper(context, &)
             service_id = HandlerHelper.service_id(context)
             client_method = HandlerHelper.client_method(service_id, context)
             context.tracer.in_span(

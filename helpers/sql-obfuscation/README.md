@@ -18,7 +18,7 @@ Add the gem to your instrumentation's Gemfile:
 ```ruby
 # Gemfile
 
-group :test, :development do
+group :test do
   gem 'opentelemetry-helpers-sql-obfuscation', path: '../../helpers/sql-obfuscation'
 end
 ```

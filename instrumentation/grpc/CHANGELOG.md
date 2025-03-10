@@ -1,18 +1,24 @@
-## [Unreleased]
+# Release History: opentelemetry-instrumentation-grpc
 
-## [0.1.3] - 2024-09-11
+### v0.2.0 / 2025-01-16
 
-- Fix error in handling of non-gRPC errors
-- Fix error in method signature for OpenTelemetry::Instrumentation::Grpc.client_interceptor [#1](https://github.com/hibachrach/opentelemetry-instrumentation-grpc/pull/1)
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
 
-## [0.1.2] - 2024-06-26
+* ADDED: Set minimum supported version to Ruby 3.1
 
-- Align span naming with spec
+### v0.1.3 / 2024-09-11
 
-## [0.1.1] - 2024-06-26
+* FIXED: Fix error in handling of non-gRPC errors
+* FIXED: Fix error in method signature for OpenTelemetry::Instrumentation::Grpc.client_interceptor [#1](https://github.com/hibachrach/opentelemetry-instrumentation-grpc/pull/1)
 
-- Fix `uninitialized constant Interceptors` error
+### v0.1.2 / 2024-06-26
 
-## [0.1.0] - 2024-06-18
+* FIXED: Align span naming with spec
 
-- Initial release
+### v0.1.1 / 2024-06-26
+
+* FIXED: Fix `uninitialized constant Interceptors` error
+
+### v0.1.0 / 2024-06-18
+
+* Initial release

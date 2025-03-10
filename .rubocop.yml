@@ -1,7 +1,7 @@
 require: rubocop-performance
 
 AllCops:
-  TargetRubyVersion: '3.0'
+  TargetRubyVersion: '3.1'
   NewCops: enable
   Exclude:
     - Rakefile
@@ -12,7 +12,7 @@ AllCops:
 Bundler/OrderedGems:
   Enabled: false
 Gemspec/DevelopmentDependencies:
-  Enabled: false
+  Enabled: true
 Gemspec/RequiredRubyVersion:
   Enabled: false
 Lint/ConstantDefinitionInBlock:
