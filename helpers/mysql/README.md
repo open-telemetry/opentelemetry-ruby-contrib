@@ -16,7 +16,7 @@ Add the gem to your instrumentation's Gemfile:
 ```ruby
 # Gemfile
 
-group :test, :development do
+group :test do
   gem 'opentelemetry-helpers-mysql', path: '../../helpers/mysql'
 end
 ```

@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.26.1 / 2025-02-04
+
+* FIXED: Do not expose auth params with Redis 5
+
+### v0.26.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
 ### v0.25.7 / 2024-07-23
 
 * DOCS: Add cspell to CI

@@ -38,6 +38,7 @@ ARG PACKAGES="\
     postgresql-dev \
     tzdata \
     util-linux \
+    imagemagick \
     "
 # Install packages
 RUN apk update && \

@@ -20,6 +20,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         stub.get('/success') { |_| [200, {}, 'OK'] }
         stub.get('/failure') { |_| [500, {}, 'OK'] }
         stub.get('/not_found') { |_| [404, {}, 'OK'] }
+        stub.get('/show-shared-attributes') { |_| [200, {}, OpenTelemetry::Common::HTTP::ClientContext.attributes.to_json] }
       end
     end
   end
@@ -31,6 +32,8 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
     OpenTelemetry.propagation = propagator
+    instrumentation.instance_variable_set(:@installed, false)
+    instrumentation.install
   end
 
   after do
@@ -38,10 +41,6 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
   end
 
   describe 'first span' do
-    before do
-      instrumentation.install
-    end
-
     describe 'given a client with a base url' do
       it 'has http 200 attributes' do
         response = client.get('/success')
@@ -99,6 +98,18 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         _(response.env.request_headers['Traceparent']).must_equal(
           "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
         )
+      end
+
+      it 'ammends attributes to client context' do
+        response = client.get('/show-shared-attributes')
+        shared_attributes = JSON.parse(response.body)
+        expected_attributes = {
+          'http.method' => 'GET', 'http.url' => 'http://example.com/show-shared-attributes',
+          'faraday.adapter.name' => 'Faraday::Adapter::Test',
+          'net.peer.name' => 'example.com'
+        }
+
+        _(shared_attributes).must_equal expected_attributes
       end
 
       it 'accepts peer service name from config' do

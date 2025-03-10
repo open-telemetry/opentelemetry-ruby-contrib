@@ -4,12 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'rdkafka-0.12.x' do
-  gem 'rdkafka', '~> 0.12.0'
-end
-
-appraise 'rdkafka-0.13.x' do
-  gem 'rdkafka', '~> 0.13.0'
+%w[0.12.0 0.13.0 0.14.0 0.15.0 0.16.0 0.17.0 0.18.0 0.19.0].each do |version|
+  appraise "rdkafka-#{version}" do
+    gem 'rdkafka', "~> #{version}"
+  end
 end
 
 appraise 'rdkafka-latest' do

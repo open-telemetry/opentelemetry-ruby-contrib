@@ -1,5 +1,30 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.36.0 / 2025-02-04
+
+* ADDED: Add active_storage instrumentation to `rails`
+* ADDED: Strip Rails `(.:format)` suffix from `http.route` (action_pack)
+
+### v0.35.1 / 2025-01-28
+
+* DOCS: Required version in Rails README from 0.24 to 0.34.
+
+### v0.35.0 / 2025-01-16
+
+* BREAKING CHANGE: Drop Support for EoL Rails 6.1
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Drop Support for EoL Rails 6.1
+* ADDED: Set minimum supported version to Ruby 3.1
+
+### v0.34.1 / 2025-01-14
+
+* FIXED: Add Concurrent Ruby dependency to Rails
+
+### v0.34.0 / 2024-12-19
+
+* ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
+
 ### v0.33.1 / 2024-11-26
 
 * (No significant changes)

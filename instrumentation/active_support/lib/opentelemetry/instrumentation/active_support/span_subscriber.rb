@@ -27,7 +27,7 @@ module OpenTelemetry
         span_name_formatter: nil
       )
         subscriber = OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
-          name: pattern,
+          pattern: pattern,
           tracer: tracer,
           notification_payload_transform: notification_payload_transform,
           disallowed_notification_payload_keys: disallowed_notification_payload_keys,
@@ -64,17 +64,18 @@ module OpenTelemetry
         ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
         # rubocop:disable Metrics/ParameterLists
-        def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: nil, kind: nil, span_name_formatter: nil)
-          @span_name = safe_span_name_for(span_name_formatter, name).dup.freeze
+        def initialize(pattern:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: nil, kind: nil, span_name_formatter: nil)
+          @pattern = pattern
           @tracer = tracer
           @notification_payload_transform = notification_payload_transform
           @disallowed_notification_payload_keys = Array(disallowed_notification_payload_keys)
           @kind = kind || :internal
+          @span_name_formatter = span_name_formatter
         end
         # rubocop:enable Metrics/ParameterLists
 
         def start(name, id, payload)
-          span = @tracer.start_span(@span_name, kind: @kind)
+          span = @tracer.start_span(safe_span_name_for(name), kind: @kind)
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
@@ -140,8 +141,8 @@ module OpenTelemetry
         # Helper method to try an shield the span name formatter from errors
         #
         # It wraps the user supplied formatter in a rescue block and returns the original name if a StandardError is raised by the formatter
-        def safe_span_name_for(span_name_formatter, name)
-          span_name_formatter&.call(name) || name
+        def safe_span_name_for(name)
+          @span_name_formatter&.call(name) || name
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'Error calling span_name_formatter. Using default span name.')
           name

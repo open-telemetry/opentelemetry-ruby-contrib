@@ -58,6 +58,14 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     _(span.attributes['code.function']).must_equal 'ok'
   end
 
+  it 'strips (:format) from http.route' do
+    skip "Rails #{Rails.gem_version} does not define ActionDispatch::Request#route_uri_pattern" if Rails.gem_version < Gem::Version.new('7.1')
+
+    get 'items/1234'
+
+    _(span.attributes['http.route']).must_equal '/items/:id'
+  end
+
   it 'does not memoize data across requests' do
     get '/ok'
     get '/items/new'

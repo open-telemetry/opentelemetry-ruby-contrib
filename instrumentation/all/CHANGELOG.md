@@ -1,5 +1,38 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.74.0 / 2025-02-11
+
+* ADDED: Rdkafka support to v0.19 including
+
+### v0.73.1 / 2025-02-05
+
+* FIXED: Add require active_storage instrumentation to `all`
+
+### v0.73.0 / 2025-02-04
+
+* CHANGED: opentelemetry-instrumentation-redis v0.26.1
+* CHANGED: opentelemetry-instrumentation-rails v0.36.0
+* CHANGED: opentelemetry-instrumentation-aws_lambda v0.3.0
+* CHANGED: opentelemetry-instrumentation-action_pack v0.12.0
+
+### v0.72.0 / 2025-01-16
+
+* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+
+* ADDED: Set minimum supported version to Ruby 3.1
+
+### v0.71.1 / 2025-01-14
+
+* No Significant Changes
+
+### v0.71.0 / 2025-01-07
+
+* ADDED: Faraday Minimum v1.0
+
+### v0.70.0 / 2024-12-19
+
+* ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
+
 ### v0.69.1 / 2024-11-26
 
 * (No significant changes)
