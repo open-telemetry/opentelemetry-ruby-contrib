@@ -6,7 +6,15 @@
 
 # Max compatible version of 2.0.x
 
-(0..4).each do |minor_version|
+# TODO: graphql version 2.1.14 is corrupted
+# See: https://github.com/rmosolgo/graphql-ruby/issues/5272
+# Lock the tests to 2.1.13 until it is resolved
+appraise "graphql-2.1.x" do
+  gem 'graphql', "2.1.13"
+end
+
+# Remove 2.1 from the loop until 2.1.15 comes out
+[0, 2, 3, 4].each do |minor_version|
   appraise "graphql-2.#{minor_version}.x" do
     gem 'graphql', "~> 2.#{minor_version}.0"
   end
