@@ -31,7 +31,7 @@ module OpenTelemetry
 
               tracer.in_span(span_name, attributes: attributes, kind: :producer) do |span|
                 OpenTelemetry.propagation.inject(job)
-                span.add_event('created_at', timestamp: job['created_at'])
+                span.add_event('created_at', timestamp: time_from_timestamp(job['created_at']))
                 yield
               end
             end
@@ -44,6 +44,15 @@ module OpenTelemetry
 
             def tracer
               Sidekiq::Instrumentation.instance.tracer
+            end
+
+            def time_from_timestamp(timestamp)
+              if timestamp.is_a?(Float)
+                # old format, timestamps were stored as fractional seconds since the epoch
+                timestamp
+              else
+                timestamp / 1000
+              end
             end
           end
         end
