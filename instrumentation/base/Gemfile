@@ -14,7 +14,7 @@ group :test do
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '~> 13.0'
   gem 'rubocop', '~> 1.72.0'
-  gem 'rubocop-performance', '~> 1.23.0'
+  gem 'rubocop-performance', '~> 1.24.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'yard', '~> 0.9'
   if RUBY_VERSION >= '3.4'
