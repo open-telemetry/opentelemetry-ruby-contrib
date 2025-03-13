@@ -1,6 +1,4 @@
 # OpenTelemetry gRPC Instrumentation
-> [!CAUTION]
-> This gem is not ready for release by the open-telemetry org yet, but other versions are available on RubyGems
 
 [![Gem Version](https://badge.fury.io/rb/opentelemetry-instrumentation-grpc.svg)](https://badge.fury.io/rb/opentelemetry-instrumentation-grpc)
 [![GitHub Actions CI Status](https://github.com/hibachrach/opentelemetry-instrumentation-grpc/actions/workflows/main.yml/badge.svg)](https://github.com/hibachrach/opentelemetry-instrumentation-grpc/actions?query=branch%3Amain)
