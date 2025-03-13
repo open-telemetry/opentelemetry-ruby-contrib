@@ -16,6 +16,9 @@ if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.1.0')
     appraise "activerecord-#{version}" do
       gem 'sqlite3', '~> 1.4'
       gem 'activerecord', "~> #{version}"
+
+      # ActiveRecord async query instrumentation should work with or without this present
+      remove_gem 'opentelemetry-instrumentation-concurrent_ruby'
     end
   end
 

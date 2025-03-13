@@ -30,6 +30,8 @@ end
 ActiveRecord::Base.logger = logger
 ActiveRecord::Migration.verbose = false
 
+ActiveRecord.async_query_executor = :global_thread_pool
+
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',
   database: 'db/development.sqlite3'
@@ -85,3 +87,19 @@ rescue ActiveRecord::StatementInvalid => e
 end
 
 Minitest.after_run { CreateUserTable.migrate(:down) }
+
+# Used in async tests to determine what thread spawned which span
+module SpanThreadIdTracking
+  TRACK_THREAD_ID = OpenTelemetry::Context.create_key(:track_thread_id)
+
+  def internal_start_span(name, kind, attributes, links, start_timestamp, parent_context, instrumentation_scope) # rubocop: disable Metrics/ParameterLists
+    if parent_context.value(TRACK_THREAD_ID)
+      attributes ||= {}
+      attributes['__test_only_thread_id'] = Thread.current.object_id
+    end
+
+    super
+  end
+end
+
+OpenTelemetry::SDK::Trace::TracerProvider.prepend(SpanThreadIdTracking)
