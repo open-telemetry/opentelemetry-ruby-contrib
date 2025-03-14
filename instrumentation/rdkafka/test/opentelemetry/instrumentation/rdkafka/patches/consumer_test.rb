@@ -167,7 +167,7 @@ unless ENV['OMIT_SERVICES']
     end
 
     # each_batch method is deleted in rdkafka 0.20.0
-    if Gem::Version.new(::Rdkafka::VERSION) < Gem::Version.new('0.20.0')
+    if Gem::Version.new(Rdkafka::VERSION) < Gem::Version.new('0.20.0')
       describe '#each_batch' do
         it 'traces each_batch call' do
           skip "#{Rdkafka::VERSION} is not supported" unless instrumentation.compatible?
