@@ -51,7 +51,7 @@ module OpenTelemetry
                 # old format, timestamps were stored as fractional seconds since the epoch
                 timestamp
               else
-                timestamp / 1000
+                timestamp / 1000r
               end
             end
           end
