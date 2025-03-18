@@ -45,8 +45,14 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
       _(job_span.attributes['messaging.operation']).must_equal 'process'
       _(job_span.attributes['peer.service']).must_be_nil
       _(job_span.events.size).must_equal(2)
-      _(job_span.events[0].name).must_equal('created_at')
-      _(job_span.events[1].name).must_equal('enqueued_at')
+
+      created_event = job_span.events[0]
+      _(created_event.name).must_equal('created_at')
+      _(created_event.timestamp.digits.count).must_equal(19)
+
+      enqueued_event = job_span.events[1]
+      _(enqueued_event.name).must_equal('enqueued_at')
+      _(enqueued_event.timestamp.digits.count).must_equal(19)
     end
 
     it 'traces when enqueued with Active Job' do
