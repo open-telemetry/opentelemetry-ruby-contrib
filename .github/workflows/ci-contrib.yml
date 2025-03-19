@@ -201,7 +201,7 @@ jobs:
           - xray
         os:
           - ubuntu-latest
-    name: "processors-${{ matrix.gem }} / ${{ matrix.os }}"
+    name: "samplers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -230,7 +230,7 @@ jobs:
           coverage: true
           build: true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-sampler-${{ matrix.gem }}"
