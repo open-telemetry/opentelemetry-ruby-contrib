@@ -11,7 +11,6 @@ module OpenTelemetry
       module Utils
         module_function
 
-        # NOTE: These constants would typically come from a Ruby gem equivalent to @opentelemetry/semantic-conventions
         CLOUD_PLATFORM_MAPPING = {
           'aws_lambda' => 'AWS::Lambda::Function',
           'aws_elastic_beanstalk' => 'AWS::ElasticBeanstalk::Environment',
@@ -38,7 +37,9 @@ module OpenTelemetry
           match = text.downcase.match?(regexp)
 
           unless match
-            # Assuming a logging mechanism exists
+            OpenTelemetry.logger.debug(
+              "WildcardMatch: no match found for #{text} against pattern #{pattern}"
+            )
           end
 
           match

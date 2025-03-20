@@ -18,7 +18,6 @@ module OpenTelemetry
       class SamplingRuleApplier
         attr_reader :sampling_rule
 
-        # Constants would typically be defined in a separate configuration or constants file
         MAX_DATE_TIME_SECONDS = Time.at(8_640_000_000_000)
 
         def initialize(sampling_rule, statistics = OpenTelemetry::Sampler::XRay::Statistics.new, target = nil)
