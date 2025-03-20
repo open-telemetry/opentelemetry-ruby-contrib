@@ -22,7 +22,7 @@ class TestPreviewer < ActiveStorage::Previewer
 
   private
 
-  def draw_sample_image(file, &block)
-    draw 'echo', '"test previewer called"', &block
+  def draw_sample_image(file, &)
+    draw('echo', '"test previewer called"', &)
   end
 end

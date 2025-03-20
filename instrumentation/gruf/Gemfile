@@ -13,6 +13,18 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
+  gem 'appraisal', '~> 2.5'
+  gem 'bundler', '>= 1.17'
+  gem 'minitest', '~> 5.0'
+  gem 'opentelemetry-sdk', '~> 1.0'
+  gem 'rake', '~> 12.3.3'
+  gem 'rubocop', '~> 1.73.2'
+  gem 'rubocop-performance', '~> 1.24.0'
+  gem 'simplecov', '~> 0.22.0'
+  gem 'webmock', '~> 3.24'
+  gem 'yard', '~> 0.9'
+  gem 'grpc_mock'
+  gem 'opentelemetry-test-helpers'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   if RUBY_VERSION >= '3.4'
     gem 'base64'

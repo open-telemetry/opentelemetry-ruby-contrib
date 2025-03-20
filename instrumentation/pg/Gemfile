@@ -9,6 +9,15 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
+  gem 'appraisal', '~> 2.5'
+  gem 'bundler', '~> 2.4'
+  gem 'minitest', '~> 5.0'
+  gem 'opentelemetry-sdk', '~> 1.1'
+  gem 'opentelemetry-test-helpers', '~> 0.3'
+  gem 'rubocop', '~> 1.73.2'
+  gem 'rubocop-performance', '~> 1.24.0'
+  gem 'simplecov', '~> 0.22.0'
+  gem 'yard', '~> 0.9'
   gem 'activerecord', '>= 7.0.0'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
