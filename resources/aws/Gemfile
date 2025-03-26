@@ -9,12 +9,17 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
+  gem 'bundler', '~> 2.4'
   gem 'minitest', '~> 5.0'
-  gem 'simplecov', '~> 0.17.1'
-  gem 'webmock', '~> 3.7.0'
-end
-
-group :development do
-  gem 'rubocop', '~> 1.42.0'
+  gem 'rake', '~> 13.0'
+  gem 'rubocop', '~> 1.73.2'
+  gem 'rubocop-performance', '~> 1.24.0'
+  gem 'simplecov', '~> 0.22.0'
+  gem 'webmock', '~> 3.24'
   gem 'yard', '~> 0.9'
+
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+  end
 end

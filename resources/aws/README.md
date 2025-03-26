@@ -38,6 +38,7 @@ end
 
 ### AWS EC2 Detector
 
+<!-- cspell:ignore Fargate -->
 Populates `cloud` and `host` for processes running on Amazon EC2, including abstractions such as ECS on EC2. Notably, it does not populate anything on AWS Fargate.
 
 | Resource Attribute | Description |
