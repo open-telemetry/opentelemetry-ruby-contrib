@@ -6,6 +6,7 @@
 
 require 'net/http'
 require 'json'
+require 'opentelemetry/common'
 
 module OpenTelemetry
   module Resource
@@ -124,7 +125,9 @@ module OpenTelemetry
             http.read_timeout = HTTP_TIMEOUT
 
             begin
-              http.request(request)
+              OpenTelemetry::Common::Utilities.untraced do
+                http.request(request)
+              end
             rescue StandardError => e
               OpenTelemetry.logger.debug("EC2 metadata service request failed: #{e.message}")
               nil
