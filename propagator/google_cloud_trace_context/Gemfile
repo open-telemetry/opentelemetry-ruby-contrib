@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gemspec
+
+group :test do
+  if RUBY_VERSION >= '3.4'
+    gem 'mutex_m'
+  end
+end
