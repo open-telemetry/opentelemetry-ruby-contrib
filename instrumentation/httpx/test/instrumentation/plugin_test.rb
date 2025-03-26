@@ -82,7 +82,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Plugin do
         OpenTelemetry::Trace::Status::ERROR
       )
       _(span.status.description).must_equal(
-        'Unhandled exception of type: HTTPX::TimeoutError'
+        'Timed out'
       )
       assert_requested(
         :get,
