@@ -6,7 +6,6 @@
 
 ENV['OTEL_LOG_LEVEL'] ||= 'fatal'
 
-require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
