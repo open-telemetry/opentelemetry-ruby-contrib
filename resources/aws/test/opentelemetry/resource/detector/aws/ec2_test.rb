@@ -12,7 +12,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EC2 do
   let(:token_path) { '/latest/api/token' }
   let(:identity_document_path) { '/latest/dynamic/instance-identity/document' }
   let(:hostname_path) { '/latest/meta-data/hostname' }
-  
+
   let(:mock_token) { 'mock-token-123456' }
   let(:mock_identity_document) do
     {
@@ -53,12 +53,12 @@ describe OpenTelemetry::Resource::Detector::AWS::EC2 do
         stub_request(:put, "http://#{ec2_metadata_host}#{token_path}")
           .with(headers: { 'X-aws-ec2-metadata-token-ttl-seconds' => '60' })
           .to_return(status: 200, body: mock_token)
-        
+
         # Stub identity document request
         stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
           .with(headers: { 'X-aws-ec2-metadata-token' => mock_token })
           .to_return(status: 200, body: mock_identity_document.to_json)
-        
+
         # Stub hostname request
         stub_request(:get, "http://#{ec2_metadata_host}#{hostname_path}")
           .with(headers: { 'X-aws-ec2-metadata-token' => mock_token })
@@ -116,7 +116,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EC2 do
         stub_request(:put, "http://#{ec2_metadata_host}#{token_path}")
           .with(headers: { 'X-aws-ec2-metadata-token-ttl-seconds' => '60' })
           .to_return(status: 200, body: mock_token)
-        
+
         # Identity document request fails
         stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
           .with(headers: { 'X-aws-ec2-metadata-token' => mock_token })
@@ -135,7 +135,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EC2 do
         stub_request(:put, "http://#{ec2_metadata_host}#{token_path}")
           .with(headers: { 'X-aws-ec2-metadata-token-ttl-seconds' => '60' })
           .to_return(status: 200, body: mock_token)
-        
+
         # Identity document is invalid JSON
         stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
           .with(headers: { 'X-aws-ec2-metadata-token' => mock_token })
@@ -154,12 +154,12 @@ describe OpenTelemetry::Resource::Detector::AWS::EC2 do
         stub_request(:put, "http://#{ec2_metadata_host}#{token_path}")
           .with(headers: { 'X-aws-ec2-metadata-token-ttl-seconds' => '60' })
           .to_return(status: 200, body: mock_token)
-        
+
         # Successful identity document request
         stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
           .with(headers: { 'X-aws-ec2-metadata-token' => mock_token })
           .to_return(status: 200, body: mock_identity_document.to_json)
-        
+
         # Hostname request times out
         stub_request(:get, "http://#{ec2_metadata_host}#{hostname_path}")
           .with(headers: { 'X-aws-ec2-metadata-token' => mock_token })
@@ -174,7 +174,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EC2 do
           'cloud.region' => 'mock-west-2',
           'cloud.availability_zone' => 'mock-west-2a',
           'host.id' => 'i-1234ab56cd7e89f01',
-          'host.type' => 't2.micro-mock',
+          'host.type' => 't2.micro-mock'
           # host.name is missing because the request failed
         }
       end

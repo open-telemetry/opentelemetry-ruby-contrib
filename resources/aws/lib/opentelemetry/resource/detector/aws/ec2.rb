@@ -50,7 +50,7 @@ module OpenTelemetry
               resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = identity['accountId']
               resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_REGION] = identity['region']
               resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_AVAILABILITY_ZONE] = identity['availabilityZone']
-              
+
               resource_attributes[OpenTelemetry::SemanticConventions::Resource::HOST_ID] = identity['instanceId']
               resource_attributes[OpenTelemetry::SemanticConventions::Resource::HOST_TYPE] = identity['instanceType']
               resource_attributes[OpenTelemetry::SemanticConventions::Resource::HOST_NAME] = hostname
@@ -65,7 +65,7 @@ module OpenTelemetry
           end
 
           private
-          
+
           # Fetches an IMDSv2 token from the EC2 metadata service
           #
           # @return [String, nil] The token or nil if the request failed

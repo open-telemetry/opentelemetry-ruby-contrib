@@ -15,11 +15,10 @@ module OpenTelemetry
 
         def detect
           # This will be a composite of all the AWS platform detectors
-          ec2_resource = EC2.detect
+          EC2.detect
 
           # For now, return the EC2 resource directly
           # In the future, we'll implement detection for EC2, ECS, EKS, etc.
-          return ec2_resource
         end
       end
     end

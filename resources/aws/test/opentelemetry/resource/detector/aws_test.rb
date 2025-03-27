@@ -13,16 +13,17 @@ describe OpenTelemetry::Resource::Detector::AWS do
     before do
       WebMock.disable_net_connect!
       # You'll add stubs for AWS endpoints here
-      stub_request(:put, "http://169.254.169.254/latest/api/token").
-        with(
+      stub_request(:put, 'http://169.254.169.254/latest/api/token')
+        .with(
           headers: {
-            'Accept'=>'*/*',
-            'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-            'Host'=>'169.254.169.254',
-            'User-Agent'=>'Ruby',
-            'X-Aws-Ec2-Metadata-Token-Ttl-Seconds'=>'60'
-          }).
-          to_return(status: 404, body: "Not Found", headers: {})
+            'Accept' => '*/*',
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Host' => '169.254.169.254',
+            'User-Agent' => 'Ruby',
+            'X-Aws-Ec2-Metadata-Token-Ttl-Seconds' => '60'
+          }
+        )
+        .to_return(status: 404, body: 'Not Found', headers: {})
     end
 
     after do
