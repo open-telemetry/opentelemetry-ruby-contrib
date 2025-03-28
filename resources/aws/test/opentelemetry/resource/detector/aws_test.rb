@@ -12,18 +12,15 @@ describe OpenTelemetry::Resource::Detector::AWS do
   describe '.detect' do
     before do
       WebMock.disable_net_connect!
-      # You'll add stubs for AWS endpoints here
+      # Ensure we stub any potential requests to EC2 metadata service
+      # Simulate failed token request
       stub_request(:put, 'http://169.254.169.254/latest/api/token')
-        .with(
-          headers: {
-            'Accept' => '*/*',
-            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-            'Host' => '169.254.169.254',
-            'User-Agent' => 'Ruby',
-            'X-Aws-Ec2-Metadata-Token-Ttl-Seconds' => '60'
-          }
-        )
-        .to_return(status: 404, body: 'Not Found', headers: {})
+        .to_timeout
+
+      # Simulate failed identity document request
+      stub_request(:get, 'http://169.254.169.254/latest/dynamic/instance-identity/document')
+        .with(headers: { 'Accept' => '*/*' })
+        .to_return(status: 404, body: 'Not Found')
     end
 
     after do

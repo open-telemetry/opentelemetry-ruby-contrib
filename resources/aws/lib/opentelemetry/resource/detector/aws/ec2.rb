@@ -30,17 +30,18 @@ module OpenTelemetry
           HTTP_TIMEOUT = 1
 
           def detect
-            # Placeholder for EC2 implementation
+            # Implementation for EC2 detection supporting both IMDSv1 and IMDSv2
             resource_attributes = {}
 
             begin
-              # Get IMDSv2 token - this will fail quickly if not on EC2
+              # Attempt to get IMDSv2 token - this will fail if IMDSv2 is not supported
+              # but we'll still try IMDSv1 in that case
               token = fetch_token
-              return OpenTelemetry::SDK::Resources::Resource.create({}) if token.nil?
 
               # Get instance identity document which contains most metadata
-              identity = fetch_identity_document(token)
-              return OpenTelemetry::SDK::Resources::Resource.create({}) if identity.nil?
+              # Will try with token (IMDSv2) or without token (IMDSv1)
+              identity = fetch_identity_document(token) || {}
+              return OpenTelemetry::SDK::Resources::Resource.create({}) if identity.empty?
 
               hostname = fetch_hostname(token)
 
@@ -82,12 +83,12 @@ module OpenTelemetry
 
           # Fetches the instance identity document which contains EC2 instance metadata
           #
-          # @param token [String] IMDSv2 token
+          # @param token [String, nil] IMDSv2 token (optional for IMDSv1)
           # @return [Hash, nil] Parsed identity document or nil if the request failed
           def fetch_identity_document(token)
             uri = URI.parse("http://#{EC2_METADATA_HOST}#{IDENTITY_DOCUMENT_ENDPOINT}")
             request = Net::HTTP::Get.new(uri)
-            request[TOKEN_HEADER] = token
+            request[TOKEN_HEADER] = token if token
 
             response = make_request(uri, request)
             return nil unless response.is_a?(Net::HTTPSuccess)
@@ -101,12 +102,12 @@ module OpenTelemetry
 
           # Fetches the EC2 instance hostname
           #
-          # @param token [String] IMDSv2 token
+          # @param token [String, nil] IMDSv2 token (optional for IMDSv1)
           # @return [String, nil] The hostname or nil if the request failed
           def fetch_hostname(token)
             uri = URI.parse("http://#{EC2_METADATA_HOST}#{HOSTNAME_ENDPOINT}")
             request = Net::HTTP::Get.new(uri)
-            request[TOKEN_HEADER] = token
+            request[TOKEN_HEADER] = token if token
 
             response = make_request(uri, request)
             return nil unless response.is_a?(Net::HTTPSuccess)

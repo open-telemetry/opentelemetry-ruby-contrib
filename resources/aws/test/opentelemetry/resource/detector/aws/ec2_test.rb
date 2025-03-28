@@ -86,27 +86,73 @@ describe OpenTelemetry::Resource::Detector::AWS::EC2 do
 
     describe 'when token request fails' do
       before do
-        # Simulate connection timeout
+        # Simulate connection timeout for token request (IMDSv2)
         stub_request(:put, "http://#{ec2_metadata_host}#{token_path}")
           .to_timeout
+
+        # Stub IMDSv1 fallback request for identity document (without token)
+        stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
+          .with(headers: { 'Accept' => '*/*' })
+          .to_return(status: 200, body: mock_identity_document.to_json)
+
+        # Stub IMDSv1 fallback request for hostname (without token)
+        stub_request(:get, "http://#{ec2_metadata_host}#{hostname_path}")
+          .with(headers: { 'Accept' => '*/*' })
+          .to_return(status: 200, body: mock_hostname)
       end
 
-      it 'returns an empty resource' do
+      let(:expected_resource_attributes) do
+        {
+          'cloud.provider' => 'aws',
+          'cloud.platform' => 'aws_ec2',
+          'cloud.account.id' => '123456789012',
+          'cloud.region' => 'mock-west-2',
+          'cloud.availability_zone' => 'mock-west-2a',
+          'host.id' => 'i-1234ab56cd7e89f01',
+          'host.type' => 't2.micro-mock',
+          'host.name' => 'ip-172-12-34-567.mock-west-2.compute.internal'
+        }
+      end
+
+      it 'falls back to IMDSv1 and returns a resource with EC2 attributes' do
         _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-        _(detected_resource_attributes).must_equal({})
+        _(detected_resource_attributes).must_equal(expected_resource_attributes)
       end
     end
 
     describe 'when token request returns error code' do
       before do
-        # Simulate 403 error
+        # Simulate 403 error for token request
         stub_request(:put, "http://#{ec2_metadata_host}#{token_path}")
           .to_return(status: 403, body: 'Forbidden')
+
+        # Stub IMDSv1 fallback request for identity document (without token)
+        stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
+          .with(headers: { 'Accept' => '*/*' })
+          .to_return(status: 200, body: mock_identity_document.to_json)
+
+        # Stub IMDSv1 fallback request for hostname (without token)
+        stub_request(:get, "http://#{ec2_metadata_host}#{hostname_path}")
+          .with(headers: { 'Accept' => '*/*' })
+          .to_return(status: 200, body: mock_hostname)
       end
 
-      it 'returns an empty resource' do
+      let(:expected_resource_attributes) do
+        {
+          'cloud.provider' => 'aws',
+          'cloud.platform' => 'aws_ec2',
+          'cloud.account.id' => '123456789012',
+          'cloud.region' => 'mock-west-2',
+          'cloud.availability_zone' => 'mock-west-2a',
+          'host.id' => 'i-1234ab56cd7e89f01',
+          'host.type' => 't2.micro-mock',
+          'host.name' => 'ip-172-12-34-567.mock-west-2.compute.internal'
+        }
+      end
+
+      it 'falls back to IMDSv1 and returns a resource with EC2 attributes' do
         _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-        _(detected_resource_attributes).must_equal({})
+        _(detected_resource_attributes).must_equal(expected_resource_attributes)
       end
     end
 
@@ -117,9 +163,14 @@ describe OpenTelemetry::Resource::Detector::AWS::EC2 do
           .with(headers: { 'X-aws-ec2-metadata-token-ttl-seconds' => '60' })
           .to_return(status: 200, body: mock_token)
 
-        # Identity document request fails
+        # Identity document request with token fails (IMDSv2)
         stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
           .with(headers: { 'X-aws-ec2-metadata-token' => mock_token })
+          .to_return(status: 500, body: 'Internal Server Error')
+
+        # Identity document request without token also fails (IMDSv1 fallback)
+        stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
+          .with(headers: { 'Accept' => '*/*' })
           .to_return(status: 500, body: 'Internal Server Error')
       end
 
@@ -136,9 +187,14 @@ describe OpenTelemetry::Resource::Detector::AWS::EC2 do
           .with(headers: { 'X-aws-ec2-metadata-token-ttl-seconds' => '60' })
           .to_return(status: 200, body: mock_token)
 
-        # Identity document is invalid JSON
+        # Identity document is invalid JSON (IMDSv2)
         stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
           .with(headers: { 'X-aws-ec2-metadata-token' => mock_token })
+          .to_return(status: 200, body: '{not valid json')
+
+        # Identity document is also invalid JSON when accessed via IMDSv1
+        stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
+          .with(headers: { 'Accept' => '*/*' })
           .to_return(status: 200, body: '{not valid json')
       end
 
@@ -155,14 +211,25 @@ describe OpenTelemetry::Resource::Detector::AWS::EC2 do
           .with(headers: { 'X-aws-ec2-metadata-token-ttl-seconds' => '60' })
           .to_return(status: 200, body: mock_token)
 
-        # Successful identity document request
+        # Successful identity document request with IMDSv2
         stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
           .with(headers: { 'X-aws-ec2-metadata-token' => mock_token })
+          .to_return(status: 200, body: mock_identity_document.to_json)
+
+        # Also stub the IMDSv1 fallback for identity document (without token)
+        # This ensures we don't get unexpected requests even if code paths change
+        stub_request(:get, "http://#{ec2_metadata_host}#{identity_document_path}")
+          .with(headers: { 'Accept' => '*/*' })
           .to_return(status: 200, body: mock_identity_document.to_json)
 
         # Hostname request times out
         stub_request(:get, "http://#{ec2_metadata_host}#{hostname_path}")
           .with(headers: { 'X-aws-ec2-metadata-token' => mock_token })
+          .to_timeout
+
+        # Also stub the IMDSv1 fallback for hostname (without token)
+        stub_request(:get, "http://#{ec2_metadata_host}#{hostname_path}")
+          .with(headers: { 'Accept' => '*/*' })
           .to_timeout
       end
 
