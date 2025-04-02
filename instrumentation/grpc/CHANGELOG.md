@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-grpc
 
+### v0.2.0 / 2025-04-02
+
+* ADDED: Add gRPC trace demonstration
+* ADDED: Migrate gRPC instrumentation to OpenTelemetry tooling
+* ADDED: Transferred ownership of the gem from @hibachrach to OpenTelemetry
+
 ### v0.1.3 / 2024-09-11
 
 * FIXED: Fix error in handling of non-gRPC errors
