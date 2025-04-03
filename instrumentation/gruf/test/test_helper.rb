@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'simplecov'
 require 'opentelemetry/sdk'
 require 'minitest/autorun'
 require 'webmock/minitest'
