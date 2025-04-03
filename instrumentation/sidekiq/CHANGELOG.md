@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.26.1 / 2025-04-01
+
+* FIXED: Add support for Sidekiq 8
+
 ### v0.26.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1

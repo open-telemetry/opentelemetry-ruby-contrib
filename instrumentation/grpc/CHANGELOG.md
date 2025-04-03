@@ -1,10 +1,10 @@
 # Release History: opentelemetry-instrumentation-grpc
 
-### v0.2.0 / 2025-01-16
+### v0.2.0 / 2025-04-02
 
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
-* ADDED: Set minimum supported version to Ruby 3.1
+* ADDED: Add gRPC trace demonstration
+* ADDED: Migrate gRPC instrumentation to OpenTelemetry tooling
+* ADDED: Transferred ownership of the gem from @hibachrach to OpenTelemetry
 
 ### v0.1.3 / 2024-09-11
 
