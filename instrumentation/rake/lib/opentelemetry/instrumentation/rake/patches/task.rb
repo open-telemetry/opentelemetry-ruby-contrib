@@ -29,7 +29,11 @@ module OpenTelemetry
           end
 
           def force_flush
-            OpenTelemetry.tracer_provider.force_flush if ::Rake.application.top_level_tasks.include?(name)
+            top_level_task_names = ::Rake.application.top_level_tasks.map { |t| t.split('[').first }
+
+            if top_level_task_names.include?(name)
+              OpenTelemetry.tracer_provider.force_flush
+            end
           end
         end
       end
