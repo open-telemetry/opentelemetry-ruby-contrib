@@ -55,7 +55,7 @@ module OpenTelemetry
             else
               span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response.status)
 
-              if response.status >= 400 && response.status <= 599
+              if response.status.between?(400, 599)
                 err = ::HTTPX::HTTPError.new(response)
                 span.record_exception(err)
                 span.status = Trace::Status.error(err.to_s)
