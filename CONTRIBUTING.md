@@ -71,6 +71,7 @@ This repository contains multiple Ruby gems:
 * Various resource detector gems located in subdirectories of `resources`
 * `opentelemetry-propagator-xray` located in the `propagator/xray` directory
 * `opentelemetry-propagator-ottrace` located in the `propagator/ottrace` directory
+* `opentelemetry-propagator-google_cloud_trace_context` located in the `propagator/google_cloud_trace_context` directory
 
 Each of these gems has its configuration and tests.
 

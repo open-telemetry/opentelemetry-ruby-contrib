@@ -69,6 +69,7 @@ jobs:
           - ottrace
           - vitess
           - xray
+          - google_cloud_platform
         os:
           - ubuntu-latest
     name: "propagator-${{ matrix.gem }} / ${{ matrix.os }}"
