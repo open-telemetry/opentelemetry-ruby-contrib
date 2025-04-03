@@ -1,6 +1,3 @@
-require_relative './proto/example_api_services_pb'
-require_relative './example_impl'
-
 require 'bundler/inline'
 
 gemfile do
@@ -11,6 +8,9 @@ gemfile do
   gem 'opentelemetry-instrumentation-grpc', path: '../'
   gem 'opentelemetry-sdk'
 end
+
+require_relative 'proto/example_api_services_pb'
+require_relative 'example_impl'
 
 ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
