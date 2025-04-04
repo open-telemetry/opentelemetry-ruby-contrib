@@ -29,6 +29,9 @@ module OpenTelemetry
           # Timeout in seconds for HTTP requests
           HTTP_TIMEOUT = 1
 
+          # Create a constant for resource semantic conventions
+          RESOURCE = OpenTelemetry::SemanticConventions::Resource
+
           def detect
             # Implementation for EC2 detection supporting both IMDSv1 and IMDSv2
             resource_attributes = {}
@@ -46,15 +49,15 @@ module OpenTelemetry
               hostname = fetch_hostname(token)
 
               # Set resource attributes from the identity document
-              resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PROVIDER] = 'aws'
-              resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM] = 'aws_ec2'
-              resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = identity['accountId']
-              resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_REGION] = identity['region']
-              resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_AVAILABILITY_ZONE] = identity['availabilityZone']
+              resource_attributes[RESOURCE::CLOUD_PROVIDER] = 'aws'
+              resource_attributes[RESOURCE::CLOUD_PLATFORM] = 'aws_ec2'
+              resource_attributes[RESOURCE::CLOUD_ACCOUNT_ID] = identity['accountId']
+              resource_attributes[RESOURCE::CLOUD_REGION] = identity['region']
+              resource_attributes[RESOURCE::CLOUD_AVAILABILITY_ZONE] = identity['availabilityZone']
 
-              resource_attributes[OpenTelemetry::SemanticConventions::Resource::HOST_ID] = identity['instanceId']
-              resource_attributes[OpenTelemetry::SemanticConventions::Resource::HOST_TYPE] = identity['instanceType']
-              resource_attributes[OpenTelemetry::SemanticConventions::Resource::HOST_NAME] = hostname
+              resource_attributes[RESOURCE::HOST_ID] = identity['instanceId']
+              resource_attributes[RESOURCE::HOST_TYPE] = identity['instanceType']
+              resource_attributes[RESOURCE::HOST_NAME] = hostname
             rescue StandardError => e
               OpenTelemetry.logger.debug("EC2 resource detection failed: #{e.message}")
               return OpenTelemetry::SDK::Resources::Resource.create({})
