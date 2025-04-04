@@ -110,6 +110,7 @@ jobs:
       fail-fast: false
       matrix:
         gem:
+          - resource-detector-aws
           - resource-detector-azure
           - resource-detector-container
           - resource-detector-google_cloud_platform
