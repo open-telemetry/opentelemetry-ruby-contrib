@@ -14,5 +14,10 @@ describe OpenTelemetry::Propagator::XRay do
         OpenTelemetry::Propagator::XRay::TextMapPropagator
       )
     end
+
+    it 'provides access to lambda text map propagator' do
+      propagator = OpenTelemetry::Propagator::XRay.lambda_text_map_propagator
+      _(propagator).must_be_instance_of(OpenTelemetry::Propagator::XRay::LambdaTextMapPropagator)
+    end
   end
 end
