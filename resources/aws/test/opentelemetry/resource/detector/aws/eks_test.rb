@@ -82,7 +82,8 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
       let(:cred_value) { "Bearer #{token}" }
       let(:aws_auth_response) { '{"kind":"ConfigMap","data":{}}' }
       let(:cluster_info_response) { '{"data":{"cluster.name":"my-eks-cluster"}}' }
-      let(:container_id) { '0123456789abcdef' * 4 }
+      let(:container_id_val) { '0123456789abcdef' * 4 }
+      let(:cluster_name_val) { 'my-eks-cluster' }
 
       before do
         @token_path_exists = true
@@ -107,25 +108,28 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
             token
           } do
             # Mock container ID retrieval
-            detector.stub :container_id, container_id do
-              # Mock HTTP requests
-              detector.stub :aws_http_request, lambda { |_method, path, _auth|
-                if path == aws_auth_path
-                  aws_auth_response
-                elsif path == cluster_info_path
-                  cluster_info_response
-                else
-                  raise "Unexpected HTTP request to #{path}"
-                end
-              } do
-                resource = detector.detect
-                attributes = resource.attribute_enumerator.to_h
+            detector.stub :container_id, container_id_val do
+              # Mock cluster name retrieval
+              detector.stub :cluster_name, ->(_) { cluster_name_val } do
+                # Mock HTTP requests
+                detector.stub :aws_http_request, lambda { |_method, path, _auth|
+                  if path == aws_auth_path
+                    aws_auth_response
+                  elsif path == cluster_info_path
+                    cluster_info_response
+                  else
+                    raise "Unexpected HTTP request to #{path}"
+                  end
+                } do
+                  resource = detector.detect
+                  attributes = resource.attribute_enumerator.to_h
 
-                # Check attributes
-                _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PROVIDER]).must_equal('aws')
-                _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM]).must_equal('aws_eks')
-                _(attributes[OpenTelemetry::SemanticConventions::Resource::K8S_CLUSTER_NAME]).must_equal('my-eks-cluster')
-                _(attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_ID]).must_equal(container_id)
+                  # Check attributes
+                  _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PROVIDER]).must_equal('aws')
+                  _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM]).must_equal('aws_eks')
+                  _(attributes[OpenTelemetry::SemanticConventions::Resource::K8S_CLUSTER_NAME]).must_equal(cluster_name_val)
+                  _(attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_ID]).must_equal(container_id_val)
+                end
               end
             end
           end
@@ -137,14 +141,14 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
         detector.stub :k8s?, true do
           detector.stub :k8s_cred_value, cred_value do
             detector.stub :eks?, true do
-              detector.stub :cluster_name, '' do
-                detector.stub :container_id, container_id do
+              detector.stub :cluster_name, ->(_) { '' } do
+                detector.stub :container_id, container_id_val do
                   resource = detector.detect
                   attributes = resource.attribute_enumerator.to_h
 
                   # Should still have container ID but no cluster name
                   _(attributes).wont_include(OpenTelemetry::SemanticConventions::Resource::K8S_CLUSTER_NAME)
-                  _(attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_ID]).must_equal(container_id)
+                  _(attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_ID]).must_equal(container_id_val)
                 end
               end
             end
@@ -157,13 +161,13 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
         detector.stub :k8s?, true do
           detector.stub :k8s_cred_value, cred_value do
             detector.stub :eks?, true do
-              detector.stub :cluster_name, 'my-eks-cluster' do
+              detector.stub :cluster_name, ->(_) { cluster_name_val } do
                 detector.stub :container_id, '' do
                   resource = detector.detect
                   attributes = resource.attribute_enumerator.to_h
 
                   # Should still have cluster name but no container ID
-                  _(attributes[OpenTelemetry::SemanticConventions::Resource::K8S_CLUSTER_NAME]).must_equal('my-eks-cluster')
+                  _(attributes[OpenTelemetry::SemanticConventions::Resource::K8S_CLUSTER_NAME]).must_equal(cluster_name_val)
                   _(attributes).wont_include(OpenTelemetry::SemanticConventions::Resource::CONTAINER_ID)
                 end
               end
@@ -189,7 +193,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
         detector.stub :k8s?, true do
           detector.stub :k8s_cred_value, cred_value do
             detector.stub :eks?, true do
-              detector.stub :cluster_name, '' do
+              detector.stub :cluster_name, ->(_) { '' } do
                 detector.stub :container_id, '' do
                   resource = detector.detect
                   _(resource.attribute_enumerator.to_h).must_equal({})
