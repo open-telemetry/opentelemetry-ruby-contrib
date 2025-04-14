@@ -34,6 +34,7 @@ module OpenTelemetry
             ::Dalli::Server.prepend(Patches::Server)
           else
             ::Dalli::Protocol::Binary.prepend(Patches::Server)
+            ::Dalli::Protocol::Meta.prepend(Patches::Server) if defined?(::Dalli::Protocol::Meta)
           end
         end
       end
