@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.75.0 / 2025-04-15
+
+* ADDED: Add `opentelemetry-instrumentation-grpc` to `-all`
+
 ### v0.74.0 / 2025-02-11
 
 * ADDED: Rdkafka support to v0.19 including
