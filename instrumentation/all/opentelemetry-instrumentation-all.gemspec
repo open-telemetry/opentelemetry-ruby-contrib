@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.8.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.22.0'
   spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.22.0'
-  spec.add_dependency 'opentelemetry-instrumentation-dalli', '~> 0.26.0'
+  spec.add_dependency 'opentelemetry-instrumentation-dalli', '~> 0.27.0'
   spec.add_dependency 'opentelemetry-instrumentation-delayed_job', '~> 0.23.0'
   spec.add_dependency 'opentelemetry-instrumentation-ethon', '~> 0.22.0'
   spec.add_dependency 'opentelemetry-instrumentation-excon', '~> 0.23.0'
