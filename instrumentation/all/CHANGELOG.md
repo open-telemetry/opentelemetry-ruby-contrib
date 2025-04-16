@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.75.1 / 2025-04-16
+
+* (No significant changes)
+
 ### v0.75.0 / 2025-04-15
 
 * ADDED: Add `opentelemetry-instrumentation-grpc` to `-all`

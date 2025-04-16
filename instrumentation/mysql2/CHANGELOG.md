@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.29.1 / 2025-04-16
+
+* (No significant changes)
+
 ### v0.29.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
