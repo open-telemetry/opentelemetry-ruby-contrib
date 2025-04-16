@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.30.1 / 2025-04-16
+
+* refactor: Use SQL helpers for context attributes #1271
+
 ### v0.30.0 / 2025-01-16
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1
