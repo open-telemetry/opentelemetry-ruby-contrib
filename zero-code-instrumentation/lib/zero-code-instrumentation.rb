@@ -100,7 +100,7 @@ module OTelBundlerPatch
       end
       OpenTelemetry.logger.info { 'Auto-instrumentation initialized' }
     rescue StandardError => e
-      OpenTelemetry.logger.info { "Auto-instrumentation failed to initialize. Error: #{e.message}" }
+      puts "Auto-instrumentation failed to initialize. Error: #{e.message}"
     end
   end
 end
@@ -111,18 +111,27 @@ container = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('container')
 google_cloud_platform = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('google_cloud_platform')
 azure = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('azure')
 
-# set OTEL_OPERATOR to true if in autoinstrumentation-ruby image
-# /otel-auto-instrumentation-ruby is set in operator ruby.go
-operator_gem_path = ENV['OTEL_OPERATOR'].to_s == 'true' ? '/otel-auto-instrumentation-ruby' : nil
+# set OTEL_OPERATOR to false if not in autoinstrumentation-ruby image, default to /otel-auto-instrumentation-ruby
+# /otel-auto-instrumentation-ruby is set in opentelemetry-operator ruby.go
+operator_gem_path = (ENV['OTEL_OPERATOR'].nil? || ENV['OTEL_OPERATOR'] == 'true') ? '/otel-auto-instrumentation-ruby' : nil
 additional_gem_path = operator_gem_path || ENV['ADDITIONAL_GEM_PATH'] || Gem.dir
 puts "Loading the additional gem path from #{additional_gem_path}" if ENV['ZERO_CODE_DEBUG'] == 'true'
 
-# google-protobuf is used for otel trace exporter
-Dir.glob("#{additional_gem_path}/gems/*").each do |file|
-  if file.include?('opentelemetry') || file.include?('google')
-    puts "Unshift #{file.inspect}" if ENV['ZERO_CODE_DEBUG'] == 'true'
-    $LOAD_PATH.unshift("#{file}/lib")
-  end
+# use UNLOAD_LIBRARY to avoid certain gem preload (esp. google protobuf)
+# e.g export UNLOAD_LIBRARY=google-protobuf;googleapis-common-protos-types
+unload_libraries = ENV['UNLOAD_LIBRARY'].to_s.split(';')
+loaded_library_file_path = Array.new
+
+Dir.glob("#{additional_gem_path}/gems/*").each do |file_path|
+  gem_name = file_path.match(/\/gems\/([^\/]+)-\d/)[1]
+  include_file = (file_path.include?('opentelemetry') || file_path.include?('google')) && !unload_libraries.include? gem_name
+  loaded_library_file_path << file_path if include_file
+end
+
+puts loaded_library_file_path.to_s if ENV['ZERO_CODE_DEBUG'] == 'true'
+
+loaded_library_file_path.each do |file_path|
+  $LOAD_PATH.unshift("#{file_path}/lib")
 end
 
 require 'opentelemetry-sdk'
