@@ -2,7 +2,7 @@
 
 ### v0.29.1 / 2025-04-16
 
-* (No significant changes)
+* refactor: Use SQL helpers for context attributes #1271
 
 ### v0.29.0 / 2025-01-16
 
