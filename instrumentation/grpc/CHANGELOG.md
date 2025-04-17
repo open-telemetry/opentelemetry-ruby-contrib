@@ -2,7 +2,7 @@
 
 ### v0.2.1 / 2025-04-17
 
-* ADDED: Add `opentelemetry-instrumentation-grpc` to `-all`
+* * CHANGED: Fix ClientTracer: uninitialized constant GRPC (NameError) https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1487
 
 ### v0.2.0 / 2025-04-02
 
