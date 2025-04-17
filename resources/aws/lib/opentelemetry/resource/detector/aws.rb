@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/resource/detector/aws/ec2'
+require 'opentelemetry/resource/detector/aws/ecs'
+require 'opentelemetry/resource/detector/aws/lambda'
 
 module OpenTelemetry
   module Resource
@@ -13,12 +15,33 @@ module OpenTelemetry
       module AWS
         extend self
 
-        def detect
-          # This will be a composite of all the AWS platform detectors
-          EC2.detect
+        RESOURCE = OpenTelemetry::SDK::Resources::Resource
 
-          # For now, return the EC2 resource directly
-          # In the future, we'll implement detection for EC2, ECS, EKS, etc.
+        # Get resources from specified AWS resource detectors
+        #
+        # @param detectors [Array<Symbol>] List of detectors to use (e.g., :ec2)
+        # @return [OpenTelemetry::SDK::Resources::Resource] The detected AWS resources
+        def detect(detectors = [])
+          return RESOURCE.create({}) if detectors.empty?
+
+          resources = detectors.map do |detector|
+            case detector
+            when :ec2
+              EC2.detect
+            when :ecs
+              ECS.detect
+            when :lambda
+              Lambda.detect
+            else
+              OpenTelemetry.logger.warn("Unknown AWS resource detector: #{detector}")
+              OpenTelemetry::SDK::Resources::Resource.create({})
+            end
+          end
+
+          # Merge all resources into a single resource
+          resources.reduce(OpenTelemetry::SDK::Resources::Resource.create({})) do |merged, resource|
+            merged.merge(resource)
+          end
         end
       end
     end
