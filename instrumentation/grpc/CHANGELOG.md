@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-grpc
 
+### v0.2.1 / 2025-04-17
+
+* ADDED: Add `opentelemetry-instrumentation-grpc` to `-all`
+
 ### v0.2.0 / 2025-04-02
 
 * ADDED: Add gRPC trace demonstration
