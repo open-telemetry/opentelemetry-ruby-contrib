@@ -15,7 +15,7 @@ group :test do
   gem 'opentelemetry-sdk', '~> 1.1'
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '~> 13.0'
-  gem 'rubocop', '~> 1.73.2'
+  gem 'rubocop', '~> 1.75.1'
   gem 'rubocop-performance', '~> 1.24.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'
