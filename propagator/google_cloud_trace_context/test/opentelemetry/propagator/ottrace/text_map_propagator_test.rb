@@ -56,7 +56,7 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
   end
 
   let(:gcp_header) do
-    '80f198ee56343ba864fe8b2a57d3eff7/16453819474850114513;o=1'
+    "#{trace_id}/#{span_id.to_i(16)};o=1"
   end
 
   let(:carrier) do
@@ -85,8 +85,8 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
         context = propagator.extract(carrier, context: parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
-        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
-        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.hex_trace_id).must_equal(trace_id)
+        _(extracted_context.hex_span_id).must_equal(span_id)
         _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
         _(extracted_context).must_be(:remote?)
       end
@@ -101,8 +101,8 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
         context = propagator.extract(carrier, context: parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
-        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
-        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.hex_trace_id).must_equal(trace_id)
+        _(extracted_context.hex_span_id).must_equal(span_id)
         _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
         _(extracted_context).must_be(:remote?)
       end
@@ -110,31 +110,27 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
 
     describe 'given a context with sampling bit set to enabled' do
       let(:carrier) do
-        { 'x-cloud-trace-context' => '80f198ee56343ba864fe8b2a57d3eff7/16453819474850114513;o=1' }
+        { 'x-cloud-trace-context' => "#{trace_id}/#{span_id.to_i(16)};o=1" }
       end
 
       it 'extracts sampled trace flag' do
         context = propagator.extract(carrier, context: parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
-        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
-        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.hex_trace_id).must_equal(trace_id)
+        _(extracted_context.hex_span_id).must_equal(span_id)
         _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
         _(extracted_context).must_be(:remote?)
       end
     end
 
     describe 'given a context with a sampling bit set to disabled' do
-      let(:carrier) do
-        { 'x-cloud-trace-context' => '80f198ee56343ba864fe8b2a57d3eff7/16453819474850114513;o=0' }
-      end
-
       it 'extracts a default trace flag' do
         context = propagator.extract(carrier, context: parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
-        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
-        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.hex_trace_id).must_equal(trace_id)
+        _(extracted_context.hex_span_id).must_equal(span_id)
         _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::DEFAULT)
         _(extracted_context).must_be(:remote?)
       end
@@ -142,7 +138,7 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
 
     describe 'given context with a malformed trace id' do
       let(:carrier) do
-        { 'x-cloud-trace-context' => 'abc123/16453819474850114513;o=1' }
+        { 'x-cloud-trace-context' => "abc123/#{span_id.to_i(16)};o=1" }
       end
 
       it 'skips content extraction' do
@@ -155,7 +151,7 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
 
     describe 'given context with a malformed span id' do
       let(:carrier) do
-        { 'x-cloud-trace-context' => '80f198ee56343ba864fe8b2a57d3eff7/abc123;o=1' }
+        { 'x-cloud-trace-context' => "#{trace_id}/abc123;o=1" }
       end
 
       it 'skips content extraction' do
@@ -211,7 +207,7 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
         carrier = {}
         propagator.inject(carrier, context: context)
 
-        _(carrier.fetch('x-cloud-trace-context')).must_equal('80f198ee56343ba864fe8b2a57d3eff7/16453819474850114513;o=0')
+        _(carrier.fetch('x-cloud-trace-context')).must_equal("#{trace_id}/#{span_id.to_i(16)};o=0")
       end
     end
 
@@ -224,7 +220,7 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
         carrier = {}
         propagator.inject(carrier, context: context)
 
-        _(carrier.fetch('x-cloud-trace-context')).must_equal('80f198ee56343ba864fe8b2a57d3eff7/16453819474850114513;o=1')
+        _(carrier.fetch('x-cloud-trace-context')).must_equal("#{trace_id}/#{span_id.to_i(16)};o=1")
       end
     end
 
@@ -235,7 +231,7 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
         alternate_setter = FakeSetter.new
         propagator.inject(carrier, context: context, setter: alternate_setter)
 
-        _(carrier.fetch('x-cloud-trace-context')).must_equal('x-cloud-trace-context = 80f198ee56343ba864fe8b2a57d3eff7/16453819474850114513;o=0')
+        _(carrier.fetch('x-cloud-trace-context')).must_equal("x-cloud-trace-context = #{trace_id}/#{span_id.to_i(16)};o=0")
       end
     end
   end

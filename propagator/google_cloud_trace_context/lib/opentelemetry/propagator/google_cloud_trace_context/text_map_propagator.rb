@@ -15,10 +15,13 @@ module OpenTelemetry
   module Propagator
     # Namespace for OpenTelemetry GoogleCloudTraceContext propagation
     module GoogleCloudTraceContext
+      # Provides a class for decoding and encoding x-cloud-trace-context header to/from into trace components
       class CloudTraceContext
-        class << self
-          CLOUD_TRACE_CONTEXT_REGEX = /\A(?<trace_id>[a-f0-9]{32})\/(?<span_id>[0-9]+)(?:;o=(?<options>[01]))?\Z/i
+        CLOUD_TRACE_CONTEXT_REGEX = /\A(?<trace_id>[a-f0-9]{32})\/(?<span_id>[0-9]+)(?:;o=(?<options>[01]))?\Z/i
 
+        private_constant :CLOUD_TRACE_CONTEXT_REGEX
+
+        class << self
           # Creates a new {CloudTraceContext} from a supplied {Trace::SpanContext}
           # @param [SpanContext] ctx The span context
           # @return [CloudTraceContext] a trace parent
@@ -28,7 +31,7 @@ module OpenTelemetry
 
           # Deserializes the {CloudTraceContext} from the string representation
           # @param [String] string The serialized trace parent
-          # @return [CloudTraceContext] a trace_parent
+          # @return [CloudTraceContext, nil] a trace_parent or nil if malformed
           def from_string(string)
             return unless matches = CLOUD_TRACE_CONTEXT_REGEX.match(string)
 
@@ -97,7 +100,9 @@ module OpenTelemetry
           trace_parent_value = getter.get(carrier, CLOUD_TRACE_CONTEXT_KEY)
           return context unless trace_parent_value
 
-          return context unless cloud_trace_context = CloudTraceContext.from_string(trace_parent_value)
+          cloud_trace_context = CloudTraceContext.from_string(trace_parent_value)
+          return context unless cloud_trace_context
+
           span_context = Trace::SpanContext.new(trace_id: cloud_trace_context.trace_id,
                                                 span_id: cloud_trace_context.span_id,
                                                 trace_flags: cloud_trace_context.flags,

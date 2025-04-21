@@ -222,9 +222,9 @@
       "package-name": "opentelemetry-resource-detector-container",
       "version-file": "lib/opentelemetry/resource/detector/container/version.rb"
     },
-    "resources/google_cloud_trace_context": {
-      "package-name": "opentelemetry-resource-detector-google_cloud_trace_context",
-      "version-file": "lib/opentelemetry/resource/detector/google_cloud_trace_context/version.rb"
+    "resources/google_cloud_platform": {
+      "package-name": "opentelemetry-resource-detector-google_cloud_platform",
+      "version-file": "lib/opentelemetry/resource/detector/google_cloud_platform/version.rb"
     }
   }
 }
