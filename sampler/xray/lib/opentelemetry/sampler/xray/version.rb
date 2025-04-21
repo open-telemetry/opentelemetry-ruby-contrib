@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-# Copyright The OpenTelemetry Authors
+# Copyright OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module Instrumentation
-    module Dalli
-      VERSION = '0.27.1'
+  module Sampler
+    module XRay
+      VERSION = '0.0.0'
     end
   end
 end
