@@ -380,7 +380,7 @@ If we determine the service container slows down the test suite significantly, i
         uses: ./.github/actions/test_gem
         with:
           gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.2.0"
+          ruby: "jruby-10.0.0.0"
     services:
       # ...
       my_service:
