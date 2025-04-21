@@ -109,10 +109,6 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
     end
 
     describe 'given a context with sampling bit set to enabled' do
-      let(:carrier) do
-        { 'x-cloud-trace-context' => "#{trace_id}/#{span_id.to_i(16)};o=1" }
-      end
-
       it 'extracts sampled trace flag' do
         context = propagator.extract(carrier, context: parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
@@ -125,6 +121,10 @@ describe OpenTelemetry::Propagator::GoogleCloudTraceContext::TextMapPropagator d
     end
 
     describe 'given a context with a sampling bit set to disabled' do
+      let(:carrier) do
+        { 'x-cloud-trace-context' => "#{trace_id}/#{span_id.to_i(16)};o=0" }
+      end
+
       it 'extracts a default trace flag' do
         context = propagator.extract(carrier, context: parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
