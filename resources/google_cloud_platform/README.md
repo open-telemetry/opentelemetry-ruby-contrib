@@ -71,4 +71,3 @@ The `opentelemetry-resource-detector-google_cloud_platform` gem is distributed u
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
-	
