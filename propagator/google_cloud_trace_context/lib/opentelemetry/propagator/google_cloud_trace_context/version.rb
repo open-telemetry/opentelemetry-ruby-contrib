@@ -15,6 +15,7 @@ module OpenTelemetry
   module Propagator
     # Namespace for OpenTelemetry GoogleCloudTraceContext propagation
     module GoogleCloudTraceContext
+      # Current gem version
       VERSION = '0.0.0'
     end
   end
