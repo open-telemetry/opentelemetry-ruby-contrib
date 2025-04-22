@@ -8,7 +8,9 @@ require 'net/http'
 require 'json'
 require 'opentelemetry/sdk'
 require_relative 'sampling_rule'
+require_relative 'fallback_sampler'
 require_relative 'sampling_rule_applier'
+require_relative 'rule_cache'
 require_relative 'aws_xray_sampling_client'
 
 module OpenTelemetry
@@ -57,7 +59,9 @@ module OpenTelemetry
           @target_polling_jitter_millis = (rand / 10) * 1000
 
           @aws_proxy_endpoint = endpoint || DEFAULT_AWS_PROXY_ENDPOINT
+          @fallback_sampler = OpenTelemetry::Sampler::XRay::FallbackSampler.new
           @client_id = self.class.generate_client_id
+          @rule_cache = OpenTelemetry::Sampler::XRay::RuleCache.new(resource)
 
           @sampling_client = OpenTelemetry::Sampler::XRay::AWSXRaySamplingClient.new(@aws_proxy_endpoint)
 
@@ -68,10 +72,25 @@ module OpenTelemetry
         end
 
         def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
-          OpenTelemetry::SDK::Trace::Samplers::Result.new(
-            decision: OpenTelemetry::SDK::Trace::Samplers::Decision::DROP,
-            tracestate: tracestate,
-            attributes: attributes
+          if @rule_cache.expired?
+            OpenTelemetry.logger.debug('Rule cache is expired, so using fallback sampling strategy')
+            return @fallback_sampler.should_sample?(
+              trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes
+            )
+          end
+
+          matched_rule = @rule_cache.get_matched_rule(attributes)
+          if matched_rule
+            return matched_rule.should_sample?(
+              trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes
+            )
+          end
+
+          OpenTelemetry.logger.debug(
+            'Using fallback sampler as no rule match was found. This is likely due to a bug, since default rule should always match'
+          )
+          @fallback_sampler.should_sample?(
+            trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes
           )
         end
 
@@ -113,7 +132,7 @@ module OpenTelemetry
                 sampling_rules << SamplingRuleApplier.new(sampling_rule)
               end
             end
-            # TODO: Add Sampling Rules to a Rule Cache
+            @rule_cache.update_rules(sampling_rules)
           else
             OpenTelemetry.logger.error('SamplingRuleRecords from GetSamplingRules request is not defined')
           end
