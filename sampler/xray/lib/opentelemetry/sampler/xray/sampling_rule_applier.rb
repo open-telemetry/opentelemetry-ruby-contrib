@@ -9,6 +9,7 @@ require 'opentelemetry-semantic_conventions'
 require 'date'
 require_relative 'sampling_rule'
 require_relative 'statistics'
+require_relative 'rate_limiting_sampler'
 require_relative 'utils'
 
 module OpenTelemetry
@@ -26,10 +27,24 @@ module OpenTelemetry
           @sampling_rule = sampling_rule
           @fixed_rate_sampler = OpenTelemetry::SDK::Trace::Samplers::TraceIdRatioBased.new(@sampling_rule.fixed_rate)
 
-          # TODO: Add Reservoir Sampler (Rate Limiting Sampler)
+          @reservoir_sampler = if @sampling_rule.reservoir_size.positive?
+                                 OpenTelemetry::Sampler::XRay::RateLimitingSampler.new(1)
+                               else
+                                 OpenTelemetry::Sampler::XRay::RateLimitingSampler.new(0)
+                               end
 
           @reservoir_expiry_time = MAX_DATE_TIME_SECONDS
           @statistics = statistics
+          @statistics_lock = Mutex.new
+
+          @statistics.reset_statistics
+          @borrowing_enabled = true
+
+          apply_target(target) if target
+        end
+
+        def with_target(target)
+          self.class.new(@sampling_rule, @statistics, target)
         end
 
         def matches?(attributes, resource)
@@ -78,14 +93,21 @@ module OpenTelemetry
         end
 
         def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
-          # TODO: Record Sampling Statistics
-
+          has_borrowed = false
           result = OpenTelemetry::SDK::Trace::Samplers::Result.new(
             decision: OpenTelemetry::SDK::Trace::Samplers::Decision::DROP,
             tracestate: OpenTelemetry::Trace::Tracestate::DEFAULT
           )
 
-          # TODO: Apply Reservoir Sampling
+          now = Time.now
+          reservoir_expired = now >= @reservoir_expiry_time
+
+          unless reservoir_expired
+            result = @reservoir_sampler.should_sample?(
+              trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes
+            )
+            has_borrowed = @borrowing_enabled && result.instance_variable_get(:@decision) != OpenTelemetry::SDK::Trace::Samplers::Decision::DROP
+          end
 
           if result.instance_variable_get(:@decision) == OpenTelemetry::SDK::Trace::Samplers::Decision::DROP
             result = @fixed_rate_sampler.should_sample?(
@@ -93,10 +115,40 @@ module OpenTelemetry
             )
           end
 
+          @statistics_lock.synchronize do
+            @statistics.sample_count += result.instance_variable_get(:@decision) == OpenTelemetry::SDK::Trace::Samplers::Decision::DROP ? 0 : 1
+            @statistics.borrow_count += has_borrowed ? 1 : 0
+            @statistics.request_count += 1
+          end
+
           result
         end
 
+        def snapshot_statistics
+          @statistics_lock.synchronize do
+            statistics_copy = @statistics.dup
+            @statistics.reset_statistics
+            return statistics_copy
+          end
+        end
+
         private
+
+        def apply_target(target)
+          @borrowing_enabled = false
+
+          @reservoir_sampler = OpenTelemetry::Sampler::XRay::RateLimitingSampler.new(target['ReservoirQuota']) if target['ReservoirQuota']
+
+          @reservoir_expiry_time = if target['ReservoirQuotaTTL']
+                                     Time.at(target['ReservoirQuotaTTL'])
+                                   else
+                                     Time.now
+                                   end
+
+          return unless target['FixedRate']
+
+          @fixed_rate_sampler = OpenTelemetry::SDK::Trace::Samplers::TraceIdRatioBased.new(target['FixedRate'])
+        end
 
         def get_arn(resource, attributes)
           resource_hash = resource.attribute_enumerator.to_h
