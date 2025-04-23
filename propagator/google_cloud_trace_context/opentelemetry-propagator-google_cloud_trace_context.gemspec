@@ -1,19 +1,22 @@
 # frozen_string_literal: true
 
-# Copyright The OpenTelemetry Authors
+# Copyright OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative 'lib/opentelemetry/propagator/google_cloud_trace_context/version'
+lib = File.expand_path('lib', __dir__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require 'opentelemetry/propagator/google_cloud_trace_context/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'opentelemetry-propagator-google_cloud_trace_context'
-  spec.version       = OpenTelemetry::Propagator::GoogleCloudTraceContext::VERSION
-  spec.authors       = ['OpenTelemetry Authors']
-  spec.email         = ['cncf-opentelemetry-contributors@lists.cncf.io']
+  spec.name        = 'opentelemetry-propagator-google_cloud_trace_context'
+  spec.version     = OpenTelemetry::Propagator::GoogleCloudTraceContext::VERSION
+  spec.authors     = ['OpenTelemetry Authors']
+  spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'GoogleCloudTraceContext Context Propagation Extension for the OpenTelemetry framework'
-  spec.description = 'GoogleCloudTraceContext Context Propagation Extension for the OpenTelemetry framework'
+  spec.summary     = 'Google Cloud Trace Context Propagation Extension for the OpenTelemetry framework'
+  spec.description = 'Google Cloud Trace Context Propagation Extension for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
@@ -24,14 +27,6 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
-
-  spec.add_development_dependency 'bundler', '~> 2.4'
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rubocop', '~> 1.71.0'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
-  spec.add_development_dependency 'simplecov', '~> 0.22.0'
-  spec.add_development_dependency 'yard', '~> 0.9'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"

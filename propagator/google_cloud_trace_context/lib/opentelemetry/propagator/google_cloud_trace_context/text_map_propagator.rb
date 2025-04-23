@@ -17,7 +17,7 @@ module OpenTelemetry
     module GoogleCloudTraceContext
       # Provides a class for decoding and encoding x-cloud-trace-context header to/from into trace components
       class CloudTraceContext
-        CLOUD_TRACE_CONTEXT_REGEX = /\A(?<trace_id>[a-f0-9]{32})\/(?<span_id>[0-9]+)(?:;o=(?<options>[01]))?\Z/i
+        CLOUD_TRACE_CONTEXT_REGEX = %r{\A(?<trace_id>[a-f0-9]{32})\/(?<span_id>[0-9]+)(?:;o=(?<options>[01]))?\Z}i
 
         private_constant :CLOUD_TRACE_CONTEXT_REGEX
 
@@ -33,7 +33,8 @@ module OpenTelemetry
           # @param [String] string The serialized trace parent
           # @return [CloudTraceContext, nil] a trace_parent or nil if malformed
           def from_string(string)
-            return unless matches = CLOUD_TRACE_CONTEXT_REGEX.match(string)
+            matches = CLOUD_TRACE_CONTEXT_REGEX.match(string)
+            return unless matches
 
             trace_id = Array(matches[:trace_id].downcase).pack('H*')
             span_id = Array(matches[:span_id].to_i.to_s(16)).pack('H*')
