@@ -121,6 +121,8 @@ module OpenTelemetry
           else
             OpenTelemetry.logger.error('GetSamplingRules Response is falsy')
           end
+        rescue StandardError => e
+          OpenTelemetry.logger.error("Error occurred when retrieving or updating Sampling Rules: #{e}")
         end
 
         def update_sampling_rules(response_object)
