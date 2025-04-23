@@ -209,7 +209,7 @@ process. Don't worry it's painless!
 
 ### Review and feedback
 
-PRs require a review from one or more of the [code owners](CODEOWNERS) before
+PRs require a review from one or more of the [code owners](CODEOWNERS) or [component owners](.github/component_owners.yml) before
 merge. You'll probably get some feedback from these fine folks which helps to
 make the project that much better. Respond to the feedback and work with your
 reviewer(s) to resolve any issues.
