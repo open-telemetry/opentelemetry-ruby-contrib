@@ -33,7 +33,8 @@ module OpenTelemetry
           if Gem::Version.new(::Dalli::VERSION) < Gem::Version.new('3.0.0')
             ::Dalli::Server.prepend(Patches::Server)
           else
-            ::Dalli::Protocol::Binary.prepend(Patches::Server)
+            ::Dalli::Protocol::Binary.prepend(Patches::Server) if defined?(::Dalli::Protocol::Binary)
+            ::Dalli::Protocol::Meta.prepend(Patches::Server) if defined?(::Dalli::Protocol::Meta)
           end
         end
       end
