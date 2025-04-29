@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-httpx
 
+### v0.2.1 / 2025-04-29
+
+* FIXED: Httpx instrumentation trace context propagation
+
 ### v0.2.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
