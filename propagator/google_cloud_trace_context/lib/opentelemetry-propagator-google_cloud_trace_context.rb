@@ -4,10 +4,5 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Instrumentation
-    module Dalli
-      VERSION = '0.27.2'
-    end
-  end
-end
+require 'opentelemetry-api'
+require_relative 'opentelemetry/propagator/google_cloud_trace_context'
