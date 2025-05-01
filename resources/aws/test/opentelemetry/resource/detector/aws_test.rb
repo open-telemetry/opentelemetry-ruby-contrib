@@ -9,6 +9,8 @@ require 'test_helper'
 describe OpenTelemetry::Resource::Detector::AWS do
   let(:detector) { OpenTelemetry::Resource::Detector::AWS }
 
+  RESOURCE = OpenTelemetry::SemanticConventions::Resource
+
   describe '.detect' do
     before do
       WebMock.disable_net_connect!
@@ -22,10 +24,13 @@ describe OpenTelemetry::Resource::Detector::AWS do
         .with(headers: { 'Accept' => '*/*' })
         .to_return(status: 404, body: 'Not Found')
 
-      # Clear environment variables for ECS
+      # Clear environment variables for ECS and Lambda
       @original_env = ENV.to_hash
       ENV.delete('ECS_CONTAINER_METADATA_URI')
       ENV.delete('ECS_CONTAINER_METADATA_URI_V4')
+      ENV.delete('AWS_LAMBDA_FUNCTION_NAME')
+      ENV.delete('AWS_LAMBDA_FUNCTION_VERSION')
+      ENV.delete('AWS_LAMBDA_LOG_STREAM_NAME')
     end
 
     after do
@@ -51,6 +56,10 @@ describe OpenTelemetry::Resource::Detector::AWS do
 
     it 'returns an empty resource when ECS detection fails' do
       assert_detection_result([:ecs])
+    end
+
+    it 'returns an empty resource when Lambda detection fails' do
+      assert_detection_result([:lambda])
     end
 
     it 'returns an empty resource with unknown detector' do
@@ -93,14 +102,14 @@ describe OpenTelemetry::Resource::Detector::AWS do
         resource = detector.detect([:ec2])
         attributes = resource.attribute_enumerator.to_h
 
-        _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PROVIDER]).must_equal('aws')
-        _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM]).must_equal('aws_ec2')
-        _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID]).must_equal('123456789012')
-        _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_REGION]).must_equal('us-west-2')
-        _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_AVAILABILITY_ZONE]).must_equal('us-west-2b')
-        _(attributes[OpenTelemetry::SemanticConventions::Resource::HOST_ID]).must_equal('i-1234567890abcdef0')
-        _(attributes[OpenTelemetry::SemanticConventions::Resource::HOST_TYPE]).must_equal('m5.xlarge')
-        _(attributes[OpenTelemetry::SemanticConventions::Resource::HOST_NAME]).must_equal(hostname)
+        _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+        _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_ec2')
+        _(attributes[RESOURCE::CLOUD_ACCOUNT_ID]).must_equal('123456789012')
+        _(attributes[RESOURCE::CLOUD_REGION]).must_equal('us-west-2')
+        _(attributes[RESOURCE::CLOUD_AVAILABILITY_ZONE]).must_equal('us-west-2b')
+        _(attributes[RESOURCE::HOST_ID]).must_equal('i-1234567890abcdef0')
+        _(attributes[RESOURCE::HOST_TYPE]).must_equal('m5.xlarge')
+        _(attributes[RESOURCE::HOST_NAME]).must_equal(hostname)
       end
 
       describe 'with succesefful ECS detection' do
@@ -147,8 +156,8 @@ describe OpenTelemetry::Resource::Detector::AWS do
               resource = detector.detect([:ecs])
               attributes = resource.attribute_enumerator.to_h
 
-              _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PROVIDER]).must_equal('aws')
-              _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM]).must_equal('aws_ecs')
+              _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+              _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_ecs')
             end
           end
         end
@@ -164,10 +173,53 @@ describe OpenTelemetry::Resource::Detector::AWS do
                 attributes = resource.attribute_enumerator.to_h
 
                 # Should include attributes from both detectors
-                _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PROVIDER]).must_equal('aws')
-                _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM]).must_equal('aws_ecs')
+                _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+                _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_ecs')
                 _(attributes['ec2.instance.id']).must_equal('i-1234567890abcdef0')
               end
+            end
+          end
+        end
+
+        describe 'with successful Lambda detection' do
+          before do
+            # Set Lambda environment variables
+            ENV['AWS_LAMBDA_FUNCTION_NAME'] = 'my-function'
+            ENV['AWS_LAMBDA_FUNCTION_VERSION'] = '$LATEST'
+            ENV['AWS_LAMBDA_LOG_STREAM_NAME'] = '2025/01/01/[$LATEST]abcdef123456'
+            ENV['AWS_REGION'] = 'us-east-1'
+            ENV['AWS_LAMBDA_FUNCTION_MEMORY_SIZE'] = '512'
+          end
+
+          it 'detects Lambda resources when specified' do
+            resource = detector.detect([:lambda])
+            attributes = resource.attribute_enumerator.to_h
+
+            _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+            _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_lambda')
+            _(attributes[RESOURCE::CLOUD_REGION]).must_equal('us-east-1')
+            _(attributes[RESOURCE::FAAS_NAME]).must_equal('my-function')
+            _(attributes[RESOURCE::FAAS_VERSION]).must_equal('$LATEST')
+            _(attributes[RESOURCE::FAAS_INSTANCE]).must_equal('2025/01/01/[$LATEST]abcdef123456')
+            _(attributes[RESOURCE::FAAS_MAX_MEMORY]).must_equal(512)
+          end
+
+          it 'detects multiple resources when specified' do
+            # Create a mock EC2 resource
+            ec2_resource = OpenTelemetry::SDK::Resources::Resource.create({
+                                                                            RESOURCE::HOST_ID => 'i-1234567890abcdef0'
+                                                                          })
+
+            # Stub EC2 detection to return the mock resource
+            OpenTelemetry::Resource::Detector::AWS::EC2.stub :detect, ec2_resource do
+              resource = detector.detect(%i[ec2 lambda])
+              attributes = resource.attribute_enumerator.to_h
+
+              # Should include attributes from both detectors
+              _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+              _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_lambda')
+              _(attributes[RESOURCE::FAAS_NAME]).must_equal('my-function')
+              _(attributes[RESOURCE::HOST_ID]).must_equal('i-1234567890abcdef0')
             end
           end
         end
