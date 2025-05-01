@@ -42,7 +42,8 @@ module OpenTelemetry
             end
           end
 
-          # each_batch method is deleted in rdkafka 0.20.0
+          # each_batch method is deleted in rdkafka-ruby-0.20.0
+          # But, rdkafka-ruby-0.19.x and 0.18.x are still maintained
           if Gem::Version.new(::Rdkafka::VERSION) < Gem::Version.new('0.20.0')
             def each_batch(max_items: 100, bytes_threshold: Float::INFINITY, timeout_ms: 250, yield_on_error: false, &block)
               super do |messages, error|
