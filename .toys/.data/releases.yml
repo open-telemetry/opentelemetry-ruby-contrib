@@ -229,6 +229,10 @@ gems:
     directory: processor/baggage
     version_constant: [OpenTelemetry, Processor, Baggage, VERSION]
 
+  - name: opentelemetry-propagator-google_cloud_trace_context
+    directory: propagator/google_cloud_trace_context
+    version_constant: [OpenTelemetry, Propagator, GoogleCloudTraceContext, VERSION]
+
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace
     version_constant: [OpenTelemetry, Propagator, OTTrace, VERSION]
