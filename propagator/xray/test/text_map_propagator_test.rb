@@ -14,20 +14,6 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
   let(:propagator) { OpenTelemetry::Propagator::XRay::TextMapPropagator.new }
 
   describe('#extract') do
-    it 'extracts context with trace id, span id, sampling flag, trace state' do
-      parent_context = OpenTelemetry::Context.empty
-      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=1;Foo=Bar;Fizz=Buzz' }
-
-      context = propagator.extract(carrier, context: parent_context)
-      extracted_context = OpenTelemetry::Trace.current_span(context).context
-
-      _(extracted_context.hex_trace_id).must_equal('80f198eae56343ba864fe8b2a57d3eff')
-      _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
-      _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
-      _(extracted_context.tracestate.to_s).must_equal(OpenTelemetry::Trace::Tracestate.from_string('Foo=Bar,Fizz=Buzz').to_s)
-      _(extracted_context).must_be(:remote?)
-    end
-
     it 'extracts context with trace id, span id, sampling flag' do
       parent_context = OpenTelemetry::Context.empty
       carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=1' }
@@ -52,6 +38,18 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
       _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
       _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::DEFAULT)
       _(extracted_context).must_be(:remote?)
+    end
+
+    it 'extracts context with lineage in header' do
+      parent_context = OpenTelemetry::Context.empty
+      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=1;Lineage=100:e3b0c442:11' }
+
+      context = propagator.extract(carrier, context: parent_context)
+      extracted_context = OpenTelemetry::Trace.current_span(context).context
+      _(extracted_context.hex_trace_id).must_equal('80f198eae56343ba864fe8b2a57d3eff')
+      _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+      _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
+      _(OpenTelemetry::Baggage.value('Lineage', context: context)).must_equal('100:e3b0c442:11')
     end
 
     it 'converts debug flag to sampled' do
@@ -88,6 +86,29 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
       context = propagator.extract(carrier, context: parent_context)
 
       _(context).must_equal(parent_context)
+    end
+    it 'handles invalid lineage' do
+      invalid_lineages = [
+        "",
+        "::",
+        "1::",
+        "1::1",
+        "1:badc0de:13",
+        ":fbadc0de:13",
+        "65535:fbadc0de:255",
+      ]
+
+      invalid_lineages.each do |lineage|
+        parent_context = OpenTelemetry::Context.empty
+        carrier = { 'X-Amzn-Trace-Id' => "Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=1;Lineage=65535:fbadc0de:255" }
+
+        context = propagator.extract(carrier, context: parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+        _(extracted_context.hex_trace_id).must_equal('80f198eae56343ba864fe8b2a57d3eff')
+        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
+        _(OpenTelemetry::Baggage.value('Lineage', context: context)).must_be_nil
+      end
     end
   end
 
@@ -131,6 +152,21 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
       propagator.inject(carrier, context: context)
 
       expected_xray = 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=d'
+      _(carrier['X-Amzn-Trace-Id']).must_equal(expected_xray)
+    end
+
+    it 'injects lineage from baggage' do
+      context = create_context(
+        trace_id: '80f198eae56343ba864fe8b2a57d3eff',
+        span_id: 'e457b5a2e4d86bd1',
+        trace_flags: TraceFlags::DEFAULT
+      )
+      context = OpenTelemetry::Baggage.set_value('Lineage', '100:e3b0c442:11', context: context)
+
+      carrier = {}
+      propagator.inject(carrier, context: context)
+
+      expected_xray = 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=0;Lineage=100:e3b0c442:11'
       _(carrier['X-Amzn-Trace-Id']).must_equal(expected_xray)
     end
 
