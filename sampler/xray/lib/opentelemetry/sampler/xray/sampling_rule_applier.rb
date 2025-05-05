@@ -20,6 +20,7 @@ module OpenTelemetry
         attr_reader :sampling_rule
 
         MAX_DATE_TIME_SECONDS = Time.at(8_640_000_000_000)
+        SEMCONV = OpenTelemetry::SemanticConventions
 
         def initialize(sampling_rule, statistics = OpenTelemetry::Sampler::XRay::Statistics.new, target = nil)
           @sampling_rule = sampling_rule
@@ -38,10 +39,10 @@ module OpenTelemetry
           http_host = nil
 
           unless attributes.nil?
-            http_target = attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET]
-            http_url = attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_URL]
-            http_method = attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD]
-            http_host = attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_HOST]
+            http_target = attributes[SEMCONV::Trace::HTTP_TARGET]
+            http_url = attributes[SEMCONV::Trace::HTTP_URL]
+            http_method = attributes[SEMCONV::Trace::HTTP_METHOD]
+            http_host = attributes[SEMCONV::Trace::HTTP_HOST]
           end
 
           service_type = nil
@@ -50,8 +51,8 @@ module OpenTelemetry
           resource_hash = resource.attribute_enumerator.to_h
 
           if resource
-            service_name = resource_hash[OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME] || ''
-            cloud_platform = resource_hash[OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM]
+            service_name = resource_hash[SEMCONV::Resource::SERVICE_NAME] || ''
+            cloud_platform = resource_hash[SEMCONV::Resource::CLOUD_PLATFORM]
             service_type = OpenTelemetry::Sampler::XRay::Utils::CLOUD_PLATFORM_MAPPING[cloud_platform] if cloud_platform.is_a?(String)
             resource_arn = get_arn(resource, attributes)
           end
@@ -99,11 +100,11 @@ module OpenTelemetry
 
         def get_arn(resource, attributes)
           resource_hash = resource.attribute_enumerator.to_h
-          arn = resource_hash[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_CONTAINER_ARN] ||
-                resource_hash[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_CLUSTER_ARN] ||
-                resource_hash[OpenTelemetry::SemanticConventions::Resource::AWS_EKS_CLUSTER_ARN]
+          arn = resource_hash[SEMCONV::Resource::AWS_ECS_CONTAINER_ARN] ||
+                resource_hash[SEMCONV::Resource::AWS_ECS_CLUSTER_ARN] ||
+                resource_hash[SEMCONV::Resource::AWS_EKS_CLUSTER_ARN]
 
-          arn = attributes[OpenTelemetry::SemanticConventions::Trace::AWS_LAMBDA_INVOKED_ARN] || resource_hash[OpenTelemetry::SemanticConventions::Resource::FAAS_ID] if arn.nil?
+          arn = attributes[SEMCONV::Trace::AWS_LAMBDA_INVOKED_ARN] || resource_hash[SEMCONV::Resource::FAAS_ID] if arn.nil?
           arn
         end
       end

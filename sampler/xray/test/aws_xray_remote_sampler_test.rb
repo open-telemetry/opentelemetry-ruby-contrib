@@ -9,6 +9,7 @@ require 'test_helper'
 DATA_DIR_SAMPLING_RULES = File.join(__dir__, 'data/test-remote-sampler_sampling-rules-response-sample.json')
 DATA_DIR_SAMPLING_TARGETS = File.join(__dir__, 'data/test-remote-sampler_sampling-targets-response-sample.json')
 TEST_URL = 'localhost:2000'
+SEMCONV = OpenTelemetry::SemanticConventions
 
 describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
   it 'creates remote sampler with empty resource' do
@@ -33,8 +34,8 @@ describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
       .to_return(status: 200, body: File.read(DATA_DIR_SAMPLING_TARGETS))
 
     resource = OpenTelemetry::SDK::Resources::Resource.create(
-      OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => 'test-service-name',
-      OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM => 'test-cloud-platform'
+      SEMCONV::Resource::SERVICE_NAME => 'test-service-name',
+      SEMCONV::Resource::CLOUD_PLATFORM => 'test-cloud-platform'
     )
     sampler = OpenTelemetry::Sampler::XRay::InternalAWSXRayRemoteSampler.new(resource: resource)
 
@@ -53,8 +54,8 @@ describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
       .to_return(status: 200, body: File.read(DATA_DIR_SAMPLING_TARGETS))
 
     resource = OpenTelemetry::SDK::Resources::Resource.create(
-      OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => 'test-service-name',
-      OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM => 'test-cloud-platform'
+      SEMCONV::Resource::SERVICE_NAME => 'test-service-name',
+      SEMCONV::Resource::CLOUD_PLATFORM => 'test-cloud-platform'
     )
     sampler = OpenTelemetry::Sampler::XRay::InternalAWSXRayRemoteSampler.new(
       resource: resource,
@@ -78,14 +79,13 @@ describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
       .to_return(status: 200, body: File.read(DATA_DIR_SAMPLING_TARGETS))
 
     resource = OpenTelemetry::SDK::Resources::Resource.create(
-      OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => 'test-service-name',
-      OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM => 'test-cloud-platform'
+      SEMCONV::Resource::SERVICE_NAME => 'test-service-name',
+      SEMCONV::Resource::CLOUD_PLATFORM => 'test-cloud-platform'
     )
     rs = OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler.new(resource: resource)
 
     attributes = { 'abc' => '1234' }
 
-    sleep(1.0)
     test_rule_applier = rs.instance_variable_get(:@root).instance_variable_get(:@root).instance_variable_get(:@rule_cache).instance_variable_get(:@rule_appliers)[0]
     assert_equal 'test', test_rule_applier.instance_variable_get(:@sampling_rule).instance_variable_get(:@rule_name)
     assert_equal OpenTelemetry::SDK::Trace::Samplers::Decision::DROP,
