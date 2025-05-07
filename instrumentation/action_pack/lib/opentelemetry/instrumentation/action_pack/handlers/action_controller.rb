@@ -53,6 +53,9 @@ module OpenTelemetry
           # @return [Array<String, Hash>] the span name and attributes
           def to_span_name_and_attributes(payload)
             request = payload[:request]
+            # It seems that there are cases in Rails functional tests where it bypasses the routing system and the `action_dispatch.route_uri_pattern` header not being set.
+            # Our Test suite executes the routing system so we are unable to recreate this error case.
+            # https://github.com/rails/rails/blob/747f85f200e7bb2c1a31b4e26e5a5655e2dc0cdc/actionpack/lib/action_dispatch/http/request.rb#L160
             http_route = request.route_uri_pattern&.chomp('(.:format)') if request.respond_to?(:route_uri_pattern)
 
             attributes = {
