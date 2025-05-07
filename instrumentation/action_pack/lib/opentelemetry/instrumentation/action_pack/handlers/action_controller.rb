@@ -53,7 +53,7 @@ module OpenTelemetry
           # @return [Array<String, Hash>] the span name and attributes
           def to_span_name_and_attributes(payload)
             request = payload[:request]
-            http_route = request.route_uri_pattern.chomp('(.:format)') if request.respond_to?(:route_uri_pattern)
+            http_route = request.route_uri_pattern&.chomp('(.:format)') if request.respond_to?(:route_uri_pattern)
 
             attributes = {
               OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => String(payload[:controller]),
