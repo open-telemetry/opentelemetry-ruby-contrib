@@ -8,7 +8,7 @@ module OpenTelemetry
   module Resource
     module Detector
       module AWS
-        VERSION = '0.2.0'
+        VERSION = '0.3.0'
       end
     end
   end
