@@ -2,10 +2,10 @@
 
 source 'https://rubygems.org'
 
-gem 'aws-sdk-core', '~> 3'
-gem 'aws-sdk-sns', '~> 1'
+gem 'aws-sdk-core', '~> 3.203.0'
+gem 'aws-sdk-sns', '~> 1.83.0'
 gem 'opentelemetry-api'
-gem 'opentelemetry-instrumentation-aws_sdk'
+gem 'opentelemetry-instrumentation-aws_sdk', '~> 0.7.0'
 gem 'opentelemetry-sdk'
 # AWS SDK core needs an XML library
 gem 'rexml'
