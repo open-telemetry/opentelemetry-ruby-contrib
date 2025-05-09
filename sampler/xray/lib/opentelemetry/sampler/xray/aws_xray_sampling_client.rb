@@ -51,7 +51,7 @@ module OpenTelemetry
           host, port = endpoint.split(':')
           [host, port.to_i]
         rescue StandardError => e
-          OpenTelemetry.logger.error("Invalid endpoint: #{endpoint}")
+          OpenTelemetry.handle_error(exception: e, message: "Invalid endpoint: #{endpoint}")
           raise e
         end
       end
