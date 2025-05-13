@@ -95,8 +95,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         client.publish(message: 'msg', phone_number: '123456')
 
         _(span.name).must_equal('phone_number publish')
-        _(span.attributes[otel_semantic::MESSAGING_DESTINATION])
-          .must_equal('phone_number')
+        _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('phone_number')
       end
     end
 
@@ -178,8 +177,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
           client.get_queue_url(queue_name: 'queue-name')
 
-          _(span.attributes['messaging.destination'])
-            .must_equal('unknown')
+          _(span.attributes['messaging.destination']).must_equal('unknown')
           _(span.attributes).wont_include('messaging.url')
         end
       end
@@ -193,8 +191,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
         client.list_tables
 
-        _(span.attributes[otel_semantic::DB_SYSTEM])
-          .must_equal('dynamodb')
+        _(span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
       end
     end
   end

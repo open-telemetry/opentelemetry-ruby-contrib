@@ -8,27 +8,16 @@ require_relative '../../test_helper'
 
 describe OpenTelemetry::Instrumentation::AwsSdk do
   describe 'Telemetry plugin' do
-    let(:instrumentation_gem_version) do
-      OpenTelemetry::Instrumentation::AwsSdk::Instrumentation.instance.gem_version
-    end
+    let(:instrumentation_instance) { OpenTelemetry::Instrumentation::AwsSdk::Instrumentation.instance }
     let(:otel_semantic) { OpenTelemetry::SemanticConventions::Trace }
     let(:exporter) { EXPORTER }
     let(:spans) { exporter.finished_spans }
     let(:otel_provider) { Aws::Telemetry::OTelProvider.new }
-    let(:stub_span) { spans.find { |s| s.name == 'Handler.StubResponses' } }
     let(:client_attrs) do
       {
         'aws.region' => 'us-stubbed-1',
         otel_semantic::CODE_NAMESPACE => 'Aws::Plugins::Telemetry',
         otel_semantic::RPC_SYSTEM => 'aws-api'
-      }
-    end
-
-    let(:stub_attrs) do
-      {
-        'http.status_code' => '200',
-        'net.protocol.name' => 'http',
-        'net.protocol.version' => '1.1'
       }
     end
 
@@ -38,17 +27,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
     describe 'Lambda' do
       let(:service_name) { 'Lambda' }
-      let(:service_uri) do
-        'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/'
-      end
-      let(:client) do
-        Aws::Lambda::Client.new(
-          telemetry_provider: otel_provider,
-          stub_responses: true
-        )
-      end
+      let(:service_uri) { 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/' }
+      let(:client) { Aws::Lambda::Client.new(telemetry_provider: otel_provider, stub_responses: true) }
       let(:client_span) { spans.find { |s| s.name == 'Lambda.ListFunctions' } }
-      let(:internal_span) { spans.find { |s| s.name == 'Handler.NetHttp' } }
 
       let(:expected_client_attrs) do
         client_attrs.tap do |attrs|
@@ -58,45 +39,13 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         end
       end
 
-      let(:expected_stub_attrs) { stub_attrs.tap { |a| a['http.method'] = 'GET' } }
-
-      let(:expected_internal_attrs) do
-        stub_attrs.tap do |attrs|
-          attrs['net.peer.name'] = 'lambda.us-east-1.amazonaws.com'
-          attrs['net.peer.port'] = '443'
-        end
-      end
-
-      it 'creates spans with all the supplied parameters' do
+      it 'create a client span with all the supplied parameters' do
         skip unless TestHelper.telemetry_plugin?(service_name)
         client.list_functions
 
         _(client_span.name).must_equal('Lambda.ListFunctions')
-        _(stub_span.name).must_equal('Handler.StubResponses')
         _(client_span.kind).must_equal(:client)
-        _(stub_span.kind).must_equal(:internal)
         TestHelper.match_span_attrs(expected_client_attrs, client_span, self)
-        TestHelper.match_span_attrs(expected_stub_attrs, stub_span, self)
-        _(stub_span.parent_span_id).must_equal(client_span.span_id)
-      end
-
-      it 'creates spans with all the non-stubbed parameters' do
-        skip unless TestHelper.telemetry_plugin?(service_name)
-        stub_request(:get, 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/')
-
-        client = Aws::Lambda::Client.new(
-          telemetry_provider: otel_provider,
-          credentials: Aws::Credentials.new('akid', 'secret'),
-          region: 'us-east-1'
-        )
-        client.list_functions
-
-        _(client_span.name).must_equal('Lambda.ListFunctions')
-        _(internal_span.name).must_equal('Handler.NetHttp')
-        _(client_span.kind).must_equal(:client)
-        _(internal_span.kind).must_equal(:internal)
-        _(client_span.attributes['aws.region']).must_equal('us-east-1')
-        TestHelper.match_span_attrs(expected_internal_attrs, internal_span, self)
       end
 
       it 'should have correct span attributes when error' do
@@ -108,19 +57,44 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         rescue Aws::Lambda::Errors::BadRequest
           _(client_span.status.code).must_equal(2)
           _(client_span.events[0].name).must_equal('exception')
-          _(internal_span.attributes['http.status_code']).must_equal('400')
         end
+      end
+
+      it 'creates internal spans when enabled' do
+        skip unless TestHelper.telemetry_plugin?(service_name)
+
+        stub_request(:get, 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/')
+        client = Aws::Lambda::Client.new(
+          telemetry_provider: otel_provider,
+          credentials: Aws::Credentials.new('akid', 'secret'),
+          region: 'us-east-1'
+        )
+
+        instrumentation_instance.config[:enable_internal_instrumentation] = true
+        client.list_functions
+
+        internal_span = spans.find { |s| s.name == 'Handler.NetHttp' }
+        _(internal_span.name).must_equal('Handler.NetHttp')
+        _(internal_span.kind).must_equal(:internal)
+        TestHelper.match_span_attrs(
+          {
+            'http.method' => 'GET',
+            'http.status_code' => '200',
+            'net.protocol.name' => 'http',
+            'net.protocol.version' => '1.1',
+            'net.peer.name' => 'lambda.us-east-1.amazonaws.com',
+            'net.peer.port' => '443'
+          },
+          internal_span,
+          self
+        )
+        instrumentation_instance.config[:enable_internal_instrumentation] = false
       end
     end
 
     describe 'SNS' do
       let(:service_name) { 'SNS' }
-      let(:client) do
-        Aws::SNS::Client.new(
-          telemetry_provider: otel_provider,
-          stub_responses: true
-        )
-      end
+      let(:client) { Aws::SNS::Client.new(telemetry_provider: otel_provider, stub_responses: true) }
       let(:client_span) { spans.find { |s| s.name.include?('SNS.Publish') } }
 
       let(:expected_client_attrs) do
@@ -134,46 +108,31 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         end
       end
 
-      let(:expected_stub_attrs) { stub_attrs.tap { |a| a['http.method'] = 'POST' } }
-
       it 'creates spans with appropriate messaging attributes' do
         skip unless TestHelper.telemetry_plugin?(service_name)
 
-        client.publish(
-          message: 'msg',
-          topic_arn: 'arn:aws:sns:fake:123:TopicName'
-        )
+        client.publish(message: 'msg', topic_arn: 'arn:aws:sns:fake:123:TopicName')
 
         _(client_span.name).must_equal('SNS.Publish.TopicName.Publish')
         _(client_span.kind).must_equal(:producer)
-        _(stub_span.name).must_equal('Handler.StubResponses')
-        _(stub_span.kind).must_equal(:internal)
         TestHelper.match_span_attrs(expected_client_attrs, client_span, self)
-        TestHelper.match_span_attrs(expected_stub_attrs, stub_span, self)
-        _(stub_span.parent_span_id).must_equal(client_span.span_id)
       end
 
       it 'creates a span that includes a phone number' do
         # skip if using aws-sdk version before phone_number supported (v2.3.18)
-        skip if Gem::Version.new('2.3.18') > instrumentation_gem_version
+        skip if Gem::Version.new('2.3.18') > instrumentation_instance.gem_version
         skip unless TestHelper.telemetry_plugin?(service_name)
 
         client.publish(message: 'msg', phone_number: '123456')
 
         _(client_span.name).must_equal('SNS.Publish.phone_number.Publish')
-        _(client_span.attributes[otel_semantic::MESSAGING_DESTINATION])
-          .must_equal('phone_number')
+        _(client_span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('phone_number')
       end
     end
 
     describe 'SQS' do
       let(:service_name) { 'SQS' }
-      let(:client) do
-        Aws::SQS::Client.new(
-          telemetry_provider: otel_provider,
-          stub_responses: true
-        )
-      end
+      let(:client) { Aws::SQS::Client.new(telemetry_provider: otel_provider, stub_responses: true) }
       let(:queue_url) { 'https://sqs.us-east-1.amazonaws.com/1/QueueName' }
       let(:expected_client_base_attrs) do
         client_attrs.tap do |attrs|
@@ -184,8 +143,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
           attrs[otel_semantic::MESSAGING_URL] = queue_url
         end
       end
-
-      let(:expected_stub_attrs) { stub_attrs.tap { |a| a['http.method'] = 'POST' } }
 
       describe '#SendMessage' do
         let(:client_span) { spans.find { |s| s.name.include?('SQS.SendMessage') } }
@@ -202,11 +159,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
           _(client_span.name).must_equal('SQS.SendMessage.QueueName.Publish')
           _(client_span.kind).must_equal(:producer)
-          _(stub_span.name).must_equal('Handler.StubResponses')
-          _(stub_span.kind).must_equal(:internal)
           TestHelper.match_span_attrs(expected_client_attrs, client_span, self)
-          TestHelper.match_span_attrs(expected_stub_attrs, stub_span, self)
-          _(stub_span.parent_span_id).must_equal(client_span.span_id)
         end
       end
 
@@ -228,11 +181,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
           _(client_span.name).must_equal('SQS.SendMessageBatch.QueueName.Publish')
           _(client_span.kind).must_equal(:producer)
-          _(stub_span.name).must_equal('Handler.StubResponses')
-          _(stub_span.kind).must_equal(:internal)
           TestHelper.match_span_attrs(expected_client_attrs, client_span, self)
-          TestHelper.match_span_attrs(expected_stub_attrs, stub_span, self)
-          _(stub_span.parent_span_id).must_equal(client_span.span_id)
         end
       end
 
@@ -252,11 +201,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
           _(client_span.name).must_equal('SQS.ReceiveMessage.QueueName.Receive')
           _(client_span.kind).must_equal(:consumer)
-          _(stub_span.name).must_equal('Handler.StubResponses')
-          _(stub_span.kind).must_equal(:internal)
           TestHelper.match_span_attrs(expected_client_attrs, client_span, self)
-          TestHelper.match_span_attrs(expected_stub_attrs, stub_span, self)
-          _(stub_span.parent_span_id).must_equal(client_span.span_id)
         end
       end
 
@@ -275,13 +220,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
     end
 
     describe 'DynamoDB' do
-      let(:client) do
-        Aws::DynamoDB::Client.new(
-          telemetry_provider: otel_provider,
-          stub_responses: true
-        )
-      end
-      let(:client_span) { TestHelper.find_span(spans, 'DynamoDB.ListTables') }
+      let(:client) { Aws::DynamoDB::Client.new(telemetry_provider: otel_provider, stub_responses: true) }
       let(:client_span) { spans.find { |s| s.name == 'DynamoDB.ListTables' } }
 
       it 'creates a span with dynamodb-specific attribute' do
@@ -289,8 +228,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
         client.list_tables
 
-        _(client_span.attributes[otel_semantic::DB_SYSTEM])
-          .must_equal('dynamodb')
+        _(client_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
       end
     end
   end
