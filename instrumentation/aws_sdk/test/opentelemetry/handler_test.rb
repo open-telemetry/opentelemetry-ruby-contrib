@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'test_helper'
+require_relative '../test_helper'
 
 describe OpenTelemetry::Instrumentation::AwsSdk do
   describe 'AwsSdk Plugin' do

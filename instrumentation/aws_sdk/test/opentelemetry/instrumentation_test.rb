@@ -65,4 +65,11 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       instrumentation.instance_variable_set(:@installed, false)
     end
   end
+
+  describe '#install with default options' do
+    it 'with default options' do
+      _(instrumentation.config[:inject_messaging_context]).must_equal(false)
+      _(instrumentation.config[:enable_internal_instrumentation]).must_equal(false)
+    end
+  end
 end
