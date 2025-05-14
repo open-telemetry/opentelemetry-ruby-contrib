@@ -6,10 +6,10 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/http'
-require_relative '../../../../lib/opentelemetry/instrumentation/http/patches/connection'
+require_relative '../../../../../lib/opentelemetry/instrumentation/http'
+require_relative '../../../../../lib/opentelemetry/instrumentation/http/patches/stable/connection'
 
-describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
+describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Connection do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
@@ -20,7 +20,9 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
   end
 
   # Force re-install of instrumentation
-  after { instrumentation.instance_variable_set(:@installed, false) }
+  after do
+    instrumentation.instance_variable_set(:@installed, false)
+  end
 
   describe '#connect' do
     it 'emits span on connect' do
@@ -36,8 +38,8 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
 
       _(exporter.finished_spans.size).must_equal(2)
       _(span.name).must_equal 'HTTP CONNECT'
-      _(span.attributes['net.peer.name']).must_equal('localhost')
-      _(span.attributes['net.peer.port']).wont_be_nil
+      _(span.attributes['server.address']).must_equal('localhost')
+      _(span.attributes['server.port']).wont_be_nil
     ensure
       WebMock.disable_net_connect!
     end
