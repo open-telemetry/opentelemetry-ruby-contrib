@@ -15,6 +15,8 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Connection do
   let(:span) { exporter.finished_spans.first }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
+
     exporter.reset
     instrumentation.install({})
   end

@@ -20,9 +20,10 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
   end
   let(:span_name_formatter) { nil }
 
-  ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
-
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
+
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
     exporter.reset
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
@@ -37,6 +38,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
   end
 
   after do
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
     # Force re-install of instrumentation
     instrumentation.instance_variable_set(:@installed, false)
     OpenTelemetry.propagation = @orig_propagation
@@ -47,6 +49,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       HTTP.get('http://example.com/success')
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'HTTP GET'
+
       # Old semantic conventions
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -54,6 +57,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       _(span.attributes['http.target']).must_equal '/success'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 80
+
       # Stable semantic conventions
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.scheme']).must_equal 'http'

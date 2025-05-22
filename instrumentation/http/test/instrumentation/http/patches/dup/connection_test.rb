@@ -15,12 +15,16 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection do
   let(:span) { exporter.finished_spans.first }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
+
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
     exporter.reset
     instrumentation.install({})
   end
 
   # Force re-install of instrumentation
   after do
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
     instrumentation.instance_variable_set(:@installed, false)
   end
 
@@ -38,10 +42,12 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection do
 
       _(exporter.finished_spans.size).must_equal(2)
       _(span.name).must_equal 'HTTP CONNECT'
+
       # Old semantic conventions
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
-      # New semantic conventions
+
+      # Stable semantic conventions
       _(span.attributes['server.address']).must_equal('localhost')
       _(span.attributes['server.port']).wont_be_nil
     ensure
