@@ -15,9 +15,10 @@ module OpenTelemetry
             attributes = {
               'db.system' => 'memcached',
               'db.operation' => operation,
-              'net.peer.name' => hostname,
-              'net.peer.port' => port
+              'net.peer.name' => hostname
             }
+            attributes['net.peer.port'] = port if port
+
             if config[:db_statement] == :include
               attributes['db.statement'] = Utils.format_command(operation, args)
             elsif config[:db_statement] == :obfuscate
