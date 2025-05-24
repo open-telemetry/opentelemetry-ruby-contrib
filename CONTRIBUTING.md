@@ -71,6 +71,7 @@ This repository contains multiple Ruby gems:
 * Various resource detector gems located in subdirectories of `resources`
 * `opentelemetry-propagator-xray` located in the `propagator/xray` directory
 * `opentelemetry-propagator-ottrace` located in the `propagator/ottrace` directory
+* `opentelemetry-propagator-google_cloud_trace_context` located in the `propagator/google_cloud_trace_context` directory
 
 Each of these gems has its configuration and tests.
 
@@ -387,34 +388,34 @@ This will then run a bulk update on all of the gems in the repository, and then 
 
 ```console
 
-diff --git a/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec b/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
+diff --git a/propagator/ottrace/Gemfile b/propagator/ottrace/Gemfile
 index 42c5ecba..74fcc743 100644
---- a/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
+--- a/propagator/ottrace/Gemfile
 +++ b/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
 @@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
-   spec.add_development_dependency 'bundler', '~> 2.4'
-   spec.add_development_dependency 'minitest', '~> 5.0'
-   spec.add_development_dependency 'rake', '~> 13.0'
--  spec.add_development_dependency 'rubocop', '~> 1.50.0'
-+  spec.add_development_dependency 'rubocop', '~> 1.56.1'
-   spec.add_development_dependency 'simplecov', '~> 0.22.0'
-   spec.add_development_dependency 'yard', '~> 0.9'
-   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
+   gem 'bundler', '~> 2.4'
+   gem 'minitest', '~> 5.0'
+   gem 'rake', '~> 13.0'
+-  gem 'rubocop', '~> 1.50.0'
++  gem 'rubocop', '~> 1.56.1'
+   gem 'simplecov', '~> 0.22.0'
+   gem 'yard', '~> 0.9'
+   gem 'yard-doctest', '~> 0.1.6'
 (1/1) Stage this hunk [y,n,q,a,d,e,?]? y
 
-diff --git a/propagator/xray/opentelemetry-propagator-xray.gemspec b/propagator/xray/opentelemetry-propagator-xray.gemspec
+diff --git a/propagator/xray/Gemfile b/propagator/xray/Gemfile
 index e29acbfc..85622d25 100644
---- a/propagator/xray/opentelemetry-propagator-xray.gemspec
-+++ b/propagator/xray/opentelemetry-propagator-xray.gemspec
+--- a/propagator/xray/Gemfile
++++ b/propagator/xray/Gemfile
 @@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
-   spec.add_development_dependency 'bundler', '~> 2.4'
-   spec.add_development_dependency 'minitest', '~> 5.0'
-   spec.add_development_dependency 'rake', '~> 13.0'
--  spec.add_development_dependency 'rubocop', '~> 1.50.0'
-+  spec.add_development_dependency 'rubocop', '~> 1.56.1'
-   spec.add_development_dependency 'simplecov', '~> 0.22.0'
-   spec.add_development_dependency 'yard', '~> 0.9'
-   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
+   gem 'bundler', '~> 2.4'
+   gem 'minitest', '~> 5.0'
+   gem 'rake', '~> 13.0'
+-  gem 'rubocop', '~> 1.50.0'
++  gem 'rubocop', '~> 1.56.1'
+   gem 'simplecov', '~> 0.22.0'
+   gem 'yard', '~> 0.9'
+   gem 'yard-doctest', '~> 0.1.6'
 (1/1) Stage this hunk [y,n,q,a,d,e,?]? y
 ```
 

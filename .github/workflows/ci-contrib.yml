@@ -59,7 +59,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "jruby-9.4.10.0"
+          ruby: "jruby-9.4.12.0"
 
   propagators:
     strategy:
@@ -69,6 +69,7 @@ jobs:
           - ottrace
           - vitess
           - xray
+          - google_cloud_trace_context
         os:
           - ubuntu-latest
     name: "propagator-${{ matrix.gem }} / ${{ matrix.os }}"
@@ -103,13 +104,14 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "jruby-9.4.10.0"
+          ruby: "jruby-9.4.12.0"
 
   resource-detectors:
     strategy:
       fail-fast: false
       matrix:
         gem:
+          - resource-detector-aws
           - resource-detector-azure
           - resource-detector-container
           - resource-detector-google_cloud_platform
@@ -148,7 +150,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "jruby-9.4.10.0"
+          ruby: "jruby-9.4.12.0"
 
   processors:
     strategy:
@@ -191,4 +193,47 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "jruby-9.4.10.0"
+          ruby: "jruby-9.4.12.0"
+
+  samplers:
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - xray
+        os:
+          - ubuntu-latest
+    name: "samplers-${{ matrix.gem }} / ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-sampler-${{ matrix.gem }}"
+          ruby: "3.4"
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-sampler-${{ matrix.gem }}"
+          ruby: "3.3"
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-sampler-${{ matrix.gem }}"
+          ruby: "3.2"
+      - name: "Test Ruby 3.1"
+        uses: ./.github/actions/test_gem
+        with:
+          gem:  "opentelemetry-sampler-${{ matrix.gem }}"
+          ruby: "3.1"
+          yard: true
+          rubocop: true
+          coverage: true
+          build: true
+      - name: "Test JRuby"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-sampler-${{ matrix.gem }}"
+          ruby: "jruby-9.4.12.0"
