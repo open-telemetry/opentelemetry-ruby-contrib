@@ -103,7 +103,7 @@ module OpenTelemetry
           def eks?(cred_value)
             # Just try to to access the aws-auth configmap
             # If it exists and we can access it, we're on EKS
-            aws_http_request('GET', AWS_AUTH_PATH, cred_value)
+            aws_http_request(AWS_AUTH_PATH, cred_value)
             true
           rescue StandardError
             false
@@ -115,7 +115,7 @@ module OpenTelemetry
           # @return [String] Cluster name or empty string if not found
           def cluster_name(cred_value)
             begin
-              response = aws_http_request('GET', CLUSTER_INFO_PATH, cred_value)
+              response = aws_http_request(CLUSTER_INFO_PATH, cred_value)
               cluster_info = JSON.parse(response)
               return cluster_info['data']['cluster.name'] if cluster_info['data'] && cluster_info['data']['cluster.name']
             rescue StandardError => e
@@ -142,14 +142,13 @@ module OpenTelemetry
             ''
           end
 
-          # Make HTTP request to K8s API
+          # Make HTTP GET request to K8s API
           #
-          # @param method [String] HTTP method
           # @param path [String] API path
           # @param cred_value [String] Authorization header value
           # @return [String] Response body
           # @raise [StandardError] if request fails
-          def aws_http_request(method, path, cred_value)
+          def aws_http_request(path, cred_value)
             uri = URI.parse("https://kubernetes.default.svc#{path}")
             http = Net::HTTP.new(uri.host, uri.port)
             http.use_ssl = true
@@ -158,15 +157,7 @@ module OpenTelemetry
             http.open_timeout = HTTP_TIMEOUT
             http.read_timeout = HTTP_TIMEOUT
 
-            request = case method.upcase
-                      when 'GET'
-                        Net::HTTP::Get.new(uri)
-                      when 'POST'
-                        Net::HTTP::Post.new(uri)
-                      else
-                        raise "Unsupported HTTP method: #{method}"
-                      end
-
+            request = Net::HTTP::Get.new(uri)
             request['Authorization'] = cred_value
 
             OpenTelemetry::Common::Utilities.untraced do

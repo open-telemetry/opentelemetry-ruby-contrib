@@ -138,7 +138,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
               # Mock cluster name retrieval
               detector.stub :cluster_name, ->(_) { mock_cluster_name } do
                 # Mock HTTP requests
-                detector.stub :aws_http_request, lambda { |_method, path, _auth|
+                detector.stub :aws_http_request, lambda { |path, _auth|
                   if path == aws_auth_path
                     mock_aws_auth_response
                   elsif path == cluster_info_path
