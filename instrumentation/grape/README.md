@@ -2,7 +2,7 @@
 
 The Grape instrumentation is a community-maintained instrumentation for [Grape][grape], a REST-like API framework for Ruby.
 
-It relies on the Grape built-in support for `ActiveSupport::Notifications` (more info [here](https://github.com/ruby-grape/grape#active-support-instrumentation)) and the [OpenTelemetry Rack instrumentation](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/opentelemetry-instrumentation-rack/v0.24.6/instrumentation/rack).
+It relies on the [Grape built-in support for `ActiveSupport::Notifications`](https://github.com/ruby-grape/grape#active-support-instrumentation) and the [OpenTelemetry Rack instrumentation](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/opentelemetry-instrumentation-rack/v0.24.6/instrumentation/rack).
 
 It currently supports the following events:
 
