@@ -9,7 +9,7 @@ module OpenTelemetry
     module HTTP
       module Patches
         # Module using old HTTP semantic conventions
-        module Old 
+        module Old
           # Module to prepend to HTTP::Client for instrumentation
           module Client
             # Constant for the HTTP status range

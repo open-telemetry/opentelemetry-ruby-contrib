@@ -57,8 +57,8 @@ module OpenTelemetry
               return unless response&.status
 
               status_code = response.status.to_i
-              span.set_attribute('http.status_code', status_code) #old semconv
-              span.set_attribute('http.response.status_code', status_code) #stable semconv
+              span.set_attribute('http.status_code', status_code) # old semconv
+              span.set_attribute('http.response.status_code', status_code) # stable semconv
               span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
             end
 
