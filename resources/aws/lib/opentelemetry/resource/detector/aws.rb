@@ -7,6 +7,7 @@
 require 'opentelemetry/resource/detector/aws/ec2'
 require 'opentelemetry/resource/detector/aws/ecs'
 require 'opentelemetry/resource/detector/aws/lambda'
+require 'opentelemetry/resource/detector/aws/eks'
 
 module OpenTelemetry
   module Resource
@@ -30,6 +31,8 @@ module OpenTelemetry
               EC2.detect
             when :ecs
               ECS.detect
+            when :eks
+              EKS.detect
             when :lambda
               Lambda.detect
             else
