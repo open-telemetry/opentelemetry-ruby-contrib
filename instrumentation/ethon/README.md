@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage of faraday can be seen in the `./example/ethon.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/ethon/example/ethon.rb)
+Example usage of faraday can be seen in the [`./example/ethon.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/ethon/example/ethon.rb)
 
 ## How can I get involved?
 

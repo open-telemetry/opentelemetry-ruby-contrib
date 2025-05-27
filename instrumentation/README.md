@@ -8,7 +8,7 @@ Instrumentation libraries provide pre-built OpenTelemetry instrumentation for po
 
 Released instrumentations can be found at the [OpenTelemetry registry](https://opentelemetry.io/registry/?language=ruby&component=instrumentation#).  You can also look in this project's Github repository: Individual instrumentation libraries can be found in subdirectories under `/instrumentation`.
 
-In-progress instrumentations can be found [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aopen+label%3Ainstrumentation+-label%3A%22help+wanted%22+).
+[In-progress instrumentations can be found here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aopen+label%3Ainstrumentation+-label%3A%22help+wanted%22+).
 
 ## How do I get started?
 
@@ -49,7 +49,7 @@ Please review the individual instrumentation READMEs for more information about 
 
 The source for all OpenTelemetry Ruby instrumentation gems is [on github](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation).
 
-If you are interested in helping out with an instrumentation, you can see instrumentations that have been requested but are not currently in-progress [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aopen+label%3Ainstrumentation+label%3A%22help+wanted%22).
+If you are interested in helping out with an instrumentation, check out [instrumentations that have been requested but are not currently in-progress](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aopen+label%3Ainstrumentation+label%3A%22help+wanted%22).
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
