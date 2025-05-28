@@ -17,7 +17,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup, database'
     exporter.reset
     instrumentation.install({})
   end

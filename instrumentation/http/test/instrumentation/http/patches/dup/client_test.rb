@@ -23,7 +23,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup, database'
     exporter.reset
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator

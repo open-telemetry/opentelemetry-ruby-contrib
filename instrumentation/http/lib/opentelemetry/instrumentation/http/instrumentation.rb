@@ -22,10 +22,12 @@ module OpenTelemetry
         option :span_name_formatter, default: nil, validate: :callable
 
         def determine_semconv
-          case ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', nil)
-          when 'http/dup'
+          stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', nil)
+          values = stability_opt_in&.split(',')
+
+          if values.include?('http/dup')
             'dup'
-          when 'http'
+          elsif values.include?('http')
             'stable'
           else
             'old'
