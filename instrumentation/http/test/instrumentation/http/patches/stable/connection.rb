@@ -33,7 +33,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Connection do
       ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup, database'
       instrumentation.install({}) # simulate a fresh install:
 
-     _(HTTP::Connection.ancestors).must_include OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection
+      _(HTTP::Connection.ancestors).must_include OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection
     end
   end
 
