@@ -42,17 +42,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client do
     OpenTelemetry.propagation = @orig_propagation
   end
 
-  describe 'installation' do
-    it 'applies the correct patch when stability options do not include HTTP stability modes' do
-      ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database'
-      # simulate a fresh install:
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install(config)
-
-      _(HTTP::Client.ancestors).must_include OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client
-    end
-  end
-
   describe '#perform' do
     it 'traces a simple request' do
       HTTP.get('http://example.com/success')

@@ -38,4 +38,30 @@ describe OpenTelemetry::Instrumentation::HTTP do
       _(instrumentation.install({})).must_equal(true)
     end
   end
+
+  describe 'determine_semconv' do
+    it 'returns "dup" when OTEL_SEMCONV_STABILITY_OPT_IN includes other configs' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http/dup, database') do
+        _(determine_semconv).must_equal('dup')
+      end
+    end
+
+    it 'returns "dup" when OTEL_SEMCONV_STABILITY_OPT_IN includes both http/dup and http' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http/dup, http') do
+        _(determine_semconv).must_equal('dup')
+      end
+    end
+
+    it 'returns "stable" when OTEL_SEMCONV_STABILITY_OPT_IN is http' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http') do
+        _(determine_semconv).must_equal('stable')
+      end
+    end
+
+    it 'returns "old" when OTEL_SEMCONV_STABILITY_OPT_IN is empty' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => '') do
+        _(determine_semconv).must_equal('old')
+      end
+    end
+  end
 end

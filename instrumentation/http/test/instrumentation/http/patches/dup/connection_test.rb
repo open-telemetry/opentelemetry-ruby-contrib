@@ -28,15 +28,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection do
     instrumentation.instance_variable_set(:@installed, false)
   end
 
-  describe 'installation' do
-    it 'installs the patch when env var has multiple configs' do
-      ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup, database'
-      instrumentation.install({}) # simulate a fresh install
-
-      _(HTTP::Connection.ancestors).must_include OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection
-    end
-  end
-
   describe '#connect' do
     it 'emits span on connect' do
       WebMock.allow_net_connect!

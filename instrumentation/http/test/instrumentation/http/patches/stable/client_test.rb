@@ -45,17 +45,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Client do
     OpenTelemetry.propagation = @orig_propagation
   end
 
-  describe 'installation' do
-    it 'applies the correct patch when stability options include only http/dup and database' do
-      ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http, database'
-      # simulate a fresh install:
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install(config)
-
-      _(HTTP::Client.ancestors).must_include OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Client
-    end
-  end
-
   describe '#perform' do
     it 'traces a simple request' do
       HTTP.get('http://example.com/success')

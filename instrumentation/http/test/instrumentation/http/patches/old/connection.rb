@@ -24,15 +24,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Connection do
   # Force re-install of instrumentation
   after { instrumentation.instance_variable_set(:@installed, false) }
 
-  describe 'installation' do
-    it 'applies the correct patch when stability options do not include HTTP stability modes' do
-      ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database'
-      instrumentation.install({}) # simulate a fresh install
-
-      _(HTTP::Connection.ancestors).must_include OpenTelemetry::Instrumentation::HTTP::Patches::Old::Connection
-    end
-  end
-
   describe '#connect' do
     it 'emits span on connect' do
       WebMock.allow_net_connect!
