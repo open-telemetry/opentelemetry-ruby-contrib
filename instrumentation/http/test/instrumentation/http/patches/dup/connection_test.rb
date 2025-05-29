@@ -17,7 +17,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup, database'
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
     exporter.reset
     instrumentation.install({})
   end
@@ -26,6 +26,15 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection do
   after do
     ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
     instrumentation.instance_variable_set(:@installed, false)
+  end
+
+  describe 'installation' do
+    it 'installs the patch when env var has multiple configs' do
+      ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup, database'
+      instrumentation.install({}) # simulate a fresh install:
+
+      _(HTTP::Connection.ancestors).must_include OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection
+    end
   end
 
   describe '#connect' do
