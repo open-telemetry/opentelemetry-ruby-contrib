@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.27.3 / 2025-05-27
+
+* FIXED: Compact Dalli attributes
+
+### v0.27.2 / 2025-04-30
+
+* FIXED: Do not pollute the `OpenTelemetry::Instrumentation` namespace
+
 ### v0.27.1 / 2025-04-21
 
 * FIXED: Only prepend Dalli patch if binary protocol defined

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.12.1 / 2025-05-07
+
+* FIXED: Account for `nil` routes
+
 ### v0.12.0 / 2025-02-04
 
 * ADDED: Strip Rails `(.:format)` suffix from `http.route`

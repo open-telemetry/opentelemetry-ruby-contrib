@@ -6,6 +6,7 @@
 
 require 'opentelemetry/resource/detector/aws/ec2'
 require 'opentelemetry/resource/detector/aws/ecs'
+require 'opentelemetry/resource/detector/aws/lambda'
 
 module OpenTelemetry
   module Resource
@@ -29,6 +30,8 @@ module OpenTelemetry
               EC2.detect
             when :ecs
               ECS.detect
+            when :lambda
+              Lambda.detect
             else
               OpenTelemetry.logger.warn("Unknown AWS resource detector: #{detector}")
               OpenTelemetry::SDK::Resources::Resource.create({})

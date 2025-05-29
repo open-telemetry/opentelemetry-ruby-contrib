@@ -2,7 +2,7 @@
 
 The Grape instrumentation is a community-maintained instrumentation for [Grape][grape], a REST-like API framework for Ruby.
 
-It relies on the Grape built-in support for `ActiveSupport::Notifications` (more info [here](https://github.com/ruby-grape/grape#active-support-instrumentation)) and the [OpenTelemetry Rack instrumentation](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/opentelemetry-instrumentation-rack/v0.24.6/instrumentation/rack).
+It relies on the [Grape built-in support for `ActiveSupport::Notifications`](https://github.com/ruby-grape/grape#active-support-instrumentation) and the [OpenTelemetry Rack instrumentation](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/opentelemetry-instrumentation-rack/v0.24.6/instrumentation/rack).
 
 It currently supports the following events:
 
@@ -69,7 +69,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/grape/example/trace_demonstration.rb)
+Example usage can be seen in the [`./example/trace_demonstration.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/grape/example/trace_demonstration.rb)
 
 ## How can I get involved?
 

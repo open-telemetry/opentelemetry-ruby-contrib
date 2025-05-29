@@ -38,7 +38,7 @@ This instrumentation offers the following configuration options:
 
 ## Examples
 
-Example usage of faraday can be seen in the `./example/faraday.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/faraday/example/faraday.rb)
+Example usage of faraday can be seen in the [`./example/faraday.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/faraday/example/faraday.rb)
 
 ## How can I get involved?
 

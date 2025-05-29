@@ -8,6 +8,7 @@ require 'net/http'
 require 'json'
 require 'socket'
 require 'opentelemetry/common'
+require 'opentelemetry/semantic_conventions/resource'
 
 module OpenTelemetry
   module Resource
@@ -68,7 +69,7 @@ module OpenTelemetry
               logs_attributes = get_logs_resource(container_metadata)
               resource_attributes.merge!(logs_attributes)
             rescue StandardError => e
-              OpenTelemetry.logger.debug("ECS resource detection failed: #{e.message}")
+              OpenTelemetry.handle_error(exception: e, message: 'ECS resource detection failed')
               return OpenTelemetry::SDK::Resources::Resource.create({})
             end
 
@@ -92,7 +93,7 @@ module OpenTelemetry
                 end
               end
             rescue Errno::ENOENT => e
-              OpenTelemetry.logger.debug("Failed to get container ID on ECS: #{e.message}")
+              OpenTelemetry.handle_error(exception: e, message: 'Failed to get container ID on ECS')
             end
 
             ''
@@ -139,7 +140,7 @@ module OpenTelemetry
                 log_attributes[RESOURCE::AWS_LOG_STREAM_NAMES] = [logs_stream_name].compact
                 log_attributes[RESOURCE::AWS_LOG_STREAM_ARNS] = [logs_stream_arn].compact
               else
-                OpenTelemetry.logger.debug("The metadata endpoint v4 has returned 'awslogs' as 'LogDriver', but there is no 'LogOptions' data")
+                OpenTelemetry.handle_error(message: 'The metadata endpoint v4 has returned \'awslogs\' as \'LogDriver\', but there is no \'LogOptions\' data')
               end
             end
 

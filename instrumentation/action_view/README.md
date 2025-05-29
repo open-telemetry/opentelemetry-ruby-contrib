@@ -34,7 +34,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_request_demonstration.ru` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_view/example/trace_request_demonstration.ru)
+Example usage can be seen in the [`./example/trace_request_demonstration.ru` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_view/example/trace_request_demonstration.ru)
 
 ## Known issues
 
