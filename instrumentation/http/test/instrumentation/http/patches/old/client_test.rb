@@ -45,7 +45,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client do
   describe 'installation' do
     it 'applies the correct patch when stability options do not include HTTP stability modes' do
       ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database'
-
       # simulate a fresh install:
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(config)

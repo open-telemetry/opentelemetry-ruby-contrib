@@ -47,7 +47,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
   describe 'installation' do
     it 'applies the correct patch when stability options include only http/dup and database' do
       ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup, database'
-
       # simulate a fresh install:
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(config)
@@ -57,7 +56,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
 
     it 'applies the http/dup patch and excludes the Stable patch when both http and http/dup are present' do
       ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http, http/dup'
-
       # simulate a fresh install:
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(config)
@@ -72,7 +70,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       HTTP.get('http://example.com/success')
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'HTTP GET'
-
       # Old semantic conventions
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -80,7 +77,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       _(span.attributes['http.target']).must_equal '/success'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 80
-
       # Stable semantic conventions
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.scheme']).must_equal 'http'

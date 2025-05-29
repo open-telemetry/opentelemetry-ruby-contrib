@@ -31,7 +31,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Connection do
   describe 'installation' do
     it 'installs the patch when env var has multiple configs' do
       ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup, database'
-      instrumentation.install({}) # simulate a fresh install:
+      instrumentation.install({}) # simulate a fresh install
 
       _(HTTP::Connection.ancestors).must_include OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection
     end
