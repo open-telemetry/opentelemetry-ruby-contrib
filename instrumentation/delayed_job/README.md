@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage of delayed_job can be seen in the `./example/delayed_job.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/delayed_job/example/delayed_job.rb)
+Example usage of delayed_job can be seen in the [`./example/delayed_job.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/delayed_job/example/delayed_job.rb)
 
 ## How can I get involved?
 
