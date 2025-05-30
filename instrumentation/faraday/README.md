@@ -18,8 +18,9 @@ To install the instrumentation, call `use` with the name of the instrumentation.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Faraday'
-  enable_internal_instrumentation: false
+  c.use 'OpenTelemetry::Instrumentation::Faraday', {
+    enable_internal_instrumentation: false
+  }
 end
 ```
 
