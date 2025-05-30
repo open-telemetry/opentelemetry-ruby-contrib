@@ -40,7 +40,7 @@ module OpenTelemetry
               ) do |span|
                 OpenTelemetry.propagation.inject(env.request_headers)
 
-                if config[:suppress_internal_instrumentation]
+                if config[:enable_internal_instrumentation] == false
                   OpenTelemetry::Common::Utilities.untraced do
                     app.call(env).on_complete { |resp| trace_response(span, resp.status) }
                   end
