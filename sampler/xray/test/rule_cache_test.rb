@@ -24,6 +24,11 @@ describe OpenTelemetry::Sampler::XRay::RuleCache do
     OpenTelemetry::Sampler::XRay::SamplingRuleApplier.new(OpenTelemetry::Sampler::XRay::SamplingRule.new(test_sampling_rule))
   end
 
+  after do
+    # Return to normal time
+    Timecop.return
+  end
+
   it 'test_cache_updates_and_sorts_rules' do
     # Set up default rule in rule cache
     default_rule = create_rule('Default', 10_000, 1, 0.05)
@@ -55,12 +60,13 @@ describe OpenTelemetry::Sampler::XRay::RuleCache do
   end
 
   it 'test_rule_cache_expiration_logic' do
-    Timecop.freeze(Time.now) do
+    current_time = Time.now
+    Timecop.freeze(current_time) do
       default_rule = create_rule('Default', 10_000, 1, 0.05)
       cache = OpenTelemetry::Sampler::XRay::RuleCache.new(OpenTelemetry::SDK::Resources::Resource.create({}))
       cache.update_rules([default_rule])
 
-      Timecop.travel(2 * 60 * 60) # Travel 2 hours into the future
+      Timecop.freeze(current_time + (2 * 60 * 60)) # Travel 2 hours into the future
       assert cache.expired?
     end
   end
@@ -156,14 +162,15 @@ describe OpenTelemetry::Sampler::XRay::RuleCache do
   end
 
   it 'test_get_all_statistics' do
-    Timecop.freeze(Time.now) do
+    current_time = Time.now
+    Timecop.freeze(current_time) do
       rule1 = create_rule('test', 4, 2, 2.0)
       rule2 = create_rule('default', 5, 5, 5.0)
 
       cache = OpenTelemetry::Sampler::XRay::RuleCache.new(OpenTelemetry::SDK::Resources::Resource.create)
       cache.update_rules([rule1, rule2])
 
-      Timecop.travel(0.001) # Travel 1ms into the future
+      Timecop.freeze(current_time + 0.001) # Travel 1ms into the future
 
       client_id = '12345678901234567890abcd'
       statistics = cache.create_sampling_statistics_documents(client_id)

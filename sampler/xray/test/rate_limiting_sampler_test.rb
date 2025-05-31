@@ -34,7 +34,8 @@ describe OpenTelemetry::Sampler::XRay::RateLimitingSampler do
     end
     assert_equal 0, sampled
 
-    Timecop.travel(@current_time + 0.5) # Move forward half a second
+    @current_time += 0.5
+    Timecop.freeze(@current_time) # Move forward half a second
 
     sampled = 0
     100.times do
@@ -49,7 +50,8 @@ describe OpenTelemetry::Sampler::XRay::RateLimitingSampler do
     end
     assert_equal 15, sampled
 
-    Timecop.travel(@current_time + 1.5) # Move forward 1 second
+    @current_time += 1
+    Timecop.freeze(@current_time) # Move forward 1 second
 
     sampled = 0
     100.times do
@@ -64,7 +66,8 @@ describe OpenTelemetry::Sampler::XRay::RateLimitingSampler do
     end
     assert_equal 30, sampled
 
-    Timecop.travel(@current_time + 4) # Move forward 2.5 more seconds
+    @current_time += 2.5
+    Timecop.freeze(@current_time) # Move forward 2.5 more seconds
 
     sampled = 0
     100.times do
@@ -79,7 +82,8 @@ describe OpenTelemetry::Sampler::XRay::RateLimitingSampler do
     end
     assert_equal 30, sampled
 
-    Timecop.travel(@current_time + 1000) # Move forward 1000 seconds
+    @current_time += 1000
+    Timecop.freeze(@current_time) # Move forward 1000 seconds
 
     sampled = 0
     100.times do
@@ -111,7 +115,8 @@ describe OpenTelemetry::Sampler::XRay::RateLimitingSampler do
     end
     assert_equal 0, sampled
 
-    Timecop.travel(@current_time + 0.5) # Move forward half a second
+    @current_time += 0.5
+    Timecop.freeze(@current_time) # Move forward half a second
 
     sampled = 0
     50.times do
@@ -126,7 +131,8 @@ describe OpenTelemetry::Sampler::XRay::RateLimitingSampler do
     end
     assert_equal 0, sampled
 
-    Timecop.travel(@current_time + 1) # Move forward another half second
+    @current_time += 0.5
+    Timecop.freeze(@current_time) # Move forward another half second
 
     sampled = 0
     50.times do
@@ -141,7 +147,8 @@ describe OpenTelemetry::Sampler::XRay::RateLimitingSampler do
     end
     assert_equal 1, sampled
 
-    Timecop.travel(@current_time + 1000) # Move forward 1000 seconds
+    @current_time += 1000
+    Timecop.freeze(@current_time) # Move forward 1000 seconds
 
     sampled = 0
     50.times do
