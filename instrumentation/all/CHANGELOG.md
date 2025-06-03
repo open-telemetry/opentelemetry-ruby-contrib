@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.77.0 / 2025-06-03
+
+* (No significant changes)
+
 ### v0.76.0 / 2025-05-06
 
 * ADDED: Update minimum required version of rdkafka to 0.18.0
