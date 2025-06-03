@@ -91,7 +91,7 @@ Internal spans are named using the name of the `ActiveSupport` event that was pr
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_request_demonstration.ru` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_mailer/example/trace_request_demonstration.ru)
+Example usage can be seen in the [`./example/trace_request_demonstration.ru` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_mailer/example/trace_request_demonstration.ru)
 
 ## How can I get involved?
 

@@ -90,7 +90,7 @@ In order to preserve this behavior you will have to update the span yourself, e.
 
 ## Examples
 
-Example usage can be seen in the `./example/active_job.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/active_job/example/active_job.rb)
+Example usage can be seen in the [`./example/active_job.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/active_job/example/active_job.rb)
 
 ## How can I get involved?
 
