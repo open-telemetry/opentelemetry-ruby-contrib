@@ -122,10 +122,9 @@ puts "Loading the additional gem path from #{additional_gem_path}" if ENV['ZERO_
 unload_libraries = ENV['UNLOAD_LIBRARY'].to_s.split(';')
 loaded_library_file_path = Array.new
 
-Dir.glob("#{additional_gem_path}/gems/*").each do |file_path|
+loaded_library_file_path = Dir.glob("#{additional_gem_path}/gems/*").select do |file_path|
   gem_name = file_path.match(/\/gems\/([^\/]+)-\d/)[1]
-  include_file = (file_path.include?('opentelemetry') || file_path.include?('google')) && !unload_libraries.include? gem_name
-  loaded_library_file_path << file_path if include_file
+ (file_path.include?('opentelemetry') || file_path.include?('google')) && !unload_libraries.include? gem_name
 end
 
 puts "Loaded Library File Paths " + loaded_library_file_path.join(",") if ENV['ZERO_CODE_DEBUG'] == 'true'
