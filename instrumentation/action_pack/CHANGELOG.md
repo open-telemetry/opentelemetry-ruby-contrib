@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.12.2 / 2025-06-04
+
+* FIXED: Rack span class naming
+
 ### v0.12.1 / 2025-05-07
 
 * FIXED: Account for `nil` routes
