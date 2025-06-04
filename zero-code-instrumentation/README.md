@@ -111,7 +111,7 @@ In example folder, executing the following commands should result in trace outpu
 
 ```console
 # if the user doesn't want to install zero-code-instrumentation from rubygems.org
-# user can build the gem and install it with gem install *.gem
+# the user can build the gem and install it with gem install *.gem
 
 gem install zero-code-instrumentation
 bundle install
