@@ -19,6 +19,8 @@ describe 'ZeroCodeInstrumentation' do
     OTelBundlerPatch.send(:undef_method, :require)
     OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation.instance_variable_get(:@instance).instance_variable_set(:@installed, false)
     OpenTelemetry::Instrumentation::Rake::Instrumentation.instance_variable_get(:@instance).instance_variable_set(:@installed, false)
+
+    ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'] = nil
   end
 
   it 'simple_load_test' do
@@ -64,7 +66,6 @@ describe 'ZeroCodeInstrumentation' do
     _(registry.size).must_equal 1
     _(registry.first.first.name).must_equal 'OpenTelemetry::Instrumentation::Net::HTTP'
 
-    ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'] = nil
   end
 
   it 'simple_load_with_additional_resource' do

@@ -126,13 +126,13 @@ These environment variables are not standard OpenTelemetry environment variables
 
 | Environment Variable | Description | Default | Example |
 |----------------------|-------------|---------|---------|
-| `REQUIRE_BUNDLER` | Set to `true` if you are using Bundler to install gems but without `Bundler.require` in your script during initialization. | nil | N/A |
-| `USE_BUNDLE_EXEC` | Set to `true` if initializing through `bundle exec`. | nil | N/A |
-| `ADDITIONAL_GEM_PATH` | Intended to be used for the OpenTelemetry Operator environment if you install `zero-code-instrumentation` to a customized path. | nil | N/A |
-| `OTEL_OPERATOR` | Set to `true` to set the binding path for the OpenTelemetry Operator. | `/otel-auto-instrumentation-ruby` | N/A |
+| `OTEL_RUBY_REQUIRE_BUNDLER` | Set to `true` if you are using Bundler to install gems but without `Bundler.require` in your script during initialization. | nil | N/A |
+| `OTEL_RUBY_ADDITIONAL_GEM_PATH` | Intended to be used for the OpenTelemetry Operator environment if you install `zero-code-instrumentation` to a customized path. | nil | N/A |
+| `OTEL_RUBY_OPERATOR` | Set to `true` to set the binding path for the OpenTelemetry Operator. | `/otel-auto-instrumentation-ruby` | N/A |
 | `OTEL_RUBY_RESOURCE_DETECTORS` | Determine what kind of resource detector is needed. Currently supports `container`, `azure`, and `google_cloud_platform`. Use commas to separate multiple detectors. | nil | `container,azure` |
 | `OTEL_RUBY_ENABLED_INSTRUMENTATIONS` | Shortcut used when you only want to instrument one or a couple of particular libraries. | nil | `redis,active_record` |
-| `ZERO_CODE_DEBUG` | Set to `true` if want to see some debug information. This to avoid preload logger gem | nil | N/A |
+| `OTEL_RUBY_ZERO_CODE_DEBUG` | Set to `true` if want to see some debug information. This to avoid preload logger gem | nil | N/A |
+| `OTEL_RUBY_UNLOAD_LIBRARY` | Use OTEL_RUBY_UNLOAD_LIBRARY to avoid certain gem preload (esp. google protobuf) | nil | N/A |
 
 ## How can I get involved?
 
