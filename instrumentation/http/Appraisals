@@ -4,10 +4,19 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'http-4.4' do
-  gem 'http', '~> 4.4.0'
-end
+# To faclitate HTTP semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# HTTP gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
-appraise 'http-3.3.0' do
-  gem 'http', '~> 3.3.0'
+semconv_stability = %w[dup stable old]
+
+semconv_stability.each do |mode|
+  appraise "http-4.4.0-#{mode}" do
+    gem 'http', '~> 4.4.0'
+  end
+
+  appraise "http-3.3.0-#{mode}" do
+    gem 'http', '~> 3.3.0'
+  end
 end
