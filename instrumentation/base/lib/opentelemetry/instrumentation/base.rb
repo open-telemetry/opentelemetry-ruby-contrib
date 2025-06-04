@@ -214,6 +214,7 @@ module OpenTelemetry
       #
       # @param [Hash] config The config for this instrumentation
       def install(config = {})
+        puts "name: #{@name}"
         return true if installed?
 
         @config = config_options(config)

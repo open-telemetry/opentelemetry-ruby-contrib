@@ -65,7 +65,6 @@ describe 'ZeroCodeInstrumentation' do
 
     _(registry.size).must_equal 1
     _(registry.first.first.name).must_equal 'OpenTelemetry::Instrumentation::Net::HTTP'
-
   end
 
   it 'simple_load_with_additional_resource' do

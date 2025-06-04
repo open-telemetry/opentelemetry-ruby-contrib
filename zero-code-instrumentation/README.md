@@ -10,7 +10,7 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 ## How does this gem fit in?
 
-The `zero-code-instrumentation` gem provides an easy way to load and initialize the OpenTelemetry Ruby SDK. This gem is particularly used for the [OpenTelemetry Operator][opentelemetry-operator].
+The `zero-code-instrumentation` gem provides an easy way to load and initialize the OpenTelemetry Ruby SDK without changing your code initialize the SDK. This gem is particularly used with the [OpenTelemetry Operator][opentelemetry-operator].
 
 ## How do I get started?
 
@@ -97,7 +97,7 @@ export REQUIRE_BUNDLER=true
 RUBYOPT="-r zero-code-instrumentation" rackup config.ru
 ```
 
-If wish to load some gem outside the Gemfile, then it needs to be placed in front of zero-code-instrumentation:
+If you wish to load some gems outside the Gemfile, then they need to be placed in front of zero-code-instrumentation:
 
 ```console
 export BUNDLE_WITHOUT=development,test
@@ -107,11 +107,11 @@ RUBYOPT="-r mysql2 -r zero-code-instrumentation" ruby application.rb
 
 ## Example
 
-In example folder, execute the following commands should see the trace output.
+In example folder, executing the following commands should result in trace output.
 
 ```console
-# if user don't want to install zero-code-instrumentation from rubygems.org
-# user can build the gem and install it with gem install *.gem
+# if the user doesn't want to install zero-code-instrumentation from rubygems.org
+# the user can build the gem and install it with gem install *.gem
 
 gem install zero-code-instrumentation
 bundle install

@@ -77,7 +77,7 @@ module OTelBundlerPatch
   def determine_enabled_instrumentation
     env = ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'].to_s
 
-    env.split(',').each_with_object({}) { |instrumentation, config| config[OTEL_INSTRUMENTATION_MAP[instrumentation]] = {} }
+    env.split(',').map { |instrumentation| OTEL_INSTRUMENTATION_MAP[instrumentation] }
   end
 
   def require_otel
@@ -90,7 +90,13 @@ module OTelBundlerPatch
 
       OpenTelemetry::SDK.configure do |c|
         c.resource = detect_resource_from_env
-        c.use_all(required_instrumentation)
+        if required_instrumentation.empty?
+          c.use_all # enables all instrumentation!
+        else
+          required_instrumentation.each do |instrumentation|
+            c.use instrumentation
+          end
+        end
       end
       OpenTelemetry.logger.info { 'Auto-instrumentation initialized' }
     rescue StandardError => e
@@ -107,29 +113,26 @@ azure = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('azure')
 
 # set OTEL_OPERATOR to false if not in autoinstrumentation-ruby image, default to /otel-auto-instrumentation-ruby
 # /otel-auto-instrumentation-ruby is set in opentelemetry-operator ruby.go
-operator_gem_path = (ENV['OTEL_RUBY_OPERATOR'].nil? || ENV['OTEL_RUBY_OPERATOR'] == 'true') ? '/otel-auto-instrumentation-ruby' : nil
+operator_gem_path = ENV['OTEL_RUBY_OPERATOR'].nil? || ENV['OTEL_RUBY_OPERATOR'] == 'true' ? '/otel-auto-instrumentation-ruby' : nil
 additional_gem_path = operator_gem_path || ENV['OTEL_RUBY_ADDITIONAL_GEM_PATH'] || Gem.dir
 puts "Loading the additional gem path from #{additional_gem_path}" if ENV['OTEL_RUBY_ZERO_CODE_DEBUG'] == 'true'
 
 # use OTEL_RUBY_UNLOAD_LIBRARY to avoid certain gem preload (esp. google protobuf)
 # e.g export OTEL_RUBY_UNLOAD_LIBRARY=google-protobuf;googleapis-common-protos-types
 unload_libraries = ENV['OTEL_RUBY_UNLOAD_LIBRARY'].to_s.split(';')
-loaded_library_file_path = Array.new
 
-Dir.glob("#{additional_gem_path}/gems/*").each do |file_path|
-  gem_name = file_path.match(/\/gems\/([^\/]+)-\d/)[1]
-  include_file = (file_path.include?('opentelemetry') || file_path.include?('google')) && !unload_libraries.include?(gem_name)
-  loaded_library_file_path << file_path if include_file
+loaded_library_file_path = Dir.glob("#{additional_gem_path}/gems/*").select do |file_path|
+  gem_name = file_path.match(%r{/gems/([^/]+)-\d})[1]
+  (file_path.include?('opentelemetry') || file_path.include?('google')) && !unload_libraries.include?(gem_name)
 end
+
+puts "Loaded Library File Paths #{loaded_library_file_path.join(',')}" if ENV['ZERO_CODE_DEBUG'] == 'true'
 
 loaded_library_file_path.each do |file_path|
   $LOAD_PATH.unshift("#{file_path}/lib")
 end
 
-if ENV['OTEL_RUBY_ZERO_CODE_DEBUG'] == 'true'
-  puts loaded_library_file_path.to_s
-  puts "$LOAD_PATH #{$LOAD_PATH}"
-end
+puts "$LOAD_PATH after unshift: #{$LOAD_PATH.join(',')}" if ENV['OTEL_RUBY_ZERO_CODE_DEBUG'] == 'true'
 
 require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-all'
