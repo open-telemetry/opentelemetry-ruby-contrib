@@ -110,7 +110,7 @@ RUBYOPT="-r mysql2 -r zero-code-instrumentation" ruby application.rb
 In example folder, executing the following commands should result in trace output.
 
 ```console
-# if user don't want to install zero-code-instrumentation from rubygems.org
+# if the user doesn't want to install zero-code-instrumentation from rubygems.org
 # user can build the gem and install it with gem install *.gem
 
 gem install zero-code-instrumentation
