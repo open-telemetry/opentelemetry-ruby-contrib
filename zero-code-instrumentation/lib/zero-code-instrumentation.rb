@@ -128,7 +128,7 @@ Dir.glob("#{additional_gem_path}/gems/*").each do |file_path|
   loaded_library_file_path << file_path if include_file
 end
 
-puts loaded_library_file_path.to_s if ENV['ZERO_CODE_DEBUG'] == 'true'
+puts "Loaded Library File Paths " + loaded_library_file_path.join(",") if ENV['ZERO_CODE_DEBUG'] == 'true'
 
 loaded_library_file_path.each do |file_path|
   $LOAD_PATH.unshift("#{file_path}/lib")
