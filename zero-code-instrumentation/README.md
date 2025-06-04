@@ -107,7 +107,7 @@ RUBYOPT="-r mysql2 -r zero-code-instrumentation" ruby application.rb
 
 ## Example
 
-In example folder, execute the following commands should see the trace output.
+In example folder, executing the following commands should result in trace output.
 
 ```console
 # if user don't want to install zero-code-instrumentation from rubygems.org
