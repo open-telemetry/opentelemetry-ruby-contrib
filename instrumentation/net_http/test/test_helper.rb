@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'simplecov'
 require 'net/http'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
