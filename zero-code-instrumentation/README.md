@@ -97,7 +97,7 @@ export REQUIRE_BUNDLER=true
 RUBYOPT="-r zero-code-instrumentation" rackup config.ru
 ```
 
-If wish to load some gem outside the Gemfile, then it needs to be placed in front of zero-code-instrumentation:
+If you wish to load some gems outside the Gemfile, then they need to be placed in front of zero-code-instrumentation:
 
 ```console
 export BUNDLE_WITHOUT=development,test
