@@ -215,11 +215,12 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
 
   describe 'when the application has exceptions_app configured' do
     let(:rails_app) { AppConfig.initialize_app(use_exceptions_app: true) }
+    let(:config) { { span_naming: :class } }
 
     it 'does not overwrite the span name from the controller that raised' do
       get 'internal_server_error'
 
-      _(span.name).must_match(/^GET/)
+      _(span.name).must_equal 'ExampleController#internal_server_error'
       _(span.kind).must_equal :server
       _(span.status.ok?).must_equal false
 
