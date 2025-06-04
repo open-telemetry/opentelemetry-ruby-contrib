@@ -1,6 +1,4 @@
 # OpenTelemetry gRPC Instrumentation
-> [!CAUTION]
-> This gem is not ready for release by the open-telemetry org yet, but other versions are available on RubyGems
 
 [![Gem Version](https://badge.fury.io/rb/opentelemetry-instrumentation-grpc.svg)](https://badge.fury.io/rb/opentelemetry-instrumentation-grpc)
 [![GitHub Actions CI Status](https://github.com/hibachrach/opentelemetry-instrumentation-grpc/actions/workflows/main.yml/badge.svg)](https://github.com/hibachrach/opentelemetry-instrumentation-grpc/actions?query=branch%3Amain)
@@ -45,7 +43,7 @@ instrumentation.
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/grpc/example/trace_demonstration.rb)
+Example usage can be seen in the [`./example/trace_demonstration.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/grpc/example/trace_demonstration.rb)
 
 ## Development
 

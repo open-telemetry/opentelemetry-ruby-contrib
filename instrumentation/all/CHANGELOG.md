@@ -1,5 +1,23 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.77.0 / 2025-06-03
+
+* ADDED: Suppress internal spans with Faraday instrumentation
+* FIXED: Handle force_flush for rake task with arguments
+
+### v0.76.0 / 2025-05-06
+
+* ADDED: Update minimum required version of rdkafka to 0.18.0
+
+### v0.75.1 / 2025-04-16
+
+* (No significant changes)
+
+### v0.75.0 / 2025-04-15
+
+* ADDED: Add `opentelemetry-instrumentation-grpc` to `-all`
+* ADDED: Support meta protocol instrumentation for Dalli
+
 ### v0.74.0 / 2025-02-11
 
 * ADDED: Rdkafka support to v0.19 including

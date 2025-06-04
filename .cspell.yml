@@ -38,6 +38,7 @@ words:
   - gemfile
   - Gitter
   - gruf
+  - hibachrach
   - HTTPX
   - httpx
   - instrumenter
@@ -82,3 +83,4 @@ words:
   - Xuan
   - yardoc
   - rackup
+  - traceparent

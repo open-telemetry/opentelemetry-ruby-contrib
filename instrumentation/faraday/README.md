@@ -18,7 +18,9 @@ To install the instrumentation, call `use` with the name of the instrumentation.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Faraday'
+  c.use 'OpenTelemetry::Instrumentation::Faraday', {
+    enable_internal_instrumentation: false
+  }
 end
 ```
 
@@ -30,9 +32,14 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Configuration options
+This instrumentation offers the following configuration options: 
+* `enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with 
+ span kind of `internal` are included in traces.
+
 ## Examples
 
-Example usage of faraday can be seen in the `./example/faraday.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/faraday/example/faraday.rb)
+Example usage of faraday can be seen in the [`./example/faraday.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/faraday/example/faraday.rb)
 
 ## How can I get involved?
 
