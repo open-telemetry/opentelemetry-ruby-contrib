@@ -24,7 +24,7 @@ describe 'ZeroCodeInstrumentation' do
   end
 
   it 'simple_load_test' do
-    load './lib/zero-code-instrumentation.rb'
+    load './lib/opentelemetry-auto-instrumentation.rb'
     Bundler.require
 
     _(OpenTelemetry.tracer_provider.class).must_equal OpenTelemetry::SDK::Trace::TracerProvider
@@ -44,7 +44,7 @@ describe 'ZeroCodeInstrumentation' do
   it 'simple_load_with_net_http_disabled' do
     ENV['OTEL_RUBY_INSTRUMENTATION_NET_HTTP_ENABLED'] = 'false'
 
-    load './lib/zero-code-instrumentation.rb'
+    load './lib/opentelemetry-auto-instrumentation.rb'
     Bundler.require
 
     registry = OpenTelemetry.tracer_provider.instance_variable_get(:@registry)
@@ -58,7 +58,7 @@ describe 'ZeroCodeInstrumentation' do
   it 'simple_load_with_desired_instrument_only' do
     ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'] = 'net_http'
 
-    load './lib/zero-code-instrumentation.rb'
+    load './lib/opentelemetry-auto-instrumentation.rb'
     Bundler.require
 
     registry = OpenTelemetry.tracer_provider.instance_variable_get(:@registry)
@@ -70,7 +70,7 @@ describe 'ZeroCodeInstrumentation' do
   it 'simple_load_with_additional_resource' do
     ENV['OTEL_RUBY_RESOURCE_DETECTORS'] = 'container'
 
-    load './lib/zero-code-instrumentation.rb'
+    load './lib/opentelemetry-auto-instrumentation.rb'
     Bundler.require
 
     resource_attributes = OpenTelemetry.tracer_provider.instance_variable_get(:@resource).instance_variable_get(:@attributes)
