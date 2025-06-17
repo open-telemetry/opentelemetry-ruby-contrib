@@ -236,6 +236,12 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
       _(span.attributes['code.namespace']).must_equal 'ExceptionsController'
       _(span.attributes['code.function']).must_equal 'show'
     end
+
+    it 'does not raise with api/non recording spans' do
+      with_sampler(OpenTelemetry::SDK::Trace::Samplers::ALWAYS_OFF) do
+        get 'internal_server_error'
+      end
+    end
   end
 
   it 'sets filters `http.target`' do
