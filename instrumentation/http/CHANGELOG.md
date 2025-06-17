@@ -2,7 +2,7 @@
 
 ### v0.25.0 / 2025-06-17
 
-* ADDED: Http semconv opt in files
+* ADDED: Introduce `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable to control what semantic conventions will be sent. The old conventions will be sent by default. See README for details.
 
 ### v0.24.0 / 2025-01-16
 
