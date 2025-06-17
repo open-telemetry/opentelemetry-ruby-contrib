@@ -1,6 +1,6 @@
 # Opentelemetry Auto Instrumentation
 
-The `opentelemetry-auto-instrumentation` gem provides an easy way to load and initialize opentelemetry-ruby for zero-code instrumentation.
+The `opentelemetry-auto-instrumentation` gem provides an easy way to load and initialize opentelemetry-ruby for auto instrumentation.
 
 ## What is OpenTelemetry?
 
@@ -131,7 +131,7 @@ These environment variables are not standard OpenTelemetry environment variables
 | `OTEL_RUBY_OPERATOR` | Set to `true` to set the binding path for the OpenTelemetry Operator. | `/otel-auto-instrumentation-ruby` | N/A |
 | `OTEL_RUBY_RESOURCE_DETECTORS` | Determine what kind of resource detector is needed. Currently supports `container`, `azure`, and `google_cloud_platform`. Use commas to separate multiple detectors. | nil | `container,azure` |
 | `OTEL_RUBY_ENABLED_INSTRUMENTATIONS` | Shortcut used when you only want to instrument one or a couple of particular libraries. | nil | `redis,active_record` |
-| `OTEL_RUBY_ZERO_CODE_DEBUG` | Set to `true` if want to see some debug information. This to avoid preload logger gem | nil | N/A |
+| `OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG` | Set to `true` if want to see some debug information. This to avoid preload logger gem | nil | N/A |
 | `OTEL_RUBY_UNLOAD_LIBRARY` | Use OTEL_RUBY_UNLOAD_LIBRARY to avoid certain gem preload (esp. google protobuf) | nil | N/A |
 
 ## How can I get involved?

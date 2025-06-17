@@ -82,7 +82,7 @@ module OTelBundlerPatch
 
   def require_otel
     lib = File.expand_path('..', __dir__)
-    $LOAD_PATH.reject! { |path| path.include?('zero-code-instrumentation') }
+    $LOAD_PATH.reject! { |path| path.include?('opentelemetry-auto-instrumentation') }
     $LOAD_PATH.unshift(lib)
 
     begin
@@ -115,7 +115,7 @@ azure = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('azure')
 # /otel-auto-instrumentation-ruby is set in opentelemetry-operator ruby.go
 operator_gem_path = ENV['OTEL_RUBY_OPERATOR'].nil? || ENV['OTEL_RUBY_OPERATOR'] == 'true' ? '/otel-auto-instrumentation-ruby' : nil
 additional_gem_path = operator_gem_path || ENV['OTEL_RUBY_ADDITIONAL_GEM_PATH'] || Gem.dir
-puts "Loading the additional gem path from #{additional_gem_path}" if ENV['OTEL_RUBY_ZERO_CODE_DEBUG'] == 'true'
+puts "Loading the additional gem path from #{additional_gem_path}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
 
 # use OTEL_RUBY_UNLOAD_LIBRARY to avoid certain gem preload (esp. google protobuf)
 # e.g export OTEL_RUBY_UNLOAD_LIBRARY=google-protobuf;googleapis-common-protos-types
@@ -126,13 +126,13 @@ loaded_library_file_path = Dir.glob("#{additional_gem_path}/gems/*").select do |
   (file_path.include?('opentelemetry') || file_path.include?('google')) && !unload_libraries.include?(gem_name)
 end
 
-puts "Loaded Library File Paths #{loaded_library_file_path.join(',')}" if ENV['ZERO_CODE_DEBUG'] == 'true'
+puts "Loaded Library File Paths #{loaded_library_file_path.join(',')}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
 
 loaded_library_file_path.each do |file_path|
   $LOAD_PATH.unshift("#{file_path}/lib")
 end
 
-puts "$LOAD_PATH after unshift: #{$LOAD_PATH.join(',')}" if ENV['OTEL_RUBY_ZERO_CODE_DEBUG'] == 'true'
+puts "$LOAD_PATH after unshift: #{$LOAD_PATH.join(',')}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
 
 require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-all'

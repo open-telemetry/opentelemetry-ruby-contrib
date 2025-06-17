@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-describe 'ZeroCodeInstrumentation' do
+describe 'AutoInstrumentation' do
   before do
     OpenTelemetry::TestHelpers.reset_opentelemetry
   end
