@@ -7,8 +7,6 @@
 appraise 'mongo-2' do
   gem 'mongo', '~> 2.13'
 
-  # TODO: bson 5.1.0 isn't compatible with JRuby at this time
-  if defined?(JRUBY_VERSION)
-    gem 'bson', '< 5.1.0'
-  end
+  # TODO: bson 5.1.0 isn't compatible with JRuby as of 2025/06/17
+  gem 'bson', '< 5.1.0' if defined?(JRUBY_VERSION)
 end
