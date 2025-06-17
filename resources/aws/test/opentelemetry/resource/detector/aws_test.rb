@@ -62,12 +62,16 @@ describe OpenTelemetry::Resource::Detector::AWS do
       assert_detection_result([:lambda])
     end
 
+    it 'returns an empty resource when EKS detection fails' do
+      assert_detection_result([:eks])
+    end
+
     it 'returns an empty resource with unknown detector' do
       assert_detection_result([:unknown])
     end
 
     it 'returns an empty resource with multiple detectors when all fail' do
-      assert_detection_result(%i[ec2 ecs unknown])
+      assert_detection_result(%i[ec2 ecs eks lambda unknown])
     end
 
     describe 'with successful EC2 detection' do
@@ -220,6 +224,70 @@ describe OpenTelemetry::Resource::Detector::AWS do
               _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_lambda')
               _(attributes[RESOURCE::FAAS_NAME]).must_equal('my-function')
               _(attributes[RESOURCE::HOST_ID]).must_equal('i-1234567890abcdef0')
+            end
+          end
+        end
+
+        describe 'with successful EKS detection' do
+          let(:cluster_name) { 'my-eks-cluster' }
+          let(:container_id) { '0123456789abcdef' * 4 }
+
+          before do
+            # No specific environment setup needed for EKS tests
+            # They rely completely on stubbing
+          end
+
+          it 'detects EKS resources when specified' do
+            # Create a mock EKS resource
+            eks_resource = OpenTelemetry::SDK::Resources::Resource.create({
+                                                                            RESOURCE::CLOUD_PROVIDER => 'aws',
+                                                                            RESOURCE::CLOUD_PLATFORM => 'aws_eks',
+                                                                            RESOURCE::K8S_CLUSTER_NAME => cluster_name,
+                                                                            RESOURCE::CONTAINER_ID => container_id
+                                                                          })
+
+            # Stub EKS detection to return the mock resource
+            OpenTelemetry::Resource::Detector::AWS::EKS.stub :detect, eks_resource do
+              resource = detector.detect([:eks])
+              attributes = resource.attribute_enumerator.to_h
+
+              # Check EKS attributes
+              _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+              _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_eks')
+              _(attributes[RESOURCE::K8S_CLUSTER_NAME]).must_equal(cluster_name)
+              _(attributes[RESOURCE::CONTAINER_ID]).must_equal(container_id)
+            end
+          end
+
+          it 'combines EC2 and EKS resources when both are detected' do
+            # Create a mock EC2 resource
+            ec2_resource = OpenTelemetry::SDK::Resources::Resource.create({
+                                                                            RESOURCE::HOST_ID => 'i-1234567890abcdef0',
+                                                                            RESOURCE::HOST_TYPE => 'm5.xlarge'
+                                                                          })
+
+            # Create a mock EKS resource
+            eks_resource = OpenTelemetry::SDK::Resources::Resource.create({
+                                                                            RESOURCE::CLOUD_PROVIDER => 'aws',
+                                                                            RESOURCE::CLOUD_PLATFORM => 'aws_eks',
+                                                                            RESOURCE::K8S_CLUSTER_NAME => cluster_name,
+                                                                            RESOURCE::CONTAINER_ID => container_id
+                                                                          })
+
+            # Stub both detectors
+            OpenTelemetry::Resource::Detector::AWS::EC2.stub :detect, ec2_resource do
+              OpenTelemetry::Resource::Detector::AWS::EKS.stub :detect, eks_resource do
+                resource = detector.detect(%i[ec2 eks])
+                attributes = resource.attribute_enumerator.to_h
+
+                # Should include attributes from both detectors
+                _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+                _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_eks')
+                _(attributes[RESOURCE::K8S_CLUSTER_NAME]).must_equal(cluster_name)
+                _(attributes[RESOURCE::CONTAINER_ID]).must_equal(container_id)
+                _(attributes[RESOURCE::HOST_ID]).must_equal('i-1234567890abcdef0')
+                _(attributes[RESOURCE::HOST_TYPE]).must_equal('m5.xlarge')
+              end
             end
           end
         end
