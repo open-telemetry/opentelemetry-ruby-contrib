@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.25.0 / 2025-06-17
+
+* ADDED: Http semconv opt in files
+
 ### v0.24.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
