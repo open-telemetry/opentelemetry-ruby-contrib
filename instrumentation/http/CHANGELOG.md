@@ -2,7 +2,7 @@
 
 ### v0.25.0 / 2025-06-17
 
-* ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable to HTTP.rb instrumentation [#1547](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1547)
+* ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1547](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1547)
 
 ### v0.24.0 / 2025-01-16
 
