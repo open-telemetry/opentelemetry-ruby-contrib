@@ -9,6 +9,8 @@ require 'test_helper'
 require_relative '../../../lib/opentelemetry/instrumentation/http'
 
 describe OpenTelemetry::Instrumentation::HTTP do
+  before { skip unless ENV['BUNDLE_GEMFILE'].include?('old') }
+
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
 
   it 'has #name' do
@@ -34,6 +36,32 @@ describe OpenTelemetry::Instrumentation::HTTP do
   describe '#install' do
     it 'accepts argument' do
       _(instrumentation.install({})).must_equal(true)
+    end
+  end
+
+  describe 'determine_semconv' do
+    it 'returns "dup" when OTEL_SEMCONV_STABILITY_OPT_IN includes other configs' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http/dup, database') do
+        _(instrumentation.determine_semconv).must_equal('dup')
+      end
+    end
+
+    it 'returns "dup" when OTEL_SEMCONV_STABILITY_OPT_IN includes both http/dup and http' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http/dup, http') do
+        _(instrumentation.determine_semconv).must_equal('dup')
+      end
+    end
+
+    it 'returns "stable" when OTEL_SEMCONV_STABILITY_OPT_IN is http' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http') do
+        _(instrumentation.determine_semconv).must_equal('stable')
+      end
+    end
+
+    it 'returns "old" when OTEL_SEMCONV_STABILITY_OPT_IN is empty' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => '') do
+        _(instrumentation.determine_semconv).must_equal('old')
+      end
     end
   end
 end
