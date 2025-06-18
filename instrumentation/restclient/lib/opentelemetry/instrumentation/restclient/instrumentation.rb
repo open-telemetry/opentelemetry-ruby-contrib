@@ -13,7 +13,7 @@ module OpenTelemetry
         install do |_config|
           patch_type = determine_semconv
           send(:"require_dependencies_#{patch_type}")
-          send(:"patch_request_#{patch_type}")          
+          send(:"patch_request_#{patch_type}")
         end
 
         present do
