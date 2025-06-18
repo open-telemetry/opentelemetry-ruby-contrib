@@ -2,12 +2,21 @@
 
 # add more tests for excon
 
-%w[0.71 0.109].each do |version|
-  appraise "excon-#{version}" do
-    gem 'excon', "~> #{version}.0"
-  end
-end
+# To faclitate HTTP semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
-appraise 'excon-latest' do
-  gem 'excon'
+semconv_stability = %w[dup stable old]
+
+semconv_stability.each do |mode|
+  %w[0.71 0.109].each do |version|
+    appraise "excon-#{version}-#{mode}" do
+      gem 'excon', "~> #{version}.0"
+    end
+  end
+
+  appraise "excon-latest-#{mode}" do
+    gem 'excon'
+  end
 end

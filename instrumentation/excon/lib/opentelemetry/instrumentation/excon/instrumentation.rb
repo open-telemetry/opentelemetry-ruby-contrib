@@ -15,9 +15,10 @@ module OpenTelemetry
         include OpenTelemetry::Instrumentation::Concerns::UntracedHosts
 
         install do |_config|
-          require_dependencies
-          add_middleware
-          patch
+          patch_type = determine_semconv
+          send(:"require_dependencies_#{patch_type}")
+          send(:"add_middleware_#{patch_type}")
+          send(:"patch_#{patch_type}")
         end
 
         present do
@@ -28,17 +29,56 @@ module OpenTelemetry
 
         private
 
-        def require_dependencies
-          require_relative 'middlewares/tracer_middleware'
-          require_relative 'patches/socket'
+        def determine_semconv
+          stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+          values = stability_opt_in.split(',').map(&:strip)
+
+          if values.include?('http/dup')
+            'dup'
+          elsif values.include?('http')
+            'stable'
+          else
+            'old'
+          end
         end
 
-        def add_middleware
-          ::Excon.defaults[:middlewares] = Middlewares::TracerMiddleware.around_default_stack
+        def require_dependencies_dup
+          require_relative 'middlewares/dup/tracer_middleware'
+          require_relative 'patches/dup/socket'
         end
 
-        def patch
-          ::Excon::Socket.prepend(Patches::Socket)
+        def require_dependencies_stable
+          require_relative 'middlewares/stable/tracer_middleware'
+          require_relative 'patches/stable/socket'
+        end
+
+        def require_dependencies_old
+          require_relative 'middlewares/old/tracer_middleware'
+          require_relative 'patches/old/socket'
+        end
+
+        def add_middleware_dup
+          ::Excon.defaults[:middlewares] = Middlewares::Dup::TracerMiddleware.around_default_stack
+        end
+
+        def add_middleware_stable
+          ::Excon.defaults[:middlewares] = Middlewares::Stable::TracerMiddleware.around_default_stack
+        end
+
+        def add_middleware_old
+          ::Excon.defaults[:middlewares] = Middlewares::Old::TracerMiddleware.around_default_stack
+        end
+
+        def patch_dup
+          ::Excon::Socket.prepend(Patches::Dup::Socket)
+        end
+
+        def patch_stable
+          ::Excon::Socket.prepend(Patches::Stable::Socket)
+        end
+
+        def patch_old
+          ::Excon::Socket.prepend(Patches::Old::Socket)
         end
       end
     end
