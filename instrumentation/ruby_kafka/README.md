@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/ruby_kafka.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/ruby_kafka/example/ruby_kafka.rb)
+Example usage can be seen in the [`./example/ruby_kafka.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/ruby_kafka/example/ruby_kafka.rb)
 
 ## How can I get involved?
 
