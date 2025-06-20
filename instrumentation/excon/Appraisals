@@ -7,10 +7,11 @@
 # gem versions. For more information on the semantic convention modes, see:
 # https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
+versions = %w[0.71 0.109]
 semconv_stability = %w[dup stable old]
 
 semconv_stability.each do |mode|
-  %w[0.71 0.109].each do |version|
+  versions.each do |version|
     appraise "excon-#{version}-#{mode}" do
       gem 'excon', "~> #{version}.0"
     end
