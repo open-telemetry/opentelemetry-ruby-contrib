@@ -215,11 +215,12 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
 
   describe 'when the application has exceptions_app configured' do
     let(:rails_app) { AppConfig.initialize_app(use_exceptions_app: true) }
+    let(:config) { { span_naming: :class } }
 
     it 'does not overwrite the span name from the controller that raised' do
       get 'internal_server_error'
 
-      _(span.name).must_match(/^GET/)
+      _(span.name).must_equal 'ExampleController#internal_server_error'
       _(span.kind).must_equal :server
       _(span.status.ok?).must_equal false
 
@@ -234,6 +235,12 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
       _(span.attributes['http.user_agent']).must_be_nil
       _(span.attributes['code.namespace']).must_equal 'ExceptionsController'
       _(span.attributes['code.function']).must_equal 'show'
+    end
+
+    it 'does not raise with api/non recording spans' do
+      with_sampler(OpenTelemetry::SDK::Trace::Samplers::ALWAYS_OFF) do
+        get 'internal_server_error'
+      end
     end
   end
 
