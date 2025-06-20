@@ -41,7 +41,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection do
       end
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.name).must_equal 'CONNECT'
       # Old semantic conventions
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
