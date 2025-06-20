@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/semantic_conventions/resource'
+
 module OpenTelemetry
   module Resource
     module Detector
