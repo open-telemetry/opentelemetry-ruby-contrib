@@ -41,7 +41,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Connection do
       end
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.name).must_equal 'CONNECT'
       _(span.attributes['server.address']).must_equal('localhost')
       _(span.attributes['server.port']).wont_be_nil
     ensure
