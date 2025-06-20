@@ -91,7 +91,14 @@ describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
     assert_equal OpenTelemetry::SDK::Trace::Samplers::Decision::DROP,
                  rs.should_sample?(parent_context: nil, trace_id: '3759e988bd862e3fe1be46a994272793', name: 'name', kind: OpenTelemetry::Trace::SpanKind::SERVER, attributes: attributes, links: []).instance_variable_get(:@decision)
 
-    # TODO: Run more tests after updating Sampling Targets
+    rs.instance_variable_get(:@root).instance_variable_get(:@root).send(:retrieve_and_update_sampling_targets)
+
+    assert_equal OpenTelemetry::SDK::Trace::Samplers::Decision::RECORD_AND_SAMPLE,
+                 rs.should_sample?(parent_context: nil, trace_id: '3759e988bd862e3fe1be46a994272793', name: 'name', kind: OpenTelemetry::Trace::SpanKind::SERVER, attributes: attributes, links: []).instance_variable_get(:@decision)
+    assert_equal OpenTelemetry::SDK::Trace::Samplers::Decision::RECORD_AND_SAMPLE,
+                 rs.should_sample?(parent_context: nil, trace_id: '3759e988bd862e3fe1be46a994272793', name: 'name', kind: OpenTelemetry::Trace::SpanKind::SERVER, attributes: attributes, links: []).instance_variable_get(:@decision)
+    assert_equal OpenTelemetry::SDK::Trace::Samplers::Decision::RECORD_AND_SAMPLE,
+                 rs.should_sample?(parent_context: nil, trace_id: '3759e988bd862e3fe1be46a994272793', name: 'name', kind: OpenTelemetry::Trace::SpanKind::SERVER, attributes: attributes, links: []).instance_variable_get(:@decision)
   end
 
   it 'generates valid client id' do
@@ -119,5 +126,88 @@ describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
     sampled_array[thread_id] = sampled
   end
 
-  # TODO: Run tests for Reservoir Sampling
+  it 'test_multithreading_with_large_reservoir' do
+    stub_request(:post, "http://#{TEST_URL}/GetSamplingRules")
+      .to_return(status: 200, body: File.read(DATA_DIR_SAMPLING_RULES))
+    stub_request(:post, "http://#{TEST_URL}/SamplingTargets")
+      .to_return(status: 200, body: File.read(DATA_DIR_SAMPLING_TARGETS))
+
+    rs = OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler.new(
+      resource: OpenTelemetry::SDK::Resources::Resource.create({
+                                                                 'service.name' => 'test-service-name',
+                                                                 'cloud.platform' => 'test-cloud-platform'
+                                                               })
+    )
+
+    attributes = { 'abc' => '1234' }
+    assert_equal OpenTelemetry::SDK::Trace::Samplers::Decision::DROP,
+                 rs.should_sample?(parent_context: nil, trace_id: '3759e988bd862e3fe1be46a994272793', name: 'name', kind: OpenTelemetry::Trace::SpanKind::SERVER, attributes: attributes, links: []).instance_variable_get(:@decision)
+    rs.instance_variable_get(:@root).instance_variable_get(:@root).send(:retrieve_and_update_sampling_targets)
+
+    number_of_spans = 100
+    thread_count = 100
+    sampled_array = Array.new(thread_count, 0)
+    threads = []
+
+    thread_count.times do |idx|
+      threads << Thread.new do
+        create_spans(sampled_array, idx, attributes, rs, number_of_spans)
+      end
+    end
+
+    threads.each(&:join)
+    sum_sampled = sampled_array.sum
+
+    test_rule_applier = rs.instance_variable_get(:@root).instance_variable_get(:@root).instance_variable_get(:@rule_cache).instance_variable_get(:@rule_appliers)[0]
+    assert_equal 100_000, test_rule_applier.instance_variable_get(:@reservoir_sampler).instance_variable_get(:@quota)
+    assert_equal 10_000, sum_sampled
+  end
+
+  it 'test_multithreading_with_some_reservoir' do
+    stub_request(:post, "http://#{TEST_URL}/GetSamplingRules")
+      .to_return(status: 200, body: File.read(DATA_DIR_SAMPLING_RULES))
+    stub_request(:post, "http://#{TEST_URL}/SamplingTargets")
+      .to_return(status: 200, body: File.read(DATA_DIR_SAMPLING_TARGETS))
+
+    rs = OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler.new(
+      resource: OpenTelemetry::SDK::Resources::Resource.create({
+                                                                 'service.name' => 'test-service-name',
+                                                                 'cloud.platform' => 'test-cloud-platform'
+                                                               })
+    )
+
+    attributes = { 'abc' => 'non-matching attribute value, use default rule' }
+    assert_equal OpenTelemetry::SDK::Trace::Samplers::Decision::RECORD_AND_SAMPLE,
+                 rs.should_sample?(parent_context: nil, trace_id: '3759e988bd862e3fe1be46a994272793', name: 'name', kind: OpenTelemetry::Trace::SpanKind::SERVER, attributes: attributes, links: []).instance_variable_get(:@decision)
+
+    rs.instance_variable_get(:@root).instance_variable_get(:@root).send(:retrieve_and_update_sampling_targets)
+
+    # Freeze time 1.5 seconds later in the future, but there should only be 1 second worth
+    # of reservoir available, which amounts to 100 sampled spans in this test.
+    # Here we will freeze time and pretend all thread jobs start and end at the exact same time,
+    # given exactly 1 second of available reservoir (100 quota) only.
+    current_time = Time.now
+    Timecop.freeze(current_time + 1.5)
+
+    number_of_spans = 100
+    thread_count = 100
+    sampled_array = Array.new(thread_count, 0)
+    threads = []
+
+    thread_count.times do |idx|
+      threads << Thread.new do
+        create_spans(sampled_array, idx, attributes, rs, number_of_spans)
+      end
+    end
+
+    threads.each(&:join)
+    sum_sampled = sampled_array.sum
+
+    test_rule_applier = rs.instance_variable_get(:@root).instance_variable_get(:@root).instance_variable_get(:@rule_cache).instance_variable_get(:@rule_appliers)[1]
+    assert_equal 100, test_rule_applier.instance_variable_get(:@reservoir_sampler).instance_variable_get(:@quota)
+    assert_equal 100, sum_sampled
+
+    # Return to normal time.
+    Timecop.return
+  end
 end
