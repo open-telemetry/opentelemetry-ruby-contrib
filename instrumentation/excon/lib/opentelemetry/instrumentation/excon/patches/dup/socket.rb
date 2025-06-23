@@ -32,7 +32,7 @@ module OpenTelemetry
               }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
               if is_a?(::Excon::SSLSocket) && @data[:proxy]
-                span_name = 'HTTP CONNECT'
+                span_name = 'CONNECT'
                 span_kind = :client
               else
                 span_name = 'connect'

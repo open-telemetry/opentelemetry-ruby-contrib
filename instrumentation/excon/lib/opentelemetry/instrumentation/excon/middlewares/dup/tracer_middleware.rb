@@ -19,7 +19,7 @@ module OpenTelemetry
             end.freeze
 
             HTTP_METHODS_TO_SPAN_NAMES = HTTP_METHODS_TO_UPPERCASE.values.each_with_object({}) do |uppercase_method, hash|
-              hash[uppercase_method] ||= "HTTP #{uppercase_method}"
+              hash[uppercase_method] ||= uppercase_method
             end.freeze
 
             # Constant for the HTTP status range
