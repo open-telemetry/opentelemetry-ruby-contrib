@@ -56,6 +56,25 @@ describe OpenTelemetry::Instrumentation::Rake::Patches::Task do
       _(execute_span.parent_span_id).must_equal(invoke_span.span_id)
     end
 
+    describe 'with a task argument' do
+      it 'should call force_flush on OpenTelemetry.tracer_provider' do
+        mock = Minitest::Mock.new
+        mock.expect(:force_flush, nil)
+        mock.expect(:force_flush, nil)
+
+        Rake::Task.define_task("#{task_name}[:arg]")
+        task_string = "#{task_name}[test_arg]"
+
+        Rake.application.instance_eval { @top_level_tasks = [task_string] }
+
+        OpenTelemetry.stub(:tracer_provider, mock) do
+          Rake.application.invoke_task(task_string)
+        end
+
+        mock.verify
+      end
+    end
+
     describe 'with a prerequisite task' do
       before do
         Rake::Task.define_task(prerequisite_task_name)

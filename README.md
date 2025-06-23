@@ -92,7 +92,7 @@ Consult instrumentation gem's README file and gemspec for details about library 
 
 ### Releases
 
-This repository was extracted from the [OpenTelemetry Ruby repository][otel-ruby]. Versions of libraries contained in this repo released prior to 2022-06-13 are available on the [OpenTelemetry Ruby Releases][otel-ruby-releases] page. Newer versions are available [here][otel-ruby-contrib-releases]
+This repository was extracted from the [OpenTelemetry Ruby repository][otel-ruby]. Versions of libraries contained in this repo released prior to 2022-06-13 are available on the [OpenTelemetry Ruby Releases][otel-ruby-releases] page. Newer versions are available [on the opentelemetry-ruby-contrib Releases page][otel-ruby-contrib-releases].
 
 ## Useful links
 

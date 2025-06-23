@@ -99,9 +99,9 @@ describe OpenTelemetry::Sampler::XRay::Utils do
 
   it 'test_attribute_match_with_undefined_attributes' do
     rule_attributes = { 'string' => 'string', 'string2' => 'string2' }
-    refute OpenTelemetry::Sampler::XRay::Utils.attribute_match(nil, rule_attributes)
-    refute OpenTelemetry::Sampler::XRay::Utils.attribute_match({}, rule_attributes)
-    refute OpenTelemetry::Sampler::XRay::Utils.attribute_match({ 'string' => 'string' }, rule_attributes)
+    refute OpenTelemetry::Sampler::XRay::Utils.attribute_match?(nil, rule_attributes)
+    refute OpenTelemetry::Sampler::XRay::Utils.attribute_match?({}, rule_attributes)
+    refute OpenTelemetry::Sampler::XRay::Utils.attribute_match?({ 'string' => 'string' }, rule_attributes)
   end
 
   it 'test_attribute_match_with_undefined_rule_attributes' do
@@ -111,19 +111,19 @@ describe OpenTelemetry::Sampler::XRay::Utils do
       'undefined' => nil,
       'boolean' => true
     }
-    assert OpenTelemetry::Sampler::XRay::Utils.attribute_match(attr, nil)
+    assert OpenTelemetry::Sampler::XRay::Utils.attribute_match?(attr, nil)
   end
 
   it 'test_attribute_match_successful_match' do
     attr = { 'language' => 'english' }
     rule_attribute = { 'language' => 'en*sh' }
-    assert OpenTelemetry::Sampler::XRay::Utils.attribute_match(attr, rule_attribute)
+    assert OpenTelemetry::Sampler::XRay::Utils.attribute_match?(attr, rule_attribute)
   end
 
   it 'test_attribute_match_failed_match' do
     attr = { 'language' => 'french' }
     rule_attribute = { 'language' => 'en*sh' }
-    refute OpenTelemetry::Sampler::XRay::Utils.attribute_match(attr, rule_attribute)
+    refute OpenTelemetry::Sampler::XRay::Utils.attribute_match?(attr, rule_attribute)
   end
 
   it 'test_attribute_match_extra_attributes_success' do
@@ -134,7 +134,7 @@ describe OpenTelemetry::Sampler::XRay::Utils do
       'boolean' => true
     }
     rule_attribute = { 'string' => 'string' }
-    assert OpenTelemetry::Sampler::XRay::Utils.attribute_match(attr, rule_attribute)
+    assert OpenTelemetry::Sampler::XRay::Utils.attribute_match?(attr, rule_attribute)
   end
 
   it 'test_attribute_match_extra_attributes_failure' do
@@ -145,6 +145,6 @@ describe OpenTelemetry::Sampler::XRay::Utils do
       'boolean' => true
     }
     rule_attribute = { 'string' => 'string', 'number' => '1' }
-    refute OpenTelemetry::Sampler::XRay::Utils.attribute_match(attr, rule_attribute)
+    refute OpenTelemetry::Sampler::XRay::Utils.attribute_match?(attr, rule_attribute)
   end
 end
