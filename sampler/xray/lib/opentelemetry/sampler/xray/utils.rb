@@ -45,7 +45,7 @@ module OpenTelemetry
           match
         end
 
-        def attribute_match(attributes = nil, rule_attributes = nil)
+        def attribute_match?(attributes = nil, rule_attributes = nil)
           return true if rule_attributes.nil? || rule_attributes.empty?
 
           return false if attributes.nil? ||

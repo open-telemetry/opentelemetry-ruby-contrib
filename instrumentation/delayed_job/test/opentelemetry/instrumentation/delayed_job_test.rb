@@ -55,9 +55,11 @@ describe OpenTelemetry::Instrumentation::DelayedJob do
 
     it 'after job' do
       payload = Class.new do
+        # rubocop:disable Naming/PredicateMethod
         def perform
           true
         end
+        # rubocop:enable Naming/PredicateMethod
       end
 
       job = Delayed::Job.enqueue(payload.new)
