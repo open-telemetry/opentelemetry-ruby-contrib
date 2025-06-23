@@ -75,7 +75,7 @@ Attributes attached to each event payload are prefixed with `active_storage.` (e
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/active_storage/example/trace_demonstration.rb)
+Example usage can be seen in the [`./example/trace_demonstration.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/active_storage/example/trace_demonstration.rb)
 
 ## How can I get involved?
 

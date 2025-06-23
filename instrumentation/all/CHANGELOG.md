@@ -1,5 +1,18 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.78.0 / 2025-06-17
+
+* ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable to HTTP.rb instrumentation [#1547](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1547)
+
+### v0.77.0 / 2025-06-03
+
+* ADDED: Suppress internal spans with Faraday instrumentation
+* FIXED: Handle force_flush for rake task with arguments
+
+### v0.76.0 / 2025-05-06
+
+* ADDED: Update minimum required version of rdkafka to 0.18.0
+
 ### v0.75.1 / 2025-04-16
 
 * (No significant changes)
