@@ -33,11 +33,12 @@ module OpenTelemetry
                   'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
                   'server.address' => @address,
                   'server.port' => @port
-                }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
-
+                }
                 path, query = split_path_and_query(req.path)
-                attributes['url.path'] = path unless attributes.key?('url.path')
+                attributes['url.path'] = path
                 attributes['url.query'] = query if query
+
+                attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
                 tracer.in_span(
                   req.method,
