@@ -34,7 +34,7 @@ module OpenTelemetry
           def determine_semconv
             stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
             values = stability_opt_in.split(',').map(&:strip)
-  
+
             if values.include?('http/dup')
               'dup'
             elsif values.include?('http')
