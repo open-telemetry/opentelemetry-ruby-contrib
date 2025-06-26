@@ -27,6 +27,7 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 ### Maintainers
 
+- [Andrew Hayworth](https://github.com/ahayworth)
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Daniel Azuma](https://github.com/dazuma), Google
 - [Eric Mustin](https://github.com/ericmustin)
