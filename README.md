@@ -37,14 +37,14 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
 - [Sam Handler](https://github.com/plantfansam), Shopify
 
-For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/community-membership.md#maintainer).
+For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
 ### Approvers
 
 - [Josef Šimánek](https://github.com/simi)
 - [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 
-For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver).
+For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
 ## Instrumentation Libraries
 
