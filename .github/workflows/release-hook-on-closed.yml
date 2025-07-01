@@ -4,8 +4,14 @@ on:
   pull_request:
     types: [closed]
 
+permissions:
+  contents: read
+
 jobs:
   release-process-request:
+    permissions:
+      contents: write # required for creating releases
+      pull-requests: write # required for updating release PRs
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     env:
       ruby_version: "3.1"
