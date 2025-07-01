@@ -26,7 +26,7 @@ module OpenTelemetry
             ) do |span|
               MessagingHelper.inject_context_if_supported(context, client_method, service_id)
 
-              if HandlerHelper.instrumentation_config[:suppress_internal_instrumentation]
+              if HandlerHelper.skip_internal_instrumentation?
                 OpenTelemetry::Common::Utilities.untraced { super }
               else
                 yield span
