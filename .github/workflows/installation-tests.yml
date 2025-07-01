@@ -9,6 +9,9 @@ on:
     # Everyday at 2 PM UTC
     - cron: "0 14 * * *"
 
+permissions:
+  contents: read
+
 jobs:
   installation-tests:
     strategy:
