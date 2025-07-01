@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/restclient'
-require_relative '../../../../lib/opentelemetry/instrumentation/restclient/patches/request'
+require_relative '../../../../../lib/opentelemetry/instrumentation/restclient'
+require_relative '../../../../../lib/opentelemetry/instrumentation/restclient/patches/old/request'
 
 describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::RestClient::Instrumentation.instance }
@@ -15,6 +15,9 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
   let(:span) { exporter.finished_spans.first }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
+
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
     exporter.reset
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:get, 'http://example.com/failure').to_return(status: 500)
@@ -45,10 +48,13 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
       RestClient.get('http://username:password@example.com/success')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_equal 200
+      _(span.attributes['url.full']).must_equal 'http://example.com/success'
       assert_requested(
         :get,
         'http://example.com/success',
@@ -62,10 +68,13 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
       end.must_raise RestClient::InternalServerError
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.url']).must_equal 'http://example.com/failure'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['http.response.status_code']).must_equal 500
+      _(span.attributes['url.full']).must_equal 'http://example.com/failure'
       assert_requested(
         :get,
         'http://example.com/failure',
@@ -75,7 +84,7 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
 
     it 'merges HTTP client context' do
       client_context_attrs = {
-        'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE'
+        'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE', 'http.request.method' => 'OVERRIDE'
       }
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
         RestClient.get('http://username:password@example.com/success')
@@ -84,6 +93,9 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
       _(span.attributes['http.method']).must_equal 'OVERRIDE'
       _(span.attributes['test.attribute']).must_equal 'test.value'
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
+      _(span.attributes['http.request.method']).must_equal 'OVERRIDE'
+      _(span.attributes['test.attribute']).must_equal 'test.value'
+      _(span.attributes['url.full']).must_equal 'http://example.com/success'
     end
 
     it 'accepts peer service name from config' do
