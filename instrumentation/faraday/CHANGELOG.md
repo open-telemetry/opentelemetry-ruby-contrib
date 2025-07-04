@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.27.0 / 2025-06-03
+
+* ADDED: Suppress internal spans with Faraday instrumentation
+
 ### v0.26.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1

@@ -11,7 +11,7 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         compatible do
           gem_version = Gem::Version.new(::Rdkafka::VERSION)
-          Gem::Requirement.new('>= 0.10.0', '< 0.20.0').satisfied_by?(gem_version)
+          Gem::Requirement.new('>= 0.18.0').satisfied_by?(gem_version)
         end
 
         install do |_config|
