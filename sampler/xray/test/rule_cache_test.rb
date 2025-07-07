@@ -24,6 +24,11 @@ describe OpenTelemetry::Sampler::XRay::RuleCache do
     OpenTelemetry::Sampler::XRay::SamplingRuleApplier.new(OpenTelemetry::Sampler::XRay::SamplingRule.new(test_sampling_rule))
   end
 
+  after do
+    # Return to normal time
+    Timecop.return
+  end
+
   it 'test_cache_updates_and_sorts_rules' do
     # Set up default rule in rule cache
     default_rule = create_rule('Default', 10_000, 1, 0.05)
@@ -55,12 +60,13 @@ describe OpenTelemetry::Sampler::XRay::RuleCache do
   end
 
   it 'test_rule_cache_expiration_logic' do
-    Timecop.freeze(Time.now) do
+    current_time = Time.now
+    Timecop.freeze(current_time) do
       default_rule = create_rule('Default', 10_000, 1, 0.05)
       cache = OpenTelemetry::Sampler::XRay::RuleCache.new(OpenTelemetry::SDK::Resources::Resource.create({}))
       cache.update_rules([default_rule])
 
-      Timecop.travel(2 * 60 * 60) # Travel 2 hours into the future
+      Timecop.freeze(current_time + (2 * 60 * 60)) # Travel 2 hours into the future
       assert cache.expired?
     end
   end
@@ -109,5 +115,86 @@ describe OpenTelemetry::Sampler::XRay::RuleCache do
     assert_equal 'second_rule', rule_appliers[0].sampling_rule.rule_name
   end
 
-  # TODO: Add tests for updating Sampling Targets and getting statistics
+  it 'test_update_sampling_targets' do
+    rule1 = create_rule('default', 10_000, 1, 0.05)
+    rule2 = create_rule('test', 20, 10, 0.2)
+    cache = OpenTelemetry::Sampler::XRay::RuleCache.new(OpenTelemetry::SDK::Resources::Resource.create({}))
+    cache.update_rules([rule1, rule2])
+
+    time = Time.now.to_i
+    target1 = {
+      'FixedRate' => 0.05,
+      'Interval' => 15,
+      'ReservoirQuota' => 1,
+      'ReservoirQuotaTTL' => time + 10,
+      'RuleName' => 'default'
+    }
+    target2 = {
+      'FixedRate' => 0.15,
+      'Interval' => 12,
+      'ReservoirQuota' => 5,
+      'ReservoirQuotaTTL' => time + 10,
+      'RuleName' => 'test'
+    }
+    target3 = {
+      'FixedRate' => 0.15,
+      'Interval' => 3,
+      'ReservoirQuota' => 5,
+      'ReservoirQuotaTTL' => time + 10,
+      'RuleName' => 'associated rule does not exist'
+    }
+
+    target_map = {
+      'default' => target1,
+      'test' => target2,
+      'associated rule does not exist' => target3
+    }
+
+    refresh_sampling_rules, next_polling_interval = cache.update_targets(target_map, time - 10)
+    refute refresh_sampling_rules
+    assert_equal target2['Interval'], next_polling_interval
+
+    rule_appliers = cache.instance_variable_get(:@rule_appliers)
+    assert_equal 2, rule_appliers.length
+
+    refresh_sampling_rules_after, = cache.update_targets(target_map, time + 1)
+    assert refresh_sampling_rules_after
+  end
+
+  it 'test_get_all_statistics' do
+    current_time = Time.now
+    Timecop.freeze(current_time) do
+      rule1 = create_rule('test', 4, 2, 2.0)
+      rule2 = create_rule('default', 5, 5, 5.0)
+
+      cache = OpenTelemetry::Sampler::XRay::RuleCache.new(OpenTelemetry::SDK::Resources::Resource.create)
+      cache.update_rules([rule1, rule2])
+
+      Timecop.freeze(current_time + 0.001) # Travel 1ms into the future
+
+      client_id = '12345678901234567890abcd'
+      statistics = cache.create_sampling_statistics_documents(client_id)
+
+      expected_statistics = [
+        {
+          ClientID: client_id,
+          RuleName: 'test',
+          Timestamp: Time.now.to_i,
+          RequestCount: 0,
+          BorrowCount: 0,
+          SampledCount: 0
+        },
+        {
+          ClientID: client_id,
+          RuleName: 'default',
+          Timestamp: Time.now.to_i,
+          RequestCount: 0,
+          BorrowCount: 0,
+          SampledCount: 0
+        }
+      ]
+
+      assert_equal expected_statistics, statistics
+    end
+  end
 end
