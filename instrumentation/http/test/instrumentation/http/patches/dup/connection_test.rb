@@ -6,21 +6,27 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/http'
-require_relative '../../../../lib/opentelemetry/instrumentation/http/patches/connection'
+require_relative '../../../../../lib/opentelemetry/instrumentation/http'
+require_relative '../../../../../lib/opentelemetry/instrumentation/http/patches/dup/connection'
 
-describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
+describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Connection do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
+
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
     exporter.reset
     instrumentation.install({})
   end
 
   # Force re-install of instrumentation
-  after { instrumentation.instance_variable_set(:@installed, false) }
+  after do
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
+    instrumentation.instance_variable_set(:@installed, false)
+  end
 
   describe '#connect' do
     it 'emits span on connect' do
@@ -35,9 +41,13 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
       end
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.name).must_equal 'CONNECT'
+      # Old semantic conventions
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
+      # Stable semantic conventions
+      _(span.attributes['server.address']).must_equal('localhost')
+      _(span.attributes['server.port']).wont_be_nil
     ensure
       WebMock.disable_net_connect!
     end

@@ -28,6 +28,7 @@ module OpenTelemetry
 
         option :span_kind, default: :client, validate: %i[client internal]
         option :peer_service, default: nil, validate: :string
+        option :enable_internal_instrumentation, default: false, validate: :boolean
 
         private
 

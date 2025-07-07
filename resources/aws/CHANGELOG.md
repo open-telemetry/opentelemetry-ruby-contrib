@@ -1,5 +1,9 @@
 # Release History: opentelemetry-resource-detector-aws
 
+### v0.4.0 / 2025-06-03
+
+* ADDED: Contribute aws eks resource detector
+
 ### v0.3.0 / 2025-05-07
 
 * ADDED: Contribute aws lambda resource detector

@@ -25,15 +25,9 @@ requests.
 The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 [community page][ruby-sig] repo for information on this and other language SIGs.
 
-Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-approvers)):
+### Maintainers
 
-- [Josef Šimánek](https://github.com/simi)
-- [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
-
-*Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).*
-
-Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-maintainers)):
-
+- [Andrew Hayworth](https://github.com/ahayworth)
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Daniel Azuma](https://github.com/dazuma), Google
 - [Eric Mustin](https://github.com/ericmustin)
@@ -44,7 +38,14 @@ Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
 - [Sam Handler](https://github.com/plantfansam), Shopify
 
-*Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).*
+For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
+
+### Approvers
+
+- [Josef Šimánek](https://github.com/simi)
+- [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
+
+For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
 ## Instrumentation Libraries
 
