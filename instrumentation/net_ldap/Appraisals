@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+appraise 'net-ldap' do
+  gem 'net-ldap', '~> 0.19.0'
+end
+
+appraise 'net-ldap-latest' do
+  gem 'net-ldap'
+end
