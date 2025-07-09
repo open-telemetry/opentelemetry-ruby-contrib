@@ -12,8 +12,8 @@ on:
     - cron: "0 0 * * *"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
-  cancel-in-progress: true  # Cancel any previous runs of this workflow
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
   instrumentation:
@@ -48,6 +48,7 @@ jobs:
           - koala
           - lmdb
           - net_http
+          - net_ldap
           - rack
           - rails
           - restclient
