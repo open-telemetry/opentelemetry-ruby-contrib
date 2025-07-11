@@ -37,7 +37,7 @@ module OpenTelemetry
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
                 tracer.in_span(
-                  "HTTP #{http_method}", attributes: attrs, kind: config.fetch(:span_kind)
+                  http_method.to_s, attributes: attrs, kind: config.fetch(:span_kind)
                 ) do |span|
                   OpenTelemetry.propagation.inject(env.request_headers)
 

@@ -13,9 +13,10 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('1.0')
 
         install do |_config|
-          require_dependencies
-          register_tracer_middleware
-          use_middleware_by_default
+          patch_type = determine_semconv
+          send(:"require_dependencies_#{patch_type}")
+          send(:"register_tracer_middleware_#{patch_type}")
+          send(:"use_middleware_by_default_#{patch_type}")
         end
 
         compatible do
@@ -35,19 +36,62 @@ module OpenTelemetry
           Gem::Version.new(::Faraday::VERSION)
         end
 
-        def require_dependencies
-          require_relative 'middlewares/tracer_middleware'
-          require_relative 'patches/connection'
+        def determine_semconv
+          stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+          values = stability_opt_in.split(',').map(&:strip)
+
+          if values.include?('http/dup')
+            'dup'
+          elsif values.include?('http')
+            'stable'
+          else
+            'old'
+          end
         end
 
-        def register_tracer_middleware
+        def require_dependencies_dup
+          require_relative 'middlewares/dup/tracer_middleware'
+          require_relative 'patches/dup/connection'
+        end
+
+        def require_dependencies_old
+          require_relative 'middlewares/old/tracer_middleware'
+          require_relative 'patches/old/connection'
+        end
+
+        def require_dependencies_stable
+          require_relative 'middlewares/stable/tracer_middleware'
+          require_relative 'patches/stable/connection'
+        end
+
+        def register_tracer_middleware_dup
           ::Faraday::Middleware.register_middleware(
-            open_telemetry: Middlewares::TracerMiddleware
+            open_telemetry: Middlewares::Dup::TracerMiddleware
           )
         end
 
-        def use_middleware_by_default
-          ::Faraday::Connection.prepend(Patches::Connection)
+        def register_tracer_middleware_old
+          ::Faraday::Middleware.register_middleware(
+            open_telemetry: Middlewares::Old::TracerMiddleware
+          )
+        end
+
+        def register_tracer_middleware_stable
+          ::Faraday::Middleware.register_middleware(
+            open_telemetry: Middlewares::Stable::TracerMiddleware
+          )
+        end
+
+        def use_middleware_by_default_dup
+          ::Faraday::Connection.prepend(Patches::Dup::Connection)
+        end
+
+        def use_middleware_by_default_old
+          ::Faraday::Connection.prepend(Patches::Old::Connection)
+        end
+
+        def use_middleware_by_default_stable
+          ::Faraday::Connection.prepend(Patches::Stable::Connection)
         end
       end
     end

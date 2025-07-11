@@ -221,7 +221,6 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
 
       it 'only adds the middleware once' do
         tracers = client.builder.handlers.count(OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddleware)
-        binding.irb if tracers != 1
         _(tracers).must_equal 1
       end
     end

@@ -48,7 +48,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Dup::TracerMiddle
       it 'has http 200 attributes' do
         response = client.get('/success')
 
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         # old attributes
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.status_code']).must_equal 200
@@ -67,7 +67,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Dup::TracerMiddle
       it 'has http.status_code 404' do
         response = client.get('/not_found')
 
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         # old attributes
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.status_code']).must_equal 404
@@ -86,7 +86,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Dup::TracerMiddle
       it 'has http.status_code 500' do
         response = client.get('/failure')
 
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         # old attributes
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.status_code']).must_equal 500
@@ -110,7 +110,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Dup::TracerMiddle
           client.get('/success')
         end
 
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         # old attributes
         _(span.attributes['http.method']).must_equal 'OVERRIDE'
         _(span.attributes['http.status_code']).must_equal 200
@@ -210,7 +210,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Dup::TracerMiddle
       it 'omits missing attributes' do
         response = client.get('/success')
 
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         # old attributes
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.status_code']).must_equal 200
@@ -257,7 +257,6 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Dup::TracerMiddle
 
       it 'only adds the middleware once' do
         tracers = client.builder.handlers.count(OpenTelemetry::Instrumentation::Faraday::Middlewares::Dup::TracerMiddleware)
-        binding.irb if tracers != 1
         _(tracers).must_equal 1
       end
     end

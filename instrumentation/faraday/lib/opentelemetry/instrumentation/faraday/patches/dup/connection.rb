@@ -17,7 +17,6 @@ module OpenTelemetry
             def initialize(...)
               super.tap do
                 use(:open_telemetry) unless builder.handlers.any? do |handler|
-                  # binding.irb
                   handler.klass == Middlewares::Dup::TracerMiddleware
                 end
               end
