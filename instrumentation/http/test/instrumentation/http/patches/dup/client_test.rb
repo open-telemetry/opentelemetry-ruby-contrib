@@ -48,7 +48,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
     it 'traces a simple request' do
       HTTP.get('http://example.com/success')
       _(exporter.finished_spans.size).must_equal(1)
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       # Old semantic conventions
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -77,7 +77,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       HTTP.post('http://example.com/failure')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP POST'
+      _(span.name).must_equal 'POST'
       # Old semantic conventions
       _(span.attributes['http.method']).must_equal 'POST'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -107,7 +107,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       end.must_raise HTTP::TimeoutError
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       # Old semantic conventions
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'https'
@@ -143,7 +143,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       end
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       # Old semantic conventions
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -172,7 +172,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       let(:span_name_formatter) do
         # demonstrate simple addition of path and string to span name:
         lambda { |request_method, request_path|
-          "HTTP #{request_method} #{request_path} miniswan"
+          "#{request_method} #{request_path} miniswan"
         }
       end
 
@@ -182,7 +182,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
         end
 
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'HTTP GET /success miniswan'
+        _(span.name).must_equal 'GET /success miniswan'
         # Old semantic conventions
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.scheme']).must_equal 'http'
@@ -221,7 +221,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
         end
 
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         # Old semantic conventions
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.scheme']).must_equal 'http'
