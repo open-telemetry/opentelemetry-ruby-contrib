@@ -1,3 +1,9 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # To faclitate HTTP semantic convention stability migration, we are using
 # appraisal to test the different semantic convention modes along with different
 # gem versions. For more information on the semantic convention modes, see:
