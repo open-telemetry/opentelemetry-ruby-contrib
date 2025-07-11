@@ -41,7 +41,13 @@ module OpenTelemetry
                 ) do |span|
                   OpenTelemetry.propagation.inject(env.request_headers)
 
-                  app.call(env).on_complete { |resp| trace_response(span, resp.status) }
+                  if config[:enable_internal_instrumentation] == false
+                    OpenTelemetry::Common::Utilities.untraced do
+                      app.call(env).on_complete { |resp| trace_response(span, resp.status) }
+                    end
+                  else
+                    app.call(env).on_complete { |resp| trace_response(span, resp.status) }
+                  end
                 rescue ::Faraday::Error => e
                   trace_response(span, e.response[:status]) if e.response
 
