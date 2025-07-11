@@ -110,10 +110,9 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.base']).must_equal 'dc=com'
         _(span.attributes['ldap.encryption']).must_equal '{"method":"simple_tls","tls_options":{"foo":"bar"}}'
         _(span.attributes['ldap.payload']).must_equal '{}'
+        _(span.attributes['ldap.error_message']).must_equal 'Net::LDAP::Error: Connection timed out - user specified timeout'
         _(span.attributes['net.peer.name']).must_equal 'test.mocked.com'
         _(span.attributes['net.peer.port']).must_equal 636
-        _(span.events.first.attributes['exception.type']).must_equal 'Net::LDAP::Error'
-        _(span.events.first.attributes['exception.message']).must_equal 'Connection timed out - user specified timeout'
       end
     end
   end

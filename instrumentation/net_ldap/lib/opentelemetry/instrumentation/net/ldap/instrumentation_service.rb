@@ -28,18 +28,19 @@ module OpenTelemetry
               OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => host || hosts,
               OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => port,
               OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE => instrumentation_config[:peer_service]
-            }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+            }
+            attributes.delete_if { |_key, value| value.nil? }
 
             tracer.in_span(
               event,
-              attributes: attributes.compact,
+              attributes: attributes,
               kind: :client
             ) do |span|
               yield(payload).tap do |response|
-                annotate_span_with_response!(span, response)
+                annotate_span_with_response(span, response) if response
               end
-            rescue StandardError => e
-              span.record_exception(e)
+            rescue ::Net::LDAP::Error => e
+              span.set_attribute('ldap.error_message', "#{e.class}: #{e.message}")
               span.status = OpenTelemetry::Trace::Status.error
               raise e
             end
@@ -57,9 +58,7 @@ module OpenTelemetry
             LDAP::Instrumentation.instance.config
           end
 
-          def annotate_span_with_response!(span, response)
-            return unless response
-
+          def annotate_span_with_response(span, response)
             status_code = ::Net::LDAP::ResultCodeSuccess
             message = ''
             error_message = ''
@@ -69,12 +68,15 @@ module OpenTelemetry
               error_message = response.error_message.to_s
               message = ::Net::LDAP.result2string(status_code)
             end
-            span.set_attribute('ldap.status_code', status_code)
-            span.set_attribute('ldap.message', message) unless message.empty?
+            attributes = {
+              'ldap.status_code' => status_code
+            }
+            attributes['ldap.message'] = message unless message.empty?
+            attributes['ldap.error_message'] = error_message unless error_message.empty?
+            span.add_attributes(attributes)
 
             return if ::Net::LDAP::ResultCodesNonError.include?(status_code)
 
-            span.record_exception(error_message) unless error_message.empty?
             span.status = OpenTelemetry::Trace::Status.error
           end
         end
