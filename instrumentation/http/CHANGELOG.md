@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.25.1 / 2025-07-01
+
+* FIXED: Update span name when semconv stability is enabled
+
 ### v0.25.0 / 2025-06-17
 
 * ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1547](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1547)
