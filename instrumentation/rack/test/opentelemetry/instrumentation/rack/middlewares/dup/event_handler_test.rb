@@ -234,7 +234,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler' 
 
           root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
           root_span_stable = finished_spans.find { |s| s.attributes['url.path'] == '/' }
-          
+
           _(root_span).wont_be_nil
           _(root_span_stable).wont_be_nil
         end

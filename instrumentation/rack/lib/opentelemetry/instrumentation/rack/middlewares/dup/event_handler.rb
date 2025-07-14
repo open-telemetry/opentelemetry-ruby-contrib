@@ -128,7 +128,7 @@ module OpenTelemetry
             end
 
             def extract_response_attributes(response)
-              attributes = { 
+              attributes = {
                 'http.status_code' => response.status.to_i,
                 'http.response.status_code' => response.status.to_i
               }

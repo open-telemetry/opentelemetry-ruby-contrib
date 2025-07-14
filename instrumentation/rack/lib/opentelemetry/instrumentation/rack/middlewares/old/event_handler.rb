@@ -42,10 +42,10 @@ module OpenTelemetry
           # @see OpenTelemetry::Instrumentation::Rack.current_span
           class EventHandler
             include ::Rack::Events::Abstract
-  
+
             OTEL_TOKEN_AND_SPAN = 'otel.rack.token_and_span'
             EMPTY_HASH = {}.freeze
-  
+
             # Creates a server span for this current request using the incoming parent context
             # and registers them as the {current_span}
             #
@@ -58,7 +58,7 @@ module OpenTelemetry
                                else
                                  extract_remote_context(request)
                                end
-  
+
               span = create_span(parent_context, request)
               span_ctx = OpenTelemetry::Trace.context_with_span(span, parent_context: parent_context)
               rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: span_ctx)
@@ -66,7 +66,7 @@ module OpenTelemetry
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end
-  
+
             # Optionally adds debugging response headers injected from {response_propagators}
             #
             # @param [Rack::Request] The current HTTP request
@@ -75,7 +75,7 @@ module OpenTelemetry
             def on_commit(request, response)
               span = OpenTelemetry::Instrumentation::Rack.current_span
               return unless span.recording?
-  
+
               response_propagators&.each do |propagator|
                 propagator.inject(response.headers)
               rescue StandardError => e
@@ -84,7 +84,7 @@ module OpenTelemetry
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end
-  
+
             # Records Unexpected Exceptions on the Rack span and set the Span Status to Error
             #
             # @note does nothing if the span is a non-recording span
@@ -94,13 +94,13 @@ module OpenTelemetry
             def on_error(request, _, error)
               span = OpenTelemetry::Instrumentation::Rack.current_span
               return unless span.recording?
-  
+
               span.record_exception(error)
               span.status = OpenTelemetry::Trace::Status.error(error.class.name)
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end
-  
+
             # Finishes the span making it eligible to be exported and cleans up existing contexts
             #
             # @note does nothing if the span is a non-recording span
@@ -109,33 +109,33 @@ module OpenTelemetry
             def on_finish(request, response)
               span = OpenTelemetry::Instrumentation::Rack.current_span
               return unless span.recording?
-  
+
               add_response_attributes(span, response) if response
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             ensure
               detach_context(request)
             end
-  
+
             private
-  
+
             def extract_request_headers(env)
               return EMPTY_HASH if allowed_request_headers.empty?
-  
+
               allowed_request_headers.each_with_object({}) do |(key, value), result|
                 result[value] = env[key] if env.key?(key)
               end
             end
-  
+
             def extract_response_attributes(response)
               attributes = { 'http.status_code' => response.status.to_i }
               attributes.merge!(extract_response_headers(response.headers))
               attributes
             end
-  
+
             def extract_response_headers(headers)
               return EMPTY_HASH if allowed_response_headers.empty?
-  
+
               allowed_response_headers.each_with_object({}) do |(key, value), result|
                 if headers.key?(key)
                   result[value] = headers[key]
@@ -150,14 +150,14 @@ module OpenTelemetry
                 end
               end
             end
-  
+
             def untraced_request?(env)
               return true if untraced_endpoints.include?(env['PATH_INFO'])
               return true if untraced_requests&.call(env)
-  
+
               false
             end
-  
+
             # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
             #
             # recommendation: span.name(s) should be low-cardinality (e.g.,
@@ -167,7 +167,7 @@ module OpenTelemetry
             def create_request_span_name(request)
               # NOTE: dd-trace-rb has implemented 'quantization' (which lowers url cardinality)
               #       see Datadog::Quantization::HTTP.url
-  
+
               if (implementation = url_quantization)
                 request_uri_or_path_info = request.env['REQUEST_URI'] || request.path_info
                 implementation.call(request_uri_or_path_info, request.env)
@@ -175,7 +175,7 @@ module OpenTelemetry
                 "HTTP #{request.request_method}"
               end
             end
-  
+
             def extract_remote_context(request, context = Context.current)
               OpenTelemetry.propagation.extract(
                 request.env,
@@ -183,7 +183,7 @@ module OpenTelemetry
                 getter: OpenTelemetry::Common::Propagation.rack_env_getter
               )
             end
-  
+
             def request_span_attributes(env)
               attributes = {
                 'http.method' => env['REQUEST_METHOD'],
@@ -191,22 +191,22 @@ module OpenTelemetry
                 'http.scheme' => env['rack.url_scheme'],
                 'http.target' => env['QUERY_STRING'].empty? ? env['PATH_INFO'] : "#{env['PATH_INFO']}?#{env['QUERY_STRING']}"
               }
-  
+
               attributes['http.user_agent'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
               attributes.merge!(extract_request_headers(env))
               attributes
             end
-  
+
             def detach_context(request)
               return nil unless request.env[OTEL_TOKEN_AND_SPAN]
-  
+
               token, span = request.env[OTEL_TOKEN_AND_SPAN]
               span.finish
               OpenTelemetry::Context.detach(token)
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end
-  
+
             def add_response_attributes(span, response)
               span.status = OpenTelemetry::Trace::Status.error if response.server_error?
               attributes = extract_response_attributes(response)
@@ -214,43 +214,43 @@ module OpenTelemetry
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end
-  
+
             def record_frontend_span?
               config[:record_frontend_span] == true
             end
-  
+
             def untraced_endpoints
               config[:untraced_endpoints]
             end
-  
+
             def untraced_requests
               config[:untraced_requests]
             end
-  
+
             def url_quantization
               config[:url_quantization]
             end
-  
+
             def response_propagators
               config[:response_propagators]
             end
-  
+
             def allowed_request_headers
               config[:allowed_rack_request_headers]
             end
-  
+
             def allowed_response_headers
               config[:allowed_rack_response_headers]
             end
-  
+
             def tracer
               OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.tracer
             end
-  
+
             def config
               OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.config
             end
-  
+
             def create_span(parent_context, request)
               span = tracer.start_span(
                 create_request_span_name(request),
