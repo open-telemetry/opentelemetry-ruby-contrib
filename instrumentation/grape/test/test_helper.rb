@@ -49,9 +49,9 @@ def build_rack_app(api_class)
     elsif values.include?('http')
       use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_stable)
     else
-      use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old)  
+      use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old)
     end
-    
+
     run api_class
   end
   Rack::MockRequest.new(builder)
