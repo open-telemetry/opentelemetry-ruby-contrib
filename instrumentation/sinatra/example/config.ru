@@ -47,5 +47,5 @@ class App < Sinatra::Base
   end
 end
 
-use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args)
+use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old)
 run App

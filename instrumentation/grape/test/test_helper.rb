@@ -41,7 +41,17 @@ end
 
 def build_rack_app(api_class)
   builder = Rack::Builder.app do
-    use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args)
+    stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+    values = stability_opt_in.split(',').map(&:strip)
+
+    if values.include?('http/dup')
+      use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_dup)
+    elsif values.include?('http')
+      use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_stable)
+    else
+      use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old)  
+    end
+    
     run api_class
   end
   Rack::MockRequest.new(builder)
