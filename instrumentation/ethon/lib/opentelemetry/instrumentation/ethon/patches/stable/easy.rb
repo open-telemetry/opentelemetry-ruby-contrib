@@ -16,7 +16,10 @@ module OpenTelemetry
               # #to_s is required because user input could be symbol or string
               h[k] = k.to_s.upcase
             end
-            HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = k.to_s }
+            HTTP_METHODS_TO_SPAN_NAMES = Hash.new do |h, k|
+              h[k] = k.to_s
+              h[k] = 'HTTP' if k == '_OTHER'
+            end
 
             # Constant for the HTTP status range
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
@@ -65,7 +68,7 @@ module OpenTelemetry
             end
 
             def otel_before_request
-              method = 'N/A' # Could be GET or not HTTP at all
+              method = '_OTHER' # Could be GET or not HTTP at all
               method = @otel_method if instance_variable_defined?(:@otel_method) && !@otel_method.nil?
 
               @otel_span = tracer.start_span(

@@ -70,8 +70,8 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             easy.stub(:complete, nil) do
               easy.perform
 
-              _(span.name).must_equal 'N/A'
-              _(span.attributes['http.request.method']).must_equal 'N/A'
+              _(span.name).must_equal 'HTTP'
+              _(span.attributes['http.request.method']).must_equal '_OTHER'
               _(span.attributes['http.response.status_code']).must_be_nil
               _(span.attributes['url.full']).must_equal 'http://example.com/test'
               _(span.attributes['server.address']).must_equal 'example.com'
@@ -93,8 +93,8 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
         it 'when response is successful' do
           stub_response(response_code: 200) do
-            _(span.name).must_equal 'N/A'
-            _(span.attributes['http.request.method']).must_equal 'N/A'
+            _(span.name).must_equal 'HTTP'
+            _(span.attributes['http.request.method']).must_equal '_OTHER'
             _(span.attributes['http.response.status_code']).must_equal 200
             _(span.attributes['url.full']).must_equal 'http://example.com/test'
             _(easy.instance_eval { @otel_span }).must_be_nil
@@ -106,8 +106,8 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
         it 'when response is not successful' do
           stub_response(response_code: 500) do
-            _(span.name).must_equal 'N/A'
-            _(span.attributes['http.request.method']).must_equal 'N/A'
+            _(span.name).must_equal 'HTTP'
+            _(span.attributes['http.request.method']).must_equal '_OTHER'
             _(span.attributes['http.response.status_code']).must_equal 500
             _(span.attributes['url.full']).must_equal 'http://example.com/test'
             _(easy.instance_eval { @otel_span }).must_be_nil
@@ -119,8 +119,8 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
         it 'when request times out' do
           stub_response(response_code: 0, return_code: :operation_timedout) do
-            _(span.name).must_equal 'N/A'
-            _(span.attributes['http.request.method']).must_equal 'N/A'
+            _(span.name).must_equal 'HTTP'
+            _(span.attributes['http.request.method']).must_equal '_OTHER'
             _(span.attributes['http.response.status_code']).must_be_nil
             _(span.attributes['url.full']).must_equal 'http://example.com/test'
             _(span.status.code).must_equal(
