@@ -70,7 +70,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             easy.stub(:complete, nil) do
               easy.perform
 
-              _(span.name).must_equal 'HTTP N/A'
+              _(span.name).must_equal 'N/A'
               _(span.attributes['http.method']).must_equal 'N/A'
               _(span.attributes['http.status_code']).must_be_nil
               _(span.attributes['http.url']).must_equal 'http://example.com/test'
@@ -97,7 +97,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
         it 'when response is successful' do
           stub_response(response_code: 200) do
-            _(span.name).must_equal 'HTTP N/A'
+            _(span.name).must_equal 'N/A'
             _(span.attributes['http.method']).must_equal 'N/A'
             _(span.attributes['http.request.method']).must_equal 'N/A'
             _(span.attributes['http.status_code']).must_equal 200
@@ -113,7 +113,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
         it 'when response is not successful' do
           stub_response(response_code: 500) do
-            _(span.name).must_equal 'HTTP N/A'
+            _(span.name).must_equal 'N/A'
             _(span.attributes['http.method']).must_equal 'N/A'
             _(span.attributes['http.request.method']).must_equal 'N/A'
             _(span.attributes['http.status_code']).must_equal 500
@@ -129,7 +129,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
         it 'when request times out' do
           stub_response(response_code: 0, return_code: :operation_timedout) do
-            _(span.name).must_equal 'HTTP N/A'
+            _(span.name).must_equal 'N/A'
             _(span.attributes['http.method']).must_equal 'N/A'
             _(span.attributes['http.request.method']).must_equal 'N/A'
             _(span.attributes['http.status_code']).must_be_nil

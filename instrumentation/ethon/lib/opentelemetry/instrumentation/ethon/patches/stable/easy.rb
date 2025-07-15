@@ -16,7 +16,7 @@ module OpenTelemetry
               # #to_s is required because user input could be symbol or string
               h[k] = k.to_s.upcase
             end
-            HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
+            HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = k.to_s }
 
             # Constant for the HTTP status range
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
