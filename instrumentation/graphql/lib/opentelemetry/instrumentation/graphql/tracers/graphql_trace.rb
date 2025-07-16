@@ -99,7 +99,7 @@ module OpenTelemetry
           def execute_query(query:, &block)
             attributes = {}
             attributes['graphql.operation.name'] = query.selected_operation_name if query.selected_operation_name
-            if query.is_a?(::GraphQL::Query::Partial)
+            if defined?(::GraphQL::Query::Partial) && query.is_a?(::GraphQL::Query::Partial)
               attributes['graphql.partial.path'] = query.path.to_s
             else
               attributes['graphql.operation.type'] = query.selected_operation.operation_type
