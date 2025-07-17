@@ -12,8 +12,9 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the HttpClient instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
-          require_dependencies
-          patch
+          patch_type = determine_semconv
+          send(:"require_dependencies_#{patch_type}")
+          send(:"patch_#{patch_type}")
         end
 
         present do
@@ -22,14 +23,47 @@ module OpenTelemetry
 
         private
 
-        def patch
-          ::HTTPClient.prepend(Patches::Client)
-          ::HTTPClient::Session.prepend(Patches::Session)
+        def determine_semconv
+          stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+          values = stability_opt_in.split(',').map(&:strip)
+
+          if values.include?('http/dup')
+            'dup'
+          elsif values.include?('http')
+            'stable'
+          else
+            'old'
+          end
         end
 
-        def require_dependencies
-          require_relative 'patches/client'
-          require_relative 'patches/session'
+        def patch_dup
+          ::HTTPClient.prepend(Patches::Dup::Client)
+          ::HTTPClient::Session.prepend(Patches::Dup::Session)
+        end
+
+        def patch_old
+          ::HTTPClient.prepend(Patches::Old::Client)
+          ::HTTPClient::Session.prepend(Patches::Old::Session)
+        end
+
+        def patch_stable
+          ::HTTPClient.prepend(Patches::Stable::Client)
+          ::HTTPClient::Session.prepend(Patches::Stable::Session)
+        end
+
+        def require_dependencies_dup
+          require_relative 'patches/dup/client'
+          require_relative 'patches/dup/session'
+        end
+
+        def require_dependencies_old
+          require_relative 'patches/old/client'
+          require_relative 'patches/old/session'
+        end
+
+        def require_dependencies_stable
+          require_relative 'patches/stable/client'
+          require_relative 'patches/stable/session'
         end
       end
     end
