@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# To faclitate HTTP semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# HTTP gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
+
+semconv_stability = %w[dup stable old]
+
+semconv_stability.each do |mode|
+  appraise "net-http-#{mode}" do
+    # NOOP - net-http is part of the Ruby standard library.
+    # We are only using Appraisals to allow testing of the
+    # different stability modes. The file and the Appraisal
+    # gem can be removed once semconv migration is complete.
+  end
+end
