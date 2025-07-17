@@ -11,8 +11,9 @@ module OpenTelemetry
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
-          require_dependencies
-          patch_request
+          patch_type = determine_semconv
+          send(:"require_dependencies_#{patch_type}")
+          send(:"patch_request_#{patch_type}")
         end
 
         present do
@@ -23,12 +24,41 @@ module OpenTelemetry
 
         private
 
-        def require_dependencies
-          require_relative 'patches/request'
+        def determine_semconv
+          stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+          values = stability_opt_in.split(',').map(&:strip)
+
+          if values.include?('http/dup')
+            'dup'
+          elsif values.include?('http')
+            'stable'
+          else
+            'old'
+          end
         end
 
-        def patch_request
-          ::RestClient::Request.prepend(Patches::Request)
+        def require_dependencies_dup
+          require_relative 'patches/dup/request'
+        end
+
+        def require_dependencies_stable
+          require_relative 'patches/stable/request'
+        end
+
+        def require_dependencies_old
+          require_relative 'patches/old/request'
+        end
+
+        def patch_request_dup
+          ::RestClient::Request.prepend(Patches::Dup::Request)
+        end
+
+        def patch_request_stable
+          ::RestClient::Request.prepend(Patches::Stable::Request)
+        end
+
+        def patch_request_old
+          ::RestClient::Request.prepend(Patches::Old::Request)
         end
       end
     end
