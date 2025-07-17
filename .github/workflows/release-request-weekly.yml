@@ -4,8 +4,14 @@ on:
   schedule:
     - cron: "0 15 * * 2"
 
+permissions:
+  contents: read
+
 jobs:
   release-request:
+    permissions:
+      contents: write # required for creating releases
+      pull-requests: write # required for creating release PRs
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     env:
       ruby_version: "3.1"
