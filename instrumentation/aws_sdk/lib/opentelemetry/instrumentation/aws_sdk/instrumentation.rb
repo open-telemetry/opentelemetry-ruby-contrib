@@ -19,18 +19,20 @@ module OpenTelemetry
       # - `false` **(default)** - Context key/value will not be added.
       # - `true` - Context key/value will be added.
       #
-      # ### `:suppress_internal_instrumentation`
+      # ### `:enable_internal_instrumentation`
+      # Enables tracing of spans of `internal` span kind.
       #
-      # Disables tracing of spans of `internal` span kind.
+      # - `false` **(default)** - Internal spans are not traced
+      # - `true` - Internal spans are traced.
       #
-      # - `false` **(default)** - Internal spans are traced.
-      # - `true` - Internal spans are not traced.
+      # ### `:suppress_internal_instrumentation` (deprecated)
+      # This configuration has been deprecated in a favor of `:enable_internal_instrumentation`
       #
-      # @example An explicit default configuration
+      # @example An explicit default configurations
       #   OpenTelemetry::SDK.configure do |c|
       #     c.use 'OpenTelemetry::Instrumentation::AwsSdk', {
       #       inject_messaging_context: false,
-      #       suppress_internal_instrumentation: false
+      #       enable_internal_instrumentation: false
       #     }
       #   end
       class Instrumentation < OpenTelemetry::Instrumentation::Base
@@ -51,7 +53,7 @@ module OpenTelemetry
         end
 
         option :inject_messaging_context, default: false, validate: :boolean
-        option :suppress_internal_instrumentation, default: false, validate: :boolean
+        option :enable_internal_instrumentation, default: false, validate: :boolean
 
         def gem_version
           if Gem.loaded_specs['aws-sdk']
