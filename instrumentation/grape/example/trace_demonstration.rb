@@ -43,8 +43,11 @@ end
 # Set up fake Rack application
 builder = Rack::Builder.app do
   # Integration is automatic in web frameworks but plain Rack applications require this line.
+  # - middleware_args_old to emit old HTTP semantic conventions
+  # - middleware_args_stable to emit stable HTTP semantic conventions
+  # - middleware_args_dup to emit both old and stable HTTP semantic conventions
   # Enable it in your config.ru.
-  use *OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args
+  use *OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old
   run ExampleAPI
 end
 app = Rack::MockRequest.new(builder)
