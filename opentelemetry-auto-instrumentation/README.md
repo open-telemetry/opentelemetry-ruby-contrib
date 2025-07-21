@@ -35,6 +35,8 @@ opentelemetry-resource-detector-azure
 opentelemetry-resource-detector-container
 ```
 
+### Example installation strategies
+
 Instrument your application:
 
 ```console
