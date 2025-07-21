@@ -84,7 +84,7 @@ RUBYOPT="-r opentelemetry-auto-instrumentation" rails server
 
 Instrument Rails application with `bundle exec`:
 
-Since installing the `opentelemetry-auto-instrumentation` gem through `gem install`, anything related to the OpenTelemetry gem won't be stored in Bundler's gem path. Therefore, users need to add an additional gem path that contains these gems prior to initialization.
+Since the `opentelemetry-auto-instrumentation` gem should be installed through `gem install`, anything related to the OpenTelemetry gem won't be stored in Bundler's gem path. Therefore, users need to add an additional gem path that contains these gems prior to initialization.
 
 ```console
 RUBYOPT="-r {PUT YOUR GEM PATH}/gems/opentelemetry-auto-instrumentation-0.1.0/lib/opentelemetry-auto-instrumentation" bundle exec rails server
