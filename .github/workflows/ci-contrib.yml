@@ -238,7 +238,7 @@ jobs:
           gem: "opentelemetry-sampler-${{ matrix.gem }}"
           ruby: "jruby-9.4.12.0"
 
-  zero-code-instrumentation:
+  auto-instrumentation:
     strategy:
       fail-fast: false
       matrix:
