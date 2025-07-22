@@ -52,7 +52,7 @@ module OpenTelemetry
               task_metadata = JSON.parse(http_get("#{metadata_uri_v4}/task"))
 
               task_arn = task_metadata['TaskARN']
-              base_arn = task_arn[0..task_arn.rindex(':') - 1]
+              base_arn = task_arn[0..(task_arn.rindex(':') - 1)]
 
               cluster = task_metadata['Cluster']
               cluster_arn = cluster.start_with?('arn:') ? cluster : "#{base_arn}:cluster/#{cluster}"

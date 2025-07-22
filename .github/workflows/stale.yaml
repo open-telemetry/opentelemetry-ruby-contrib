@@ -4,8 +4,15 @@ on:
   schedule:
   - cron: "30 1 * * *"
 
+permissions:
+  contents: read
+
 jobs:
   stale:
+
+    permissions:
+      issues: write # required for labeling and closing stale issues
+      pull-requests: write # required for labeling and closing stale PRs
 
     runs-on: ubuntu-latest
 

@@ -68,7 +68,7 @@ module OpenTelemetry
             http_target = '/'
           end
 
-          OpenTelemetry::Sampler::XRay::Utils.attribute_match(attributes, @sampling_rule.attributes) &&
+          OpenTelemetry::Sampler::XRay::Utils.attribute_match?(attributes, @sampling_rule.attributes) &&
             OpenTelemetry::Sampler::XRay::Utils.wildcard_match(@sampling_rule.host, http_host) &&
             OpenTelemetry::Sampler::XRay::Utils.wildcard_match(@sampling_rule.http_method, http_method) &&
             OpenTelemetry::Sampler::XRay::Utils.wildcard_match(@sampling_rule.service_name, service_name) &&
