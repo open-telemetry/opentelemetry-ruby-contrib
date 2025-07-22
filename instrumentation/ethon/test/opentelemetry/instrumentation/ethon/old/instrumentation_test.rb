@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/ethon'
-require_relative '../../../../lib/opentelemetry/instrumentation/ethon/patches/easy'
+require_relative '../../../../../lib/opentelemetry/instrumentation/ethon'
+require_relative '../../../../../lib/opentelemetry/instrumentation/ethon/patches/old/easy'
 
 describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Ethon::Instrumentation.instance }
@@ -15,6 +15,8 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
   let(:span) { exporter.finished_spans.first }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
+
     exporter.reset
 
     # this is currently a noop but this will future proof the test
