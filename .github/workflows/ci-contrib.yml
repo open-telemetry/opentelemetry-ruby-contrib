@@ -277,7 +277,7 @@ jobs:
           rubocop: true
           build: true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest'"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
