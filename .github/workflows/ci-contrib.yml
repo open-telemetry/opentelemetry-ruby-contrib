@@ -246,7 +246,7 @@ jobs:
       fail-fast: false
       matrix:
         gem:
-          - auto-instrumentation
+          - opentelemetry-auto-instrumentation
         os:
           - ubuntu-latest
     name: "${{ matrix.gem }} / ${{ matrix.os }}"
