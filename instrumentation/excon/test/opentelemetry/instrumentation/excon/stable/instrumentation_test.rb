@@ -52,7 +52,6 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'
-      _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.scheme']).must_equal 'http'
       _(span.attributes['http.response.status_code']).must_equal 200
@@ -77,7 +76,6 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'
-      _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.scheme']).must_equal 'http'
       _(span.attributes['http.response.status_code']).must_equal 500
@@ -98,7 +96,6 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'
-      _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.scheme']).must_equal 'http'
       _(span.attributes['url.path']).must_equal '/timeout'
@@ -129,7 +126,6 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'
-      _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.request.method']).must_equal 'OVERRIDE'
       _(span.attributes['url.scheme']).must_equal 'http'
       _(span.attributes['http.response.status_code']).must_equal 200
@@ -210,7 +206,6 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'
-      _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.request.method']).must_equal 'GET'
     end
 
@@ -326,7 +321,6 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
   def assert_http_spans(scheme: 'http', host: 'localhost', port: nil, target: '/', exception: nil)
     exporter.finished_spans[1..].each do |http_span|
       _(http_span.name).must_equal 'GET'
-      _(http_span.attributes['http.host']).must_equal host
       _(http_span.attributes['http.request.method']).must_equal 'GET'
       _(http_span.attributes['url.scheme']).must_equal scheme
       _(http_span.attributes['url.path']).must_equal target
