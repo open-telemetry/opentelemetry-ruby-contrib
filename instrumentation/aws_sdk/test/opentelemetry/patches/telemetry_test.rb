@@ -39,7 +39,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
     describe 'Lambda' do
       let(:service_name) { 'Lambda' }
       let(:service_uri) do
-        'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/'
+        'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions'
       end
       let(:client) do
         Aws::Lambda::Client.new(
@@ -82,7 +82,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
       it 'creates spans with all the non-stubbed parameters' do
         skip unless TestHelper.telemetry_plugin?(service_name)
-        stub_request(:get, 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/')
+        stub_request(:get, 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions')
 
         client = Aws::Lambda::Client.new(
           telemetry_provider: otel_provider,
