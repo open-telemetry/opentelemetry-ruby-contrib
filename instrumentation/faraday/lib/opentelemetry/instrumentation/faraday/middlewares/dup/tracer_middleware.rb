@@ -37,7 +37,7 @@ module OpenTelemetry
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
                 tracer.in_span(
-                  http_method.to_s, attributes: attrs, kind: config.fetch(:span_kind)
+                  http_method, attributes: attrs, kind: config.fetch(:span_kind)
                 ) do |span|
                   OpenTelemetry.propagation.inject(env.request_headers)
 
@@ -59,11 +59,12 @@ module OpenTelemetry
             private
 
             def span_creation_attributes(http_method:, url:, config:)
+              cleansed_url = OpenTelemetry::Common::Utilities.cleanse_url(url.to_s)
               attrs = {
                 'http.method' => http_method,
                 'http.request.method' => http_method,
-                'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url.to_s),
-                'url.full' => OpenTelemetry::Common::Utilities.cleanse_url(url.to_s),
+                'http.url' => cleansed_url,
+                'url.full' => cleansed_url,
                 'faraday.adapter.name' => app.class.name
               }
               attrs['net.peer.name'] = url.host if url.host
