@@ -44,7 +44,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['url.scheme']).must_equal 'http'
-      _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['server.address']).must_equal 'example.com'
       _(span.attributes['url.path']).must_equal '/success'
       assert_requested(
         :get,
@@ -61,7 +61,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['http.response.status_code']).must_equal 500
       _(span.attributes['url.scheme']).must_equal 'http'
-      _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['server.address']).must_equal 'example.com'
       _(span.attributes['url.path']).must_equal '/failure'
       assert_requested(
         :get,
@@ -79,7 +79,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
       _(span.name).must_equal 'GET'
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.scheme']).must_equal 'http'
-      _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['server.address']).must_equal 'example.com'
       _(span.attributes['url.path']).must_equal '/timeout'
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
@@ -108,7 +108,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
       _(span.attributes['http.request.method']).must_equal 'OVERRIDE'
       _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['url.scheme']).must_equal 'http'
-      _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['server.address']).must_equal 'example.com'
       _(span.attributes['url.path']).must_equal '/success'
       _(span.attributes['test.attribute']).must_equal 'test.value'
       assert_requested(
