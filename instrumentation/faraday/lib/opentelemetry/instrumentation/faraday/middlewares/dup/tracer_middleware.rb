@@ -67,8 +67,10 @@ module OpenTelemetry
                 'url.full' => cleansed_url,
                 'faraday.adapter.name' => app.class.name
               }
-              attrs['net.peer.name'] = url.host if url.host
-              attrs['server.address'] = url.host if url.host
+              if url.host
+                attrs['net.peer.name'] = url.host
+                attrs['server.address'] = url.host
+              end
               attrs['peer.service'] = config[:peer_service] if config[:peer_service]
 
               attrs.merge!(
