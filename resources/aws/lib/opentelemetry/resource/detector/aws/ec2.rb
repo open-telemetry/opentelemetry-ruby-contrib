@@ -7,6 +7,7 @@
 require 'net/http'
 require 'json'
 require 'opentelemetry/common'
+require 'opentelemetry/semantic_conventions/resource'
 
 module OpenTelemetry
   module Resource
