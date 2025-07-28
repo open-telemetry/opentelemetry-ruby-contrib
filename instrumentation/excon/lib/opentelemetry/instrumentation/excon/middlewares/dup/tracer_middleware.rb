@@ -29,18 +29,19 @@ module OpenTelemetry
               return @stack.request_call(datum) if untraced?(datum)
 
               http_method = HTTP_METHODS_TO_UPPERCASE[datum[:method]]
+              cleansed_url = OpenTelemetry::Common::Utilities.cleanse_url(::Excon::Utils.request_uri(datum))
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => datum[:host],
                 OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => http_method,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => datum[:scheme],
                 OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => datum[:path],
-                OpenTelemetry::SemanticConventions::Trace::HTTP_URL => OpenTelemetry::Common::Utilities.cleanse_url(::Excon::Utils.request_uri(datum)),
+                OpenTelemetry::SemanticConventions::Trace::HTTP_URL => cleansed_url,
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => datum[:hostname],
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => datum[:port],
                 'http.request.method' => http_method,
                 'url.scheme' => datum[:scheme],
                 'url.path' => datum[:path],
-                'url.full' => OpenTelemetry::Common::Utilities.cleanse_url(::Excon::Utils.request_uri(datum)),
+                'url.full' => cleansed_url,
                 'server.address' => datum[:hostname],
                 'server.port' => datum[:port]
               }
