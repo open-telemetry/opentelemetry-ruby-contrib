@@ -6,15 +6,17 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/http_client'
-require_relative '../../../../lib/opentelemetry/instrumentation/http_client/patches/session'
+require_relative '../../../../../lib/opentelemetry/instrumentation/http_client'
+require_relative '../../../../../lib/opentelemetry/instrumentation/http_client/patches/old/session'
 
-describe OpenTelemetry::Instrumentation::HttpClient::Patches::Session do
+describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Session do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HttpClient::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
+
     exporter.reset
     instrumentation.install({})
   end
