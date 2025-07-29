@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.23.0 / 2025-07-29
+
+* ADDED: Ethon HTTP semantic convention stability migration
+
 ### v0.22.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
