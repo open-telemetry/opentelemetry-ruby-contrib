@@ -2,7 +2,7 @@
 
 ### v0.23.0 / 2025-07-29
 
-* ADDED: Ethon HTTP semantic convention stability migration
+* ADDED: Add Ethon `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1561](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1561)
 
 ### v0.22.0 / 2025-01-16
 

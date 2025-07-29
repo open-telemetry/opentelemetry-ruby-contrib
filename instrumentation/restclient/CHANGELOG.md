@@ -2,7 +2,7 @@
 
 ### v0.24.0 / 2025-07-29
 
-* ADDED: Rest-client HTTP semantic convention stability migration
+* ADDED: Add REST Client `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1568](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1568)
 
 ### v0.23.0 / 2025-01-16
 

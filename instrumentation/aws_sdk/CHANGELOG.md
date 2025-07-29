@@ -2,7 +2,7 @@
 
 ### v0.8.2 / 2025-07-29
 
-* FIXED: Net_http and aws_sdk ci fix
+* FIXED: net_http and aws_sdk ci fix
 
 ### v0.8.1 / 2025-05-13
 
