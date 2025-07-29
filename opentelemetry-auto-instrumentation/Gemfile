@@ -6,18 +6,20 @@
 
 source 'https://rubygems.org'
 
-# avoid use gemspec to avoid circular load
+gemspec
 
-gem 'opentelemetry-sdk'
-gem 'opentelemetry-instrumentation-all'
-gem 'opentelemetry-exporter-otlp'
-gem 'opentelemetry-test-helpers'
-gem 'opentelemetry-resource-detector-container', path: '../resources/container'
-
-gem 'bundler'
-gem 'minitest'
-gem 'rake'
-gem 'rubocop'
-gem 'rubocop-performance'
-gem 'simplecov'
-gem 'yard'
+group :test do
+	gem 'bundler'
+  gem 'minitest'
+  gem 'rake'
+  gem 'rubocop'
+  gem 'rubocop-performance'
+  gem 'simplecov'
+  gem 'yard'
+  gem 'opentelemetry-test-helpers'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'bigdecimal'
+    gem 'mutex_m'
+  end
+end

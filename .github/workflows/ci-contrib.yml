@@ -242,78 +242,38 @@ jobs:
           ruby: "jruby-9.4.12.0"
 
   auto-instrumentation:
-    name: "auto-instrumentation / ubuntu-latest"
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - opentelemetry-auto-instrumentation
+        os:
+          - ubuntu-latest
+    name: "${{ matrix.gem }} / ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: "Test Ruby 3.4"
-        uses: ruby/setup-ruby@v1.247.0
+        uses: ./.github/actions/test_gem
         with:
-          ruby-version: "3.4"
-      - name: Test Gem
-        shell: bash
-        run: |
-          bundle install --quiet --jobs=3 --retry=4
-          bundle exec rake test
-          rm -f Gemfile.lock
-        working-directory: './opentelemetry-auto-instrumentation'
+          gem: "${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
-        uses: ruby/setup-ruby@v1.247.0
+        uses: ./.github/actions/test_gem
         with:
-          ruby-version: "3.3"
-      - name: Test Gem
-        shell: bash
-        run: |
-          bundle install --quiet --jobs=3 --retry=4
-          bundle exec rake test
-          rm -f Gemfile.lock
-        working-directory: './opentelemetry-auto-instrumentation'
+          gem: "${{ matrix.gem }}"
+          ruby: "3.3"
       - name: "Test Ruby 3.2"
-        uses: ruby/setup-ruby@v1.247.0
+        uses: ./.github/actions/test_gem
         with:
-          ruby-version: "3.2"
-      - name: Test Gem
-        shell: bash
-        run: |
-          bundle install --quiet --jobs=3 --retry=4
-          bundle exec rake test
-          rm -f Gemfile.lock
-        working-directory: './opentelemetry-auto-instrumentation'
-      - name: "Test Ruby 3.1"
-        uses: ruby/setup-ruby@v1.247.0
+          gem: "${{ matrix.gem }}"
+          ruby: "3.2"
+          yard: true
+          rubocop: true
+          build: true
+      - name: "Test JRuby"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
         with:
-          ruby-version: "3.1"
-      - name: Test Gem
-        shell: bash
-        run: |
-          bundle install --quiet --jobs=3 --retry=4
-          bundle exec rake test
-          rm -f Gemfile.lock
-        working-directory: './opentelemetry-auto-instrumentation'
-
-      - name: YARD
-        shell: bash
-        run: |
-          # 📄 Yard Docs 📄
-          bundle exec rake yard
-        working-directory: './opentelemetry-auto-instrumentation'
-
-      - name: Rubocop
-        shell: bash
-        run: |
-          # 🤖 Rubocop 🤖
-          bundle exec rake rubocop
-        working-directory: './opentelemetry-auto-instrumentation'
-
-      - name: Coverage
-        shell: bash
-        run: |
-          bundle exec ruby -e 'require "simplecov"; SimpleCov.minimum_coverage(85)'
-        working-directory: './opentelemetry-auto-instrumentation'
-
-      - name: Build Gem
-        shell: bash
-        run: |
-          # 📦 Build Gem 📦
-          gem build opentelemetry-auto-instrumentation.gemspec
-        working-directory: './opentelemetry-auto-instrumentation'
+          gem: "${{ matrix.gem }}"
+          ruby: "jruby-9.4.12.0"

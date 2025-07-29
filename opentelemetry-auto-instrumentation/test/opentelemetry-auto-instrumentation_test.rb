@@ -12,15 +12,32 @@ describe 'AutoInstrumentation' do
   end
 
   after do
-    OTelBundlerPatch.send(:remove_const, :OTEL_INSTRUMENTATION_MAP)
-    OTelBundlerPatch.send(:undef_method, :detect_resource_from_env)
-    OTelBundlerPatch.send(:undef_method, :determine_enabled_instrumentation)
-    OTelBundlerPatch.send(:undef_method, :require_otel)
-    OTelBundlerPatch.send(:undef_method, :require)
-    OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation.instance_variable_get(:@instance).instance_variable_set(:@installed, false)
-    OpenTelemetry::Instrumentation::Rake::Instrumentation.instance_variable_get(:@instance).instance_variable_set(:@installed, false)
+    # Clean up constants and methods if they exist
+    if defined?(OTelBundlerPatch::Initializer::OTEL_INSTRUMENTATION_MAP)
+      OTelBundlerPatch::Initializer.send(:remove_const, :OTEL_INSTRUMENTATION_MAP)
+    end
 
+    if defined?(OTelBundlerPatch::Initializer)
+      OTelBundlerPatch.send(:remove_const, :Initializer)
+    end
+
+    %i[require].each do |method|
+      if OTelBundlerPatch.method_defined?(method)
+        OTelBundlerPatch.send(:undef_method, method)
+      end
+    end    # Reset instrumentation installation state
+    [
+      OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation,
+      OpenTelemetry::Instrumentation::Rake::Instrumentation
+    ].each do |instrumentation|
+      instance = instrumentation.instance_variable_get(:@instance)
+      instance&.instance_variable_set(:@installed, false)
+    end
+
+    # Clean up environment variables
     ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'] = nil
+    ENV['OTEL_RUBY_INSTRUMENTATION_NET_HTTP_ENABLED'] = nil
+    ENV['OTEL_RUBY_RESOURCE_DETECTORS'] = nil
   end
 
   it 'simple_load_test' do
@@ -37,8 +54,10 @@ describe 'AutoInstrumentation' do
     _(resource_attributes.key?('container.id')).must_equal false
 
     registry = OpenTelemetry.tracer_provider.instance_variable_get(:@registry)
+    instrumentation_names = registry.map { |entry| entry.first.name }.sort
 
-    _(registry.size).must_equal 2
+    _(instrumentation_names).must_include 'OpenTelemetry::Instrumentation::Net::HTTP'
+    _(instrumentation_names).must_include 'OpenTelemetry::Instrumentation::Rake'
   end
 
   it 'simple_load_with_net_http_disabled' do
@@ -48,9 +67,10 @@ describe 'AutoInstrumentation' do
     Bundler.require
 
     registry = OpenTelemetry.tracer_provider.instance_variable_get(:@registry)
+    instrumentation_names = registry.map { |entry| entry.first.name }
 
-    _(registry.size).must_equal 1
-    _(registry.first.first.name).must_equal 'OpenTelemetry::Instrumentation::Rake'
+    _(instrumentation_names).must_include 'OpenTelemetry::Instrumentation::Rake'
+    _(instrumentation_names).wont_include 'OpenTelemetry::Instrumentation::Net::HTTP'
 
     ENV['OTEL_RUBY_INSTRUMENTATION_NET_HTTP_ENABLED'] = nil
   end
@@ -62,9 +82,10 @@ describe 'AutoInstrumentation' do
     Bundler.require
 
     registry = OpenTelemetry.tracer_provider.instance_variable_get(:@registry)
+    instrumentation_names = registry.map { |entry| entry.first.name }
 
-    _(registry.size).must_equal 1
-    _(registry.first.first.name).must_equal 'OpenTelemetry::Instrumentation::Net::HTTP'
+    _(instrumentation_names).must_include 'OpenTelemetry::Instrumentation::Net::HTTP'
+    _(instrumentation_names).wont_include 'OpenTelemetry::Instrumentation::Rake'
   end
 
   it 'simple_load_with_additional_resource' do

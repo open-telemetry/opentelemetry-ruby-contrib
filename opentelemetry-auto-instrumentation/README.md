@@ -117,9 +117,7 @@ In example folder, executing the following commands should result in trace outpu
 
 gem install opentelemetry-auto-instrumentation
 bundle install
-export REQUIRE_BUNDLER=true
-export OTEL_TRACES_EXPORTER=console
-RUBYOPT="-r opentelemetry-auto-instrumentation" ruby app.rb
+OTEL_RUBY_REQUIRE_BUNDLER=true  OTEL_TRACES_EXPORTER=console RUBYOPT="-r opentelemetry-auto-instrumentation" OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG=false OTEL_RUBY_OPERATOR=false ruby app.rb
 ```
 
 ## Configuration
