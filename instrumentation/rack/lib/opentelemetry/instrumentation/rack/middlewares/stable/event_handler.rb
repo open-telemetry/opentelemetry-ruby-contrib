@@ -158,12 +158,10 @@ module OpenTelemetry
               false
             end
 
-            # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
+            # https://opentelemetry.io/docs/specs/semconv/http/http-spans/#name
             #
             # recommendation: span.name(s) should be low-cardinality (e.g.,
             # strip off query param value, keep param name)
-            #
-            # see http://github.com/open-telemetry/opentelemetry-specification/pull/416/files
             def create_request_span_name(request)
               # NOTE: dd-trace-rb has implemented 'quantization' (which lowers url cardinality)
               #       see Datadog::Quantization::HTTP.url
@@ -193,7 +191,7 @@ module OpenTelemetry
               }
 
               attributes['url.query'] = env['QUERY_STRING'] unless env['QUERY_STRING'].empty?
-              attributes['http.user_agent'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
+              attributes['user_agent.original'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
               attributes.merge!(extract_request_headers(env))
               attributes
             end

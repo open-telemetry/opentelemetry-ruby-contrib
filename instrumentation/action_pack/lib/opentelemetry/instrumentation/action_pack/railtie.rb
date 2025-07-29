@@ -15,22 +15,18 @@ module OpenTelemetry
           stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
           values = stability_opt_in.split(',').map(&:strip)
 
-          if values.include?('http/dup')
-            app.middleware.insert_before(
-              0,
-              *OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_dup
-            )
+          middleware_args = if values.include?('http/dup')
+             OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_dup
           elsif values.include?('http')
-            app.middleware.insert_before(
-              0,
-              *OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_stable
-            )
+            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_stable
           else
-            app.middleware.insert_before(
-              0,
-              *OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old
-            )
+            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old
           end
+
+           app.middleware.insert_before(
+             0,
+             *middleware_args
+           )
         end
       end
     end

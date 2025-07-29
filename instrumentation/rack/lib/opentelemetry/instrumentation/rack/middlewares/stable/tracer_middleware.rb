@@ -132,7 +132,7 @@ module OpenTelemetry
               }
 
               attributes['url.query'] = env['QUERY_STRING'] unless env['QUERY_STRING'].empty?
-              attributes['http.user_agent'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
+              attributes['user_agent.original'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
               attributes.merge!(allowed_request_headers(env))
             end
 
