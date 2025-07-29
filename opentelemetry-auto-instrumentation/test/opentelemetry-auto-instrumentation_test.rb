@@ -15,11 +15,22 @@ describe 'AutoInstrumentation' do
     # Clean up constants and methods if they exist
     OTelBundlerPatch::Initializer.send(:remove_const, :OTEL_INSTRUMENTATION_MAP) if defined?(OTelBundlerPatch::Initializer::OTEL_INSTRUMENTATION_MAP)
 
+    # Remove singleton methods from Initializer
+    if defined?(OTelBundlerPatch::Initializer)
+      %i[detect_resource_from_env determine_enabled_instrumentation require_otel].each do |method|
+        OTelBundlerPatch::Initializer.singleton_class.send(:undef_method, method) if OTelBundlerPatch::Initializer.respond_to?(method)
+      end
+    end
+
+    # Remove the Initializer module
     OTelBundlerPatch.send(:remove_const, :Initializer) if defined?(OTelBundlerPatch::Initializer)
 
+    # Remove instance methods from OTelBundlerPatch
     %i[require].each do |method|
       OTelBundlerPatch.send(:undef_method, method) if OTelBundlerPatch.method_defined?(method)
     end
+
+    # Reset instrumentation installation state
     [
       OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation,
       OpenTelemetry::Instrumentation::Rake::Instrumentation
