@@ -31,10 +31,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-helpers-mysql', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-helpers-sql-obfuscation', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-all', '~> 0.72.0'
+  spec.add_dependency 'opentelemetry-resource-detector-aws', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-resource-detector-azure', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-resource-detector-container', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-resource-detector-google_cloud_platform', '~> 0.2.0'
-  spec.add_dependency 'opentelemetry-resource-detector-aws', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-sdk', '~> 1.6.0'
 
   if spec.respond_to?(:metadata)

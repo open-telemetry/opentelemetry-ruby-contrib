@@ -13,19 +13,13 @@ describe 'AutoInstrumentation' do
 
   after do
     # Clean up constants and methods if they exist
-    if defined?(OTelBundlerPatch::Initializer::OTEL_INSTRUMENTATION_MAP)
-      OTelBundlerPatch::Initializer.send(:remove_const, :OTEL_INSTRUMENTATION_MAP)
-    end
+    OTelBundlerPatch::Initializer.send(:remove_const, :OTEL_INSTRUMENTATION_MAP) if defined?(OTelBundlerPatch::Initializer::OTEL_INSTRUMENTATION_MAP)
 
-    if defined?(OTelBundlerPatch::Initializer)
-      OTelBundlerPatch.send(:remove_const, :Initializer)
-    end
+    OTelBundlerPatch.send(:remove_const, :Initializer) if defined?(OTelBundlerPatch::Initializer)
 
     %i[require].each do |method|
-      if OTelBundlerPatch.method_defined?(method)
-        OTelBundlerPatch.send(:undef_method, method)
-      end
-    end    # Reset instrumentation installation state
+      OTelBundlerPatch.send(:undef_method, method) if OTelBundlerPatch.method_defined?(method)
+    end
     [
       OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation,
       OpenTelemetry::Instrumentation::Rake::Instrumentation

@@ -68,7 +68,7 @@ module OTelBundlerPatch
           when 'azure'
             additional_resource = additional_resource.merge(::OpenTelemetry::Resource::Detector::Azure.detect) if defined? ::OpenTelemetry::Resource::Detector::Azure
           when 'aws'
-            additional_resource = additional_resource.merge(::OpenTelemetry::Resource::Detector::AWS.detect([:ec2, :ecs, :eks, :lambda])) if defined? ::OpenTelemetry::Resource::Detector::AWS
+            additional_resource = additional_resource.merge(::OpenTelemetry::Resource::Detector::AWS.detect(%i[ec2 ecs eks lambda])) if defined? ::OpenTelemetry::Resource::Detector::AWS
           end
         end
 
@@ -105,7 +105,7 @@ module OTelBundlerPatch
           end
           OpenTelemetry.logger.info { 'Auto-instrumentation initialized' }
         rescue StandardError => e
-          $stderr.puts "Auto-instrumentation failed to initialize. Error: #{e.message}"
+          warn "Auto-instrumentation failed to initialize. Error: #{e.message}"
         end
       end
     end

@@ -9,7 +9,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-	gem 'bundler'
+  gem 'bundler'
   gem 'minitest'
   gem 'rake'
   gem 'rubocop'
