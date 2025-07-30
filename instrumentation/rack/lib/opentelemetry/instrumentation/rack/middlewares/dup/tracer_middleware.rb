@@ -127,6 +127,7 @@ module OpenTelemetry
               attributes = {
                 'http.method' => env['REQUEST_METHOD'],
                 'http.host' => env['HTTP_HOST'] || 'unknown',
+                'server.address' => env['HTTP_HOST'] || 'unknown',
                 'http.scheme' => env['rack.url_scheme'],
                 'http.target' => env['QUERY_STRING'].empty? ? env['PATH_INFO'] : "#{env['PATH_INFO']}?#{env['QUERY_STRING']}",
                 'http.request.method' => env['REQUEST_METHOD'],
@@ -135,6 +136,10 @@ module OpenTelemetry
               }
 
               attributes['url.query'] = env['QUERY_STRING'] unless env['QUERY_STRING'].empty?
+              if env['HTTP_USER_AGENT']
+                attributes['http.user_agent'] = env['HTTP_USER_AGENT']
+                attributes['user_agent.original'] = env['HTTP_USER_AGENT']
+              end
               attributes.merge!(allowed_request_headers(env))
             end
 
@@ -151,7 +156,7 @@ module OpenTelemetry
               if (implementation = config[:url_quantization])
                 implementation.call(request_uri_or_path_info, env)
               else
-                env['REQUEST_METHOD'].to_s
+                env['REQUEST_METHOD']
               end
             end
 
