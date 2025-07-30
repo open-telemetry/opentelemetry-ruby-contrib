@@ -191,6 +191,7 @@ module OpenTelemetry
               attributes = {
                 'http.method' => env['REQUEST_METHOD'],
                 'http.host' => env['HTTP_HOST'] || 'unknown',
+                'server.address' => env['HTTP_HOST'] || 'unknown',
                 'http.scheme' => env['rack.url_scheme'],
                 'http.target' => env['QUERY_STRING'].empty? ? env['PATH_INFO'] : "#{env['PATH_INFO']}?#{env['QUERY_STRING']}",
                 'http.request.method' => env['REQUEST_METHOD'],

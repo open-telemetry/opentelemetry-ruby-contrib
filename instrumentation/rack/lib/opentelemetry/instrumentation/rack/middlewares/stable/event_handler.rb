@@ -185,7 +185,7 @@ module OpenTelemetry
             def request_span_attributes(env)
               attributes = {
                 'http.request.method' => env['REQUEST_METHOD'],
-                'http.host' => env['HTTP_HOST'] || 'unknown',
+                'server.address' => env['HTTP_HOST'] || 'unknown',
                 'url.scheme' => env['rack.url_scheme'],
                 'url.path' => env['PATH_INFO']
               }
