@@ -148,7 +148,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.request.method' => 'GET',
         'url.path' => '/api/v1/foo/janedoe/',
         'url.scheme' => 'http',
-        'http.response.status_code' => 200,
+        'http.response.status_code' => 200
       )
       _(exporter.finished_spans.map(&:name))
         .must_equal [
