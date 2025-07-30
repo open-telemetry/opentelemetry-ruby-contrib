@@ -66,7 +66,7 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
 
     describe 'when rack events are disabled' do
       let(:config) { Hash(use_rack_events: false) }
-      
+
       it 'instantiates a custom middleware' do
         args = instrumentation.middleware_args_dup
         _(args).must_equal [OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::TracerMiddleware]
