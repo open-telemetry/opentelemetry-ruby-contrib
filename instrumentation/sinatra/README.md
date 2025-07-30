@@ -79,7 +79,7 @@ In the OpenTelemetry ecosystem, HTTP semantic conventions have now reached a sta
 
 To facilitate the migration to stable semantic conventions, you can use the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable. This variable allows you to opt-in to the new stable conventions, ensuring compatibility and future-proofing your instrumentation.
 
-Sinatra instrumentaion installs Rack middleware, but the middleware version it installs depends on which `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable is set.
+Sinatra instrumentation installs Rack middleware, but the middleware version it installs depends on which `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable is set.
 
 When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
 
