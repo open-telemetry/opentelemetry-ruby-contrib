@@ -33,8 +33,15 @@ module OpenTelemetry
               extracted_context = OpenTelemetry.propagation.extract(msg)
               created_at = time_from_timestamp(msg['created_at'])
               enqueued_at = time_from_timestamp(msg['created_at'])
+              propagation_style =
+                if instrumentation_config[:propagation_style].respond_to?(:call)
+                  instrumentation_config[:propagation_style].call
+                else
+                  instrumentation_config[:propagation_style]
+                end
+
               OpenTelemetry::Context.with_current(extracted_context) do
-                if instrumentation_config[:propagation_style] == :child
+                if propagation_style == :child
                   tracer.in_span(span_name, attributes: attributes, kind: :consumer) do |span|
                     span.add_event('created_at', timestamp: created_at)
                     span.add_event('enqueued_at', timestamp: enqueued_at)
@@ -43,7 +50,7 @@ module OpenTelemetry
                 else
                   links = []
                   span_context = OpenTelemetry::Trace.current_span(extracted_context).context
-                  links << OpenTelemetry::Trace::Link.new(span_context) if instrumentation_config[:propagation_style] == :link && span_context.valid?
+                  links << OpenTelemetry::Trace::Link.new(span_context) if propagation_style == :link && span_context.valid?
                   span = tracer.start_root_span(span_name, attributes: attributes, links: links, kind: :consumer)
                   OpenTelemetry::Trace.with_span(span) do
                     span.add_event('created_at', timestamp: created_at)
