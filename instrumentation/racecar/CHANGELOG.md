@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-racecar
 
+* Renamed messaging.kafka.message_key to messaging.kafka.message.key to match semantic conventions.
+
+* Renamed messaging.destination to messaging.destination.name to match semantic conventions.
+
+* Renamed messaging.kafka.partition to messaging.destination.partition.id to match semantic conventions.
+
+* Removed messaging.destination_kind to match semantic conventions.
+
+* Add messaging.operation.type attribute as per semantic conventions.
+
 ### v0.4.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1

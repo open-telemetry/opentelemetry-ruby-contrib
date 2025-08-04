@@ -126,8 +126,8 @@ describe OpenTelemetry::Instrumentation::Racecar do
         first_process_span = process_spans[0]
         _(first_process_span.name).must_equal("#{topic_name} process")
         _(first_process_span.kind).must_equal(:consumer)
-        _(first_process_span.attributes['messaging.destination']).must_equal(topic_name)
-        _(first_process_span.attributes['messaging.kafka.partition']).wont_be_nil
+        _(first_process_span.attributes['messaging.destination.name']).must_equal(topic_name)
+        _(first_process_span.attributes['messaging.destination.partition.id']).wont_be_nil
 
         first_process_span_link = first_process_span.links[0]
         linked_span_context = first_process_span_link.span_context
@@ -184,10 +184,10 @@ describe OpenTelemetry::Instrumentation::Racecar do
           process_spans = spans.select { |s| s.name == "#{topic_name} process" }
 
           first_process_span = process_spans[0]
-          _(first_process_span.attributes['messaging.kafka.message_key']).must_equal('Key 1')
+          _(first_process_span.attributes['messaging.kafka.message.key']).must_equal('Key 1')
 
           second_process_span = process_spans[1]
-          _(second_process_span.attributes).wont_include('messaging.kafka.message_key')
+          _(second_process_span.attributes).wont_include('messaging.kafka.message.key')
         end
       end
     end
@@ -216,8 +216,8 @@ describe OpenTelemetry::Instrumentation::Racecar do
         first_process_span = process_spans[0]
         _(first_process_span.name).must_equal("#{topic_name} process")
         _(first_process_span.kind).must_equal(:consumer)
-        _(first_process_span.attributes['messaging.destination']).must_equal(topic_name)
-        _(first_process_span.attributes['messaging.kafka.partition']).wont_be_nil
+        _(first_process_span.attributes['messaging.destination.name']).must_equal(topic_name)
+        _(first_process_span.attributes['messaging.destination.partition.id']).wont_be_nil
 
         first_process_span_link = first_process_span.links[0]
         linked_span_context = first_process_span_link.span_context
