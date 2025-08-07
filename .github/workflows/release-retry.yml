@@ -25,16 +25,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.247.0
+        uses: ruby/setup-ruby@v1.254.0
         with:
           ruby-version: ${{ env.ruby_version }}
+
       - name: Checkout repo
         uses: actions/checkout@v4
+
       - name: Install Toys
         run: "gem install --no-document toys -v 0.15.5"
+
+      - name: Create otelbot token
+        uses: actions/create-github-app-token@3ff1caaa28b64c9cc276ce0a02e2ff584f3900c5 # v2.0.2
+        id: otelbot-token
+        with:
+          app-id: ${{ vars.OTELBOT_APP_ID }}
+          private-key: ${{ secrets.OTELBOT_PRIVATE_KEY }}
+
       - name: Retry release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.otelbot-token.outputs.token }}
         run: |
           toys release retry --yes --verbose \
             "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \

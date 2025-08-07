@@ -7,9 +7,9 @@
 require 'test_helper'
 
 # require Instrumentation so .install method is found:
-require_relative '../../../../../lib/opentelemetry/instrumentation/faraday/middlewares/tracer_middleware'
+require_relative '../../../../../../lib/opentelemetry/instrumentation/faraday/middlewares/old/tracer_middleware'
 
-describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware do
+describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddleware do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Faraday::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
@@ -26,6 +26,8 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
   end
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
+
     exporter.reset
 
     # this is currently a noop but this will future proof the test
@@ -218,7 +220,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       end
 
       it 'only adds the middleware once' do
-        tracers = client.builder.handlers.count(OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware)
+        tracers = client.builder.handlers.count(OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddleware)
         _(tracers).must_equal 1
       end
     end
