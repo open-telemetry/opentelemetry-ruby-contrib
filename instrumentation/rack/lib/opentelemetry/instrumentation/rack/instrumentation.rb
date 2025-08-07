@@ -13,7 +13,8 @@ module OpenTelemetry
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
-          require_dependencies
+          patch_type = determine_semconv
+          send(:"require_dependencies_#{patch_type}")
         end
 
         present do
@@ -35,23 +36,62 @@ module OpenTelemetry
         #
         # @example Default usage
         #   Rack::Builder.new do
-        #     use *OpenTelemetry::Instrumentation::Rack::Instrumenation.instance.middleware_args
+        #     use *OpenTelemetry::Instrumentation::Rack::Instrumenation.instance.middleware_args_old
         #     run lambda { |_arg| [200, { 'Content-Type' => 'text/plain' }, body] }
         #   end
         # @return [Array] consisting of a middleware and arguments used in rack builders
-        def middleware_args
-          if config.fetch(:use_rack_events, false) == true && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler)
-            [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new]]
+        def middleware_args_old
+          if config.fetch(:use_rack_events, false) == true && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler)
+            [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler.new]]
           else
-            [OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware]
+            [OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddleware]
+          end
+        end
+
+        def middleware_args_dup
+          if config.fetch(:use_rack_events, false) == true && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler)
+            [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler.new]]
+          else
+            [OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::TracerMiddleware]
+          end
+        end
+
+        def middleware_args_stable
+          if config.fetch(:use_rack_events, false) == true && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler)
+            [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler.new]]
+          else
+            [OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddleware]
           end
         end
 
         private
 
-        def require_dependencies
-          require_relative 'middlewares/event_handler' if defined?(::Rack::Events)
-          require_relative 'middlewares/tracer_middleware'
+        def determine_semconv
+          stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+          values = stability_opt_in.split(',').map(&:strip)
+
+          if values.include?('http/dup')
+            'dup'
+          elsif values.include?('http')
+            'stable'
+          else
+            'old'
+          end
+        end
+
+        def require_dependencies_old
+          require_relative 'middlewares/old/event_handler' if defined?(::Rack::Events)
+          require_relative 'middlewares/old/tracer_middleware'
+        end
+
+        def require_dependencies_stable
+          require_relative 'middlewares/stable/event_handler' if defined?(::Rack::Events)
+          require_relative 'middlewares/stable/tracer_middleware'
+        end
+
+        def require_dependencies_dup
+          require_relative 'middlewares/dup/event_handler' if defined?(::Rack::Events)
+          require_relative 'middlewares/dup/tracer_middleware'
         end
 
         def config_options(user_config)

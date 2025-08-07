@@ -47,5 +47,9 @@ class App < Sinatra::Base
   end
 end
 
-use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args)
+# Rack instrumentation is moving through the process of migrating to the new HTTP semantic
+# conventions. In this example, we will use the old HTTP conventions by patching the Rack
+# middleware that uses the old conventions. See README: HTTP Semantic Conventions for more
+# information.
+use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old)
 run App
