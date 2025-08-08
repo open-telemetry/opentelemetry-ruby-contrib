@@ -40,7 +40,7 @@ module OpenTelemetry
         def container_id
           [CGROUP_V2_PATH, CGROUP_V1_PATH].each do |cgroup|
             unless File.readable?(cgroup)
-              OpenTelemetry.handle_error(message: "Container resource detector - #{cgroup} could not be read.")
+              OpenTelemetry.logger.debug("Container resource detector - #{cgroup} could not be read.")
               next
             end
 
