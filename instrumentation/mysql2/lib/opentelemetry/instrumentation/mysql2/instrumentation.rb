@@ -11,8 +11,9 @@ module OpenTelemetry
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
-          require_dependencies
-          patch_client
+          patch_type = determine_semconv
+          send(:"require_dependencies_#{patch_type}")
+          send(:"patch_client_#{patch_type}")
         end
 
         present do
@@ -26,12 +27,41 @@ module OpenTelemetry
 
         private
 
-        def require_dependencies
-          require_relative 'patches/client'
+        def determine_semconv
+          stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+          values = stability_opt_in.split(',').map(&:strip)
+
+          if values.include?('database/dup')
+            'dup'
+          elsif values.include?('database')
+            'stable'
+          else
+            'old'
+          end
         end
 
-        def patch_client
-          ::Mysql2::Client.prepend(Patches::Client)
+        def require_dependencies_dup
+          require_relative 'patches/dup/client'
+        end
+
+        def require_dependencies_old
+          require_relative 'patches/old/client'
+        end
+
+        def require_dependencies_stable
+          require_relative 'patches/stable/client'
+        end
+
+        def patch_client_dup
+          ::Mysql2::Client.prepend(Patches::Dup::Client)
+        end
+
+        def patch_client_old
+          ::Mysql2::Client.prepend(Patches::Old::Client)
+        end
+
+        def patch_client_stable
+          ::Mysql2::Client.prepend(Patches::Stable::Client)
         end
       end
     end
