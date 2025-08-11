@@ -139,7 +139,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         _(span.name).must_equal 'select'
         _(span.attributes['db.namespace']).must_equal(database)
-        _(span.attributes['db.system.name.name']).must_equal 'mysql'
+        _(span.attributes['db.system.name']).must_equal 'mysql'
         _(span.attributes['db.query.text']).must_equal 'SELECT ?'
         _(span.attributes['server.address']).must_equal(host)
       end
@@ -150,7 +150,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         _(span.name).must_equal 'explain'
         _(span.attributes['db.namespace']).must_equal(database)
-        _(span.attributes['db.system.name.name']).must_equal 'mysql'
+        _(span.attributes['db.system.name']).must_equal 'mysql'
         _(span.attributes['db.query.text']).must_equal 'EXPLAIN SELECT ?'
       end
 
@@ -161,7 +161,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         _(span.name).must_equal 'mysql'
         _(span.attributes['db.namespace']).must_equal(database)
-        _(span.attributes['db.system.name.name']).must_equal 'mysql'
+        _(span.attributes['db.system.name']).must_equal 'mysql'
         _(span.attributes['db.query.text']).must_equal 'DESELECT ?'
       end
     end
@@ -174,7 +174,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         _(span.name).must_equal 'connect'
         _(span.attributes['db.namespace']).must_equal(database)
-        _(span.attributes['db.system.name.name']).must_equal 'mysql'
+        _(span.attributes['db.system.name']).must_equal 'mysql'
         _(span.attributes['server.address']).must_equal(host)
       end
     end
@@ -189,7 +189,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         _(span.name).must_equal 'ping'
         _(span.attributes['db.namespace']).must_equal(database)
-        _(span.attributes['db.system.name.name']).must_equal 'mysql'
+        _(span.attributes['db.system.name']).must_equal 'mysql'
       end
     end
 
@@ -199,7 +199,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         _(span.name).must_equal 'select'
         _(span.attributes['db.namespace']).must_equal(database)
-        _(span.attributes['db.system.name.name']).must_equal 'mysql'
+        _(span.attributes['db.system.name']).must_equal 'mysql'
         _(span.attributes['db.query.text']).must_equal 'select @@hostname'
         _(span.attributes['server.address']).must_equal(host)
 
@@ -209,7 +209,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         _(last_span.name).must_equal 'select'
         _(span.attributes['db.namespace']).must_equal(database)
-        _(last_span.attributes['db.system.name.name']).must_equal 'mysql'
+        _(last_span.attributes['db.system.name']).must_equal 'mysql'
         _(last_span.attributes['db.query.text']).must_equal 'SELECT ?'
         _(last_span.attributes['server.address']).must_equal(host)
       end
@@ -230,7 +230,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         _(span.name).must_equal 'select'
         _(span.attributes['db.namespace']).must_equal(database)
-        _(span.attributes['db.system.name.name']).must_equal 'mysql'
+        _(span.attributes['db.system.name']).must_equal 'mysql'
         _(span.attributes['db.query.text']).must_equal 'select @@hostname'
         _(span.attributes['server.address']).must_match(/sock/)
 
@@ -240,7 +240,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         _(last_span.name).must_equal 'select'
         _(span.attributes['db.namespace']).must_equal(database)
-        _(last_span.attributes['db.system.name.name']).must_equal 'mysql'
+        _(last_span.attributes['db.system.name']).must_equal 'mysql'
         _(last_span.attributes['db.query.text']).must_equal 'SELECT ?'
         _(last_span.attributes['server.address']).wont_equal(/sock/)
         _(last_span.attributes['server.address']).must_equal client.connected_host
@@ -255,7 +255,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         _(span.name).must_equal 'select'
         _(span.attributes['db.namespace']).must_equal(database)
-        _(span.attributes['db.system.name.name']).must_equal 'mysql'
+        _(span.attributes['db.system.name']).must_equal 'mysql'
         _(span.attributes['db.query.text']).must_equal 'SELECT INVALID'
 
         _(span.status.code).must_equal(
