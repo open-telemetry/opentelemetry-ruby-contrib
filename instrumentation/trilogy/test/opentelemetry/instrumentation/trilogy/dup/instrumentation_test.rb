@@ -105,7 +105,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
     end
 
     describe '.attributes' do
-      let(:attributes) { { 'db.statement' => 'foobar' } }
+      let(:attributes) { { 'db.statement' => 'foobar', 'db.query.text' => 'foobar' } }
 
       it 'returns an empty hash by default' do
         _(OpenTelemetry::Instrumentation::Trilogy.attributes).must_equal({})
