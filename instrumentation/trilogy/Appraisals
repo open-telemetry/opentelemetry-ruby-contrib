@@ -9,7 +9,7 @@
 # gem versions. For more information on the semantic convention modes, see:
 # https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/
 
-semconv_stability = %w[old]
+semconv_stability = %w[old stable]
 
 semconv_stability.each do |mode|
   appraise "trilogy-2-#{mode}" do
