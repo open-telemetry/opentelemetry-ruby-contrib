@@ -48,6 +48,8 @@ module OpenTelemetry
           end
         end
 
+        alias middleware_args middleware_args_old
+
         def middleware_args_dup
           if config.fetch(:use_rack_events, false) == true && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler)
             [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler.new]]

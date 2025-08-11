@@ -72,5 +72,14 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
         _(args).must_equal [OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddleware]
       end
     end
+
+    describe 'when previously defined middleware_args is called' do
+      let(:config) { Hash(use_rack_events: false) }
+
+      it 'alias to middleware_args_old' do
+        args = instrumentation.middleware_args
+        _(args).must_equal [OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddleware]
+      end
+    end
   end
 end
