@@ -33,6 +33,7 @@ opentelemetry-helpers-sql-obfuscation
 opentelemetry-resource-detector-google_cloud_platform
 opentelemetry-resource-detector-azure
 opentelemetry-resource-detector-container
+opentelemetry-resource-detector-aws
 ```
 
 ### Example installation strategies

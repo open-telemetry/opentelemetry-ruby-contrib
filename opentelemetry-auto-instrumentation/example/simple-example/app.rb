@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-url = URI.parse("http://catfact.ninja/fact")
+url = URI.parse('http://catfact.ninja/fact')
 req = Net::HTTP::Get.new(url.to_s)
-res = Net::HTTP.start(url.host, url.port) {|http|
+Net::HTTP.start(url.host, url.port) do |http|
   http.request(req)
-}
+end

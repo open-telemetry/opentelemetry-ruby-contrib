@@ -118,7 +118,7 @@ azure = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('azure')
 
 # set OTEL_OPERATOR to false if not in autoinstrumentation-ruby image, default to /otel-auto-instrumentation-ruby
 # /otel-auto-instrumentation-ruby is set in opentelemetry-operator ruby.go
-operator_gem_path = ENV['OTEL_RUBY_OPERATOR'].nil? || ENV['OTEL_RUBY_OPERATOR'] == 'true' ? '/otel-auto-instrumentation-ruby' : nil
+operator_gem_path = ENV['OTEL_RUBY_OPERATOR'] == 'true' ? '/otel-auto-instrumentation-ruby' : nil
 additional_gem_path = operator_gem_path || ENV['OTEL_RUBY_ADDITIONAL_GEM_PATH'] || Gem.dir
 $stdout.puts "Loading the additional gem path from #{additional_gem_path}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
 
