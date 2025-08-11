@@ -6,9 +6,9 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/excon'
-require_relative '../../../../lib/opentelemetry/instrumentation/excon/middlewares/tracer_middleware'
-require_relative '../../../../lib/opentelemetry/instrumentation/excon/patches/socket'
+require_relative '../../../../../lib/opentelemetry/instrumentation/excon'
+require_relative '../../../../../lib/opentelemetry/instrumentation/excon/middlewares/dup/tracer_middleware'
+require_relative '../../../../../lib/opentelemetry/instrumentation/excon/patches/dup/socket'
 
 describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Excon::Instrumentation.instance }
@@ -16,8 +16,12 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
   let(:span) { exporter.finished_spans.first }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
+
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
     exporter.reset
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
+    stub_request(:get, 'http://example.com/success?hello=there').to_return(status: 200)
     stub_request(:get, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'http://example.com/timeout').to_timeout
 
@@ -47,13 +51,20 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       Excon.get('http://example.com/success')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
+      # stable semconv
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['url.scheme']).must_equal 'http'
+      _(span.attributes['http.response.status_code']).must_equal 200
+      _(span.attributes['url.path']).must_equal '/success'
+      _(span.attributes['url.query']).must_be_nil
+      _(span.attributes['url.full']).must_equal 'http://example.com/success'
       assert_requested(
         :get,
         'http://example.com/success',
@@ -71,13 +82,20 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       Excon.get('http://example.com/failure')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.target']).must_equal '/failure'
       _(span.attributes['http.url']).must_equal 'http://example.com/failure'
+      # stable semconv
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['url.scheme']).must_equal 'http'
+      _(span.attributes['http.response.status_code']).must_equal 500
+      _(span.attributes['url.path']).must_equal '/failure'
+      _(span.attributes['url.full']).must_equal 'http://example.com/failure'
+      _(span.attributes['url.query']).must_be_nil
       assert_requested(
         :get,
         'http://example.com/failure',
@@ -91,12 +109,18 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       end.must_raise Excon::Error::Timeout
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.target']).must_equal '/timeout'
       _(span.attributes['http.url']).must_equal 'http://example.com/timeout'
+      # stable semconv
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['url.scheme']).must_equal 'http'
+      _(span.attributes['url.path']).must_equal '/timeout'
+      _(span.attributes['url.full']).must_equal 'http://example.com/timeout'
+      _(span.attributes['url.query']).must_be_nil
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -114,14 +138,14 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
     it 'merges HTTP client context' do
       client_context_attrs = {
-        'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE'
+        'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE', 'http.request.method' => 'OVERRIDE'
       }
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
         Excon.get('http://example.com/success')
       end
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'OVERRIDE'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -129,9 +153,28 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['http.target']).must_equal '/success'
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
       _(span.attributes['test.attribute']).must_equal 'test.value'
+      # stable semconv
+      _(span.attributes['http.request.method']).must_equal 'OVERRIDE'
+      _(span.attributes['url.scheme']).must_equal 'http'
+      _(span.attributes['http.response.status_code']).must_equal 200
+      _(span.attributes['url.path']).must_equal '/success'
+      _(span.attributes['url.full']).must_equal 'http://example.com/success'
+      _(span.attributes['url.query']).must_be_nil
       assert_requested(
         :get,
         'http://example.com/success',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
+
+    it 'records url query' do
+      Excon.get('http://example.com/success?hello=there')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.attributes['url.query']).must_equal 'hello=there'
+      assert_requested(
+        :get,
+        'http://example.com/success?hello=there',
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
@@ -189,9 +232,10 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       Excon.get('http://example.com/body')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
     end
 
     it 'creates a span on connect for a non-ignored request' do
@@ -204,6 +248,8 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('example.com')
       _(span.attributes['net.peer.port']).must_equal(80)
+      _(span.attributes['server.address']).must_equal('example.com')
+      _(span.attributes['server.port']).must_equal(80)
     end
   end
 
@@ -238,6 +284,10 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
       _(span.attributes['net.peer.port']).must_equal(port)
+      # stable semconv
+      _(span.attributes['server.address']).must_equal('localhost')
+      _(span.attributes['server.port']).wont_be_nil
+      _(span.attributes['server.port']).must_equal(port)
 
       assert_http_spans(port: port, target: '/example', exception: 'Excon::Error::Timeout')
     end
@@ -249,6 +299,9 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.name).must_equal 'connect'
       _(span.attributes['net.peer.name']).must_equal('invalid.com')
       _(span.attributes['net.peer.port']).must_equal(99_999)
+      # stable semconv
+      _(span.attributes['server.address']).must_equal('invalid.com')
+      _(span.attributes['server.port']).must_equal(99_999)
 
       span_event = span.events.first
       _(span_event.name).must_equal 'exception'
@@ -266,6 +319,9 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
+      # stable semconv
+      _(span.attributes['server.address']).must_equal('localhost')
+      _(span.attributes['server.port']).must_equal(443)
 
       assert_http_spans
     end
@@ -274,10 +330,13 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(-> { Excon.get('https://localhost/', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
 
       _(exporter.finished_spans.size).must_equal(3)
-      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.name).must_equal 'CONNECT'
       _(span.kind).must_equal(:client)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
+      # stable semconv
+      _(span.attributes['server.address']).must_equal('localhost')
+      _(span.attributes['server.port']).must_equal(443)
 
       assert_http_spans(scheme: 'https')
     end
@@ -290,6 +349,9 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
+      # stable semconv
+      _(span.attributes['server.address']).must_equal('localhost')
+      _(span.attributes['server.port']).must_equal(443)
 
       assert_http_spans(exception: 'Excon::Error::Socket')
     end
@@ -305,12 +367,17 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
   def assert_http_spans(scheme: 'http', host: 'localhost', port: nil, target: '/', exception: nil)
     exporter.finished_spans[1..].each do |http_span|
-      _(http_span.name).must_equal 'HTTP GET'
+      _(http_span.name).must_equal 'GET'
       _(http_span.attributes['http.host']).must_equal host
       _(http_span.attributes['http.method']).must_equal 'GET'
       _(http_span.attributes['http.scheme']).must_equal scheme
       _(http_span.attributes['http.target']).must_equal target
       _(http_span.attributes['http.url']).must_equal "#{scheme}://#{host}#{port&.to_s&.prepend(':')}#{target}"
+      # stable semconv
+      _(http_span.attributes['http.request.method']).must_equal 'GET'
+      _(http_span.attributes['url.scheme']).must_equal scheme
+      _(http_span.attributes['url.path']).must_equal target
+      _(http_span.attributes['url.full']).must_equal "#{scheme}://#{host}#{port&.to_s&.prepend(':')}#{target}"
       _(http_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
