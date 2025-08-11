@@ -1,9 +1,18 @@
 # frozen_string_literal: true
 
-appraise 'rest-client-2.1' do
-  gem 'rest-client', '~> 2.1.0'
-end
+# To faclitate HTTP semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
-appraise 'rest-client-2.0' do
-  gem 'rest-client', '~> 2.0.0'
+semconv_stability = %w[dup stable old]
+
+semconv_stability.each do |mode|
+  appraise "rest-client-2.1_#{mode}" do
+    gem 'rest-client', '~> 2.1.0'
+  end
+
+  appraise "rest-client-2.0_#{mode}" do
+    gem 'rest-client', '~> 2.0.0'
+  end
 end
