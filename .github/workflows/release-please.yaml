@@ -8,19 +8,26 @@ on:
       - main
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   prepare:
+    permissions:
+      contents: write # required for creating releases
+      pull-requests: write # required for creating release PRs
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Process Release
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+        id: otelbot-token
+        with:
+          app-id: ${{ vars.OTELBOT_APP_ID }}
+          private-key: ${{ secrets.OTELBOT_PRIVATE_KEY }}
       - uses: googleapis/release-please-action@v4.2.0
         id: prepare
         # with:
-        #   token: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
+        #   token: ${{ steps.otelbot-token.outputs.token }}
 
     outputs:
       paths_released: ${{ steps.prepare.outputs.paths_released }}
@@ -50,7 +57,7 @@ jobs:
           chmod 0600 $HOME/.gem/credentials
           printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
 
-      - uses: ruby/setup-ruby@v1.245.0
+      - uses: ruby/setup-ruby@v1.254.0
         with:
           ruby-version: "3.1"
           bundler: latest
