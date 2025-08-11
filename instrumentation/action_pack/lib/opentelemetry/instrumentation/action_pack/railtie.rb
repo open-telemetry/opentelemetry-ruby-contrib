@@ -16,17 +16,17 @@ module OpenTelemetry
           values = stability_opt_in.split(',').map(&:strip)
 
           middleware_args = if values.include?('http/dup')
-             OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_dup
-          elsif values.include?('http')
-            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_stable
-          else
-            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old
-          end
+                              OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_dup
+                            elsif values.include?('http')
+                              OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_stable
+                            else
+                              OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old
+                            end
 
-           app.middleware.insert_before(
-             0,
-             *middleware_args
-           )
+          app.middleware.insert_before(
+            0,
+            *middleware_args
+          )
         end
       end
     end
