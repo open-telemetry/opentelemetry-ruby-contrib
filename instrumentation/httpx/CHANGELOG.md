@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-httpx
 
+### v0.3.0 / 2025-08-12
+
+* ADDED: HTTPX semantic convention stability opt in
+
 ### v0.2.1 / 2025-04-29
 
 * FIXED: Httpx instrumentation trace context propagation

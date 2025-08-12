@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.28.0 / 2025-08-12
+
+* ADDED: Faraday semantic convention stability opt in
+
 ### v0.27.0 / 2025-06-03
 
 * ADDED: Suppress internal spans with Faraday instrumentation

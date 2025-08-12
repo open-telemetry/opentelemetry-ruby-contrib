@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-excon
 
+### v0.24.0 / 2025-08-12
+
+* ADDED: Excon HTTP semantic convention stability migration
+
 ### v0.23.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
