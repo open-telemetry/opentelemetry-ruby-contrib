@@ -41,6 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-grpc', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-instrumentation-gruf', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-http', '~> 0.25.0'
+  spec.add_dependency 'opentelemetry-instrumentation-httpx', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-http_client', '~> 0.24.0'
   spec.add_dependency 'opentelemetry-instrumentation-koala', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-lmdb', '~> 0.23.0'
