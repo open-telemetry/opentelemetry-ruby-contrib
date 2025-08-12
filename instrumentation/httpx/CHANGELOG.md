@@ -2,7 +2,7 @@
 
 ### v0.3.0 / 2025-08-12
 
-* ADDED: HTTPX semantic convention stability opt in
+* ADDED: HTTPX `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1589](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1589)
 
 ### v0.2.1 / 2025-04-29
 

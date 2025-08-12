@@ -2,7 +2,7 @@
 
 ### v0.24.0 / 2025-08-12
 
-* ADDED: Excon HTTP semantic convention stability migration
+* ADDED: Add Excon `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1569](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1569)
 
 ### v0.23.0 / 2025-01-16
 
