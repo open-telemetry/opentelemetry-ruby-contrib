@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.28.0 / 2025-08-12
+
+* ADDED: Add Faraday `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1592](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1592)
+
 ### v0.27.0 / 2025-06-03
 
 * ADDED: Suppress internal spans with Faraday instrumentation

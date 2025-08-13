@@ -11,6 +11,8 @@ describe OpenTelemetry::Instrumentation::Faraday do
   let(:exporter) { EXPORTER }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
+
     instrumentation.install
     exporter.reset
   end
