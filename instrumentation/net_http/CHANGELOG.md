@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.23.1 / 2025-07-29
+
+* FIXED: net_http and aws_sdk ci fix
+
 ### v0.23.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
