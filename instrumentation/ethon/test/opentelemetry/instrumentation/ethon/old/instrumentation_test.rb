@@ -122,7 +122,6 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
         it 'when response is not successful' do
           stub_response(response_code: 500) do
-            binding.pry
             _(span.name).must_equal 'HTTP N/A'
             _(span.attributes['http.method']).must_equal 'N/A'
             _(span.attributes['http.status_code']).must_equal 500
