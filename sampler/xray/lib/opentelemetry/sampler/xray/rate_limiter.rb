@@ -20,7 +20,7 @@ module OpenTelemetry
         end
 
         def take(cost = 1)
-          return false if @quota.zero?
+          return false if @quota <= 0
 
           quota_per_millis = @quota / 1000.0
 

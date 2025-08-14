@@ -47,4 +47,18 @@ describe OpenTelemetry::Sampler::XRay::RateLimiter do
     end
     assert_equal 30, spent
   end
+
+  it 'test_take_with_zero_quota' do
+    limiter = OpenTelemetry::Sampler::XRay::RateLimiter.new(0, 1)
+
+    # Zero quota should always return false
+    refute limiter.take(1)
+  end
+
+  it 'test_take_with_negative_quota' do
+    limiter = OpenTelemetry::Sampler::XRay::RateLimiter.new(-5, 1)
+
+    # Negative quota should always return false
+    refute limiter.take(1)
+  end
 end

@@ -43,8 +43,9 @@ class WelcomeController < ActionController::Base
   end
 end
 
-ENV['OTEL_TRACES_EXPORTER'] = 'console'
-ENV['OTEL_SERVICE_NAME'] = 'xray-sampler-on-rails-service'
+ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
+ENV['OTEL_SERVICE_NAME'] ||= 'xray-sampler-on-rails-service'
+
 OpenTelemetry::SDK.configure do |c|
   c.use_all({ 'OpenTelemetry::Instrumentation::ActiveRecord' => { enabled: false } })
 end
@@ -59,7 +60,7 @@ run App
 
 #### Running and using the Sample App
 # To run this example run the `rackup` command with this file
-# Example: rackup trace_request_demonstration.ru
+# Example: rackup xray_sampling_on_rails_demonstration.ru
 # Navigate to http://localhost:9292/
 # Spans for any requests sampled by the X-Ray Sampler will appear in the console
 
