@@ -60,7 +60,7 @@ module OpenTelemetry
             elsif values.include?('http')
               app.use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_stable)
             else
-              app.use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_old)
+              app.use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args)
             end
           end
 
