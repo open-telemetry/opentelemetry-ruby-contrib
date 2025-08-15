@@ -36,14 +36,14 @@ module OpenTelemetry
       def attributes(payload)
         attributes = {
           'messaging.system' => 'kafka',
-          'messaging.destination' => payload[:topic],
-          'messaging.destination_kind' => 'topic',
-          'messaging.kafka.partition' => payload[:partition],
-          'messaging.kafka.offset' => payload[:offset]
+          'messaging.destination.name' => payload[:topic],
+          'messaging.destination.partition.id' => payload[:partition],
+          'messaging.kafka.offset' => payload[:offset],
+          'messaging.operation.type' => 'receive'
         }
 
         message_key = extract_message_key(payload[:key])
-        attributes['messaging.kafka.message_key'] = message_key if message_key
+        attributes['messaging.kafka.message.key'] = message_key if message_key
 
         attributes
       end
