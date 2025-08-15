@@ -3,11 +3,14 @@ name: Markdown Lint Check
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   markdownlint-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md"  --config .markdownlint.json
       - name: "Markdown Lint Check"
