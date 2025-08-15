@@ -27,7 +27,7 @@ jobs:
           ruby-version: ${{ env.ruby_version }}
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Toys
         run: "gem install --no-document toys -v 0.15.5"
