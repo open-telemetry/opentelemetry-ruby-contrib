@@ -31,7 +31,7 @@ jobs:
     name: other / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -83,7 +83,7 @@ jobs:
     name: mysql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -126,7 +126,7 @@ jobs:
     name: kafka / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -185,7 +185,7 @@ jobs:
     name: redis / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -235,7 +235,7 @@ jobs:
     name: postgresql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -282,7 +282,7 @@ jobs:
     name: rabbitmq / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
