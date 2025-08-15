@@ -1,6 +1,6 @@
 # Release History: opentelemetry-instrumentation-net_http
 
-### v0.23.1 / 2025-07-29
+### v0.23.1 / 2025-08-13
 
 * FIXED: net_http and aws_sdk ci fix
 
@@ -40,30 +40,30 @@
 
 ### v0.22.1 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.22.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
-* FIXED: Drop Rails dependency for ActiveSupport Instrumentation 
+* ADDED: Drop support for EoL Ruby 2.7
+* FIXED: Drop Rails dependency for ActiveSupport Instrumentation
 
 ### v0.21.1 / 2023-01-14
 
-* FIXED: Add untraced check to the Net::HTTP connect instrumentation 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* FIXED: Add untraced check to the Net::HTTP connect instrumentation
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.21.0 / 2022-10-04
 
 * ADDED: Add Net::HTTP :untraced_hosts option
-* FIXED: Rename HTTP CONNECT for low level connection spans 
+* FIXED: Rename HTTP CONNECT for low level connection spans
 
 ### v0.20.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.19.5 / 2022-05-05
 
@@ -71,12 +71,12 @@
 
 ### v0.19.4 / 2022-02-02
 
-* FIXED: Clientcontext attrs overwrite in net::http 
-* FIXED: Excessive hash creation on context attr merging 
+* FIXED: Clientcontext attrs overwrite in net::http
+* FIXED: Excessive hash creation on context attr merging
 
 ### v0.19.3 / 2021-12-01
 
-* FIXED: Change net attribute names to match the semantic conventions spec for http 
+* FIXED: Change net attribute names to match the semantic conventions spec for http
 
 ### v0.19.2 / 2021-09-29
 
@@ -84,13 +84,13 @@
 
 ### v0.19.1 / 2021-08-12
 
-* DOCS: Update docs to rely more on environment variable configuration 
+* DOCS: Update docs to rely more on environment variable configuration
 
 ### v0.19.0 / 2021-06-23
 
-* BREAKING CHANGE: Total order constraint on span.status= 
+* BREAKING CHANGE: Total order constraint on span.status=
 
-* FIXED: Total order constraint on span.status= 
+* FIXED: Total order constraint on span.status=
 
 ### v0.18.0 / 2021-05-21
 
