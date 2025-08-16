@@ -30,6 +30,10 @@ commit_lint:
 #  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
+  - name: opentelemetry-instrumentation-puma
+    directory: instrumentation/puma
+    version_constant: [OpenTelemetry, Instrumentation, Puma, VERSION]
+
   - name: opentelemetry-instrumentation-active_storage
     directory: instrumentation/active_storage
     version_constant: [OpenTelemetry, Instrumentation, ActiveStorage, VERSION]

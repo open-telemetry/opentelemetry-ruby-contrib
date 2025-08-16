@@ -51,6 +51,7 @@ jobs:
           - koala
           - lmdb
           - net_http
+          - puma
           - rack
           - rails
           - restclient
