@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative 'attribute_mapper'
+
 module OpenTelemetry
   module Instrumentation
     module Net
@@ -33,7 +35,7 @@ module OpenTelemetry
 
             tracer.in_span(
               event,
-              attributes: attributes,
+              attributes: AttributeMapper.map(attributes),
               kind: :client
             ) do |span|
               yield(payload).tap do |response|

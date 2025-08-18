@@ -29,6 +29,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
 
     def initialize
       @bind_success = Result.new(true, Net::LDAP::ResultCodeSuccess)
+      @modify_success = Result.new(true, Net::LDAP::ResultCodeSuccess)
       @search_success = Result.new(true, Net::LDAP::ResultCodeSizeLimitExceeded)
     end
 
@@ -44,6 +45,11 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
     # for testing failure case
     def add(args)
       raise Net::LDAP::Error, 'Connection timed out - user specified timeout'
+    end
+
+    # for testing redaction
+    def modify(args)
+      @modify_success
     end
   end
 
@@ -111,6 +117,26 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.encryption']).must_equal '{"method":"simple_tls","tls_options":{"foo":"bar"}}'
         _(span.attributes['ldap.payload']).must_equal '{}'
         _(span.attributes['ldap.error_message']).must_equal 'Net::LDAP::Error: Connection timed out - user specified timeout'
+        _(span.attributes['net.peer.name']).must_equal 'test.mocked.com'
+        _(span.attributes['net.peer.port']).must_equal 636
+      end
+    end
+
+    describe 'when modify happens' do
+      it 'tracks the attributes with correct name & redacts sensitive information' do
+        ldap.connection = FakeConnection.new
+        ops = [
+          [:replace, :unicodePwd, ['P@ssw0rd']],
+        ]
+        assert ldap.modify(dn: 'CN=test,OU=test,DC=com', operations: ops)
+
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'modify.net_ldap'
+        _(span.attributes['ldap.auth']).must_equal '{"method":"anonymous"}'
+        _(span.attributes['ldap.base']).must_equal 'dc=com'
+        _(span.attributes['ldap.encryption']).must_equal '{"method":"simple_tls","tls_options":{"foo":"bar"}}'
+        _(span.attributes['ldap.payload']).must_equal '{"dn":"CN=test,OU=test,DC=com","operations":[["replace","unicodePwd",["[REDACTED]"]]]}'
+        _(span.attributes['ldap.status_code']).must_equal 0
         _(span.attributes['net.peer.name']).must_equal 'test.mocked.com'
         _(span.attributes['net.peer.port']).must_equal 636
       end
