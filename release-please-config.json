@@ -10,7 +10,7 @@
   "release-type": "ruby",
   "separate-pull-requests": false,
   "sequential-calls": true,
-  "signoff": "OpenTelemetry Bot <107717825+opentelemetrybot@users.noreply.github.com>",
+  "signoff": "OpenTelemetry Bot <197425009+otelbot@users.noreply.github.com>",
   "skip-github-release": false,
   "tag-separator": " ",
   "packages": {

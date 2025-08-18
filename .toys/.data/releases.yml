@@ -8,8 +8,8 @@ main_branch: main
 required_checks_timeout: 1200
 required_checks: "^(ci|CI).*"
 # Git user attached to commits for release pull requests.
-git_user_name: OpenTelemetry Bot
-git_user_email: 107717825+opentelemetrybot@users.noreply.github.com
+git_user_name: otelbot
+git_user_email: 197425009+otelbot@users.noreply.github.com
 
 # Control the conventional commit linter.
 commit_lint:

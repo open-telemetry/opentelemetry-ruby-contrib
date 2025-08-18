@@ -11,7 +11,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
@@ -22,7 +21,7 @@ jobs:
     name: Conventional Commits Validation
     runs-on: ubuntu-latest
     steps:
-      - uses: dev-build-deploy/commit-me@v1.5.0
+      - uses: dev-build-deploy/commit-me@v1.5.3
         env:
           FORCE_COLOR: 3
         with:
