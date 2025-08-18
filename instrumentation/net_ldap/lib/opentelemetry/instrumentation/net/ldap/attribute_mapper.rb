@@ -17,13 +17,11 @@ module OpenTelemetry
           end
 
           def self.map_json(json_string)
-            begin
-              parsed = JSON.parse(json_string)
-              redacted = deep_map(parsed)
-              JSON.generate(redacted)
-            rescue JSON::ParserError
-              json_string
-            end
+            parsed = JSON.parse(json_string)
+            redacted = deep_map(parsed)
+            JSON.generate(redacted)
+          rescue JSON::ParserError
+            json_string
           end
 
           def self.map(attributes)

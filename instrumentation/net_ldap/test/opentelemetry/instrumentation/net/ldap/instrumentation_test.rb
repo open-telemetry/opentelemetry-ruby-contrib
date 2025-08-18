@@ -126,7 +126,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
       it 'tracks the attributes with correct name & redacts sensitive information' do
         ldap.connection = FakeConnection.new
         ops = [
-          [:replace, :unicodePwd, ['P@ssw0rd']],
+          [:replace, :unicodePwd, ['P@ssw0rd']]
         ]
         assert ldap.modify(dn: 'CN=test,OU=test,DC=com', operations: ops)
 
