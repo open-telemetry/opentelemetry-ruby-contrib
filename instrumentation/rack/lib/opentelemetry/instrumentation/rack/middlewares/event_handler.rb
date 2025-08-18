@@ -202,6 +202,7 @@ module OpenTelemetry
             token, span = request.env[OTEL_TOKEN_AND_SPAN]
             span.finish
             OpenTelemetry::Context.detach(token)
+            record_http_server_request_duration_metric(span)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
@@ -260,6 +261,43 @@ module OpenTelemetry
             request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
             span.add_event('http.proxy.request.started', timestamp: request_start_time) unless request_start_time.nil?
             span
+          end
+
+          # Metrics stuff
+          HTTP_SERVER_REQUEST_DURATION_ATTRS_FROM_SPAN = %w[http.method http.scheme http.route http.status_code http.host].freeze
+
+          def metrics_enabled?
+            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.metrics_enabled?
+          end
+
+          def meter
+            return unless metrics_enabled?
+
+            OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.meter
+          end
+
+          def http_server_request_duration_histogram
+            return unless metrics_enabled?
+
+            @http_server_request_duration_histogram ||= meter.create_histogram(
+              'http.server.request.duration',
+              unit: 's',
+              description: 'Duration of HTTP server requests.'
+            )
+          end
+
+          def record_http_server_request_duration_metric(span)
+            return unless metrics_enabled?
+
+            # find span duration
+            # end - start / a billion to convert nanoseconds to seconds
+            duration = (span.end_timestamp - span.start_timestamp) / Float(10**9)
+            # glean attributes
+            attrs = span.attributes.select { |k, _v| HTTP_SERVER_REQUEST_DURATION_ATTRS_FROM_SPAN.include?(k) }
+            # set error
+            attrs['error.type'] = span.status.description if span.status.code == OpenTelemetry::Trace::Status::ERROR
+
+            http_server_request_duration_histogram.record(duration, attributes: attrs)
           end
         end
       end
