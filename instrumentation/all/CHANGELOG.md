@@ -1,8 +1,8 @@
 # Release History: opentelemetry-instrumentation-all
 
-### v0.79.1 / 2025-08-19
+### v0.80.0 / 2025-08-19
 
-* (No significant changes)
+ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility for Rack. This includes an integration with Action Pack (Rails) and Sinatra instrumentation libraries. [#1594](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1594)
 
 ### v0.79.0 / 2025-08-18
 
