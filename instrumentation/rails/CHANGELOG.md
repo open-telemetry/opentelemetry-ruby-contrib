@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.36.1 / 2025-08-19
+
+* (No significant changes)
+
 ### v0.36.0 / 2025-02-04
 
 * ADDED: Add active_storage instrumentation to `rails`

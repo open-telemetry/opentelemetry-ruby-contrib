@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.79.1 / 2025-08-19
+
+* (No significant changes)
+
 ### v0.79.0 / 2025-08-18
 
 * ADDED: Add HTTPX instrumentation to all

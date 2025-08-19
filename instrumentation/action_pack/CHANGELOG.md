@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.13.0 / 2025-08-19
+
+* ADDED: Rack semantic stability opt in
+
 ### v0.12.3 / 2025-06-16
 
 * FIXED: Action_pack always assuming sdk spans
