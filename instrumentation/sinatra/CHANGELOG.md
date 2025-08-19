@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.26.0 / 2025-08-19
+
+* ADDED: Rack semantic stability opt in
+
 ### v0.25.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
