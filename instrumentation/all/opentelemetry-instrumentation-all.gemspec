@@ -42,6 +42,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-gruf', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-http', '~> 0.25.0'
   spec.add_dependency 'opentelemetry-instrumentation-http_client', '~> 0.24.0'
+  spec.add_dependency 'opentelemetry-instrumentation-httpx', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-koala', '~> 0.21.0'
   spec.add_dependency 'opentelemetry-instrumentation-lmdb', '~> 0.23.0'
   spec.add_dependency 'opentelemetry-instrumentation-mongo', '~> 0.23.0'
@@ -50,8 +51,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-pg', '~> 0.30.0'
   spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.9.0'
   spec.add_dependency 'opentelemetry-instrumentation-racecar', '~> 0.4.0'
-  spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.26.0'
-  spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.36.0'
+  spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.27.0'
+  spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.37.0'
   spec.add_dependency 'opentelemetry-instrumentation-rake', '~> 0.3.1'
   spec.add_dependency 'opentelemetry-instrumentation-rdkafka', '~> 0.7.0'
   spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.26.1'
@@ -59,7 +60,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-restclient', '~> 0.24.0'
   spec.add_dependency 'opentelemetry-instrumentation-ruby_kafka', '~> 0.22.0'
   spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.26.0'
-  spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.25.0'
+  spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.26.0'
   spec.add_dependency 'opentelemetry-instrumentation-trilogy', '~> 0.61.0'
 
   if spec.respond_to?(:metadata)
