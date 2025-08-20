@@ -1,6 +1,6 @@
 # Release History: opentelemetry-instrumentation-httpx
 
-### v0.3.0 / 2025-08-12
+### v0.3.0 / 2025-08-13
 
 * ADDED: HTTPX `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1589](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1589)
 
