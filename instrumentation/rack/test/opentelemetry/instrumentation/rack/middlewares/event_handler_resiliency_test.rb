@@ -7,12 +7,14 @@
 require 'test_helper'
 require_relative '../../../../../lib/opentelemetry/instrumentation/rack'
 require_relative '../../../../../lib/opentelemetry/instrumentation/rack/instrumentation'
-require_relative '../../../../../lib/opentelemetry/instrumentation/rack/middlewares/event_handler'
+require_relative '../../../../../lib/opentelemetry/instrumentation/rack/middlewares/old/event_handler'
 
 describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler::ResiliencyTest' do
   let(:handler) do
-    OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler.new
+    OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler.new
   end
+
+  before { skip unless ENV['BUNDLE_GEMFILE'].include?('old') }
 
   it 'reports unexpected errors without causing request errors' do
     allow(OpenTelemetry::Instrumentation::Rack).to receive(:current_span).and_raise('Bad news!')
