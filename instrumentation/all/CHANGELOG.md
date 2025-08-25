@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.79.0 / 2025-08-18
+
+* ADDED: Add HTTPX instrumentation to all
+* ADDED: Add Ethon `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1561](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1561)
+* ADDED: Add Excon `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1569](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1569)
+* ADDED: Add Faraday `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1592](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1592)
+* ADDED: Add HTTPClient `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1588](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1588)
+* ADDED: HTTPX `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1589](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1589)
+* ADDED: Add REST Client `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1568](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1568)
+
 ### v0.78.0 / 2025-06-17
 
 * ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable to HTTP.rb instrumentation [#1547](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1547)
