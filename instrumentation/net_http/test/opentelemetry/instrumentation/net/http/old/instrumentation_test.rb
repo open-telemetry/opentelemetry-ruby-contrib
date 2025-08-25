@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-require_relative '../../../../../lib/opentelemetry/instrumentation/net/http'
-require_relative '../../../../../lib/opentelemetry/instrumentation/net/http/patches/instrumentation'
+require_relative '../../../../../../lib/opentelemetry/instrumentation/net/http'
+require_relative '../../../../../../lib/opentelemetry/instrumentation/net/http/patches/old/instrumentation'
 
 describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation.instance }
@@ -15,6 +15,8 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
   let(:span) { exporter.finished_spans.first }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
+
     exporter.reset
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
