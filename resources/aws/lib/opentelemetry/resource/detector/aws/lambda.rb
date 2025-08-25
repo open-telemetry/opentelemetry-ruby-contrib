@@ -35,7 +35,7 @@ module OpenTelemetry
               # Convert memory size to integer
               resource_attributes[RESOURCE::FAAS_MAX_MEMORY] = ENV['AWS_LAMBDA_FUNCTION_MEMORY_SIZE'].to_i if ENV['AWS_LAMBDA_FUNCTION_MEMORY_SIZE']
             rescue StandardError => e
-              OpenTelemetry.handle_error(exception: e, message: 'Lambda resource detection failed')
+              OpenTelemetry.logger.debug("Lambda resource detection failed: #{e.message}")
               return OpenTelemetry::SDK::Resources::Resource.create({})
             end
 
