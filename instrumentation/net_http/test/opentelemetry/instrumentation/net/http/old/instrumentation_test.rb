@@ -156,16 +156,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         # this works because http://bazqux.com is reachable site; try http://asdfasdfsef.com will fail
         uri = URI.parse('http://bazqux.com')
         http = Net::HTTP.new(uri.host, uri.port)
-
-        fake_socket = Object.new
-        def fake_socket.setsockopt(*args); end
-        def fake_socket.close; end
-
-        # Replace the TCP socket creation with our fake socket
-        TCPSocket.stub(:open, fake_socket) do
-          http.send(:connect)
-        end
-
+        http.send(:connect)
         http.send(:do_finish)
         _(exporter.finished_spans.size).must_equal 0
       end
