@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.24.0 / 2025-08-26
+
+* ADDED: NET::HTTP semantic convention stability migration
+
 ### v0.23.1 / 2025-08-13
 
 * FIXED: net_http and aws_sdk ci fix
