@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'json'
-require 'net/http'
 require 'opentelemetry/sdk'
 require_relative 'aws_xray_sampling_client'
 require_relative 'fallback_sampler'

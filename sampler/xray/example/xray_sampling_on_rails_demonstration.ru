@@ -47,7 +47,7 @@ ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
 ENV['OTEL_SERVICE_NAME'] ||= 'xray-sampler-on-rails-service'
 
 OpenTelemetry::SDK.configure do |c|
-  c.use_all({ 'OpenTelemetry::Instrumentation::ActiveRecord' => { enabled: false } })
+  c.use_all
 end
 
 OpenTelemetry.tracer_provider.sampler = OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler.new(resource:OpenTelemetry::SDK::Resources::Resource.create({
