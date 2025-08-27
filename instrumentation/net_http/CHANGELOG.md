@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.24.0 / 2025-08-26
+
+* ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility [#1572](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1572)
+
 ### v0.23.1 / 2025-08-13
 
 * FIXED: net_http and aws_sdk ci fix
