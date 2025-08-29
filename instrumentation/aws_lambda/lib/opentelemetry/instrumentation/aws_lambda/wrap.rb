@@ -43,7 +43,7 @@ module OpenTelemetry
               begin
                 response = yield
 
-                unless span.attributes.key?(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE)
+                if span.recording? && !span.attributes.key?(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE)
                   status_code = response['statusCode'] || response[:statusCode] if response.is_a?(Hash)
                   span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code) if status_code
                 end
