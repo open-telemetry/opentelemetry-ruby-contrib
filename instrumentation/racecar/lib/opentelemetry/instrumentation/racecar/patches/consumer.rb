@@ -13,8 +13,8 @@ module OpenTelemetry
           def produce(payload, topic:, key: nil, partition: nil, partition_key: nil, headers: nil, create_time: nil)
             attributes = {
               'messaging.system' => 'kafka',
-              'messaging.destination' => topic,
-              'messaging.destination_kind' => 'topic'
+              'messaging.destination.name' => topic,
+              'messaging.operation.type' => 'send'
             }
 
             headers ||= {}
