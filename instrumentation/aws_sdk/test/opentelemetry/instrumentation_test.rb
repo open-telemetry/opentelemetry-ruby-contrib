@@ -66,10 +66,21 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
     end
   end
 
-  describe '#install with default options' do
-    it 'with default options' do
-      _(instrumentation.config[:inject_messaging_context]).must_equal(false)
-      _(instrumentation.config[:enable_internal_instrumentation]).must_equal(false)
-    end
+  it 'with default options' do
+    instrumentation.instance_variable_set(:@installed, false)
+    instrumentation.install
+    _(instrumentation.config[:inject_messaging_context]).must_equal(false)
+    _(instrumentation.config[:enable_internal_instrumentation]).must_equal(false)
+    assert_nil(instrumentation.config[:suppress_internal_instrumentation])
+  end
+
+  it 'honors deprecated config, :suppress_internal_instrumentation' do
+    instrumentation.instance_variable_set(:@installed, false)
+    instrumentation.install(suppress_internal_instrumentation: false)
+    _(instrumentation.config[:enable_internal_instrumentation]).must_equal(true)
+
+    instrumentation.instance_variable_set(:@installed, false)
+    instrumentation.install(suppress_internal_instrumentation: true)
+    _(instrumentation.config[:enable_internal_instrumentation]).must_equal(false)
   end
 end

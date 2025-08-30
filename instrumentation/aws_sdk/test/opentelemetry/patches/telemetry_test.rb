@@ -70,7 +70,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
       it 'creates internal spans when enabled' do
         skip unless TestHelper.telemetry_plugin?(service_name)
-        stub_request(:get, 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/')
+        stub_request(:get, 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions')
         client = Aws::Lambda::Client.new(
           telemetry_provider: otel_provider,
           credentials: Aws::Credentials.new('akid', 'secret'),

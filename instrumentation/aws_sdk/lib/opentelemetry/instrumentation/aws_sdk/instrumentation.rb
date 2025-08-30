@@ -38,7 +38,8 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('2.0.0')
 
-        install do |_config|
+        install do |config|
+          resolve_config(config) unless config[:suppress_internal_instrumentation].nil?
           require_dependencies
           patch_telemetry_plugin if telemetry_plugin?
           add_plugins(Seahorse::Client::Base, *loaded_service_clients)
@@ -54,6 +55,7 @@ module OpenTelemetry
 
         option :inject_messaging_context, default: false, validate: :boolean
         option :enable_internal_instrumentation, default: false, validate: :boolean
+        option :suppress_internal_instrumentation, default: nil, validate: :boolean
 
         def gem_version
           if Gem.loaded_specs['aws-sdk']
@@ -66,6 +68,13 @@ module OpenTelemetry
         end
 
         private
+
+        def resolve_config(config)
+          OpenTelemetry.logger.warn(
+            'suppress_internal_instrumentation is deprecated, please use enable_internal_instrumentation instead'
+          )
+          config[:enable_internal_instrumentation] = !config[:suppress_internal_instrumentation]
+        end
 
         def require_dependencies
           require_relative 'handler'
