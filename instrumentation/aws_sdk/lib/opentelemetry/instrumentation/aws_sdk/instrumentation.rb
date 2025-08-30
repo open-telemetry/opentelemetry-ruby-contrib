@@ -72,7 +72,6 @@ module OpenTelemetry
         def resolve_config(config)
           return unless config[:suppress_internal_instrumentation]
 
-          config[:enable_internal_instrumentation] = false
           OpenTelemetry.logger.warn(
             'Instrumentation AwsSdk configuration option suppress_internal_instrumentation has been deprecated,' \
             'use enable_internal_instrumentation option instead'
