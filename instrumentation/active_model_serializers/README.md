@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage of active_model_serializers can be seen in the `./example/` folder [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/active_model_serializers/example)
+Example usage of active_model_serializers can be seen [in the `./example/` folder](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/active_model_serializers/example)
 
 ## How can I get involved?
 

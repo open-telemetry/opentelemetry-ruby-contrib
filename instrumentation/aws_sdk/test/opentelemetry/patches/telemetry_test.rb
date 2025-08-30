@@ -27,8 +27,16 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
     describe 'Lambda' do
       let(:service_name) { 'Lambda' }
-      let(:service_uri) { 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/' }
-      let(:client) { Aws::Lambda::Client.new(telemetry_provider: otel_provider, stub_responses: true) }
+      let(:service_uri) do
+        'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions'
+      end
+      let(:client) do
+        Aws::Lambda::Client.new(
+          telemetry_provider: otel_provider,
+          stub_responses: true
+        )
+      end
+
       let(:client_span) { spans.find { |s| s.name == 'Lambda.ListFunctions' } }
 
       let(:expected_client_attrs) do
@@ -62,7 +70,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
       it 'creates internal spans when enabled' do
         skip unless TestHelper.telemetry_plugin?(service_name)
-
         stub_request(:get, 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions/')
         client = Aws::Lambda::Client.new(
           telemetry_provider: otel_provider,

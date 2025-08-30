@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rake
 
+### v0.3.1 / 2025-06-03
+
+* FIXED: Handle force_flush for rake task with arguments
+
 ### v0.3.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1

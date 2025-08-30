@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.8.2 / 2025-08-13
+
+* FIXED: net_http and aws_sdk ci fix
+
 ### v0.8.1 / 2025-05-13
 
 * DOCS: Use AWS SDK v3 in example
@@ -44,31 +48,31 @@
 
 ### v0.4.1 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.4.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.3.2 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.3.1 / 2022-07-19
 
-* FIXED: Suppress invalid span attribute value type warning in aws-sdk instrumentation 
+* FIXED: Suppress invalid span attribute value type warning in aws-sdk instrumentation
 
 ### v0.3.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.2.3 / 2022-05-02
 
-* FIXED: RubyGems Fallback 
+* FIXED: RubyGems Fallback
 
 ### v0.2.2 / 2022-01-26
 

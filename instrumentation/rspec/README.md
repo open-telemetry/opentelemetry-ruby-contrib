@@ -55,7 +55,7 @@ To avoid spans from being dropped, which will mean you lose insight into your sp
 
 ## Examples
 
-Example usage can be seen in the `/example` directory [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/rspec/example)
+Example usage can be seen in the [`/example` directory](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/rspec/example)
 
 ## How can I get involved?
 
