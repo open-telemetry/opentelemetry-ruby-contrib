@@ -71,14 +71,10 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
     instrumentation.install
     _(instrumentation.config[:inject_messaging_context]).must_equal(false)
     _(instrumentation.config[:enable_internal_instrumentation]).must_equal(false)
-    assert_nil(instrumentation.config[:suppress_internal_instrumentation])
+    _(instrumentation.config[:suppress_internal_instrumentation]).must_equal(false)
   end
 
   it 'honors deprecated config, :suppress_internal_instrumentation' do
-    instrumentation.instance_variable_set(:@installed, false)
-    instrumentation.install(suppress_internal_instrumentation: false)
-    _(instrumentation.config[:enable_internal_instrumentation]).must_equal(true)
-
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(suppress_internal_instrumentation: true)
     _(instrumentation.config[:enable_internal_instrumentation]).must_equal(false)
