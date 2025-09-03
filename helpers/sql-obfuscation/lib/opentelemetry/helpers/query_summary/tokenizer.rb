@@ -31,7 +31,7 @@ module OpenTelemetry
           quoted_identifier: /"(?:""|[^"\r\n])*"|`(?:``|[^`\r\n])*`|\[(?:[^\]\r\n])*\]/,
           keyword: /\b(?:SELECT|INSERT|UPDATE|DELETE|FROM|INTO|JOIN|CREATE|ALTER|DROP|TRUNCATE|WITH|UNION|TABLE|INDEX|PROCEDURE|VIEW|DATABASE)\b/i,
           identifier: /[a-zA-Z_][a-zA-Z0-9_.]*/,
-          operator: /<=|>=|<>|!=|[=<>+\-*\/%,;()!?]/
+          operator: %r{<=|>=|<>|!=|[=<>+\-*\/%,;()!?]}
         }.freeze
 
         EXCLUDED_TYPES = %i[whitespace comment].freeze
