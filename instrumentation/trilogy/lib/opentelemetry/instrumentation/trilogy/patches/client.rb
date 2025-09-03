@@ -16,7 +16,7 @@ module OpenTelemetry
           def initialize(options = {})
             @connection_options = options # This is normally done by Trilogy#initialize
 
-            tracer.in_span(
+            in_span(
               'connect',
               attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
               kind: :client
@@ -26,7 +26,7 @@ module OpenTelemetry
           end
 
           def ping(...)
-            tracer.in_span(
+            in_span(
               'ping',
               attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
               kind: :client
@@ -36,7 +36,7 @@ module OpenTelemetry
           end
 
           def query(sql)
-            tracer.in_span(
+            in_span(
               OpenTelemetry::Helpers::MySQL.database_span_name(
                 sql,
                 OpenTelemetry::Instrumentation::Trilogy.attributes[
@@ -63,6 +63,19 @@ module OpenTelemetry
           end
 
           private
+
+          def in_span(name, attributes: nil, kind: nil)
+            span = tracer.start_span(name, attributes: attributes, kind: kind)
+            OpenTelemetry::Trace.with_span(span) { |s, c| yield s, c }
+          rescue Exception => e # rubocop:disable Lint/RescueException
+            if config[:record_exception]
+              span&.record_exception(e)
+            end
+            span&.status = OpenTelemetry::Trace::Status.error("Exception of type: #{e.class}")
+            raise e
+          ensure
+            span&.finish
+          end
 
           def client_attributes(sql = nil)
             attributes = {
