@@ -22,11 +22,14 @@ module OpenTelemetry
         @cache_size = DEFAULT_SIZE
 
         def self.fetch(key)
-          return @cache[key] if @cache.key?(key)
+          @cache_mutex.synchronize do
+            return @cache[key] if @cache.key?(key)
 
-          result = yield
-          store(key, result)
-          result
+            result = yield
+            @cache.shift if @cache.size >= @cache_size
+            @cache[key] = result
+            result
+          end
         end
 
         def self.configure(size: DEFAULT_SIZE)

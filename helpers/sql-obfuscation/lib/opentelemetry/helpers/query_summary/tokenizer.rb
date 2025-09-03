@@ -40,17 +40,19 @@ module OpenTelemetry
           scanner = StringScanner.new(query)
           tokens = []
 
-          until scanner.eos?
-            matched = TOKEN_REGEX.any? do |type, regex|
-              next unless (value = scanner.scan(regex))
-
-              tokens << Token.new(type, value) unless EXCLUDED_TYPES.include?(type)
-              true
-            end
-            scanner.getch unless matched
-          end
+          scan_next_token(scanner, tokens) until scanner.eos?
 
           tokens
+        end
+
+        def self.scan_next_token(scanner, tokens)
+          matched = TOKEN_REGEX.any? do |type, regex|
+            next unless (value = scanner.scan(regex))
+
+            tokens << Token.new(type, value) unless EXCLUDED_TYPES.include?(type)
+            true
+          end
+          scanner.getch unless matched
         end
       end
     end

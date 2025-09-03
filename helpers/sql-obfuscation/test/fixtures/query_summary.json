@@ -18,6 +18,24 @@
         }
     },
     {
+        "name": "nil_input",
+        "input": {
+            "query": null 
+        },
+        "expected": {
+            "db.query.summary": "UNKNOWN"
+        }
+    },
+    {
+        "name": "deeply_nested_subqueries",
+        "input": {
+            "query": "SELECT * FROM (SELECT * FROM (SELECT * FROM my_table))"
+        },
+        "expected": {
+            "db.query.summary": "SELECT SELECT SELECT my_table"
+        }
+    },
+    {
         "name": "numeric_literal_with_decimal_point",
         "input": {
             "query": "SELECT 12.34, -12.34, +12.34, .01, -.01"
@@ -368,6 +386,33 @@
         "expected": {
             "db.query.summary": "SELECT products"
         }
+    },
+    {
+      "name": "create_index",
+      "input": {
+          "query": "CREATE INDEX idx_name ON MyTable (column1)"
+      },
+      "expected": {
+          "db.query.summary": "CREATE INDEX idx_name"
+      }
+    },
+    {
+      "name": "create_database",
+      "input": {
+        "query": "CREATE DATABASE my_db"
+      },
+      "expected": {
+          "db.query.summary": "CREATE DATABASE my_db"
+      }
+    },
+    {
+      "name": "create_procedure",
+      "input": {
+        "query": "CREATE PROCEDURE my_proc AS BEGIN SELECT * FROM MyTable END"
+      },
+      "expected": {
+        "db.query.summary": "CREATE PROCEDURE my_proc SELECT MyTable"
+      }
     }
 ]
 

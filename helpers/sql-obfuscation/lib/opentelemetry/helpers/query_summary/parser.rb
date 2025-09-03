@@ -16,9 +16,18 @@ module OpenTelemetry
       #   tokens = [Token.new(:keyword, "SELECT"), Token.new(:identifier, "users")]
       #   Parser.build_summary_from_tokens(tokens) # => "SELECT users"
       class Parser
+        DEFAULT_STATE = :default
+        EXPECT_COLLECTION_STATE = :expect_collection
+
+        MAIN_OPERATIONS = %w[SELECT INSERT DELETE].freeze
+        COLLECTION_OPERATIONS = %w[WITH UPDATE].freeze
+        TRIGGER_COLLECTION = %w[FROM INTO JOIN IN].freeze
+        TABLE_OPERATIONS = %w[CREATE ALTER DROP TRUNCATE].freeze
+        TABLE_OBJECTS = %w[TABLE INDEX PROCEDURE VIEW DATABASE].freeze
+
         def self.build_summary_from_tokens(tokens)
           summary_parts = []
-          state = :default # Either :default or :expect_collection
+          state = DEFAULT_STATE
           skip_until = 0 # Next token index to process; allows skipping tokens already consumed by previous operations
 
           tokens.each_with_index do |token, index|
@@ -45,14 +54,16 @@ module OpenTelemetry
         end
 
         def self.process_main_operation(token, tokens, index, current_state)
-          case token.value.upcase
-          when 'SELECT', 'INSERT', 'DELETE'
-            add_to_summary(token.value, :default, index + 1)
-          when 'WITH', 'UPDATE'
-            add_to_summary(token.value, :expect_collection, index + 1)
-          when 'FROM', 'INTO', 'JOIN', 'IN'
+          upcased_value = token.value.upcase
+
+          case upcased_value
+          when *MAIN_OPERATIONS
+            add_to_summary(token.value, DEFAULT_STATE, index + 1)
+          when *COLLECTION_OPERATIONS
+            add_to_summary(token.value, EXPECT_COLLECTION_STATE, index + 1)
+          when *TRIGGER_COLLECTION
             trigger_collection_mode(index + 1)
-          when 'CREATE', 'ALTER', 'DROP', 'TRUNCATE'
+          when *TABLE_OPERATIONS
             handle_table_operation(token, tokens, index)
           when 'UNION'
             handle_union(token, tokens, index)
@@ -62,21 +73,33 @@ module OpenTelemetry
         end
 
         def self.process_collection_token(token, tokens, index, state)
-          return { processed: false, parts: [], new_state: state, next_index: index + 1 } unless state == :expect_collection
+          return not_processed(state, index + 1) unless state == EXPECT_COLLECTION_STATE
 
           upcased_value = token.value.upcase
 
           if identifier_like?(token) || (token.type == :keyword && can_be_table_name?(upcased_value))
-            skip_count = calculate_alias_skip(tokens, index)
-            new_state = tokens[index + 1 + skip_count]&.value == ',' ? :expect_collection : :default
-            skip_count += 1 if tokens[index + 1 + skip_count]&.value == ','
-
-            { processed: true, parts: [token.value], new_state: new_state, next_index: index + 1 + skip_count }
+            handle_collection_identifier(token, tokens, index)
           elsif token.value == '(' || token.type == :operator
-            { processed: true, parts: [], new_state: state, next_index: index + 1 }
+            handle_collection_operator(token, state, index)
           else
-            { processed: true, parts: [], new_state: :default, next_index: index + 1 }
+            handle_collection_default(token, index)
           end
+        end
+
+        def self.handle_collection_identifier(token, tokens, index)
+          skip_count = calculate_alias_skip(tokens, index)
+          new_state = tokens[index + 1 + skip_count]&.value == ',' ? EXPECT_COLLECTION_STATE : DEFAULT_STATE
+          skip_count += 1 if tokens[index + 1 + skip_count]&.value == ','
+
+          { processed: true, parts: [token.value], new_state: new_state, next_index: index + 1 + skip_count }
+        end
+
+        def self.handle_collection_operator(token, state, index)
+          { processed: true, parts: [], new_state: state, next_index: index + 1 }
+        end
+
+        def self.handle_collection_default(token, index)
+          { processed: true, parts: [], new_state: DEFAULT_STATE, next_index: index + 1 }
         end
 
         def self.identifier_like?(token)
@@ -85,13 +108,14 @@ module OpenTelemetry
 
         def self.can_be_table_name?(upcased_value)
           # Keywords that can also be used as table/object names in certain contexts
-          %w[TABLE INDEX PROCEDURE VIEW DATABASE].include?(upcased_value)
+          TABLE_OBJECTS.include?(upcased_value)
         end
 
         def self.calculate_alias_skip(tokens, index)
-          if tokens[index + 1]&.value&.upcase == 'AS'
+          next_token = tokens[index + 1]
+          if next_token && next_token.value&.upcase == 'AS'
             2  # Skip 'AS' and the alias
-          elsif tokens[index + 1]&.type == :identifier
+          elsif next_token && next_token.type == :identifier
             1  # Skip the alias
           else
             0
@@ -103,7 +127,7 @@ module OpenTelemetry
         end
 
         def self.trigger_collection_mode(next_index)
-          { processed: true, parts: [], new_state: :expect_collection, next_index: next_index }
+          { processed: true, parts: [], new_state: EXPECT_COLLECTION_STATE, next_index: next_index }
         end
 
         def self.not_processed(current_state, next_index)
@@ -111,21 +135,23 @@ module OpenTelemetry
         end
 
         def self.handle_union(token, tokens, index)
-          if tokens[index + 1]&.value&.upcase == 'ALL'
-            { processed: true, parts: ["#{token.value} #{tokens[index + 1].value}"], new_state: :default, next_index: index + 2 }
+          next_token = tokens[index + 1]
+          if next_token && next_token.value&.upcase == 'ALL'
+            { processed: true, parts: ["#{token.value} #{next_token.value}"], new_state: DEFAULT_STATE, next_index: index + 2 }
           else
-            add_to_summary(token.value, :default, index + 1)
+            add_to_summary(token.value, DEFAULT_STATE, index + 1)
           end
         end
 
         def self.handle_table_operation(token, tokens, index)
-          next_token = tokens[index + 1]&.value&.upcase
+          next_token_obj = tokens[index + 1]
+          next_token = next_token_obj&.value&.upcase
 
           case next_token
           when 'TABLE', 'INDEX', 'PROCEDURE', 'VIEW', 'DATABASE'
-            { processed: true, parts: ["#{token.value} #{next_token}"], new_state: :expect_collection, next_index: index + 2 }
+            { processed: true, parts: ["#{token.value} #{next_token}"], new_state: EXPECT_COLLECTION_STATE, next_index: index + 2 }
           else
-            add_to_summary(token.value, :default, index + 1)
+            add_to_summary(token.value, DEFAULT_STATE, index + 1)
           end
         end
       end
