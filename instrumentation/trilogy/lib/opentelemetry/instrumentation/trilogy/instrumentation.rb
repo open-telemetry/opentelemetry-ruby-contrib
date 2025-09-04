@@ -10,8 +10,9 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Trilogy instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |config|
-          require_dependencies
-          patch_client
+          patch_type = determine_semconv
+          send(:"require_dependencies_#{patch_type}")
+          send(:"patch_client_#{patch_type}")
           configure_propagator(config)
         end
 
@@ -33,12 +34,45 @@ module OpenTelemetry
 
         private
 
-        def require_dependencies
-          require_relative 'patches/client'
+        def determine_semconv
+          stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+          values = stability_opt_in.split(',').map(&:strip)
+
+          if values.include?('database/dup')
+            'dup'
+          elsif values.include?('database')
+            'stable'
+          else
+            'old'
+          end
+        end
+
+        def require_dependencies_dup
+          require_relative 'patches/dup/client'
+        end
+
+        def require_dependencies_stable
+          require_relative 'patches/stable/client'
+        end
+
+        def require_dependencies_old
+          require_relative 'patches/old/client'
         end
 
         def patch_client
-          ::Trilogy.prepend(Patches::Client)
+          ::Trilogy.prepend(Patches::Dup::Client)
+        end
+
+        def patch_client_stable
+          ::Trilogy.prepend(Patches::Stable::Client)
+        end
+
+        def patch_client_old
+          ::Trilogy.prepend(Patches::Old::Client)
+        end
+
+        def patch_client_dup
+          ::Trilogy.prepend(Patches::Dup::Client)
         end
 
         def configure_propagator(config)
