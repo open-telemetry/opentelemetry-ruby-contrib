@@ -413,6 +413,15 @@
       "expected": {
         "db.query.summary": "CREATE PROCEDURE my_proc SELECT MyTable"
       }
-    }
+    },
+    {
+        "name": "oracle_angle_quote",
+        "input": {
+            "query": "select * from foo where bar=q'<baz's>' and x=5"
+        },
+        "expected": {
+            "db.query.summary": "select foo"
+        }
+   }
 ]
 

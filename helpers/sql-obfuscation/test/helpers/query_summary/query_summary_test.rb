@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../test_helper'
-require_relative '../../lib/opentelemetry/helpers/query_summary'
+require_relative '../../test_helper'
+require_relative '../../../lib/opentelemetry/helpers/query_summary'
 
 class QuerySummaryTest < Minitest::Test
   def self.load_fixture

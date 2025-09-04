@@ -36,23 +36,25 @@ module OpenTelemetry
 
         EXCLUDED_TYPES = %i[whitespace comment].freeze
 
-        def self.tokenize(query)
-          scanner = StringScanner.new(query)
-          tokens = []
+        class << self
+          def tokenize(query)
+            scanner = StringScanner.new(query)
+            tokens = []
 
-          scan_next_token(scanner, tokens) until scanner.eos?
+            scan_next_token(scanner, tokens) until scanner.eos?
 
-          tokens
-        end
-
-        def self.scan_next_token(scanner, tokens)
-          matched = TOKEN_REGEX.any? do |type, regex|
-            next unless (value = scanner.scan(regex))
-
-            tokens << Token.new(type, value) unless EXCLUDED_TYPES.include?(type)
-            true
+            tokens
           end
-          scanner.getch unless matched
+
+          def scan_next_token(scanner, tokens)
+            matched = TOKEN_REGEX.any? do |type, regex|
+              next unless (value = scanner.scan(regex))
+
+              tokens << Token.new(type, value) unless EXCLUDED_TYPES.include?(type)
+              true
+            end
+            scanner.getch unless matched
+          end
         end
       end
     end

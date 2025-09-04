@@ -2,7 +2,7 @@
 
 # Copyright The OpenTelemetry Authors
 #
-# SPDX-License-Identifier: Apache-2.0module OpenTelemetry
+# SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
   module Helpers
@@ -13,37 +13,41 @@ module OpenTelemetry
       # Uses mutex synchronization for thread safety.
       #
       # @example
-      #   Cache.fetch("SELECT * FROM users") { "SELECT users" } # => "SELECT users"
+      #   cache = Cache.new
+      #   cache.fetch("SELECT * FROM users") { "SELECT users" } # => "SELECT users"
       class Cache
         DEFAULT_SIZE = 1000
 
-        @cache = {}
-        @cache_mutex = Mutex.new
-        @cache_size = DEFAULT_SIZE
+        def initialize(size: DEFAULT_SIZE)
+          @cache = {}
+          @cache_mutex = Mutex.new
+          @cache_size = size
+        end
 
-        def self.fetch(key)
+        def fetch(key)
           @cache_mutex.synchronize do
             return @cache[key] if @cache.key?(key)
 
             result = yield
-            @cache.shift if @cache.size >= @cache_size
+            evict_if_needed
             @cache[key] = result
             result
           end
         end
 
-        def self.configure(size: DEFAULT_SIZE)
-          @cache_mutex.synchronize do
-            @cache_size = size
-            @cache.clear if @cache.size > size
-          end
+        private
+
+        def configure(size: DEFAULT_SIZE)
+          @cache_size = size
+          @cache.clear if @cache.size > size
         end
 
-        def self.store(key, value)
-          @cache_mutex.synchronize do
-            @cache.shift if @cache.size >= @cache_size
-            @cache[key] = value
-          end
+        def clear
+          @cache.clear
+        end
+
+        def evict_if_needed
+          @cache.shift if @cache.size >= @cache_size
         end
       end
     end
