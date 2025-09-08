@@ -16,23 +16,24 @@ module OpenTelemetry
       #   tokens = [Token.new(:keyword, "SELECT"), Token.new(:identifier, "users")]
       #   Parser.build_summary_from_tokens(tokens) # => "SELECT users"
       class Parser
-        DEFAULT_STATE = :default
+        # Two states: normal parsing vs. waiting for table names
+        PARSING_STATE = :parsing
         EXPECT_COLLECTION_STATE = :expect_collection
 
-        MAIN_OPERATIONS = %w[SELECT INSERT DELETE].freeze
-        COLLECTION_OPERATIONS = %w[WITH UPDATE].freeze
-        TRIGGER_COLLECTION = %w[FROM INTO JOIN IN].freeze
-        TABLE_OPERATIONS = %w[CREATE ALTER DROP TRUNCATE].freeze
-        TABLE_OBJECTS = %w[TABLE INDEX PROCEDURE VIEW DATABASE].freeze
+        MAIN_OPERATIONS = %w[SELECT INSERT DELETE].freeze # Operations that start queries and need table names
+        COLLECTION_OPERATIONS = %w[WITH UPDATE].freeze # Operations that work with existing data and expect table names to follow
+        TRIGGER_COLLECTION = %w[FROM INTO JOIN IN].freeze # Keywords that signal a table name is coming next
+        TABLE_OPERATIONS = %w[CREATE ALTER DROP TRUNCATE].freeze # Database structure operations that create, modify, or remove objects
+        TABLE_OBJECTS = %w[TABLE INDEX PROCEDURE VIEW DATABASE].freeze # Types of database objects that can be created, modified, or removed
 
         class << self
           def build_summary_from_tokens(tokens)
             summary_parts = []
-            state = DEFAULT_STATE
-            skip_until = 0 # Next token index to process; allows skipping tokens already consumed by previous operations
+            state = PARSING_STATE
+            skip_until = 0 # Skip tokens we've already processed when looking ahead
 
             tokens.each_with_index do |token, index|
-              next if index < skip_until # Skip already processed tokens
+              next if index < skip_until
 
               result = process_token(token, tokens, index, state)
 
@@ -59,11 +60,11 @@ module OpenTelemetry
 
             case upcased_value
             when *MAIN_OPERATIONS
-              add_to_summary(token.value, DEFAULT_STATE, index + 1)
+              add_to_summary(token.value, PARSING_STATE, index + 1)
             when *COLLECTION_OPERATIONS
               add_to_summary(token.value, EXPECT_COLLECTION_STATE, index + 1)
             when *TRIGGER_COLLECTION
-              trigger_collection_mode(index + 1)
+              expect_table_names_next(index + 1)
             when *TABLE_OPERATIONS
               handle_table_operation(token, tokens, index)
             when 'UNION'
@@ -79,17 +80,19 @@ module OpenTelemetry
             upcased_value = token.value.upcase
 
             if identifier_like?(token) || (token.type == :keyword && can_be_table_name?(upcased_value))
-              handle_collection_identifier(token, tokens, index)
+              process_table_name_and_alias(token, tokens, index)
             elsif token.value == '(' || token.type == :operator
               handle_collection_operator(token, state, index)
             else
-              handle_collection_default(token, index)
+              return_to_normal_parsing(token, index)
             end
           end
 
-          def handle_collection_identifier(token, tokens, index)
+          def process_table_name_and_alias(token, tokens, index)
+            # Look ahead to skip table aliases (e.g., "users u" or "users AS u")
             skip_count = calculate_alias_skip(tokens, index)
-            new_state = tokens[index + 1 + skip_count]&.value == ',' ? EXPECT_COLLECTION_STATE : DEFAULT_STATE
+            # Check if there's a comma - if so, expect more table names in the list
+            new_state = tokens[index + 1 + skip_count]&.value == ',' ? EXPECT_COLLECTION_STATE : PARSING_STATE
             skip_count += 1 if tokens[index + 1 + skip_count]&.value == ','
 
             { processed: true, parts: [token.value], new_state: new_state, next_index: index + 1 + skip_count }
@@ -99,8 +102,8 @@ module OpenTelemetry
             { processed: true, parts: [], new_state: state, next_index: index + 1 }
           end
 
-          def handle_collection_default(token, index)
-            { processed: true, parts: [], new_state: DEFAULT_STATE, next_index: index + 1 }
+          def return_to_normal_parsing(token, index)
+            { processed: true, parts: [], new_state: PARSING_STATE, next_index: index + 1 }
           end
 
           def identifier_like?(token)
@@ -108,16 +111,17 @@ module OpenTelemetry
           end
 
           def can_be_table_name?(upcased_value)
-            # Keywords that can also be used as table/object names in certain contexts
+            # Object types that can appear after DDL operations
             TABLE_OBJECTS.include?(upcased_value)
           end
 
           def calculate_alias_skip(tokens, index)
+            # Handle both "table AS alias" and "table alias" patterns
             next_token = tokens[index + 1]
             if next_token && next_token.value&.upcase == 'AS'
-              2  # Skip 'AS' and the alias
+              2
             elsif next_token && next_token.type == :identifier
-              1  # Skip the alias
+              1
             else
               0
             end
@@ -127,7 +131,7 @@ module OpenTelemetry
             { processed: true, parts: [part], new_state: new_state, next_index: next_index }
           end
 
-          def trigger_collection_mode(next_index)
+          def expect_table_names_next(next_index)
             { processed: true, parts: [], new_state: EXPECT_COLLECTION_STATE, next_index: next_index }
           end
 
@@ -138,13 +142,14 @@ module OpenTelemetry
           def handle_union(token, tokens, index)
             next_token = tokens[index + 1]
             if next_token && next_token.value&.upcase == 'ALL'
-              { processed: true, parts: ["#{token.value} #{next_token.value}"], new_state: DEFAULT_STATE, next_index: index + 2 }
+              { processed: true, parts: ["#{token.value} #{next_token.value}"], new_state: PARSING_STATE, next_index: index + 2 }
             else
-              add_to_summary(token.value, DEFAULT_STATE, index + 1)
+              add_to_summary(token.value, PARSING_STATE, index + 1)
             end
           end
 
           def handle_table_operation(token, tokens, index)
+            # Combine DDL operations with object types: "CREATE TABLE", "DROP INDEX", etc.
             next_token_obj = tokens[index + 1]
             next_token = next_token_obj&.value&.upcase
 
@@ -152,7 +157,7 @@ module OpenTelemetry
             when 'TABLE', 'INDEX', 'PROCEDURE', 'VIEW', 'DATABASE'
               { processed: true, parts: ["#{token.value} #{next_token}"], new_state: EXPECT_COLLECTION_STATE, next_index: index + 2 }
             else
-              add_to_summary(token.value, DEFAULT_STATE, index + 1)
+              add_to_summary(token.value, PARSING_STATE, index + 1)
             end
           end
         end

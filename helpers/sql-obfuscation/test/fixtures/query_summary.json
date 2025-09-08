@@ -1,427 +1,436 @@
 [
-    {
-        "name": "numeric_literal_integers",
-        "input": {
-            "query": "SELECT 12, -12, +12"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "caching_query_summaries",
-        "input": {
-            "query": "SELECT 12, -12, +12"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "nil_input",
-        "input": {
-            "query": null 
-        },
-        "expected": {
-            "db.query.summary": "UNKNOWN"
-        }
-    },
-    {
-        "name": "deeply_nested_subqueries",
-        "input": {
-            "query": "SELECT * FROM (SELECT * FROM (SELECT * FROM my_table))"
-        },
-        "expected": {
-            "db.query.summary": "SELECT SELECT SELECT my_table"
-        }
-    },
-    {
-        "name": "numeric_literal_with_decimal_point",
-        "input": {
-            "query": "SELECT 12.34, -12.34, +12.34, .01, -.01"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "numeric_literal_exponential",
-        "input": {
-            "query": "SELECT 12.34e56, -12.34e56, +12.34e56"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "numeric_literal_negative_exponential",
-        "input": {
-            "query": "SELECT 12.34e-56, -12.34e-56, +12.34e-56"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "arithmetic_on_numeric_literals",
-        "input": {
-            "query": "SELECT 99+100"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "hex_literal",
-        "input": {
-            "query": "SELECT 0xDEADBEEF, 0XdeadBEEF"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "string_literal",
-        "input": {
-            "query": "SELECT 'hello'"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "string_literal_escaped_single_quote",
-        "input": {
-            "query": "SELECT 'My name''s not important'"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "string_with_embedded_newline",
-        "input": {
-            "query": "SELECT 'My name is \n not important'"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "numbers_in_identifiers",
-        "input": {
-            "query": "SELECT c3po, r2d2 FROM covid19 WHERE n1h1=1234"
-        },
-        "expected": {
-            "db.query.summary": "SELECT covid19"
-        }
-    },
-    {
-        "name": "periods_in_identifiers",
-        "input": {
-            "query": "SELECT a FROM dbo.Table JOIN dbo.AnotherTable"
-        },
-        "expected": {
-            "db.query.summary": "SELECT dbo.Table dbo.AnotherTable"
-        }
-    },
-    {
-        "name": "insert_into",
-        "input": {
-            "query": "INSERT INTO X VALUES(1, 23456, 123.456, 99+100)"
-        },
-        "expected": {
-            "db.query.summary": "INSERT X"
-        }
-    },
-    {
-        "name": "uuid",
-        "input": {
-            "query": "SELECT { guid '01234567-89ab-cdef-0123-456789abcdef' }"
-        },
-        "expected": {
-            "db.query.summary": "SELECT"
-        }
-    },
-    {
-        "name": "in_clause",
-        "input": {
-            "query": "SELECT * FROM table WHERE value IN (123, 456, 'abc')"
-        },
-        "expected": {
-            "db.query.summary": "SELECT table"
-        }
-    },
-    {
-        "name": "comments",
-        "input": {
-            "query": "SELECT column -- end of line comment\nFROM /* block \n comment */ table"
-        },
-        "expected": {
-            "db.query.summary": "SELECT table"
-        }
-    },
-    {
-        "name": "insert_into_select",
-        "input": {
-            "query": "INSERT INTO shipping_details\n(order_id,\naddress)\nSELECT order_id,\naddress\nFROM   orders\nWHERE  order_id = 1"
-        },
-        "expected": {
-            "db.query.summary": "INSERT shipping_details SELECT orders"
-        }
-    },
-    {
-        "name": "select_nested_query",
-        "input": {
-            "query": "SELECT order_date\nFROM   (SELECT *\nFROM   orders o\nJOIN customers c\nON o.customer_id = c.customer_id)"
-        },
-        "expected": {
-            "db.query.summary": "SELECT SELECT orders customers"
-        }
-    },
-    {
-        "name": "select_nested_query_case_preserved",
-        "input": {
-            "query": "SELEcT order_date\nFROM   (sELECT *\nFROM   orders o\nJOIN customers c\nON o.customer_id = c.customer_id)"
-        },
-        "expected": {
-            "db.query.summary": "SELEcT sELECT orders customers"
-        }
-    },
-    {
-        "name": "case_preserved",
-        "input": {
-            "query": "SELEcT order_date\nFROM ORders"
-        },
-        "expected": {
-            "db.query.summary": "SELEcT ORders"
-        }
-    },
-    {
-        "name": "cross_join",
-        "input": {
-            "query": "SELECT * FROM Orders o CROSS JOIN OrderDetails od"
-        },
-        "expected": {
-            "db.query.summary": "SELECT Orders OrderDetails"
-        }
-    },
-    {
-        "name": "cross_join_comma_separated_syntax",
-        "input": {
-            "query": "SELECT * FROM Orders o, OrderDetails od"
-        },
-        "expected": {
-            "db.query.summary": "SELECT Orders OrderDetails"
-        }
-    },
-    {
-        "name": "left_outer_join",
-        "input": {
-            "query": "SELECT c.name, o.id FROM customers c LEFT JOIN orders o ON c.id = o.customer_id"
-        },
-        "expected": {
-            "db.query.summary": "SELECT customers orders"
-        }
-    },
-    {
-        "name": "create_table",
-        "input": {
-            "query": "CREATE  TABLE MyTable (\n    ID NOT NULL IDENTITY(1,1) PRIMARY KEY\n)"
-        },
-        "expected": {
-            "db.query.summary": "CREATE TABLE MyTable"
-        }
-    },
-    {
-        "name": "alter_table",
-        "input": {
-            "query": "ALTER  TABLE MyTable ADD Name varchar(255)"
-        },
-        "expected": {
-            "db.query.summary": "ALTER TABLE MyTable"
-        }
-    },
-    {
-        "name": "drop_table",
-        "input": {
-            "query": "DROP  TABLE MyTable"
-        },
-        "expected": {
-            "db.query.summary": "DROP TABLE MyTable"
-        }
-    },
-    {
-        "name": "query_that_performs_multiple_operations",
-        "input": {
-            "query": "INSERT INTO shipping_details(order_id, address) SELECT order_id, address FROM orders WHERE  order_id = ?"
-        },
-        "expected": {
-            "db.query.summary": "INSERT shipping_details SELECT orders"
-        }
-    },
-    {
-        "name": "query_that_performs_an_operation_thats_applied_to_multiple_collections",
-        "input": {
-            "db.system.name": "other_sql",
-            "query": "SELECT * FROM   songs, artists WHERE songs.artist_id == artists.id"
-        },
-        "expected": {
-            "db.query.summary": "SELECT songs artists"
-        }
-    },
-    {
-        "name": "query_that_performs_operation_on_multiple_collections_with_double-quotes_or_other_punctuation",
-        "input": {
-            "query": "SELECT * FROM   \"song list\", 'artists'"
-        },
-        "expected": {
-            "db.query.summary": "SELECT \"song list\" 'artists'"
-        }
-    },
-    {
-        "name": "update_statement",
-        "input": {
-            "query": "UPDATE Customers SET ContactName = 'Alfred Schmidt', City= 'Frankfurt' WHERE CustomerID = 1"
-        },
-        "expected": {
-            "db.query.summary": "UPDATE Customers"
-        }
-    },
-    {
-        "name": "delete_statement",
-        "input": {
-            "query": "DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste'"
-        },
-        "expected": {
-            "db.query.summary": "DELETE Customers"
-        }
-    },
-    {
-        "name": "truncate_table_statement",
-        "input": {
-            "query": "TRUNCATE TABLE Customers"
-        },
-        "expected": {
-            "db.query.summary": "TRUNCATE TABLE Customers"
-        }
-    },
-    {
-        "name": "with_clause_cte",
-        "input": {
-            "query": "WITH regional_sales AS (SELECT region, SUM(amount) AS total_sales FROM orders GROUP BY region) SELECT region, total_sales FROM regional_sales WHERE total_sales > 1000"
-        },
-        "expected": {
-            "db.query.summary": "WITH regional_sales SELECT orders SELECT regional_sales"
-        }
-    },
-    {
-        "name": "union_statement",
-        "input": {
-            "query": "SELECT City FROM Customers UNION ALL SELECT City FROM Suppliers ORDER BY City"
-        },
-        "expected": {
-            "db.query.summary": "SELECT Customers UNION ALL SELECT Suppliers"
-        }
-    },
-    {
-        "name": "group_by_and_having_clauses",
-        "input": {
-            "query": "SELECT COUNT(CustomerID), Country FROM Customers WHERE Country != 'USA' GROUP BY Country HAVING COUNT(CustomerID) > 5"
-        },
-        "expected": {
-            "db.query.summary": "SELECT Customers"
-        }
-    },
-    {
-        "name": "boolean_and_null_literals",
-        "input": {
-            "query": "SELECT * FROM my_table WHERE a IS NOT NULL AND b = TRUE AND c = FALSE"
-        },
-        "expected": {
-            "db.query.summary": "SELECT my_table"
-        }
-    },
-    {
-        "name": "multiple_joins_and_aliases",
-        "input": {
-            "query": "SELECT o.OrderID, c.CustomerName, s.ShipperName FROM ((Orders AS o INNER JOIN Customers AS c ON o.CustomerID = c.CustomerID) INNER JOIN Shippers AS s ON o.ShipperID = s.ShipperID)"
-        },
-        "expected": {
-            "db.query.summary": "SELECT Orders Customers Shippers"
-        }
-    },
-    {
-        "name": "window_function_over_partition",
-        "input": {
-            "query": "SELECT name, salary, ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) as rank FROM employees"
-        },
-        "expected": {
-            "db.query.summary": "SELECT employees"
-        }
-    },
-    {
-        "name": "case_statement",
-        "input": {
-            "query": "SELECT OrderID, Quantity, CASE WHEN Quantity > 30 THEN 'Large' WHEN Quantity > 10 THEN 'Medium' ELSE 'Small' END AS QuantityText FROM OrderDetails"
-        },
-        "expected": {
-            "db.query.summary": "SELECT OrderDetails"
-        }
-    },
-    {
-        "name": "like_predicate",
-        "input": {
-            "query": "SELECT * FROM products WHERE product_name LIKE 'Chai%'"
-        },
-        "expected": {
-            "db.query.summary": "SELECT products"
-        }
-    },
-    {
-        "name": "between_predicate",
-        "input": {
-            "query": "SELECT * FROM products WHERE price BETWEEN 10 AND 20"
-        },
-        "expected": {
-            "db.query.summary": "SELECT products"
-        }
-    },
-    {
-      "name": "create_index",
+  {
+      "name": "numeric_literal_integers",
       "input": {
-          "query": "CREATE INDEX idx_name ON MyTable (column1)"
+          "query": "SELECT 12, -12, +12"
       },
       "expected": {
-          "db.query.summary": "CREATE INDEX idx_name"
+          "db.query.summary": "SELECT"
       }
-    },
-    {
-      "name": "create_database",
+  },
+  {
+      "name": "caching_query_summaries",
       "input": {
-        "query": "CREATE DATABASE my_db"
+          "query": "SELECT 12, -12, +12"
       },
       "expected": {
-          "db.query.summary": "CREATE DATABASE my_db"
+          "db.query.summary": "SELECT"
       }
-    },
-    {
-      "name": "create_procedure",
+  },
+  {
+      "name": "nil_input",
       "input": {
-        "query": "CREATE PROCEDURE my_proc AS BEGIN SELECT * FROM MyTable END"
+          "query": null 
       },
       "expected": {
-        "db.query.summary": "CREATE PROCEDURE my_proc SELECT MyTable"
+          "db.query.summary": "UNKNOWN"
       }
+  },
+  {
+      "name": "deeply_nested_subqueries",
+      "input": {
+          "query": "SELECT * FROM (SELECT * FROM (SELECT * FROM my_table))"
+      },
+      "expected": {
+          "db.query.summary": "SELECT SELECT SELECT my_table"
+      }
+  },
+  {
+      "name": "numeric_literal_with_decimal_point",
+      "input": {
+          "query": "SELECT 12.34, -12.34, +12.34, .01, -.01"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "numeric_literal_exponential",
+      "input": {
+          "query": "SELECT 12.34e56, -12.34e56, +12.34e56"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "numeric_literal_negative_exponential",
+      "input": {
+          "query": "SELECT 12.34e-56, -12.34e-56, +12.34e-56"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "arithmetic_on_numeric_literals",
+      "input": {
+          "query": "SELECT 99+100"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "hex_literal",
+      "input": {
+          "query": "SELECT 0xDEADBEEF, 0XdeadBEEF"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "string_literal",
+      "input": {
+          "query": "SELECT 'hello'"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "string_literal_escaped_single_quote",
+      "input": {
+          "query": "SELECT 'My name''s not important'"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "string_with_embedded_newline",
+      "input": {
+          "query": "SELECT 'My name is \n not important'"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "numbers_in_identifiers",
+      "input": {
+          "query": "SELECT c3po, r2d2 FROM covid19 WHERE n1h1=1234"
+      },
+      "expected": {
+          "db.query.summary": "SELECT covid19"
+      }
+  },
+  {
+      "name": "periods_in_identifiers",
+      "input": {
+          "query": "SELECT a FROM dbo.Table JOIN dbo.AnotherTable"
+      },
+      "expected": {
+          "db.query.summary": "SELECT dbo.Table dbo.AnotherTable"
+      }
+  },
+  {
+      "name": "insert_into",
+      "input": {
+          "query": "INSERT INTO X VALUES(1, 23456, 123.456, 99+100)"
+      },
+      "expected": {
+          "db.query.summary": "INSERT X"
+      }
+  },
+  {
+      "name": "uuid",
+      "input": {
+          "query": "SELECT { guid '01234567-89ab-cdef-0123-456789abcdef' }"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "in_clause",
+      "input": {
+          "query": "SELECT * FROM table WHERE value IN (123, 456, 'abc')"
+      },
+      "expected": {
+          "db.query.summary": "SELECT table"
+      }
+  },
+  {
+      "name": "comments",
+      "input": {
+          "query": "SELECT column -- end of line comment\nFROM /* block \n comment */ table"
+      },
+      "expected": {
+          "db.query.summary": "SELECT table"
+      }
+  },
+  {
+      "name": "insert_into_select",
+      "input": {
+          "query": "INSERT INTO shipping_details\n(order_id,\naddress)\nSELECT order_id,\naddress\nFROM   orders\nWHERE  order_id = 1"
+      },
+      "expected": {
+          "db.query.summary": "INSERT shipping_details SELECT orders"
+      }
+  },
+  {
+      "name": "select_nested_query",
+      "input": {
+          "query": "SELECT order_date\nFROM   (SELECT *\nFROM   orders o\nJOIN customers c\nON o.customer_id = c.customer_id)"
+      },
+      "expected": {
+          "db.query.summary": "SELECT SELECT orders customers"
+      }
+  },
+  {
+      "name": "select_nested_query_case_preserved",
+      "input": {
+          "query": "SELEcT order_date\nFROM   (sELECT *\nFROM   orders o\nJOIN customers c\nON o.customer_id = c.customer_id)"
+      },
+      "expected": {
+          "db.query.summary": "SELEcT sELECT orders customers"
+      }
+  },
+  {
+      "name": "case_preserved",
+      "input": {
+          "query": "SELEcT order_date\nFROM ORders"
+      },
+      "expected": {
+          "db.query.summary": "SELEcT ORders"
+      }
+  },
+  {
+      "name": "cross_join",
+      "input": {
+          "query": "SELECT * FROM Orders o CROSS JOIN OrderDetails od"
+      },
+      "expected": {
+          "db.query.summary": "SELECT Orders OrderDetails"
+      }
+  },
+  {
+      "name": "cross_join_comma_separated_syntax",
+      "input": {
+          "query": "SELECT * FROM Orders o, OrderDetails od"
+      },
+      "expected": {
+          "db.query.summary": "SELECT Orders OrderDetails"
+      }
+  },
+  {
+      "name": "left_outer_join",
+      "input": {
+          "query": "SELECT c.name, o.id FROM customers c LEFT JOIN orders o ON c.id = o.customer_id"
+      },
+      "expected": {
+          "db.query.summary": "SELECT customers orders"
+      }
+  },
+  {
+      "name": "create_table",
+      "input": {
+          "query": "CREATE  TABLE MyTable (\n    ID NOT NULL IDENTITY(1,1) PRIMARY KEY\n)"
+      },
+      "expected": {
+          "db.query.summary": "CREATE TABLE MyTable"
+      }
+  },
+  {
+      "name": "alter_table",
+      "input": {
+          "query": "ALTER  TABLE MyTable ADD Name varchar(255)"
+      },
+      "expected": {
+          "db.query.summary": "ALTER TABLE MyTable"
+      }
+  },
+  {
+      "name": "drop_table",
+      "input": {
+          "query": "DROP  TABLE MyTable"
+      },
+      "expected": {
+          "db.query.summary": "DROP TABLE MyTable"
+      }
+  },
+  {
+      "name": "query_that_performs_multiple_operations",
+      "input": {
+          "query": "INSERT INTO shipping_details(order_id, address) SELECT order_id, address FROM orders WHERE  order_id = ?"
+      },
+      "expected": {
+          "db.query.summary": "INSERT shipping_details SELECT orders"
+      }
+  },
+  {
+      "name": "query_that_performs_an_operation_thats_applied_to_multiple_collections",
+      "input": {
+          "db.system.name": "other_sql",
+          "query": "SELECT * FROM   songs, artists WHERE songs.artist_id == artists.id"
+      },
+      "expected": {
+          "db.query.summary": "SELECT songs artists"
+      }
+  },
+  {
+      "name": "query_that_performs_operation_on_multiple_collections_with_double-quotes_or_other_punctuation",
+      "input": {
+          "query": "SELECT * FROM   \"song list\", 'artists'"
+      },
+      "expected": {
+          "db.query.summary": "SELECT \"song list\" 'artists'"
+      }
+  },
+  {
+      "name": "update_statement",
+      "input": {
+          "query": "UPDATE Customers SET ContactName = 'Alfred Schmidt', City= 'Frankfurt' WHERE CustomerID = 1"
+      },
+      "expected": {
+          "db.query.summary": "UPDATE Customers"
+      }
+  },
+  {
+      "name": "delete_statement",
+      "input": {
+          "query": "DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste'"
+      },
+      "expected": {
+          "db.query.summary": "DELETE Customers"
+      }
+  },
+  {
+      "name": "truncate_table_statement",
+      "input": {
+          "query": "TRUNCATE TABLE Customers"
+      },
+      "expected": {
+          "db.query.summary": "TRUNCATE TABLE Customers"
+      }
+  },
+  {
+      "name": "with_clause_cte",
+      "input": {
+          "query": "WITH regional_sales AS (SELECT region, SUM(amount) AS total_sales FROM orders GROUP BY region) SELECT region, total_sales FROM regional_sales WHERE total_sales > 1000"
+      },
+      "expected": {
+          "db.query.summary": "WITH regional_sales SELECT orders SELECT regional_sales"
+      }
+  },
+  {
+      "name": "union_statement",
+      "input": {
+          "query": "SELECT City FROM Customers UNION ALL SELECT City FROM Suppliers ORDER BY City"
+      },
+      "expected": {
+          "db.query.summary": "SELECT Customers UNION ALL SELECT Suppliers"
+      }
+  },
+  {
+      "name": "group_by_and_having_clauses",
+      "input": {
+          "query": "SELECT COUNT(CustomerID), Country FROM Customers WHERE Country != 'USA' GROUP BY Country HAVING COUNT(CustomerID) > 5"
+      },
+      "expected": {
+          "db.query.summary": "SELECT Customers"
+      }
+  },
+  {
+      "name": "boolean_and_null_literals",
+      "input": {
+          "query": "SELECT * FROM my_table WHERE a IS NOT NULL AND b = TRUE AND c = FALSE"
+      },
+      "expected": {
+          "db.query.summary": "SELECT my_table"
+      }
+  },
+  {
+      "name": "multiple_joins_and_aliases",
+      "input": {
+          "query": "SELECT o.OrderID, c.CustomerName, s.ShipperName FROM ((Orders AS o INNER JOIN Customers AS c ON o.CustomerID = c.CustomerID) INNER JOIN Shippers AS s ON o.ShipperID = s.ShipperID)"
+      },
+      "expected": {
+          "db.query.summary": "SELECT Orders Customers Shippers"
+      }
+  },
+  {
+      "name": "window_function_over_partition",
+      "input": {
+          "query": "SELECT name, salary, ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) as rank FROM employees"
+      },
+      "expected": {
+          "db.query.summary": "SELECT employees"
+      }
+  },
+  {
+      "name": "case_statement",
+      "input": {
+          "query": "SELECT OrderID, Quantity, CASE WHEN Quantity > 30 THEN 'Large' WHEN Quantity > 10 THEN 'Medium' ELSE 'Small' END AS QuantityText FROM OrderDetails"
+      },
+      "expected": {
+          "db.query.summary": "SELECT OrderDetails"
+      }
+  },
+  {
+      "name": "like_predicate",
+      "input": {
+          "query": "SELECT * FROM products WHERE product_name LIKE 'Chai%'"
+      },
+      "expected": {
+          "db.query.summary": "SELECT products"
+      }
+  },
+  {
+      "name": "between_predicate",
+      "input": {
+          "query": "SELECT * FROM products WHERE price BETWEEN 10 AND 20"
+      },
+      "expected": {
+          "db.query.summary": "SELECT products"
+      }
+  },
+  {
+    "name": "create_index",
+    "input": {
+        "query": "CREATE INDEX idx_name ON MyTable (column1)"
     },
-    {
-        "name": "oracle_angle_quote",
-        "input": {
-            "query": "select * from foo where bar=q'<baz's>' and x=5"
-        },
-        "expected": {
-            "db.query.summary": "select foo"
-        }
-   }
+    "expected": {
+        "db.query.summary": "CREATE INDEX idx_name"
+    }
+  },
+  {
+    "name": "create_database",
+    "input": {
+      "query": "CREATE DATABASE my_db"
+    },
+    "expected": {
+        "db.query.summary": "CREATE DATABASE my_db"
+    }
+  },
+  {
+    "name": "create_procedure",
+    "input": {
+      "query": "CREATE PROCEDURE my_proc AS BEGIN SELECT * FROM MyTable END"
+    },
+    "expected": {
+      "db.query.summary": "CREATE PROCEDURE my_proc SELECT MyTable"
+    }
+  },
+  {
+    "name": "oracle_angle_quote",
+    "input": {
+        "query": "select * from foo where bar=q'<baz's>' and x=5"
+    },
+    "expected": {
+        "db.query.summary": "select foo"
+    }
+  },
+  {
+    "name": "cassandra_blobs",
+    "input" : {
+      "query": "select * from foo where bar=0xabcdef123 and x=5"
+    },
+    "expected": {
+        "db.query.summary": "select foo"
+    }
+  }
 ]
 
