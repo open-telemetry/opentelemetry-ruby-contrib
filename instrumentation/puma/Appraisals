@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'puma-7.0' do
+  gem 'puma', '~> 7.0'
+end
+
+appraise 'puma-6.0' do
+  gem 'puma', '~> 6.0'
+end
