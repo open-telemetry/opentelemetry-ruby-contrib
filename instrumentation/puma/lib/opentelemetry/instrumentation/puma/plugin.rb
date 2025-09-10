@@ -14,16 +14,24 @@ module OpenTelemetry
         ::Puma::Plugins.register('opentelemetry', self)
 
         def start(launcher)
-          launcher.events.on_stopped do
-            shutdown_providers
-          end
-
-          launcher.events.on_restart do
-            shutdown_providers
+          if ::Puma::Const::PUMA_VERSION < '7'
+            register_puma_6_events(launcher)
+          else
+            register_puma_7_events(launcher)
           end
         end
 
         private
+
+        def register_puma_6_events(launcher)
+          launcher.events.on_stopped { shutdown_providers }
+          launcher.events.on_restart { shutdown_providers }
+        end
+
+        def register_puma_7_events(launcher)
+          launcher.events.after_stopped { shutdown_providers }
+          launcher.events.before_restart { shutdown_providers }
+        end
 
         def shutdown_providers
           OpenTelemetry.tracer_provider.shutdown

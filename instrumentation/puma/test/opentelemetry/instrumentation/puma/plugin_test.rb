@@ -24,7 +24,8 @@ describe OpenTelemetry::Instrumentation::Puma::Plugin do
   end
 
   it 'flushes providers on stop' do
-    @launcher.events.on_booted do
+    event_name = ::Puma::Const::PUMA_VERSION < '7' ? :on_booted : :after_booted
+    @launcher.events.public_send(event_name) do
       sleep 1.1 unless mri?
       @launcher.stop
     end
