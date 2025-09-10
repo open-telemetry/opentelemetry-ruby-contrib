@@ -1,6 +1,6 @@
 # OpenTelemetry Puma Instrumentation
 
-The OpenTelemetry Puma gem is a community maintained instrumentation for [Puma][puma-home].
+The OpenTelemetry Puma gem is a community maintained instrumentation for [Puma][puma-home]. It currently does not emit Puma telemetry and only registers hooks to ensure application telemetry is sent before the Puma process exits.
 
 ## How do I get started?
 
