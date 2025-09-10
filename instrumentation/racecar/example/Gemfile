@@ -6,10 +6,6 @@
 
 source 'https://rubygems.org'
 
-# DO NOT ADD DEPENDENCIES HERE!
-# Please declare a minimum development dependency in the gemspec,
-# then target specific versions in the Appraisals file.
-
 gem 'activesupport'
 gem 'opentelemetry-instrumentation-base', path: '../../base'
 gem 'opentelemetry-instrumentation-racecar', path: '../'

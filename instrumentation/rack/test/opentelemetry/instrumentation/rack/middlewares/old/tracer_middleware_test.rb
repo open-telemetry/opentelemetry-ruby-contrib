@@ -7,16 +7,16 @@
 require 'test_helper'
 
 # require Instrumentation so .install method is found:
-require_relative '../../../../../lib/opentelemetry/instrumentation/rack'
-require_relative '../../../../../lib/opentelemetry/instrumentation/rack/instrumentation'
-require_relative '../../../../../lib/opentelemetry/instrumentation/rack/middlewares/tracer_middleware'
+require_relative '../../../../../../lib/opentelemetry/instrumentation/rack'
+require_relative '../../../../../../lib/opentelemetry/instrumentation/rack/instrumentation'
+require_relative '../../../../../../lib/opentelemetry/instrumentation/rack/middlewares/old/tracer_middleware'
 
-describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
+describe OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddleware do
   let(:instrumentation_module) { OpenTelemetry::Instrumentation::Rack }
   let(:instrumentation_class) { instrumentation_module::Instrumentation }
   let(:instrumentation) { instrumentation_class.instance }
 
-  let(:described_class) { OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware }
+  let(:described_class) { OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddleware }
 
   let(:app) { ->(_env) { [200, { 'Content-Type' => 'text/plain' }, ['OK']] } }
   let(:middleware) { described_class.new(app) }
@@ -33,6 +33,8 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
   let(:uri) { '/' }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
+
     # clear captured spans:
     exporter.reset
 
