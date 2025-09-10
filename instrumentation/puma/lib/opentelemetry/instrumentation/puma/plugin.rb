@@ -34,6 +34,8 @@ module OpenTelemetry
         end
 
         def shutdown_providers
+          return if ENV['OTEL_SDK_DISABLED'] == 'true'
+
           OpenTelemetry.tracer_provider.shutdown
           OpenTelemetry.meter_provider.shutdown if OpenTelemetry.respond_to?(:meter_provider)
           OpenTelemetry.logger_provider.shutdown if OpenTelemetry.respond_to?(:logger_provider)
