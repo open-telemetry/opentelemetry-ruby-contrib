@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.27.1 / 2025-09-11
+
+* DOCS: Typo in Rack::Instrumentation usage example of middleware_args
+
 ### v0.27.0 / 2025-08-19
 
 * ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility [#1594](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1594)
