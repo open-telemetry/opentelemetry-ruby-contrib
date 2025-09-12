@@ -23,7 +23,7 @@ module OpenTelemetry
           ) do |span|
             MessagingHelper.inject_context_if_supported(context, client_method, service_id)
 
-            if HandlerHelper.instrumentation_config[:suppress_internal_instrumentation]
+            if HandlerHelper.skip_internal_instrumentation?
               OpenTelemetry::Common::Utilities.untraced { super }
             else
               super
@@ -32,7 +32,6 @@ module OpenTelemetry
                 OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE,
                 context.http_response.status_code
               )
-
               if (err = response.error)
                 span.record_exception(err)
                 span.status = Trace::Status.error(err.to_s)
