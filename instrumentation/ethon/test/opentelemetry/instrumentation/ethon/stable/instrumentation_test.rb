@@ -78,6 +78,23 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             end
           end
         end
+
+        it 'when the perform fails before complete with an exception' do
+          Ethon::Curl.stub(:easy_perform, ->(_handle) { raise StandardError, 'Connection failed' }) do
+            easy.perform
+
+            # NOTE: check the finished spans since we expect to have closed it
+            span = exporter.finished_spans.first
+            _(span.name).must_equal 'HTTP'
+            _(span.attributes['http.request.method']).must_equal '_OTHER'
+            _(span.attributes['http.response.status_code']).must_be_nil
+            _(span.attributes['url.full']).must_equal 'http://example.com/test'
+            _(span.status.code).must_equal(
+              OpenTelemetry::Trace::Status::ERROR
+            )
+            _(easy.instance_eval { @otel_span }).must_be_nil
+          end
+        end
       end
 
       describe '#complete' do
