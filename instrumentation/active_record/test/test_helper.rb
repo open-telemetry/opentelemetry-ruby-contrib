@@ -32,7 +32,9 @@ ActiveRecord::Migration.verbose = false
 
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',
-  database: 'db/development.sqlite3'
+  database: 'db/development.sqlite3',
+  # allow to manipulate the transaction isolation level
+  flags: ::SQLite3::Constants::Open::READWRITE | SQLite3::Constants::Open::CREATE | ::SQLite3::Constants::Open::SHAREDCACHE
 )
 
 # Create ActiveRecord models

@@ -18,9 +18,13 @@ module OpenTelemetry
 
           # Contains ActiveRecord::Transactions::ClassMethods to be patched
           module ClassMethods
-            def transaction(...)
-              tracer.in_span('ActiveRecord.transaction', attributes: { 'code.namespace' => name }) do
-                super
+            def transaction(*args, **kwargs, &block)
+              attributes = { 'code.namespace' => name }
+              if kwargs[:isolation]
+                attributes['db.transaction_isolation'] = kwargs[:isolation].to_s
+              end
+              tracer.in_span('ActiveRecord.transaction', attributes: attributes) do
+                super(*args, **kwargs, &block)
               end
             end
 

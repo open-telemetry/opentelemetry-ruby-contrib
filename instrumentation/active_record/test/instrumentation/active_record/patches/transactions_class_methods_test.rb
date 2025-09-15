@@ -48,5 +48,13 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::TransactionsClas
       transaction_span = spans.find { |s| s.attributes['code.namespace'] == 'ActiveRecord::Base' }
       _(transaction_span).wont_be_nil
     end
+
+    it 'records transaction isolation level' do
+      ActiveRecord::Base.transaction(isolation: :read_uncommitted) { User.create! }
+
+      transaction_span = spans.find { |s| s.attributes['code.namespace'] == 'ActiveRecord::Base' }
+      _(transaction_span).wont_be_nil
+      _(transaction_span.attributes['db.transaction.isolation']).must_equal 'read_uncommitted'
+    end
   end
 end
