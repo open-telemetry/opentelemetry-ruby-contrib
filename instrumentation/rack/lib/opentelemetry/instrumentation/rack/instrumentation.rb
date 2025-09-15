@@ -36,7 +36,7 @@ module OpenTelemetry
         #
         # @example Default usage
         #   Rack::Builder.new do
-        #     use *OpenTelemetry::Instrumentation::Rack::Instrumenation.instance.middleware_args
+        #     use *OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args
         #     run lambda { |_arg| [200, { 'Content-Type' => 'text/plain' }, body] }
         #   end
         # @return [Array] consisting of a middleware and arguments used in rack builders
