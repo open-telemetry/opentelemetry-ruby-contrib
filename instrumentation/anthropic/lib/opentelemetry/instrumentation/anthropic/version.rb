@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Instrumentation
-    module Rack
-      VERSION = '0.27.1'
+    module Anthropic
+      VERSION = '0.1.0'
     end
   end
 end

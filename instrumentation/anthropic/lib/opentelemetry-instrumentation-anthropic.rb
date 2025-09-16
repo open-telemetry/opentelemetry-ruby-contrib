@@ -4,10 +4,4 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Instrumentation
-    module Rack
-      VERSION = '0.27.1'
-    end
-  end
-end
+require_relative 'opentelemetry/instrumentation'
