@@ -7,6 +7,5 @@
 require_relative 'opentelemetry/helpers'
 
 OpenTelemetry.logger.warn <<~WARNING
-  [DEPRECATION] The 'opentelemetry-helpers-sql-obfuscation' is deprecated and has been replaced by 'opentelemetry-helpers-sql-processor'.
-  Please update your Gemfile to use 'opentelemetry-helpers-sql-processor' instead.
+  [DEPRECATION] The 'opentelemetry-helpers-sql-obfuscation' gem has been renamed to 'opentelemetry-helpers-sql-processor'. No action is needed unless you use this gem directly.
 WARNING
