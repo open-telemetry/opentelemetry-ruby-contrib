@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Instrumentation
-    module Ethon
-      VERSION = '0.23.1'
+    module Anthropic
+      VERSION = '0.1.0'
     end
   end
 end
