@@ -3,7 +3,7 @@
 ### v0.81.0 / 2025-09-16
 
 * ADDED: Anthropic initial instrumentation
-* ADDED: Add anthropic instrumentation to instrumentation_all
+* ADDED: Add Net::HTTP `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1572](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1572)
 
 ### v0.80.0 / 2025-08-19
 
