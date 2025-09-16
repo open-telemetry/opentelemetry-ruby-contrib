@@ -215,6 +215,22 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         end
       end
     end
+
+    describe 'no raise error when the span is not recording' do
+      it 'no raise error xuan' do
+        original_sampler = OpenTelemetry.tracer_provider.sampler
+        OpenTelemetry.tracer_provider.sampler = OpenTelemetry::SDK::Trace::Samplers.parent_based(
+          root: OpenTelemetry::SDK::Trace::Samplers::ALWAYS_OFF
+        )
+
+        otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
+        otel_wrapper.stub(:call_original_handler, {}) do
+          assert otel_wrapper.call_wrapped(event: sqs_record, context: context) # assert no error will occur if span is not recording
+        end
+
+        OpenTelemetry.tracer_provider.sampler = original_sampler
+      end
+    end
   end
 
   describe 'validate_if_span_is_registered' do
