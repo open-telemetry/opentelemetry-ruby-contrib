@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/semconv/incubating/peer'
+require 'opentelemetry/semconv/network'
+require 'opentelemetry/semconv/server'
 require_relative 'attribute_mapper'
 
 module OpenTelemetry
