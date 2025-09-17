@@ -55,7 +55,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
 
   before do
     exporter.reset
-    instrumentation.install
+    instrumentation.install(peer_service: 'test:ldap')
   end
 
   after do
@@ -81,6 +81,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.request.message']).must_equal '{}'
         _(span.attributes['ldap.response.status_code']).must_equal 0
         _(span.attributes['network.protocol.name']).must_equal 'ldap'
+        _(span.attributes['peer.service']).must_equal 'test:ldap'
         _(span.attributes['server.address']).must_equal 'test.mocked.com'
         _(span.attributes['server.port']).must_equal 636
       end
@@ -99,6 +100,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.request.message']).must_equal '{"filter":"(uid=user1)","paged_searches_supported":false,"base":"dc=com"}'
         _(span.attributes['ldap.response.status_code']).must_equal 0
         _(span.attributes['network.protocol.name']).must_equal 'ldap'
+        _(span.attributes['peer.service']).must_equal 'test:ldap'
         _(span.attributes['server.address']).must_equal 'test.mocked.com'
         _(span.attributes['server.port']).must_equal 636
       end
@@ -121,6 +123,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.encryption']).must_equal '{"method":"simple_tls","tls_options":{"foo":"bar"}}'
         _(span.attributes['ldap.request.message']).must_equal '{}'
         _(span.attributes['network.protocol.name']).must_equal 'ldap'
+        _(span.attributes['peer.service']).must_equal 'test:ldap'
         _(span.attributes['server.address']).must_equal 'test.mocked.com'
         _(span.attributes['server.port']).must_equal 636
       end
@@ -142,6 +145,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.request.message']).must_equal '{"dn":"CN=test,OU=test,DC=com","operations":[["replace","unicodePwd",["[REDACTED]"]]]}'
         _(span.attributes['ldap.response.status_code']).must_equal 0
         _(span.attributes['network.protocol.name']).must_equal 'ldap'
+        _(span.attributes['peer.service']).must_equal 'test:ldap'
         _(span.attributes['server.address']).must_equal 'test.mocked.com'
         _(span.attributes['server.port']).must_equal 636
       end
