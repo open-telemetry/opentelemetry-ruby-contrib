@@ -78,10 +78,11 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.auth']).must_equal '{"method":"anonymous"}'
         _(span.attributes['ldap.base']).must_equal 'dc=com'
         _(span.attributes['ldap.encryption']).must_equal '{"method":"simple_tls","tls_options":{"foo":"bar"}}'
-        _(span.attributes['ldap.payload']).must_equal '{}'
-        _(span.attributes['ldap.status_code']).must_equal 0
-        _(span.attributes['net.peer.name']).must_equal 'test.mocked.com'
-        _(span.attributes['net.peer.port']).must_equal 636
+        _(span.attributes['ldap.request.message']).must_equal '{}'
+        _(span.attributes['ldap.response.status_code']).must_equal 0
+        _(span.attributes['network.protocol.name']).must_equal 'ldap'
+        _(span.attributes['server.address']).must_equal 'test.mocked.com'
+        _(span.attributes['server.port']).must_equal 636
       end
     end
 
@@ -95,10 +96,11 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.auth']).must_equal '{"method":"anonymous"}'
         _(span.attributes['ldap.base']).must_equal 'dc=com'
         _(span.attributes['ldap.encryption']).must_equal '{"method":"simple_tls","tls_options":{"foo":"bar"}}'
-        _(span.attributes['ldap.payload']).must_equal '{"filter":"(uid=user1)","paged_searches_supported":false,"base":"dc=com"}'
-        _(span.attributes['ldap.status_code']).must_equal 0
-        _(span.attributes['net.peer.name']).must_equal 'test.mocked.com'
-        _(span.attributes['net.peer.port']).must_equal 636
+        _(span.attributes['ldap.request.message']).must_equal '{"filter":"(uid=user1)","paged_searches_supported":false,"base":"dc=com"}'
+        _(span.attributes['ldap.response.status_code']).must_equal 0
+        _(span.attributes['network.protocol.name']).must_equal 'ldap'
+        _(span.attributes['server.address']).must_equal 'test.mocked.com'
+        _(span.attributes['server.port']).must_equal 636
       end
     end
 
@@ -112,13 +114,15 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
 
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'add.net_ldap'
+        _(span.attributes['error.message']).must_equal 'Connection timed out - user specified timeout'
+        _(span.attributes['error.type']).must_equal 'Net::LDAP::Error'
         _(span.attributes['ldap.auth']).must_equal '{"method":"anonymous"}'
         _(span.attributes['ldap.base']).must_equal 'dc=com'
         _(span.attributes['ldap.encryption']).must_equal '{"method":"simple_tls","tls_options":{"foo":"bar"}}'
-        _(span.attributes['ldap.payload']).must_equal '{}'
-        _(span.attributes['ldap.error_message']).must_equal 'Net::LDAP::Error: Connection timed out - user specified timeout'
-        _(span.attributes['net.peer.name']).must_equal 'test.mocked.com'
-        _(span.attributes['net.peer.port']).must_equal 636
+        _(span.attributes['ldap.request.message']).must_equal '{}'
+        _(span.attributes['network.protocol.name']).must_equal 'ldap'
+        _(span.attributes['server.address']).must_equal 'test.mocked.com'
+        _(span.attributes['server.port']).must_equal 636
       end
     end
 
@@ -135,10 +139,11 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.auth']).must_equal '{"method":"anonymous"}'
         _(span.attributes['ldap.base']).must_equal 'dc=com'
         _(span.attributes['ldap.encryption']).must_equal '{"method":"simple_tls","tls_options":{"foo":"bar"}}'
-        _(span.attributes['ldap.payload']).must_equal '{"dn":"CN=test,OU=test,DC=com","operations":[["replace","unicodePwd",["[REDACTED]"]]]}'
-        _(span.attributes['ldap.status_code']).must_equal 0
-        _(span.attributes['net.peer.name']).must_equal 'test.mocked.com'
-        _(span.attributes['net.peer.port']).must_equal 636
+        _(span.attributes['ldap.request.message']).must_equal '{"dn":"CN=test,OU=test,DC=com","operations":[["replace","unicodePwd",["[REDACTED]"]]]}'
+        _(span.attributes['ldap.response.status_code']).must_equal 0
+        _(span.attributes['network.protocol.name']).must_equal 'ldap'
+        _(span.attributes['server.address']).must_equal 'test.mocked.com'
+        _(span.attributes['server.port']).must_equal 636
       end
     end
   end
