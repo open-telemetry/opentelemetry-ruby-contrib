@@ -1,8 +1,10 @@
 # Release History: opentelemetry-instrumentation-all
 
-### v0.81.1 / 2025-09-17
+### v0.82.0 / 2025-09-17
 
-* (No significant changes)
+* BREAKING CHANGE: AWS Lambda: Check if span has the attributes method to avoid internal error
+
+* FIXED: AWS Lambda: Check if span has the attributes method to avoid internal error
 
 ### v0.81.0 / 2025-09-16
 
