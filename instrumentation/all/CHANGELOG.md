@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.81.1 / 2025-09-17
+
+* (No significant changes)
+
 ### v0.81.0 / 2025-09-16
 
 * ADDED: Anthropic initial instrumentation
