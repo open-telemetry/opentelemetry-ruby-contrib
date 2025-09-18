@@ -94,9 +94,7 @@ module OpenTelemetry
 
             namespace = endpoint.routes.first.namespace
             version = endpoint.routes.first.options[:version]
-            version = "{#{version.join("|")}}" if version.is_a?(Array) if config[:version_format] == :formatted
-
-            version = version&.to_s
+            version = config[:version_format].call(version)
             prefix = endpoint.routes.first.options[:prefix]&.to_s
             parts = [prefix, version] + namespace.split('/') + endpoint.options[:path]
             parts.reject { |p| p.nil? || p.empty? || p.eql?('/') }.join('/').prepend('/')
