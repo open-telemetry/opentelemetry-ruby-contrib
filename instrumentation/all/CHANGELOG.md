@@ -1,5 +1,16 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.82.0 / 2025-09-18
+
+* BREAKING CHANGE: AWS Lambda: Check if span has the attributes method to avoid internal error
+
+* FIXED: AWS Lambda: Check if span has the attributes method to avoid internal error
+
+### v0.81.0 / 2025-09-16
+
+* ADDED: Anthropic initial instrumentation
+* ADDED: Add Net::HTTP `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1572](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1572)
+
 ### v0.80.0 / 2025-08-19
 
 ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility for Rack. This includes an integration with Action Pack (Rails) and Sinatra instrumentation libraries. [#1594](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1594)
