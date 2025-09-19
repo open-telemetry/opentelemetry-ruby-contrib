@@ -198,13 +198,19 @@ services:
       - postgres_socket:/var/run/postgresql
 
   redis:
-    image: bitnami/redis:6.2
+    image: redis:6.2
     environment:
       - REDIS_PASSWORD=passw0rd
     volumes:
       - redis_data:/data
     ports:
       - "16379:6379"
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
+    options: >-
+      --health-cmd "sh -c 'redis-cli -a \"$REDIS_PASSWORD\" ping | grep PONG'"
+      --health-interval 10s
+      --health-timeout 5s
+      --health-retries 5
 
   rabbitmq:
     image: rabbitmq:3.8-alpine
