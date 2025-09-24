@@ -164,6 +164,26 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'DESELECT ?'
       end
+
+      it 'includes row count' do
+        client.query('SELECT 1')
+
+        _(span.attributes['db.response.returned_rows']).must_equal(1)
+      end
+
+      it 'includes affected rows' do
+        client.query(<<~SQL)
+          CREATE TABLE products (
+            product_id int
+          )
+        SQL
+
+        client.query('INSERT INTO products (product_id) VALUES (1), (2), (3)')
+
+        _(exporter.finished_spans.last.attributes['db.response.affected_rows']).must_equal(3)
+      ensure
+        client.query('DROP TABLE IF EXISTS products')
+      end
     end
 
     describe 'when connecting' do
