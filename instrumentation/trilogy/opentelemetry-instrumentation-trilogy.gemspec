@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-helpers-mysql'
   spec.add_dependency 'opentelemetry-helpers-sql'
   spec.add_dependency 'opentelemetry-helpers-sql-obfuscation'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23'
   spec.add_dependency 'opentelemetry-semantic_conventions', '>= 1.8.0'
 
   if spec.respond_to?(:metadata)
