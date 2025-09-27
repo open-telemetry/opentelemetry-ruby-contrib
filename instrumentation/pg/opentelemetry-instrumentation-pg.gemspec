@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-helpers-sql'
   spec.add_dependency 'opentelemetry-helpers-sql-obfuscation'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"

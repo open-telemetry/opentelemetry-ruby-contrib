@@ -277,6 +277,18 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.events.first.attributes['exception.message']).wont_be_nil
         _(span.events.first.attributes['exception.stacktrace']).wont_be_nil
       end
+
+      describe 'when record_exception is false' do
+        let(:config) { { record_exception: false } }
+
+        it 'does not record exception when record_exception is false' do
+          expect do
+            client.query('SELECT INVALID')
+          end.must_raise Trilogy::Error
+
+          _(span.events).must_be_nil
+        end
+      end
     end
 
     describe 'when db_statement is set to include' do

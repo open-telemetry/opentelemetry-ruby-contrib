@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.62.0 / 2025-09-25
+
+* ADDED: Trilogy: introduce record_exception setting
+
 ### v0.61.1 / 2025-04-16
 
 * refactor: Use SQL helpers for context attributes #1271
