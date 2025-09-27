@@ -33,6 +33,7 @@ jobs:
           - active_storage
           - active_support
           - all
+          - anthropic
           - aws_sdk
           - aws_lambda
           - base
