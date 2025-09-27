@@ -2,7 +2,7 @@
 
 ### v0.83.0 / 2025-09-27
 
-* (No significant changes)
+* ADDED: Update trilogy instrumentation to v0.62.0
 
 ### v0.82.0 / 2025-09-18
 
