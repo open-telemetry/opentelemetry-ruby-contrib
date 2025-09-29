@@ -212,12 +212,11 @@ jobs:
           build: true
     services:
       redis:
-        image: redis:6.2
+        image: bitnamilegacy/redis:6.2
         ports:
           - 6379:6379
-        command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
         options: >-
-          --health-cmd "sh -c 'redis-cli -a \"$REDIS_PASSWORD\" ping | grep PONG'"
+          --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
