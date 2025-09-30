@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_mailer
 
+### v0.5.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.4.0 / 2025-01-16
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1

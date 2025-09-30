@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_lambda
 
+### v0.5.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.4.0 / 2025-09-18
 
 * BREAKING CHANGE: Check if span has the attributes method to avoid internal error
