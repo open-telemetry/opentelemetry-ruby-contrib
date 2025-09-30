@@ -25,7 +25,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
 
-  spec.add_dependency 'opentelemetry-api', '~> 1.6'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23'
 
   if spec.respond_to?(:metadata)
