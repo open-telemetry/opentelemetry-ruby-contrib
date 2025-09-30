@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rdkafka
 
+### v0.8.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.7.0 / 2025-05-06
 
 * ADDED: Update minimum gem version requirement for rdkafka to 0.18.0

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.9.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.8.2 / 2025-08-13
 
 * FIXED: net_http and aws_sdk ci fix

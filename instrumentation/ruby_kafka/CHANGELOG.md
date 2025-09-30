@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ruby_kafka
 
+### v0.23.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.22.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1

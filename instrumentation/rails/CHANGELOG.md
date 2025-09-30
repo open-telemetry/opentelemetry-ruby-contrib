@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.38.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.37.0 / 2025-08-19
 
 ADDED: Add action_pack `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility for Rack integration [#1594](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1594)

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.31.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.30.1 / 2025-04-16
 
 * refactor: Use SQL helpers for context attributes #1271
