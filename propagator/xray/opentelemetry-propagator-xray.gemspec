@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
 
-  spec.add_dependency 'opentelemetry-api', '~> 1.0'
+  spec.add_dependency 'opentelemetry-api', '~> 1.7'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
