@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.30.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.29.1 / 2025-04-16
 
 * refactor: Use SQL helpers for context attributes #1271
