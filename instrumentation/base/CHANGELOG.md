@@ -80,3 +80,8 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
+
+### v0.24.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+* FIXED: Min OTel Ruby API 1.7

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.25.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
 ### v0.25.0 / 2025-09-30
 
 * ADDED: Bump minimum API Version to 1.7
