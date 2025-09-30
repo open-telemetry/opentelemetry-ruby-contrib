@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.27.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
 ### v0.27.0 / 2025-09-30
 
 * ADDED: Bump minimum API Version to 1.7
