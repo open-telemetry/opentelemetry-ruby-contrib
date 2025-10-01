@@ -4,14 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'net/http'
 require 'json'
 require 'opentelemetry/sdk'
-require_relative 'sampling_rule'
-require_relative 'fallback_sampler'
-require_relative 'sampling_rule_applier'
-require_relative 'rule_cache'
 require_relative 'aws_xray_sampling_client'
+require_relative 'fallback_sampler'
+require_relative 'rule_cache'
+require_relative 'sampling_rule'
+require_relative 'sampling_rule_applier'
 
 module OpenTelemetry
   module Sampler
@@ -68,7 +67,8 @@ module OpenTelemetry
           # Start the Sampling Rules poller
           start_sampling_rules_poller
 
-          # TODO: Start the Sampling Targets poller
+          # Start the Sampling Targets poller
+          start_sampling_targets_poller
         end
 
         def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
@@ -113,6 +113,15 @@ module OpenTelemetry
           end
         end
 
+        def start_sampling_targets_poller
+          @target_poller = Thread.new do
+            loop do
+              sleep(((@target_polling_interval * 1000) + @target_polling_jitter_millis) / 1000.0)
+              retrieve_and_update_sampling_targets
+            end
+          end
+        end
+
         def retrieve_and_update_sampling_rules
           sampling_rules_response = @sampling_client.fetch_sampling_rules
           if sampling_rules_response&.body && sampling_rules_response.body != ''
@@ -123,6 +132,19 @@ module OpenTelemetry
           end
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'Error occurred when retrieving or updating Sampling Rules')
+        end
+
+        def retrieve_and_update_sampling_targets
+          request_body = {
+            SamplingStatisticsDocuments: @rule_cache.create_sampling_statistics_documents(@client_id)
+          }
+          sampling_targets_response = @sampling_client.fetch_sampling_targets(request_body)
+          if sampling_targets_response&.body && sampling_targets_response.body != ''
+            response_body = JSON.parse(sampling_targets_response.body)
+            update_sampling_targets(response_body)
+          else
+            OpenTelemetry.logger.debug('SamplingTargets Response is falsy')
+          end
         end
 
         def update_sampling_rules(response_object)
@@ -138,6 +160,33 @@ module OpenTelemetry
           else
             OpenTelemetry.logger.error('SamplingRuleRecords from GetSamplingRules request is not defined')
           end
+        end
+
+        def update_sampling_targets(response_object)
+          if response_object && response_object['SamplingTargetDocuments']
+            target_documents = {}
+
+            response_object['SamplingTargetDocuments'].each do |new_target|
+              target_documents[new_target['RuleName']] = new_target
+            end
+
+            refresh_sampling_rules, next_polling_interval = @rule_cache.update_targets(
+              target_documents,
+              response_object['LastRuleModification']
+            )
+
+            @target_polling_interval = next_polling_interval
+
+            if refresh_sampling_rules
+              OpenTelemetry.logger.debug('Performing out-of-band sampling rule polling to fetch updated rules.')
+              @rule_poller&.kill
+              start_sampling_rules_poller
+            end
+          else
+            OpenTelemetry.logger.debug('SamplingTargetDocuments from SamplingTargets request is not defined')
+          end
+        rescue StandardError => e
+          OpenTelemetry.logger.debug("Error occurred when updating Sampling Targets: #{e}")
         end
 
         class << self
