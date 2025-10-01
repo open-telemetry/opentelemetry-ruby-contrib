@@ -219,7 +219,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       let(:app) do
         apps_to_build = apps
         Rack::Builder.new do
-          use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args_dup)
+          use(*OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args)
 
           apps_to_build.each do |root, app|
             map root do
