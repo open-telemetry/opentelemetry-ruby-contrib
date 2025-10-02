@@ -68,8 +68,12 @@ module OpenTelemetry
 
         def example_finished(notification)
           pop_and_finalize_span do |span|
-            result = notification.example.execution_result
+            example = notification.example
+            result = example.execution_result
 
+            # Update name and full_description for one-liner examples where description is generated after execution
+            span.name = example.description
+            span.set_attribute('rspec.example.full_description', example.full_description.to_s)
             span.set_attribute('rspec.example.result', result.status.to_s)
 
             add_exception_and_failures(span, result.exception)
