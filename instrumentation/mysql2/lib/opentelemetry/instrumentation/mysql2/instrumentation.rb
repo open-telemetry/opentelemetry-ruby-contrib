@@ -28,10 +28,12 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'patches/client'
+          require_relative 'patches/statement'
         end
 
         def patch_client
           ::Mysql2::Client.prepend(Patches::Client)
+          ::Mysql2::Statement.prepend(Patches::Statement)
         end
       end
     end
