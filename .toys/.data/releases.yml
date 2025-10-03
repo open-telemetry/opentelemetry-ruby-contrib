@@ -55,6 +55,11 @@ gems:
     version_rb_path: lib/opentelemetry/helpers/sql_obfuscation/version.rb
     version_constant: [OpenTelemetry, Helpers, SqlObfuscation, VERSION]
 
+    - name: opentelemetry-helpers-sql-processor
+    directory: helpers/sql-processor
+    version_rb_path: lib/opentelemetry/helpers/sql_processor/version.rb
+    version_constant: [OpenTelemetry, Helpers, SqlProcessor, VERSION]
+
   - name: opentelemetry-instrumentation-grape
     directory: instrumentation/grape
     version_constant: [OpenTelemetry, Instrumentation, Grape, VERSION]
