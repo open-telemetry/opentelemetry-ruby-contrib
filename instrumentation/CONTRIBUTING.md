@@ -368,11 +368,6 @@ If we determine the service container slows down the test suite significantly, i
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           build: true

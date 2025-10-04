@@ -48,11 +48,6 @@ jobs:
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -94,11 +89,6 @@ jobs:
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           build: true
@@ -139,11 +129,6 @@ jobs:
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -182,11 +167,6 @@ jobs:
         with:
           gem: "opentelemetry-processor-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -225,11 +205,6 @@ jobs:
         with:
           gem: "opentelemetry-sampler-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-sampler-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
