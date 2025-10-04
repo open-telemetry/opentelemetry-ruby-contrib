@@ -107,7 +107,7 @@ module OpenTelemetry
             end
           end
 
-          def execute_query_lazy
+          def execute_query_lazy(...)
             tracer.in_span('graphql.execute_query_lazy') { super }
           end
 
