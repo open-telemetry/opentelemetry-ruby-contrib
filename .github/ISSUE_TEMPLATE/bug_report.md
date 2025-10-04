@@ -26,8 +26,8 @@ what happened and what you expected with a link to the relevant portion of the s
 
 Operating system details: Linux, Ubuntu 20.04 LTS
 RUBY_ENGINE: "ruby"
-RUBY_VERSION: "3.1.1"
-RUBY_DESCRIPTION: "ruby 3.1.1p18 (2022-02-18 revision 53f5fc4236) [arm64-darwin21]"
+RUBY_VERSION: "3.4"
+RUBY_DESCRIPTION: "ruby 3.4.1 (2024-12-25 revision 48d4efcb85)"
 
 **Share a simplified reproduction if possible**
 
