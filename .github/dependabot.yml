@@ -6,10 +6,6 @@ updates:
     schedule:
       interval: daily
   - package-ecosystem: bundler
-    directory: "/"
+    directories: "**/*"
     schedule:
       interval: weekly
-    groups:
-      all-gems:
-        patterns:
-          - "**/Gemfile"
