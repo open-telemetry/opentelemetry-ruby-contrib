@@ -32,7 +32,7 @@ module OpenTelemetry
 
               extracted_context = OpenTelemetry.propagation.extract(msg)
               created_at = time_from_timestamp(msg['created_at'])
-              enqueued_at = time_from_timestamp(msg['created_at'])
+              enqueued_at = time_from_timestamp(msg['enqueued_at'])
               scheduled_at = time_from_timestamp(msg['at']) unless msg['at'].nil?
               OpenTelemetry::Context.with_current(extracted_context) do
                 if instrumentation_config[:propagation_style] == :child
