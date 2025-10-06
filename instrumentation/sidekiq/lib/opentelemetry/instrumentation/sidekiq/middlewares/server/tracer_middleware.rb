@@ -33,11 +33,13 @@ module OpenTelemetry
               extracted_context = OpenTelemetry.propagation.extract(msg)
               created_at = time_from_timestamp(msg['created_at'])
               enqueued_at = time_from_timestamp(msg['created_at'])
+              scheduled_at = time_from_timestamp(msg['at']) unless msg['at'].nil?
               OpenTelemetry::Context.with_current(extracted_context) do
                 if instrumentation_config[:propagation_style] == :child
                   tracer.in_span(span_name, attributes: attributes, kind: :consumer) do |span|
                     span.add_event('created_at', timestamp: created_at)
                     span.add_event('enqueued_at', timestamp: enqueued_at)
+                    span.add_event('scheduled_at', timestamp: scheduled_at) unless scheduled_at.nil?
                     yield
                   end
                 else
@@ -48,6 +50,7 @@ module OpenTelemetry
                   OpenTelemetry::Trace.with_span(span) do
                     span.add_event('created_at', timestamp: created_at)
                     span.add_event('enqueued_at', timestamp: enqueued_at)
+                    span.add_event('scheduled_at', timestamp: scheduled_at) unless scheduled_at.nil?
                     yield
                   rescue Exception => e # rubocop:disable Lint/RescueException
                     span.record_exception(e)

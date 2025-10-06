@@ -24,14 +24,25 @@ module OpenTelemetry
               }
               attributes[SemanticConventions::Trace::PEER_SERVICE] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
 
+              scheduled_at = job['at']
+              op = scheduled_at.nil? ? "publish" : "scheduled"
+
               span_name = case instrumentation_config[:span_naming]
-                          when :job_class then "#{job['wrapped']&.to_s || job['class']} publish"
-                          else "#{job['queue']} publish"
+                          when :job_class then "#{job['wrapped']&.to_s || job['class']} #{op}"
+                          else "#{job['queue']} #{op}"
                           end
 
-              tracer.in_span(span_name, attributes: attributes, kind: :producer) do |span|
+              # In case this is Scheduled job, there is already context injected, so link to that context
+              # NOTE: :propagation_style = :child is not supported as it is quite tricky when :trace_poller_enqueue = true
+              extracted_context = OpenTelemetry.propagation.extract(job, context: OpenTelemetry::Context::ROOT)
+              links = []
+              span_context = OpenTelemetry::Trace.current_span(extracted_context).context
+              links << OpenTelemetry::Trace::Link.new(span_context) if instrumentation_config[:propagation_style] == :link && span_context.valid?
+
+              tracer.in_span(span_name, attributes: attributes, links: links, kind: :producer) do |span|
                 OpenTelemetry.propagation.inject(job)
                 span.add_event('created_at', timestamp: time_from_timestamp(job['created_at']))
+                span.add_event('scheduled_at', timestamp: time_from_timestamp(scheduled_at)) unless scheduled_at.nil?
                 yield
               end
             end
