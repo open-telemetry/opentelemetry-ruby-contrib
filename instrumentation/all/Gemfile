@@ -29,7 +29,7 @@ group :test do
      .sort
      .each { |dir| gem "opentelemetry-helpers-#{dir}", path: "../../helpers/#{dir}" }
 
-  excluded_instrumentations = %w[. .. all]
+  excluded_instrumentations = %w[. .. all logger]
   Dir.entries('../')
      .select { |entry| File.directory?(File.join('../', entry)) }
      .reject { |entry| excluded_instrumentations.include?(entry) }
