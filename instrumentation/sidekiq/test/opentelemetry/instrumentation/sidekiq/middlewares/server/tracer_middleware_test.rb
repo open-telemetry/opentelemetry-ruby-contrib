@@ -133,7 +133,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
         _(root_span.kind).must_equal :producer
 
         # process span is linked to the root enqueuing job
-        child_span1 = spans.find { |s| s.links && s.links.first.span_context.span_id == root_span.span_id }
+        child_span1 = spans.find { |s| s.links&.first&.span_context&.span_id == root_span.span_id }
         _(child_span1.name).must_equal 'default process'
         _(child_span1.kind).must_equal :consumer
 
@@ -143,7 +143,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
         _(child_span2.kind).must_equal :producer
 
         # last process job is linked back to the process job that enqueued it
-        child_span3 = spans.find { |s| s.links && s.links.first.span_context.span_id == child_span2.span_id }
+        child_span3 = spans.find { |s| s.links&.first&.span_context&.span_id == child_span2.span_id }
         _(child_span3.name).must_equal 'default process'
         _(child_span3.kind).must_equal :consumer
       end
