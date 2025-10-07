@@ -1,5 +1,19 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.84.0 / 2025-09-27
+
+* ADDED: Minimum version of opentelemetry-api v1.7.0
+
+### v0.83.0 / 2025-09-27
+
+* ADDED: Update trilogy instrumentation to v0.62.0
+
+### v0.82.0 / 2025-09-18
+
+* BREAKING CHANGE: AWS Lambda: Check if span has the attributes method to avoid internal error
+
+* FIXED: AWS Lambda: Check if span has the attributes method to avoid internal error
+
 ### v0.81.0 / 2025-09-16
 
 * ADDED: Anthropic initial instrumentation

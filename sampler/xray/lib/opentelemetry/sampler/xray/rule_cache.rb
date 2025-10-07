@@ -53,6 +53,52 @@ module OpenTelemetry
           end
         end
 
+        def create_sampling_statistics_documents(client_id)
+          statistics_documents = []
+
+          @cache_lock.synchronize do
+            @rule_appliers.each do |rule|
+              statistics = rule.snapshot_statistics
+              now_in_seconds = Time.now.to_i
+
+              sampling_statistics_doc = {
+                ClientID: client_id,
+                RuleName: rule.sampling_rule.rule_name,
+                Timestamp: now_in_seconds,
+                RequestCount: statistics.request_count,
+                BorrowCount: statistics.borrow_count,
+                SampledCount: statistics.sample_count
+              }
+
+              statistics_documents << sampling_statistics_doc
+            end
+          end
+
+          statistics_documents
+        end
+
+        def update_targets(target_documents, last_rule_modification)
+          min_polling_interval = nil
+          next_polling_interval = DEFAULT_TARGET_POLLING_INTERVAL_SECONDS
+
+          @cache_lock.synchronize do
+            @rule_appliers.each_with_index do |rule, index|
+              target = target_documents[rule.sampling_rule.rule_name]
+              if target
+                @rule_appliers[index] = rule.with_target(target)
+                min_polling_interval = target['Interval'] if target['Interval'] && (min_polling_interval.nil? || min_polling_interval > target['Interval'])
+              else
+                OpenTelemetry.logger.debug('Invalid sampling target: missing rule name')
+              end
+            end
+
+            next_polling_interval = min_polling_interval if min_polling_interval
+
+            refresh_sampling_rules = last_rule_modification * 1000 > @last_updated_epoch_millis
+            return [refresh_sampling_rules, next_polling_interval]
+          end
+        end
+
         private
 
         def sort_rules_by_priority
