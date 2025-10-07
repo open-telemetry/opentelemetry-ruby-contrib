@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.27.1 / 2025-10-07
+
+* FIXED: Unify rack middleware_args
+
+### v0.27.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.26.0 / 2025-08-19
+
+* ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility for Rack integration [#1594](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1594)
+
 ### v0.25.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
@@ -37,13 +49,13 @@
 ### v0.23.0 / 2023-06-05
 
 * ADDED: Use Rack Middleware Helper
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.22.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.21.5 / 2023-02-13
 
@@ -59,8 +71,8 @@
 
 ### v0.21.2 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.21.1 / 2022-11-16
 
@@ -68,21 +80,21 @@
 
 ### v0.21.0 / 2022-10-12
 
-* ADDED: Use rack middleware in sinatra middleware 
-* FIXED: Add exceptions to sinatra spans. 
+* ADDED: Use rack middleware in sinatra middleware
+* FIXED: Add exceptions to sinatra spans.
 
 ### v0.20.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.19.4 / 2022-05-02
 
-* FIXED: Update server instrumentation to not reflect 400 status as error 
+* FIXED: Update server instrumentation to not reflect 400 status as error
 
 ### v0.19.3 / 2021-12-01
 
-* FIXED: Sinatra to stop using api env getter 
+* FIXED: Sinatra to stop using api env getter
 
 ### v0.19.2 / 2021-09-29
 
@@ -90,13 +102,13 @@
 
 ### v0.19.1 / 2021-08-12
 
-* DOCS: Update docs to rely more on environment variable configuration 
+* DOCS: Update docs to rely more on environment variable configuration
 
 ### v0.19.0 / 2021-06-23
 
-* BREAKING CHANGE: Total order constraint on span.status= 
+* BREAKING CHANGE: Total order constraint on span.status=
 
-* FIXED: Total order constraint on span.status= 
+* FIXED: Total order constraint on span.status=
 
 ### v0.18.0 / 2021-05-21
 

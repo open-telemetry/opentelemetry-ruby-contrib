@@ -198,7 +198,7 @@ services:
       - postgres_socket:/var/run/postgresql
 
   redis:
-    image: bitnami/redis:6.2
+    image: bitnamilegacy/redis:6.2
     environment:
       - REDIS_PASSWORD=passw0rd
     volumes:

@@ -25,16 +25,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
 
-  spec.add_dependency 'opentelemetry-api', '~> 1.0'
-  spec.add_dependency 'opentelemetry-instrumentation-action_mailer', '~> 0.4.0'
-  spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.12.0'
-  spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.9.0'
-  spec.add_dependency 'opentelemetry-instrumentation-active_job', '~> 0.8.0'
-  spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.9.0'
-  spec.add_dependency 'opentelemetry-instrumentation-active_storage', '~> 0.1.0'
-  spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.8.0'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.23.0'
-  spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.22.0'
+  spec.add_dependency 'opentelemetry-instrumentation-action_mailer', '~> 0.4'
+  spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.13'
+  spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.9'
+  spec.add_dependency 'opentelemetry-instrumentation-active_job', '~> 0.8'
+  spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.9'
+  spec.add_dependency 'opentelemetry-instrumentation-active_storage', '~> 0.1'
+  spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.8'
+  spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.22'
 
   spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/rails' if spec.respond_to?(:metadata)
 

@@ -9,6 +9,7 @@ AllCops:
     - "**/example/*"
     - "bin/instrumentation_generator"
     - "**/**/vendor/bundle/**/*"
+    - "**/proto/**"
 Bundler/OrderedGems:
   Enabled: false
 Gemspec/DevelopmentDependencies:

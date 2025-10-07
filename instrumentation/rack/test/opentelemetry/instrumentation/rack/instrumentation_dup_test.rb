@@ -12,6 +12,8 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
   let(:config) { {} }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
+
     # simulate a fresh install:
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.config.clear
@@ -47,7 +49,7 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
     end
   end
 
-  describe '#middleware_args' do
+  describe '#middleware_args_old' do
     before do
       instrumentation.install(config)
     end
@@ -56,9 +58,9 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
       let(:config) { Hash(use_rack_events: true) }
 
       it 'instantiates a custom event handler' do
-        args = instrumentation.middleware_args
+        args = instrumentation.middleware_args_dup
         _(args[0]).must_equal Rack::Events
-        _(args[1][0]).must_be_instance_of OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler
+        _(args[1][0]).must_be_instance_of OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler
       end
     end
 
@@ -66,8 +68,8 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
       let(:config) { Hash(use_rack_events: false) }
 
       it 'instantiates a custom middleware' do
-        args = instrumentation.middleware_args
-        _(args).must_equal [OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware]
+        args = instrumentation.middleware_args_dup
+        _(args).must_equal [OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::TracerMiddleware]
       end
     end
   end
