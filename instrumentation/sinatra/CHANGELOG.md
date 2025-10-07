@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.27.1 / 2025-10-07
+
+* FIXED: Unify rack middleware_args
+
 ### v0.27.0 / 2025-09-30
 
 * ADDED: Bump minimum API Version to 1.7
