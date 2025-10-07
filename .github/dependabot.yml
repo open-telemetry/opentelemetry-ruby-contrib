@@ -6,7 +6,6 @@ updates:
     schedule:
       interval: daily
   - package-ecosystem: bundler
-    directories:
-      - "**/*"
+    directories: "**/*"
     schedule:
       interval: weekly
