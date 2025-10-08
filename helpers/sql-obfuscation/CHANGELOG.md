@@ -6,6 +6,12 @@
 * **ACTION REQUIRED:** No action is needed unless you use this gem directly. If you use this gem directly, update your `Gemfile` to use `gem 'opentelemetry-helpers-sql-processor'` instead.
 * **SUPPORT ENDING:** `opentelemetry-helpers-sql-obfuscation` will no longer receive updates.
 
+### v0.4.0 / 2025-10-08
+
+* BREAKING CHANGE: Deprecate sql-obfuscation gem
+
+* ADDED: Deprecate sql-obfuscation gem
+
 ### v0.3.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
