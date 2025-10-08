@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Mongo
-      VERSION = '0.23.0'
+      VERSION = '0.24.1'
     end
   end
 end

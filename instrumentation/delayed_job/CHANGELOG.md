@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+### v0.24.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.24.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.23.0 / 2025-01-16
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1

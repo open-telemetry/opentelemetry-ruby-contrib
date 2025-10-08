@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-rake
 
+### v0.4.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.4.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.3.1 / 2025-06-03
 
 * FIXED: Handle force_flush for rake task with arguments

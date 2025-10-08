@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-xray
 
+### v0.25.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.24.0 / 2025-05-06
 
 * ADDED: Contribute xray lambda propagator

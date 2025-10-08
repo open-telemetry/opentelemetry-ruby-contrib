@@ -1,5 +1,21 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.28.2 / 2025-10-07
+
+* FIXED: Unify rack middleware_args
+
+### v0.28.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.28.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.27.1 / 2025-09-16
+
+* DOCS: Typo in Rack::Instrumentation usage example of middleware_args
+
 ### v0.27.0 / 2025-08-19
 
 * ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility [#1594](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1594)

@@ -212,7 +212,7 @@ jobs:
           build: true
     services:
       redis:
-        image: bitnami/redis:6.2
+        image: bitnamilegacy/redis:6.2
         ports:
           - 6379:6379
         options: >-

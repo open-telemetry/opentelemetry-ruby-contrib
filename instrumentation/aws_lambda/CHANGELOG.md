@@ -1,5 +1,19 @@
 # Release History: opentelemetry-instrumentation-aws_lambda
 
+### v0.5.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.5.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.4.0 / 2025-09-18
+
+* BREAKING CHANGE: Check if span has the attributes method to avoid internal error
+
+* FIXED: Check if span has the attributes method to avoid internal error
+
 ### v0.3.0 / 2025-02-04
 
 * ADDED: AWS Lambda programmatic wrap

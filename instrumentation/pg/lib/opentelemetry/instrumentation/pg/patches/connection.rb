@@ -15,7 +15,7 @@ module OpenTelemetry
         # Module to prepend to PG::Connection for instrumentation
         module Connection # rubocop:disable Metrics/ModuleLength
           # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
-          TABLE_NAME = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE(?:\s+IF\s+EXISTS)?)\s+["]?([\w\.]+)["]?/i
+          TABLE_NAME = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE(?:\s+IF\s+EXISTS)?)\s+"?([\w\.]+)"?/i
 
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args, &block|

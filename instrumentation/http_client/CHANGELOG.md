@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-http_client
 
+### v0.25.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.25.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.24.0 / 2025-08-13
 
 * ADDED: Add HTTPClient `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1588](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1588)

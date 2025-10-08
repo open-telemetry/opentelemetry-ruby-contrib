@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.63.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.63.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.62.0 / 2025-09-25
+
+* ADDED: Trilogy: introduce record_exception setting
+
 ### v0.61.1 / 2025-04-16
 
 * refactor: Use SQL helpers for context attributes #1271
