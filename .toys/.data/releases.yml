@@ -39,7 +39,11 @@ gems:
     version_constant: [OpenTelemetry, Instrumentation, ActiveStorage, VERSION]
 
   - name: opentelemetry-helpers-sql
-    directory: helpers/sql
+    # we append a slash here to avoid the naive substring start_with? directory-matching condition in underlying toys gem
+    # which casues helpers/sql to incorrectly match when changes occur in helpers/sql-processor or helpers/sql-obfuscation
+    # https://github.com/dazuma/toys/blob/17ed449da8299f272b834470ff6b279a59e8070b/.toys/release/.lib/release_utils.rb#L436
+    # https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1727
+    directory: helpers/sql/
     version_constant: [OpenTelemetry, Helpers, Sql, VERSION]
 
   - name: opentelemetry-instrumentation-gruf
@@ -130,7 +134,11 @@ gems:
     version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]
 
   - name: opentelemetry-instrumentation-http
-    directory: instrumentation/http
+    # we append a slash here to avoid the naive substring start_with? directory-matching condition in underlying toys gem
+    # which casues instrumentation/http to incorrectly match when changes occur in instrumentation/httpx
+    # https://github.com/dazuma/toys/blob/17ed449da8299f272b834470ff6b279a59e8070b/.toys/release/.lib/release_utils.rb#L436
+    # https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1512
+    directory: instrumentation/http/
     version_constant: [OpenTelemetry, Instrumentation, HTTP, VERSION]
 
   - name: opentelemetry-instrumentation-graphql
