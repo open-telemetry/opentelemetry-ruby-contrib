@@ -201,22 +201,15 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
     end
 
     describe 'context detachment with non-recording spans' do
-      before do
-        @original_sampler = OpenTelemetry.tracer_provider.sampler
-        OpenTelemetry.tracer_provider.sampler = OpenTelemetry::SDK::Trace::Samplers::ALWAYS_OFF
-      end
-
-      after do
-        OpenTelemetry.tracer_provider.sampler = @original_sampler
-      end
-
       it 'detaches context when span is not recorded' do
-        initial_context = OpenTelemetry::Context.current
-        Excon.get('http://example.com/success')
-        final_context = OpenTelemetry::Context.current
+        with_sampler(OpenTelemetry::SDK::Trace::Samplers::ALWAYS_OFF) do
+          initial_context = OpenTelemetry::Context.current
+          Excon.get('http://example.com/success')
+          final_context = OpenTelemetry::Context.current
 
-        _(final_context).must_equal initial_context
-        _(exporter.finished_spans).must_be_empty
+          _(final_context).must_equal initial_context
+          _(exporter.finished_spans).must_be_empty
+        end
       end
     end
   end
