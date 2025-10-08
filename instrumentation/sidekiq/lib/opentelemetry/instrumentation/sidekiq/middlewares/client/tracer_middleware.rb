@@ -25,7 +25,7 @@ module OpenTelemetry
               attributes[SemanticConventions::Trace::PEER_SERVICE] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
 
               scheduled_at = job['at']
-              op = scheduled_at.nil? ? "publish" : "scheduled"
+              op = scheduled_at.nil? ? 'publish' : 'scheduled'
 
               span_name = case instrumentation_config[:span_naming]
                           when :job_class then "#{job['wrapped']&.to_s || job['class']} #{op}"
