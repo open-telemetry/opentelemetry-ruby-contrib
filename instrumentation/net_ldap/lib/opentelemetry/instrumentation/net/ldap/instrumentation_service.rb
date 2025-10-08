@@ -26,14 +26,16 @@ module OpenTelemetry
 
           def instrument(event, payload)
             attributes = {
-              'ldap.auth' => auth.except(:password).to_json,
+              'ldap.auth.method' => auth[:method].to_s,
+              'ldap.auth.username' => auth[:username].to_s,
               'ldap.tree.base' => base,
-              'ldap.encryption' => encryption.to_json,
               'ldap.request.message' => payload.to_json,
               OpenTelemetry::SemConv::SERVER::SERVER_ADDRESS => host || hosts,
               OpenTelemetry::SemConv::SERVER::SERVER_PORT => port,
               OpenTelemetry::SemConv::Incubating::PEER::PEER_SERVICE => instrumentation_config[:peer_service],
-              OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_NAME => 'ldap'
+              OpenTelemetry::SemConv::NETWORK::NETWORK_TRANSPORT => 'tcp',
+              OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_NAME => 'ldap',
+              OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_VERSION => ::Net::LDAP::Connection::LdapVersion
             }
             attributes.delete_if { |_key, value| value.nil? }
 
