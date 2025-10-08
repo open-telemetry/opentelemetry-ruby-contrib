@@ -6,16 +6,16 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/helpers/sql_obfuscation/version'
+require 'opentelemetry/helpers/sql_processor/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-helpers-sql-obfuscation'
-  spec.version     = OpenTelemetry::Helpers::SqlObfuscation::VERSION
+  spec.name        = 'opentelemetry-helpers-sql-processor'
+  spec.version     = OpenTelemetry::Helpers::SqlProcessor::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'This gem is deprecated and no longer maintained. It has been replaced by opentelemetry-helpers-sql-processor.'
-  spec.description = 'This gem is deprecated and no longer maintained. It has been replaced by opentelemetry-helpers-sql-processor.'
+  spec.summary     = 'SQL Processing Instrumentation Helpers for the OpenTelemetry framework'
+  spec.description = 'SQL Processing Instrumentation Helpers for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/helpers/sql-obfuscation'
+    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/helpers/sql-processor'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
     spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end

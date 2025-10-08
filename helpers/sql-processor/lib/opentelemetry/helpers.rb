@@ -4,10 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/helpers/sql_obfuscation'
+
 module OpenTelemetry
+  # The helpers module contains functionality shared across multiple
+  # instrumentation libraries
   module Helpers
-    module SqlObfuscation
-      VERSION = '0.4.0'
-    end
   end
 end

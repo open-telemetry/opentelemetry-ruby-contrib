@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Helpers
-    module SqlObfuscation
-      VERSION = '0.4.0'
+    module SqlProcessor
+      VERSION = '0.1.0'
     end
   end
 end
