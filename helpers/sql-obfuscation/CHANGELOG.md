@@ -1,8 +1,10 @@
 # Release History: opentelemetry-helpers-sql-obfuscation
 
-### Deprecation Notice / 2025-10-13
+### v0.4.0 / 2025-10-08
 
-* **DEPRECATED:** This gem, `opentelemetry-helpers-sql-obfuscation`, has been replaced by `opentelemetry-helpers-sql-processor`. This is the final release and serves as a transitional package. 
+## Deprecation Notice
+
+* **DEPRECATED:** This gem, `opentelemetry-helpers-sql-obfuscation`, has been replaced by `opentelemetry-helpers-sql-processor`. This is the final release and serves as a transitional package.
 * **ACTION REQUIRED:** No action is needed unless you use this gem directly. If you use this gem directly, update your `Gemfile` to use `gem 'opentelemetry-helpers-sql-processor'` instead.
 * **SUPPORT ENDING:** `opentelemetry-helpers-sql-obfuscation` will no longer receive updates.
 
