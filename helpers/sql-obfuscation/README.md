@@ -1,8 +1,8 @@
 # Deprecation Notice
 
-**⚠️ This gem (`opentelemetry-helpers-sql-obfuscation`) is deprecated and no longer maintained.**
+**This gem (`opentelemetry-helpers-sql-obfuscation`) is deprecated and no longer maintained.**
 
-It has been replace by **`opentelemetry-helpers-sql-processor`**.
+It has been replaced by **`opentelemetry-helpers-sql-processor`**.
 
 All future development, bug fixes, and feature releases will occur in the new gem.
 
