@@ -15,7 +15,7 @@ module OpenTelemetry
   module Propagator
     # Namespace for OpenTelemetry Vitess propagation
     module Vitess
-      VERSION = '0.2.0'
+      VERSION = '0.3.0'
     end
   end
 end

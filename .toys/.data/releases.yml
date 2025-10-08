@@ -30,6 +30,10 @@ commit_lint:
 #  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
+  - name: opentelemetry-instrumentation-anthropic
+    directory: instrumentation/anthropic
+    version_constant: [OpenTelemetry, Instrumentation, Anthropic, VERSION]
+
   - name: opentelemetry-instrumentation-active_storage
     directory: instrumentation/active_storage
     version_constant: [OpenTelemetry, Instrumentation, ActiveStorage, VERSION]
@@ -51,9 +55,22 @@ gems:
     version_rb_path: lib/opentelemetry/helpers/sql_processor/version.rb
     version_constant: [OpenTelemetry, Helpers, SqlProcessor, VERSION]
 
+  - name: opentelemetry-helpers-sql-processor
+    directory: helpers/sql-processor
+    version_rb_path: lib/opentelemetry/helpers/sql_processor/version.rb
+    version_constant: [OpenTelemetry, Helpers, SqlProcessor, VERSION]
+
   - name: opentelemetry-instrumentation-grape
     directory: instrumentation/grape
     version_constant: [OpenTelemetry, Instrumentation, Grape, VERSION]
+
+  - name: opentelemetry-instrumentation-gruf
+    directory: instrumentation/gruf
+    version_constant: [OpenTelemetry, Instrumentation, Gruf, VERSION]
+
+  - name: opentelemetry-instrumentation-logger
+    directory: instrumentation/logger
+    version_constant: [OpenTelemetry, Instrumentation, Logger, VERSION]
 
   - name: opentelemetry-instrumentation-racecar
     directory: instrumentation/racecar

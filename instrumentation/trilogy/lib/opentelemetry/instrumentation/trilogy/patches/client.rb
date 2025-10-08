@@ -19,7 +19,8 @@ module OpenTelemetry
             tracer.in_span(
               'connect',
               attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
-              kind: :client
+              kind: :client,
+              record_exception: config[:record_exception]
             ) do
               super
             end
@@ -29,7 +30,8 @@ module OpenTelemetry
             tracer.in_span(
               'ping',
               attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
-              kind: :client
+              kind: :client,
+              record_exception: config[:record_exception]
             ) do
               super
             end
@@ -48,7 +50,8 @@ module OpenTelemetry
               attributes: client_attributes(sql).merge!(
                 OpenTelemetry::Instrumentation::Trilogy.attributes
               ),
-              kind: :client
+              kind: :client,
+              record_exception: config[:record_exception]
             ) do |_span, context|
               if propagator && sql.frozen?
                 sql = +sql

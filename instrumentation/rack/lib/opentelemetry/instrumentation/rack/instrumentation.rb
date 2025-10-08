@@ -32,23 +32,26 @@ module OpenTelemetry
         # This option is only valid for applications using Rack 2.0 or greater
         option :use_rack_events,          default: true, validate: :boolean
 
+        def middleware_args
+          patch_type = determine_semconv
+          send(:"middleware_args_#{patch_type}")
+        end
+
         # Temporary Helper for Sinatra and ActionPack middleware to use during installation
         #
         # @example Default usage
         #   Rack::Builder.new do
-        #     use *OpenTelemetry::Instrumentation::Rack::Instrumenation.instance.middleware_args
+        #     use *OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.middleware_args
         #     run lambda { |_arg| [200, { 'Content-Type' => 'text/plain' }, body] }
         #   end
         # @return [Array] consisting of a middleware and arguments used in rack builders
-        def middleware_args
+        def middleware_args_old
           if config.fetch(:use_rack_events, false) == true && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler)
             [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler.new]]
           else
             [OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddleware]
           end
         end
-
-        alias middleware_args_old middleware_args
 
         def middleware_args_dup
           if config.fetch(:use_rack_events, false) == true && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler)
