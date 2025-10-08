@@ -8,6 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Anthropic
       module Patches
+        # Patches Anthropic to propagate context when using PooledNetRequester
         module PooledNetRequester
           OTEL_FIBER_KEY = :_otel_pooled_net_requester_context
           private_constant :OTEL_FIBER_KEY
