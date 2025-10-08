@@ -27,7 +27,7 @@ module OpenTelemetry
           def instrument(event, payload)
             attributes = {
               'ldap.auth' => auth.except(:password).to_json,
-              'ldap.base' => base,
+              'ldap.tree.base' => base,
               'ldap.encryption' => encryption.to_json,
               'ldap.request.message' => payload.to_json,
               OpenTelemetry::SemConv::SERVER::SERVER_ADDRESS => host || hosts,
