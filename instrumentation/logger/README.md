@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/logger.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/logger/example/logger.rb)
+Example usage can be [found in the `./example/logger.rb` file](example/logger.rb).
 
 ## Development
 
