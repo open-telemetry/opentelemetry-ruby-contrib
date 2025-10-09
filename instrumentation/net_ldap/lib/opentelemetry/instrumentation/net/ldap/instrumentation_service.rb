@@ -39,10 +39,11 @@ module OpenTelemetry
             }
             attributes.delete_if { |_key, value| value.nil? }
 
+            span_name, span_kind = event.split('.').then { |s| [s.first, s.last == 'net_ldap_connection' ? :internal : :client] }
             tracer.in_span(
-              event,
+              "LDAP #{span_name}",
               attributes: AttributeMapper.map(attributes),
-              kind: :client
+              kind: span_kind
             ) do |span|
               yield(payload).tap do |response|
                 annotate_span_with_response(span, response) if response

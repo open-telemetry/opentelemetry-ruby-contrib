@@ -75,7 +75,8 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         assert ldap.bind
 
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'bind.net_ldap'
+        _(span.name).must_equal 'LDAP bind'
+        _(span.kind).must_equal :client
         _(span.attributes['ldap.auth.username']).must_equal 'test_user'
         _(span.attributes['ldap.auth.method']).must_equal 'simple'
         _(span.attributes.values).wont_include 'test_password'
@@ -97,7 +98,8 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         assert ldap.search(filter: '(uid=user1)')
 
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'search.net_ldap'
+        _(span.name).must_equal 'LDAP search'
+        _(span.kind).must_equal :client
         _(span.attributes['ldap.auth.username']).must_equal 'test_user'
         _(span.attributes['ldap.auth.method']).must_equal 'simple'
         _(span.attributes.values).wont_include 'test_password'
@@ -122,7 +124,8 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         end
 
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'add.net_ldap'
+        _(span.name).must_equal 'LDAP add'
+        _(span.kind).must_equal :client
         _(span.attributes['error.message']).must_equal 'Connection timed out - user specified timeout'
         _(span.attributes['error.type']).must_equal 'Net::LDAP::Error'
         _(span.attributes['ldap.auth.username']).must_equal 'test_user'
@@ -148,7 +151,8 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         assert ldap.modify(dn: 'CN=test,OU=test,DC=com', operations: ops)
 
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'modify.net_ldap'
+        _(span.name).must_equal 'LDAP modify'
+        _(span.kind).must_equal :client
         _(span.attributes['ldap.auth.username']).must_equal 'test_user'
         _(span.attributes['ldap.auth.method']).must_equal 'simple'
         _(span.attributes.values).wont_include 'test_password'
