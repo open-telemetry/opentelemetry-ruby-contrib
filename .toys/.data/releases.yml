@@ -68,6 +68,14 @@ gems:
     directory: instrumentation/grape
     version_constant: [OpenTelemetry, Instrumentation, Grape, VERSION]
 
+  - name: opentelemetry-instrumentation-gruf
+    directory: instrumentation/gruf
+    version_constant: [OpenTelemetry, Instrumentation, Gruf, VERSION]
+
+  - name: opentelemetry-instrumentation-logger
+    directory: instrumentation/logger
+    version_constant: [OpenTelemetry, Instrumentation, Logger, VERSION]
+
   - name: opentelemetry-instrumentation-racecar
     directory: instrumentation/racecar
     version_constant: [OpenTelemetry, Instrumentation, Racecar, VERSION]
