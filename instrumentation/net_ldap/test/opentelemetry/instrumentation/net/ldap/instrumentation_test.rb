@@ -80,6 +80,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.auth.username']).must_equal 'test_user'
         _(span.attributes['ldap.auth.method']).must_equal 'simple'
         _(span.attributes.values).wont_include 'test_password'
+        _(span.attributes['ldap.operation.type']).must_equal 'bind'
         _(span.attributes['ldap.request.message']).must_equal '{}'
         _(span.attributes['ldap.response.status_code']).must_equal 0
         _(span.attributes['ldap.tree.base']).must_equal 'dc=com'
@@ -103,6 +104,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.auth.username']).must_equal 'test_user'
         _(span.attributes['ldap.auth.method']).must_equal 'simple'
         _(span.attributes.values).wont_include 'test_password'
+        _(span.attributes['ldap.operation.type']).must_equal 'search'
         _(span.attributes['ldap.request.message']).must_equal '{"filter":"(uid=user1)","paged_searches_supported":false,"base":"dc=com"}'
         _(span.attributes['ldap.response.status_code']).must_equal 0
         _(span.attributes['ldap.tree.base']).must_equal 'dc=com'
@@ -131,6 +133,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.auth.username']).must_equal 'test_user'
         _(span.attributes['ldap.auth.method']).must_equal 'simple'
         _(span.attributes.values).wont_include 'test_password'
+        _(span.attributes['ldap.operation.type']).must_equal 'add'
         _(span.attributes['ldap.request.message']).must_equal '{}'
         _(span.attributes['ldap.tree.base']).must_equal 'dc=com'
         _(span.attributes['network.protocol.name']).must_equal 'ldap'
@@ -156,6 +159,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.auth.username']).must_equal 'test_user'
         _(span.attributes['ldap.auth.method']).must_equal 'simple'
         _(span.attributes.values).wont_include 'test_password'
+        _(span.attributes['ldap.operation.type']).must_equal 'modify'
         _(span.attributes['ldap.request.message']).must_equal '{"dn":"CN=test,OU=test,DC=com","operations":[["replace","unicodePwd",["[REDACTED]"]]]}'
         _(span.attributes['ldap.response.status_code']).must_equal 0
         _(span.attributes['ldap.tree.base']).must_equal 'dc=com'

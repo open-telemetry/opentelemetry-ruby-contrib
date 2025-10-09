@@ -25,11 +25,14 @@ module OpenTelemetry
           end
 
           def instrument(event, payload)
+            operation_type, span_kind = event.split('.').then { |s| [s.first, s.last == 'net_ldap_connection' ? :internal : :client] }
+
             attributes = {
               'ldap.auth.method' => auth[:method].to_s,
               'ldap.auth.username' => auth[:username].to_s,
-              'ldap.tree.base' => base,
+              'ldap.operation.type' => operation_type,
               'ldap.request.message' => payload.to_json,
+              'ldap.tree.base' => base,
               OpenTelemetry::SemConv::SERVER::SERVER_ADDRESS => host || hosts,
               OpenTelemetry::SemConv::SERVER::SERVER_PORT => port,
               OpenTelemetry::SemConv::Incubating::PEER::PEER_SERVICE => instrumentation_config[:peer_service],
@@ -39,9 +42,8 @@ module OpenTelemetry
             }
             attributes.delete_if { |_key, value| value.nil? }
 
-            span_name, span_kind = event.split('.').then { |s| [s.first, s.last == 'net_ldap_connection' ? :internal : :client] }
             tracer.in_span(
-              "LDAP #{span_name}",
+              "LDAP #{operation_type}",
               attributes: AttributeMapper.map(attributes),
               kind: span_kind
             ) do |span|
