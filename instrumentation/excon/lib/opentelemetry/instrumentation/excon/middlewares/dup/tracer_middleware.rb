@@ -84,7 +84,8 @@ module OpenTelemetry
 
             def handle_response(datum)
               datum.delete(:otel_span)&.tap do |span|
-                OpenTelemetry::Context.detach(datum.delete(:otel_token)) if datum.include?(:otel_token)
+                token = datum.delete(:otel_token)
+                OpenTelemetry::Context.detach(token) if token
                 return unless span.recording?
 
                 if datum.key?(:response)
