@@ -33,7 +33,7 @@ module OpenTelemetry
           ::ActiveRecord.version
         end
 
-        def require_dependencies(config)
+        def require_dependencies
           require 'active_support/lazy_load_hooks'
           require_relative 'patches/querying'
           require_relative 'patches/persistence'
