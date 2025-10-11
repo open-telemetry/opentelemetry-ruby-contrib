@@ -12,7 +12,7 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('7')
 
         install do |config|
-          require_dependencies(config)
+          require_dependencies
           patch_activerecord
           subscribe_to_notifications if config[:enable_notifications_instrumentation]
         end
