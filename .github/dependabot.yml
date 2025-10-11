@@ -5,10 +5,9 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-  # Update all dependencies - scans recursively through all subdirectories
+  # Update all dependencies - processes from root to handle path dependencies correctly
   - package-ecosystem: bundler
-    directories:
-      - "**/*"
+    directory: "/"
     schedule:
       interval: weekly
     ignore:
