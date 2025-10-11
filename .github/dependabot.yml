@@ -5,11 +5,26 @@ updates:
     directory: "/"
     schedule:
       interval: daily
+  # Update all dependencies - scans recursively through all subdirectories
   - package-ecosystem: bundler
-    directory: "/"
+    directories:
+      - "**/*"
     schedule:
       interval: weekly
+    ignore:
+      # Ignore internal instrumentation interdependencies managed via local paths in Gemfiles
+      - dependency-name: "opentelemetry-instrumentation-*"
+      - dependency-name: "opentelemetry-helpers-*"
+      - dependency-name: "opentelemetry-processor-*"
+      - dependency-name: "opentelemetry-propagator-*"
+      - dependency-name: "opentelemetry-sampler-*"
+      - dependency-name: "opentelemetry-resource-detector-*"
     groups:
-      all-gems:
+      production-dependencies:
+        dependency-type: "production"
         patterns:
-          - "**/Gemfile"
+          - "*"
+      development-dependencies:
+        dependency-type: "development"
+        patterns:
+          - "*"
