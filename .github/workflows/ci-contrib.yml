@@ -26,7 +26,6 @@ jobs:
         gem:
           - sql
           - mysql
-          - sql-obfuscation
           - sql-processor
         os:
           - ubuntu-latest
