@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.24.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.24.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.23.1 / 2025-09-02
+
+* FIXED: Improve Ethon exception handling
+
 ### v0.23.0 / 2025-08-13
 
 * ADDED: Add Ethon `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1561](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1561)
