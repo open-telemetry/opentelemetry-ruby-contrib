@@ -193,6 +193,10 @@ gems:
     directory: instrumentation/faraday
     version_constant: [OpenTelemetry, Instrumentation, Faraday, VERSION]
 
+  - name: opentelemetry-instrumentation-grpc
+    directory: instrumentation/grpc
+    version_constant: [OpenTelemetry, Instrumentation, Grpc, VERSION]
+
   - name: opentelemetry-instrumentation-mongo
     directory: instrumentation/mongo
     version_constant: [OpenTelemetry, Instrumentation, Mongo, VERSION]
@@ -290,6 +294,6 @@ gems:
     version_rb_path: lib/opentelemetry/resource/detector/google_cloud_platform/version.rb
     version_constant: [OpenTelemetry, Resource, Detector, GoogleCloudPlatform, VERSION]
 
-  - name: opentelemetry-instrumentation-grpc
-    directory: instrumentation/grpc
-    version_constant: [OpenTelemetry, Instrumentation, Grpc, VERSION]
+  - name: opentelemetry-sampler-xray
+    directory: sampler/xray
+    version_constant: [OpenTelemetry, Sampler, XRay, VERSION]
