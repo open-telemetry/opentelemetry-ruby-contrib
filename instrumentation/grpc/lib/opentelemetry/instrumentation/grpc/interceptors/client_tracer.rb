@@ -10,20 +10,20 @@ module OpenTelemetry
       module Interceptors
         # ClientTracer is a gRPC client interceptor which instrument gRPC calls with OpenTelemetry tracing
         class ClientTracer < ::GRPC::ClientInterceptor
-          def request_response(request: nil, call: nil, method: nil, metadata: nil, &blk)
-            call(type: 'request_response', requests: [request], call: call, method: method, metadata: metadata, &blk)
+          def request_response(request: nil, call: nil, method: nil, metadata: nil, &)
+            call(type: 'request_response', requests: [request], call: call, method: method, metadata: metadata, &)
           end
 
-          def client_streamer(requests: nil, call: nil, method: nil, metadata: nil, &blk)
-            call(type: 'client_streamer', requests: requests, call: call, method: method, metadata: metadata, &blk)
+          def client_streamer(requests: nil, call: nil, method: nil, metadata: nil, &)
+            call(type: 'client_streamer', requests: requests, call: call, method: method, metadata: metadata, &)
           end
 
-          def server_streamer(request: nil, call: nil, method: nil, metadata: nil, &blk)
-            call(type: 'server_streamer', requests: [request], call: call, method: method, metadata: metadata, &blk)
+          def server_streamer(request: nil, call: nil, method: nil, metadata: nil, &)
+            call(type: 'server_streamer', requests: [request], call: call, method: method, metadata: metadata, &)
           end
 
-          def bidi_streamer(requests: nil, call: nil, method: nil, metadata: nil, &blk)
-            call(type: 'client_streamer', requests: requests, call: call, method: method, metadata: metadata, &blk)
+          def bidi_streamer(requests: nil, call: nil, method: nil, metadata: nil, &)
+            call(type: 'client_streamer', requests: requests, call: call, method: method, metadata: metadata, &)
           end
 
           private
