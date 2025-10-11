@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.9.2 / 2025-10-07
+
+* DOCS: Enhance README
+
 ### v0.9.1 / 2025-09-30
 
 * FIXED: Min OTel Ruby API 1.7

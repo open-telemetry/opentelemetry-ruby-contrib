@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.28.2 / 2025-10-07
+
+* FIXED: Unify rack middleware_args
+
 ### v0.28.1 / 2025-09-30
 
 * FIXED: Min OTel Ruby API 1.7

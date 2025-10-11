@@ -50,6 +50,7 @@ jobs:
           - httpx
           - koala
           - lmdb
+          - logger
           - net_http
           - rack
           - rails
