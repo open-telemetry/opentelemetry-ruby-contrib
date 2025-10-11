@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.85.0 / 2025-10-11
+
+* ADDED: Ruby Logger instrumentation
+
 ### v0.84.0 / 2025-09-27
 
 * ADDED: Minimum version of opentelemetry-api v1.7.0
