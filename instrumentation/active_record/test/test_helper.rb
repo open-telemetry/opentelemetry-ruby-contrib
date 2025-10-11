@@ -30,9 +30,13 @@ end
 ActiveRecord::Base.logger = logger
 ActiveRecord::Migration.verbose = false
 
+# Configure global async query executor
+ActiveRecord.async_query_executor = :global_thread_pool
+
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',
-  database: 'db/development.sqlite3'
+  database: 'db/development.sqlite3',
+  pool: 5
 )
 
 # Create ActiveRecord models
@@ -81,7 +85,7 @@ end
 begin
   CreateUserTable.migrate(:up)
 rescue ActiveRecord::StatementInvalid => e
-  raise e unless e.message == "Mysql2::Error: Table 'users' already exists"
+  raise e unless e.message.include?('already exists')
 end
 
 Minitest.after_run { CreateUserTable.migrate(:down) }

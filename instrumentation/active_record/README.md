@@ -30,6 +30,42 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+## Configuration Options
+
+The instrumentation supports the following configuration options:
+
+- **enable_notifications_instrumentation:** Enables instrumentation of SQL queries using ActiveSupport notifications. When enabled, generates spans for each SQL query with additional metadata including operation names, async status, and caching information.
+  - Default: `false`
+
+## Active Support Instrumentation
+
+This instrumentation can optionally leverage `ActiveSupport::Notifications` to provide detailed SQL query instrumentation. When enabled via the `enable_notifications_instrumentation` configuration option, it subscribes to `sql.active_record` events to create spans for individual SQL queries.
+
+### Enabling SQL Notifications
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::ActiveRecord',
+        enable_notifications_instrumentation: true
+end
+```
+
+See the table below for details of what [Rails ActiveRecord Events](https://guides.rubyonrails.org/active_support_instrumentation.html#active-record) are recorded by this instrumentation:
+
+| Event Name | Creates Span? | Notes |
+| - | - | - |
+| `sql.active_record` | :white_check_mark: | Creates an `internal` span for each SQL query with operation name, async status, and caching information |
+
+### SQL Query Spans
+
+When notifications instrumentation is enabled, each SQL query executed through ActiveRecord generates a span with:
+
+- **Span name**: Derived from the query operation (e.g., `"User Create"`, `"Account Load"`, `"Post Update"`)
+- **Span kind**: `internal`
+- **Attributes**:
+  - `db.active_record.async` (boolean): Present and set to `true` for asynchronous queries
+  - `db.active_record.cached` (boolean): Present and set to `true` for cached query results
+
 ## Examples
 
 Example usage can be seen in the [`./example/trace_demonstration.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/active_record/example/trace_demonstration.rb)

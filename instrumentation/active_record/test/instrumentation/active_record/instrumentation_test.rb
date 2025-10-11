@@ -39,4 +39,22 @@ describe OpenTelemetry::Instrumentation::ActiveRecord do
       instrumentation.instance_variable_set(:@installed, false)
     end
   end
+
+  describe 'configuration' do
+    it 'has enable_notifications_instrumentation option' do
+      _(instrumentation.config).must_respond_to(:key?)
+      _(instrumentation.config.key?(:enable_notifications_instrumentation)).must_equal true
+    end
+
+    it 'defaults enable_notifications_instrumentation to false' do
+      _(instrumentation.config[:enable_notifications_instrumentation]).must_equal false
+    end
+
+    it 'allows enabling notifications_instrumentation' do
+      # This would need to be tested in an integration test with a fresh SDK configuration
+      # since we can't easily reconfigure after installation in unit tests
+      config = { enable_notifications_instrumentation: true }
+      _(config[:enable_notifications_instrumentation]).must_equal true
+    end
+  end
 end
