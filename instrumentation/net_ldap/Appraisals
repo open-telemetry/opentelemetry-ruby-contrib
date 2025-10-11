@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+%w[0.17.1 0.18.0 0.19.0].each do |version|
+  appraise "net-ldap-#{version}" do
+    gem 'net-ldap', "~> #{version}"
+  end
+end
+
+appraise 'net-ldap-latest' do
+  gem 'net-ldap'
+end
