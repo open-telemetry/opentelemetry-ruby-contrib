@@ -1,4 +1,12 @@
-# OpenTelemetry Instrumentation Helpers: SQL Obfuscation
+# Deprecation Notice
+
+**This gem (`opentelemetry-helpers-sql-obfuscation`) is deprecated and no longer maintained.**
+
+It has been replaced by **`opentelemetry-helpers-sql-processor`**.
+
+All future development, bug fixes, and feature releases will occur in the new gem.
+
+## OpenTelemetry Instrumentation Helpers: SQL Obfuscation
 
 This Ruby gem contains logic to obfuscate SQL. It's intended for use by by gem authors instrumenting SQL adapter libraries, such as mysql2, pg, and trilogy.
 
