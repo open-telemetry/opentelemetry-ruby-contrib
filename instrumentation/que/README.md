@@ -10,7 +10,7 @@ Install the gem using:
 gem install opentelemetry-instrumentation-que
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-que` to your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-que` in your `Gemfile`.
 
 ## Usage
 
@@ -49,9 +49,9 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-If you wish the job will be executed in the same logical trace as a direct
-child of the span that enqueued the job then set propagation_style to `child`. By
-default the jobs are just linked together.
+If you wish the job to be executed in the same logical trace as a direct
+child of the span that enqueued the job, then set propagation_style to `child`. By
+default, the jobs are just linked together.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|

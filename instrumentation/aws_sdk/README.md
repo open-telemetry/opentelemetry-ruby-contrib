@@ -38,8 +38,8 @@ This instrumentation offers the following configuration options:
  to Message Attributes for SQS/SNS messages.
 * `:enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with 
  span kind of `internal` are traced.
-* `:suppress_internal_instrumentation`: **Deprecated**. This configuration has been 
- deprecated in a favor of `:enable_internal_instrumentation`
+* `:suppress_internal_instrumentation`: **Deprecated**. This configuration has been
+ deprecated in favor of `:enable_internal_instrumentation`
 
 ## Integration with SDK V3's Telemetry support
 AWS SDK for Ruby V3 added support for Observability which includes a new configuration, 
