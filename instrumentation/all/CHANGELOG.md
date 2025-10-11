@@ -3,6 +3,7 @@
 ### v0.85.0 / 2025-10-11
 
 * ADDED: Ruby Logger instrumentation
+* BREAKING CHANGE: aws_sdk Suppress internal spans by default
 
 ### v0.84.0 / 2025-09-27
 
