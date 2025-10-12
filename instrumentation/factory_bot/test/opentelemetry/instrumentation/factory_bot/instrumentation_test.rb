@@ -18,11 +18,9 @@ describe OpenTelemetry::Instrumentation::FactoryBot do
 
   before do
     exporter.reset
-
-    # Clean up any existing factory definitions
+    instrumentation.install({})
     FactoryBot.reload
 
-    # Define test factories
     FactoryBot.define do
       factory :user do
         sequence(:name) { |n| "User #{n}" }
@@ -42,7 +40,6 @@ describe OpenTelemetry::Instrumentation::FactoryBot do
   end
 
   after do
-    # Reset instrumentation state for isolation
     instrumentation.instance_variable_set(:@installed, false)
   end
 
@@ -68,29 +65,8 @@ describe OpenTelemetry::Instrumentation::FactoryBot do
     end
   end
 
-  # Strategy tests - FactoryBot.create
-  describe 'FactoryBot.create' do
-    before do
-      instrumentation.install({})
-    end
-
-    it 'creates a span for FactoryBot.create' do
-      # Using build instead of create to avoid needing database in tests
-      FactoryBot.build(:user)
-
-      spans = exporter.finished_spans
-      _(spans).wont_be_empty
-      # For now, just verify instrumentation is working
-      # We'll fix span matching once implementation is done
-    end
-  end
-
   # Strategy tests - FactoryBot.build
   describe 'FactoryBot.build' do
-    before do
-      instrumentation.install({})
-    end
-
     it 'creates a span for FactoryBot.build' do
       FactoryBot.build(:user)
 
@@ -111,14 +87,17 @@ describe OpenTelemetry::Instrumentation::FactoryBot do
       span = exporter.finished_spans.find { |s| s.name.include?('FactoryBot.build') }
       _(span.attributes['factory_bot.factory_name']).must_equal 'user'
     end
+
+    it 'sets factory_bot.traits to empty array when no traits' do
+      FactoryBot.build(:user)
+
+      span = exporter.finished_spans.find { |s| s.name.include?('FactoryBot.build') }
+      _(span.attributes['factory_bot.traits']).must_equal []
+    end
   end
 
   # Strategy tests - FactoryBot.build_stubbed
   describe 'FactoryBot.build_stubbed' do
-    before do
-      instrumentation.install({})
-    end
-
     it 'creates a span for FactoryBot.build_stubbed' do
       FactoryBot.build_stubbed(:user)
 
@@ -139,14 +118,17 @@ describe OpenTelemetry::Instrumentation::FactoryBot do
       span = exporter.finished_spans.find { |s| s.name.include?('FactoryBot.build_stubbed') }
       _(span.attributes['factory_bot.factory_name']).must_equal 'user'
     end
+
+    it 'sets factory_bot.traits to empty array when no traits' do
+      FactoryBot.build_stubbed(:user)
+
+      span = exporter.finished_spans.find { |s| s.name.include?('FactoryBot.build_stubbed') }
+      _(span.attributes['factory_bot.traits']).must_equal []
+    end
   end
 
   # Strategy tests - FactoryBot.attributes_for
   describe 'FactoryBot.attributes_for' do
-    before do
-      instrumentation.install({})
-    end
-
     it 'creates a span for FactoryBot.attributes_for' do
       FactoryBot.attributes_for(:user)
 
@@ -167,41 +149,58 @@ describe OpenTelemetry::Instrumentation::FactoryBot do
       span = exporter.finished_spans.find { |s| s.name.include?('FactoryBot.attributes_for') }
       _(span.attributes['factory_bot.factory_name']).must_equal 'user'
     end
+
+    it 'sets factory_bot.traits to empty array when no traits' do
+      FactoryBot.attributes_for(:user)
+
+      span = exporter.finished_spans.find { |s| s.name.include?('FactoryBot.attributes_for') }
+      _(span.attributes['factory_bot.traits']).must_equal []
+    end
   end
 
   # Batch operation tests
   describe 'FactoryBot.build_list' do
-    before do
-      instrumentation.install({})
-    end
-
     it 'creates spans for each item in FactoryBot.build_list' do
       FactoryBot.build_list(:user, 3)
 
       spans = exporter.finished_spans.select { |s| s.name.include?('FactoryBot.build') }
       _(spans.size).must_equal 3
     end
+
+    it 'sets correct attributes on each span' do
+      FactoryBot.build_list(:user, 3)
+
+      spans = exporter.finished_spans.select { |s| s.name.include?('FactoryBot.build') }
+      spans.each do |span|
+        _(span.attributes['factory_bot.strategy']).must_equal 'build'
+        _(span.attributes['factory_bot.factory_name']).must_equal 'user'
+        _(span.attributes['factory_bot.traits']).must_equal []
+      end
+    end
   end
 
   describe 'FactoryBot.build_pair' do
-    before do
-      instrumentation.install({})
-    end
-
     it 'creates spans for each item in FactoryBot.build_pair' do
       FactoryBot.build_pair(:user)
 
       spans = exporter.finished_spans.select { |s| s.name.include?('FactoryBot.build') }
       _(spans.size).must_equal 2
     end
+
+    it 'sets correct attributes on each span' do
+      FactoryBot.build_pair(:user)
+
+      spans = exporter.finished_spans.select { |s| s.name.include?('FactoryBot.build') }
+      spans.each do |span|
+        _(span.attributes['factory_bot.strategy']).must_equal 'build'
+        _(span.attributes['factory_bot.factory_name']).must_equal 'user'
+        _(span.attributes['factory_bot.traits']).must_equal []
+      end
+    end
   end
 
   # Test multiple factory types
   describe 'multiple factories' do
-    before do
-      instrumentation.install({})
-    end
-
     it 'correctly identifies different factories' do
       FactoryBot.build(:user)
       FactoryBot.build(:admin)
@@ -217,8 +216,6 @@ describe OpenTelemetry::Instrumentation::FactoryBot do
   # Traits tests
   describe 'traits' do
     before do
-      instrumentation.install({})
-
       FactoryBot.define do
         factory :user_with_traits, class: User do
           sequence(:name) { |n| "User #{n}" }
@@ -232,7 +229,14 @@ describe OpenTelemetry::Instrumentation::FactoryBot do
       end
     end
 
-    it 'sets factory_bot.traits as array' do
+    it 'sets factory_bot.traits to empty array when no traits used' do
+      FactoryBot.build(:user_with_traits)
+
+      span = exporter.finished_spans.find { |s| s.name.include?('FactoryBot.build') }
+      _(span.attributes['factory_bot.traits']).must_equal []
+    end
+
+    it 'sets factory_bot.traits as array with multiple traits' do
       FactoryBot.build(:user_with_traits, :premium, :verified)
 
       span = exporter.finished_spans.find { |s| s.name.include?('FactoryBot.build') }
