@@ -213,4 +213,30 @@ describe OpenTelemetry::Instrumentation::FactoryBot do
       _(factory_names).must_include 'admin'
     end
   end
+
+  # Traits tests
+  describe 'traits' do
+    before do
+      instrumentation.install({})
+
+      FactoryBot.define do
+        factory :user_with_traits, class: User do
+          sequence(:name) { |n| "User #{n}" }
+          sequence(:email) { |n| "user#{n}@example.com" }
+
+          trait :premium
+          trait :verified
+
+          initialize_with { new(**attributes) }
+        end
+      end
+    end
+
+    it 'sets factory_bot.traits as array' do
+      FactoryBot.build(:user_with_traits, :premium, :verified)
+
+      span = exporter.finished_spans.find { |s| s.name.include?('FactoryBot.build') }
+      _(span.attributes['factory_bot.traits']).must_equal ['premium', 'verified']
+    end
+  end
 end

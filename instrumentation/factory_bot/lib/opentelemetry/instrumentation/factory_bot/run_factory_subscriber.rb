@@ -28,10 +28,9 @@ module OpenTelemetry
 
           attrs = {
             'factory_bot.strategy' => internal_strategy,
-            'factory_bot.factory_name' => factory_name.to_s
+            'factory_bot.factory_name' => factory_name.to_s,
+            'factory_bot.traits' => traits.map(&:to_s)
           }
-
-          attrs['factory_bot.traits'] = traits.join(',') if traits.any?
 
           span = tracer.start_span(span_name, kind: :internal, attributes: attrs)
           token = OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))
