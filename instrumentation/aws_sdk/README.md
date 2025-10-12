@@ -20,7 +20,7 @@ To install the instrumentation, call `use` with the name of the instrumentation.
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::AwsSdk', {
     inject_messaging_context: true,
-    suppress_internal_instrumentation: true
+	enable_internal_instrumentation: true
   }
 end
 ```
@@ -36,8 +36,10 @@ end
 This instrumentation offers the following configuration options: 
 * `:inject_messaging_context` (default: `false`): When set to `true`, adds context key/value 
  to Message Attributes for SQS/SNS messages.
-* `suppress_internal_instrumentation` (default: `false`): When set to `true`, any spans with 
- span kind of `internal` are suppressed from traces.
+* `:enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with 
+ span kind of `internal` are traced.
+* `:suppress_internal_instrumentation`: **Deprecated**. This configuration has been 
+ deprecated in a favor of `:enable_internal_instrumentation`
 
 ## Integration with SDK V3's Telemetry support
 AWS SDK for Ruby V3 added support for Observability which includes a new configuration, 

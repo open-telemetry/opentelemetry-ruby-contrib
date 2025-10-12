@@ -43,7 +43,11 @@ gems:
     version_constant: [OpenTelemetry, Instrumentation, ActiveStorage, VERSION]
 
   - name: opentelemetry-helpers-sql
-    directory: helpers/sql
+    # we append a slash here to avoid the naive substring start_with? directory-matching condition in underlying toys gem
+    # which causes helpers/sql to incorrectly match when changes occur in helpers/sql-processor or helpers/sql-obfuscation
+    # https://github.com/dazuma/toys/blob/17ed449da8299f272b834470ff6b279a59e8070b/.toys/release/.lib/release_utils.rb#L436
+    # https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1727
+    directory: helpers/sql/
     version_constant: [OpenTelemetry, Helpers, Sql, VERSION]
 
   - name: opentelemetry-instrumentation-gruf
@@ -59,9 +63,22 @@ gems:
     version_rb_path: lib/opentelemetry/helpers/sql_obfuscation/version.rb
     version_constant: [OpenTelemetry, Helpers, SqlObfuscation, VERSION]
 
+  - name: opentelemetry-helpers-sql-processor
+    directory: helpers/sql-processor
+    version_rb_path: lib/opentelemetry/helpers/sql_processor/version.rb
+    version_constant: [OpenTelemetry, Helpers, SqlProcessor, VERSION]
+
   - name: opentelemetry-instrumentation-grape
     directory: instrumentation/grape
     version_constant: [OpenTelemetry, Instrumentation, Grape, VERSION]
+
+  - name: opentelemetry-instrumentation-gruf
+    directory: instrumentation/gruf
+    version_constant: [OpenTelemetry, Instrumentation, Gruf, VERSION]
+
+  - name: opentelemetry-instrumentation-logger
+    directory: instrumentation/logger
+    version_constant: [OpenTelemetry, Instrumentation, Logger, VERSION]
 
   - name: opentelemetry-instrumentation-racecar
     directory: instrumentation/racecar
@@ -129,7 +146,11 @@ gems:
     version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]
 
   - name: opentelemetry-instrumentation-http
-    directory: instrumentation/http
+    # we append a slash here to avoid the naive substring start_with? directory-matching condition in underlying toys gem
+    # which causes instrumentation/http to incorrectly match when changes occur in instrumentation/httpx
+    # https://github.com/dazuma/toys/blob/17ed449da8299f272b834470ff6b279a59e8070b/.toys/release/.lib/release_utils.rb#L436
+    # https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1512
+    directory: instrumentation/http/
     version_constant: [OpenTelemetry, Instrumentation, HTTP, VERSION]
 
   - name: opentelemetry-instrumentation-graphql
@@ -175,6 +196,10 @@ gems:
   - name: opentelemetry-instrumentation-faraday
     directory: instrumentation/faraday
     version_constant: [OpenTelemetry, Instrumentation, Faraday, VERSION]
+
+  - name: opentelemetry-instrumentation-grpc
+    directory: instrumentation/grpc
+    version_constant: [OpenTelemetry, Instrumentation, Grpc, VERSION]
 
   - name: opentelemetry-instrumentation-mongo
     directory: instrumentation/mongo
@@ -273,6 +298,6 @@ gems:
     version_rb_path: lib/opentelemetry/resource/detector/google_cloud_platform/version.rb
     version_constant: [OpenTelemetry, Resource, Detector, GoogleCloudPlatform, VERSION]
 
-  - name: opentelemetry-instrumentation-grpc
-    directory: instrumentation/grpc
-    version_constant: [OpenTelemetry, Instrumentation, Grpc, VERSION]
+  - name: opentelemetry-sampler-xray
+    directory: sampler/xray
+    version_constant: [OpenTelemetry, Sampler, XRay, VERSION]
