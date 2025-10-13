@@ -240,7 +240,7 @@ describe OpenTelemetry::Instrumentation::FactoryBot do
       FactoryBot.build(:user_with_traits, :premium, :verified)
 
       span = exporter.finished_spans.find { |s| s.name.include?('FactoryBot.build') }
-      _(span.attributes['factory_bot.traits']).must_equal ['premium', 'verified']
+      _(span.attributes['factory_bot.traits']).must_equal %w[premium verified]
     end
   end
 end
