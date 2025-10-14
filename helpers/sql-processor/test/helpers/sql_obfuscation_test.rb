@@ -9,11 +9,11 @@
 
 require_relative '../test_helper'
 
-class SqlObfuscationTest < Minitest::Test
+class SqlProcessorTest < Minitest::Test
   def test_named_arg_defaults_obfuscates
     sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
     expected = 'SELECT * from users where users.id = ? and users.email = ?'
-    result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql)
+    result = OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql)
 
     assert_equal(expected, result)
   end
@@ -21,7 +21,7 @@ class SqlObfuscationTest < Minitest::Test
   def test_obfuscation_returns_message_when_limit_is_reached
     sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
     expected = 'SQL not obfuscated, query exceeds 42 characters'
-    result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: 42)
+    result = OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: 42)
 
     assert_equal(expected, result)
   end
@@ -29,7 +29,7 @@ class SqlObfuscationTest < Minitest::Test
   def test_non_utf_8_encoded_string_obfuscates_with_mysql
     sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com\255'"
     expected = 'SELECT * from users where users.id = ? and users.email = ?'
-    result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, adapter: :mysql)
+    result = OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, adapter: :mysql)
 
     assert_equal(expected, result)
   end
@@ -37,7 +37,7 @@ class SqlObfuscationTest < Minitest::Test
   def test_non_utf_8_encoded_string_obfuscates_with_postgres
     sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com\255'"
     expected = 'SELECT * from users where users.id = ? and users.email = ?'
-    result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, adapter: :postgres)
+    result = OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, adapter: :postgres)
 
     assert_equal(expected, result)
   end
@@ -45,7 +45,7 @@ class SqlObfuscationTest < Minitest::Test
   def test_statement_with_emoji_encodes_utf_8_and_obfuscates
     sql = "SELECT * from users where users.id = 1 and users.email = 'test@😄.com'"
     expected = 'SELECT * from users where users.id = ? and users.email = ?'
-    result = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql)
+    result = OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql)
 
     assert_equal(expected, result)
   end
@@ -89,7 +89,7 @@ class SqlObfuscationTest < Minitest::Test
 
     dialects.each do |dialect|
       define_method(:"test_sql_obfuscation_#{name}_#{dialect}") do
-        actual_obfuscated = OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(query, adapter: dialect.to_sym)
+        actual_obfuscated = OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(query, adapter: dialect.to_sym)
         message = build_failure_message(query, dialect, acceptable_outputs, actual_obfuscated)
 
         assert_includes(acceptable_outputs, actual_obfuscated, message)
