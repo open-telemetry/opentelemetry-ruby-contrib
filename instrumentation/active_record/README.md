@@ -63,8 +63,8 @@ When notifications instrumentation is enabled, each SQL query executed through A
 - **Span name**: Derived from the query operation (e.g., `"User Create"`, `"Account Load"`, `"Post Update"`)
 - **Span kind**: `internal`
 - **Attributes**:
-  - `db.active_record.async` (boolean): Present and set to `true` for asynchronous queries
-  - `db.active_record.cached` (boolean): Present and set to `true` for cached query results
+  - `rails.active_record.query.async` (boolean): Present and set to `true` for asynchronous queries
+  - `rails.active_record.query.cached` (boolean): Present and set to `true` for cached query results
 
 ## Examples
 

@@ -18,8 +18,11 @@ module OpenTelemetry
           # @return [Hash] the payload passed as a method argument
           def start(name, id, payload)
             span = tracer.start_span(
-              payload[:name] || 'SQL',
-              kind: :internal
+              name,
+              kind: :internal,
+              attributes: { 'db.operation' => payload[:name] || 'SQL',
+                            'rails.active_record.query.async' => payload[:async] == true,
+                            'rails.active_record.query.cached' => payload[:cached] == true }
             )
             token = OpenTelemetry::Context.attach(
               OpenTelemetry::Trace.context_with_span(span)
@@ -36,13 +39,7 @@ module OpenTelemetry
           # @param id [String] of the event
           # @param payload [Hash] containing SQL execution information
           def finish(name, id, payload)
-            attributes = {
-              'db.active_record.async' => payload[:async] == true,
-              'db.active_record.cached' => payload[:cached] == true
-            }
             span = payload.delete(:__opentelemetry_span)
-            span&.add_attributes(attributes)
-
             token = payload.delete(:__opentelemetry_ctx_token)
             return unless span && token
 

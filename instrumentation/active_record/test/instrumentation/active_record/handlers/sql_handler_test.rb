@@ -11,7 +11,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Handlers::SqlHandler do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveRecord::Instrumentation.instance }
   let(:config) { { enable_notifications_instrumentation: true } }
   let(:exporter) { EXPORTER }
-  let(:spans) { exporter.finished_spans }
+  let(:spans) { exporter.finished_spans.select { |s| s.name == 'sql.active_record' } }
 
   before do
     # Capture original config before modification
@@ -22,6 +22,8 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Handlers::SqlHandler do
     instrumentation.instance_variable_set(:@installed, false)
 
     instrumentation.install(config)
+    User.delete_all
+    Account.delete_all
     exporter.reset
   end
 
@@ -41,36 +43,34 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Handlers::SqlHandler do
     it 'creates spans with operation name from payload' do
       User.create!(name: 'otel')
 
-      # Filter to only sql.active_record spans
-      sql_spans = spans.select { |s| s.name == 'User Create' }
-
-      _(sql_spans).wont_be_empty
+      _(spans).wont_be_empty
     end
 
     it 'records async attribute when query is async' do
-      # Check if the connection supports concurrent connections and async executor is configur      # Create a user first so there's data to load
-      User.create!(name: 'otel')
+      # Create a user first so there's data to load
+      Account.transaction do
+        account = Account.create!
+        User.create!(name: 'otel', account: account)
+      end
 
       exporter.reset
 
-      # Trigger a real async query
+      ActiveRecord::Base.asynchronous_queries_tracker.start_session
       relations = [
-        User.where(name: 'otel').load_async,
-        User.where(name: 'not found').load_async,
-        User.all.load_async
+        User.limit(1).load_async,
+        User.where(name: 'otel').includes(:account).load_async
       ]
-
       # Now wait for completion
-      result = relations.map(&:to_a)
+      result = relations.flat_map(&:to_a)
+      ActiveRecord::Base.asynchronous_queries_tracker.finalize_session(true)
+
       _(result).wont_be_empty
 
-      # Find the User query span
-      sql_spans = spans.select { |s| s.name.include?('User') }
-      _(sql_spans).wont_be_nil
+      # Trigger a real async query
 
-      # Skip if the query didn't run asynchronously (ActiveRecord may choose to run it synchronou
       # The query should have run asynchronously
-      _(sql_spans.flat_map { |span| span.attributes['db.active_record.async'] }.compact.uniq).must_equal [true]
+      async_spans = spans.select { |span| span.attributes['rails.active_record.query.async'] == true }
+      _(async_spans).wont_be_empty
     end
 
     it 'records cached attribute when query is cached' do
@@ -85,30 +85,22 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Handlers::SqlHandler do
         User.first
       end
 
-      cached_spans = spans.select { |s| s.attributes['db.active_record.cached'] == true }
+      cached_spans = spans.select { |s| s.attributes['rails.active_record.query.cached'] == true }
       _(cached_spans).wont_be_empty
     end
 
-    it 'does not add async attribute when not async' do
-      User.first
+    it 'records synchronous queries' do
+      _(User.all.to_a).must_be_empty
 
-      sql_spans = spans.select { |s| s.name.include?('User Load') }
-      _(sql_spans).wont_be_empty
-
-      sql_spans.each do |span|
-        _(span.attributes.key?('db.active_record.async')).must_equal false
-      end
+      values = spans.map { |span| span.attributes['rails.active_record.query.async'] }.uniq
+      _(values).must_equal [false]
     end
 
-    it 'does not add cached attribute when not cached' do
-      User.first
+    it 'records actual queries' do
+      _(User.all.to_a).must_be_empty
 
-      sql_spans = spans.select { |s| s.name.include?('User Load') }
-      _(sql_spans).wont_be_empty
-
-      sql_spans.each do |span|
-        _(span.attributes.key?('db.active_record.cached')).must_equal false
-      end
+      values = spans.map { |span| span.attributes['rails.active_record.query.cached'] }.uniq
+      _(values).must_equal [false]
     end
 
     it 'records exceptions on spans' do
@@ -126,7 +118,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Handlers::SqlHandler do
     it 'sets span kind to internal' do
       User.first
 
-      sql_spans = spans.reject { |s| s.name == 'ActiveRecord::Base.transaction' }
+      sql_spans = spans.reject { |s| s.attributes['db.operation'] == 'ActiveRecord::Base.transaction' }
       _(sql_spans).wont_be_empty
 
       sql_spans.each do |span|
@@ -136,13 +128,9 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Handlers::SqlHandler do
 
     it 'uses SQL as default name when name is not present' do
       # Manually trigger a notification without a name
-      ActiveSupport::Notifications.instrument(
-        'sql.active_record',
-        sql: 'SELECT 1'
-      )
+      ActiveRecord::Base.connection.execute('SELECT 1')
 
-      sql_span = spans.find { |s| s.name == 'SQL' }
-      _(sql_span).wont_be_nil
+      _(spans.map { |s| s.attributes['db.operation'] }).must_equal ['SQL']
     end
 
     it 'creates nested spans correctly' do
@@ -151,17 +139,14 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Handlers::SqlHandler do
         User.create!(name: 'otel', account: account)
       end
 
-      _(spans.any? { |s| s.name == 'ActiveRecord.transaction' }).must_equal true
-      _(spans.any? { |s| s.name == 'Account Create' }).must_equal true
-      _(spans.any? { |s| s.name == 'User Create' }).must_equal true
-
       # Verify parent-child relationships
-      transaction_span = spans.find { |s| s.name == 'ActiveRecord.transaction' }
-      create_spans = spans.select { |s| s.name.include?('Create') }
+      transaction_span = spans.find { |s| s.attributes['db.operation'] == 'TRANSACTION' }
+      _(transaction_span).wont_be_nil
 
-      create_spans.each do |span|
-        _(span.trace_id).must_equal transaction_span.trace_id
-      end
+      create_spans = spans.select { |s| s.attributes['db.operation'].include?('Create') }
+
+      _(create_spans.map { |s| s.attributes['db.operation'] }).must_equal(['Account Create', 'User Create'])
+      _(create_spans.map(&:parent_span_id)).must_equal([transaction_span.span_id, transaction_span.span_id])
     end
   end
 
@@ -174,7 +159,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Handlers::SqlHandler do
     it 'instruments SELECT queries' do
       User.where(name: 'otel').first
 
-      select_spans = spans.select { |s| s.name.include?('User Load') }
+      select_spans = spans.select { |s| s.attributes['db.operation'].include?('User Load') }
       _(select_spans).wont_be_empty
     end
 
@@ -182,7 +167,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Handlers::SqlHandler do
       user = User.first
       user.update!(counter: 42)
 
-      update_spans = spans.select { |s| s.name.include?('User Update') }
+      update_spans = spans.select { |s| s.attributes['db.operation'].include?('User Update') }
       _(update_spans).wont_be_empty
     end
 
@@ -190,14 +175,14 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Handlers::SqlHandler do
       user = User.first
       user.destroy
 
-      delete_spans = spans.select { |s| s.name.include?('User Destroy') }
+      delete_spans = spans.select { |s| s.attributes['db.operation'].include?('User Destroy') }
       _(delete_spans).wont_be_empty
     end
 
     it 'instruments batch operations' do
       User.where(name: 'otel').delete_all
 
-      delete_spans = spans.select { |s| s.name.include?('SQL') || s.name.include?('Delete') }
+      delete_spans = spans.select { |s| s.attributes['db.operation'].include?('SQL') || s.attributes['db.operation'].include?('Delete') }
       _(delete_spans).wont_be_empty
     end
   end
