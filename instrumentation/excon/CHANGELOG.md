@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-excon
 
+### v0.25.2 / 2025-10-11
+
+* FIXED: Fixing missing OpenTelemetry::Context detach on Excon instrumentation
+
+### v0.25.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.25.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.24.0 / 2025-08-13
 
 * ADDED: Add Excon `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1569](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1569)
