@@ -36,10 +36,13 @@ module OpenTelemetry
               otel_before_request
               super
             rescue StandardError => e
-              # If an exception occurs before we can call `complete`, we should add and error status and close the span
+              # If an exception occurs before we can call `complete`
+              # we should add an error status and close the span
+              # and raise the original error
               @otel_span&.status = OpenTelemetry::Trace::Status.error("Request threw an exception: #{e.message}")
               @otel_span&.finish
               @otel_span = nil
+              raise e
             end
 
             def complete
