@@ -11,6 +11,9 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
   cancel-in-progress: true  # Cancel any previous runs of this workflow
@@ -24,12 +27,13 @@ jobs:
           - sql
           - mysql
           - sql-obfuscation
+          - sql-processor
         os:
           - ubuntu-latest
     name: "helpers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -75,7 +79,7 @@ jobs:
     name: "propagator-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -120,7 +124,7 @@ jobs:
     name: "opentelemetry-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -163,7 +167,7 @@ jobs:
     name: "processors-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -206,7 +210,7 @@ jobs:
     name: "samplers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:

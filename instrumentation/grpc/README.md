@@ -16,7 +16,7 @@ Install the gem using:
 gem install opentelemetry-instrumentation-grpc
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-grpc` to your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-grpc` in your `Gemfile`.
 
 
 ## Usage
@@ -43,7 +43,7 @@ instrumentation.
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/grpc/example/trace_demonstration.rb)
+Example usage can be seen in the [`./example/trace_demonstration.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/grpc/example/trace_demonstration.rb)
 
 ## Development
 

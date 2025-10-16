@@ -5,11 +5,16 @@ on:
     paths:
       - '**/*.md'
 
+permissions:
+  contents: read
+
 jobs:
   markdown-link-check:
+    permissions:
+      pull-requests: write # required for posting PR review comments
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # equivalent cli: linkspector check
       - name: Run linkspector

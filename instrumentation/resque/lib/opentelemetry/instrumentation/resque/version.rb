@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Resque
-      VERSION = '0.6.0'
+      VERSION = '0.7.1'
     end
   end
 end

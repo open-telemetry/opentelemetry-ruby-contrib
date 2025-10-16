@@ -4,8 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-instrumentation-gruf'
-require 'opentelemetry-instrumentation-trilogy'
+require 'opentelemetry-instrumentation-anthropic'
 require 'opentelemetry-instrumentation-active_support'
 require 'opentelemetry-instrumentation-action_pack'
 require 'opentelemetry-instrumentation-active_job'
@@ -18,6 +17,7 @@ require 'opentelemetry-instrumentation-aws_lambda'
 require 'opentelemetry-instrumentation-bunny'
 require 'opentelemetry-instrumentation-lmdb'
 require 'opentelemetry-instrumentation-http'
+require 'opentelemetry-instrumentation-httpx'
 require 'opentelemetry-instrumentation-koala'
 require 'opentelemetry-instrumentation-active_model_serializers'
 require 'opentelemetry-instrumentation-concurrent_ruby'
@@ -29,6 +29,7 @@ require 'opentelemetry-instrumentation-faraday'
 require 'opentelemetry-instrumentation-grape'
 require 'opentelemetry-instrumentation-graphql'
 require 'opentelemetry-instrumentation-grpc'
+require 'opentelemetry-instrumentation-gruf'
 require 'opentelemetry-instrumentation-http_client'
 require 'opentelemetry-instrumentation-mongo'
 require 'opentelemetry-instrumentation-mysql2'
@@ -46,6 +47,7 @@ require 'opentelemetry-instrumentation-resque'
 require 'opentelemetry-instrumentation-ruby_kafka'
 require 'opentelemetry-instrumentation-sidekiq'
 require 'opentelemetry-instrumentation-sinatra'
+require 'opentelemetry-instrumentation-trilogy'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation

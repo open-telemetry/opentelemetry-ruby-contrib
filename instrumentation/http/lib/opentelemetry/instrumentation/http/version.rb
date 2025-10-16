@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module HTTP
-      VERSION = '0.24.0'
+      VERSION = '0.26.1'
     end
   end
 end
