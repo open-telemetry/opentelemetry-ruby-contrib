@@ -63,6 +63,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.27.0'
   spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.27.0'
   spec.add_dependency 'opentelemetry-instrumentation-trilogy', '~> 0.63.0'
+  spec.add_dependency 'opentelemetry-instrumentation-twirp', '~> 0.1.0'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"

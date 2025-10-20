@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'twirp-1.10' do
+  gem 'twirp', '~> 1.10.0'
+end
+
+appraise 'twirp-1.11' do
+  gem 'twirp', '~> 1.11.0'
+
+end
+
+appraise 'twirp-1.13' do
+  gem 'twirp', '~> 1.13.0'
+end

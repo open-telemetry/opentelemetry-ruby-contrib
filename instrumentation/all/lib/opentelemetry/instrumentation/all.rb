@@ -48,6 +48,7 @@ require 'opentelemetry-instrumentation-ruby_kafka'
 require 'opentelemetry-instrumentation-sidekiq'
 require 'opentelemetry-instrumentation-sinatra'
 require 'opentelemetry-instrumentation-trilogy'
+require 'opentelemetry-instrumentation-twirp'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
