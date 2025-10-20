@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.24.2 / 2025-10-14
+
+* FIXED: Raise original Ethon error after span updates
+
 ### v0.24.1 / 2025-09-30
 
 * FIXED: Min OTel Ruby API 1.7

@@ -10,7 +10,7 @@ Install the gem using:
 gem install opentelemetry-instrumentation-ethon
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-ethon` to your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-ethon` in your `Gemfile`.
 
 ## Usage
 

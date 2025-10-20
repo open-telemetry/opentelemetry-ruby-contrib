@@ -1,0 +1,32 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+source 'https://rubygems.org'
+
+# DO NOT ADD DEPENDENCIES HERE!
+# Please declare a minimum development dependency in the gemspec,
+# then target specific versions in the Appraisals file.
+
+gemspec
+
+group :test do
+  gem 'appraisal', '~> 2.5'
+  gem 'bundler', '~> 2.4'
+  gem 'minitest', '~> 5.0'
+  gem 'opentelemetry-sdk', '~> 1.0'
+  gem 'opentelemetry-logs-sdk', '~> 0.1'
+  gem 'opentelemetry-test-helpers', '~> 0.3'
+  gem 'rubocop', '~> 1.80.2'
+  gem 'rubocop-performance', '~> 1.26.0'
+  gem 'simplecov', '~> 0.22.0'
+  gem 'webmock', '~> 3.24'
+  gem 'yard', '~> 0.9'
+  gem 'opentelemetry-instrumentation-base', path: '../base'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+  end
+end

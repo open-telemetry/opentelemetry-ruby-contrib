@@ -27,6 +27,7 @@ jobs:
           - sql
           - mysql
           - sql-obfuscation
+          - sql-processor
         os:
           - ubuntu-latest
     name: "helpers-${{ matrix.gem }} / ${{ matrix.os }}"

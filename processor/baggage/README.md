@@ -5,7 +5,7 @@ This is an OpenTelemetry [span processor](https://opentelemetry.io/docs/specs/ot
 Keys and values added to Baggage will appear on all subsequent child spans, not the current active span, for a trace within this service *and* will be propagated to external services via propagation headers.
 If the external services also have a Baggage span processor, the keys and values will appear in those child spans as well.
 
-⚠️ Waning ⚠️
+⚠️ Warning ⚠️
 To repeat: a consequence of adding data to Baggage is that the keys and values will appear in all outgoing HTTP headers from the application.
 Do not put sensitive information in Baggage.
 
@@ -17,7 +17,7 @@ Install the gem using:
 gem install opentelemetry-processor-baggage
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-processor-baggage` to your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-processor-baggage` in your `Gemfile`.
 
 ### Version Compatibility
 

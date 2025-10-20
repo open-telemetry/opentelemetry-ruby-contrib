@@ -71,7 +71,7 @@ This is how the rails controller instrumentation is able to rename the span name
 
 ### High cardinality example
 
-You can pass in an url quantization lambda that simply uses the URL path, the result is you will end up with high cardinality span names, however this may be acceptable in your deployment and is easy configurable using the following example.
+You can pass in a url quantization lambda that simply uses the URL path; the result is you will end up with high cardinality span names. However, this may be acceptable in your deployment and is easily configurable using the following example.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|

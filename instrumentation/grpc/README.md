@@ -16,7 +16,7 @@ Install the gem using:
 gem install opentelemetry-instrumentation-grpc
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-grpc` to your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-grpc` in your `Gemfile`.
 
 
 ## Usage

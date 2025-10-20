@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+%w[7.1.0 7.2.0].each do |version|
+  appraise "rails-#{version}" do
+    gem 'rails', "~> #{version}"
+  end
+end
+
+appraise 'rails-latest' do
+  gem 'rails'
+end

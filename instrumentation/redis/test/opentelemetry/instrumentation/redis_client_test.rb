@@ -190,7 +190,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::RedisClientInstrume
       # span is created. The 'connect' operation can be separately instrumented
       # via the connect hook in the middleware. If this expectation (last_span must be nil)
       # fails due to this implementation, it can be removed.
-      # This test remains here for parity the the V4 instrumentation, which _does_
+      # This test remains here for parity with the V4 instrumentation, which _does_
       # wrap the connect failure in a span.
       _(last_span).must_be_nil
     end

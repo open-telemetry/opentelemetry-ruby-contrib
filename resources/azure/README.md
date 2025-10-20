@@ -1,6 +1,6 @@
 # OpenTelemetry::Resource::Detector::Azure
 
-The `opentelemetry-resource-detector-azure` gem provides a Azure resource detector for OpenTelemetry.
+The `opentelemetry-resource-detector-azure` gem provides an Azure resource detector for OpenTelemetry.
 
 ## What is OpenTelemetry?
 
