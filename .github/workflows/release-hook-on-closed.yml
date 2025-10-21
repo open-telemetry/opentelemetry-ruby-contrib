@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: write # required for creating releases
       pull-requests: write # required for updating release PRs
+      issues: write # required to create issues for failed releases
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     env:
       ruby-version: "3.2"
