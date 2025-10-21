@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.11.0 / 2025-10-21
+
+* BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+
+* ADDED: Min Ruby Version 3.2 and Rails 7.1
+
 ### v0.10.0 / 2025-09-30
 
 * ADDED: Bump minimum API Version to 1.7
