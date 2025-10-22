@@ -11,6 +11,13 @@
   end
 end
 
+%w[8.0.0].each do |version|
+  appraise "activerecord-#{version}" do
+    gem 'sqlite3', '>= 2.1'
+    gem 'activerecord', "~> #{version}"
+  end
+end
+
 appraise 'activerecord-latest' do
   gem 'sqlite3', '>= 2.1'
   gem 'activerecord'
