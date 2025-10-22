@@ -2,7 +2,9 @@
 
 ### v0.26.0 / 2025-10-22
 
-* (No significant changes)
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
 
 ### v0.25.2 / 2025-10-11
 

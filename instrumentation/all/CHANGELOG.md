@@ -2,7 +2,7 @@
 
 ### v0.86.1 / 2025-10-22
 
-* (No significant changes)
+* ADDED: Updated minimum gem versions for dependent instrumentations
 
 ### v0.86.0 / 2025-10-21
 

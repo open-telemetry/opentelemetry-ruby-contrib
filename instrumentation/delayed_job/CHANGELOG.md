@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+### v0.25.1 / 2025-10-22
+
+* FIXED: Update opentelemetry-instrumentation-base dependency
+
 ### v0.25.0 / 2025-10-21
 
 * BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
