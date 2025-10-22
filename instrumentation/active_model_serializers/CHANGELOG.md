@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+### v0.24.0 / 2025-10-22
+
+* (No significant changes)
+
 ### v0.23.0 / 2025-09-30
 
 * ADDED: Bump minimum API Version to 1.7

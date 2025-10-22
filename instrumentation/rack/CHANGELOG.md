@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.29.0 / 2025-10-22
+
+* (No significant changes)
+
 ### v0.28.2 / 2025-10-07
 
 * FIXED: Unify rack middleware_args

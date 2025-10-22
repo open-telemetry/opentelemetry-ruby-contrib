@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.11.0 / 2025-10-22
+
+* (No significant changes)
+
 ### v0.10.0 / 2025-10-11
 
 * BREAKING CHANGE: Suppress internal spans by default

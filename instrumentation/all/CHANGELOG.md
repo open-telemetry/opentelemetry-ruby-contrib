@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.86.1 / 2025-10-22
+
+* (No significant changes)
+
 ### v0.86.0 / 2025-10-21
 
 * BREAKING CHANGE: Min Version Support For Ruby 3.2 and Rails 7.1

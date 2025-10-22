@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-restclient
 
+### v0.26.0 / 2025-10-22
+
+* (No significant changes)
+
 ### v0.25.1 / 2025-09-30
 
 * FIXED: Min OTel Ruby API 1.7

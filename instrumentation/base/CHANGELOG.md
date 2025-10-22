@@ -80,3 +80,7 @@
 ### v0.17.0 / 2021-04-22
 
 * Initial release.
+
+### v0.25.0 / 2025-10-22
+
+* (No significant changes)

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.30.0 / 2025-10-22
+
+* (No significant changes)
+
 ### v0.29.1 / 2025-09-30
 
 * FIXED: Min OTel Ruby API 1.7

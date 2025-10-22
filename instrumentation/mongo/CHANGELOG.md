@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+### v0.25.0 / 2025-10-22
+
+* (No significant changes)
+
 ### v0.24.1 / 2025-09-30
 
 * FIXED: Min OTel Ruby API 1.7
