@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.15.1 / 2025-10-22
+
+* FIXED: Update opentelemetry-instrumentation-base dependency
+
 ### v0.15.0 / 2025-10-21
 
 * BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1

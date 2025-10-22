@@ -4,9 +4,17 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[7.1.0 7.2.0].each do |version|
+%w[7.1.0 7.2.0 8.0.0].each do |version|
   appraise "activestorage-#{version}" do
     gem 'sqlite3', '~> 1.4'
+    gem 'image_processing', '~> 1.2'
+    gem 'rails', "~> #{version}"
+  end
+end
+
+%w[8.0.0].each do |version|
+  appraise "activestorage-#{version}" do
+    gem 'sqlite3', '>= 2.1'
     gem 'image_processing', '~> 1.2'
     gem 'rails', "~> #{version}"
   end
