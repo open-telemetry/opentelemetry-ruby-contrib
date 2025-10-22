@@ -1,5 +1,9 @@
 # Release History: opentelemetry-helpers-sql-obfuscation
 
+### v0.5.0 / 2025-10-22
+
+* (No significant changes)
+
 ### v0.4.0 / 2025-10-08
 
 ## Deprecation Notice
