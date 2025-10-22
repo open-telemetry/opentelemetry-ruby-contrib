@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[7.1.0 7.2.0].each do |version|
+%w[7.1.0 7.2.0 8.0.0].each do |version|
   appraise "activejob-#{version}" do
     gem 'activejob', "~> #{version}"
   end
