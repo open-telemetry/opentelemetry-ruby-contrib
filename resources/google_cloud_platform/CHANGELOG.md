@@ -1,5 +1,9 @@
 # Release History: opentelemetry-resource-detector-google_cloud_platform
 
+### v0.3.0 / 2025-10-22
+
+* (No significant changes)
+
 ### v0.2.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
