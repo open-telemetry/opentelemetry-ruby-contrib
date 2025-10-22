@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[7.1.0 7.2.0].each do |version|
+%w[7.1.0 7.2.0 8.0.0].each do |version|
   appraise "activerecord-#{version}" do
     gem 'sqlite3', '~> 1.4'
     gem 'activerecord', "~> #{version}"
