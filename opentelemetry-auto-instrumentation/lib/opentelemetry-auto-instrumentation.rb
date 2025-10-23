@@ -8,6 +8,8 @@
 module OTelBundlerPatch
   # Nested module to handle OpenTelemetry initialization logic
   module OTelInitializer
+    @initialized = false
+
     OTEL_INSTRUMENTATION_MAP = {
       'gruf' => 'OpenTelemetry::Instrumentation::Gruf',
       'trilogy' => 'OpenTelemetry::Instrumentation::Trilogy',
@@ -78,6 +80,10 @@ module OTelBundlerPatch
     end
 
     def self.require_otel
+      return if @initialized
+
+      @initialized = true
+
       lib = File.expand_path('..', __dir__)
       $LOAD_PATH.reject! { |path| path.include?('opentelemetry-auto-instrumentation') }
       $LOAD_PATH.unshift(lib)
