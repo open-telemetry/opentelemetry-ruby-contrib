@@ -24,7 +24,7 @@ jobs:
         with:
           app-id: ${{ vars.OTELBOT_APP_ID }}
           private-key: ${{ secrets.OTELBOT_PRIVATE_KEY }}
-      - uses: googleapis/release-please-action@v4.3.0
+      - uses: googleapis/release-please-action@v4.4.0
         id: prepare
         # with:
         #   token: ${{ steps.otelbot-token.outputs.token }}
