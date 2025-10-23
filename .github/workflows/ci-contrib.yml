@@ -27,12 +27,13 @@ jobs:
           - sql
           - mysql
           - sql-obfuscation
+          - sql-processor
         os:
           - ubuntu-latest
     name: "helpers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -48,11 +49,6 @@ jobs:
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -62,7 +58,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "jruby-9.4.12.0"
+          ruby: "jruby-10.0.2.0"
 
   propagators:
     strategy:
@@ -78,7 +74,7 @@ jobs:
     name: "propagator-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -94,11 +90,6 @@ jobs:
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           build: true
@@ -107,7 +98,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "jruby-9.4.12.0"
+          ruby: "jruby-10.0.2.0"
 
   resource-detectors:
     strategy:
@@ -123,7 +114,7 @@ jobs:
     name: "opentelemetry-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -139,11 +130,6 @@ jobs:
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -153,7 +139,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "jruby-9.4.12.0"
+          ruby: "jruby-10.0.2.0"
 
   processors:
     strategy:
@@ -166,7 +152,7 @@ jobs:
     name: "processors-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -182,11 +168,6 @@ jobs:
         with:
           gem: "opentelemetry-processor-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -196,7 +177,7 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "jruby-9.4.12.0"
+          ruby: "jruby-10.0.2.0"
 
   samplers:
     strategy:
@@ -209,7 +190,7 @@ jobs:
     name: "samplers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -225,11 +206,6 @@ jobs:
         with:
           gem: "opentelemetry-sampler-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-sampler-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -239,70 +215,4 @@ jobs:
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-sampler-${{ matrix.gem }}"
-          ruby: "jruby-9.4.12.0"
-
-  auto-instrumentation:
-    name: "auto-instrumentation / ubuntu-latest"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: "Test Ruby 3.4"
-        uses: ruby/setup-ruby@v1.247.0
-        with:
-          ruby-version: "3.4"
-      - name: Test Gem
-        shell: bash
-        run: |
-          bundle install --quiet --jobs=3 --retry=4
-          bundle exec rake test
-          rm -f Gemfile.lock
-        working-directory: './opentelemetry-auto-instrumentation'
-      - name: "Test Ruby 3.3"
-        uses: ruby/setup-ruby@v1.247.0
-        with:
-          ruby-version: "3.3"
-      - name: Test Gem
-        shell: bash
-        run: |
-          bundle install --quiet --jobs=3 --retry=4
-          bundle exec rake test
-          rm -f Gemfile.lock
-        working-directory: './opentelemetry-auto-instrumentation'
-      - name: "Test Ruby 3.2"
-        uses: ruby/setup-ruby@v1.247.0
-        with:
-          ruby-version: "3.2"
-      - name: Test Gem
-        shell: bash
-        run: |
-          bundle install --quiet --jobs=3 --retry=4
-          bundle exec rake test
-          rm -f Gemfile.lock
-        working-directory: './opentelemetry-auto-instrumentation'
-
-      - name: YARD
-        shell: bash
-        run: |
-          # 📄 Yard Docs 📄
-          bundle exec rake yard
-        working-directory: './opentelemetry-auto-instrumentation'
-
-      - name: Rubocop
-        shell: bash
-        run: |
-          # 🤖 Rubocop 🤖
-          bundle exec rake rubocop
-        working-directory: './opentelemetry-auto-instrumentation'
-
-      - name: Coverage
-        shell: bash
-        run: |
-          bundle exec ruby -e 'require "simplecov"; SimpleCov.minimum_coverage(85)'
-        working-directory: './opentelemetry-auto-instrumentation'
-
-      - name: Build Gem
-        shell: bash
-        run: |
-          # 📦 Build Gem 📦
-          gem build opentelemetry-auto-instrumentation.gemspec
-        working-directory: './opentelemetry-auto-instrumentation'
+          ruby: "jruby-10.0.2.0"

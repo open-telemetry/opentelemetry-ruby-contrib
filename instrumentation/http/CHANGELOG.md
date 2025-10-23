@@ -1,5 +1,19 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.27.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
+### v0.26.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.26.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.25.1 / 2025-07-01
 
 * FIXED: Update span name when semconv stability is enabled

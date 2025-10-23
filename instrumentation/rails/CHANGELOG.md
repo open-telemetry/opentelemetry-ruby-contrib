@@ -1,5 +1,23 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.39.1 / 2025-10-22
+
+* FIXED: Update opentelemetry-instrumentation-base dependency
+
+### v0.39.0 / 2025-10-21
+
+* BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+
+* ADDED: Min Ruby Version 3.2 and Rails 7.1
+
+### v0.38.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.37.0 / 2025-08-19
+
+ADDED: Add action_pack `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility for Rack integration [#1594](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1594)
+
 ### v0.36.0 / 2025-02-04
 
 * ADDED: Add active_storage instrumentation to `rails`
