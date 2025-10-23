@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.86.1 / 2025-10-22
+
+* ADDED: Updated minimum gem versions for dependent instrumentations
+
+### v0.86.0 / 2025-10-21
+
+* BREAKING CHANGE: Min Version Support For Ruby 3.2 and Rails 7.1
+
+* ADDED: Min Version Support For Ruby 3.2 and Rails 7.1
+
 ### v0.85.0 / 2025-10-11
 
 * BREAKING CHANGE: aws_sdk Suppress internal spans by default

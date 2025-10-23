@@ -1,5 +1,11 @@
 # Release History: opentelemetry-helpers-mysql
 
+### v0.4.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
 ### v0.3.0 / 2025-09-30
 
 * ADDED: Bump minimum API Version to 1.7
