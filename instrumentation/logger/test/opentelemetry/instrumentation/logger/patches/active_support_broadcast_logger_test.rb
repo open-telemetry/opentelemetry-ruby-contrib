@@ -38,7 +38,8 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
 
       assert_equal 1, log_records.size
       assert_equal 'DEBUG', log_records.first.severity_text
-      assert_equal body, log_records.first.body
+      assert_includes log_records.first.body, 'DEBUG'
+      assert_includes log_records.first.body, body
     end
   end
 
@@ -59,7 +60,8 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
 
       assert_equal 1, log_records.size
       assert_equal 'ANY', log_records.first.severity_text
-      assert_equal body, log_records.first.body
+      assert_includes log_records.first.body, 'ANY'
+      assert_includes log_records.first.body, body
     end
   end
 
@@ -81,7 +83,8 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
 
         assert_equal 1, log_records.size
         assert_equal severity.upcase, log_records.first.severity_text
-        assert_equal body, log_records.first.body
+        assert_includes log_records.first.body, severity.upcase
+        assert_includes log_records.first.body, body
       end
     end
   end

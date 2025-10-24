@@ -42,7 +42,8 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
 
       Time.stub(:now, timestamp) do
         ruby_logger.debug(msg)
-        assert_equal(msg, log_record.body)
+        assert_includes(log_record.body, msg)
+        assert_includes(log_record.body, 'DEBUG')
         assert_equal('DEBUG', log_record.severity_text)
         assert_equal(5, log_record.severity_number)
         assert_equal(nano_timestamp, log_record.timestamp)
