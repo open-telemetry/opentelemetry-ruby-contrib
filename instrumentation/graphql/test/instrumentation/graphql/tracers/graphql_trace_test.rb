@@ -233,7 +233,6 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
           _(span).must_be_nil
         end
 
-
         it 'does not traces .resolve_type_lazy' do
           skip unless supports_authorized_and_resolved_types?
           SomeGraphQLAppSchema.execute('{ vehicle { __typename } }', context: { lazy_type_resolve: true })
