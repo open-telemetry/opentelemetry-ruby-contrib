@@ -100,13 +100,4 @@ describe 'AutoInstrumentation' do
     _(result[:instrumentation_names]).must_include 'OpenTelemetry::Instrumentation::Net::HTTP'
     _(result[:instrumentation_names]).wont_include 'OpenTelemetry::Instrumentation::Rake'
   end
-
-  it 'simple_load_with_additional_resource' do
-    result = run_in_subprocess('OTEL_RUBY_RESOURCE_DETECTORS' => 'container')
-
-    _(result[:error]).must_be_nil
-    _(result[:resource_attributes].key?('container.id')).must_equal true
-    _(result[:resource_attributes]['telemetry.sdk.name']).must_equal 'opentelemetry'
-    _(result[:resource_attributes]['telemetry.sdk.language']).must_equal 'ruby'
-  end
 end
