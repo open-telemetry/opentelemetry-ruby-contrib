@@ -11,9 +11,10 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('7')
 
-        install do |_config|
+        install do |config|
           require_dependencies
           patch_activerecord
+          subscribe_to_notifications if config[:enable_notifications_instrumentation]
         end
 
         present do
@@ -23,6 +24,8 @@ module OpenTelemetry
         compatible do
           gem_version >= MINIMUM_VERSION
         end
+
+        option :enable_notifications_instrumentation, default: false, validate: :boolean
 
         private
 
@@ -39,6 +42,7 @@ module OpenTelemetry
           require_relative 'patches/transactions_class_methods'
           require_relative 'patches/validations'
           require_relative 'patches/relation_persistence'
+          require_relative 'handlers'
         end
 
         def patch_activerecord
@@ -56,6 +60,10 @@ module OpenTelemetry
 
             ::ActiveRecord::Relation.prepend(Patches::RelationPersistence)
           end
+        end
+
+        def subscribe_to_notifications
+          Handlers.subscribe
         end
       end
     end
