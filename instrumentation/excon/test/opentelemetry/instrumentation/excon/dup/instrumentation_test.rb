@@ -138,23 +138,23 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
     it 'merges HTTP client context' do
       client_context_attrs = {
-        'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE', 'http.request.method' => 'OVERRIDE'
+        'test.attribute' => 'test.value', 'http.method' => 'PATCH', 'http.request.method' => 'PATCH'
       }
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
         Excon.get('http://example.com/success')
       end
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'GET'
+      _(span.name).must_equal 'PATCH'
       _(span.attributes['http.host']).must_equal 'example.com'
-      _(span.attributes['http.method']).must_equal 'OVERRIDE'
+      _(span.attributes['http.method']).must_equal 'PATCH'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.target']).must_equal '/success'
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
       _(span.attributes['test.attribute']).must_equal 'test.value'
       # stable semconv
-      _(span.attributes['http.request.method']).must_equal 'OVERRIDE'
+      _(span.attributes['http.request.method']).must_equal 'PATCH'
       _(span.attributes['url.scheme']).must_equal 'http'
       _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['url.path']).must_equal '/success'
@@ -257,7 +257,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       Excon::Socket.new(hostname: uri.host, port: uri.port)
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal('connect')
+      _(span.name).must_equal('tcp connect')
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('example.com')
       _(span.attributes['net.peer.port']).must_equal(80)
@@ -293,7 +293,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal(3)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
       _(span.attributes['net.peer.port']).must_equal(port)
@@ -309,7 +309,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(-> { Excon.get('http://invalid.com:99999/example') }).must_raise
 
       _(exporter.finished_spans.size).must_equal(3)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp connect'
       _(span.attributes['net.peer.name']).must_equal('invalid.com')
       _(span.attributes['net.peer.port']).must_equal(99_999)
       # stable semconv
@@ -328,7 +328,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(-> { Excon.get('http://localhost/', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
 
       _(exporter.finished_spans.size).must_equal(3)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp connect'
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
@@ -358,7 +358,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(-> { Excon.get('http://localhost', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
 
       _(exporter.finished_spans.size).must_equal(3)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp connect'
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)

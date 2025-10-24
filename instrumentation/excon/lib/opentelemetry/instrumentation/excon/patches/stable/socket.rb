@@ -30,7 +30,7 @@ module OpenTelemetry
                 span_name = 'CONNECT'
                 span_kind = :client
               else
-                span_name = 'connect'
+                span_name = 'tcp connect'
                 span_kind = :internal
               end
 

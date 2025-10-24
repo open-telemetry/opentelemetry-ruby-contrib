@@ -53,6 +53,8 @@ Style/MultilineIfModifier:
      - "**/test/**/*"
 Style/RedundantRegexpEscape:
   Enabled: false
+Style/RedundantReturn:
+  Enabled: false
 Style/StringLiterals:
   Exclude:
     - "**/gemfiles/*"
