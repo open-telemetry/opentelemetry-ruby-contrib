@@ -216,3 +216,33 @@ jobs:
         with:
           gem: "opentelemetry-sampler-${{ matrix.gem }}"
           ruby: "jruby-10.0.2.0"
+
+  auto-instrumentation:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+    name: "opentelemetry-auto-instrumentation / ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-auto-instrumentation"
+          ruby: "3.4"
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-auto-instrumentation"
+          ruby: "3.3"
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-auto-instrumentation"
+          ruby: "3.2"
+          yard: true
+          rubocop: true
+          coverage: true
+          build: true
