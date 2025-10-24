@@ -58,6 +58,7 @@ module OpenTelemetry
         def example_started(notification)
           example = notification.example
           attributes = {
+            'rspec.example.id' => example.id.to_s,
             'rspec.example.location' => example.location.to_s,
             'rspec.example.full_description' => example.full_description.to_s,
             'rspec.example.described_class' => example.metadata[:described_class].to_s
