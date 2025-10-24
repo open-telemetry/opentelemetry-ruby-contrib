@@ -43,6 +43,10 @@ module OpenTelemetry
           Gem::Requirement.new('>= 2.0.19').satisfied_by?(gem_version)
         end
 
+        def dataloader_has_spawn_fiber?
+          Gem::Requirement.new('>= 2.1.8').satisfied_by?(gem_version)
+        end
+
         ## Supported configuration keys for the install config hash:
         #
         # The enable_platform_field key expects a boolean value,
@@ -100,7 +104,7 @@ module OpenTelemetry
         end
 
         def patch
-          return if gem_version < Gem::Version.new('2.1.8')
+          return unless dataloader_has_spawn_fiber?
 
           require_relative 'patches/dataloader'
           ::GraphQL::Dataloader.prepend(Patches::Dataloader)
