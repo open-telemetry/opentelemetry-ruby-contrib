@@ -27,6 +27,8 @@ module OpenTelemetry
             require_relative 'tracers/graphql_trace'
             install_new_tracer(config)
           end
+
+          patch
         end
 
         present do
@@ -95,6 +97,13 @@ module OpenTelemetry
               OpenTelemetry.logger.error("Unable to patch schema #{schema}: #{e.message}")
             end
           end
+        end
+
+        def patch
+          return if gem_version < Gem::Version.new('2.1.8')
+
+          require_relative 'patches/dataloader'
+          ::GraphQL::Dataloader.prepend(Patches::Dataloader)
         end
       end
     end
