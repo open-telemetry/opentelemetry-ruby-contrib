@@ -8,7 +8,7 @@ require 'test_helper'
 
 require_relative '../../../../../lib/opentelemetry/helpers/semconv/http'
 
-describe OpenTelemetry::Helpers::Semconv::HTTP do
+describe OpenTelemetry::Helpers::Semconv::HTTP::Client do
   describe 'span naming' do
     test_cases = [
       # [description, attributes, expected_result]
@@ -28,33 +28,33 @@ describe OpenTelemetry::Helpers::Semconv::HTTP do
 
     test_cases.each do |description, attributes, expected|
       it description do
-        _(OpenTelemetry::Helpers::Semconv::HTTP.name_from(attributes)).must_equal expected
+        _(OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from(attributes)).must_equal expected
       end
     end
 
     it 'normalizes HTTP methods to uppercase' do
       %w[GET POST PUT PATCH DELETE HEAD OPTIONS TRACE CONNECT].each do |method|
         attrs = { 'http.request.method' => method }
-        _(OpenTelemetry::Helpers::Semconv::HTTP.name_from(attrs)).must_equal method
+        _(OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from(attrs)).must_equal method
 
         attrs = { 'http.request.method' => method.downcase }
-        _(OpenTelemetry::Helpers::Semconv::HTTP.name_from(attrs)).must_equal method
+        _(OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from(attrs)).must_equal method
 
         attrs = { 'http.method' => method }
-        _(OpenTelemetry::Helpers::Semconv::HTTP.name_from(attrs)).must_equal method
+        _(OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from(attrs)).must_equal method
 
         attrs = { 'http.method' => method.downcase }
-        _(OpenTelemetry::Helpers::Semconv::HTTP.name_from(attrs)).must_equal method
+        _(OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from(attrs)).must_equal method
       end
     end
 
     it 'defaults to HTTP for unknown methods' do
       %w[PURGE FAKE PHONY].each do |method|
         attrs = { 'http.request.method' => method }
-        _(OpenTelemetry::Helpers::Semconv::HTTP.name_from(attrs)).must_equal 'HTTP'
+        _(OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from(attrs)).must_equal 'HTTP'
       end
 
-      _(OpenTelemetry::Helpers::Semconv::HTTP.name_from({})).must_equal 'HTTP'
+      _(OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from({})).must_equal 'HTTP'
     end
   end
 end
