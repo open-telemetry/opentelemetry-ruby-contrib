@@ -20,25 +20,34 @@ end
 
 ## Usage
 
-### HTTP Span Naming
+### HTTP Client Span Naming
 
-The HTTP module provides consistent span naming for HTTP operations using the `OpenTelemetry::Helpers::Semconv::HTTP.name_from` method:
+The HTTP Client module provides consistent span naming for HTTP client operations using the `OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from` method:
 
 ```ruby
 require 'opentelemetry/helpers/semconv'
 
-# Basic usage with HTTP method and URL template
+# Basic usage with HTTP method and URL template for client spans
 attributes = {
   'http.request.method' => 'GET',
   'url.template' => '/users/:id'
 }
-span_name = OpenTelemetry::Helpers::Semconv::HTTP.name_from(attributes)
+span_name = OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from(attributes)
 # Returns: "GET /users/:id"
+
+# Method normalization
+attributes = { 'http.request.method' => 'post' }
+span_name = OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from(attributes)
+# Returns: "POST"
+
+# Fallback behavior
+span_name = OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from({})
+# Returns: "HTTP"
 ```
 
-### Integration with Instrumentation
+### Integration with HTTP Client Instrumentation
 
-Use in your instrumentation libraries to create consistent HTTP spans:
+Use in your HTTP client instrumentation libraries to create consistent spans:
 
 ```ruby
 require 'opentelemetry/helpers/semconv'
@@ -47,25 +56,30 @@ require 'opentelemetry/helpers/semconv'
 def instrument_request(method, url, attributes = {})
   # Add HTTP attributes for span naming
   attributes['http.request.method'] = method
-  attributes['url.template'] = extract_url_template(url)
+  attributes['url.template'] = extract_url_template(url) if url_template_available?
 
-  span_name = OpenTelemetry::Helpers::Semconv::HTTP.name_from(attributes)
+  span_name = OpenTelemetry::Helpers::Semconv::HTTP::Client.name_from(attributes)
 
   tracer.in_span(span_name, attributes: attributes) do |span|
     # perform HTTP request
+    yield span if block_given?
   end
 end
 ```
 
+**Note**: This helper is specifically designed for HTTP **client** spans that use `url.template` attributes. For HTTP **server** spans, consider using `http.route` or other server-appropriate attributes for naming.
+
 ### Supported Attributes
 
-The HTTP helper supports both current and legacy OpenTelemetry semantic conventions:
+The HTTP Client helper supports both current and legacy OpenTelemetry semantic conventions:
 
-- **Current**: `http.request.method`, `url.template`
-- **Legacy**: `http.method` (deprecated but supported)
+- **Current**: `http.request.method`, `url.template` (client spans only)
+- **Legacy**: `http.method` (deprecated but supported for compatibility)
 - **Behavior**: Prefers current conventions over legacy ones
 - **Method normalization**: Automatically converts standard HTTP methods to uppercase (e.g., 'get' → 'GET')
 - **Fallbacks**: Returns 'HTTP' when no recognizable attributes are present
+
+**Important**: The `url.template` attribute is only applicable to HTTP client spans according to OpenTelemetry semantic conventions. Server spans should use `http.route` or other appropriate attributes.
 
 ### Supported HTTP Methods
 
