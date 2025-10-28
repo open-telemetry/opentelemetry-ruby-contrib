@@ -1,4 +1,4 @@
-name: Markdown Lint Check
+name: Markdown Checks
 
 on:
   pull_request:
@@ -7,9 +7,11 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write # required for posting PR review comments
 
 jobs:
   markdownlint-check:
+    name: Markdown Lint Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -23,3 +25,17 @@ jobs:
           globs: |
             **/*.md
             !**/CHANGELOG.md
+
+  markdown-link-check:
+    name: Markdown Link Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # equivalent cli: linkspector check
+      - name: Run linkspector
+        uses: umbrelladocs/action-linkspector@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          fail_on_error: true
