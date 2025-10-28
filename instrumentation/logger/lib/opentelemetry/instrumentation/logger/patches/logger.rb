@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Logger
       module Patches
-        # Instrumention for methods from Ruby's Logger class
+        # Instrumentation for methods from Ruby's Logger class
         module Logger
           attr_writer :skip_otel_emit
 

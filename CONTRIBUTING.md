@@ -69,9 +69,8 @@ This repository contains multiple Ruby gems:
 
 * Various instrumentation gems located in subdirectories of `instrumentation`
 * Various resource detector gems located in subdirectories of `resources`
-* `opentelemetry-propagator-xray` located in the `propagator/xray` directory
-* `opentelemetry-propagator-ottrace` located in the `propagator/ottrace` directory
-* `opentelemetry-propagator-google_cloud_trace_context` located in the `propagator/google_cloud_trace_context` directory
+* Various propagation gems located in the subdirectories of `propagator`
+* `opentelemetry-sampler-xray` located in the `sampler/xray` directory
 
 Each of these gems has its configuration and tests.
 
@@ -215,7 +214,7 @@ merge. You'll probably get some feedback from these fine folks which helps to
 make the project that much better. Respond to the feedback and work with your
 reviewer(s) to resolve any issues.
 
-The some of the things the code owners are looking for include:
+Some of the things the code owners are looking for include:
 
 * a signed [CNCF CLA][cncf-cla]
 * a passing CI build
@@ -247,10 +246,10 @@ Releases are normally performed using GitHub Actions.
     `Open release request` workflow, and run the workflow manually using the
     dropdown in the upper right.
      * Releases must be run from the main branch.
-     * If you leave the `Gems to release` field, blank, and the script will
+     * If you leave the `Gems to release` field blank, the script will
         find all the gems that have had conventional-commit-tagged changes since
         their last release. Alternately, you can specify which gems to release
-        by including their names, space-delimited, in this this field. You can
+        by including their names, space-delimited, in this field. You can
         optionally append `:<version>` to any gem in the list to specify the
         version to release, or omit the version to let the script decide based
         on conventional commits. You can also use the special name `all` to
