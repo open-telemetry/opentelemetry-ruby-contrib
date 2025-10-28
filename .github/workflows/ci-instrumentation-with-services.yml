@@ -42,7 +42,7 @@ on:
       - 'instrumentation/ruby_kafka/**'
       - 'instrumentation/sidekiq/**'
       - 'instrumentation/trilogy/**'
-      - '.github/workflows/ci-instrumentation-with-services.yml'
+      # - '.github/workflows/ci-instrumentation-with-services.yml'
       - '.github/actions/**'
       - 'Gemfile'
       - 'Rakefile'
