@@ -148,12 +148,16 @@ module OpenTelemetry
 
           def resolve_type(query:, type:, object:, &)
             platform_key = @_otel_resolve_type_key_cache[type]
+            return super unless platform_key
+
             attributes = @_otel_type_attrs_cache[type]
             tracer.in_span(platform_key, attributes: attributes) { super }
           end
 
           def resolve_type_lazy(query:, type:, object:, &)
             platform_key = @_otel_resolve_type_key_cache[type]
+            return super unless platform_key
+
             attributes = @_otel_lazy_type_attrs_cache[type]
             tracer.in_span(platform_key, attributes: attributes) { super }
           end
