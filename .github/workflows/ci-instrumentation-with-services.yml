@@ -5,9 +5,49 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'instrumentation/bunny/**'
+      - 'instrumentation/dalli/**'
+      - 'instrumentation/mongo/**'
+      - 'instrumentation/mysql2/**'
+      - 'instrumentation/pg/**'
+      - 'instrumentation/que/**'
+      - 'instrumentation/racecar/**'
+      - 'instrumentation/rdkafka/**'
+      - 'instrumentation/redis/**'
+      - 'instrumentation/resque/**'
+      - 'instrumentation/ruby_kafka/**'
+      - 'instrumentation/sidekiq/**'
+      - 'instrumentation/trilogy/**'
+      - '.github/workflows/ci-instrumentation-with-services.yml'
+      - '.github/actions/**'
+      - 'Gemfile'
+      - 'Rakefile'
+      - '.rubocop.yml'
+      - 'gemspecs/**'
   pull_request:
     branches:
       - main
+    paths:
+      - 'instrumentation/bunny/**'
+      - 'instrumentation/dalli/**'
+      - 'instrumentation/mongo/**'
+      - 'instrumentation/mysql2/**'
+      - 'instrumentation/pg/**'
+      - 'instrumentation/que/**'
+      - 'instrumentation/racecar/**'
+      - 'instrumentation/rdkafka/**'
+      - 'instrumentation/redis/**'
+      - 'instrumentation/resque/**'
+      - 'instrumentation/ruby_kafka/**'
+      - 'instrumentation/sidekiq/**'
+      - 'instrumentation/trilogy/**'
+      - '.github/workflows/ci-instrumentation-with-services.yml'
+      - '.github/actions/**'
+      - 'Gemfile'
+      - 'Rakefile'
+      - '.rubocop.yml'
+      - 'gemspecs/**'
   schedule:
     - cron: "0 0 * * *"
 

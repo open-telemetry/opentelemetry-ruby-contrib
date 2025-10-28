@@ -2,6 +2,8 @@ name: Markdown Lint Check
 
 on:
   pull_request:
+    paths:
+      - '**/*.md'
 
 permissions:
   contents: read
