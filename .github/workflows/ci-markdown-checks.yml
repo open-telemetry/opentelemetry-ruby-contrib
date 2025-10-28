@@ -39,3 +39,15 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
           fail_on_error: true
+
+  spelling-check:
+    name: Spelling Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: streetsidesoftware/cspell-action@v7
+        with:
+          # Files should be consistent with check:spelling files
+          files: |
+            **/*.md
+          config: .cspell.yml
