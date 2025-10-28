@@ -139,6 +139,8 @@ jobs:
         env:
           ZOOKEEPER_CLIENT_PORT: 2181
           ZOOKEEPER_TICK_TIME: 2000
+          KAFKA_LOG4J_ROOT_LOGLEVEL: ERROR
+          KAFKA_LOG4J_LOGGERS: "org.apache.zookeeper=ERROR,org.apache.kafka=ERROR"
       kafka:
         image: confluentinc/cp-kafka:7.9.1
         ports:
@@ -151,6 +153,9 @@ jobs:
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
           KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+          KAFKA_LOG4J_ROOT_LOGLEVEL: ERROR
+          KAFKA_LOG4J_LOGGERS: "org.apache.zookeeper=ERROR,org.apache.kafka=ERROR,state.change.logger=ERROR,kafka.controller=ERROR"
+          KAFKA_TOOLS_LOG4J_LOGLEVEL: ERROR
 
   instrumentation_redis:
     strategy:
