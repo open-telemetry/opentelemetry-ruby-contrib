@@ -6,6 +6,7 @@ on:
     branches:
       - main
     paths:
+      - 'helpers/**'
       - 'instrumentation/action_mailer/**'
       - 'instrumentation/action_pack/**'
       - 'instrumentation/action_view/**'
@@ -38,7 +39,6 @@ on:
       - 'instrumentation/restclient/**'
       - 'instrumentation/rspec/**'
       - 'instrumentation/sinatra/**'
-      - 'helpers/**'
       - '.github/workflows/ci-instrumentation.yml'
       - '.github/actions/**'
       - 'Gemfile'

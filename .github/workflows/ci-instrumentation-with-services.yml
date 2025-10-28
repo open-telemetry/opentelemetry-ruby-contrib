@@ -6,6 +6,8 @@ on:
     branches:
       - main
     paths:
+      - 'helpers/**'
+      - 'instrumentation/base/**'
       - 'instrumentation/bunny/**'
       - 'instrumentation/dalli/**'
       - 'instrumentation/mongo/**'
