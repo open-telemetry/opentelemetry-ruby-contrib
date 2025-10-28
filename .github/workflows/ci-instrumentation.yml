@@ -14,7 +14,6 @@ on:
       - 'instrumentation/active_record/**'
       - 'instrumentation/active_storage/**'
       - 'instrumentation/active_support/**'
-      - 'instrumentation/all/**'
       - 'instrumentation/aws_sdk/**'
       - 'instrumentation/aws_lambda/**'
       - 'instrumentation/base/**'
@@ -58,7 +57,6 @@ on:
       - 'instrumentation/active_record/**'
       - 'instrumentation/active_storage/**'
       - 'instrumentation/active_support/**'
-      - 'instrumentation/all/**'
       - 'instrumentation/aws_sdk/**'
       - 'instrumentation/aws_lambda/**'
       - 'instrumentation/base/**'
@@ -114,7 +112,6 @@ jobs:
           - active_record
           - active_storage
           - active_support
-          - all
           - aws_sdk
           - aws_lambda
           - base

@@ -1,0 +1,84 @@
+name: CI Instrumentation All
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'instrumentation/**'
+      - 'helpers/**'
+      - '.github/workflows/ci-instrumentation-all.yml'
+      - '.github/actions/**'
+      - 'Gemfile'
+      - 'Rakefile'
+      - '.rubocop.yml'
+      - 'gemspecs/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'instrumentation/**'
+      - 'helpers/**'
+      - '.github/workflows/ci-instrumentation-all.yml'
+      - '.github/actions/**'
+      - 'Gemfile'
+      - 'Rakefile'
+      - '.rubocop.yml'
+      - 'gemspecs/**'
+  schedule:
+    - cron: "0 0 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true  # Cancel any previous runs of this workflow
+
+jobs:
+  instrumentation_all:
+    strategy:
+      fail-fast: false
+      matrix:
+        gem:
+          - all
+        os:
+          - ubuntu-latest
+
+    name: ${{ matrix.gem }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.4"
+      - name: "Test Ruby 3.3"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.3"
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "3.2"
+          yard: true
+          rubocop: true
+          coverage: true
+          build: true
+      - name: "JRuby Filter"
+        id: jruby_skip
+        shell: bash
+        run: |
+          echo "skip=false" >> $GITHUB_OUTPUT
+          # The 'all' instrumentation should work with JRuby
+          true
+      - name: "Test JRuby"
+        if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "jruby-10.0.2.0"
