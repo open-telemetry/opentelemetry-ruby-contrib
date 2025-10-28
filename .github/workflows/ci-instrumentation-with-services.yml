@@ -136,18 +136,19 @@ jobs:
         image: confluentinc/cp-zookeeper:latest
         ports:
           - 2181:2181
+        options: >-
+          --log-driver=none
         env:
           ZOOKEEPER_CLIENT_PORT: 2181
           ZOOKEEPER_TICK_TIME: 2000
           CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
-          KAFKA_LOG4J_ROOT_LOGLEVEL: ERROR
-          KAFKA_LOG4J_LOGGERS: "org.apache.zookeeper=ERROR,org.apache.kafka=ERROR"
-          KAFKA_OPTS: "-Dlog4j.rootLogger=ERROR,stdout -Dkafka.logs.dir=/dev/null"
       kafka:
         image: confluentinc/cp-kafka:7.9.1
         ports:
           - 9092:9092
           - 29092:29092
+        options: >-
+          --log-driver=none
         env:
           KAFKA_BROKER_ID: 1
           KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -156,10 +157,6 @@ jobs:
           KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
           CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
-          KAFKA_LOG4J_ROOT_LOGLEVEL: ERROR
-          KAFKA_LOG4J_LOGGERS: "org.apache.zookeeper=ERROR,org.apache.kafka=ERROR,state.change.logger=ERROR,kafka.controller=ERROR"
-          KAFKA_TOOLS_LOG4J_LOGLEVEL: ERROR
-          KAFKA_OPTS: "-Dlog4j.rootLogger=ERROR,stdout -Dlog4j.logger.org.apache.zookeeper=ERROR -Dlog4j.logger.org.apache.kafka=ERROR -Dkafka.logs.dir=/dev/null"
 
   instrumentation_redis:
     strategy:
