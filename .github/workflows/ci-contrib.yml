@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-    paths:
+    paths: &path_filters
       - 'helpers/**'
       - 'propagator/**'
       - 'resources/**'
@@ -20,18 +20,7 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'helpers/**'
-      - 'propagator/**'
-      - 'resources/**'
-      - 'processor/**'
-      - 'sampler/**'
-      - '.github/workflows/ci-contrib.yml'
-      - '.github/actions/**'
-      - 'Gemfile'
-      - 'Rakefile'
-      - '.rubocop.yml'
-      - 'gemspecs/**'
+    paths: *path_filters
   schedule:
     - cron: "0 0 * * *"
 
