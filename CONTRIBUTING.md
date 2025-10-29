@@ -443,7 +443,7 @@ After running the script:
 2. Test against the new minimum Ruby version
 3. Update CI configurations in `.github/workflows`
 4. Update `.rubocop.yml` to set the `TargetRubyVersion`
-5. Remove any conditional logic handling Ruby verions in Apprisal files that is no longer needed
+5. Remove any conditional logic handling Ruby versions in Appraisal files that are no longer needed
 6. Remove any conditional logic in test cases that are no longer needed
 7. Commit with a message like `chore: update minimum Ruby version to 3.3`
 
