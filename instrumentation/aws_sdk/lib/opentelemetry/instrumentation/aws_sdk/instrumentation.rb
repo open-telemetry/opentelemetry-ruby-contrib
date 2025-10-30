@@ -19,24 +19,27 @@ module OpenTelemetry
       # - `false` **(default)** - Context key/value will not be added.
       # - `true` - Context key/value will be added.
       #
-      # ### `:suppress_internal_instrumentation`
+      # ### `:enable_internal_instrumentation`
+      # Enables tracing of spans of `internal` span kind.
       #
-      # Disables tracing of spans of `internal` span kind.
+      # - `false` **(default)** - Internal spans are not traced
+      # - `true` - Internal spans are traced.
       #
-      # - `false` **(default)** - Internal spans are traced.
-      # - `true` - Internal spans are not traced.
+      # ### `:suppress_internal_instrumentation` (deprecated)
+      # This configuration has been deprecated in favor of `:enable_internal_instrumentation`
       #
       # @example An explicit default configuration
       #   OpenTelemetry::SDK.configure do |c|
       #     c.use 'OpenTelemetry::Instrumentation::AwsSdk', {
       #       inject_messaging_context: false,
-      #       suppress_internal_instrumentation: false
+      #       enable_internal_instrumentation: false
       #     }
       #   end
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('2.0.0')
 
-        install do |_config|
+        install do |config|
+          resolve_config(config)
           require_dependencies
           patch_telemetry_plugin if telemetry_plugin?
           add_plugins(Seahorse::Client::Base, *loaded_service_clients)
@@ -52,6 +55,7 @@ module OpenTelemetry
 
         option :inject_messaging_context, default: false, validate: :boolean
         option :suppress_internal_instrumentation, default: false, validate: :boolean
+        option :enable_internal_instrumentation, default: false, validate: :boolean
 
         def gem_version
           if Gem.loaded_specs['aws-sdk']
@@ -64,6 +68,15 @@ module OpenTelemetry
         end
 
         private
+
+        def resolve_config(config)
+          return unless config[:suppress_internal_instrumentation]
+
+          OpenTelemetry.logger.warn(
+            'Instrumentation AwsSdk configuration option suppress_internal_instrumentation has been deprecated,' \
+            'use enable_internal_instrumentation option instead'
+          )
+        end
 
         def require_dependencies
           require_relative 'handler'
@@ -92,7 +105,7 @@ module OpenTelemetry
 
         # Patches AWS SDK V3's telemetry plugin for integration
         # This patch supports configuration set by this gem and
-        # additional span attributes that was not provided by the plugin
+        # additional span attributes that were not provided by the plugin
         def patch_telemetry_plugin
           ::Aws::Plugins::Telemetry::Handler.prepend(Patches::Handler)
         end
@@ -112,7 +125,7 @@ module OpenTelemetry
 
         # This check does the following:
         # 1 - Checks if the service client is autoload or not
-        # 2 - Validates whether if is a service client
+        # 2 - Validates whether it is a service client
         # note that Seahorse::Client::Base is a superclass for V3 clients
         # but for V2, it is Aws::Client
         # rubocop:disable Style/MultipleComparison

@@ -23,11 +23,11 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
+  spec.required_ruby_version = '>= 3.2'
 
   spec.add_dependency 'opentelemetry-helpers-sql'
   spec.add_dependency 'opentelemetry-helpers-sql-obfuscation'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.24'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.25'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
