@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   app:
-    image: ruby:3.1-slim
+    image: ruby:3.2-slim
     volumes:
       - ../.:/app
     working_dir: /app/example

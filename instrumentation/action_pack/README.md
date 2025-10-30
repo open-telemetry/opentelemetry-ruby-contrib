@@ -48,8 +48,6 @@ This instrumentation generally uses [HTTP server semantic conventions](https://o
 
 For Rails 7.1+, the span name is updated to match the HTTP method and route that was matched for the request using [`ActionDispatch::Request#route_uri_pattern`](https://api.rubyonrails.org/classes/ActionDispatch/Request.html#method-i-route_uri_pattern), e.g.: `GET /users/:id`
 
-For older versions of Rails the span name is updated to match the HTTP method, controller, and action name that was the target of the request, e.g.: `GET /example/index`
-
 > ![NOTE]: Users may override the `span_naming` option to default to Legacy Span Naming Behavior that uses the controller's class name and action in Ruby documentation syntax, e.g. `ExampleController#index`.
 
 This instrumentation does not emit any custom attributes.
@@ -58,7 +56,7 @@ This instrumentation does not emit any custom attributes.
 | - | - | - |
 | `code.namespace` | String | `ActionController` class name |
 | `code.function` | String | `ActionController` action name e.g. `index`, `show`, `edit`, etc... |
-| `http.route` | String | (Rails 7.1+) the route that was matched for the request |
+| `http.route` | String | The route that was matched for the request |
 | `http.target` | String | The `request.filtered_path` |
 
 ### Error Handling for Action Controller

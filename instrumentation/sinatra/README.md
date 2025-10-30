@@ -10,7 +10,7 @@ Install the gem using:
 gem install opentelemetry-instrumentation-sinatra
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-sinatra` to your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-sinatra` in your `Gemfile`.
 
 ### Version Compatibility
 

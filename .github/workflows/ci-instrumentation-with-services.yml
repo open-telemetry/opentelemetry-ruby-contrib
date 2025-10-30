@@ -5,9 +5,32 @@ on:
   push:
     branches:
       - main
+    paths: &path_filters
+      - 'helpers/**'
+      - 'instrumentation/base/**'
+      - 'instrumentation/bunny/**'
+      - 'instrumentation/dalli/**'
+      - 'instrumentation/mongo/**'
+      - 'instrumentation/mysql2/**'
+      - 'instrumentation/pg/**'
+      - 'instrumentation/que/**'
+      - 'instrumentation/racecar/**'
+      - 'instrumentation/rdkafka/**'
+      - 'instrumentation/redis/**'
+      - 'instrumentation/resque/**'
+      - 'instrumentation/ruby_kafka/**'
+      - 'instrumentation/sidekiq/**'
+      - 'instrumentation/trilogy/**'
+      - '.github/workflows/ci-instrumentation-with-services.yml'
+      - '.github/actions/**'
+      - 'Gemfile'
+      - 'Rakefile'
+      - '.rubocop.yml'
+      - 'gemspecs/**'
   pull_request:
     branches:
       - main
+    paths: *path_filters
   schedule:
     - cron: "0 0 * * *"
 
@@ -47,20 +70,10 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
           build: true
-      - name: "Test JRuby"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.12.0"
     services:
       memcached:
         image: memcached:alpine
@@ -99,11 +112,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -142,11 +150,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -201,11 +204,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -251,11 +249,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -298,11 +291,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true

@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Koala
-      VERSION = '0.22.1'
+      VERSION = '0.23.0'
     end
   end
 end
