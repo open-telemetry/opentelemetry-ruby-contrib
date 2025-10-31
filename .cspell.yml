@@ -77,6 +77,8 @@ words:
   - toolset
   - traceid
   - traceresponse
+  - Triager
+  - triagers
   - Untrace
   - vitess
   - webmocks
