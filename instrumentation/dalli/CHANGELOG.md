@@ -1,5 +1,31 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.29.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
+### v0.28.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.28.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.27.3 / 2025-05-27
+
+* FIXED: Compact Dalli attributes
+
+### v0.27.2 / 2025-04-30
+
+* FIXED: Do not pollute the `OpenTelemetry::Instrumentation` namespace
+
+### v0.27.1 / 2025-04-21
+
+* FIXED: Only prepend Dalli patch if binary protocol defined
+
 ### v0.27.0 / 2025-04-15
 
 * ADDED: Support meta protocol instrumentation

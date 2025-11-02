@@ -1,5 +1,23 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.32.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
+### v0.31.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.31.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.30.1 / 2025-04-16
+
+* refactor: Use SQL helpers for context attributes #1271
+
 ### v0.30.0 / 2025-01-16
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1

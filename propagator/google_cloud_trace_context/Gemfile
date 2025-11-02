@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gemspec
+
+group :test do
+  gem 'bundler', '~> 2.4'
+  gem 'minitest', '~> 5.0'
+  gem 'rake', '~> 13.0'
+  gem 'rubocop', '~> 1.81.1'
+  gem 'rubocop-performance', '~> 1.26.0'
+  gem 'simplecov', '~> 0.22.0'
+  gem 'yard', '~> 0.9'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+  end
+end

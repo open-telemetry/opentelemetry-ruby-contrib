@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module HTTPX
-      VERSION = '0.2.0'
+      VERSION = '0.5.0'
     end
   end
 end

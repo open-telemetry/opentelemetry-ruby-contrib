@@ -7,6 +7,7 @@
 require 'net/http'
 require 'json'
 require 'opentelemetry/common'
+require 'opentelemetry/semantic_conventions/resource'
 
 module OpenTelemetry
   module Resource
@@ -59,7 +60,7 @@ module OpenTelemetry
               resource_attributes[RESOURCE::HOST_TYPE] = identity['instanceType']
               resource_attributes[RESOURCE::HOST_NAME] = hostname
             rescue StandardError => e
-              OpenTelemetry.logger.debug("EC2 resource detection failed: #{e.message}")
+              OpenTelemetry.handle_error(exception: e, message: 'EC2 resource detection failed')
               return OpenTelemetry::SDK::Resources::Resource.create({})
             end
 
@@ -133,7 +134,7 @@ module OpenTelemetry
                 http.request(request)
               end
             rescue StandardError => e
-              OpenTelemetry.logger.debug("EC2 metadata service request failed: #{e.message}")
+              OpenTelemetry.handle_error(exception: e, message: 'EC2 metadata service request failed')
               nil
             end
           end

@@ -59,8 +59,6 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
   end
 
   it 'strips (:format) from http.route' do
-    skip "Rails #{Rails.gem_version} does not define ActionDispatch::Request#route_uri_pattern" if Rails.gem_version < Gem::Version.new('7.1')
-
     get 'items/1234'
 
     _(span.attributes['http.route']).must_equal '/items/:id'
@@ -150,51 +148,21 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
   describe 'span naming' do
     describe 'when using the default span_naming configuration' do
       describe 'successful requests' do
-        describe 'Rails Version < 7.1' do
-          it 'uses the http method controller and action name' do
-            skip "Rails #{Rails.gem_version} uses ActionDispatch::Request#route_uri_pattern" if Rails.gem_version >= Gem::Version.new('7.1')
-            get '/ok'
+        it 'uses the Rails route' do
+          get '/ok'
 
-            _(span.name).must_equal 'GET /example/ok'
-          end
-
-          it 'excludes route params' do
-            skip "Rails #{Rails.gem_version} uses ActionDispatch::Request#route_uri_pattern" if Rails.gem_version >= Gem::Version.new('7.1')
-            get '/items/1234'
-
-            _(span.name).must_equal 'GET /example/item'
-          end
+          _(span.name).must_equal 'GET /ok'
         end
 
-        describe 'Rails Version >= 7.1' do
-          it 'uses the Rails route' do
-            skip "Rails #{Rails.gem_version} does not define ActionDispatch::Request#route_uri_pattern" if Rails.gem_version < Gem::Version.new('7.1')
-            get '/ok'
+        it 'includes route params' do
+          get '/items/1234'
 
-            _(span.name).must_equal 'GET /ok'
-          end
-
-          it 'includes route params' do
-            skip "Rails #{Rails.gem_version} does not define ActionDispatch::Request#route_uri_pattern" if Rails.gem_version < Gem::Version.new('7.1')
-            get '/items/1234'
-
-            _(span.name).must_equal 'GET /items/:id'
-          end
+          _(span.name).must_equal 'GET /items/:id'
         end
       end
 
       describe 'server errors' do
-        it 'uses the http method controller and action name for server side errors' do
-          skip "Rails #{Rails.gem_version} uses ActionDispatch::Request#route_uri_pattern" if Rails.gem_version >= Gem::Version.new('7.1')
-
-          get 'internal_server_error'
-
-          _(span.name).must_equal 'GET /example/internal_server_error'
-        end
-
         it 'uses the Rails route for server side errors' do
-          skip "Rails #{Rails.gem_version} uses ActionDispatch::Request#route_uri_pattern" if Rails.gem_version < Gem::Version.new('7.1')
-
           get 'internal_server_error'
 
           _(span.name).must_equal 'GET /internal_server_error'
@@ -215,11 +183,12 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
 
   describe 'when the application has exceptions_app configured' do
     let(:rails_app) { AppConfig.initialize_app(use_exceptions_app: true) }
+    let(:config) { { span_naming: :class } }
 
     it 'does not overwrite the span name from the controller that raised' do
       get 'internal_server_error'
 
-      _(span.name).must_match(/^GET/)
+      _(span.name).must_equal 'ExampleController#internal_server_error'
       _(span.kind).must_equal :server
       _(span.status.ok?).must_equal false
 
@@ -234,6 +203,12 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
       _(span.attributes['http.user_agent']).must_be_nil
       _(span.attributes['code.namespace']).must_equal 'ExceptionsController'
       _(span.attributes['code.function']).must_equal 'show'
+    end
+
+    it 'does not raise with api/non recording spans' do
+      with_sampler(OpenTelemetry::SDK::Trace::Samplers::ALWAYS_OFF) do
+        get 'internal_server_error'
+      end
     end
   end
 

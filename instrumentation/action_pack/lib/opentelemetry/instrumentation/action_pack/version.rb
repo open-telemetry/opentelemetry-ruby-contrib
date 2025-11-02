@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module ActionPack
-      VERSION = '0.12.0'
+      VERSION = '0.15.1'
     end
   end
 end

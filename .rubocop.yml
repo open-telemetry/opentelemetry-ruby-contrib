@@ -1,7 +1,7 @@
 plugins: rubocop-performance
 
 AllCops:
-  TargetRubyVersion: '3.1'
+  TargetRubyVersion: 3.2
   NewCops: enable
   Exclude:
     - Rakefile
@@ -9,6 +9,7 @@ AllCops:
     - "**/example/*"
     - "bin/instrumentation_generator"
     - "**/**/vendor/bundle/**/*"
+    - "**/proto/**"
 Bundler/OrderedGems:
   Enabled: false
 Gemspec/DevelopmentDependencies:

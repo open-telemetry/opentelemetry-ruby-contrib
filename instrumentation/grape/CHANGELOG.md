@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-grape
 
+### v0.5.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
+### v0.4.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.3.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1

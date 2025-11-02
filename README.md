@@ -25,15 +25,9 @@ requests.
 The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 [community page][ruby-sig] repo for information on this and other language SIGs.
 
-Approvers ([@open-telemetry/ruby-contrib-approvers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-approvers)):
+### Maintainers
 
-- [Josef Šimánek](https://github.com/simi)
-- [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
-
-*Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).*
-
-Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-contrib-maintainers)):
-
+- [Andrew Hayworth](https://github.com/ahayworth)
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Daniel Azuma](https://github.com/dazuma), Google
 - [Eric Mustin](https://github.com/ericmustin)
@@ -44,7 +38,14 @@ Maintainers ([@open-telemetry/ruby-contrib-maintainers](https://github.com/orgs/
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
 - [Sam Handler](https://github.com/plantfansam), Shopify
 
-*Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).*
+For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
+
+### Approvers
+
+- [Josef Šimánek](https://github.com/simi)
+- [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
+
+For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
 ## Instrumentation Libraries
 
@@ -77,7 +78,9 @@ OpenTelemetry Ruby follows the [versioning and stability document][otel-versioni
 
 ### Ruby and Library Compatibility
 
-All libraries in this repository require Ruby Versions 3.1 or newer.
+All libraries in this repository require Ruby Versions 3.2 or newer.
+
+- Ruby 3.1 EoL 2025-03-31 No longer receiving OTel Contrib updates as of 2025-09-30
 
 This project is managed on a volunteer basis and therefore we have limited capacity to support compatibility with unmaintained or EOL libraries.
 
@@ -92,7 +95,7 @@ Consult instrumentation gem's README file and gemspec for details about library 
 
 ### Releases
 
-This repository was extracted from the [OpenTelemetry Ruby repository][otel-ruby]. Versions of libraries contained in this repo released prior to 2022-06-13 are available on the [OpenTelemetry Ruby Releases][otel-ruby-releases] page. Newer versions are available [here][otel-ruby-contrib-releases]
+This repository was extracted from the [OpenTelemetry Ruby repository][otel-ruby]. Versions of libraries contained in this repo released prior to 2022-06-13 are available on the [OpenTelemetry Ruby Releases][otel-ruby-releases] page. Newer versions are available [on the opentelemetry-ruby-contrib Releases page][otel-ruby-contrib-releases].
 
 ## Useful links
 

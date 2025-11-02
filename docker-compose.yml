@@ -198,7 +198,7 @@ services:
       - postgres_socket:/var/run/postgresql
 
   redis:
-    image: bitnami/redis:6.2
+    image: bitnamilegacy/redis:6.2
     environment:
       - REDIS_PASSWORD=passw0rd
     volumes:
@@ -226,7 +226,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.9.1
     ports:
       - "9092:9092"
       - "29092:29092"

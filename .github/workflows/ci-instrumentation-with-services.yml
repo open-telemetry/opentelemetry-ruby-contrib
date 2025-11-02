@@ -5,11 +5,37 @@ on:
   push:
     branches:
       - main
+    paths: &path_filters
+      - 'helpers/**'
+      - 'instrumentation/base/**'
+      - 'instrumentation/bunny/**'
+      - 'instrumentation/dalli/**'
+      - 'instrumentation/mongo/**'
+      - 'instrumentation/mysql2/**'
+      - 'instrumentation/pg/**'
+      - 'instrumentation/que/**'
+      - 'instrumentation/racecar/**'
+      - 'instrumentation/rdkafka/**'
+      - 'instrumentation/redis/**'
+      - 'instrumentation/resque/**'
+      - 'instrumentation/ruby_kafka/**'
+      - 'instrumentation/sidekiq/**'
+      - 'instrumentation/trilogy/**'
+      - '.github/workflows/ci-instrumentation-with-services.yml'
+      - '.github/actions/**'
+      - 'Gemfile'
+      - 'Rakefile'
+      - '.rubocop.yml'
+      - 'gemspecs/**'
   pull_request:
     branches:
       - main
+    paths: *path_filters
   schedule:
     - cron: "0 0 * * *"
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
@@ -28,7 +54,7 @@ jobs:
     name: other / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -44,20 +70,10 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
           build: true
-      - name: "Test JRuby"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.12.0"
     services:
       memcached:
         image: memcached:alpine
@@ -80,7 +96,7 @@ jobs:
     name: mysql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -96,11 +112,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -123,7 +134,7 @@ jobs:
     name: kafka / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -139,11 +150,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -157,7 +163,7 @@ jobs:
           ZOOKEEPER_CLIENT_PORT: 2181
           ZOOKEEPER_TICK_TIME: 2000
       kafka:
-        image: confluentinc/cp-kafka:latest
+        image: confluentinc/cp-kafka:7.9.1
         ports:
           - 9092:9092
           - 29092:29092
@@ -182,7 +188,7 @@ jobs:
     name: redis / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -198,18 +204,13 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
           build: true
     services:
       redis:
-        image: bitnami/redis:6.2
+        image: bitnamilegacy/redis:6.2
         ports:
           - 6379:6379
         options: >-
@@ -232,7 +233,7 @@ jobs:
     name: postgresql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -248,11 +249,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -279,7 +275,7 @@ jobs:
     name: rabbitmq / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -295,11 +291,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true

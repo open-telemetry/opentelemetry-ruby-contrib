@@ -10,7 +10,7 @@
   "release-type": "ruby",
   "separate-pull-requests": false,
   "sequential-calls": true,
-  "signoff": "OpenTelemetry Bot <107717825+opentelemetrybot@users.noreply.github.com>",
+  "signoff": "OpenTelemetry Bot <197425009+otelbot@users.noreply.github.com>",
   "skip-github-release": false,
   "tag-separator": " ",
   "packages": {
@@ -209,6 +209,10 @@
     "propagator/xray": {
       "package-name": "opentelemetry-propagator-xray",
       "version-file": "lib/opentelemetry/propagator/xray/version.rb"
+    },
+    "propagator/google_cloud_trace_context": {
+      "package-name": "opentelemetry-propagator-google_cloud_trace_context",
+      "version-file": "lib/opentelemetry/propagator/google_cloud_trace_context/version.rb"
     },
     "resources/azure": {
       "package-name": "opentelemetry-resource-detector-azure",
