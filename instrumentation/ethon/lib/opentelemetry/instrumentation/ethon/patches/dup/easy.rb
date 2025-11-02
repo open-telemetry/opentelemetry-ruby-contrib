@@ -80,9 +80,12 @@ module OpenTelemetry
               method = '_OTHER' # Could be GET or not HTTP at all
               method = @otel_method if instance_variable_defined?(:@otel_method) && !@otel_method.nil?
 
+              span_attrs = span_creation_attributes(method)
+              span_name = determine_span_name(span_attrs, method)
+
               @otel_span = tracer.start_span(
-                HTTP_METHODS_TO_SPAN_NAMES[method],
-                attributes: span_creation_attributes(method),
+                span_name,
+                attributes: span_attrs,
                 kind: :client
               )
 
@@ -137,6 +140,17 @@ module OpenTelemetry
 
             def tracer
               Ethon::Instrumentation.instance.tracer
+            end
+
+            def determine_span_name(attributes, method)
+              # According to https://opentelemetry.io/docs/specs/semconv/http/http-spans/#name
+              # Span name should be "{http.request.method} {url.template}" if template is available,
+              # otherwise just "{http.request.method}"
+              # For non-HTTP methods, return 'HTTP' as per the spec
+              template = attributes['url.template']
+              http_method = method == '_OTHER' ? 'HTTP' : method
+
+              template ? "#{http_method} #{template}" : http_method
             end
           end
         end

@@ -94,7 +94,9 @@ module OpenTelemetry
               attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-              span = tracer.start_span(verb, attributes: attributes, kind: :client, start_timestamp: start_time)
+              span_name = determine_span_name(attributes, verb)
+
+              span = tracer.start_span(span_name, attributes: attributes, kind: :client, start_timestamp: start_time)
 
               OpenTelemetry::Trace.with_span(span) do
                 OpenTelemetry.propagation.inject(request.headers)
@@ -107,6 +109,15 @@ module OpenTelemetry
 
             def tracer
               HTTPX::Instrumentation.instance.tracer
+            end
+
+            def determine_span_name(attributes, verb)
+              # According to https://opentelemetry.io/docs/specs/semconv/http/http-spans/#name
+              # Span name should be "{http.request.method} {url.template}" if template is available,
+              # otherwise just "{http.request.method}"
+              template = attributes['url.template']
+
+              template ? "#{verb} #{template}" : verb
             end
           end
 

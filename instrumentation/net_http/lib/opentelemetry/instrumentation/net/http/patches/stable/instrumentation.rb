@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../../../http/helpers'
+
 module OpenTelemetry
   module Instrumentation
     module Net
@@ -35,8 +37,10 @@ module OpenTelemetry
 
                 attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
+                span_name = OpenTelemetry::Instrumentation::Net::HTTP::Helpers.determine_span_name(attributes, http_method)
+
                 tracer.in_span(
-                  req.method.to_s,
+                  span_name,
                   attributes: attributes,
                   kind: :client
                 ) do |span|

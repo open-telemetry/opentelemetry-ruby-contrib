@@ -63,12 +63,22 @@ module OpenTelemetry
             end
 
             def create_request_span_name(request_method, request_path)
+              # First check for url.template in ClientContext attributes
+              url_template = OpenTelemetry::Common::HTTP::ClientContext.attributes['url.template']
+
+              # According to https://opentelemetry.io/docs/specs/semconv/http/http-spans/#name
+              # Span name should be "{http.request.method} {url.template}" if template is available,
+              # otherwise just "{http.request.method}"
+              return "#{request_method} #{url_template}" if url_template
+
+              # Then check custom formatter if configured
               if (implementation = config[:span_name_formatter])
                 updated_span_name = implementation.call(request_method, request_path)
-                updated_span_name.is_a?(String) ? updated_span_name : request_method.to_s
-              else
-                request_method.to_s
+                return updated_span_name if updated_span_name.is_a?(String)
               end
+
+              # Fallback to just the HTTP method
+              request_method.to_s
             rescue StandardError
               request_method.to_s
             end

@@ -54,12 +54,17 @@ module OpenTelemetry
             def create_request_span_name(request_method, request_path)
               if (implementation = config[:span_name_formatter])
                 updated_span_name = implementation.call(request_method, request_path)
-                updated_span_name.is_a?(String) ? updated_span_name : "HTTP #{request_method}"
+                updated_span_name.is_a?(String) ? updated_span_name : determine_span_name(request_method)
               else
-                "HTTP #{request_method}"
+                determine_span_name(request_method)
               end
             rescue StandardError
-              "HTTP #{request_method}"
+              determine_span_name(request_method)
+            end
+
+            def determine_span_name(http_method)
+              template = OpenTelemetry::Common::HTTP::ClientContext.attributes['url.template']
+              template ? "#{http_method} #{template}" : "HTTP #{http_method}"
             end
 
             def tracer

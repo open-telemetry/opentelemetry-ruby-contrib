@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../../../faraday/helpers'
+
 module OpenTelemetry
   module Instrumentation
     module Faraday
@@ -36,8 +38,9 @@ module OpenTelemetry
               )
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
+                span_name = OpenTelemetry::Instrumentation::Faraday::Helpers.determine_span_name(attrs)
                 tracer.in_span(
-                  http_method, attributes: attrs, kind: config.fetch(:span_kind)
+                  span_name, attributes: attrs, kind: config.fetch(:span_kind)
                 ) do |span|
                   OpenTelemetry.propagation.inject(env.request_headers)
 

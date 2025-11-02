@@ -39,7 +39,9 @@ module OpenTelemetry
 
               attributes['url.query'] = uri.query unless uri.query.nil?
 
-              tracer.in_span(request_method, attributes: attributes, kind: :client) do |span|
+              span_name = determine_span_name(attributes, request_method)
+
+              tracer.in_span(span_name, attributes: attributes, kind: :client) do |span|
                 OpenTelemetry.propagation.inject(req.header)
                 super.tap do
                   response = conn.pop
@@ -61,6 +63,15 @@ module OpenTelemetry
 
             def tracer
               HttpClient::Instrumentation.instance.tracer
+            end
+
+            def determine_span_name(attributes, request_method)
+              # According to https://opentelemetry.io/docs/specs/semconv/http/http-spans/#name
+              # Span name should be "{http.request.method} {url.template}" if template is available,
+              # otherwise just "{http.request.method}"
+              template = attributes['url.template']
+
+              template ? "#{request_method} #{template}" : request_method
             end
           end
         end

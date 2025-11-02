@@ -76,9 +76,10 @@ module OpenTelemetry
               method = 'N/A' # Could be GET or not HTTP at all
               method = @otel_method if instance_variable_defined?(:@otel_method) && !@otel_method.nil?
 
+              attributes = span_creation_attributes(method)
               @otel_span = tracer.start_span(
-                HTTP_METHODS_TO_SPAN_NAMES[method],
-                attributes: span_creation_attributes(method),
+                determine_span_name(attributes, method),
+                attributes: attributes,
                 kind: :client
               )
 
@@ -129,6 +130,11 @@ module OpenTelemetry
 
             def tracer
               Ethon::Instrumentation.instance.tracer
+            end
+
+            def determine_span_name(attributes, http_method)
+              template = attributes['url.template']
+              template ? "#{http_method} #{template}" : "HTTP #{http_method}"
             end
           end
         end
