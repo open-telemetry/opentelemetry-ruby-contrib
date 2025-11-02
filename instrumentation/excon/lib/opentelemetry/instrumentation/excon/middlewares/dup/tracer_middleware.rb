@@ -51,7 +51,7 @@ module OpenTelemetry
               peer_service = Excon::Instrumentation.instance.config[:peer_service]
               attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = peer_service if peer_service
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
-              span_name = OpenTelemetry::Instrumentation::Excon::Helpers.determine_span_name(attributes, http_method)
+              span_name = OpenTelemetry::Instrumentation::Excon::Helpers.format_span_name(attributes, http_method)
               span = tracer.start_span(span_name, attributes: attributes, kind: :client)
               ctx = OpenTelemetry::Trace.context_with_span(span)
               datum[:otel_span] = span

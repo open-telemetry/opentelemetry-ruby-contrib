@@ -38,7 +38,7 @@ module OpenTelemetry
               )
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
-                span_name = OpenTelemetry::Instrumentation::Faraday::Helpers.determine_span_name(attrs)
+                span_name = OpenTelemetry::Instrumentation::Faraday::Helpers.format_span_name(attrs, http_method)
                 tracer.in_span(
                   span_name, attributes: attrs, kind: config.fetch(:span_kind)
                 ) do |span|

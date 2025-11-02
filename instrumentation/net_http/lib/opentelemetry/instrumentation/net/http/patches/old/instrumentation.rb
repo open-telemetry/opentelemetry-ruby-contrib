@@ -26,15 +26,15 @@ module OpenTelemetry
 
                 return super if untraced?
 
-                attributes = {
+                attributes = client_context_attrs.merge(
                   OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
                   OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
                   OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
-                }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+                ).merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-                span_name = OpenTelemetry::Instrumentation::Net::HTTP::Helpers.determine_span_name(attributes, req.method)
+                span_name = OpenTelemetry::Instrumentation::Net::HTTP::Helpers.format_span_name(attributes, req.method)
 
                 tracer.in_span(
                   span_name,

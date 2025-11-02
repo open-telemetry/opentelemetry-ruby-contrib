@@ -37,7 +37,7 @@ module OpenTelemetry
 
                 attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-                span_name = OpenTelemetry::Instrumentation::Net::HTTP::Helpers.determine_span_name(attributes, http_method)
+                span_name = OpenTelemetry::Instrumentation::Net::HTTP::Helpers.format_span_name(attributes, http_method)
 
                 tracer.in_span(
                   span_name,

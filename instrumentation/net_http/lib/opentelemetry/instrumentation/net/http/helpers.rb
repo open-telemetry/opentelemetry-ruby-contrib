@@ -10,11 +10,11 @@ module OpenTelemetry
       module HTTP
         # Helper methods for Net::HTTP instrumentation
         module Helpers
-          class << self
-            def determine_span_name(attributes, http_method)
-              template = attributes['url.template']
-              template ? "#{http_method} #{template}" : http_method
-            end
+          extend self
+
+          def format_span_name(attributes, http_method)
+            template = attributes['url.template']
+            template ? "#{http_method} #{template}" : http_method
           end
         end
       end
