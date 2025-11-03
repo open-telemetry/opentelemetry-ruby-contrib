@@ -17,7 +17,7 @@ module OpenTelemetry
             @connection_options = options # This is normally done by Trilogy#initialize
 
             tracer.in_span(
-              'connect',
+              'tcp.connect',
               attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
               kind: :client,
               record_exception: config[:record_exception]
