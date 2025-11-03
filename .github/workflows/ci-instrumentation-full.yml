@@ -35,6 +35,7 @@ on:
       - 'instrumentation/lmdb/**'
       - 'instrumentation/logger/**'
       - 'instrumentation/net_http/**'
+      - 'instrumentation/net_ldap/**'
       - 'instrumentation/rack/**'
       - 'instrumentation/rails/**'
       - 'instrumentation/restclient/**'
@@ -94,6 +95,7 @@ jobs:
           - lmdb
           - logger
           - net_http
+          - net_ldap
           - rack
           - rails
           - restclient
