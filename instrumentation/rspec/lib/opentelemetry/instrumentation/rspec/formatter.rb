@@ -74,8 +74,10 @@ module OpenTelemetry
 
             # Update name and full_description for one-liner examples where description is generated after execution
             span.name = example.description
-            span.set_attribute('rspec.example.full_description', example.full_description.to_s)
-            span.set_attribute('rspec.example.result', result.status.to_s)
+            span.add_attributes(
+              'rspec.example.full_description' => example.full_description.to_s,
+              'rspec.example.result' => result.status.to_s
+            )
 
             add_exception_and_failures(span, result.exception)
           end
