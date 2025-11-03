@@ -82,7 +82,7 @@ module OpenTelemetry
                 'server.port' => uri.port
               }
               attributes['url.query'] = uri.query unless uri.query.nil?
-              attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
               span = tracer.start_span(determine_span_name(attributes, verb), attributes: attributes, kind: :client, start_timestamp: start_time)

@@ -54,7 +54,7 @@ module OpenTelemetry
                 span.record_exception(response.error)
                 span.status = Trace::Status.error(response.error.to_s)
               else
-                span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response.status)
+                span.set_attribute('http.status_code', response.status)
 
                 if response.status.between?(400, 599)
                   err = ::HTTPX::HTTPError.new(response)
@@ -74,16 +74,16 @@ module OpenTelemetry
               config = HTTPX::Instrumentation.instance.config
 
               attributes = {
-                OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => uri.host,
-                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => verb,
-                OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => uri.scheme,
-                OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => uri.path,
-                OpenTelemetry::SemanticConventions::Trace::HTTP_URL => "#{uri.scheme}://#{uri.host}",
-                OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => uri.host,
-                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => uri.port
+                'http.host' => uri.host,
+                'http.method' => verb,
+                'http.scheme' => uri.scheme,
+                'http.target' => uri.path,
+                'http.url' => "#{uri.scheme}://#{uri.host}",
+                'net.peer.name' => uri.host,
+                'net.peer.port' => uri.port
               }
 
-              attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
               span = tracer.start_span(determine_span_name(attributes, verb), attributes: attributes, kind: :client, start_timestamp: start_time)
