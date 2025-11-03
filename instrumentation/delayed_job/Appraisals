@@ -4,23 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[7.0.0 7.1.0].each do |version|
+%w[7.1.0 7.2.0 8.0.0].each do |version|
   appraise "delayed_job_4.1-activejob-#{version}" do
     gem 'delayed_job', '~> 4.1'
     gem 'activejob', "~> #{version}"
   end
 end
 
-if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.1.0')
-  %w[7.2.0].each do |version|
-    appraise "delayed_job-4.1-activejob-#{version}" do
-      gem 'delayed_job', '~> 4.1'
-      gem 'activejob', "~> #{version}"
-    end
-  end
-
-  appraise 'delayed_job-latest' do
-    gem 'delayed_job'
-    gem 'activejob'
-  end
+appraise 'delayed_job-latest' do
+  gem 'delayed_job'
+  gem 'activejob'
 end

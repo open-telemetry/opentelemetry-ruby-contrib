@@ -19,45 +19,12 @@ concurrency:
   cancel-in-progress: true  # Cancel any previous runs of this workflow
 
 jobs:
-  instrumentation:
+  instrumentation_all:
     strategy:
       fail-fast: false
       matrix:
         gem:
-          - action_mailer
-          - action_pack
-          - action_view
-          - active_job
-          - active_model_serializers
-          - active_record
-          - active_storage
-          - active_support
           - all
-          - aws_sdk
-          - aws_lambda
-          - base
-          - concurrent_ruby
-          - delayed_job
-          - ethon
-          - excon
-          - factory_bot
-          - faraday
-          - grape
-          - graphql
-          - grpc
-          - gruf
-          - http
-          - http_client
-          - httpx
-          - koala
-          - lmdb
-          - logger
-          - net_http
-          - rack
-          - rails
-          - restclient
-          - rspec
-          - sinatra
         os:
           - ubuntu-latest
 
@@ -80,11 +47,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           coverage: true
@@ -94,29 +56,11 @@ jobs:
         shell: bash
         run: |
           echo "skip=false" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "action_pack"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "action_view"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "active_model_serializers" ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "active_record"            ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "active_storage"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "active_support"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "aws_sdk"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "aws_lambda"               ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "delayed_job"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "graphql"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "http"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "http_client"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "koala"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "lmdb"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "rack"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "rails"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "grpc"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "gruf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
+          # The 'all' instrumentation should work with JRuby
           true
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.12.0"
+          ruby: "jruby-10.0.2.0"
