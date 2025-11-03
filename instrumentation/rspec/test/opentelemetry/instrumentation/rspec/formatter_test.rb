@@ -131,6 +131,10 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
         _(subject.attributes['rspec.example.location']).must_match %r{\./test/opentelemetry/instrumentation/rspec/formatter_test.rb:\d+}
       end
 
+      it 'has an id attribute' do
+        _(subject.attributes['rspec.example.id']).must_match %r{\./test/opentelemetry/instrumentation/rspec/formatter_test.rb\[\d+:\d+\]}
+      end
+
       it 'records when the example passes' do
         _(subject.attributes['rspec.example.result']).must_equal 'passed'
       end
@@ -324,6 +328,32 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       it 'records the second exception' do
         _(subject.events[1].attributes['exception.type']).must_equal 'RuntimeError'
         _(subject.events[1].attributes['exception.message']).must_equal 'another-error'
+      end
+    end
+
+    describe 'dynamic examples with same location' do
+      it 'have unique example.id attributes' do
+        spans = run_rspec_with_tracing do
+          RSpec.describe('dynamic examples') do
+            [1, 2, 3].each do |num|
+              example("example #{num}") { expect(num).to be_positive }
+            end
+          end
+        end
+
+        example_spans = spans.select { |span| span.name.start_with?('example ') }
+        _(example_spans.size).must_equal 3
+
+        # All examples have the same location (same line in the loop)
+        locations = example_spans.map { |span| span.attributes['rspec.example.location'] }
+        _(locations.uniq.size).must_equal 1
+
+        # But each has a unique id
+        ids = example_spans.map { |span| span.attributes['rspec.example.id'] }
+        _(ids.uniq.size).must_equal 3
+        ids.each do |id|
+          _(id).must_match %r{\./test/opentelemetry/instrumentation/rspec/formatter_test.rb\[\d+:\d+\]}
+        end
       end
     end
 
