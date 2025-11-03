@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../../helpers'
+
 module OpenTelemetry
   module Instrumentation
     module Ethon
@@ -12,20 +14,11 @@ module OpenTelemetry
         module Dup
           # Ethon::Easy patch for instrumentation
           module Easy
-            ACTION_NAMES_TO_HTTP_METHODS = Hash.new do |h, k|
-              # #to_s is required because user input could be symbol or string
-              h[k] = k.to_s.upcase
-            end
-            HTTP_METHODS_TO_SPAN_NAMES = Hash.new do |h, k|
-              h[k] = k.to_s
-              h[k] = 'HTTP' if k == '_OTHER'
-            end
-
             # Constant for the HTTP status range
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def http_request(url, action_name, options = {})
-              @otel_method = ACTION_NAMES_TO_HTTP_METHODS[action_name]
+              @otel_method, @otel_original_method = Helpers.normalize_method(action_name)
               super
             end
 
@@ -73,15 +66,17 @@ module OpenTelemetry
             ensure
               @otel_span = nil
               @otel_method = nil
+              @otel_original_method = nil
               @otel_original_headers = nil
             end
 
             def otel_before_request
-              method = '_OTHER' # Could be GET or not HTTP at all
-              method = @otel_method if instance_variable_defined?(:@otel_method) && !@otel_method.nil?
+              method = @otel_method || '_OTHER'
+              original_method = @otel_original_method if instance_variable_defined?(:@otel_original_method)
 
-              span_attrs = span_creation_attributes(method)
-              span_name = determine_span_name(span_attrs, method)
+              span_attrs = span_creation_attributes(method, original_method)
+              # For dup semconv, when method is unknown use "HTTP" as span name
+              span_name = method == '_OTHER' ? 'HTTP' : Helpers.format_span_name(span_attrs, method)
 
               @otel_span = tracer.start_span(
                 span_name,
@@ -102,12 +97,14 @@ module OpenTelemetry
 
             private
 
-            def span_creation_attributes(method)
-              http_method = (method == '_OTHER' ? 'N/A' : method)
+            def span_creation_attributes(method, original_method)
+              # For dup semconv, use 'N/A' for old http.method when unknown
+              http_method_attr = method == '_OTHER' ? 'N/A' : method
               instrumentation_attrs = {
-                'http.method' => http_method,
+                'http.method' => http_method_attr,
                 'http.request.method' => method
               }
+              instrumentation_attrs['http.request.method_original'] = original_method if original_method
 
               uri = _otel_cleanse_uri(url)
               if uri
@@ -140,17 +137,6 @@ module OpenTelemetry
 
             def tracer
               Ethon::Instrumentation.instance.tracer
-            end
-
-            def determine_span_name(attributes, method)
-              # According to https://opentelemetry.io/docs/specs/semconv/http/http-spans/#name
-              # Span name should be "{http.request.method} {url.template}" if template is available,
-              # otherwise just "{http.request.method}"
-              # For non-HTTP methods, return 'HTTP' as per the spec
-              template = attributes['url.template']
-              http_method = method == '_OTHER' ? 'HTTP' : method
-
-              template ? "#{http_method} #{template}" : http_method
             end
           end
         end
