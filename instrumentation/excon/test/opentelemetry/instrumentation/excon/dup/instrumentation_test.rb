@@ -257,7 +257,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       Excon::Socket.new(hostname: uri.host, port: uri.port)
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal('connect')
+      _(span.name).must_equal('tcp.connect')
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('example.com')
       _(span.attributes['net.peer.port']).must_equal(80)
@@ -293,7 +293,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal(3)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp.connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
       _(span.attributes['net.peer.port']).must_equal(port)
@@ -309,7 +309,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(-> { Excon.get('http://invalid.com:99999/example') }).must_raise
 
       _(exporter.finished_spans.size).must_equal(3)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp.connect'
       _(span.attributes['net.peer.name']).must_equal('invalid.com')
       _(span.attributes['net.peer.port']).must_equal(99_999)
       # stable semconv
@@ -328,7 +328,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(-> { Excon.get('http://localhost/', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
 
       _(exporter.finished_spans.size).must_equal(3)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp.connect'
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
@@ -358,7 +358,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(-> { Excon.get('http://localhost', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
 
       _(exporter.finished_spans.size).must_equal(3)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp.connect'
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)

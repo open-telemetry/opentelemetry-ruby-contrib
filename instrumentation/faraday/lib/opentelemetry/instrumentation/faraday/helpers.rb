@@ -11,8 +11,8 @@ module OpenTelemetry
       module Helpers
         extend self
 
-        # Known HTTP methods as defined in RFC9110, RFC5789, and httpbis-safe-method-w-body
-        KNOWN_METHODS = %w[
+        # Default known HTTP methods as defined in RFC9110, RFC5789, and httpbis-safe-method-w-body
+        DEFAULT_KNOWN_METHODS = %w[
           CONNECT
           DELETE
           GET
@@ -25,18 +25,39 @@ module OpenTelemetry
           QUERY
         ].freeze
 
-        private_constant :KNOWN_METHODS
+        private_constant :DEFAULT_KNOWN_METHODS
+
+        # Returns the list of known HTTP methods, checking the environment variable first
+        #
+        # @return [Array<String>] List of known HTTP methods in uppercase
+        # @api private
+        def known_methods
+          @known_methods ||= if (env_methods = ENV.fetch('OTEL_INSTRUMENTATION_HTTP_KNOWN_METHODS', nil))
+                               env_methods.split(',').map { |v| v.strip.upcase }.freeze
+                             else
+                               DEFAULT_KNOWN_METHODS
+                             end
+        end
 
         # Normalizes an HTTP method to match OpenTelemetry semantic conventions.
+        # Returns both the normalized method and the original if they differ.
         #
         # @param method [String, Symbol] The HTTP method to normalize
-        # @return [String] The normalized method name (uppercase if known, '_OTHER' if unknown)
+        # @return [Array<String, String|nil>] A tuple of [normalized_method, original_method]
+        #   where original_method is nil if it matches the normalized method
         # @api private
         def normalize_method(method)
-          return '_OTHER' if method.nil? || method.to_s.empty?
+          return ['_OTHER', nil] if method.nil? || method.to_s.empty?
 
-          normalized = method.to_s.upcase
-          KNOWN_METHODS.include?(normalized) ? normalized : '_OTHER'
+          original = method.to_s
+          normalized = original.upcase
+
+          if known_methods.include?(normalized)
+            # Return original as nil if it already matches the normalized form
+            [normalized, (original == normalized ? nil : original)]
+          else
+            ['_OTHER', original]
+          end
         end
 
         # Formats the span name based on the HTTP method and URL template if available

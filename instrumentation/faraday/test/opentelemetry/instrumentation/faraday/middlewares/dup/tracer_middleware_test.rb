@@ -124,7 +124,8 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Dup::TracerMiddle
         shared_attributes = JSON.parse(response.body)
         expected_attributes = {
           'http.method' => 'GET', 'http.url' => 'http://example.com/show-shared-attributes',
-          'http.request.method' => 'GET', 'url.full' => 'http://example.com/show-shared-attributes',
+          'http.request.method' => 'GET', 'http.request.method_original' => 'get',
+          'url.full' => 'http://example.com/show-shared-attributes',
           'faraday.adapter.name' => 'Faraday::Adapter::Test',
           'net.peer.name' => 'example.com',
           'server.address' => 'example.com'

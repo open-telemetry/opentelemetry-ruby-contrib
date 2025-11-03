@@ -19,7 +19,7 @@ module OpenTelemetry
             def request_call(datum)
               return @stack.request_call(datum) if untraced?(datum)
 
-              http_method = Helpers.normalize_method(datum[:method])
+              http_method, original_method = Helpers.normalize_method(datum[:method])
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => datum[:host],
                 OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => http_method,
@@ -29,11 +29,11 @@ module OpenTelemetry
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => datum[:hostname],
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => datum[:port]
               }
+              attributes['http.request.method_original'] = original_method if original_method
               peer_service = Excon::Instrumentation.instance.config[:peer_service]
               attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = peer_service if peer_service
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
-              # Old semconv used "HTTP {method}" format for span names
-              span_name = attributes['url.template'] ? "#{http_method} #{attributes['url.template']}" : "HTTP #{http_method}"
+              span_name = Helpers.format_span_name(attributes, http_method)
               span = tracer.start_span(span_name, attributes: attributes, kind: :client)
               ctx = OpenTelemetry::Trace.context_with_span(span)
               datum[:otel_span] = span

@@ -25,17 +25,20 @@ module OpenTelemetry
 
                 return super if untraced?
 
+                http_method, original_method = Helpers.normalize_method(req.method)
+
                 attributes = {
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
+                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => http_method,
                   OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
                   OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port,
-                  'http.request.method' => req.method,
+                  'http.request.method' => http_method,
                   'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
                   'server.address' => @address,
                   'server.port' => @port
                 }
+                attributes['http.request.method_original'] = original_method if original_method
                 path, query = split_path_and_query(req.path)
                 attributes['url.path'] = path
                 attributes['url.query'] = query if query
@@ -81,7 +84,7 @@ module OpenTelemetry
                   span_name = 'CONNECT'
                   span_kind = :client
                 else
-                  span_name = 'connect'
+                  span_name = 'tcp.connect'
                   span_kind = :internal
                 end
 

@@ -18,16 +18,15 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def call(env)
-              http_method = Helpers.normalize_method(env.method)
+              http_method, original_method = Helpers.normalize_method(env.method)
               config = Faraday::Instrumentation.instance.config
 
               attributes = span_creation_attributes(
-                http_method: http_method, url: env.url, config: config
+                http_method: http_method, original_method: original_method, url: env.url, config: config
               )
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
-                # Old semconv used "HTTP {method}" format for span names
-                span_name = attrs['url.template'] ? "#{http_method} #{attrs['url.template']}" : "HTTP #{http_method}"
+                span_name = Helpers.format_span_name(attrs, http_method)
                 tracer.in_span(
                   span_name, attributes: attrs, kind: config.fetch(:span_kind)
                 ) do |span|
@@ -50,12 +49,13 @@ module OpenTelemetry
 
             private
 
-            def span_creation_attributes(http_method:, url:, config:)
+            def span_creation_attributes(http_method:, original_method:, url:, config:)
               attrs = {
                 'http.method' => http_method,
                 'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url.to_s),
                 'faraday.adapter.name' => app.class.name
               }
+              attrs['http.request.method_original'] = original_method if original_method
               attrs['net.peer.name'] = url.host if url.host
               attrs['peer.service'] = config[:peer_service] if config[:peer_service]
 

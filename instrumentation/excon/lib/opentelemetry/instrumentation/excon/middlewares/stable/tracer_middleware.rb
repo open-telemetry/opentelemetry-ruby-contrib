@@ -19,7 +19,7 @@ module OpenTelemetry
             def request_call(datum)
               return @stack.request_call(datum) if untraced?(datum)
 
-              http_method = Helpers.normalize_method(datum[:method])
+              http_method, original_method = Helpers.normalize_method(datum[:method])
               attributes = {
                 'http.request.method' => http_method,
                 'url.scheme' => datum[:scheme],
@@ -28,6 +28,7 @@ module OpenTelemetry
                 'server.address' => datum[:hostname],
                 'server.port' => datum[:port]
               }
+              attributes['http.request.method_original'] = original_method if original_method
               attributes['url.query'] = datum[:query] if datum[:query]
               peer_service = Excon::Instrumentation.instance.config[:peer_service]
               attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = peer_service if peer_service

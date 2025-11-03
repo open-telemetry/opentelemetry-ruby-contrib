@@ -18,11 +18,11 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def call(env)
-              http_method = Helpers.normalize_method(env.method)
+              http_method, original_method = Helpers.normalize_method(env.method)
               config = Faraday::Instrumentation.instance.config
 
               attributes = span_creation_attributes(
-                http_method: http_method, url: env.url, config: config
+                http_method: http_method, original_method: original_method, url: env.url, config: config
               )
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
@@ -49,7 +49,7 @@ module OpenTelemetry
 
             private
 
-            def span_creation_attributes(http_method:, url:, config:)
+            def span_creation_attributes(http_method:, original_method:, url:, config:)
               cleansed_url = OpenTelemetry::Common::Utilities.cleanse_url(url.to_s)
               attrs = {
                 'http.method' => http_method,
@@ -58,6 +58,7 @@ module OpenTelemetry
                 'url.full' => cleansed_url,
                 'faraday.adapter.name' => app.class.name
               }
+              attrs['http.request.method_original'] = original_method if original_method
               if url.host
                 attrs['net.peer.name'] = url.host
                 attrs['server.address'] = url.host
