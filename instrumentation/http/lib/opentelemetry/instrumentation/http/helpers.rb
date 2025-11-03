@@ -11,6 +11,34 @@ module OpenTelemetry
       module Helpers
         extend self
 
+        # Known HTTP methods as defined in RFC9110, RFC5789, and httpbis-safe-method-w-body
+        KNOWN_METHODS = %w[
+          CONNECT
+          DELETE
+          GET
+          HEAD
+          OPTIONS
+          PATCH
+          POST
+          PUT
+          TRACE
+          QUERY
+        ].freeze
+
+        private_constant :KNOWN_METHODS
+
+        # Normalizes an HTTP method to match OpenTelemetry semantic conventions.
+        #
+        # @param method [String, Symbol] The HTTP method to normalize
+        # @return [String] The normalized method name (uppercase if known, '_OTHER' if unknown)
+        # @api private
+        def normalize_method(method)
+          return '_OTHER' if method.nil? || method.to_s.empty?
+
+          normalized = method.to_s.upcase
+          KNOWN_METHODS.include?(normalized) ? normalized : '_OTHER'
+        end
+
         # Formats the span name based on the HTTP method and URL template if available
         #
         # @param attributes [Hash] The span attributes hash

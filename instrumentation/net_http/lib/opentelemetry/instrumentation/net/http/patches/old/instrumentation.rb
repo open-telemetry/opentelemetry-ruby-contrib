@@ -14,7 +14,6 @@ module OpenTelemetry
           module Old
             # Module to prepend to Net::HTTP for instrumentation
             module Instrumentation
-              HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
               USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
               # Constant for the HTTP status range
@@ -34,7 +33,7 @@ module OpenTelemetry
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
                 ).merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-                span_name = OpenTelemetry::Instrumentation::Net::HTTP::Helpers.format_span_name(attributes, req.method)
+                span_name = Helpers.format_span_name(attributes, req.method)
 
                 tracer.in_span(
                   span_name,
