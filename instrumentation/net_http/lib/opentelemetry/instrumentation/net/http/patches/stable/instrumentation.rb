@@ -14,10 +14,8 @@ module OpenTelemetry
           module Stable
             # Module to prepend to Net::HTTP for instrumentation
             module Instrumentation
-              USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
               # Constant for the HTTP status range
-              HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
               def request(req, body = nil, &)
                 # Do not trace recursive call for starting the connection
@@ -29,7 +27,7 @@ module OpenTelemetry
 
                 attributes = {
                   'http.request.method' => http_method,
-                  'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
+                  'url.scheme' => Helpers::USE_SSL_TO_SCHEME[use_ssl?],
                   'server.address' => @address,
                   'server.port' => @port
                 }
@@ -92,7 +90,7 @@ module OpenTelemetry
                 status_code = response.code.to_i
 
                 span.set_attribute('http.response.status_code', status_code)
-                span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
+                span.status = OpenTelemetry::Trace::Status.error unless Helpers::HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
               end
 
               def tracer

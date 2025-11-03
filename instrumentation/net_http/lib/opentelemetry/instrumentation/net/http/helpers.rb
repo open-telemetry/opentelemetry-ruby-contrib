@@ -12,6 +12,12 @@ module OpenTelemetry
         module Helpers
           extend self
 
+          # HTTP status code range for successful responses
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
+
+          # Map SSL boolean to scheme string
+          USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
+
           # Default known HTTP methods as defined in RFC9110, RFC5789, and httpbis-safe-method-w-body
           DEFAULT_KNOWN_METHODS = %w[
             CONNECT

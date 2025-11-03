@@ -13,8 +13,6 @@ module OpenTelemetry
         module Dup
           # Excon middleware for instrumentation
           class TracerMiddleware < ::Excon::Middleware::Base
-            # Constant for the HTTP status range
-            HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def request_call(datum)
               return @stack.request_call(datum) if untraced?(datum)
@@ -85,7 +83,7 @@ module OpenTelemetry
                   response = datum[:response]
                   span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response[:status])
                   span.set_attribute('http.response.status_code', response[:status])
-                  span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(response[:status].to_i)
+                  span.status = OpenTelemetry::Trace::Status.error unless Helpers::HTTP_STATUS_SUCCESS_RANGE.cover?(response[:status].to_i)
                 end
 
                 if datum.key?(:error)
