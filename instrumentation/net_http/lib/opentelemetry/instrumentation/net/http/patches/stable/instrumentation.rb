@@ -14,7 +14,6 @@ module OpenTelemetry
           module Stable
             # Module to prepend to Net::HTTP for instrumentation
             module Instrumentation
-
               # Constant for the HTTP status range
 
               def request(req, body = nil, &)

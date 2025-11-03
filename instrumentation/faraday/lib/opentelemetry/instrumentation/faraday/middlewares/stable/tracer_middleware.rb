@@ -14,7 +14,6 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Faraday requests
           # by way of its middleware system
           class TracerMiddleware < ::Faraday::Middleware
-
             def call(env)
               http_method, original_method = Helpers.normalize_method(env.method)
               config = Faraday::Instrumentation.instance.config

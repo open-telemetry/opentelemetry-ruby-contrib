@@ -13,23 +13,22 @@ module OpenTelemetry
         module Old
           # Excon middleware for instrumentation
           class TracerMiddleware < ::Excon::Middleware::Base
-
             def request_call(datum)
               return @stack.request_call(datum) if untraced?(datum)
 
               http_method, original_method = Helpers.normalize_method(datum[:method])
               attributes = {
-                OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => datum[:host],
-                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => http_method,
-                OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => datum[:scheme],
-                OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => datum[:path],
-                OpenTelemetry::SemanticConventions::Trace::HTTP_URL => OpenTelemetry::Common::Utilities.cleanse_url(::Excon::Utils.request_uri(datum)),
-                OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => datum[:hostname],
-                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => datum[:port]
+                'http.host' => datum[:host],
+                'http.method' => http_method,
+                'http.scheme' => datum[:scheme],
+                'http.target' => datum[:path],
+                'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(::Excon::Utils.request_uri(datum)),
+                'net.peer.name' => datum[:hostname],
+                'net.peer.port' => datum[:port]
               }
               attributes['http.request.method_original'] = original_method if original_method
               peer_service = Excon::Instrumentation.instance.config[:peer_service]
-              attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = peer_service if peer_service
+              attributes['peer.service'] = peer_service if peer_service
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
               span_name = Helpers.format_span_name(attributes, http_method)
               span = tracer.start_span(span_name, attributes: attributes, kind: :client)
@@ -73,7 +72,7 @@ module OpenTelemetry
 
                 if datum.key?(:response)
                   response = datum[:response]
-                  span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response[:status])
+                  span.set_attribute('http.status_code', response[:status])
                   span.status = OpenTelemetry::Trace::Status.error unless Helpers::HTTP_STATUS_SUCCESS_RANGE.cover?(response[:status].to_i)
                 end
 

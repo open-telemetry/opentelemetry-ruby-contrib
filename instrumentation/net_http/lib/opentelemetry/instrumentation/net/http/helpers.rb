@@ -40,7 +40,7 @@ module OpenTelemetry
           # @api private
           def known_methods
             @known_methods ||= if (env_methods = ENV.fetch('OTEL_INSTRUMENTATION_HTTP_KNOWN_METHODS', nil))
-                                 env_methods.split(',').map(&:strip).map(&:upcase).freeze
+                                 env_methods.split(',').map { |x| x.strip.upcase }.freeze
                                else
                                  DEFAULT_KNOWN_METHODS
                                end

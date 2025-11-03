@@ -13,7 +13,6 @@ module OpenTelemetry
         module Stable
           # Excon middleware for instrumentation
           class TracerMiddleware < ::Excon::Middleware::Base
-
             def request_call(datum)
               return @stack.request_call(datum) if untraced?(datum)
 
@@ -29,7 +28,7 @@ module OpenTelemetry
               attributes['http.request.method_original'] = original_method if original_method
               attributes['url.query'] = datum[:query] if datum[:query]
               peer_service = Excon::Instrumentation.instance.config[:peer_service]
-              attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = peer_service if peer_service
+              attributes['peer.service'] = peer_service if peer_service
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
               span_name = Helpers.format_span_name(attributes, http_method)
               span = tracer.start_span(span_name, attributes: attributes, kind: :client)

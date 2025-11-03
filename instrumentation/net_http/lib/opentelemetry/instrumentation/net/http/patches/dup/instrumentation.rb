@@ -14,7 +14,6 @@ module OpenTelemetry
           module Dup
             # Module to prepend to Net::HTTP for instrumentation
             module Instrumentation
-
               # Constant for the HTTP status range
 
               def request(req, body = nil, &)
@@ -26,11 +25,11 @@ module OpenTelemetry
                 http_method, original_method = Helpers.normalize_method(req.method)
 
                 attributes = {
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => http_method,
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => Helpers::USE_SSL_TO_SCHEME[use_ssl?],
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port,
+                  'http.method' => http_method,
+                  'http.scheme' => Helpers::USE_SSL_TO_SCHEME[use_ssl?],
+                  'http.target' => req.path,
+                  'net.peer.name' => @address,
+                  'net.peer.port' => @port,
                   'http.request.method' => http_method,
                   'url.scheme' => Helpers::USE_SSL_TO_SCHEME[use_ssl?],
                   'server.address' => @address,
@@ -72,8 +71,8 @@ module OpenTelemetry
                 end
 
                 attributes = {
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => conn_address,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port,
+                  'net.peer.name' => conn_address,
+                  'net.peer.port' => conn_port,
                   'server.address' => conn_address,
                   'server.port' => conn_port
                 }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
@@ -96,7 +95,7 @@ module OpenTelemetry
 
                 status_code = response.code.to_i
 
-                span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code)
+                span.set_attribute('http.status_code', status_code)
                 span.set_attribute('http.response.status_code', status_code)
                 span.status = OpenTelemetry::Trace::Status.error unless Helpers::HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
               end
