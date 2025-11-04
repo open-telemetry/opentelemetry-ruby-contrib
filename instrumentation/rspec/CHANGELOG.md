@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-rspec
 
+### v0.7.0 / 2025-11-04
+
+* ADDED: Add example.id attribute to RSpec instrumentation
+* FIXED: Capture correct descriptions for RSpec one-liner examples
+
 ### v0.6.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
