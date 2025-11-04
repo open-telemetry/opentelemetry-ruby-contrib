@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.33.0 / 2025-11-03
+
+* ADDED: Instrument PG connect
+
 ### v0.32.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
