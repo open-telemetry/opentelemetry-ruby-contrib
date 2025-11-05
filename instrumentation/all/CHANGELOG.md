@@ -2,7 +2,7 @@
 
 ### v0.87.0 / 2025-11-05
 
-* (No significant changes)
+* ADDED: upgrade opentelemetry-instrumentation-pg to 0.33.0
 
 ### v0.86.1 / 2025-10-22
 
