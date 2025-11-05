@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.87.0 / 2025-11-05
+
+* (No significant changes)
+
 ### v0.86.1 / 2025-10-22
 
 * ADDED: Updated minimum gem versions for dependent instrumentations
