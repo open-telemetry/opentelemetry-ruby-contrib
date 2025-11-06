@@ -239,6 +239,30 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           end
         end
       end
+
+      describe 'with unknown HTTP method' do
+        def stub_response(options)
+          easy.stub(:mirror, Ethon::Easy::Mirror.new(options)) do
+            easy.otel_before_request
+            # NOTE: perform calls complete
+            easy.complete
+
+            yield
+          end
+        end
+
+        it 'normalizes unknown HTTP methods' do
+          easy.http_request('http://example.com/purge', :purge)
+
+          stub_response(response_code: 200) do
+            _(exporter.finished_spans.size).must_equal 1
+            _(span.name).must_equal 'HTTP'
+            _(span.attributes['http.request.method']).must_equal '_OTHER'
+            _(span.attributes['http.request.method_original']).must_equal 'PURGE'
+            _(span.attributes['url.full']).must_equal 'http://example.com/purge'
+          end
+        end
+      end
     end
 
     describe 'multi' do

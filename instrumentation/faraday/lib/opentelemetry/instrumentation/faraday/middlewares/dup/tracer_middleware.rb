@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../http_helper'
+
 module OpenTelemetry
   module Instrumentation
     module Faraday
@@ -29,15 +31,23 @@ module OpenTelemetry
 
             def call(env)
               http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
+              normalized_method, original_method = HttpHelper.normalize_method(http_method || env.method)
+
+              # Per semantic conventions, span name uses 'HTTP' when method is unknown
+              span_name = HttpHelper.span_name_for_stable(normalized_method)
+
               config = Faraday::Instrumentation.instance.config
 
               attributes = span_creation_attributes(
-                http_method: http_method, url: env.url, config: config
+                http_method: normalized_method,
+                original_method: original_method,
+                url: env.url,
+                config: config
               )
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
                 tracer.in_span(
-                  http_method, attributes: attrs, kind: config.fetch(:span_kind)
+                  span_name, attributes: attrs, kind: config.fetch(:span_kind)
                 ) do |span|
                   OpenTelemetry.propagation.inject(env.request_headers)
 
@@ -58,7 +68,7 @@ module OpenTelemetry
 
             private
 
-            def span_creation_attributes(http_method:, url:, config:)
+            def span_creation_attributes(http_method:, original_method:, url:, config:)
               cleansed_url = OpenTelemetry::Common::Utilities.cleanse_url(url.to_s)
               attrs = {
                 'http.method' => http_method,
@@ -67,6 +77,7 @@ module OpenTelemetry
                 'url.full' => cleansed_url,
                 'faraday.adapter.name' => app.class.name
               }
+              attrs['http.request.method_original'] = original_method if original_method
               if url.host
                 attrs['net.peer.name'] = url.host
                 attrs['server.address'] = url.host

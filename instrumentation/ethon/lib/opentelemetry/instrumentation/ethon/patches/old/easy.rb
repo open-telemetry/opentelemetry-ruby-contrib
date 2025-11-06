@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../http_helper'
+
 module OpenTelemetry
   module Instrumentation
     module Ethon
@@ -12,17 +14,11 @@ module OpenTelemetry
         module Old
           # Ethon::Easy patch for instrumentation
           module Easy
-            ACTION_NAMES_TO_HTTP_METHODS = Hash.new do |h, k|
-              # #to_s is required because user input could be symbol or string
-              h[k] = k.to_s.upcase
-            end
-            HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
-
             # Constant for the HTTP status range
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def http_request(url, action_name, options = {})
-              @otel_method = ACTION_NAMES_TO_HTTP_METHODS[action_name]
+              @otel_method = action_name.to_s.upcase
               super
             end
 
@@ -76,9 +72,12 @@ module OpenTelemetry
               method = 'N/A' # Could be GET or not HTTP at all
               method = @otel_method if instance_variable_defined?(:@otel_method) && !@otel_method.nil?
 
+              normalized_method, _original_method = HttpHelper.normalize_method(method)
+              span_name = HttpHelper.span_name_for_old(normalized_method)
+
               @otel_span = tracer.start_span(
-                HTTP_METHODS_TO_SPAN_NAMES[method],
-                attributes: span_creation_attributes(method),
+                span_name,
+                attributes: span_creation_attributes(normalized_method),
                 kind: :client
               )
 
@@ -95,9 +94,9 @@ module OpenTelemetry
 
             private
 
-            def span_creation_attributes(method)
+            def span_creation_attributes(normalized_method)
               instrumentation_attrs = {
-                'http.method' => method
+                'http.method' => normalized_method
               }
 
               uri = _otel_cleanse_uri(url)

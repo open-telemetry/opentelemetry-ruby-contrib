@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../http_helper'
+
 module OpenTelemetry
   module Instrumentation
     module HTTPX
@@ -71,11 +73,14 @@ module OpenTelemetry
               verb = request.verb
               uri = request.uri
 
+              normalized_method, _original_method = HttpHelper.normalize_method(verb)
+              span_name = HttpHelper.span_name_for_old(normalized_method)
+
               config = HTTPX::Instrumentation.instance.config
 
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => uri.host,
-                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => verb,
+                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => normalized_method,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => uri.scheme,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => uri.path,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_URL => "#{uri.scheme}://#{uri.host}",
@@ -86,7 +91,7 @@ module OpenTelemetry
               attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-              span = tracer.start_span("HTTP #{verb}", attributes: attributes, kind: :client, start_timestamp: start_time)
+              span = tracer.start_span(span_name, attributes: attributes, kind: :client, start_timestamp: start_time)
 
               OpenTelemetry::Trace.with_span(span) do
                 OpenTelemetry.propagation.inject(request.headers)

@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../http_helper'
+
 module OpenTelemetry
   module Instrumentation
     module Net
@@ -12,7 +14,6 @@ module OpenTelemetry
           module Old
             # Module to prepend to Net::HTTP for instrumentation
             module Instrumentation
-              HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
               USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
               # Constant for the HTTP status range
@@ -24,8 +25,11 @@ module OpenTelemetry
 
                 return super if untraced?
 
+                normalized_method, _original_method = HttpHelper.normalize_method(req.method)
+                span_name = HttpHelper.span_name_for_old(normalized_method)
+
                 attributes = {
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
+                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => normalized_method,
                   OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
                   OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
@@ -33,7 +37,7 @@ module OpenTelemetry
                 }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
                 tracer.in_span(
-                  HTTP_METHODS_TO_SPAN_NAMES[req.method],
+                  span_name,
                   attributes: attributes,
                   kind: :client
                 ) do |span|

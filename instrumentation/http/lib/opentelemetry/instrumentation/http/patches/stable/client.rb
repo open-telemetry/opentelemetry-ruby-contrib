@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../http_helper'
+
 module OpenTelemetry
   module Instrumentation
     module HTTP
@@ -18,16 +20,18 @@ module OpenTelemetry
             def perform(req, options)
               uri = req.uri
               request_method = req.verb.to_s.upcase
-              span_name = create_request_span_name(request_method, uri.path)
+              normalized_method, original_method = HttpHelper.normalize_method(request_method)
+              span_name = create_span_name(normalized_method, uri.path)
 
               attributes = {
-                'http.request.method' => request_method,
+                'http.request.method' => normalized_method,
                 'url.scheme' => uri.scheme,
                 'url.path' => uri.path,
                 'url.full' => "#{uri.scheme}://#{uri.host}",
                 'server.address' => uri.host,
                 'server.port' => uri.port
               }
+              attributes['http.request.method_original'] = original_method if original_method
               attributes['url.query'] = uri.query unless uri.query.nil?
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
@@ -53,15 +57,17 @@ module OpenTelemetry
               span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
             end
 
-            def create_request_span_name(request_method, request_path)
+            def create_span_name(normalized_method, request_path)
+              default_span_name = HttpHelper.span_name_for_stable(normalized_method)
+
               if (implementation = config[:span_name_formatter])
-                updated_span_name = implementation.call(request_method, request_path)
-                updated_span_name.is_a?(String) ? updated_span_name : request_method.to_s
+                updated_span_name = implementation.call(normalized_method, request_path)
+                updated_span_name.is_a?(String) ? updated_span_name : default_span_name
               else
-                request_method.to_s
+                default_span_name
               end
             rescue StandardError
-              request_method.to_s
+              default_span_name
             end
 
             def tracer
