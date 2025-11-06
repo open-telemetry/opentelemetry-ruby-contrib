@@ -356,6 +356,26 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
         end
       end
     end
+
+    describe 'one-liner syntax' do
+      subject do
+        run_example do
+          it { is_expected.not_to be_nil }
+        end
+      end
+
+      it 'has a name that matches the auto-generated description' do
+        _(subject.name).must_equal 'is expected not to be nil'
+      end
+
+      it 'has a full_description attribute that includes the group description' do
+        _(subject.attributes['rspec.example.full_description']).must_equal 'group one is expected not to be nil'
+      end
+
+      it 'records when the example passes' do
+        _(subject.attributes['rspec.example.result']).must_equal 'passed'
+      end
+    end
   end
 
   describe 'using a custom tracer provider' do
