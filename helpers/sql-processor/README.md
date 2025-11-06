@@ -43,7 +43,7 @@ Check [New Relic's SQL Obfuscation Helpers module][new-relic-obfuscation-helpers
 To obfuscate sql in your library:
 
 ```ruby
-OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :postgres)
+OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :postgres)
 ```
 
 ## How can I get involved?
