@@ -10,26 +10,35 @@ module OpenTelemetry
       module HTTP
         module Metrics
           def request(req, body = nil, &block)
-            return super unless started?
-            return super if untraced?
-
-            start_time = (Time.now.to_f * 1000).to_i
-            error_occurred = false
-
-            begin
-              super
-            rescue => e
-              error_occurred = true
-              raise
-            ensure
-              duration_ms = (Time.now.to_f * 1000).to_i - start_time
-              record_metric(duration_ms, req, error_occurred)
-            end
+            with_metric_timing { super }
           end
 
           private
 
-          def record_metric(duration_ms, req, error_occurred)
+          def connect
+            with_metric_timing { super }
+          end
+
+          def with_metric_timing
+            return yield unless started?
+            return yield if untraced?
+
+            start_time = current_time_ms
+
+            begin
+              yield
+            rescue
+              raise
+            end
+          ensure
+            record_metric(current_time_ms - start_time) if start_time
+          end
+
+          def current_time_ms
+            (Time.now.to_f * 1000).to_i
+          end
+
+          def record_metric(duration_ms)
             instrumentation = ::OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation.instance
             return unless instrumentation
 

@@ -63,12 +63,18 @@ module OpenTelemetry
         end
 
         def middleware_args_stable
-          if config.fetch(:use_rack_events, false) == true && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler)
-            puts 'EventHandler'
-            [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler.new]]
+          if config.fetch(:use_rack_events, false) == true \
+              && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler) \
+              && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMetrics)
+            [
+              ::Rack::Events,
+              [
+                OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler.new,
+                OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMetrics.new
+              ]
+            ]
           else
-            puts 'TracerMiddleware'
-            [OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddleware]
+            [OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWithMetrics]
           end
         end
 
@@ -94,7 +100,9 @@ module OpenTelemetry
 
         def require_dependencies_stable
           require_relative 'middlewares/stable/event_handler' if defined?(::Rack::Events)
+          require_relative 'middlewares/event_handler_with_metrics' if defined?(::Rack::Events)
           require_relative 'middlewares/stable/tracer_middleware'
+          require_relative 'middlewares/tracer_middleware_with_metrics'
         end
 
         def require_dependencies_dup

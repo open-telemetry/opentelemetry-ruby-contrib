@@ -233,8 +233,10 @@ module OpenTelemetry
         initialize_metrics
       end
 
+      # Each instrumentation can implement the initialize_metrics function to
+      # include the desired metrics instrument
       def initialize_metrics
-        OpenTelemetry.logger.debug "Instrumentation should implement the function"
+        OpenTelemetry.logger.info "Instrumentation should implement the function"
       end
 
       # Whether or not this instrumentation is installable in the current process. Will
@@ -329,7 +331,7 @@ module OpenTelemetry
           h[option_name] = option[:default]
         end
 
-        dropped_config_keys = user_config.keys - validated_config.keys - [:enabled]
+        dropped_config_keys = user_config.keys - validated_config.keys - [:enabled, :metrics]
         OpenTelemetry.logger.warn("Instrumentation #{name} ignored the following unknown configuration options #{dropped_config_keys}") unless dropped_config_keys.empty?
 
         validated_config

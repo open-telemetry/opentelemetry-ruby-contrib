@@ -44,7 +44,6 @@ module OpenTelemetry
             include ::Rack::Events::Abstract
 
             OTEL_TOKEN_AND_SPAN = 'otel.rack.token_and_span'
-            OTEL_SERVER_START_TIME = 'otel.rack.server.start_time'
             EMPTY_HASH = {}.freeze
 
             # Creates a server span for this current request using the incoming parent context
@@ -64,7 +63,6 @@ module OpenTelemetry
               span_ctx = OpenTelemetry::Trace.context_with_span(span, parent_context: parent_context)
               rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: span_ctx)
               request.env[OTEL_TOKEN_AND_SPAN] = [OpenTelemetry::Context.attach(rack_ctx), span]
-              request.env[OTEL_SERVER_START_TIME] = (Time.now.to_f * 1000).to_i
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end
@@ -116,8 +114,6 @@ module OpenTelemetry
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             ensure
-              duration_ms = (Time.now.to_f * 1000).to_i - request.env[OTEL_SERVER_START_TIME]
-              config[:server_request_duration]&.record(duration_ms)
               detach_context(request)
             end
 
