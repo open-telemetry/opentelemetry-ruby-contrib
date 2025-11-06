@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry'
+require 'opentelemetry/semconv/http'
 
 module OpenTelemetry
   module Instrumentation
@@ -63,8 +64,10 @@ module OpenTelemetry
 
         def middleware_args_stable
           if config.fetch(:use_rack_events, false) == true && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler)
+            puts 'EventHandler'
             [::Rack::Events, [OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler.new]]
           else
+            puts 'TracerMiddleware'
             [OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddleware]
           end
         end
@@ -122,6 +125,14 @@ module OpenTelemetry
 
         def build_attribute_name(prefix, suffix)
           prefix + suffix.to_s.downcase.gsub(/[-\s]/, '_')
+        end
+
+        def initialize_metrics
+          return if meter.nil?
+
+          config[:server_request_duration] = meter.create_histogram(::OpenTelemetry::SemConv::HTTP::HTTP_SERVER_REQUEST_DURATION,
+                                                                    unit: 'ms',
+                                                                    description: 'Duration of HTTP server requests.')
         end
       end
     end

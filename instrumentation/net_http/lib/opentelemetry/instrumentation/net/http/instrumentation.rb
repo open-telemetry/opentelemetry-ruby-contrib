@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/semconv/http'
+
 module OpenTelemetry
   module Instrumentation
     module Net
@@ -53,6 +55,7 @@ module OpenTelemetry
           end
 
           def require_dependencies_stable
+            require_relative 'metrics'
             require_relative 'patches/stable/instrumentation'
           end
 
@@ -65,7 +68,16 @@ module OpenTelemetry
           end
 
           def patch_stable
+            ::Net::HTTP.prepend(Metrics)
             ::Net::HTTP.prepend(Patches::Stable::Instrumentation)
+          end
+
+          def initialize_metrics
+            return if meter.nil?
+
+            config[:client_request_duration] = meter.create_histogram(::OpenTelemetry::SemConv::HTTP::HTTP_CLIENT_REQUEST_DURATION,
+                                                            unit: 'ms',
+                                                            description: 'Duration of HTTP client requests.')
           end
         end
       end

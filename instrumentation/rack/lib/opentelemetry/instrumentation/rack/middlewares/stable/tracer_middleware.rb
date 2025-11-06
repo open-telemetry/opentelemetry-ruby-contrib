@@ -58,6 +58,7 @@ module OpenTelemetry
             end
 
             def call(env)
+              start_time = (Time.now.to_f * 1000).to_i
               if untraced_request?(env)
                 OpenTelemetry::Common::Utilities.untraced do
                   return @app.call(env)
@@ -89,6 +90,8 @@ module OpenTelemetry
                 end
               end
             ensure
+              duration_ms = (Time.now.to_f * 1000).to_i - start_time
+              config[:server_request_duration]&.record(duration_ms)
               finish_span(frontend_context)
             end
 
