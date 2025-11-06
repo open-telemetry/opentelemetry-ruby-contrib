@@ -214,7 +214,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           end
 
           it 'cleans up @otel_method' do
-            _(easy.instance_eval { @otel_method }).must_equal 'PUT'
+            _(easy.instance_eval { @otel_method }).must_equal :put
 
             easy.reset
 

@@ -18,7 +18,7 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def http_request(url, action_name, options = {})
-              @otel_method = action_name.to_s.upcase
+              @otel_method = action_name
               super
             end
 
@@ -69,10 +69,7 @@ module OpenTelemetry
             end
 
             def otel_before_request
-              method = '_OTHER' # Could be GET or not HTTP at all
-              method = @otel_method if instance_variable_defined?(:@otel_method) && !@otel_method.nil?
-
-              normalized_method, original_method = HttpHelper.normalize_method(method)
+              normalized_method, original_method = HttpHelper.normalize_method(@otel_method)
               span_name = HttpHelper.span_name_for_stable(normalized_method)
 
               @otel_span = tracer.start_span(

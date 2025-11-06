@@ -71,7 +71,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
               easy.perform
 
               _(span.name).must_equal 'HTTP'
-              _(span.attributes['http.method']).must_equal 'N/A'
+              _(span.attributes['http.method']).must_equal '_OTHER'
               _(span.attributes['http.status_code']).must_be_nil
               _(span.attributes['http.url']).must_equal 'http://example.com/test'
               _(span.attributes['net.peer.name']).must_equal 'example.com'
@@ -92,7 +92,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
               # NOTE: check the finished spans since we expect to have closed it
               span = exporter.finished_spans.first
               _(span.name).must_equal 'HTTP'
-              _(span.attributes['http.method']).must_equal 'N/A'
+              _(span.attributes['http.method']).must_equal '_OTHER'
               _(span.attributes['http.status_code']).must_be_nil
               _(span.attributes['http.url']).must_equal 'http://example.com/test'
               _(span.attributes['http.request.method']).must_equal '_OTHER'
@@ -121,7 +121,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
         it 'when response is successful' do
           stub_response(response_code: 200) do
             _(span.name).must_equal 'HTTP'
-            _(span.attributes['http.method']).must_equal 'N/A'
+            _(span.attributes['http.method']).must_equal '_OTHER'
             _(span.attributes['http.request.method']).must_equal '_OTHER'
             _(span.attributes['http.status_code']).must_equal 200
             _(span.attributes['http.response.status_code']).must_equal 200
@@ -137,7 +137,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
         it 'when response is not successful' do
           stub_response(response_code: 500) do
             _(span.name).must_equal 'HTTP'
-            _(span.attributes['http.method']).must_equal 'N/A'
+            _(span.attributes['http.method']).must_equal '_OTHER'
             _(span.attributes['http.request.method']).must_equal '_OTHER'
             _(span.attributes['http.status_code']).must_equal 500
             _(span.attributes['http.response.status_code']).must_equal 500
@@ -153,7 +153,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
         it 'when request times out' do
           stub_response(response_code: 0, return_code: :operation_timedout) do
             _(span.name).must_equal 'HTTP'
-            _(span.attributes['http.method']).must_equal 'N/A'
+            _(span.attributes['http.method']).must_equal '_OTHER'
             _(span.attributes['http.request.method']).must_equal '_OTHER'
             _(span.attributes['http.status_code']).must_be_nil
             _(span.attributes['http.response.status_code']).must_be_nil
@@ -232,7 +232,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           end
 
           it 'cleans up @otel_method' do
-            _(easy.instance_eval { @otel_method }).must_equal 'PUT'
+            _(easy.instance_eval { @otel_method }).must_equal :put
 
             easy.reset
 
@@ -274,10 +274,10 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           stub_response(response_code: 200) do
             _(exporter.finished_spans.size).must_equal 1
             _(span.name).must_equal 'HTTP'
-            _(span.attributes['http.method']).must_equal 'N/A'
+            _(span.attributes['http.method']).must_equal '_OTHER'
             _(span.attributes['http.url']).must_equal 'http://example.com/purge'
             _(span.attributes['http.request.method']).must_equal '_OTHER'
-            _(span.attributes['http.request.method_original']).must_equal 'PURGE'
+            _(span.attributes['http.request.method_original']).must_equal 'purge'
             _(span.attributes['url.full']).must_equal 'http://example.com/purge'
           end
         end

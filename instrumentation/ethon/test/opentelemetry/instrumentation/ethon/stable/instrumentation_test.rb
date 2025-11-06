@@ -215,7 +215,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           end
 
           it 'cleans up @otel_method' do
-            _(easy.instance_eval { @otel_method }).must_equal 'PUT'
+            _(easy.instance_eval { @otel_method }).must_equal :put
 
             easy.reset
 
@@ -258,7 +258,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             _(exporter.finished_spans.size).must_equal 1
             _(span.name).must_equal 'HTTP'
             _(span.attributes['http.request.method']).must_equal '_OTHER'
-            _(span.attributes['http.request.method_original']).must_equal 'PURGE'
+            _(span.attributes['http.request.method_original']).must_equal 'purge'
             _(span.attributes['url.full']).must_equal 'http://example.com/purge'
           end
         end

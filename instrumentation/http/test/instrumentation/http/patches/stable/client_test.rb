@@ -203,7 +203,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Client do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP'
       _(span.attributes['http.request.method']).must_equal '_OTHER'
-      _(span.attributes['http.request.method_original']).must_equal 'SEARCH'
+      _(span.attributes['http.request.method_original']).must_equal 'search'
       _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['url.scheme']).must_equal 'http'
       _(span.attributes['server.address']).must_equal 'example.com'

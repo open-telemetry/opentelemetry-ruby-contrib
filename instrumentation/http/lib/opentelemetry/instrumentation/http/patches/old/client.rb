@@ -19,8 +19,7 @@ module OpenTelemetry
 
             def perform(req, options)
               uri = req.uri
-              request_method = req.verb.to_s.upcase
-              normalized_method, _original_method = HttpHelper.normalize_method(request_method)
+              normalized_method, _original_method = HttpHelper.normalize_method(req.verb)
               span_name = create_span_name(normalized_method, uri.path)
 
               attributes = {

@@ -118,7 +118,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Dup::TracerMiddle
         _(span.attributes['net.peer.name']).must_equal 'example.com'
         # stable semantic conventions
         _(span.attributes['http.request.method']).must_equal '_OTHER'
-        _(span.attributes['http.request.method_original']).must_equal 'PURGE'
+        _(span.attributes['http.request.method_original']).must_equal 'purge'
         _(span.attributes['http.response.status_code']).must_equal 200
         _(span.attributes['url.full']).must_equal 'http://example.com/purge'
         _(span.attributes['server.address']).must_equal 'example.com'

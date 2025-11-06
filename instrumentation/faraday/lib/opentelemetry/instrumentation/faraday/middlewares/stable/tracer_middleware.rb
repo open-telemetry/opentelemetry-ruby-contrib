@@ -14,24 +14,11 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Faraday requests
           # by way of its middleware system
           class TracerMiddleware < ::Faraday::Middleware
-            HTTP_METHODS_SYMBOL_TO_STRING = {
-              connect: 'CONNECT',
-              delete: 'DELETE',
-              get: 'GET',
-              head: 'HEAD',
-              options: 'OPTIONS',
-              patch: 'PATCH',
-              post: 'POST',
-              put: 'PUT',
-              trace: 'TRACE'
-            }.freeze
-
             # Constant for the HTTP status range
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def call(env)
-              http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
-              normalized_method, original_method = HttpHelper.normalize_method(http_method || env.method)
+              normalized_method, original_method = HttpHelper.normalize_method(env.method)
               span_name = HttpHelper.span_name_for_stable(normalized_method)
 
               config = Faraday::Instrumentation.instance.config

@@ -261,7 +261,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       _(span.attributes['http.target']).must_equal '/query'
       # Stable semantic conventions
       _(span.attributes['http.request.method']).must_equal '_OTHER'
-      _(span.attributes['http.request.method_original']).must_equal 'SEARCH'
+      _(span.attributes['http.request.method_original']).must_equal 'search'
       _(span.attributes['http.response.status_code']).must_equal 200
       _(span.attributes['url.scheme']).must_equal 'http'
       _(span.attributes['server.address']).must_equal 'example.com'
