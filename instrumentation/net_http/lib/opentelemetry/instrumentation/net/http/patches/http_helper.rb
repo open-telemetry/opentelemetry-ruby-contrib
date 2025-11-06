@@ -27,13 +27,26 @@ module OpenTelemetry
               TRACE
             ].freeze
 
+            # Pre-computed span names for old semantic conventions to avoid allocations
+            OLD_SPAN_NAMES = {
+              'CONNECT' => 'HTTP CONNECT',
+              'DELETE' => 'HTTP DELETE',
+              'GET' => 'HTTP GET',
+              'HEAD' => 'HTTP HEAD',
+              'OPTIONS' => 'HTTP OPTIONS',
+              'PATCH' => 'HTTP PATCH',
+              'POST' => 'HTTP POST',
+              'PUT' => 'HTTP PUT',
+              'TRACE' => 'HTTP TRACE'
+            }.freeze
+
             module_function
 
             # Normalizes an HTTP method per semantic conventions
             # @param method [String] the HTTP method to normalize
             # @return [Array<String, String|nil>] normalized method and original if different
             def normalize_method(method)
-              method_str = method.to_s.upcase
+              method_str = method.is_a?(String) ? method.upcase : method.to_s.upcase
 
               if KNOWN_METHODS.include?(method_str)
                 [method_str, nil]
@@ -53,7 +66,7 @@ module OpenTelemetry
             # @param normalized_method [String] the normalized HTTP method
             # @return [String] the span name
             def span_name_for_old(normalized_method)
-              normalized_method == '_OTHER' ? 'HTTP' : "HTTP #{normalized_method}"
+              OLD_SPAN_NAMES.fetch(normalized_method, 'HTTP')
             end
           end
         end
