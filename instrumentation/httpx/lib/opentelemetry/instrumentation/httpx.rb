@@ -15,5 +15,6 @@ module OpenTelemetry
   end
 end
 
+require_relative 'httpx/http_helper'
 require_relative 'httpx/instrumentation'
 require_relative 'httpx/version'

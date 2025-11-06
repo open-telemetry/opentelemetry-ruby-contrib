@@ -12,17 +12,11 @@ module OpenTelemetry
         module Old
           # Ethon::Easy patch for instrumentation
           module Easy
-            ACTION_NAMES_TO_HTTP_METHODS = Hash.new do |h, k|
-              # #to_s is required because user input could be symbol or string
-              h[k] = k.to_s.upcase
-            end
-            HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
-
             # Constant for the HTTP status range
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def http_request(url, action_name, options = {})
-              @otel_method = ACTION_NAMES_TO_HTTP_METHODS[action_name]
+              @otel_method = action_name
               super
             end
 
@@ -73,12 +67,11 @@ module OpenTelemetry
             end
 
             def otel_before_request
-              method = 'N/A' # Could be GET or not HTTP at all
-              method = @otel_method if instance_variable_defined?(:@otel_method) && !@otel_method.nil?
+              span_data = HttpHelper.span_attrs_for(@otel_method, semconv: :old)
 
               @otel_span = tracer.start_span(
-                HTTP_METHODS_TO_SPAN_NAMES[method],
-                attributes: span_creation_attributes(method),
+                span_data.span_name,
+                attributes: span_creation_attributes(span_data),
                 kind: :client
               )
 
@@ -95,9 +88,9 @@ module OpenTelemetry
 
             private
 
-            def span_creation_attributes(method)
+            def span_creation_attributes(span_data)
               instrumentation_attrs = {
-                'http.method' => method
+                'http.method' => span_data.normalized_method
               }
 
               uri = _otel_cleanse_uri(url)
