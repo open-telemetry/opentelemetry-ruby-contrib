@@ -23,7 +23,7 @@ module OpenTelemetry
               severity_text: severity,
               severity_number: severity_number(severity),
               timestamp: datetime,
-              body: msg,
+              body: formatted_message,
               context: OpenTelemetry::Context.current
             )
             formatted_message

@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
+  spec.required_ruby_version = '>= 3.2'
 
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.24.0'
   spec.add_dependency 'opentelemetry-instrumentation-anthropic', '~> 0.3.0'
@@ -49,7 +49,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-mongo', '~> 0.25.0'
   spec.add_dependency 'opentelemetry-instrumentation-mysql2', '~> 0.31.0'
   spec.add_dependency 'opentelemetry-instrumentation-net_http', '~> 0.26.0'
-  spec.add_dependency 'opentelemetry-instrumentation-pg', '~> 0.32.0'
+  spec.add_dependency 'opentelemetry-instrumentation-pg', '~> 0.33.0'
   spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.11.1'
   spec.add_dependency 'opentelemetry-instrumentation-racecar', '~> 0.6.0'
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.29.0'
