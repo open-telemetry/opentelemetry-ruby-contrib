@@ -10,7 +10,7 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 ## How does this gem fit in?
 
-The `opentelemetry-auto-instrumentation` gem provides an easy way to load and initialize the OpenTelemetry Ruby SDK without changing your code initialize the SDK. This gem is particularly used with the [OpenTelemetry Operator][opentelemetry-operator].
+The `opentelemetry-auto-instrumentation` gem provides an easy way to load and initialize the OpenTelemetry Ruby SDK without changing your code. This gem is particularly used with the [OpenTelemetry Operator][opentelemetry-operator].
 
 ## How do I get started?
 
