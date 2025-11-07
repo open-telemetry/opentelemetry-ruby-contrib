@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../http_helper'
-
 module OpenTelemetry
   module Instrumentation
     module HTTP
@@ -18,19 +16,20 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def perform(req, options)
+              span_data = HttpHelper.span_attrs_for(req.verb)
+
               uri = req.uri
-              normalized_method, original_method = HttpHelper.normalize_method(req.verb)
-              span_name = create_span_name(normalized_method, uri.path)
+              span_name = create_span_name(span_data, uri.path)
 
               attributes = {
-                'http.request.method' => normalized_method,
+                'http.request.method' => span_data.normalized_method,
                 'url.scheme' => uri.scheme,
                 'url.path' => uri.path,
                 'url.full' => "#{uri.scheme}://#{uri.host}",
                 'server.address' => uri.host,
                 'server.port' => uri.port
               }
-              attributes['http.request.method_original'] = original_method if original_method
+              attributes['http.request.method_original'] = span_data.original_method if span_data.original_method
               attributes['url.query'] = uri.query unless uri.query.nil?
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
@@ -56,11 +55,11 @@ module OpenTelemetry
               span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
             end
 
-            def create_span_name(normalized_method, request_path)
-              default_span_name = HttpHelper.span_name_for_stable(normalized_method)
+            def create_span_name(span_data, request_path)
+              default_span_name = span_data.span_name
 
               if (implementation = config[:span_name_formatter])
-                updated_span_name = implementation.call(normalized_method, request_path)
+                updated_span_name = implementation.call(span_data.normalized_method, request_path)
                 updated_span_name.is_a?(String) ? updated_span_name : default_span_name
               else
                 default_span_name

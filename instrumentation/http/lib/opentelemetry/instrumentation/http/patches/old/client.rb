@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../http_helper'
-
 module OpenTelemetry
   module Instrumentation
     module HTTP
@@ -18,12 +16,13 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def perform(req, options)
+              span_data = HttpHelper.span_attrs_for(req.verb, semconv: :old)
+
               uri = req.uri
-              normalized_method, _original_method = HttpHelper.normalize_method(req.verb)
-              span_name = create_span_name(normalized_method, uri.path)
+              span_name = create_span_name(span_data, uri.path)
 
               attributes = {
-                'http.method' => normalized_method,
+                'http.method' => span_data.normalized_method,
                 'http.scheme' => uri.scheme,
                 'http.target' => uri.path,
                 'http.url' => "#{uri.scheme}://#{uri.host}",
@@ -53,11 +52,11 @@ module OpenTelemetry
               span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
             end
 
-            def create_span_name(normalized_method, request_path)
-              default_span_name = HttpHelper.span_name_for_old(normalized_method)
+            def create_span_name(span_data, request_path)
+              default_span_name = span_data.span_name
 
               if (implementation = config[:span_name_formatter])
-                updated_span_name = implementation.call(normalized_method, request_path)
+                updated_span_name = implementation.call(span_data.normalized_method, request_path)
                 updated_span_name.is_a?(String) ? updated_span_name : default_span_name
               else
                 default_span_name

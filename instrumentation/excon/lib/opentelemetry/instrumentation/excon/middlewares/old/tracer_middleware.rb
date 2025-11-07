@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../http_helper'
-
 module OpenTelemetry
   module Instrumentation
     module Excon
@@ -19,12 +17,11 @@ module OpenTelemetry
             def request_call(datum)
               return @stack.request_call(datum) if untraced?(datum)
 
-              normalized_method, _original_method = HttpHelper.normalize_method(datum[:method])
-              span_name = HttpHelper.span_name_for_old(normalized_method)
+              span_data = HttpHelper.span_attrs_for(datum[:method], semconv: :old)
 
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => datum[:host],
-                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => normalized_method,
+                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => span_data.normalized_method,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => datum[:scheme],
                 OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => datum[:path],
                 OpenTelemetry::SemanticConventions::Trace::HTTP_URL => OpenTelemetry::Common::Utilities.cleanse_url(::Excon::Utils.request_uri(datum)),
@@ -34,7 +31,7 @@ module OpenTelemetry
               peer_service = Excon::Instrumentation.instance.config[:peer_service]
               attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = peer_service if peer_service
               attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
-              span = tracer.start_span(span_name, attributes: attributes, kind: :client)
+              span = tracer.start_span(span_data.span_name, attributes: attributes, kind: :client)
               ctx = OpenTelemetry::Trace.context_with_span(span)
               datum[:otel_span] = span
               datum[:otel_token] = OpenTelemetry::Context.attach(ctx)

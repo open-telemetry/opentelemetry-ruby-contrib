@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Instrumentation
-    module HTTPX
-      # Utility module for normalizing HTTP methods according to OpenTelemetry semantic conventions
+    module HttpClient
+      # Module for normalizing HTTP methods
       # @api private
       module HttpHelper
         # Lightweight struct to hold span creation attributes

@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../http_helper'
-
 module OpenTelemetry
   module Instrumentation
     module Ethon
@@ -69,12 +67,11 @@ module OpenTelemetry
             end
 
             def otel_before_request
-              normalized_method, _original_method = HttpHelper.normalize_method(@otel_method)
-              span_name = HttpHelper.span_name_for_old(normalized_method)
+              span_data = HttpHelper.span_attrs_for(@otel_method, semconv: :old)
 
               @otel_span = tracer.start_span(
-                span_name,
-                attributes: span_creation_attributes(normalized_method),
+                span_data.span_name,
+                attributes: span_creation_attributes(span_data),
                 kind: :client
               )
 
@@ -91,9 +88,9 @@ module OpenTelemetry
 
             private
 
-            def span_creation_attributes(normalized_method)
+            def span_creation_attributes(span_data)
               instrumentation_attrs = {
-                'http.method' => normalized_method
+                'http.method' => span_data.normalized_method
               }
 
               uri = _otel_cleanse_uri(url)

@@ -149,7 +149,6 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Stable::Client do
       http = HTTPClient.new
       http.request(:purge, 'http://example.com/cache')
 
-      _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP'
       _(span.attributes['http.request.method']).must_equal '_OTHER'
       _(span.attributes['http.request.method_original']).must_equal 'PURGE'

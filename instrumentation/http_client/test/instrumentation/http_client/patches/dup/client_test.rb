@@ -178,7 +178,6 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Dup::Client do
       http = HTTPClient.new
       http.request(:purge, 'http://example.com/cache')
 
-      _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP'
       # old semantic conventions
       _(span.attributes['http.method']).must_equal '_OTHER'

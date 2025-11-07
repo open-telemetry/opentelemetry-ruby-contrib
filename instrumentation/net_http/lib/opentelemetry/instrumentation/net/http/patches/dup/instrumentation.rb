@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../http_helper'
-
 module OpenTelemetry
   module Instrumentation
     module Net
@@ -25,21 +23,20 @@ module OpenTelemetry
 
                 return super if untraced?
 
-                normalized_method, original_method = HttpHelper.normalize_method(req.method)
-                span_name = HttpHelper.span_name_for_stable(normalized_method)
+                span_data = HttpHelper.span_attrs_for(req.method)
 
                 attributes = {
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => normalized_method,
+                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => span_data.normalized_method,
                   OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
                   OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port,
-                  'http.request.method' => normalized_method,
+                  'http.request.method' => span_data.normalized_method,
                   'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
                   'server.address' => @address,
                   'server.port' => @port
                 }
-                attributes['http.request.method_original'] = original_method if original_method
+                attributes['http.request.method_original'] = span_data.original_method if span_data.original_method
                 path, query = split_path_and_query(req.path)
                 attributes['url.path'] = path
                 attributes['url.query'] = query if query
@@ -47,7 +44,7 @@ module OpenTelemetry
                 attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
                 tracer.in_span(
-                  span_name,
+                  span_data.span_name,
                   attributes: attributes,
                   kind: :client
                 ) do |span|

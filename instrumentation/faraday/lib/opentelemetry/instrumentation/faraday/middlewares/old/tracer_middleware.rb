@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../http_helper'
-
 module OpenTelemetry
   module Instrumentation
     module Faraday
@@ -18,20 +16,17 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def call(env)
-              normalized_method, _original_method = HttpHelper.normalize_method(env.method)
-
-              # Per semantic conventions, span name uses 'HTTP' when method is unknown
-              span_name = HttpHelper.span_name_for_old(normalized_method)
+              span_data = HttpHelper.span_attrs_for(env.method, semconv: :old)
 
               config = Faraday::Instrumentation.instance.config
 
               attributes = span_creation_attributes(
-                http_method: normalized_method, url: env.url, config: config
+                http_method: span_data.normalized_method, url: env.url, config: config
               )
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
                 tracer.in_span(
-                  span_name, attributes: attrs, kind: config.fetch(:span_kind)
+                  span_data.span_name, attributes: attrs, kind: config.fetch(:span_kind)
                 ) do |span|
                   OpenTelemetry.propagation.inject(env.request_headers)
 

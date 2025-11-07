@@ -6,10 +6,14 @@
 
 module OpenTelemetry
   module Instrumentation
-    module Faraday
-      module Middlewares
+    module Net
+      module HTTP
         # Utility module for HTTP-related helper methods
+        # @api private
         module HttpHelper
+          # Lightweight struct to hold span creation attributes
+          SpanCreationAttributes = Struct.new(:span_name, :normalized_method, :original_method, keyword_init: true)
+
           # Pre-computed mapping to avoid string allocations during normalization
           METHOD_CACHE = {
             'CONNECT' => 'CONNECT',
@@ -56,33 +60,26 @@ module OpenTelemetry
 
           private_constant :METHOD_CACHE, :OLD_SPAN_NAMES
 
-          module_function
-
-          # Normalizes an HTTP method according to OpenTelemetry semantic conventions
-          # @param method [String, Symbol] The HTTP method to normalize
-          # @return [Array<String, String|nil>] A tuple of [normalized_method, original_method]
-          #   where normalized_method is either a known method or '_OTHER',
-          #   and original_method is the original value if it was normalized to '_OTHER', or nil
-          def normalize_method(method)
+          # Prepares all span data for the specified semantic convention in a single call
+          # @param method [String, Symbol] The HTTP method
+          # @param semconv [Symbol] The semantic convention to use (:stable or :old)
+          # @return [SpanCreationAttributes] struct containing span_name, normalized_method, and original_method
+          def self.span_attrs_for(method, semconv: :stable)
             normalized = METHOD_CACHE[method]
-            return [normalized, nil] if normalized
-
-            # Mixed case or unknown methods are treated as '_OTHER'
-            ['_OTHER', method.to_s]
-          end
-
-          # Generates span name for stable semantic conventions
-          # @param normalized_method [String] the normalized HTTP method
-          # @return [String] the span name
-          def span_name_for_stable(normalized_method)
-            normalized_method == '_OTHER' ? 'HTTP' : normalized_method
-          end
-
-          # Generates span name for old semantic conventions
-          # @param normalized_method [String] the normalized HTTP method
-          # @return [String] the span name
-          def span_name_for_old(normalized_method)
-            OLD_SPAN_NAMES.fetch(normalized_method, 'HTTP')
+            if normalized
+              span_name = semconv == :old ? OLD_SPAN_NAMES[normalized] : normalized
+              SpanCreationAttributes.new(
+                span_name: span_name,
+                normalized_method: normalized,
+                original_method: nil
+              )
+            else
+              SpanCreationAttributes.new(
+                span_name: 'HTTP',
+                normalized_method: '_OTHER',
+                original_method: method.to_s
+              )
+            end
           end
         end
       end
