@@ -57,7 +57,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
       HTTPX.get('http://example.com/success')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -74,7 +74,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
       HTTPX.get('http://example.com/failure')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -93,7 +93,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
       assert response.error.is_a?(HTTPX::TimeoutError)
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.host']).must_equal 'example.com'
@@ -121,7 +121,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
       end
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'OVERRIDE'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.scheme']).must_equal 'http'

@@ -36,7 +36,8 @@ task default: [:each]
 
 def foreach_gem(cmd)
   Dir.glob("**/opentelemetry-*.gemspec") do |gemspec|
-    name = File.basename(gemspec, ".gemspec")
+    next if gemspec.start_with?('.')
+
     dir = File.dirname(gemspec)
     puts "**** Entering #{dir}"
     Dir.chdir(dir) do

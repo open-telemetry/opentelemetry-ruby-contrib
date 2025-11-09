@@ -49,7 +49,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       Excon.get('http://example.com/success')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -93,7 +93,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       Excon.get('http://example.com/failure')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -113,7 +113,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       end.must_raise Excon::Error::Timeout
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -143,7 +143,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'OVERRIDE'
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -224,7 +224,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       Excon.get('http://example.com/body')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.method']).must_equal 'GET'
     end
@@ -309,7 +309,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(-> { Excon.get('https://localhost/', proxy: 'https://proxy_user:proxy_pass@localhost') }).must_raise(Excon::Error::Socket)
 
       _(exporter.finished_spans.size).must_equal(3)
-      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.name).must_equal 'CONNECT'
       _(span.kind).must_equal(:client)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
@@ -340,7 +340,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
   def assert_http_spans(scheme: 'http', host: 'localhost', port: nil, target: '/', exception: nil)
     exporter.finished_spans[1..].each do |http_span|
-      _(http_span.name).must_equal 'HTTP GET'
+      _(http_span.name).must_equal 'GET'
       _(http_span.attributes['http.host']).must_equal host
       _(http_span.attributes['http.method']).must_equal 'GET'
       _(http_span.attributes['http.scheme']).must_equal scheme
