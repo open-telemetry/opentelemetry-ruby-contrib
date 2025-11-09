@@ -41,7 +41,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
       http.get('http://example.com/success')
 
       _(exporter.finished_spans.size).must_equal(1)
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
@@ -61,7 +61,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
       http.post('http://example.com/failure')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP POST'
+      _(span.name).must_equal 'POST'
       _(span.attributes['http.method']).must_equal 'POST'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 500
@@ -83,7 +83,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
       end.must_raise HTTPClient::TimeoutError
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'https'
       _(span.attributes['http.status_code']).must_be_nil
@@ -111,7 +111,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
       end
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200

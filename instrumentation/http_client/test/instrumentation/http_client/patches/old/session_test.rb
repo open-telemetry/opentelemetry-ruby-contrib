@@ -39,7 +39,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Session do
       end
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.name).must_equal 'CONNECT'
       _(span.attributes['http.url']).must_match(%r{http://localhost:})
     ensure
       WebMock.disable_net_connect!

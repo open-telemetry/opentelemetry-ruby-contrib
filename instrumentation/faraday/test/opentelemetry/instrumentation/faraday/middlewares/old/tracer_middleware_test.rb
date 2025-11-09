@@ -47,7 +47,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
       it 'has http 200 attributes' do
         response = client.get('/success')
 
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.status_code']).must_equal 200
         _(span.attributes['http.url']).must_equal 'http://example.com/success'
@@ -60,7 +60,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
       it 'has http.status_code 404' do
         response = client.get('/not_found')
 
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.status_code']).must_equal 404
         _(span.attributes['http.url']).must_equal 'http://example.com/not_found'
@@ -73,7 +73,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
       it 'has http.status_code 500' do
         response = client.get('/failure')
 
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.status_code']).must_equal 500
         _(span.attributes['http.url']).must_equal 'http://example.com/failure'
@@ -116,7 +116,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
           client.get('/success')
         end
 
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         _(span.attributes['http.method']).must_equal 'OVERRIDE'
         _(span.attributes['http.status_code']).must_equal 200
         _(span.attributes['http.url']).must_equal 'http://example.com/success'
@@ -206,7 +206,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
       it 'omits missing attributes' do
         response = client.get('/success')
 
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.status_code']).must_equal 200
         _(span.attributes['http.url']).must_equal 'http:/success'

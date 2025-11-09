@@ -12,7 +12,7 @@ module OpenTelemetry
         # @api private
         module HttpHelper
           # Lightweight struct to hold span creation attributes
-          SpanCreationAttributes = Struct.new(:span_name, :normalized_method, :original_method, keyword_init: true)
+          SpanCreationAttributes = Struct.new(:span_name, :attributes, keyword_init: true)
 
           # Pre-computed mapping to avoid string allocations during normalization
           METHOD_CACHE = {
@@ -45,41 +45,83 @@ module OpenTelemetry
             :trace => 'TRACE'
           }.freeze
 
-          # Pre-computed span names for old semantic conventions to avoid allocations
-          OLD_SPAN_NAMES = {
-            'CONNECT' => 'HTTP CONNECT',
-            'DELETE' => 'HTTP DELETE',
-            'GET' => 'HTTP GET',
-            'HEAD' => 'HTTP HEAD',
-            'OPTIONS' => 'HTTP OPTIONS',
-            'PATCH' => 'HTTP PATCH',
-            'POST' => 'HTTP POST',
-            'PUT' => 'HTTP PUT',
-            'TRACE' => 'HTTP TRACE'
-          }.freeze
+          private_constant :METHOD_CACHE
 
-          private_constant :METHOD_CACHE, :OLD_SPAN_NAMES
-
-          # Prepares all span data for the specified semantic convention in a single call
+          # Prepares span data using old semantic conventions
           # @param method [String, Symbol] The HTTP method
-          # @param semconv [Symbol] The semantic convention to use (:stable or :old)
-          # @return [SpanCreationAttributes] struct containing span_name, normalized_method, and original_method
-          def self.span_attrs_for(method, semconv: :stable)
+          # @return [SpanCreationAttributes] struct containing span_name and attributes hash
+          def self.span_attrs_for_old(method)
+            client_context_attrs = OpenTelemetry::Common::HTTP::ClientContext.attributes
             normalized = METHOD_CACHE[method]
+            attributes = client_context_attrs.dup
+
+            # Determine base span name and method value
             if normalized
-              span_name = semconv == :old ? OLD_SPAN_NAMES[normalized] : normalized
-              SpanCreationAttributes.new(
-                span_name: span_name,
-                normalized_method: normalized,
-                original_method: nil
-              )
+              span_name = normalized
+              method_value = normalized
             else
-              SpanCreationAttributes.new(
-                span_name: 'HTTP',
-                normalized_method: '_OTHER',
-                original_method: method.to_s
-              )
+              span_name = 'HTTP'
+              method_value = '_OTHER'
             end
+
+            attributes['http.method'] ||= method_value
+
+            SpanCreationAttributes.new(span_name: span_name, attributes: attributes)
+          end
+
+          # Prepares span data using stable semantic conventions
+          # @param method [String, Symbol] The HTTP method
+          # @return [SpanCreationAttributes] struct containing span_name and attributes hash
+          def self.span_attrs_for_stable(method)
+            client_context_attrs = OpenTelemetry::Common::HTTP::ClientContext.attributes
+            url_template = client_context_attrs['url.template']
+            normalized = METHOD_CACHE[method]
+            attributes = client_context_attrs.dup
+
+            # Determine base span name and method value
+            if normalized
+              base_name = normalized
+              method_value = normalized
+              original = nil
+            else
+              base_name = 'HTTP'
+              method_value = '_OTHER'
+              original = method.to_s
+            end
+
+            span_name = url_template ? "#{base_name} #{url_template}" : base_name
+            attributes['http.request.method'] ||= method_value
+            attributes['http.request.method_original'] ||= original if original
+
+            SpanCreationAttributes.new(span_name: span_name, attributes: attributes)
+          end
+
+          # Prepares span data using both old and stable semantic conventions
+          # @param method [String, Symbol] The HTTP method
+          # @return [SpanCreationAttributes] struct containing span_name and attributes hash
+          def self.span_attrs_for_dup(method)
+            client_context_attrs = OpenTelemetry::Common::HTTP::ClientContext.attributes
+            url_template = client_context_attrs['url.template']
+            normalized = METHOD_CACHE[method]
+            attributes = client_context_attrs.dup
+
+            # Determine base span name and method value
+            if normalized
+              base_name = normalized
+              method_value = normalized
+              original = nil
+            else
+              base_name = 'HTTP'
+              method_value = '_OTHER'
+              original = method.to_s
+            end
+
+            span_name = url_template ? "#{base_name} #{url_template}" : base_name
+            attributes['http.method'] ||= method_value
+            attributes['http.request.method'] ||= method_value
+            attributes['http.request.method_original'] ||= original if original
+
+            SpanCreationAttributes.new(span_name: span_name, attributes: attributes)
           end
         end
       end
