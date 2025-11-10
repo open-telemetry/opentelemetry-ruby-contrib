@@ -18,18 +18,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWit
 
   let(:described_class) { OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWithMetrics }
 
-  # Helper method to verify metric structure
-  def assert_server_duration_metric(metric, expected_count: nil)
-    _(metric).wont_be_nil
-    _(metric.name).must_equal 'http.server.request.duration'
-    _(metric.description).must_equal 'Duration of HTTP server requests.'
-    _(metric.unit).must_equal 'ms'
-    _(metric.instrument_kind).must_equal :histogram
-    _(metric.instrumentation_scope.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
-    _(metric.data_points).wont_be_empty
-    _(metric.data_points.first.count).must_equal expected_count if expected_count
-  end
-
   let(:app) { ->(_env) { [200, { 'Content-Type' => 'text/plain' }, ['OK']] } }
   let(:middleware) { described_class.new(app) }
   let(:rack_builder) { Rack::Builder.new }
@@ -44,14 +32,11 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWit
   let(:uri) { '/' }
 
   before do
-    # clear captured spans:
     exporter.reset
 
-    # Setup metrics
     @metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
     OpenTelemetry.meter_provider.add_metric_reader(@metric_exporter)
 
-    # simulate a fresh install:
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(config)
 
@@ -61,7 +46,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWit
   end
 
   after do
-    # installation is 'global', so it should be reset:
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(default_config)
   end

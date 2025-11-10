@@ -19,18 +19,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
   let(:instrumentation) { instrumentation_class.instance }
   let(:instrumentation_enabled) { true }
 
-  # Helper method to verify metric structure
-  def assert_server_duration_metric(metric, expected_count: nil)
-    _(metric).wont_be_nil
-    _(metric.name).must_equal 'http.server.request.duration'
-    _(metric.description).must_equal 'Duration of HTTP server requests.'
-    _(metric.unit).must_equal 'ms'
-    _(metric.instrument_kind).must_equal :histogram
-    _(metric.instrumentation_scope.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
-    _(metric.data_points).wont_be_empty
-    _(metric.data_points.first.count).must_equal expected_count if expected_count
-  end
-
   let(:config) do
     {
       untraced_endpoints: [],
@@ -61,7 +49,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
   before do
     exporter.reset
 
-    # Setup metrics
     @metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
     OpenTelemetry.meter_provider.add_metric_reader(@metric_exporter)
 
@@ -71,7 +58,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
   end
 
   after do
-    # Clean up
     instrumentation.instance_variable_set(:@installed, false)
   end
 
@@ -85,15 +71,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
       _(start_time).wont_be_nil
       _(start_time).must_be_kind_of Integer
       _(start_time).must_be :>, 0
-    end
-
-    it 'handles exceptions gracefully when request is nil' do
-      begin
-        handler.on_start(nil, nil)
-        _(true).must_equal true
-      rescue NoMethodError => e
-        _(e).must_be_kind_of NoMethodError
-      end
     end
   end
 
@@ -119,9 +96,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
       @metric_exporter.pull
       metrics = @metric_exporter.metric_snapshots
 
-      _(metrics).wont_be_empty
-      duration_metric = metrics.find { |m| m.name == 'http.server.request.duration' }
-      assert_server_duration_metric(duration_metric, expected_count: 1)
+      assert_server_duration_metric(metrics[0], expected_count: 1)
     end
 
     it 'handles edge cases gracefully' do
@@ -131,13 +106,10 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
       # Missing start_time - should not raise
       handler.on_finish(request, response)
 
-      # Nil request - should handle gracefully
-      begin
-        handler.on_finish(nil, nil)
-        _(true).must_equal true
-      rescue NoMethodError => e
-        _(e).must_be_kind_of NoMethodError
-      end
+      @metric_exporter.pull
+      metrics = @metric_exporter.metric_snapshots
+
+      _(metrics).must_be_empty
     end
   end
 
@@ -148,9 +120,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
       @metric_exporter.pull
       metrics = @metric_exporter.metric_snapshots
 
-      _(metrics).wont_be_empty
-      duration_metric = metrics.find { |m| m.name == 'http.server.request.duration' }
-      assert_server_duration_metric(duration_metric, expected_count: 1)
+      assert_server_duration_metric(metrics[0], expected_count: 1)
     end
 
     it 'works alongside other event handlers' do
@@ -162,7 +132,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
           @callback = callback
         end
 
-        define_method(:on_start) do |request, response|
+        define_method(:on_start) do |_request, _response|
           @callback.call
         end
       end.new(-> { other_handler_called = true })
