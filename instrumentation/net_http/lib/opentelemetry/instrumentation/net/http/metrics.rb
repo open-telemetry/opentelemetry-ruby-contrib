@@ -8,8 +8,9 @@ module OpenTelemetry
   module Instrumentation
     module Net
       module HTTP
+        # Metrics module for patching the instrumentation
         module Metrics
-          def request(req, body = nil, &block)
+          def request(req, body = nil, &)
             with_metric_timing { super }
           end
 
@@ -25,11 +26,7 @@ module OpenTelemetry
 
             start_time = current_time_ms
 
-            begin
-              yield
-            rescue
-              raise
-            end
+            yield
           ensure
             record_metric(current_time_ms - start_time) if start_time
           end
@@ -43,7 +40,7 @@ module OpenTelemetry
             return unless instrumentation
 
             instrumentation.config[:client_request_duration]&.record(duration_ms)
-          rescue => e
+          rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           end
 

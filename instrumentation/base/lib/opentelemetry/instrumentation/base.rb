@@ -224,10 +224,8 @@ module OpenTelemetry
         @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true
 
-        if enable_metrics?(config)
-          if defined?(OpenTelemetry.meter_provider) && OpenTelemetry.meter_provider.instance_of?(OpenTelemetry::SDK::Metrics::MeterProvider)
-            @meter = OpenTelemetry.meter_provider.meter(name, version: version)
-          end
+        if enable_metrics?(config) && defined?(OpenTelemetry.meter_provider) && OpenTelemetry.meter_provider.instance_of?(OpenTelemetry::SDK::Metrics::MeterProvider)
+          @meter = OpenTelemetry.meter_provider.meter(name, version: version)
         end
 
         initialize_metrics
@@ -236,7 +234,7 @@ module OpenTelemetry
       # Each instrumentation can implement the initialize_metrics function to
       # include the desired metrics instrument
       def initialize_metrics
-        OpenTelemetry.logger.info "Instrumentation should implement the function"
+        OpenTelemetry.logger.info 'Instrumentation should implement the function'
       end
 
       # Whether or not this instrumentation is installable in the current process. Will
@@ -282,7 +280,8 @@ module OpenTelemetry
       #
       # @param [optional Hash] config The local config
       def enable_metrics?(config = nil)
-        return true if enabled_metrics_by_env_var?
+        env_value = metrics_env_var_value
+        return env_value == 'true' if %w[true false].include?(env_value)
         return config[:metrics] if config&.key?(:metrics)
 
         false
@@ -331,7 +330,7 @@ module OpenTelemetry
           h[option_name] = option[:default]
         end
 
-        dropped_config_keys = user_config.keys - validated_config.keys - [:enabled, :metrics]
+        dropped_config_keys = user_config.keys - validated_config.keys - %i[enabled metrics]
         OpenTelemetry.logger.warn("Instrumentation #{name} ignored the following unknown configuration options #{dropped_config_keys}") unless dropped_config_keys.empty?
 
         validated_config
@@ -353,21 +352,19 @@ module OpenTelemetry
         ENV[var_name] != 'false'
       end
 
-
-      # Checks to see if this instrumentation metrics is enabled by env var. By convention, the
+      # Returns the value of the metrics environment variable. By convention, the
       # environment variable will be the instrumentation name upper cased, with '::'
-      # replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG} and _ENABLED appended.
-      # For example, the, environment variable name for OpenTelemetry::Instrumentation::Sinatra
-      # will be OTEL_RUBY_INSTRUMENTATION_SINATRA_METRICS_ENABLED. A value of 'true' will enable
-      # the metrics recording in instrumentation, all other values will disable it.
-      def enabled_metrics_by_env_var?
+      # replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG} and _METRICS_ENABLED appended.
+      # For example, the environment variable name for OpenTelemetry::Instrumentation::Sinatra
+      # will be OTEL_RUBY_INSTRUMENTATION_SINATRA_METRICS_ENABLED.
+      def metrics_env_var_value
         var_name = name.dup.tap do |n|
           n.upcase!
           n.gsub!('::', '_')
           n.gsub!('OPENTELEMETRY_', 'OTEL_RUBY_')
           n << '_METRICS_ENABLED'
         end
-        ENV[var_name] == 'true'
+        ENV.fetch(var_name, nil)
       end
 
       # Checks to see if the user has passed any environment variables that set options

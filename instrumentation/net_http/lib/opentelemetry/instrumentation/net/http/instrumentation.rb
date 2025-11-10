@@ -76,8 +76,8 @@ module OpenTelemetry
             return if meter.nil?
 
             config[:client_request_duration] = meter.create_histogram(::OpenTelemetry::SemConv::HTTP::HTTP_CLIENT_REQUEST_DURATION,
-                                                            unit: 'ms',
-                                                            description: 'Duration of HTTP client requests.')
+                                                                      unit: 'ms',
+                                                                      description: 'Duration of HTTP client requests.')
           end
         end
       end
