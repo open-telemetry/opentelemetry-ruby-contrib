@@ -18,6 +18,18 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWit
 
   let(:described_class) { OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWithMetrics }
 
+  # Helper method to verify metric structure
+  def assert_server_duration_metric(metric, expected_count: nil)
+    _(metric).wont_be_nil
+    _(metric.name).must_equal 'http.server.request.duration'
+    _(metric.description).must_equal 'Duration of HTTP server requests.'
+    _(metric.unit).must_equal 'ms'
+    _(metric.instrument_kind).must_equal :histogram
+    _(metric.instrumentation_scope.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
+    _(metric.data_points).wont_be_empty
+    _(metric.data_points.first.count).must_equal expected_count if expected_count
+  end
+
   let(:app) { ->(_env) { [200, { 'Content-Type' => 'text/plain' }, ['OK']] } }
   let(:middleware) { described_class.new(app) }
   let(:rack_builder) { Rack::Builder.new }
@@ -27,7 +39,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWit
   let(:first_span) { exporter.finished_spans.first }
 
   let(:default_config) { {} }
-  let(:config) { default_config }
+  let(:config) { { metrics: true, server_request_duration: true } }
   let(:env) { {} }
   let(:uri) { '/' }
 
@@ -37,7 +49,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWit
 
     # Setup metrics
     @metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-    @metric_exporter.reset
     OpenTelemetry.meter_provider.add_metric_reader(@metric_exporter)
 
     # simulate a fresh install:
@@ -65,34 +76,28 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWit
   end
 
   describe '#call' do
-    it 'delegates tracing to TracerMiddleware' do
+    it 'delegates tracing to TracerMiddleware and records metrics' do
       Rack::MockRequest.new(rack_builder).get(uri, env)
 
-      # Verify that spans are still created (delegated to TracerMiddleware)
+      # Verify spans are created (delegated to TracerMiddleware)
       _(finished_spans).wont_be_empty
       _(first_span.attributes['http.request.method']).must_equal 'GET'
       _(first_span.attributes['http.response.status_code']).must_equal 200
       _(first_span.attributes['url.path']).must_equal '/'
       _(first_span.name).must_equal 'GET'
       _(first_span.kind).must_equal :server
-    end
 
-    it 'records metrics for the request' do
-      Rack::MockRequest.new(rack_builder).get(uri, env)
-
+      # Verify metrics are recorded
       @metric_exporter.pull
       metrics = @metric_exporter.metric_snapshots
 
-      # Verify that metrics were recorded if configured
-      if instrumentation.config[:server_request_duration]
-        _(metrics).wont_be_empty
-        duration_metric = metrics.find { |m| m.name == 'http.server.request.duration' }
-        _(duration_metric).wont_be_nil
-      end
+      _(metrics).wont_be_empty
+      duration_metric = metrics.find { |m| m.name == 'http.server.request.duration' }
+      assert_server_duration_metric(duration_metric, expected_count: 1)
     end
 
-    it 'records metrics even when app returns different status codes' do
-      [200, 404, 500].each do |status_code|
+    it 'works with different status codes' do
+      [404, 500].each do |status_code|
         exporter.reset
         @metric_exporter.reset
 
@@ -103,50 +108,52 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWit
 
         Rack::MockRequest.new(custom_builder).get(uri, env)
 
-        # Verify span was created
         _(exporter.finished_spans).wont_be_empty
         _(exporter.finished_spans.first.attributes['http.response.status_code']).must_equal status_code
       end
     end
 
-    describe 'when app raises an exception' do
-      let(:app) do
-        ->(_env) { raise StandardError, 'Test error' }
+    it 'handles exceptions and still records metrics' do
+      exporter.reset
+      @metric_exporter.reset
+
+      exception_app = ->(_env) { raise StandardError, 'Test error' }
+      exception_builder = Rack::Builder.new
+      exception_builder.run exception_app
+      exception_builder.use described_class
+
+      exception_raised = false
+      begin
+        Rack::MockRequest.new(exception_builder).get(uri, env)
+      rescue StandardError
+        exception_raised = true
       end
 
-      it 'records metrics even when exception occurs' do
-        exception_raised = false
+      _(exception_raised).must_equal true
 
-        begin
-          Rack::MockRequest.new(rack_builder).get(uri, env)
-        rescue StandardError
-          exception_raised = true
-        end
+      # Verify span details
+      _(finished_spans.size).must_equal 1
+      error_span = finished_spans.first
 
-        _(exception_raised).must_equal true
+      _(error_span).wont_be_nil
+      _(error_span.name).must_equal 'GET'
+      _(error_span.kind).must_equal :server
+      _(error_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(error_span.status.description).must_match(/StandardError/)
+      _(error_span.attributes['http.request.method']).must_equal 'GET'
+      _(error_span.attributes['url.path']).must_equal '/'
+      _(error_span.events.size).must_equal 1
+      _(error_span.events.first.name).must_equal 'exception'
+      _(error_span.events.first.attributes['exception.type']).must_equal 'StandardError'
+      _(error_span.events.first.attributes['exception.message']).must_equal 'Test error'
 
-        # Metrics should still be recorded
-        @metric_exporter.pull
-        metrics = @metric_exporter.metric_snapshots
+      # Metrics should still be recorded
+      @metric_exporter.pull
+      metrics = @metric_exporter.metric_snapshots
 
-        if instrumentation.config[:server_request_duration]
-          _(metrics).wont_be_empty
-        end
-      end
-
-      it 'ensures TracerMiddleware handles the exception' do
-        exception_raised = false
-
-        begin
-          Rack::MockRequest.new(rack_builder).get(uri, env)
-        rescue StandardError
-          exception_raised = true
-        end
-
-        _(exception_raised).must_equal true
-        # Span should still be created and finished
-        _(finished_spans).wont_be_empty
-      end
+      _(metrics).wont_be_empty
+      duration_metric = metrics.find { |m| m.name == 'http.server.request.duration' }
+      assert_server_duration_metric(duration_metric, expected_count: 1)
     end
   end
 
@@ -170,53 +177,21 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddlewareWit
     end
   end
 
-  describe 'error handling in metric recording' do
-    it 'handles errors during metric recording gracefully' do
-      # Mock config to cause an error
-      bad_config = { server_request_duration: nil }
-
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install(bad_config)
-
-      builder = Rack::Builder.new
-      builder.run app
-      builder.use described_class
-
-      # Should not raise an exception
-      response = Rack::MockRequest.new(builder).get(uri, env)
-      _(response.status).must_equal 200
-    end
-  end
-
   describe 'integration with TracerMiddleware' do
-    it 'preserves all TracerMiddleware functionality' do
-      # Test that tracing context is properly propagated
-      Rack::MockRequest.new(rack_builder).get(uri, env)
+    it 'preserves TracerMiddleware functionality with headers and query strings' do
+      custom_env = {
+        'HTTP_USER_AGENT' => 'Test Agent',
+        'HTTP_X_FORWARDED_FOR' => '192.168.1.1'
+      }
+      uri_with_query = '/endpoint?query=true&foo=bar'
+
+      Rack::MockRequest.new(rack_builder).get(uri_with_query, custom_env)
 
       _(first_span).wont_be_nil
       _(first_span.name).must_equal 'GET'
       _(first_span.kind).must_equal :server
       _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
-    end
-
-    it 'works with custom headers' do
-      custom_env = {
-        'HTTP_USER_AGENT' => 'Test Agent',
-        'HTTP_X_FORWARDED_FOR' => '192.168.1.1'
-      }
-
-      Rack::MockRequest.new(rack_builder).get(uri, custom_env)
-
-      _(first_span).wont_be_nil
       _(first_span.attributes['user_agent.original']).must_equal 'Test Agent'
-    end
-
-    it 'handles query strings' do
-      uri_with_query = '/endpoint?query=true&foo=bar'
-
-      Rack::MockRequest.new(rack_builder).get(uri_with_query, env)
-
-      _(first_span).wont_be_nil
       _(first_span.attributes['url.path']).must_equal '/endpoint'
       _(first_span.attributes['url.query']).must_equal 'query=true&foo=bar'
     end

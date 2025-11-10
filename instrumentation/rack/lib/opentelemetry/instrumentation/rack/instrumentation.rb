@@ -63,9 +63,6 @@ module OpenTelemetry
         end
 
         def middleware_args_stable
-          puts "config: #{config.inspect}"
-          puts "defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler): #{defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler)}"
-          puts "defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMetrics): #{defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMetrics)}"
           if config.fetch(:use_rack_events, false) == true \
               && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler) \
               && defined?(OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMetrics)

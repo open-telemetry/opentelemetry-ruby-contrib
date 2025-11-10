@@ -19,11 +19,24 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
   let(:instrumentation) { instrumentation_class.instance }
   let(:instrumentation_enabled) { true }
 
+  # Helper method to verify metric structure
+  def assert_server_duration_metric(metric, expected_count: nil)
+    _(metric).wont_be_nil
+    _(metric.name).must_equal 'http.server.request.duration'
+    _(metric.description).must_equal 'Duration of HTTP server requests.'
+    _(metric.unit).must_equal 'ms'
+    _(metric.instrument_kind).must_equal :histogram
+    _(metric.instrumentation_scope.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
+    _(metric.data_points).wont_be_empty
+    _(metric.data_points.first.count).must_equal expected_count if expected_count
+  end
+
   let(:config) do
     {
       untraced_endpoints: [],
       enabled: instrumentation_enabled,
-      use_rack_events: true
+      use_rack_events: true,
+      metrics: true
     }
   end
 
@@ -50,7 +63,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
 
     # Setup metrics
     @metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-    @metric_exporter.reset
     OpenTelemetry.meter_provider.add_metric_reader(@metric_exporter)
 
     # simulate a fresh install:
@@ -76,34 +88,22 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
     end
 
     it 'handles exceptions gracefully when request is nil' do
-      # Should handle gracefully without raising
       begin
         handler.on_start(nil, nil)
-        _(true).must_equal true  # If we get here, test passed
+        _(true).must_equal true
       rescue NoMethodError => e
-        # NoMethodError is expected when calling methods on nil
         _(e).must_be_kind_of NoMethodError
       end
     end
   end
 
-  describe '#on_commit' do
-    it 'is a no-op' do
-      request = Rack::Request.new(Rack::MockRequest.env_for(uri))
-      response = Rack::Response.new
-
-      # Should not raise an exception
-      handler.on_commit(request, response)
-    end
-  end
-
-  describe '#on_error' do
-    it 'is a no-op' do
+  describe '#on_commit and #on_error' do
+    it 'are no-ops that do not raise exceptions' do
       request = Rack::Request.new(Rack::MockRequest.env_for(uri))
       response = Rack::Response.new
       error = StandardError.new('test error')
 
-      # Should not raise an exception
+      handler.on_commit(request, response)
       handler.on_error(request, response, error)
     end
   end
@@ -113,67 +113,47 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
       request = Rack::Request.new(Rack::MockRequest.env_for(uri))
       response = Rack::Response.new([200, {}, ['OK']])
 
-      # Set start time
       handler.on_start(request, nil)
-
-      # Record metric
       handler.on_finish(request, response)
 
-      # Verify metric was recorded
       @metric_exporter.pull
       metrics = @metric_exporter.metric_snapshots
 
-      # Check if metrics are configured
-      if instrumentation.config[:server_request_duration]
-        _(metrics).wont_be_empty
-        duration_metric = metrics.find { |m| m.name == 'http.server.request.duration' }
-        _(duration_metric).wont_be_nil
-      else
-        # If metrics are not configured, we just verify no crash
-        _(true).must_equal true
-      end
+      _(metrics).wont_be_empty
+      duration_metric = metrics.find { |m| m.name == 'http.server.request.duration' }
+      assert_server_duration_metric(duration_metric, expected_count: 1)
     end
 
-    it 'does not record metrics when start_time is missing' do
+    it 'handles edge cases gracefully' do
       request = Rack::Request.new(Rack::MockRequest.env_for(uri))
       response = Rack::Response.new
 
-      # Don't set start time
-
-      # Should not raise an exception
+      # Missing start_time - should not raise
       handler.on_finish(request, response)
-    end
 
-    it 'handles exceptions gracefully when request is nil' do
-      # Should handle gracefully without raising
+      # Nil request - should handle gracefully
       begin
         handler.on_finish(nil, nil)
-        _(true).must_equal true  # If we get here, test passed
+        _(true).must_equal true
       rescue NoMethodError => e
-        # NoMethodError is expected when calling methods on nil
         _(e).must_be_kind_of NoMethodError
       end
     end
   end
 
-  describe 'integration test' do
+  describe 'integration tests' do
     it 'records metrics for a complete request' do
-      # Make a request through the full stack
       get uri, {}, headers
 
       @metric_exporter.pull
       metrics = @metric_exporter.metric_snapshots
 
-      # Verify that metrics were recorded if configured
-      if instrumentation.config[:server_request_duration]
-        _(metrics).wont_be_empty
-        duration_metric = metrics.find { |m| m.name == 'http.server.request.duration' }
-        _(duration_metric).wont_be_nil
-      end
+      _(metrics).wont_be_empty
+      duration_metric = metrics.find { |m| m.name == 'http.server.request.duration' }
+      assert_server_duration_metric(duration_metric, expected_count: 1)
     end
 
     it 'works alongside other event handlers' do
-      # Create an app with multiple handlers
       other_handler_called = false
       other_handler = Class.new do
         include Rack::Events::Abstract
@@ -196,17 +176,11 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandlerWithMet
 
       _(other_handler_called).must_equal true
     end
-  end
 
-  describe 'error handling' do
-    it 'continues to work after metric recording errors' do
-      # Mock config to return nil
+    it 'handles metric recording errors gracefully' do
       handler.stub(:config, {}) do
         request = Rack::Request.new(Rack::MockRequest.env_for(uri))
-
         handler.on_start(request, nil)
-
-        # Should not raise
         handler.on_finish(request, nil)
       end
     end
