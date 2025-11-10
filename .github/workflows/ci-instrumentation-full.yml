@@ -22,6 +22,7 @@ on:
       - 'instrumentation/delayed_job/**'
       - 'instrumentation/ethon/**'
       - 'instrumentation/excon/**'
+      - 'instrumentation/factory_bot/**'
       - 'instrumentation/faraday/**'
       - 'instrumentation/grape/**'
       - 'instrumentation/graphql/**'
@@ -80,6 +81,7 @@ jobs:
           - delayed_job
           - ethon
           - excon
+          - factory_bot
           - faraday
           - grape
           - graphql
