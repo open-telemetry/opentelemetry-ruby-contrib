@@ -1,5 +1,9 @@
 # Release History: opentelemetry-helpers-sql-processor
 
+### v0.3.1 / 2025-11-11
+
+* DOCS: Update example to match new gem namespace (sql-processor)
+
 ### v0.3.0 / 2025-11-04
 
 * ADDED: Refactor SQL processor file structure for clarity
