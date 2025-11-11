@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.31.2 / 2025-10-28
+
+* FIXED: Patch dataloader to propagate context to new fiber
+* FIXED: Does not trace resolve type unless enable
+
 ### v0.31.1 / 2025-10-22
 
 * FIXED: Update opentelemetry-instrumentation-base dependency
