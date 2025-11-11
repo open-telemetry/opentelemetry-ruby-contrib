@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - '**/*.md'
+      - .github/workflows/ci-markdown-checks.yml
 
 permissions:
   contents: read
