@@ -58,8 +58,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
   end
 
   describe 'metrics integration' do
-    it 'records metrics alongside spans for various scenarios' do
-      # Successful request
+    it 'records metrics alongside spans for successful request' do
       Net::HTTP.get('example.com', '/success')
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'
@@ -68,22 +67,24 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       metrics = @metric_exporter.metric_snapshots
       _(metrics).wont_be_empty
       assert_duration_metric(metrics[0], expected_count: 1)
+    end
 
-      # Failed request with 500 status
+    it 'records metrics alongside spans for failed request with 500 status' do
       Net::HTTP.post(URI('http://example.com/failure'), 'q' => 'ruby')
       _(exporter.finished_spans.last.attributes['http.response.status_code']).must_equal 500
 
       @metric_exporter.pull
       metrics = @metric_exporter.metric_snapshots
       assert_duration_metric(metrics[0], expected_count: 1)
+    end
 
-      # Multiple requests accumulate
+    it 'records metrics alongside spans for multiple requests accumulate' do
       2.times { Net::HTTP.get('example.com', '/success') }
-      _(exporter.finished_spans.size).must_equal 4
+      _(exporter.finished_spans.size).must_equal 2
 
       @metric_exporter.pull
       metrics = @metric_exporter.metric_snapshots
-      assert_duration_metric(metrics[0], expected_count: 3)
+      assert_duration_metric(metrics[0], expected_count: 2)
     end
 
     it 'records metrics even when request times out' do
