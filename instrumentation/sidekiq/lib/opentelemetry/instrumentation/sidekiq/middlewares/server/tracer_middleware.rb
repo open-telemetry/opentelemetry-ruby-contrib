@@ -15,6 +15,9 @@ module OpenTelemetry
             include ::Sidekiq::ServerMiddleware if defined?(::Sidekiq::ServerMiddleware)
 
             def call(_worker, msg, _queue)
+              created_at = time_from_timestamp(msg['created_at'])
+              enqueued_at = time_from_timestamp(msg['enqueued_at']) if msg['enqueued_at']
+
               attributes = {
                 SemanticConventions::Trace::MESSAGING_SYSTEM => 'sidekiq',
                 'messaging.sidekiq.job_class' => msg['wrapped']&.to_s || msg['class'],
@@ -24,6 +27,8 @@ module OpenTelemetry
                 SemanticConventions::Trace::MESSAGING_OPERATION => 'process'
               }
               attributes[SemanticConventions::Trace::PEER_SERVICE] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
+              attributes['messaging.sidekiq.latency'] = queue_latency(enqueued_at) if enqueued_at
+              attributes['messaging.sidekiq.retry.count'] = msg['retry_count'] if msg['retry_count']
 
               span_name = case instrumentation_config[:span_naming]
                           when :job_class then "#{msg['wrapped']&.to_s || msg['class']} process"
@@ -31,13 +36,11 @@ module OpenTelemetry
                           end
 
               extracted_context = OpenTelemetry.propagation.extract(msg)
-              created_at = time_from_timestamp(msg['created_at'])
-              enqueued_at = time_from_timestamp(msg['created_at'])
               OpenTelemetry::Context.with_current(extracted_context) do
                 if instrumentation_config[:propagation_style] == :child
                   tracer.in_span(span_name, attributes: attributes, kind: :consumer) do |span|
                     span.add_event('created_at', timestamp: created_at)
-                    span.add_event('enqueued_at', timestamp: enqueued_at)
+                    span.add_event('enqueued_at', timestamp: enqueued_at) if enqueued_at
                     yield
                   end
                 else
@@ -47,7 +50,7 @@ module OpenTelemetry
                   span = tracer.start_root_span(span_name, attributes: attributes, links: links, kind: :consumer)
                   OpenTelemetry::Trace.with_span(span) do
                     span.add_event('created_at', timestamp: created_at)
-                    span.add_event('enqueued_at', timestamp: enqueued_at)
+                    span.add_event('enqueued_at', timestamp: enqueued_at) if enqueued_at
                     yield
                   rescue Exception => e # rubocop:disable Lint/RescueException
                     span.record_exception(e)
@@ -77,6 +80,12 @@ module OpenTelemetry
               else
                 timestamp/1000r
               end
+            end
+
+            def queue_latency(time)
+              return unless time
+
+              Time.now.to_f - time
             end
           end
         end
