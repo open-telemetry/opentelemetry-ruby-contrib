@@ -37,6 +37,7 @@ module OpenTelemetry
       # - `:none` - The job will be represented by a separate trace from the span that enqueued the job.
       #   There will be no explicit relationship between the job trace and the trace containing the span that
       #   enqueued the job.
+      # - Can alternatively be a callable which resolves to one of the above values.
       #
       # ### `:trace_launcher_heartbeat`
       #
@@ -101,7 +102,7 @@ module OpenTelemetry
         end
 
         option :span_naming,                 default: :queue, validate: %I[job_class queue]
-        option :propagation_style,           default: :link,  validate: %i[link child none]
+        option :propagation_style,           default: :link,  validate: DynamicValidator.new(%i[link child none])
         option :trace_launcher_heartbeat,    default: false, validate: :boolean
         option :trace_poller_enqueue,        default: false, validate: :boolean
         option :trace_poller_wait,           default: false, validate: :boolean
