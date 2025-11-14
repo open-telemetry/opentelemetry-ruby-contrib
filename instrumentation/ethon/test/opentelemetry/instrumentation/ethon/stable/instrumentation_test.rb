@@ -215,7 +215,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           end
 
           it 'cleans up @otel_method' do
-            _(easy.instance_eval { @otel_method }).must_equal 'PUT'
+            _(easy.instance_eval { @otel_method }).must_equal :put
 
             easy.reset
 
@@ -236,6 +236,30 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             easy.reset
 
             _(easy.instance_eval { @otel_span }).must_be_nil
+          end
+        end
+      end
+
+      describe 'with unknown HTTP method' do
+        def stub_response(options)
+          easy.stub(:mirror, Ethon::Easy::Mirror.new(options)) do
+            easy.otel_before_request
+            # NOTE: perform calls complete
+            easy.complete
+
+            yield
+          end
+        end
+
+        it 'normalizes unknown HTTP methods' do
+          easy.http_request('http://example.com/purge', :purge)
+
+          stub_response(response_code: 200) do
+            _(exporter.finished_spans.size).must_equal 1
+            _(span.name).must_equal 'HTTP'
+            _(span.attributes['http.request.method']).must_equal '_OTHER'
+            _(span.attributes['http.request.method_original']).must_equal 'purge'
+            _(span.attributes['url.full']).must_equal 'http://example.com/purge'
           end
         end
       end

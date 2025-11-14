@@ -84,6 +84,31 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Stable::TracerMid
         )
       end
 
+      it 'handles unknown http method' do
+        # Stub Faraday::Connection::METHODS to include :purge
+        stub_const('Faraday::Connection::METHODS', Faraday::Connection::METHODS + [:purge])
+
+        # Create a new client - Faraday test adapter will accept any stubbed method through method_missing
+        purge_client = Faraday.new('http://example.com') do |builder|
+          builder.adapter(:test) do |stub|
+            # Use send to define the purge stub since the method doesn't exist yet
+            stub.send(:new_stub, :purge, '/purge') { |_| [200, {}, 'OK'] }
+          end
+        end
+
+        response = purge_client.run_request(:purge, '/purge', nil, nil)
+
+        _(span.name).must_equal 'HTTP'
+        _(span.attributes['http.request.method']).must_equal '_OTHER'
+        _(span.attributes['http.request.method_original']).must_equal 'purge'
+        _(span.attributes['http.response.status_code']).must_equal 200
+        _(span.attributes['url.full']).must_equal 'http://example.com/purge'
+        _(span.attributes['server.address']).must_equal 'example.com'
+        _(response.env.request_headers['Traceparent']).must_equal(
+          "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
+        )
+      end
+
       it 'merges http client attributes' do
         client_context_attrs = {
           'test.attribute' => 'test.value', 'http.request.method' => 'OVERRIDE'

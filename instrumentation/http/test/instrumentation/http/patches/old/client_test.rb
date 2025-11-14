@@ -47,7 +47,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client do
       HTTP.get('http://example.com/success')
 
       _(exporter.finished_spans.size).must_equal(1)
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
@@ -65,7 +65,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client do
       HTTP.post('http://example.com/failure')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP POST'
+      _(span.name).must_equal 'POST'
       _(span.attributes['http.method']).must_equal 'POST'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 500
@@ -85,7 +85,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client do
       end.must_raise HTTP::TimeoutError
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'https'
       _(span.attributes['http.status_code']).must_be_nil
@@ -111,7 +111,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client do
       end
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
@@ -169,7 +169,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client do
         end
 
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.scheme']).must_equal 'http'
         _(span.attributes['http.status_code']).must_equal 200
@@ -183,6 +183,24 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client do
           headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
         )
       end
+    end
+
+    it 'traces a request with non-standard HTTP method' do
+      stub_request(:search, 'http://example.com/query').to_return(status: 200)
+      HTTP.request(:search, 'http://example.com/query')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP'
+      _(span.attributes['http.method']).must_equal '_OTHER'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
+      _(span.attributes['http.target']).must_equal '/query'
+      assert_requested(
+        :search,
+        'http://example.com/query',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
     end
   end
 end

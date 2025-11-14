@@ -71,11 +71,12 @@ module OpenTelemetry
               verb = request.verb
               uri = request.uri
 
+              span_data = HttpHelper.span_attrs_for_old(verb)
+
               config = HTTPX::Instrumentation.instance.config
 
               attributes = {
                 OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => uri.host,
-                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => verb,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => uri.scheme,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => uri.path,
                 OpenTelemetry::SemanticConventions::Trace::HTTP_URL => "#{uri.scheme}://#{uri.host}",
@@ -84,9 +85,9 @@ module OpenTelemetry
               }
 
               attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
-              attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+              attributes.merge!(span_data.attributes)
 
-              span = tracer.start_span("HTTP #{verb}", attributes: attributes, kind: :client, start_timestamp: start_time)
+              span = tracer.start_span(span_data.span_name, attributes: attributes, kind: :client, start_timestamp: start_time)
 
               OpenTelemetry::Trace.with_span(span) do
                 OpenTelemetry.propagation.inject(request.headers)

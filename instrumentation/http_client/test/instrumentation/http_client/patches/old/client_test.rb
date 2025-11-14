@@ -41,7 +41,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
       http.get('http://example.com/success')
 
       _(exporter.finished_spans.size).must_equal(1)
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
@@ -61,7 +61,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
       http.post('http://example.com/failure')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP POST'
+      _(span.name).must_equal 'POST'
       _(span.attributes['http.method']).must_equal 'POST'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 500
@@ -83,7 +83,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
       end.must_raise HTTPClient::TimeoutError
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'https'
       _(span.attributes['http.status_code']).must_be_nil
@@ -111,7 +111,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
       end
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
@@ -122,6 +122,24 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
       assert_requested(
         :get,
         'http://example.com/success',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
+
+    it 'traces a request with non-standard HTTP method' do
+      stub_request(:purge, 'http://example.com/cache').to_return(status: 200)
+      http = HTTPClient.new
+      http.request(:purge, 'http://example.com/cache')
+
+      _(span.name).must_equal 'HTTP'
+      _(span.attributes['http.method']).must_equal '_OTHER'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
+      _(span.attributes['http.target']).must_equal '/cache'
+      assert_requested(
+        :purge,
+        'http://example.com/cache',
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
