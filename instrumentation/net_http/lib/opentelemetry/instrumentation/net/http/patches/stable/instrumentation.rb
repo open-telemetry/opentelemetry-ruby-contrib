@@ -23,12 +23,15 @@ module OpenTelemetry
 
                 return super if untraced?
 
+                span_data = HttpHelper.span_attrs_for(req.method)
+
                 attributes = {
-                  'http.request.method' => req.method,
+                  'http.request.method' => span_data.normalized_method,
                   'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
                   'server.address' => @address,
                   'server.port' => @port
                 }
+                attributes['http.request.method_original'] = span_data.original_method if span_data.original_method
                 path, query = split_path_and_query(req.path)
                 attributes['url.path'] = path
                 attributes['url.query'] = query if query
@@ -36,7 +39,7 @@ module OpenTelemetry
                 attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
                 tracer.in_span(
-                  req.method.to_s,
+                  span_data.span_name,
                   attributes: attributes,
                   kind: :client
                 ) do |span|

@@ -78,6 +78,34 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['http.method']).must_equal 'GET'
     end
 
+    it 'handles unknown HTTP method' do
+      stub_request(:purge, 'http://example.com/purge').to_return(status: 200)
+
+      Excon.new('http://example.com/purge').request(method: 'PURGE')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP'
+      # old semconv
+      _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['http.method']).must_equal '_OTHER'
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.target']).must_equal '/purge'
+      _(span.attributes['http.url']).must_equal 'http://example.com/purge'
+      # stable semconv
+      _(span.attributes['http.request.method']).must_equal '_OTHER'
+      _(span.attributes['http.request.method_original']).must_equal 'PURGE'
+      _(span.attributes['url.scheme']).must_equal 'http'
+      _(span.attributes['http.response.status_code']).must_equal 200
+      _(span.attributes['url.path']).must_equal '/purge'
+      _(span.attributes['url.full']).must_equal 'http://example.com/purge'
+      assert_requested(
+        :purge,
+        'http://example.com/purge',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
+
     it 'after request with failure code' do
       Excon.get('http://example.com/failure')
 
