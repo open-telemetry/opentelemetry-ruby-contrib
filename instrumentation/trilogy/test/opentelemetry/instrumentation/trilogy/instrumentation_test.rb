@@ -172,7 +172,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       it 'spans will include database name' do
         _(client.connected_host).wont_be_nil
 
-        _(span.name).must_equal 'connect'
+        _(span.name).must_equal 'tcp.connect'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'

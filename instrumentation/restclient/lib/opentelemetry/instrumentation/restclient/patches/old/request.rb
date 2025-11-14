@@ -30,11 +30,10 @@ module OpenTelemetry
               }
               instrumentation_config = RestClient::Instrumentation.instance.config
               instrumentation_attrs['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
+              merged_attrs = instrumentation_attrs.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
               span = tracer.start_span(
-                "HTTP #{http_method}",
-                attributes: instrumentation_attrs.merge(
-                  OpenTelemetry::Common::HTTP::ClientContext.attributes
-                ),
+                determine_span_name(merged_attrs, http_method),
+                attributes: merged_attrs,
                 kind: :client
               )
 
@@ -66,6 +65,11 @@ module OpenTelemetry
 
             def tracer
               RestClient::Instrumentation.instance.tracer
+            end
+
+            def determine_span_name(attributes, http_method)
+              template = attributes['url.template']
+              template ? "#{http_method} #{template}" : "HTTP #{http_method}"
             end
           end
         end

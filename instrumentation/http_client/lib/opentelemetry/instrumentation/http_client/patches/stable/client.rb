@@ -32,7 +32,7 @@ module OpenTelemetry
 
               attributes['url.query'] = uri.query unless uri.query.nil?
 
-              tracer.in_span(request_method, attributes: attributes, kind: :client) do |span|
+              tracer.in_span(determine_span_name(attributes, request_method), attributes: attributes, kind: :client) do |span|
                 OpenTelemetry.propagation.inject(req.header)
                 super.tap do
                   response = conn.pop
@@ -53,6 +53,11 @@ module OpenTelemetry
 
             def tracer
               HttpClient::Instrumentation.instance.tracer
+            end
+
+            def determine_span_name(attributes, http_method)
+              template = attributes['url.template']
+              template ? "#{http_method} #{template}" : http_method
             end
           end
         end

@@ -32,11 +32,16 @@ module OpenTelemetry
               }
               instrumentation_config = RestClient::Instrumentation.instance.config
               instrumentation_attrs['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
+
+              merged_attrs = instrumentation_attrs.merge(
+                OpenTelemetry::Common::HTTP::ClientContext.attributes
+              )
+
+              span_name = determine_span_name(merged_attrs, http_method.to_s)
+
               span = tracer.start_span(
-                http_method.to_s,
-                attributes: instrumentation_attrs.merge(
-                  OpenTelemetry::Common::HTTP::ClientContext.attributes
-                ),
+                span_name,
+                attributes: merged_attrs,
                 kind: :client
               )
 
@@ -70,6 +75,15 @@ module OpenTelemetry
 
             def tracer
               RestClient::Instrumentation.instance.tracer
+            end
+
+            def determine_span_name(attributes, http_method)
+              # According to https://opentelemetry.io/docs/specs/semconv/http/http-spans/#name
+              # Span name should be "{http.request.method} {url.template}" if template is available,
+              # otherwise just "{http.request.method}"
+              template = attributes['url.template']
+
+              template ? "#{http_method} #{template}" : http_method
             end
           end
         end

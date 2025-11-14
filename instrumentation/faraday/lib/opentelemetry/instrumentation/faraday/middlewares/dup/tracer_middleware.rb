@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../../../faraday/helpers'
+
 module OpenTelemetry
   module Instrumentation
     module Faraday
@@ -12,32 +14,18 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Faraday requests
           # by way of its middleware system
           class TracerMiddleware < ::Faraday::Middleware
-            HTTP_METHODS_SYMBOL_TO_STRING = {
-              connect: 'CONNECT',
-              delete: 'DELETE',
-              get: 'GET',
-              head: 'HEAD',
-              options: 'OPTIONS',
-              patch: 'PATCH',
-              post: 'POST',
-              put: 'PUT',
-              trace: 'TRACE'
-            }.freeze
-
-            # Constant for the HTTP status range
-            HTTP_STATUS_SUCCESS_RANGE = (100..399)
-
             def call(env)
-              http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
+              http_method, original_method = Helpers.normalize_method(env.method)
               config = Faraday::Instrumentation.instance.config
 
               attributes = span_creation_attributes(
-                http_method: http_method, url: env.url, config: config
+                http_method: http_method, original_method: original_method, url: env.url, config: config
               )
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
+                span_name = Helpers.format_span_name(attrs, http_method)
                 tracer.in_span(
-                  http_method, attributes: attrs, kind: config.fetch(:span_kind)
+                  span_name, attributes: attrs, kind: config.fetch(:span_kind)
                 ) do |span|
                   OpenTelemetry.propagation.inject(env.request_headers)
 
@@ -58,7 +46,7 @@ module OpenTelemetry
 
             private
 
-            def span_creation_attributes(http_method:, url:, config:)
+            def span_creation_attributes(http_method:, original_method:, url:, config:)
               cleansed_url = OpenTelemetry::Common::Utilities.cleanse_url(url.to_s)
               attrs = {
                 'http.method' => http_method,
@@ -67,6 +55,7 @@ module OpenTelemetry
                 'url.full' => cleansed_url,
                 'faraday.adapter.name' => app.class.name
               }
+              attrs['http.request.method_original'] = original_method if original_method
               if url.host
                 attrs['net.peer.name'] = url.host
                 attrs['server.address'] = url.host
@@ -88,7 +77,7 @@ module OpenTelemetry
             def trace_response(span, status)
               span.set_attribute('http.status_code', status)
               span.set_attribute('http.response.status_code', status)
-              span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status.to_i)
+              span.status = OpenTelemetry::Trace::Status.error unless Helpers::HTTP_STATUS_SUCCESS_RANGE.cover?(status.to_i)
             end
           end
         end

@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../../../http/helpers'
+
 module OpenTelemetry
   module Instrumentation
     module Net
@@ -12,11 +14,7 @@ module OpenTelemetry
           module Old
             # Module to prepend to Net::HTTP for instrumentation
             module Instrumentation
-              HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
-              USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
-
               # Constant for the HTTP status range
-              HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
               def request(req, body = nil, &)
                 # Do not trace recursive call for starting the connection
@@ -24,16 +22,22 @@ module OpenTelemetry
 
                 return super if untraced?
 
+                http_method, original_method = Helpers.normalize_method(req.method)
+
                 attributes = {
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
-                }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+                  'http.method' => http_method,
+                  'http.scheme' => Helpers::USE_SSL_TO_SCHEME[use_ssl?],
+                  'http.target' => req.path,
+                  'net.peer.name' => @address,
+                  'net.peer.port' => @port
+                }
+                attributes['http.request.method_original'] = original_method if original_method
+                attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+
+                span_name = Helpers.format_span_name(attributes, http_method)
 
                 tracer.in_span(
-                  HTTP_METHODS_TO_SPAN_NAMES[req.method],
+                  span_name,
                   attributes: attributes,
                   kind: :client
                 ) do |span|
@@ -59,15 +63,15 @@ module OpenTelemetry
                 end
 
                 attributes = {
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => conn_address,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port
+                  'net.peer.name' => conn_address,
+                  'net.peer.port' => conn_port
                 }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
                 if use_ssl? && proxy?
-                  span_name = 'HTTP CONNECT'
+                  span_name = 'CONNECT'
                   span_kind = :client
                 else
-                  span_name = 'connect'
+                  span_name = 'tcp.connect'
                   span_kind = :internal
                 end
 
@@ -81,8 +85,8 @@ module OpenTelemetry
 
                 status_code = response.code.to_i
 
-                span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code)
-                span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
+                span.set_attribute('http.status_code', status_code)
+                span.status = OpenTelemetry::Trace::Status.error unless Helpers::HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
               end
 
               def tracer

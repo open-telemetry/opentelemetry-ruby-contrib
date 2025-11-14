@@ -45,7 +45,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       Net::HTTP.get('example.com', '/success')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
@@ -63,7 +63,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       Net::HTTP.post(URI('http://example.com/failure'), 'q' => 'ruby')
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP POST'
+      _(span.name).must_equal 'POST'
       _(span.attributes['http.method']).must_equal 'POST'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 500
@@ -83,7 +83,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       end.must_raise Net::OpenTimeout
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'https'
       _(span.attributes['http.status_code']).must_be_nil
@@ -109,7 +109,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'HTTP GET'
+      _(span.name).must_equal 'GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
@@ -164,7 +164,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       it 'creates a span for a non-ignored request' do
         Net::HTTP.get('example.com', '/body')
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'HTTP GET'
+        _(span.name).must_equal 'GET'
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['net.peer.name']).must_equal 'example.com'
       end
@@ -184,7 +184,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
         http.send(:do_finish)
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal('connect')
+        _(span.name).must_equal('tcp.connect')
         _(span.kind).must_equal(:internal)
         _(span.attributes['net.peer.name']).must_equal('example.com')
         _(span.attributes['net.peer.port']).must_equal(80)
@@ -238,7 +238,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp.connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
     ensure
@@ -253,7 +253,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(-> { http.request(Net::HTTP::Get.new(uri.request_uri)) }).must_raise
 
       _(exporter.finished_spans.size).must_equal(1)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp.connect'
       _(span.attributes['net.peer.name']).must_equal('invalid.com')
       _(span.attributes['net.peer.port']).must_equal(99_999)
 
@@ -282,7 +282,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       # rubocop:enable Lint/SuppressedException
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.name).must_equal 'CONNECT'
       _(span.kind).must_equal(:client)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
@@ -306,7 +306,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       # rubocop:enable Lint/SuppressedException
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp.connect'
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)

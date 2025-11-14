@@ -232,7 +232,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
         http.send(:do_finish)
         _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal('connect')
+        _(span.name).must_equal('tcp.connect')
         _(span.kind).must_equal(:internal)
         _(span.attributes['net.peer.name']).must_equal('example.com')
         _(span.attributes['net.peer.port']).must_equal(80)
@@ -289,7 +289,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp.connect'
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).wont_be_nil
       # stable semantic conventions
@@ -307,7 +307,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(-> { http.request(Net::HTTP::Get.new(uri.request_uri)) }).must_raise
 
       _(exporter.finished_spans.size).must_equal(1)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp.connect'
       _(span.attributes['net.peer.name']).must_equal('invalid.com')
       _(span.attributes['net.peer.port']).must_equal(99_999)
       # stable semantic conventions
@@ -366,7 +366,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       # rubocop:enable Lint/SuppressedException
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'connect'
+      _(span.name).must_equal 'tcp.connect'
       _(span.kind).must_equal(:internal)
       _(span.attributes['net.peer.name']).must_equal('localhost')
       _(span.attributes['net.peer.port']).must_equal(443)
