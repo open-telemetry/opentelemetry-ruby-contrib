@@ -23,6 +23,7 @@ gem install opentelemetry-auto-instrumentation
 ```
 
 Installing opentelemetry-auto-instrumentation will automatically install following gems:
+
 ```console
 opentelemetry-sdk
 opentelemetry-api
@@ -91,6 +92,14 @@ Since the `opentelemetry-auto-instrumentation` gem should be installed through `
 RUBYOPT="-r {PUT YOUR GEM PATH}/gems/opentelemetry-auto-instrumentation-0.1.0/lib/opentelemetry-auto-instrumentation" bundle exec rails server
 ```
 
+If you wish to load some gems outside the Gemfile, then they need to be placed in front of opentelemetry-auto-instrumentation:
+
+```console
+export BUNDLE_WITHOUT=development,test
+gem install mysql2
+RUBYOPT="-r mysql2 -r opentelemetry-auto-instrumentation" ruby application.rb
+```
+
 Instrument Sinatra application with rackup:
 
 If you are using a Gemfile to install the required gems but without `Bundler.require`, set `REQUIRE_BUNDLER` to true. This way, `opentelemetry-auto-instrumentation` will call `Bundler.require` to initialize the required gems prior to SDK initialization.
@@ -100,13 +109,9 @@ export REQUIRE_BUNDLER=true
 RUBYOPT="-r opentelemetry-auto-instrumentation" rackup config.ru
 ```
 
-If you wish to load some gems outside the Gemfile, then they need to be placed in front of opentelemetry-auto-instrumentation:
+### Troubleshooting
 
-```console
-export BUNDLE_WITHOUT=development,test
-gem install mysql2
-RUBYOPT="-r mysql2 -r opentelemetry-auto-instrumentation" ruby application.rb
-```
+The auto-instrumentation works by patching the `Bundler::Runtime#require` method to inject the `opentelemetry-auto-instrumentation` gem into your application. Rails applications automatically call `Bundler.require` during their boot process, so they work out of the box. However, many other frameworks (like Sinatra) do not call `Bundler.require` automatically, which means the OpenTelemetry SDK is never loaded. To fix this, explicitly call `Bundler.require` early in your application's startup process, or set the `OTEL_RUBY_REQUIRE_BUNDLER` environment variable to `true`.
 
 ## Example
 
