@@ -5,9 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module Helpers
-    module SqlProcessor
-      VERSION = '0.3.1'
+  module Instrumentation
+    module FactoryBot
+      VERSION = '0.1.0'
     end
   end
 end
