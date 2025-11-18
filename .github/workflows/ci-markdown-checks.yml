@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - '**/*.md'
+      - .github/workflows/ci-markdown-checks.yml
 
 permissions:
   contents: read
@@ -45,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: streetsidesoftware/cspell-action@v7
+      - uses: streetsidesoftware/cspell-action@v8
         with:
           # Files should be consistent with check:spelling files
           files: |

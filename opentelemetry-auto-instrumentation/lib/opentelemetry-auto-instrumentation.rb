@@ -137,7 +137,7 @@ loaded_library_file_path = Dir.glob("#{additional_gem_path}/gems/*").select do |
   (file_path.include?('opentelemetry') || file_path.include?('google')) && !unload_libraries.include?(gem_name)
 end
 
-$stdout.puts "Loaded Library File Paths #{loaded_library_file_path.join(',')}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
+$stderr.puts "Loaded Library File Paths #{loaded_library_file_path.join(',')}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
 
 loaded_library_file_path.each do |file_path|
   $LOAD_PATH.unshift("#{file_path}/lib")
