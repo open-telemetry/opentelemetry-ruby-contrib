@@ -22,6 +22,8 @@ In addition to the requirements to maintain at least [community member status](h
     * Ruby language changes
     * Instrumented library changes
 
+When you become a component owner, you will be added to the `opentelemetry/ruby-contrib-triagers` group and will be automatically assigned to pull requests related to your component.
+
 If you do not have the capacity to maintain the instrumentation library, please consider contributing to the OpenTelemetry Ruby project in other ways or consider creating a separate project for the instrumentation library.
 
 > :warning: Libraries that do not meet these requirements may be removed from the project at any time at the discretion of OpenTelemetry Ruby Contrib Maintainers.
