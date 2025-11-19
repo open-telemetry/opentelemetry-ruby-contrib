@@ -74,7 +74,7 @@ module OpenTelemetry
             )
           else
             SpanCreationAttributes.new(
-              span_name: 'HTTP',
+              span_name: semconv == :old ? 'HTTP N/A' : 'HTTP',
               normalized_method: '_OTHER',
               original_method: method.to_s
             )
