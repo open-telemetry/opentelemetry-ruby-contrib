@@ -141,7 +141,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           stub_response(response_code: 0, return_code: :operation_timedout) do
             _(span.name).must_equal 'HTTP N/A'
             _(span.attributes['http.method']).must_equal '_OTHER'
-            _(span.attributes['http.status_code']).must_equal 0
+            _(span.attributes['http.status_code']).must_be_nil
             _(span.attributes['http.url']).must_equal 'http://example.com/test'
             _(span.status.code).must_equal(
               OpenTelemetry::Trace::Status::ERROR
