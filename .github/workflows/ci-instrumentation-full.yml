@@ -105,7 +105,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
