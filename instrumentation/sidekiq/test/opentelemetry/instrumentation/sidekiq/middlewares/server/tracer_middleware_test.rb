@@ -67,6 +67,31 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
       _(job_span.attributes['messaging.operation']).must_equal 'process'
     end
 
+    it 'traces when enqueued through another system' do
+      payload = { 'queue' => 'default', 'args' => [], 'class' => SimpleJob, 'enqueued_at' => Time.current, 'jid' => '4' }
+      Sidekiq::Client.new.send(:raw_push, [payload])
+      Sidekiq::Worker.drain_all
+
+      _(job_span.name).must_equal 'default process'
+      _(job_span.kind).must_equal :consumer
+      _(job_span.attributes['messaging.system']).must_equal 'sidekiq'
+      _(job_span.attributes['messaging.sidekiq.job_class']).must_equal 'SimpleJob'
+      _(job_span.attributes['messaging.message_id']).must_equal '4'
+      _(job_span.attributes['messaging.destination']).must_equal 'default'
+      _(job_span.attributes['messaging.destination_kind']).must_equal 'queue'
+      _(job_span.attributes['messaging.operation']).must_equal 'process'
+      _(job_span.attributes['peer.service']).must_be_nil
+      _(job_span.events.size).must_equal(2)
+
+      created_event = job_span.events[0]
+      _(created_event.name).must_equal('created_at')
+      _(created_event.timestamp.digits.count).must_equal(19)
+
+      enqueued_event = job_span.events[1]
+      _(enqueued_event.name).must_equal('enqueued_at')
+      _(enqueued_event.timestamp.digits.count).must_equal(19)
+    end
+
     it 'defaults to using links to the enqueing span but does not continue the trace' do
       SimpleJob.perform_async
       SimpleJob.drain
