@@ -44,25 +44,6 @@ module OpenTelemetry
           require_relative 'patches/client'
         end
 
-        # openai-ruby has chat.completions.{chat, stream_raw, stream}
-        # there are a lot of path for openai api, but for openai-ruby, everything falls to @client.request
-        # so we just instrument the @client.request should be enough
-        # but if you want to get response, then
-        # def request(req)
-        #   span.add(req)
-        #   response = super
-        #   span.add(response)
-        #   response
-        # end
-
-        # for the llm span attributes, two categories: chat and embedding.
-        # all of them need operation name, ai system and request model (ai model)
-        # chat needs temperature, erquest top p, max_tokens, prescent penalty frequency penalty, request seed, response format,
-        # embedding needs dimensions and encoding format
-
-        # for the trace and span, it emit user message as log, set response to response attributes if recording, return result
-        # for streaming, openai-ruby request has the param: (stream: OpenAI::Internal::Stream,) may need really work on this because stream is tricky
-
         def patch_client
           ::OpenAI::Client.prepend(Patches::Client)
         end
