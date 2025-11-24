@@ -1,4 +1,4 @@
-# OpenTelemetry Openai Instrumentation
+# OpenTelemetry OpenAI Instrumentation
 
 Todo: Add a description.
 

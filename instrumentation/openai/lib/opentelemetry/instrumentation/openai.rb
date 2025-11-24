@@ -9,7 +9,7 @@ require 'opentelemetry-instrumentation-base'
 
 module OpenTelemetry
   module Instrumentation
-    # Contains the OpenTelemetry instrumentation for the Openai gem
+    # Contains the OpenTelemetry instrumentation for the openai gem
     module OpenAI
     end
   end

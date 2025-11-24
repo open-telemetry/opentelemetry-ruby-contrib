@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module OpenAI
-      # The Instrumentation class contains logic to detect and install the Openai instrumentation
+      # The Instrumentation class contains logic to detect and install the openai instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('0.35.2')
         ALLOWED_OPERATION = %w[chat completions embeddings].freeze
