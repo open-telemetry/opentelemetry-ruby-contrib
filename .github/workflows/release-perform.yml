@@ -28,11 +28,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.RUBY_VERSION }}
-        uses: ruby/setup-ruby@v1.267.0
+        uses: ruby/setup-ruby@v1.268.0
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
       - name: Checkout repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Install Toys
         run: "gem install --no-document toys -v 0.15.5"
       - name: Perform release
