@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.25.1 / 2025-11-25
+
+* FIXED: HTTP unknown methods
+
 ### v0.25.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
