@@ -46,7 +46,7 @@ jobs:
     name: "helpers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.0
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -87,7 +87,7 @@ jobs:
     name: "propagator-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.0
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -127,7 +127,7 @@ jobs:
     name: "opentelemetry-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.0
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -165,7 +165,7 @@ jobs:
     name: "processors-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.0
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -203,7 +203,7 @@ jobs:
     name: "samplers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.0
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
