@@ -15,7 +15,7 @@ jobs:
     name: Markdown Lint Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6.0.0
 
       # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md"  --config .markdownlint.json
       - name: "Markdown Lint Check"
@@ -31,7 +31,7 @@ jobs:
     name: Markdown Link Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6.0.0
 
       # equivalent cli: linkspector check
       - name: Run linkspector
@@ -45,7 +45,7 @@ jobs:
     name: Spelling Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6.0.0
       - uses: streetsidesoftware/cspell-action@v8
         with:
           # Files should be consistent with check:spelling files
