@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:latest@sha256:7610a50b13e7e9f6dc0dd00585ffdcb0bbed27392bef6b45791ef4087b2a746c
     ports:
       - 2181:2181
     environment:
@@ -10,7 +10,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:7.9.1
+    image: confluentinc/cp-kafka:7.9.1@sha256:632e5f09affa3fe2a044da044ec4b40542a7aea5c48ac6eb13d42bc78ec9c9b5
     ports:
       - "9092:9092"
       - "29092:29092"
