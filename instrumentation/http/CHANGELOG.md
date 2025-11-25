@@ -2,7 +2,7 @@
 
 ### v0.27.1 / 2025-11-25
 
-* FIXED: HTTP unknown methods
+* FIXED: Update support for unknown HTTP methods to match semantic conventions
 
 ### v0.27.0 / 2025-10-22
 
