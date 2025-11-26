@@ -22,18 +22,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.RUBY_VERSION }}
-        uses: ruby/setup-ruby@v1.268.0
+        uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1.268.0
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
 
       - name: Checkout repo
-        uses: actions/checkout@v6.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Install Toys
         run: "gem install --no-document toys -v 0.15.5"
 
       - name: Create otelbot app token
-        uses: actions/create-github-app-token@v2.2.0
+        uses: actions/create-github-app-token@7e473efe3cb98aa54f8d4bac15400b15fad77d94 # v2.2.0
         id: app-token
         with:
           app-id: ${{ vars.OTELBOT_RUBY_CONTRIB_APP_ID }}

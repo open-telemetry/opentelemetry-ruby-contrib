@@ -24,7 +24,7 @@ jobs:
         with:
           app-id: ${{ vars.OTELBOT_APP_ID }}
           private-key: ${{ secrets.OTELBOT_PRIVATE_KEY }}
-      - uses: googleapis/release-please-action@v4.4.0
+      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
         id: prepare
         # with:
         #   token: ${{ steps.otelbot-token.outputs.token }}
@@ -46,7 +46,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - name: Configure RubyGems
         env:
           GEM_HOST_API_KEY: "${{secrets.RUBYGEMS_API_KEY}}"
@@ -57,7 +57,7 @@ jobs:
           chmod 0600 $HOME/.gem/credentials
           printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
 
-      - uses: ruby/setup-ruby@v1.268.0
+      - uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1.268.0
         with:
           ruby-version: "3.2"
           bundler: latest
