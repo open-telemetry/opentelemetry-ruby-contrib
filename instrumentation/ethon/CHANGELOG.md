@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.26.0 / 2025-11-26
+
+* BREAKING CHANGE: Update Ethon span name when unknown method
+
+* ADDED: Update Ethon span name when unknown method
+
 ### v0.25.1 / 2025-11-25
 
 * FIXED: Update support for unknown HTTP methods to match semantic conventions
