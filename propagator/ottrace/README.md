@@ -7,8 +7,8 @@ The `opentelemetry-propagator-ottrace` gem contains injectors and extractors for
 
 | Header Name         | Description                                                                                                                            | Required              |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| `ot-tracer-traceid` | 64-bit; 16 hex digits (extract and inject) or 128-bit; 32 hex digits (extract)                                             | yes                   |
-| `ot-tracer-spanid`  | 64-bit; 16 hex digits                                                                                    | yes                   |
+| `ot-tracer-traceid` | 64-bit; 16 hex digits (extract and inject) or 128-bit; 32 hex digits (extract)                                                         | yes                   |
+| `ot-tracer-spanid`  | 64-bit; 16 hex digits                                                                                                                  | yes                   |
 | `ot-tracer-sampled` | boolean or bit encoded as a string with the values `'true'`,`'false'`, `'1'`, or `'0'`                                                 | no                    |
 | `ot-baggage-*`      | repeated string to string key-value baggage items; keys are prefixed with `ot-baggage-` and the corresponding value is the raw string. | if baggage is present |
 
