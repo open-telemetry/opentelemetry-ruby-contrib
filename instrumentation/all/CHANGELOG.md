@@ -2,7 +2,9 @@
 
 ### v0.87.1 / 2025-11-26
 
-* (No significant changes)
+* BREAKING CHANGE: Update Ethon span name when unknown method
+
+* ADDED: Update Ethon span name when unknown method
 
 ### v0.87.0 / 2025-11-05
 
