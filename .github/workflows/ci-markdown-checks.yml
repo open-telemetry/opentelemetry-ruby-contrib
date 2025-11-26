@@ -21,6 +21,7 @@ jobs:
       - name: "Markdown Lint Check"
         uses: DavidAnson/markdownlint-cli2-action@v21
         with:
+          config: .markdownlint.json
           fix: false
           globs: |
             **/*.md
