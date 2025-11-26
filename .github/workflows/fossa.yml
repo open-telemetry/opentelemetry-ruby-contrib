@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@c2d88d3ecc89a9ef08eebf45d9637801dcee7eb5 # v4.2.2
 
       - name: Install Ruby 3.4
-        uses: ruby/setup-ruby@v1.268.0
+        uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1.268.0
         with:
           ruby-version: 3.4
       - name: Generate Gemfile.lock
