@@ -1,6 +1,6 @@
 # Release History: opentelemetry-instrumentation-all
 
-### v0.87.1 / 2025-11-26
+### v0.88.0 / 2025-11-26
 
 * BREAKING CHANGE: Update Ethon span name when unknown method
 
