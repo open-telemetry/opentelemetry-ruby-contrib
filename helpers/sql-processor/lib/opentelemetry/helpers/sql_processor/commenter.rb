@@ -43,10 +43,8 @@ module OpenTelemetry
               "#{key}='#{encoded_value}'"
             end
 
-            comment = "/*#{comment_parts.join(',')}*/"
-
             # Append to end of query (spec recommendation)
-            carrier << " #{comment}"
+            carrier << " /*#{comment_parts.join(',')}*/"
           end
         end
 
