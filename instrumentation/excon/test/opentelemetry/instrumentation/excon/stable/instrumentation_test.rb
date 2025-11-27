@@ -350,6 +350,23 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
         _(exporter.finished_spans.size).must_equal(0)
       end
     end
+
+    it 'uses url.template in span name when present in client context' do
+      client_context_attrs = { 'url.template' => '/users/{id}' }
+      OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+        Excon.get('http://example.com/users/123')
+      end
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'GET /users/{id}'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['url.template']).must_equal '/users/{id}'
+      assert_requested(
+        :get,
+        'http://example.com/users/123',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
   end
 
   def assert_http_spans(scheme: 'http', host: 'localhost', port: nil, target: '/', exception: nil)
@@ -367,25 +384,6 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
         exception_event = http_span.events.first
         _(exception_event.attributes['exception.type']).must_equal(exception)
       end
-    end
-  end
-
-  describe 'url.template' do
-    it 'uses url.template in span name when present in client context' do
-      client_context_attrs = { 'url.template' => '/users/{id}' }
-      OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
-        Excon.get('http://example.com/users/123')
-      end
-
-      _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'GET /users/{id}'
-      _(span.attributes['http.request.method']).must_equal 'GET'
-      _(span.attributes['url.template']).must_equal '/users/{id}'
-      assert_requested(
-        :get,
-        'http://example.com/users/123',
-        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
-      )
     end
   end
 end
