@@ -46,7 +46,7 @@ module OpenTelemetry
             comment = "/*#{comment_parts.join(',')}*/"
 
             # Append to end of query (spec recommendation)
-            carrier.concat(" #{comment}")
+            carrier << " #{comment}"
           end
         end
 
