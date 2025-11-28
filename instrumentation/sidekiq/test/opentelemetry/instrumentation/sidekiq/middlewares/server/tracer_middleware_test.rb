@@ -67,7 +67,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
       _(job_span.attributes['messaging.operation']).must_equal 'process'
     end
 
-    it 'traces when enqueued through another system' do
+    it 'traces when enqueued with minimal data' do
       payload = { 'queue' => 'default', 'args' => [], 'class' => SimpleJob, 'enqueued_at' => Time.current, 'jid' => '4' }
       Sidekiq::Client.new.send(:raw_push, [payload])
       Sidekiq::Worker.drain_all
