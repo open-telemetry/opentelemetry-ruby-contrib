@@ -35,6 +35,24 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
       _(exporter.finished_spans.size).must_equal 0
     end
 
+    it 'after request with non-standard HTTP method' do
+      stub_request(:purge, 'http://example.com/cache').to_return(status: 200)
+      HTTPX.request('PURGE', 'http://example.com/cache')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP'
+      _(span.attributes['http.method']).must_equal '_OTHER'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
+      _(span.attributes['http.target']).must_equal '/cache'
+      assert_requested(
+        :purge,
+        'http://example.com/cache',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
+
     it 'after request with success code' do
       HTTPX.get('http://example.com/success')
 

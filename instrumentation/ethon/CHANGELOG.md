@@ -1,5 +1,25 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.26.0 / 2025-11-26
+
+* BREAKING CHANGE: Update Ethon span name when unknown method
+
+* ADDED: Update Ethon span name when unknown method
+
+### v0.25.1 / 2025-11-25
+
+* FIXED: Update support for unknown HTTP methods to match semantic conventions
+
+### v0.25.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
+### v0.24.2 / 2025-10-14
+
+* FIXED: Raise original Ethon error after span updates
+
 ### v0.24.1 / 2025-09-30
 
 * FIXED: Min OTel Ruby API 1.7

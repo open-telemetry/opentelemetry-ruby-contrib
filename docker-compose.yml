@@ -167,14 +167,14 @@ services:
       bash -c "bundle install && rake"
 
   mongo:
-    image: mongo:4.4
+    image: mongo:4.4@sha256:52c42cbab240b3c5b1748582cc13ef46d521ddacae002bbbda645cebed270ec0
     expose:
       - "27017"
     ports:
       - "27017:27017"
 
   mysql:
-    image: mysql:8.0.31
+    image: mysql:8.0.31@sha256:3d7ae561cf6095f6aca8eb7830e1d14734227b1fb4748092f2be2cfbccf7d614
     command: mysqld --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_DATABASE=mysql
@@ -187,7 +187,7 @@ services:
       - "3306:3306"
 
   postgres:
-    image: postgres:13
+    image: postgres:13@sha256:4689940c683801b4ab839ab3b0a0a3555a5fe425371422310944e89eca7d8068
     environment:
       - POSTGRES_PASSWORD=postgres
     expose:
@@ -198,7 +198,7 @@ services:
       - postgres_socket:/var/run/postgresql
 
   redis:
-    image: bitnamilegacy/redis:6.2
+    image: bitnamilegacy/redis:6.2@sha256:116419dc09f37b2c37e47e1a2cef258620ca1a30bae379b3660cf78fc0e7fc99
     environment:
       - REDIS_PASSWORD=passw0rd
     volumes:
@@ -207,18 +207,18 @@ services:
       - "16379:6379"
 
   rabbitmq:
-    image: rabbitmq:3.8-alpine
+    image: rabbitmq:3.8-alpine@sha256:711d76bc8d9822adf32fd9bdbe33f53645a77e2bbd0675f8011eed397919f7a4
     ports:
       - "5672:5672"
 
   memcached:
-    image: memcached:alpine
+    image: memcached:alpine@sha256:7b45203a99eb1419c95b875c7e48c5a9eebc0a305eeb09eefc9f3a2cff758a46
     command: memcached -m 64
     ports:
       - "11211:11211"
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:latest@sha256:7610a50b13e7e9f6dc0dd00585ffdcb0bbed27392bef6b45791ef4087b2a746c
     ports:
       - 2181:2181
     environment:
@@ -226,7 +226,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:7.9.1
+    image: confluentinc/cp-kafka:7.9.4@sha256:0142ea2a6606e967ac22b5d58f6ba36de3e649980e6ac723a6341fc3c0406888
     ports:
       - "9092:9092"
       - "29092:29092"
@@ -241,12 +241,12 @@ services:
       - zookeeper
 
   jaeger:
-    image: jaegertracing/all-in-one
+    image: jaegertracing/all-in-one@sha256:e493bff54e457ba5827f82418d744a322165cd5d46146607fb76489bfb2a8885
     ports:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.109.0
+    image: otel/opentelemetry-collector:0.109.0@sha256:ba28c8595b9a57401acd4a1ed39203c3babc6738cc17407478bd5c3c6c524663
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml

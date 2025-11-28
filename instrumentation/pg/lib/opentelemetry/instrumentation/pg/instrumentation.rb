@@ -40,6 +40,7 @@ module OpenTelemetry
 
         def patch_client
           ::PG::Connection.prepend(Patches::Connection)
+          ::PG::Connection.singleton_class.prepend(Patches::Connect)
         end
       end
     end

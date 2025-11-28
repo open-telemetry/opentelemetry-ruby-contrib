@@ -53,7 +53,7 @@ module OpenTelemetry
     #
     # OpenTelemetry::Instrumentation::Sinatra.instance.tracer
     #
-    # The instrumention class establishes a convention for disabling an instrumentation
+    # The instrumentation class establishes a convention for disabling an instrumentation
     # by environment variable and local configuration. An instrumentation disabled
     # by environment variable will take precedence over local config. The
     # convention for environment variable name is the library name, upcased with

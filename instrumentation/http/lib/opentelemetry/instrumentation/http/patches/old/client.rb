@@ -16,12 +16,13 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def perform(req, options)
+              span_data = HttpHelper.span_attrs_for(req.verb, semconv: :old)
+
               uri = req.uri
-              request_method = req.verb.to_s.upcase
-              span_name = create_request_span_name(request_method, uri.path)
+              span_name = create_span_name(span_data, uri.path)
 
               attributes = {
-                'http.method' => request_method,
+                'http.method' => span_data.normalized_method,
                 'http.scheme' => uri.scheme,
                 'http.target' => uri.path,
                 'http.url' => "#{uri.scheme}://#{uri.host}",
@@ -51,15 +52,17 @@ module OpenTelemetry
               span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
             end
 
-            def create_request_span_name(request_method, request_path)
+            def create_span_name(span_data, request_path)
+              default_span_name = span_data.span_name
+
               if (implementation = config[:span_name_formatter])
-                updated_span_name = implementation.call(request_method, request_path)
-                updated_span_name.is_a?(String) ? updated_span_name : "HTTP #{request_method}"
+                updated_span_name = implementation.call(span_data.normalized_method, request_path)
+                updated_span_name.is_a?(String) ? updated_span_name : default_span_name
               else
-                "HTTP #{request_method}"
+                default_span_name
               end
             rescue StandardError
-              "HTTP #{request_method}"
+              default_span_name
             end
 
             def tracer

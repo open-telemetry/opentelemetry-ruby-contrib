@@ -1,6 +1,6 @@
 # OpenTelemetry Instrumentation Helpers: SQL Processor
 
-This Ruby gem contains logic to process SQL, including obfuscation. It's intended for use by by gem authors instrumenting SQL adapter libraries, such as mysql2, pg, and trilogy.
+This Ruby gem contains logic to process SQL, including obfuscation. It's intended for use by gem authors instrumenting SQL adapter libraries, such as mysql2, pg, and trilogy.
 
 Obfuscation logic is largely drawn from the [New Relic Ruby agent's SQL Obfuscation Helpers module][new-relic-obfuscation-helpers].
 
@@ -43,7 +43,7 @@ Check [New Relic's SQL Obfuscation Helpers module][new-relic-obfuscation-helpers
 To obfuscate sql in your library:
 
 ```ruby
-OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :postgres)
+OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :postgres)
 ```
 
 ## How can I get involved?

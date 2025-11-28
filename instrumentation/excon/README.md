@@ -10,7 +10,7 @@ Install the gem using:
 gem install opentelemetry-instrumentation-excon
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-excon` to your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-excon` in your `Gemfile`.
 
 ## Usage
 

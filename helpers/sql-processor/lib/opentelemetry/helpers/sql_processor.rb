@@ -13,7 +13,7 @@ module OpenTelemetry
     #
     # This module provides a unified interface for SQL processing operations
     # commonly needed in database adapter instrumentation, including SQL obfuscation.
-		#
+    #
     # @api public
     module SqlProcessor
       module_function
