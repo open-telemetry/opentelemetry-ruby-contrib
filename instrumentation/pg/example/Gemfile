@@ -4,6 +4,6 @@ source 'https://rubygems.org'
 
 gem 'opentelemetry-api'
 gem 'opentelemetry-common'
-gem 'opentelemetry-instrumentation-pg'
+gem 'opentelemetry-instrumentation-pg', path: '..'
 gem 'opentelemetry-sdk'
 gem 'pg'
