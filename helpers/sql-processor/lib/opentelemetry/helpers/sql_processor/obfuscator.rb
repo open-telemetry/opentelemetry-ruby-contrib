@@ -54,11 +54,11 @@ module OpenTelemetry
           mysql: %i[single_quotes double_quotes numeric_literals boolean_literals
                     hexadecimal_literals comments multi_line_comments],
           postgres: %i[single_quotes dollar_quotes uuids numeric_literals
-                      boolean_literals comments multi_line_comments],
+                       boolean_literals comments multi_line_comments],
           sqlite: %i[single_quotes numeric_literals boolean_literals hexadecimal_literals
-                    comments multi_line_comments],
+                     comments multi_line_comments],
           oracle: %i[single_quotes oracle_quoted_strings numeric_literals comments
-                    multi_line_comments],
+                     multi_line_comments],
           cassandra: %i[single_quotes uuids numeric_literals boolean_literals
                         hexadecimal_literals comments multi_line_comments]
         }.freeze
