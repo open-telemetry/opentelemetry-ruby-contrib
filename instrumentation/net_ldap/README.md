@@ -18,7 +18,10 @@ To install the instrumentation, call `use` with the name of the instrumentation.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Net::LDAP'
+  c.use 'OpenTelemetry::Instrumentation::Net::LDAP', {
+    enable_internal_instrumentation: false
+  }
+
 end
 ```
 
@@ -29,6 +32,12 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+
+### Configuration options
+This instrumentation offers the following configuration options:
+* `enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with
+ span kind of `internal` are included in traces.
+* `peer_service`: When set, it adds the `peer.service` attribute (the `service.name` of the remote service).
 
 ## How can I get involved?
 
