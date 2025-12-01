@@ -226,6 +226,64 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
       end
     end
 
+    describe 'when propagation_style is a callable that resolves to `:child`' do
+      let(:config) do
+        { propagation_style: -> { :child } }
+      end
+
+      it 'continues the enqueuer trace to the job process' do
+        SimpleJob.perform_async
+        SimpleJob.drain
+
+        _(job_span.parent_span_id).must_equal(enqueuer_span.span_id)
+        _(job_span.trace_id).must_equal(enqueuer_span.trace_id)
+      end
+
+      it 'fan out jobs are a continous trace' do
+        SimpleEnqueueingJob.perform_async
+        Sidekiq::Worker.drain_all
+
+        _(exporter.finished_spans.size).must_equal 4
+
+        _(root_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+        _(root_span.name).must_equal 'default publish'
+        _(root_span.kind).must_equal :producer
+
+        child_span1 = spans.find { |s| s.parent_span_id == root_span.span_id }
+        _(child_span1.name).must_equal 'default process'
+        _(child_span1.kind).must_equal :consumer
+
+        child_span2 = spans.find { |s| s.parent_span_id == child_span1.span_id }
+        _(child_span2.name).must_equal 'default publish'
+        _(child_span2.kind).must_equal :producer
+
+        child_span3 = spans.find { |s| s.parent_span_id == child_span2.span_id }
+        _(child_span3.name).must_equal 'default process'
+        _(child_span3.kind).must_equal :consumer
+      end
+
+      it 'propagates baggage' do
+        ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
+        OpenTelemetry::Context.with_current(ctx) do
+          BaggageTestingJob.perform_async
+        end
+
+        Sidekiq::Worker.drain_all
+
+        _(job_span.attributes['success']).must_equal(true)
+      end
+
+      it 'records exceptions' do
+        ExceptionTestingJob.perform_async
+        _(-> { Sidekiq::Worker.drain_all }).must_raise(RuntimeError)
+
+        ev = job_span.events
+        _(ev[2].attributes['exception.type']).must_equal('RuntimeError')
+        _(ev[2].attributes['exception.message']).must_equal('a little hell')
+        _(ev[2].attributes['exception.stacktrace']).wont_be_nil
+      end
+    end
+
     describe 'when propagation_style is none' do
       let(:config) { { propagation_style: :none } }
 

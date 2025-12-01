@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/instrumentation/dynamic_validator'
+
 module OpenTelemetry
   module Instrumentation
     # The Base class holds all metadata and configuration for an
@@ -71,6 +73,16 @@ module OpenTelemetry
         }.freeze
 
         private_constant :NAME_REGEX, :VALIDATORS
+
+        def get_validation_type(validation)
+          if VALIDATORS[validation] || validation.is_a?(DynamicValidator)
+            validation
+          elsif validation.respond_to?(:include?)
+            :enum
+          else
+            :callable
+          end
+        end
 
         private :new
 
@@ -142,22 +154,17 @@ module OpenTelemetry
         # and a validation callable to be provided.
         # @param [String] name The name of the configuration option
         # @param default The default value to be used, or to used if validation fails
-        # @param [Callable, Symbol] validate Accepts a callable or a symbol that matches
-        # a key in the VALIDATORS hash.  The supported keys are, :array, :boolean,
-        # :callable, :integer, :string.
+        # @param [Callable, Symbol] validate Accepts a callable, Enumerable,
+        # DynamicValidator, or a symbol that matches a key in the VALIDATORS
+        # hash.  The supported keys are, :array, :boolean, :callable, :integer,
+        # :string.
         def option(name, default:, validate:)
           validator = VALIDATORS[validate] || validate
-          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validator.respond_to?(:call) || validator.respond_to?(:include?)
+          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validator.respond_to?(:call) || validator.respond_to?(:include?) || validator.is_a?(DynamicValidator)
 
           @options ||= []
 
-          validation_type = if VALIDATORS[validate]
-                              validate
-                            elsif validate.respond_to?(:include?)
-                              :enum
-                            else
-                              :callable
-                            end
+          validation_type = get_validation_type(validate)
 
           @options << { name: name, default: default, validator: validator, validation_type: validation_type }
         end
@@ -277,17 +284,25 @@ module OpenTelemetry
           option_name = option[:name]
           config_value = user_config[option_name]
           config_override = coerce_env_var(config_overrides[option_name], option[:validation_type]) if config_overrides[option_name]
+          static_validator =
+            if option[:validator].is_a?(DynamicValidator)
+              option[:validator].static_validation
+            else
+              option[:validator]
+            end
 
           # rubocop:disable Lint/DuplicateBranch
           value = if config_value.nil? && config_override.nil?
                     option[:default]
-                  elsif option[:validator].respond_to?(:include?) && option[:validator].include?(config_override)
+                  elsif static_validator.respond_to?(:include?) && static_validator.include?(config_override)
                     config_override
-                  elsif option[:validator].respond_to?(:include?) && option[:validator].include?(config_value)
+                  elsif static_validator.respond_to?(:include?) && static_validator.include?(config_value)
                     config_value
-                  elsif option[:validator].respond_to?(:call) && option[:validator].call(config_override)
+                  elsif static_validator.respond_to?(:call) && static_validator.call(config_override)
                     config_override
-                  elsif option[:validator].respond_to?(:call) && option[:validator].call(config_value)
+                  elsif static_validator.respond_to?(:call) && static_validator.call(config_value)
+                    config_value
+                  elsif option[:validator].is_a?(DynamicValidator) && config_value.respond_to?(:call)
                     config_value
                   else
                     OpenTelemetry.logger.warn(
@@ -300,6 +315,7 @@ module OpenTelemetry
 
           h[option_name] = value
         rescue StandardError => e
+          pp e
           OpenTelemetry.handle_error(exception: e, message: "Instrumentation #{name} unexpected configuration error")
           h[option_name] = option[:default]
         end
@@ -378,6 +394,8 @@ module OpenTelemetry
             "configurable using environment variables. Ignoring raw value: #{env_var}"
           )
           nil
+        when DynamicValidator
+          coerce_env_var(env_var, self.class.get_validation_type(validation_type.static_validation))
         end
       end
     end
