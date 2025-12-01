@@ -47,8 +47,16 @@ module OpenTelemetry
               attributes: AttributeMapper.map(attributes),
               kind: span_kind
             ) do |span|
-              yield(payload).tap do |response|
-                annotate_span_with_response(span, response) if response
+              if instrumentation_config[:enable_internal_instrumentation] == false
+                OpenTelemetry::Common::Utilities.untraced do
+                  yield(payload).tap do |response|
+                    annotate_span_with_response(span, response) if response
+                  end
+                end
+              else
+                yield(payload).tap do |response|
+                  annotate_span_with_response(span, response) if response
+                end
               end
             rescue ::Net::LDAP::Error => e
               span.add_attributes({

@@ -26,6 +26,7 @@ module OpenTelemetry
           end
 
           option :peer_service, default: nil, validate: :string
+          option :enable_internal_instrumentation, default: false, validate: :boolean
 
           private
 
