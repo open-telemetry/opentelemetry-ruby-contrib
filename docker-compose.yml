@@ -226,7 +226,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:7.9.1@sha256:632e5f09affa3fe2a044da044ec4b40542a7aea5c48ac6eb13d42bc78ec9c9b5
+    image: confluentinc/cp-kafka:7.9.5@sha256:c4c6b755551da17fff056b9c8b39700f99020083bd2d69a171ece4784f33e640
     ports:
       - "9092:9092"
       - "29092:29092"
