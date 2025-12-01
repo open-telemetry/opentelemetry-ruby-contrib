@@ -246,5 +246,31 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
         )
       end
     end
+
+    it 'traces a request with non-standard HTTP method' do
+      stub_request(:search, 'http://example.com/query').to_return(status: 200)
+      HTTP.request(:search, 'http://example.com/query')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP'
+      # Old semantic conventions
+      _(span.attributes['http.method']).must_equal '_OTHER'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
+      _(span.attributes['http.target']).must_equal '/query'
+      # Stable semantic conventions
+      _(span.attributes['http.request.method']).must_equal '_OTHER'
+      _(span.attributes['http.request.method_original']).must_equal 'search'
+      _(span.attributes['http.response.status_code']).must_equal 200
+      _(span.attributes['url.scheme']).must_equal 'http'
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['url.path']).must_equal '/query'
+      assert_requested(
+        :search,
+        'http://example.com/query',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
   end
 end

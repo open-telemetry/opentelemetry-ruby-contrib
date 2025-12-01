@@ -38,8 +38,8 @@ This instrumentation now relies on `ActiveSupport::Notifications` and registers 
 
 See the table below for details of what [Rails Framework Hook Events](https://guides.rubyonrails.org/active_support_instrumentation.html#action-controller) are recorded by this instrumentation:
 
-| Event Name | Subscribe? | Creates Span? |  Notes |
-| - | - | - | - |
+| Event Name | Subscribe? | Creates Span? | Notes |
+| ---- | --- | --- | --- |
 | `process_action.action_controller` | :white_check_mark: | :x: | It modifies the existing Rack span |
 
 ## Semantic Conventions

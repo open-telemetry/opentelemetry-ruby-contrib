@@ -20,9 +20,10 @@ module OpenTelemetry
               uri = req.header.request_uri
               url = "#{uri.scheme}://#{uri.host}"
               request_method = req.header.request_method
+              span_data = HttpHelper.span_attrs_for(request_method)
 
               attributes = {
-                'http.request.method' => request_method,
+                'http.request.method' => span_data.normalized_method,
                 'url.scheme' => uri.scheme,
                 'url.path' => uri.path,
                 'url.full' => url,
@@ -30,9 +31,10 @@ module OpenTelemetry
                 'server.port' => uri.port
               }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
+              attributes['http.request.method_original'] = span_data.original_method if span_data.original_method
               attributes['url.query'] = uri.query unless uri.query.nil?
 
-              tracer.in_span(request_method, attributes: attributes, kind: :client) do |span|
+              tracer.in_span(span_data.span_name, attributes: attributes, kind: :client) do |span|
                 OpenTelemetry.propagation.inject(req.header)
                 super.tap do
                   response = conn.pop

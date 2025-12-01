@@ -60,7 +60,7 @@ This repository also contains libraries that hold code shared among
 multiple instrumentation libraries.
 
 - [MySQL](helpers/mysql/)
-- [SQL Obfuscation](helpers/sql-obfuscation/)
+- [SQL Processor](helpers/sql-processor/)
 
 ## Additional Libraries
 

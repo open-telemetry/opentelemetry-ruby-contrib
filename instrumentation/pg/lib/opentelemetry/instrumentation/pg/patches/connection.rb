@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-helpers-sql-obfuscation'
+require 'opentelemetry-helpers-sql-processor'
 require_relative '../constants'
 require_relative '../lru_cache'
 
@@ -116,7 +116,7 @@ module OpenTelemetry
           def obfuscate_sql(sql)
             return sql unless config[:db_statement] == :obfuscate
 
-            OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(
+            OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(
               sql,
               obfuscation_limit: config[:obfuscation_limit],
               adapter: :postgres
