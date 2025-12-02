@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.89.0 / 2025-12-02
+
+* ADDED: Upgrade trilogy instrumentation to 0.65.0
+* ADDED: Upgrade mysql2 instrumentation to 0.32.0
+* ADDED: Upgrade pg instrumentation to 0.34.0
+* ADDED: Upgrade que instrumentation to 0.12.0
+* ADDED: Upgrade sidekiq instrumentation to 0.28.1
+
 ### v0.88.0 / 2025-11-26
 
 * BREAKING CHANGE: Update Ethon span name when unknown method
