@@ -44,6 +44,8 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
       _(job_span.attributes['messaging.destination_kind']).must_equal 'queue'
       _(job_span.attributes['messaging.operation']).must_equal 'process'
       _(job_span.attributes['peer.service']).must_be_nil
+      _(job_span.attributes['messaging.sidekiq.latency']).wont_be_nil
+      _(job_span.attributes['messaging.sidekiq.retry.count']).must_be_nil
       _(job_span.events.size).must_equal(2)
 
       created_event = job_span.events[0]
@@ -65,6 +67,40 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMid
       _(job_span.attributes['messaging.destination']).must_equal('default')
       _(job_span.attributes['messaging.destination_kind']).must_equal('queue')
       _(job_span.attributes['messaging.operation']).must_equal 'process'
+      _(job_span.attributes['messaging.sidekiq.latency']).wont_be_nil
+      _(job_span.attributes['messaging.sidekiq.retry.count']).must_be_nil
+    end
+
+    it 'records retry count when present in job message' do
+      # Create a job message with retry count
+      job_message = {
+        'jid' => 'test-retry-job-id',
+        'class' => 'ExceptionTestingJob',
+        'queue' => 'default',
+        'created_at' => Time.now.to_f,
+        'retry_count' => 2
+      }
+
+      # Create a mock worker
+      worker = ExceptionTestingJob.new
+
+      # Test the middleware directly with the job message
+      middleware = OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMiddleware.new
+
+      begin
+        middleware.call(worker, job_message, 'default') do
+          raise 'a little hell'
+        end
+      rescue RuntimeError
+        # Expected - job will fail
+      end
+
+      # Find the span that was created
+      retry_span = spans.find { |s| s.attributes['messaging.sidekiq.retry.count'] }
+
+      _(retry_span).wont_be_nil
+      _(retry_span.attributes['messaging.sidekiq.retry.count']).must_equal 2
+      _(retry_span.attributes['messaging.sidekiq.job_class']).must_equal 'ExceptionTestingJob'
     end
 
     it 'defaults to using links to the enqueing span but does not continue the trace' do
