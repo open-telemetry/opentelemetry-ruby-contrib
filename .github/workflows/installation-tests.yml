@@ -24,10 +24,10 @@ jobs:
     name: ${{ matrix.ruby-version }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         # ATTENTION: Dependabot does not know how to update shared actions file.
         # If you see it update setup-ruby here also update it as part of actions/test_gem/action.yml
-      - uses: ruby/setup-ruby@v1.268.0
+      - uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1.268.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
       - name: "Install Latest Gem Versions on ${{ matrix.ruby-version }}"

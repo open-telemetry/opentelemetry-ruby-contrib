@@ -13,12 +13,12 @@ jobs:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v4.2.2
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Install Ruby 3.4
-        uses: ruby/setup-ruby@v1.268.0
+        uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1.268.0
         with:
-          ruby-version: 3.4
+          ruby-version: 3.4.7
       - name: Generate Gemfile.lock
         run: |
           echo "Finding all Gemfiles in the project..."

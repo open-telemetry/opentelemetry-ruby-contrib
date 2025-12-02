@@ -12,7 +12,6 @@ module OpenTelemetry
           module Old
             # Module to prepend to Net::HTTP for instrumentation
             module Instrumentation
-              HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
               USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
               # Constant for the HTTP status range
@@ -24,8 +23,10 @@ module OpenTelemetry
 
                 return super if untraced?
 
+                span_data = HttpHelper.span_attrs_for(req.method, semconv: :old)
+
                 attributes = {
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
+                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => span_data.normalized_method,
                   OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
                   OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
@@ -33,7 +34,7 @@ module OpenTelemetry
                 }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
                 tracer.in_span(
-                  HTTP_METHODS_TO_SPAN_NAMES[req.method],
+                  span_data.span_name,
                   attributes: attributes,
                   kind: :client
                 ) do |span|

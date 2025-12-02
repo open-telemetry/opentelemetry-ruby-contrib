@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.24.0'
   spec.add_dependency 'opentelemetry-instrumentation-dalli', '~> 0.29.0'
   spec.add_dependency 'opentelemetry-instrumentation-delayed_job', '~> 0.25.1'
-  spec.add_dependency 'opentelemetry-instrumentation-ethon', '~> 0.25.0'
+  spec.add_dependency 'opentelemetry-instrumentation-ethon', '~> 0.26.0'
   spec.add_dependency 'opentelemetry-instrumentation-excon', '~> 0.26.0'
   spec.add_dependency 'opentelemetry-instrumentation-faraday', '~> 0.30.0'
   spec.add_dependency 'opentelemetry-instrumentation-grape', '~> 0.5.0'
