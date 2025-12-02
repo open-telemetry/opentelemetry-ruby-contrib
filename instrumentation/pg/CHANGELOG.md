@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.34.0 / 2025-12-02
+
+* ADDED: Replace references sql-obfuscation -> sql-processor
+
 ### v0.33.0 / 2025-11-03
 
 * ADDED: Instrument PG connect
