@@ -47,10 +47,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-koala', '~> 0.23.0'
   spec.add_dependency 'opentelemetry-instrumentation-lmdb', '~> 0.25.0'
   spec.add_dependency 'opentelemetry-instrumentation-mongo', '~> 0.25.0'
-  spec.add_dependency 'opentelemetry-instrumentation-mysql2', '~> 0.31.0'
+  spec.add_dependency 'opentelemetry-instrumentation-mysql2', '~> 0.32.0'
   spec.add_dependency 'opentelemetry-instrumentation-net_http', '~> 0.26.0'
-  spec.add_dependency 'opentelemetry-instrumentation-pg', '~> 0.33.0'
-  spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.11.1'
+  spec.add_dependency 'opentelemetry-instrumentation-pg', '~> 0.34.0'
+  spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.12.0'
   spec.add_dependency 'opentelemetry-instrumentation-racecar', '~> 0.6.0'
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.29.0'
   spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.39.1'
@@ -60,9 +60,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-resque', '~> 0.8.0'
   spec.add_dependency 'opentelemetry-instrumentation-restclient', '~> 0.26.0'
   spec.add_dependency 'opentelemetry-instrumentation-ruby_kafka', '~> 0.24.0'
-  spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.28.0'
+  spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.28.1'
   spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.28.0'
-  spec.add_dependency 'opentelemetry-instrumentation-trilogy', '~> 0.64.0'
+  spec.add_dependency 'opentelemetry-instrumentation-trilogy', '~> 0.65.0'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
