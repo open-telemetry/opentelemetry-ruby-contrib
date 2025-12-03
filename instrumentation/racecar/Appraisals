@@ -9,6 +9,7 @@
     gem 'racecar', "~> #{version}"
   end
 end
+
 appraise 'racecar-latest' do
   gem 'racecar'
 end

@@ -10,9 +10,10 @@
 # https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
 semconv_stability = %w[stable old dup]
+gem_versions = %w[2.2.0 3.0.0 3.1.0 3.2.0]
 
 semconv_stability.each do |mode|
-  %w[2.2.0 3.0.0 3.1.0 3.2.0].each do |version|
+  gem_versions.each do |version|
     appraise "rack-#{version}-#{mode}" do
       gem 'rack', "~> #{version}"
     end
