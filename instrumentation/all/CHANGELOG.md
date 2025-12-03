@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.89.1 / 2025-12-03
+
+* (No significant changes)
+
 ### v0.89.0 / 2025-12-02
 
 * ADDED: Upgrade trilogy instrumentation to 0.65.0

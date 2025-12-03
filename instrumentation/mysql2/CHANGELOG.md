@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.32.1 / 2025-12-03
+
+* FIXED: Update gemspec dependencies to sql-processor
+
 ### v0.32.0 / 2025-12-02
 
 * ADDED: Replace references sql-obfuscation -> sql-processor
