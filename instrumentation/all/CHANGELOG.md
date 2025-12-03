@@ -1,8 +1,41 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.89.1 / 2025-12-03
+
+* ADDED: Upgrade trilogy instrumentation to 0.65.1
+* ADDED: Upgrade mysql2 instrumentation to 0.32.1
+* ADDED: Upgrade pg instrumentation to 0.34.1
+
+### v0.89.0 / 2025-12-02
+
+* ADDED: Upgrade trilogy instrumentation to 0.65.0
+* ADDED: Upgrade mysql2 instrumentation to 0.32.0
+* ADDED: Upgrade pg instrumentation to 0.34.0
+* ADDED: Upgrade que instrumentation to 0.12.0
+* ADDED: Upgrade sidekiq instrumentation to 0.28.1
+
+### v0.88.0 / 2025-11-26
+
+* BREAKING CHANGE: Update Ethon span name when unknown method
+
+* ADDED: Update Ethon span name when unknown method
+
+### v0.87.0 / 2025-11-05
+
+* ADDED: upgrade opentelemetry-instrumentation-pg to 0.33.0
+
+### v0.86.1 / 2025-10-22
+
+* ADDED: Updated minimum gem versions for dependent instrumentations
+
+### v0.86.0 / 2025-10-21
+
+* BREAKING CHANGE: Min Version Support For Ruby 3.2 and Rails 7.1
+
+* ADDED: Min Version Support For Ruby 3.2 and Rails 7.1
+
 ### v0.85.0 / 2025-10-11
 
-* ADDED: Ruby Logger instrumentation
 * BREAKING CHANGE: aws_sdk Suppress internal spans by default
 
 ### v0.84.0 / 2025-09-27

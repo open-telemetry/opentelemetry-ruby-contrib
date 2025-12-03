@@ -22,6 +22,8 @@ In addition to the requirements to maintain at least [community member status](h
     * Ruby language changes
     * Instrumented library changes
 
+When you become a component owner, you will be added to the `opentelemetry/ruby-contrib-triagers` group and will be automatically assigned to pull requests related to your component.
+
 If you do not have the capacity to maintain the instrumentation library, please consider contributing to the OpenTelemetry Ruby project in other ways or consider creating a separate project for the instrumentation library.
 
 > :warning: Libraries that do not meet these requirements may be removed from the project at any time at the discretion of OpenTelemetry Ruby Contrib Maintainers.
@@ -47,7 +49,7 @@ The following steps are required to contribute a new instrumentation library:
 
 This repository contains a script to generate a new instrumentation library.
 
-The snippet below demonstrates how to generate a an instrumentation for the `werewolf` gem, starting from the repository root.
+The snippet below demonstrates how to generate an instrumentation for the `werewolf` gem, starting from the repository root.
 
 ```console
 
@@ -137,7 +139,7 @@ module OpenTelemetry
         end
 
         compatible do
-          Gem::Version.new(::Wereworlf::VERSION) >= MINIMUM_VERSION
+          Gem::Version.new(::Werewolf::VERSION) >= MINIMUM_VERSION
         end
       end
     end
@@ -189,7 +191,7 @@ If the attribute is specific to your instrumentation, then consider namespacing 
 
 Code that is not tested will not be accepted by maintainers. We understand that providing 100% test coverage is not always possible but we still ask that you provide your best effort when writing automated tests.
 
-Most of the libraries instrument introduce changes outside of our control. For this reason, integration or state-based tests are preferred over interaction (mock) tests.
+Most of the libraries we instrument introduce changes outside of our control. For this reason, integration or state-based tests are preferred over interaction (mock) tests.
 
 When you do in fact run into cases where test doubles or API stubs are absolutely necessary, we recommend using the [`rspec-mocks`](https://github.com/rspec/rspec-mocks) and [`webmocks`](https://github.com/bblimke/webmock) gems.
 
@@ -368,11 +370,6 @@ If we determine the service container slows down the test suite significantly, i
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           build: true

@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Logger
       module Patches
-        # Instrumention for methods from Ruby's Logger class
+        # Instrumentation for methods from Ruby's Logger class
         module Logger
           attr_writer :skip_otel_emit
 
@@ -23,7 +23,7 @@ module OpenTelemetry
               severity_text: severity,
               severity_number: severity_number(severity),
               timestamp: datetime,
-              body: msg,
+              body: formatted_message,
               context: OpenTelemetry::Context.current
             )
             formatted_message

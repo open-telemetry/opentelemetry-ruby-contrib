@@ -1,0 +1,54 @@
+name: Markdown Checks
+
+on:
+  pull_request:
+    paths:
+      - '**/*.md'
+      - .github/workflows/ci-markdown-checks.yml
+
+permissions:
+  contents: read
+  pull-requests: write # required for posting PR review comments
+
+jobs:
+  markdownlint-check:
+    name: Markdown Lint Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+
+      # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md"  --config .markdownlint.json
+      - name: "Markdown Lint Check"
+        uses: DavidAnson/markdownlint-cli2-action@30a0e04f1870d58f8d717450cc6134995f993c63 # v21
+        with:
+          config: .markdownlint.json
+          fix: false
+          globs: |
+            **/*.md
+            !**/CHANGELOG.md
+
+  markdown-link-check:
+    name: Markdown Link Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+
+      # equivalent cli: linkspector check
+      - name: Run linkspector
+        uses: umbrelladocs/action-linkspector@652f85bc57bb1e7d4327260decc10aa68f7694c3 # v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          fail_on_error: true
+
+  spelling-check:
+    name: Spelling Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: streetsidesoftware/cspell-action@3294df585d3d639e30f3bc019cb11940b9866e95 # v8
+        with:
+          # Files should be consistent with check:spelling files
+          files: |
+            **/*.md
+          config: .cspell.yml

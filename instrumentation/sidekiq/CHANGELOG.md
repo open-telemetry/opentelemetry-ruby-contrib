@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.28.1 / 2025-12-02
+
+* FIXED: Sidekiq spans crashing when enqueued by Exq
+
+### v0.28.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
 ### v0.27.1 / 2025-09-30
 
 * FIXED: Min OTel Ruby API 1.7

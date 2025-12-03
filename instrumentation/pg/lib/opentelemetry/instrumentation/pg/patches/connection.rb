@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-helpers-sql-obfuscation'
+require 'opentelemetry-helpers-sql-processor'
 require_relative '../constants'
 require_relative '../lru_cache'
 
@@ -12,6 +12,65 @@ module OpenTelemetry
   module Instrumentation
     module PG
       module Patches
+        # Utility methods for setting connection attributes from Connect module
+        module ConnectionHelper
+          module_function
+
+          def set_connection_attributes(span, conn, config)
+            attributes = {
+              'db.system' => 'postgresql',
+              'db.name' => conn.db,
+              'db.user' => conn.user
+            }
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+            h = conn.host
+            if h&.start_with?('/')
+              attributes['net.sock.family'] = 'unix'
+              attributes['net.peer.name'] = h
+            else
+              attributes['net.transport'] = 'ip_tcp'
+              attributes['net.peer.name'] = h
+              attributes['net.peer.port'] = conn.port if defined?(::PG::DEF_PGPORT)
+            end
+
+            attributes.merge!(OpenTelemetry::Instrumentation::PG.attributes)
+            attributes.compact!
+
+            span.add_attributes(attributes)
+          end
+        end
+
+        # Module to prepend to PG::Connection singleton class for connection initialization
+        # We override `new` instead of `initialize` because PG::Connection.new is implemented
+        # as a Ruby method that calls the C-level connect_start, bypassing initialize.
+        # We also need to override the aliases (open, connect, async_connect) because they
+        # were aliased before our prepend, so they point to the original method.
+        # See: https://github.com/ged/ruby-pg/blob/master/lib/pg/connection.rb#L870
+        module Connect
+          def new(...)
+            tracer = OpenTelemetry::Instrumentation::PG::Instrumentation.instance.tracer
+            config = OpenTelemetry::Instrumentation::PG::Instrumentation.instance.config
+
+            tracer.in_span('connect', kind: :client) do |span|
+              if block_given?
+                super do |conn|
+                  ConnectionHelper.set_connection_attributes(span, conn, config)
+                  yield conn
+                end
+              else
+                conn = super
+                ConnectionHelper.set_connection_attributes(span, conn, config)
+                conn
+              end
+            end
+          end
+
+          PG::Constants::CONNECTION_METHODS.each do |method|
+            alias_method method, :new
+          end
+        end
+
         # Module to prepend to PG::Connection for instrumentation
         module Connection # rubocop:disable Metrics/ModuleLength
           # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
@@ -57,7 +116,7 @@ module OpenTelemetry
           def obfuscate_sql(sql)
             return sql unless config[:db_statement] == :obfuscate
 
-            OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(
+            OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(
               sql,
               obfuscation_limit: config[:obfuscation_limit],
               adapter: :postgres

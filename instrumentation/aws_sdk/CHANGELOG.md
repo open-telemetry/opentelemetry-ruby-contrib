@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.11.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
 ### v0.10.0 / 2025-10-11
 
 * BREAKING CHANGE: Suppress internal spans by default

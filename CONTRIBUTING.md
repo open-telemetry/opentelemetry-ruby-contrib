@@ -214,7 +214,7 @@ merge. You'll probably get some feedback from these fine folks which helps to
 make the project that much better. Respond to the feedback and work with your
 reviewer(s) to resolve any issues.
 
-The some of the things the code owners are looking for include:
+Some of the things the code owners are looking for include:
 
 * a signed [CNCF CLA][cncf-cla]
 * a passing CI build
@@ -231,6 +231,55 @@ In addition, when a change is complex or a reviewer is unfamiliar with the code,
 the reviewer may seek additional reviews from people more familiar with the
 change before merging a PR.
 
+## Component Ownership
+
+This repository contains many components which are maintained by more than the typical set of ruby-contrib maintainers and approvers.
+Each component in this repository SHOULD have a component owner who is responsible for maintaining it.
+The README.md for each component SHOULD contain its owner, but the source of truth for component ownership is in [.github/component_owners.yml](.github/component_owners.yml).
+
+Component owners are generally given authority to make decisions relating to implementation and feature requests for their components,
+provided they follow the best practices set out by the maintainers and the [mission, vision and values](https://github.com/open-telemetry/community/blob/main/mission-vision-values.md)
+of the OpenTelemetry Project. To facilitate independent triage of issues pertaining to the owned component, component owners are assigned
+[the Triager role](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#triager).
+
+Component owners MUST do their best to maintain a high level of quality, security, performance, and specification compliance within their components.
+Maintainers may override the decisions of component owners, but should only do so when they feel one or more of these traits is compromised.
+
+### Becoming a Component Owner
+
+To become a component owner, contributors MUST be a [member](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#member) of the OpenTelemetry GitHub organization.
+To become a member, follow the steps in the [community guidelines for membership requirements](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#requirements).
+
+To become a component owner, contributors SHOULD demonstrate prior knowledge of the instrumented package or the concepts therein.
+
+Ways do to so may be by providing proof of:
+
+- current or prior involvement with the community that develops the upstream package
+  - **Example:** A person working on MongoDB requesting ownership over a MongoDB instrumentation
+- current or prior involvement with a community that develops systems with similar concepts
+  - **Example:** A person previously working on MySQL requesting ownership of a instrumentation package that instruments another database client library instrumentation.
+- current or prior extensive use of the instrumented package in other project they are involved in
+  - **Example:** A person working at a company that makes extensive use of the `koala` library requesting ownership of the `opentelemetry-instrumentation-koala` package.
+- a vested interest in the telemetry being emitted from that instrumentation
+  - **Example:** A person employed at an observability vendor that relies on the continued maintenance of the instrumentation
+
+**Examples of proof may include but are not limited to:**
+
+- Links to issues/PRs they worked on
+- Links to blog posts authored by them on behalf of the organization developing that system
+- Membership in GitHub teams/organizations that are associated with the development of the upstream package
+
+Aspiring Component Owners MUST agree to uphold the [mission, vision and values](https://github.com/open-telemetry/community/blob/main/mission-vision-values.md) of the OpenTelemetry project.
+Further, aspiring component owners are expected to have knowledge of the [OpenTelemetry Semantic Conventions](https://github.com/open-telemetry/semantic-conventions)
+and MUST agree to adhere to the rules set out therein.
+
+If all these conditions are met, aspiring component owners are encouraged to self-nominate by opening an issue.
+@open-telemetry/ruby-contrib-maintainers will then engage on the issue, may ask questions, and will then - based on the
+information provided on the issue - either approve or deny the ownership request. If the ownership request has been
+approved, the new component owner opens a PR to add themselves to the list of owners ([.github/component_owners.yml](.github/component_owners.yml))
+for that package.
+@open-telemetry/ruby-contrib-maintainers will add the component owner to @open-telemetry/ruby-contrib-triagers.
+
 ## Releases
 
 This repository includes a set of tools for releasing gems. Only maintainers
@@ -246,10 +295,10 @@ Releases are normally performed using GitHub Actions.
     `Open release request` workflow, and run the workflow manually using the
     dropdown in the upper right.
      * Releases must be run from the main branch.
-     * If you leave the `Gems to release` field, blank, and the script will
+     * If you leave the `Gems to release` field blank, the script will
         find all the gems that have had conventional-commit-tagged changes since
         their last release. Alternately, you can specify which gems to release
-        by including their names, space-delimited, in this this field. You can
+        by including their names, space-delimited, in this field. You can
         optionally append `:<version>` to any gem in the list to specify the
         version to release, or omit the version to let the script decide based
         on conventional commits. You can also use the special name `all` to
@@ -417,6 +466,35 @@ index e29acbfc..85622d25 100644
    gem 'yard-doctest', '~> 0.1.6'
 (1/1) Stage this hunk [y,n,q,a,d,e,?]? y
 ```
+
+## Updating Ruby version requirements
+
+To update the minimum Ruby version requirement across all gems in the repository, use the `bin/update-ruby-version` script:
+
+```console
+# Update to Ruby 3.3 minimum
+bin/update-ruby-version 3.3
+
+# Supports patch versions and pre-releases
+bin/update-ruby-version 3.2.0
+bin/update-ruby-version 3.4.0.alpha
+```
+
+The script will:
+
+1. Validate the version format
+2. Update `spec.required_ruby_version` in all gemspec files
+3. Show a summary of changes
+
+After running the script:
+
+1. Review changes with `git diff`
+2. Test against the new minimum Ruby version
+3. Update CI configurations in `.github/workflows`
+4. Update `.rubocop.yml` to set the `TargetRubyVersion`
+5. Remove any conditional logic handling Ruby versions in Appraisal files that are no longer needed
+6. Remove any conditional logic in test cases that are no longer needed
+7. Commit with a message like `chore: update minimum Ruby version to 3.3`
 
 [cncf-cla]: https://identity.linuxfoundation.org/projects/cncf
 [github-draft]: https://github.blog/2019-02-14-introducing-draft-pull-requests/

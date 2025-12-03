@@ -1,5 +1,20 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.31.2 / 2025-10-28
+
+* FIXED: Patch dataloader to propagate context to new fiber
+* FIXED: Does not trace resolve type unless enable
+
+### v0.31.1 / 2025-10-22
+
+* FIXED: Update opentelemetry-instrumentation-base dependency
+
+### v0.31.0 / 2025-10-21
+
+* BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+
+* ADDED: Min Ruby Version 3.2 and Rails 7.1
+
 ### v0.30.1 / 2025-09-30
 
 * FIXED: Min OTel Ruby API 1.7

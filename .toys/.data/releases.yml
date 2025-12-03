@@ -30,6 +30,10 @@ commit_lint:
 #  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
+  - name: opentelemetry-instrumentation-factory_bot
+    directory: instrumentation/factory_bot
+    version_constant: [OpenTelemetry, Instrumentation, FactoryBot, VERSION]
+
   - name: opentelemetry-instrumentation-anthropic
     directory: instrumentation/anthropic
     version_constant: [OpenTelemetry, Instrumentation, Anthropic, VERSION]
@@ -53,11 +57,6 @@ gems:
   - name: opentelemetry-helpers-mysql
     directory: helpers/mysql
     version_constant: [OpenTelemetry, Helpers, MySQL, VERSION]
-
-  - name: opentelemetry-helpers-sql-obfuscation
-    directory: helpers/sql-obfuscation
-    version_rb_path: lib/opentelemetry/helpers/sql_obfuscation/version.rb
-    version_constant: [OpenTelemetry, Helpers, SqlObfuscation, VERSION]
 
   - name: opentelemetry-helpers-sql-processor
     directory: helpers/sql-processor

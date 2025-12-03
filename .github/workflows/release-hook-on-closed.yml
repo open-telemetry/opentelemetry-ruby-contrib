@@ -12,17 +12,18 @@ jobs:
     permissions:
       contents: write # required for creating releases
       pull-requests: write # required for updating release PRs
+      issues: write # required to create issues for failed releases
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     env:
-      ruby_version: "3.1"
+      RUBY_VERSION: "3.2"
     runs-on: ubuntu-latest
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.265.0
+      - name: Install Ruby ${{ env.RUBY_VERSION }}
+        uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1.268.0
         with:
-          ruby-version: ${{ env.ruby_version }}
+          ruby-version: ${{ env.RUBY_VERSION }}
       - name: Checkout repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - name: Install Toys
         run: "gem install --no-document toys -v 0.15.5"
       - name: Process release request
