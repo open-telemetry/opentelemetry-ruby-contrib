@@ -2,7 +2,9 @@
 
 ### v0.89.1 / 2025-12-03
 
-* (No significant changes)
+* ADDED: Upgrade trilogy instrumentation to 0.65.1
+* ADDED: Upgrade mysql2 instrumentation to 0.32.1
+* ADDED: Upgrade pg instrumentation to 0.34.1
 
 ### v0.89.0 / 2025-12-02
 
