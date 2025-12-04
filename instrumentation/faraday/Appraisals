@@ -9,7 +9,7 @@
 # gem versions. For more information on the semantic convention modes, see:
 # https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
-versions = %w[1.0 2.0]
+versions = %w[1.10.0 2.14.0]
 semconv_stability = %w[old stable dup]
 
 semconv_stability.each do |mode|
