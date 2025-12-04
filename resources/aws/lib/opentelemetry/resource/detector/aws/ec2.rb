@@ -60,7 +60,7 @@ module OpenTelemetry
               resource_attributes[RESOURCE::HOST_TYPE] = identity['instanceType']
               resource_attributes[RESOURCE::HOST_NAME] = hostname
             rescue StandardError => e
-              OpenTelemetry.handle_error(exception: e, message: 'EC2 resource detection failed')
+              OpenTelemetry.logger.debug("EC2 resource detection failed: #{e.message}")
               return OpenTelemetry::SDK::Resources::Resource.create({})
             end
 
@@ -134,7 +134,7 @@ module OpenTelemetry
                 http.request(request)
               end
             rescue StandardError => e
-              OpenTelemetry.handle_error(exception: e, message: 'EC2 metadata service request failed')
+              OpenTelemetry.logger.debug("EC2 metadata service request failed: #{e.message}")
               nil
             end
           end
