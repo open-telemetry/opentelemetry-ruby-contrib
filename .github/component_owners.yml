@@ -25,6 +25,8 @@ components:
     - chrisholmes
   instrumentation/que:
     - indrekj
+  instrumentation/sidekiq:
+    - dmathieu
   processor/baggage:
     - robbkidd
     - mikegoldsmith
