@@ -16,19 +16,18 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def perform(req, options)
-              span_data = HttpHelper.span_attrs_for(req.verb, semconv: :old)
+              span_data = HttpHelper.span_attrs_for_old(req.verb)
 
               uri = req.uri
               span_name = create_span_name(span_data, uri.path)
 
               attributes = {
-                'http.method' => span_data.normalized_method,
                 'http.scheme' => uri.scheme,
                 'http.target' => uri.path,
                 'http.url' => "#{uri.scheme}://#{uri.host}",
                 'net.peer.name' => uri.host,
                 'net.peer.port' => uri.port
-              }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+              }.merge!(span_data.attributes)
 
               tracer.in_span(span_name, attributes: attributes, kind: :client) do |span|
                 OpenTelemetry.propagation.inject(req.headers)
@@ -56,7 +55,9 @@ module OpenTelemetry
               default_span_name = span_data.span_name
 
               if (implementation = config[:span_name_formatter])
-                updated_span_name = implementation.call(span_data.normalized_method, request_path)
+                # Extract the HTTP method from attributes
+                http_method = span_data.attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD]
+                updated_span_name = implementation.call(http_method, request_path)
                 updated_span_name.is_a?(String) ? updated_span_name : default_span_name
               else
                 default_span_name
