@@ -21,20 +21,37 @@ module OpenTelemetry
         # Token holds the type (e.g., :keyword) and value (e.g., "SELECT")
         Token = Struct.new(:type, :value)
 
-        # The order of token matching is important for correct parsing,
-        # as more specific patterns should be matched before more general ones.
-        TOKEN_REGEX = {
-          whitespace: /\s+/,
-          comment: %r{--[^\r\n]*|\/\*.*?\*\/}m,
-          numeric: /[+-]?(?:0x[0-9a-fA-F]+|\d+\.?\d*(?:[eE][+-]?\d+)?|\.\d+(?:[eE][+-]?\d+)?)/,
-          string: /'(?:''|[^'\r\n])*'?/,
-          quoted_identifier: /"(?:""|[^"\r\n])*"|`(?:``|[^`\r\n])*`|\[(?:[^\]\r\n])*\]/,
-          keyword: /\b(?:SELECT|INSERT|UPDATE|DELETE|FROM|INTO|JOIN|CREATE|ALTER|DROP|TRUNCATE|WITH|UNION|TABLE|INDEX|PROCEDURE|VIEW|DATABASE)\b/i,
-          identifier: /[a-zA-Z_][a-zA-Z0-9_.]*/,
-          operator: %r{<=|>=|<>|!=|[=<>+\-*\/%,;()!?]}
-        }.freeze
+        KEYWORDS_ARRAY = %w[
+          # Core DML operations
+          SELECT INSERT UPDATE DELETE
 
-        EXCLUDED_TYPES = %i[whitespace comment].freeze
+          # Query structure and joins
+          FROM INTO JOIN WHERE SET ORDER GROUP BY HAVING LIMIT
+
+          # DDL operations
+          CREATE ALTER DROP TRUNCATE
+
+          # Advanced query features
+          WITH UNION DISTINCT ALL EXISTS
+
+          # Database objects
+          TABLE INDEX PROCEDURE VIEW DATABASE SCHEMA SEQUENCE TRIGGER FUNCTION
+
+          # Conditions and logic
+          IF NOT AND OR AFTER BEFORE BEGIN END
+
+          # Data types and constraints
+          UNIQUE CLUSTERED
+
+          # System operations
+          EXEC EXECUTE ROLE USER RESTART TRANSFER
+
+          # Column operations
+          ADD MODIFY RENAME COLUMN TO INCLUDE REBUILD MEMBER PASSWORD
+        ].freeze
+
+        # Hash-based keyword lookup performance optimization
+        KEYWORDS = KEYWORDS_ARRAY.each_with_object({}) { |keyword, hash| hash[keyword] = true }.freeze
 
         class << self
           def tokenize(query)
@@ -47,13 +64,41 @@ module OpenTelemetry
           end
 
           def scan_next_token(scanner, tokens)
-            matched = TOKEN_REGEX.any? do |type, regex|
-              next unless (value = scanner.scan(regex))
+            return if skip_comments_and_whitespace(scanner)
 
-              tokens << Token.new(type, value) unless EXCLUDED_TYPES.include?(type)
-              true
+            case
+            when (operator = scanner.scan(%r{<=|>=|<>|!=|[=<>+\-*/%,;()!?]}))
+              # SQL operators: comparison (<=, >=, <>, !=), equality (=), arithmetic (+, -, *, /), punctuation
+              tokens << Token.new(:operator, operator)
+            when (number = scanner.scan(/[+-]?(?:\d+\.?\d*(?:[eE][+-]?\d+)?|0x[0-9a-fA-F]+|\.\d+(?:[eE][+-]?\d+)?)/))
+              # Numbers: signed integers, decimals, scientific notation (1.23e-4), hex (0xFF)
+              tokens << Token.new(:numeric, number)
+            when (string_literal = scanner.scan(/'(?:''|[^'\r\n])*'/))
+              # String literals with escaped quotes ('John''s Car')
+              tokens << Token.new(:string, string_literal)
+            when (quoted_name = scanner.scan(/"(?:""|[^"\r\n])*"|`(?:``|[^`\r\n])*`|\[(?:[^\]\r\n])*\]/))
+              # Quoted identifiers: "double", `backtick`, [bracket] for table/column names
+              tokens << Token.new(:quoted_identifier, quoted_name)
+            when (identifier = scanner.scan(/@?[a-zA-Z_\u0080-\uffff][a-zA-Z0-9_.\u0080-\uffff]*/u))
+              # Identifiers: table names, column names, variables (supports Unicode)
+              type = classify_identifier(identifier)
+              tokens << Token.new(type, identifier)
+            else
+              # Skip unmatched characters
+              scanner.getch
             end
-            scanner.getch unless matched
+          end
+
+          private
+
+          def skip_comments_and_whitespace(scanner)
+            scanner.scan(/--[^\r\n]*/) ||     # Single-line comments (-- comment)
+            scanner.scan(%r{/\*.*?\*/}m) ||   # Block comments (/* comment */)
+            scanner.scan(/\s+/)               # Whitespace (spaces, tabs, newlines)
+          end
+
+          def classify_identifier(identifier)
+            KEYWORDS[identifier.upcase] ? :keyword : :identifier
           end
         end
       end
