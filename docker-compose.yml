@@ -212,7 +212,7 @@ services:
       - "5672:5672"
 
   memcached:
-    image: memcached:alpine@sha256:7b45203a99eb1419c95b875c7e48c5a9eebc0a305eeb09eefc9f3a2cff758a46
+    image: memcached:alpine@sha256:c8503d4491edd3110cc07d0465089d3a41cf1daf8645e71149e39a51835e92cd
     command: memcached -m 64
     ports:
       - "11211:11211"
