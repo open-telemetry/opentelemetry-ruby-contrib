@@ -62,7 +62,7 @@ module OpenTelemetry
                 }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
                 if use_ssl? && proxy?
-                  span_name = 'CONNECT'
+                  span_name = 'HTTP CONNECT'
                   span_kind = :client
                 else
                   span_name = 'connect'
