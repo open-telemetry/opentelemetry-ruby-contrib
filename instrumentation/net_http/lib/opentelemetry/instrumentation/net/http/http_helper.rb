@@ -47,6 +47,12 @@ module OpenTelemetry
 
           private_constant :METHOD_CACHE
 
+          OLD_SPAN_NAMES_BY_METHOD = METHOD_CACHE.values.uniq.each_with_object({}) do |method, hash|
+            hash[method] = "HTTP #{method}"
+          end.freeze
+
+          private_constant :OLD_SPAN_NAMES_BY_METHOD
+
           # Prepares span data using old semantic conventions
           # @param method [String, Symbol] The HTTP method
           # @return [SpanCreationAttributes] struct containing span_name and attributes hash
@@ -57,7 +63,7 @@ module OpenTelemetry
 
             # Determine base span name and method value
             if normalized
-              span_name = normalized
+              span_name = OLD_SPAN_NAMES_BY_METHOD[normalized]
               method_value = normalized
             else
               span_name = 'HTTP'
