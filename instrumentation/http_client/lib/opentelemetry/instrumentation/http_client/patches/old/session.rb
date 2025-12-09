@@ -16,7 +16,7 @@ module OpenTelemetry
               url = site.addr
 
               attributes = { 'http.url' => url }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
-              tracer.in_span('CONNECT', attributes: attributes) do
+              tracer.in_span('HTTP CONNECT', attributes: attributes) do
                 super
               end
             end
