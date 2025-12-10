@@ -469,5 +469,76 @@ describe OpenTelemetry::Instrumentation::Grape do
         end
       end
     end
+
+    describe 'when with multiple version in api' do
+      class BasicAPI < Grape::API
+        version 'v5', 'v6', 'v7', using: :path
+        format :json
+
+        get :hello do
+          { message: 'Hello, world!' }
+        end
+      end
+
+      let(:app) do
+        builder = Rack::Builder.app do
+          run BasicAPI
+        end
+        Rack::MockRequest.new(builder)
+      end
+
+      let(:request_path) { '/v5/hello' }
+      let(:expected_span_name) { 'HTTP GET /hello' }
+
+      describe 'default version_format' do
+        let(:config) { { install_rack: false } }
+
+        let(:app) do
+          build_rack_app(BasicAPI)
+        end
+
+        before do
+          OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install
+        end
+
+        it 'creates a span' do
+          app.get request_path
+          _(exporter.finished_spans.first.attributes).must_equal(
+            'code.namespace' => 'BasicAPI',
+            'http.method' => 'GET',
+            'http.host' => 'unknown',
+            'http.scheme' => 'http',
+            'http.target' => '/v5/hello',
+            'http.route' => '/["v5", "v6", "v7"]/hello',
+            'http.status_code' => 200
+          )
+        end
+      end
+
+      describe 'customized version_format' do
+        let(:config) { { install_rack: false, version_format: ->(version) { version.is_a?(Array) ? "{#{version.join('|')}}" : version.to_s } } }
+
+        let(:app) do
+          build_rack_app(BasicAPI)
+        end
+
+        before do
+          OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install
+        end
+
+        it 'creates a span' do
+          app.get request_path
+          _(exporter.finished_spans.first.attributes).must_equal(
+            'code.namespace' => 'BasicAPI',
+            'http.method' => 'GET',
+            'http.host' => 'unknown',
+            'http.scheme' => 'http',
+            'http.target' => '/v5/hello',
+            'http.route' => '/{v5|v6|v7}/hello',
+            'http.status_code' => 200
+          )
+        end
+      end
+    end
   end
 end
