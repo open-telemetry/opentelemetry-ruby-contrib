@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-appraise 'dalli-2.7' do
-  gem 'dalli', '~> 2.7'
+%w[2.7.0 3.2.0].each do |version|
+  appraise "dalli-#{version}" do
+    gem 'dalli', "~> #{version}"
+  end
 end
 
-appraise 'dalli-3.0' do
-  gem 'dalli', '~> 3.0'
+appraise 'dalli-latest' do
+  gem 'dalli'
 end

@@ -4,11 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'que-1.x' do
-  gem 'que', '~> 1.4'
-  gem 'activerecord', '~> 7.1.0'
-end
-
 appraise 'que-2.x' do
   gem 'que', '~> 2.4'
   gem 'activerecord', '~> 7.2.0'
