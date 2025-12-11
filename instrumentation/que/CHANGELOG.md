@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.12.0 / 2025-12-02
+
+* ADDED: Replace references sql-obfuscation -> sql-processor
+
 ### v0.11.1 / 2025-10-22
 
 * FIXED: Update opentelemetry-instrumentation-base dependency
