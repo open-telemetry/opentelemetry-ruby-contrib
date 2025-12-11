@@ -19,9 +19,24 @@ module OpenTelemetry
       #   Parser.build_summary_from_tokens(tokens) # => "SELECT users"
       class Parser
         # Three states: normal parsing vs. waiting for table names vs. DDL body (skip everything)
+        #
+        # State Machine:
+        #   PARSING_STATE          - Default state: looking for SQL operations (SELECT, CREATE, etc.)
+        #   EXPECT_COLLECTION_STATE - Collecting table names after FROM, INTO, JOIN keywords
+        #   DDL_BODY_STATE         - Inside procedure/trigger body: skip all tokens until end
+        #
+        # State Transitions:
+        #   PARSING_STATE → EXPECT_COLLECTION_STATE:  when hitting FROM, INTO, JOIN, or main operations
+        #   EXPECT_COLLECTION_STATE → PARSING_STATE:  when hitting WHERE, SET, or end of table list
+        #   EXPECT_COLLECTION_STATE → DDL_BODY_STATE: when hitting AS BEGIN (procedure/trigger body)
+        #   DDL_BODY_STATE → stays until end of input (skips everything inside DDL bodies)
         PARSING_STATE = :parsing
         EXPECT_COLLECTION_STATE = :expect_collection
         DDL_BODY_STATE = :ddl_body
+
+        # Array indices for token access (matches tokenizer)
+        TYPE_INDEX = 0
+        VALUE_INDEX = 1
 
         # Optimized frozen sets for O(1) lookups instead of O(n) array includes
         MAIN_OPERATIONS = %w[SELECT INSERT DELETE].to_set.freeze
@@ -58,17 +73,17 @@ module OpenTelemetry
             in_clause_context = false # Track if we're in an IN clause context
 
             # First pass: check if any table names are too long
-            has_long_table_name = tokens.any? { |token| identifier_like?(token) && token.value.length > MAX_TABLE_NAME_LENGTH }
+            has_long_table_name = tokens.any? { |token| identifier_like?(token) && token[VALUE_INDEX].length > MAX_TABLE_NAME_LENGTH }
 
             tokens.each_with_index do |token, index|
               next if index < skip_until
 
               # Update IN clause context
-              if cached_upcase(token.value) == 'IN'
+              if cached_upcase(token[VALUE_INDEX]) == 'IN'
                 in_clause_context = true
-              elsif token.value == '(' && in_clause_context
+              elsif token[VALUE_INDEX] == '(' && in_clause_context
                 # Continue in IN clause context until we find closing parenthesis
-              elsif token.value == ')' && in_clause_context
+              elsif token[VALUE_INDEX] == ')' && in_clause_context
                 in_clause_context = false
               end
 
@@ -100,21 +115,21 @@ module OpenTelemetry
             # Skip processing main operations when inside IN clause subqueries
             return not_processed(current_state, index + 1) if in_clause_context
 
-            upcased_value = cached_upcase(token.value)
+            upcased_value = cached_upcase(token[VALUE_INDEX])
 
             case upcased_value
             when 'AS'
               # AS in main parsing context might indicate DDL body start
               handle_as_keyword(token, tokens, index, current_state)
             when *MAIN_OPERATIONS
-              add_to_summary(token.value, PARSING_STATE, index + 1)
+              add_to_summary(token[VALUE_INDEX], PARSING_STATE, index + 1)
             when *COLLECTION_OPERATIONS
               # Check if this is WITH in OPENJSON context - if so, skip it
               if upcased_value == 'WITH' && index > 0
                 # Optimized lookback - search backwards up to 5 tokens
                 start_idx = [0, index - 5].max
                 found_openjson = tokens[start_idx...index].any? do |t|
-                  cached_upcase(t.value) == 'OPENJSON'
+                  cached_upcase(t[VALUE_INDEX]) == 'OPENJSON'
                 end
 
                 if found_openjson
@@ -123,7 +138,7 @@ module OpenTelemetry
                 end
               end
 
-              add_to_summary(token.value, EXPECT_COLLECTION_STATE, index + 1)
+              add_to_summary(token[VALUE_INDEX], EXPECT_COLLECTION_STATE, index + 1)
             when *UPDATE_OPERATIONS
               handle_update_operation(token, tokens, index)
             when *TRIGGER_COLLECTION
@@ -142,7 +157,7 @@ module OpenTelemetry
           def process_collection_token(token, tokens, index, state, has_long_table_name = false, in_clause_context = false)
             return not_processed(state, index + 1) unless state == EXPECT_COLLECTION_STATE
 
-            upcased_value = cached_upcase(token.value)
+            upcased_value = cached_upcase(token[VALUE_INDEX])
 
             # Stop collection when we hit certain keywords that signal the end of the object name
             if upcased_value == 'AS'
@@ -150,9 +165,9 @@ module OpenTelemetry
               { processed: true, parts: [], new_state: DDL_BODY_STATE, next_index: index + 1 }
             elsif STOP_COLLECTION_KEYWORDS.include?(upcased_value)
               return_to_normal_parsing(token, index)
-            elsif identifier_like?(token) || (token.type == :string && !in_clause_context) || (token.type == :keyword && can_be_table_name?(upcased_value))
+            elsif identifier_like?(token) || (token[TYPE_INDEX] == :string && !in_clause_context) || (token[TYPE_INDEX] == :keyword && can_be_table_name?(upcased_value))
               process_table_name_and_alias(token, tokens, index, has_long_table_name)
-            elsif token.value == '(' || token.type == :operator
+            elsif token[VALUE_INDEX] == '(' || token[TYPE_INDEX] == :operator
               handle_collection_operator(token, state, index)
             else
               return_to_normal_parsing(token, index)
@@ -162,44 +177,44 @@ module OpenTelemetry
           def process_table_name_and_alias(token, tokens, index, has_long_table_name = false)
             # Special handling for PROCEDURE with AS BEGIN pattern FIRST (before general AS handling)
             # For "CREATE PROCEDURE name AS BEGIN SELECT * FROM table END" we want to extract the inner operations
-            if token.value.length > 3 # Skip very short names
+            if token[VALUE_INDEX].length > 3 # Skip very short names
               # Look for immediate AS BEGIN pattern (PROCEDURE name AS BEGIN...)
               as_token = tokens[index + 1]
               begin_token = tokens[index + 2]
 
-              if as_token&.value&.upcase == 'AS' && begin_token&.value&.upcase == 'BEGIN'
+              if as_token && as_token[VALUE_INDEX]&.upcase == 'AS' && begin_token && begin_token[VALUE_INDEX]&.upcase == 'BEGIN'
                 # This is a PROCEDURE with AS BEGIN structure - we want to parse the body
                 # Continue normal processing but include the procedure name and skip AS BEGIN
-                table_parts = (has_long_table_name || !should_include_table_name?(token.value)) ? [] : [token.value]
+                table_parts = (has_long_table_name || !should_include_table_name?(token[VALUE_INDEX])) ? [] : [token[VALUE_INDEX]]
                 return { processed: true, parts: table_parts, new_state: PARSING_STATE, next_index: index + 3 }
               end
             end
 
             # Check if the next token is AS in DDL context (not an alias)
             next_token = tokens[index + 1]
-            if next_token && next_token.value&.upcase == 'AS'
+            if next_token && next_token[VALUE_INDEX]&.upcase == 'AS'
               # In DDL operations, AS starts the body definition, not an alias
               # Check if this looks like DDL AS (followed by DDL keywords like SELECT, BEGIN, etc.)
               after_as_token = tokens[index + 2]
-              if after_as_token && %w[SELECT INSERT UPDATE DELETE BEGIN].include?(after_as_token.value.upcase)
+              if after_as_token && %w[SELECT INSERT UPDATE DELETE BEGIN].include?(after_as_token[VALUE_INDEX].upcase)
                 # This is DDL AS - transition to DDL_BODY_STATE and skip AS
-                table_parts = (has_long_table_name || !should_include_table_name?(token.value)) ? [] : [token.value]
+                table_parts = (has_long_table_name || !should_include_table_name?(token[VALUE_INDEX])) ? [] : [token[VALUE_INDEX]]
                 return { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: index + 2 }
               end
             end
 
             # For TRIGGER patterns, look ahead for AS keyword after ON/AFTER/BEFORE clauses
             # Handle patterns like: "TRIGGER name ON table AFTER INSERT AS BEGIN"
-            if token.value.length > 3 # Skip very short names that are likely not real trigger names
+            if token[VALUE_INDEX].length > 3 # Skip very short names that are likely not real trigger names
               look_ahead_index = index + 1
               found_as_with_begin = false
 
               # Look ahead up to 10 tokens for AS followed by BEGIN
               while look_ahead_index < tokens.length && look_ahead_index < index + 10
                 current_token = tokens[look_ahead_index]
-                if current_token&.value&.upcase == 'AS'
+                if current_token && current_token[VALUE_INDEX]&.upcase == 'AS'
                   next_after_as = tokens[look_ahead_index + 1]
-                  if next_after_as&.value&.upcase == 'BEGIN'
+                  if next_after_as && next_after_as[VALUE_INDEX]&.upcase == 'BEGIN'
                     found_as_with_begin = true
                     break
                   end
@@ -209,7 +224,7 @@ module OpenTelemetry
 
               if found_as_with_begin
                 # This is a TRIGGER name - transition to DDL_BODY_STATE at the AS token
-                table_parts = (has_long_table_name || !should_include_table_name?(token.value)) ? [] : [token.value]
+                table_parts = (has_long_table_name || !should_include_table_name?(token[VALUE_INDEX])) ? [] : [token[VALUE_INDEX]]
                 return { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: look_ahead_index + 1 }
               end
             end
@@ -223,23 +238,23 @@ module OpenTelemetry
 
             # Stop if we hit certain keywords that end the object name or parameter lists
             should_terminate = false
-            if next_token_after_alias && %w[WITH SET WHERE BEGIN DROP ADD COLUMN START INCREMENT BY].include?(next_token_after_alias.value.upcase)
+            if next_token_after_alias && %w[WITH SET WHERE BEGIN DROP ADD COLUMN START INCREMENT BY].include?(next_token_after_alias[VALUE_INDEX].upcase)
               new_state = PARSING_STATE
               # Skip over the stopping keyword so it doesn't get processed again
               skip_count += 1
-            elsif next_token_after_alias&.value&.upcase == 'RESTART'
+            elsif next_token_after_alias && next_token_after_alias[VALUE_INDEX]&.upcase == 'RESTART'
               # Handle RESTART WITH pattern - skip both tokens
               new_state = PARSING_STATE
               following_token = tokens[index + 2 + skip_count]
-              if following_token&.value&.upcase == 'WITH'
+              if following_token && following_token[VALUE_INDEX]&.upcase == 'WITH'
                 skip_count += 2 # Skip both RESTART and WITH
               else
                 skip_count += 1 # Skip just RESTART
               end
-            elsif next_token_after_alias && next_token_after_alias.value.start_with?('@')
+            elsif next_token_after_alias && next_token_after_alias[VALUE_INDEX].start_with?('@')
               # Handle SQL Server parameter syntax - stop at parameter definitions
               new_state = PARSING_STATE
-            elsif next_token_after_alias&.value == ','
+            elsif next_token_after_alias && next_token_after_alias[VALUE_INDEX] == ','
               # Check if there's a comma - if so, expect more table names in the list
               new_state = EXPECT_COLLECTION_STATE
               skip_count += 1 # Skip the comma
@@ -248,7 +263,7 @@ module OpenTelemetry
             end
 
             # Apply truncation logic - if any table name is too long, exclude all table names
-            cleaned_table_name = clean_table_name(token.value)
+            cleaned_table_name = clean_table_name(token[VALUE_INDEX])
             table_parts = (has_long_table_name || !should_include_table_name?(cleaned_table_name)) ? [] : [cleaned_table_name]
 
             result = { processed: true, parts: table_parts, new_state: new_state, next_index: index + 1 + skip_count }
@@ -269,7 +284,7 @@ module OpenTelemetry
           end
 
           def identifier_like?(token)
-            %i[identifier quoted_identifier].include?(token.type)
+            %i[identifier quoted_identifier].include?(token[TYPE_INDEX])
           end
 
           def can_be_table_name?(upcased_value)
@@ -280,9 +295,9 @@ module OpenTelemetry
           def calculate_alias_skip(tokens, index)
             # Handle both "table AS alias" and "table alias" patterns
             next_token = tokens[index + 1]
-            if next_token && next_token.value&.upcase == 'AS'
+            if next_token && next_token[VALUE_INDEX]&.upcase == 'AS'
               2
-            elsif next_token && next_token.type == :identifier
+            elsif next_token && next_token[TYPE_INDEX] == :identifier
               1
             else
               0
@@ -303,10 +318,10 @@ module OpenTelemetry
 
           def handle_union(token, tokens, index)
             next_token = tokens[index + 1]
-            if next_token && next_token.value&.upcase == 'ALL'
-              { processed: true, parts: ["#{token.value} #{next_token.value}"], new_state: PARSING_STATE, next_index: index + 2 }
+            if next_token && next_token[VALUE_INDEX]&.upcase == 'ALL'
+              { processed: true, parts: ["#{token[VALUE_INDEX]} #{next_token[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 2 }
             else
-              add_to_summary(token.value, PARSING_STATE, index + 1)
+              add_to_summary(token[VALUE_INDEX], PARSING_STATE, index + 1)
             end
           end
 
@@ -321,10 +336,10 @@ module OpenTelemetry
 
             while search_index < tokens.length
               candidate = tokens[search_index]
-              if candidate && TABLE_OBJECTS.include?(candidate.value.upcase)
+              if candidate && TABLE_OBJECTS.include?(candidate[VALUE_INDEX].upcase)
                 object_type_token = candidate
                 break
-              elsif candidate && %w[UNIQUE CLUSTERED DISTINCT].include?(candidate.value.upcase)
+              elsif candidate && %w[UNIQUE CLUSTERED DISTINCT].include?(candidate[VALUE_INDEX].upcase)
                 # Skip modifiers
                 search_index += 1
               else
@@ -333,15 +348,15 @@ module OpenTelemetry
             end
 
             if object_type_token
-              { processed: true, parts: ["#{token.value} #{object_type_token.value.upcase}"], new_state: EXPECT_COLLECTION_STATE, next_index: search_index + 1 }
+              { processed: true, parts: ["#{token[VALUE_INDEX]} #{object_type_token[VALUE_INDEX].upcase}"], new_state: EXPECT_COLLECTION_STATE, next_index: search_index + 1 }
             else
-              add_to_summary(token.value, PARSING_STATE, index + 1)
+              add_to_summary(token[VALUE_INDEX], PARSING_STATE, index + 1)
             end
           end
 
           def handle_ddl_with_if_exists(token, tokens, index)
             # Handle patterns like "DROP USER IF EXISTS name" or "CREATE TABLE IF NOT EXISTS name"
-            operation = token.value
+            operation = token[VALUE_INDEX]
 
             # Look for patterns:
             # 1. DROP OBJECT_TYPE IF EXISTS name -> DROP OBJECT_TYPE name
@@ -350,26 +365,26 @@ module OpenTelemetry
 
             # Case 1: DROP OBJECT_TYPE IF EXISTS name
             next_token = tokens[index + 1]
-            if next_token && TABLE_OBJECTS.include?(next_token.value.upcase)
-              object_type = next_token.value
-              if tokens[index + 2]&.value&.upcase == 'IF' &&
-                 tokens[index + 3]&.value&.upcase == 'EXISTS'
+            if next_token && TABLE_OBJECTS.include?(next_token[VALUE_INDEX].upcase)
+              object_type = next_token[VALUE_INDEX]
+              if tokens[index + 2] && tokens[index + 2][VALUE_INDEX]&.upcase == 'IF' &&
+                 tokens[index + 3] && tokens[index + 3][VALUE_INDEX]&.upcase == 'EXISTS'
                 object_name = tokens[index + 4]
                 if object_name
-                  return { processed: true, parts: ["#{operation} #{object_type.upcase} #{object_name.value}"], new_state: PARSING_STATE, next_index: index + 5 }
+                  return { processed: true, parts: ["#{operation} #{object_type.upcase} #{object_name[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 5 }
                 end
               end
             end
 
             # Case 2: CREATE TABLE IF NOT EXISTS name
-            if operation.upcase == 'CREATE' && next_token && TABLE_OBJECTS.include?(next_token.value.upcase)
-              object_type = next_token.value
-              if tokens[index + 2]&.value&.upcase == 'IF' &&
-                 tokens[index + 3]&.value&.upcase == 'NOT' &&
-                 tokens[index + 4]&.value&.upcase == 'EXISTS'
+            if operation.upcase == 'CREATE' && next_token && TABLE_OBJECTS.include?(next_token[VALUE_INDEX].upcase)
+              object_type = next_token[VALUE_INDEX]
+              if tokens[index + 2] && tokens[index + 2][VALUE_INDEX]&.upcase == 'IF' &&
+                 tokens[index + 3] && tokens[index + 3][VALUE_INDEX]&.upcase == 'NOT' &&
+                 tokens[index + 4] && tokens[index + 4][VALUE_INDEX]&.upcase == 'EXISTS'
                 object_name = tokens[index + 5]
                 if object_name
-                  return { processed: true, parts: ["#{operation} #{object_type.upcase} #{object_name.value}"], new_state: PARSING_STATE, next_index: index + 6 }
+                  return { processed: true, parts: ["#{operation} #{object_type.upcase} #{object_name[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 6 }
                 end
               end
             end
@@ -382,9 +397,9 @@ module OpenTelemetry
             # Handle EXEC/EXECUTE operations - get the procedure name
             next_token = tokens[index + 1]
             if next_token && identifier_like?(next_token)
-              { processed: true, parts: ["#{token.value} #{next_token.value}"], new_state: PARSING_STATE, next_index: index + 2 }
+              { processed: true, parts: ["#{token[VALUE_INDEX]} #{next_token[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 2 }
             else
-              add_to_summary(token.value, PARSING_STATE, index + 1)
+              add_to_summary(token[VALUE_INDEX], PARSING_STATE, index + 1)
             end
           end
 
@@ -394,21 +409,21 @@ module OpenTelemetry
             table_token = tokens[index + 1]
             set_token = tokens[index + 2]
 
-            if table_token && set_token&.value&.upcase == 'SET'
+            if table_token && set_token && set_token[VALUE_INDEX]&.upcase == 'SET'
               # Check if there's a parenthesized constant pattern after SET
               assignment_part = tokens[index + 3..-1] || []
-              has_parenthesized_constant = assignment_part.any? { |t| t.value == '(' }
+              has_parenthesized_constant = assignment_part.any? { |t| t[VALUE_INDEX] == '(' }
 
-              if has_parenthesized_constant && table_token.value.length == 1
+              if has_parenthesized_constant && table_token[VALUE_INDEX].length == 1
                 # For single-char table names with parenthesized constants, return just UPDATE
-                add_to_summary(token.value, PARSING_STATE, index + 1)
+                add_to_summary(token[VALUE_INDEX], PARSING_STATE, index + 1)
               else
                 # Standard UPDATE with table name
-                add_to_summary(token.value, EXPECT_COLLECTION_STATE, index + 1)
+                add_to_summary(token[VALUE_INDEX], EXPECT_COLLECTION_STATE, index + 1)
               end
             else
               # Default UPDATE handling
-              add_to_summary(token.value, EXPECT_COLLECTION_STATE, index + 1)
+              add_to_summary(token[VALUE_INDEX], EXPECT_COLLECTION_STATE, index + 1)
             end
           end
 
@@ -416,7 +431,7 @@ module OpenTelemetry
             # Check if AS appears after DDL operations by looking at previous tokens
             # Use a larger lookback window to handle complex parameter lists
             recent_tokens = tokens[0...index] || []
-            has_ddl_operation = recent_tokens.any? { |t| %w[CREATE ALTER].include?(t.value.upcase) }
+            has_ddl_operation = recent_tokens.any? { |t| %w[CREATE ALTER].include?(t[VALUE_INDEX].upcase) }
 
             if has_ddl_operation
               { processed: true, parts: [], new_state: DDL_BODY_STATE, next_index: index + 1 }

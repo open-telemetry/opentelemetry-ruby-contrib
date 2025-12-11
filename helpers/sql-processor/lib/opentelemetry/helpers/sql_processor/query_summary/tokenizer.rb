@@ -16,9 +16,13 @@ module OpenTelemetry
       #
       # @example
       #   tokens = Tokenizer.tokenize("SELECT * FROM users WHERE id = 1")
-      #   # Returns tokens: [keyword: SELECT], [operator: *], [keyword: FROM], etc.
+      #   # Returns tokens: [:keyword, "SELECT"], [:operator, "*"], [:keyword, "FROM"], etc.
       class Tokenizer
-        # Token holds the type (e.g., :keyword) and value (e.g., "SELECT")
+        # Token is represented as [type, value] array for performance
+        #
+        # Token format: [symbol, string] where:
+        #   [0] = token type (symbol)
+        #   [1] = token value (string, frozen for performance)
         #
         # Token Types:
         #   :keyword           - SELECT, FROM, WHERE, CREATE, etc.
@@ -27,7 +31,6 @@ module OpenTelemetry
         #   :operator          - =, <, >, +, -, *, (, ), ;
         #   :numeric           - 123, -45.67, 1.2e-4, 0xFF
         #   :string            - 'literal text', 'O''Brien'
-        Token = Struct.new(:type, :value)
 
         KEYWORDS_ARRAY = %w[
           # Core DML operations
@@ -77,20 +80,20 @@ module OpenTelemetry
             case
             when (operator = scanner.scan(%r{<=|>=|<>|!=|[=<>+\-*/%,;()!?]}))
               # SQL operators: comparison (<=, >=, <>, !=), equality (=), arithmetic (+, -, *, /), punctuation
-              tokens << Token.new(:operator, operator)
+              tokens << [:operator, operator.freeze]
             when (number = scanner.scan(/[+-]?(?:\d+\.?\d*(?:[eE][+-]?\d+)?|0x[0-9a-fA-F]+|\.\d+(?:[eE][+-]?\d+)?)/))
               # Numbers: signed integers, decimals, scientific notation (1.23e-4), hex (0xFF)
-              tokens << Token.new(:numeric, number)
+              tokens << [:numeric, number.freeze]
             when (string_literal = scanner.scan(/'(?:''|[^'\r\n])*'/))
               # String literals with escaped quotes ('John''s Car')
-              tokens << Token.new(:string, string_literal)
+              tokens << [:string, string_literal.freeze]
             when (quoted_name = scanner.scan(/"(?:""|[^"\r\n])*"|`(?:``|[^`\r\n])*`|\[(?:[^\]\r\n])*\]/))
               # Quoted identifiers: "double", `backtick`, [bracket] for table/column names
-              tokens << Token.new(:quoted_identifier, quoted_name)
+              tokens << [:quoted_identifier, quoted_name.freeze]
             when (identifier = scanner.scan(/@?[a-zA-Z_\u0080-\uffff][a-zA-Z0-9_.\u0080-\uffff]*/u))
               # Identifiers: table names, column names, variables (supports Unicode)
               type = classify_identifier(identifier)
-              tokens << Token.new(type, identifier)
+              tokens << [type, identifier.freeze]
             else
               # Skip unmatched characters
               scanner.getch

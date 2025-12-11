@@ -49,6 +49,17 @@ SQL Query → Tokenizer → Token Stream → Parser → Summary String
 - Supports multiple SQL dialects (MySQL backticks, SQL Server brackets, PostgreSQL quotes)
 - Handles Unicode identifiers and complex string literals
 
+**Token Format:**
+Tokens are represented as `[type, value]` arrays for optimal performance:
+```ruby
+[:keyword, "SELECT"]           # SQL keyword
+[:identifier, "users"]         # Table/column name
+[:quoted_identifier, "`table`"] # Quoted identifier
+[:operator, "="]               # SQL operator
+[:numeric, "123"]              # Number
+[:string, "'text'"]            # String literal
+```
+
 **Token Types:**
 - `:keyword` - SQL keywords (SELECT, FROM, WHERE, etc.)
 - `:identifier` - Table/column names
@@ -187,9 +198,9 @@ QuerySummary.configure_cache(size: 2000)
 - Early exits on malformed queries
 
 **Typical Performance:**
-- Simple queries: ~0.1ms
-- Complex queries: ~1-5ms
-- Cache hits: ~0.01ms
+- Simple queries: ~0.001ms (1000+ queries/second)
+- Complex queries: ~0.003ms (300+ queries/second)
+- Cache hits: ~0.0004ms (2500+ queries/second)
 
 **Memory Usage:**
 - Token overhead: ~50-200 bytes per token
@@ -228,6 +239,7 @@ QuerySummary.configure_cache(size: 1000)  # Default size
 
 # Access internal components (for testing/debugging)
 tokens = QuerySummary::Tokenizer.tokenize("SELECT * FROM users")
+# tokens => [[:keyword, "SELECT"], [:operator, "*"], [:keyword, "FROM"], [:identifier, "users"]]
 summary = QuerySummary::Parser.build_summary_from_tokens(tokens)
 ```
 
