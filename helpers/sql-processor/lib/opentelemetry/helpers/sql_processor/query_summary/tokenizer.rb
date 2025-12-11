@@ -19,6 +19,14 @@ module OpenTelemetry
       #   # Returns tokens: [keyword: SELECT], [operator: *], [keyword: FROM], etc.
       class Tokenizer
         # Token holds the type (e.g., :keyword) and value (e.g., "SELECT")
+        #
+        # Token Types:
+        #   :keyword           - SELECT, FROM, WHERE, CREATE, etc.
+        #   :identifier        - table_name, column_name, @variable, schema.table
+        #   :quoted_identifier - "table", `column`, [index]
+        #   :operator          - =, <, >, +, -, *, (, ), ;
+        #   :numeric           - 123, -45.67, 1.2e-4, 0xFF
+        #   :string            - 'literal text', 'O''Brien'
         Token = Struct.new(:type, :value)
 
         KEYWORDS_ARRAY = %w[
