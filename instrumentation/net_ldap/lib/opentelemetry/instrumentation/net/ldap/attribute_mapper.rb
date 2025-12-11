@@ -10,7 +10,7 @@ module OpenTelemetry
       module LDAP
         # attribute mapper to redact sensitive keys
         class AttributeMapper
-          SENSITIVE_KEYS = %w[userPassword unicodePwd lmPassword ntPassword authPassword krbPrincipalKey sambaNTPassword sambaLMPassword].freeze
+          SENSITIVE_KEYS = %w[userPassword unicodePwd lmPassword msDS-ManagedPassword ntPassword authPassword krbPrincipalKey sambaNTPassword sambaLMPassword].freeze
 
           def self.redact(_value)
             '[REDACTED]'

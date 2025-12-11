@@ -31,7 +31,11 @@ module OpenTelemetry
               'ldap.auth.method' => auth[:method].to_s,
               'ldap.auth.username' => auth[:username].to_s,
               'ldap.operation.type' => operation_type,
-              'ldap.request.message' => payload.to_json,
+              'ldap.request.message' => begin
+                 payload.to_json
+              rescue JSON::GeneratorError
+                'Could not generate JSON'
+              end,
               'ldap.tree.base' => base,
               OpenTelemetry::SemConv::SERVER::SERVER_ADDRESS => host || hosts,
               OpenTelemetry::SemConv::SERVER::SERVER_PORT => port,
