@@ -32,7 +32,7 @@ module OpenTelemetry
               'ldap.auth.username' => auth[:username].to_s,
               'ldap.operation.type' => operation_type,
               'ldap.request.message' => begin
-                 payload.to_json
+                payload.to_json
               rescue JSON::GeneratorError
                 'Could not generate JSON'
               end,
