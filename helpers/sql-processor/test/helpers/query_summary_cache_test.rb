@@ -108,4 +108,36 @@ class CacheTest < Minitest::Test
     # Verify we can still retrieve a stressed key
     assert_equal 'thread_0_iteration_0', @cache.fetch('stress_key_0')
   end
+
+def test_lru_eviction_behavior
+    lru_cache = OpenTelemetry::Helpers::QuerySummary::Cache.new(size: 2)
+
+    # 1. Fill cache to capacity (A is LRU)
+    lru_cache.fetch('A') { 'valueA' }
+    lru_cache.fetch('B') { 'valueB' }
+    # Cache state: [LRU] A -> B [MRU]
+
+    # 2. Access A to make it Most Recently Used
+    result = lru_cache.fetch('A') { 'should_not_execute' }
+    assert_equal 'valueA', result
+    # Cache state: [LRU] B -> A [MRU] (B is now the least recently used key)
+
+    # 3. Add new key C - should evict B (the LRU key)
+    lru_cache.fetch('C') { 'valueC' }
+    # Cache state: [LRU] A -> C [MRU] (B is evicted, C is new MRU)
+
+    # 4. Verify B was evicted (forces a cache miss)
+    result = lru_cache.fetch('B') { 'newB' }
+    assert_equal 'newB', result # Block should execute (cache miss)
+    
+    # New key B is added, which evicts A (now the LRU key)
+    # Cache state: [LRU] C -> B [MRU] (A is evicted, B is new MRU)
+
+    # 5. Verify C and B are present
+    # Check C (was LRU, now should still be present)
+    assert_equal 'valueC', lru_cache.fetch('C') { 'should_not_execute' }
+    
+    # Check B (just added)
+    assert_equal 'newB', lru_cache.fetch('B') { 'should_not_execute' }
+  end
 end

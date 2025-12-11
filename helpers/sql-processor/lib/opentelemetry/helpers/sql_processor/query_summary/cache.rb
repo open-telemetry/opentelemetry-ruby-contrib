@@ -10,7 +10,8 @@ module OpenTelemetry
       # Cache provides thread-safe LRU caching for query summaries.
       #
       # Stores generated query summaries to avoid reprocessing identical queries.
-      # Uses mutex synchronization for thread safety.
+      # When cache reaches maximum size, least recently used entries are evicted first (LRU).
+      # Uses mutex synchronization for thread safety in concurrent applications.
       #
       # @example
       #   cache = Cache.new
@@ -24,9 +25,19 @@ module OpenTelemetry
           @cache_size = size
         end
 
+        # Retrieves cached value or computes and caches new value.
+        #
+        # @param key [Object] Cache key (typically SQL query string)
+        # @yield Block to execute if key not found in cache
+        # @return [Object] Cached value or result of block execution
         def fetch(key)
           @cache_mutex.synchronize do
-            return @cache[key] if @cache.key?(key)
+            if @cache.key?(key)
+              # Move to end (most recently used) by deleting and re-inserting
+              value = @cache.delete(key)
+              @cache[key] = value
+              return value
+            end
 
             result = yield
             evict_if_needed
