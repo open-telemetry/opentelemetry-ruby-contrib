@@ -115,6 +115,30 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['server.address']).must_equal 'test.mocked.com'
         _(span.attributes['server.port']).must_equal 636
       end
+
+      it 'should not throw an error when JSON could not be generated' do
+        ldap.connection = FakeConnection.new
+        binary_objectsid = Random.new(Minitest.seed).bytes(16).force_encoding(Encoding::BINARY)
+        filter = Net::LDAP::Filter.eq('objectSid', binary_objectsid)
+        assert ldap.search(filter: filter)
+
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'LDAP search'
+        _(span.kind).must_equal :client
+        _(span.attributes['ldap.auth.username']).must_equal 'test_user'
+        _(span.attributes['ldap.auth.method']).must_equal 'simple'
+        _(span.attributes.values).wont_include 'test_password'
+        _(span.attributes['ldap.operation.type']).must_equal 'search'
+        _(span.attributes['ldap.request.message']).must_equal 'Could not generate JSON'
+        _(span.attributes['ldap.response.status_code']).must_equal 0
+        _(span.attributes['ldap.tree.base']).must_equal 'dc=com'
+        _(span.attributes['network.protocol.name']).must_equal 'ldap'
+        _(span.attributes['network.protocol.version']).must_equal 3
+        _(span.attributes['network.transport']).must_equal 'tcp'
+        _(span.attributes['peer.service']).must_equal 'test:ldap'
+        _(span.attributes['server.address']).must_equal 'test.mocked.com'
+        _(span.attributes['server.port']).must_equal 636
+      end
     end
 
     describe 'when error happens' do
