@@ -13,9 +13,14 @@ module OpenTelemetry
       # When cache reaches maximum size, least recently used entries are evicted first (LRU).
       # Uses mutex synchronization for thread safety in concurrent applications.
       #
-      # @example
+      # @example Basic usage
       #   cache = Cache.new
       #   cache.fetch("SELECT * FROM users") { "SELECT users" } # => "SELECT users"
+      #   cache.fetch("SELECT * FROM users") { "won't execute" } # => "SELECT users" (cached)
+      #
+      # @example Custom size and configuration
+      #   cache = Cache.new(size: 500)
+      #   cache.configure(size: 100)  # Resize and clear if needed
       class Cache
         DEFAULT_SIZE = 1000
 
@@ -46,12 +51,21 @@ module OpenTelemetry
           end
         end
 
-        private
-
+        # Configures the cache with a new size limit.
+        #
+        # If the new size is smaller than the current number of cached entries,
+        # the cache is cleared completely to ensure it fits within the new limit.
+        #
+        # @param size [Integer] Maximum number of entries to cache (default: 1000)
+        # @return [void]
         def configure(size: DEFAULT_SIZE)
-          @cache_size = size
-          @cache.clear if @cache.size > size
+          @cache_mutex.synchronize do
+            @cache_size = size
+            @cache.clear if @cache.size > size
+          end
         end
+
+        private
 
         def clear
           @cache.clear
