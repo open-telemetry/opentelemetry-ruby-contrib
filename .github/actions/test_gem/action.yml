@@ -72,6 +72,14 @@ runs:
           fi
         fi
 
+    - name: Configure local gem development
+      shell: bash
+      run: |
+        # 🔧 Configure Bundler for local gems 🔧
+        # Create a git reference for the main branch to satisfy bundler
+        git branch main 2>/dev/null || git branch -f main HEAD
+        bash bin/setup-local-dev
+
     # Install ImageMagick for active_storage testing.
     # Unfortunately, as of ubuntu-24.04, ImageMagick is no longer pre-installed in Github Actions.
     # See https://github.com/actions/runner-images/issues/10772
