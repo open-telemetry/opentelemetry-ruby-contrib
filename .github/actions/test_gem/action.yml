@@ -48,7 +48,7 @@ runs:
       shell: bash
       run: |
         # 🛠️ Setup 🛠️
-        dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
+        dir=$(find . -path ./vendor -prune -o -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
         # We install multiple ruby versions here, and that makes for some
