@@ -35,6 +35,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
     stub_request(:get, 'http://example.com/success?hello=there').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'https://example.com/timeout').to_timeout
+    stub_request(:get, 'http://example.com/users/123').to_return(status: 200)
   end
 
   after do
@@ -269,6 +270,24 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       assert_requested(
         :search,
         'http://example.com/query',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
+
+    it 'uses url.template in span name when present in client context' do
+      client_context_attrs = { 'url.template' => '/users/{id}' }
+      OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+        HTTP.get('http://example.com/users/123')
+      end
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'GET /users/{id}'
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['url.template']).must_equal '/users/{id}'
+      assert_requested(
+        :get,
+        'http://example.com/users/123',
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end

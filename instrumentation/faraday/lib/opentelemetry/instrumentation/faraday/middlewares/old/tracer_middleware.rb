@@ -16,13 +16,12 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def call(env)
-              span_data = HttpHelper.span_attrs_for(env.method, semconv: :old)
+              span_data = HttpHelper.span_attrs_for_old(env.method)
 
               config = Faraday::Instrumentation.instance.config
 
-              attributes = span_creation_attributes(
-                http_method: span_data.normalized_method, url: env.url, config: config
-              )
+              attributes = span_creation_attributes(url: env.url, config: config)
+              attributes.merge!(span_data.attributes)
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
                 tracer.in_span(
@@ -47,18 +46,15 @@ module OpenTelemetry
 
             private
 
-            def span_creation_attributes(http_method:, url:, config:)
+            def span_creation_attributes(url:, config:)
               attrs = {
-                'http.method' => http_method,
                 'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url.to_s),
                 'faraday.adapter.name' => app.class.name
               }
               attrs['net.peer.name'] = url.host if url.host
               attrs['peer.service'] = config[:peer_service] if config[:peer_service]
 
-              attrs.merge!(
-                OpenTelemetry::Common::HTTP::ClientContext.attributes
-              )
+              attrs
             end
 
             # Versions prior to 1.0 do not define an accessor for app
