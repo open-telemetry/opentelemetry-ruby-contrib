@@ -44,7 +44,29 @@ while IFS= read -r gemspec_path; do
   ALL_GEM_NAMES+=("$GEM_NAME")
 done < <(find "$REPO_PATH" -name "*.gemspec" -type f)
 
-echo "Configuring Bundler to use local repository for all gems..."
+echo "Generating bundle configuration template with all gems..."
+echo ""
+
+# Create template config directory with a dummy Gemfile
+TEMPLATE_BUNDLE_DIR="$TEMP_CONFIG_DIR/.bundle"
+mkdir -p "$TEMP_CONFIG_DIR"
+cd "$TEMP_CONFIG_DIR"
+
+# Create a minimal Gemfile so bundle config works
+echo "source 'https://rubygems.org'" > Gemfile
+
+# Configure bundle settings in template
+bundle config --local disable_local_branch_check true >/dev/null 2>&1
+bundle config --local disable_local_revision_check true >/dev/null 2>&1
+
+# Configure local override for ALL gems in the template
+for GEM_NAME in "${ALL_GEM_NAMES[@]}"; do
+  bundle config --local "local.$GEM_NAME" "$REPO_PATH" >/dev/null 2>&1
+done
+
+echo "[OK] Template configuration generated with ${#ALL_GEM_NAMES[@]} gems"
+echo ""
+echo "Copying configuration to gem directories..."
 echo ""
 
 DIR_COUNT=0
@@ -55,26 +77,19 @@ while IFS= read -r gemfile_path; do
 
   # Check if this Gemfile has git references to our repo
   if grep -q "git:.*open-telemetry/opentelemetry-ruby-contrib" "$gemfile_path" 2>/dev/null; then
+    # Copy the template config
+    mkdir -p "$GEM_DIR/.bundle"
+    cp "$TEMPLATE_BUNDLE_DIR/config" "$GEM_DIR/.bundle/config"
+
     # Find the gemspec in this directory to exclude it from local overrides
     CURRENT_GEM=""
     if ls "$GEM_DIR"/*.gemspec 1> /dev/null 2>&1; then
       CURRENT_GEM=$(basename "$GEM_DIR"/*.gemspec .gemspec 2>/dev/null | head -1)
+
+      # Remove the current gem's local override by deleting the line from the config file
+      CONFIG_KEY=$(echo "$CURRENT_GEM" | sed 's/[-_]/___/g' | tr '[:lower:]' '[:upper:]')
+      sed -i '' "/^BUNDLE_LOCAL__${CONFIG_KEY}:/d" "$GEM_DIR/.bundle/config"
     fi
-
-    mkdir -p "$GEM_DIR/.bundle"
-    CONFIG_FILE="$GEM_DIR/.bundle/config"
-
-    echo "---" > "$CONFIG_FILE"
-    echo "BUNDLE_DISABLE_LOCAL_BRANCH_CHECK: \"true\"" >> "$CONFIG_FILE"
-    echo "BUNDLE_DISABLE_LOCAL_REVISION_CHECK: \"true\"" >> "$CONFIG_FILE"
-
-    # Configure local override for each gem EXCEPT the current one
-    for GEM_NAME in "${ALL_GEM_NAMES[@]}"; do
-      if [ "$GEM_NAME" != "$CURRENT_GEM" ]; then
-        CONFIG_KEY=$(echo "$GEM_NAME" | sed 's/[-_]/___/g' | tr '[:lower:]' '[:upper:]')
-        echo "BUNDLE_LOCAL__${CONFIG_KEY}: \"$REPO_PATH\"" >> "$CONFIG_FILE"
-      fi
-    done
 
     echo "  [OK] Configured $(basename $GEM_DIR) (excluded: $CURRENT_GEM)"
     ((DIR_COUNT++))
