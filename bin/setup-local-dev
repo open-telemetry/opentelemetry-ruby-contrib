@@ -89,7 +89,12 @@ while IFS= read -r gemfile_path; do
 
       # Remove the current gem's local override by deleting the line from the config file
       CONFIG_KEY=$(echo "$CURRENT_GEM" | sed 's/[-_]/___/g' | tr '[:lower:]' '[:upper:]')
-      sed -i '' "/^BUNDLE_LOCAL__${CONFIG_KEY}:/d" "$GEM_DIR/.bundle/config"
+      # Use different sed syntax for macOS vs Linux
+      if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "/^BUNDLE_LOCAL__${CONFIG_KEY}:/d" "$GEM_DIR/.bundle/config"
+      else
+        sed -i "/^BUNDLE_LOCAL__${CONFIG_KEY}:/d" "$GEM_DIR/.bundle/config"
+      fi
     fi
 
     echo "  [OK] Configured $(basename $GEM_DIR) (excluded: $CURRENT_GEM)"
