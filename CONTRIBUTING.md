@@ -72,7 +72,7 @@ This configures all gems in the repository to use local overrides, allowing you 
 bin/setup-local-dev --clean
 ```
 
-See [docs/local-development.md](docs/local-development.md) for more details.
+See [guides/local-development.md](guides/local-development.md) for more details.
 
 For more detailed information on this workflow read the
 [GitHub Workflow][otel-github-workflow].
