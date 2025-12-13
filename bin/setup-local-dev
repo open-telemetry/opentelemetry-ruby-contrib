@@ -3,6 +3,7 @@
 # This script configures Bundler to use your local repository for gem dependencies
 
 REPO_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TEMP_CONFIG_DIR="$REPO_PATH/.bundle-template"
 
 # Check if --clean flag is provided
 if [ "$1" = "--clean" ]; then
@@ -10,17 +11,22 @@ if [ "$1" = "--clean" ]; then
   echo "======================================================================"
   echo ""
 
-  GEM_COUNT=0
+  DIR_COUNT=0
+
+  # Clean config in each gem directory
   while IFS= read -r gemspec_path; do
-    GEM_NAME=$(basename "$gemspec_path" .gemspec)
-    bundle config --delete "local.$GEM_NAME" 2>/dev/null && {
-      echo "  [OK] Removed local.$GEM_NAME"
-      ((GEM_COUNT++))
-    } || true
+    GEM_DIR=$(dirname "$gemspec_path")
+
+    if [ -d "$GEM_DIR/.bundle" ]; then
+      rm -rf "$GEM_DIR/.bundle"
+      ((DIR_COUNT++))
+    fi
   done < <(find "$REPO_PATH" -name "*.gemspec" -type f)
 
-  echo ""
-  echo "[OK] Removed $GEM_COUNT local gem configurations."
+  # Clean template directory
+  rm -rf "$TEMP_CONFIG_DIR"
+
+  echo "[OK] Removed .bundle directories from $DIR_COUNT gem directories."
   echo ""
   exit 0
 fi
@@ -31,26 +37,57 @@ echo ""
 echo "Repository path: $REPO_PATH"
 echo ""
 
-# Find all gemspec files and configure bundle to use local repository for each gem
-echo "Configuring Bundler to use local repository for all gems..."
-echo ""
+# Generate template bundle config once
+echo "Generating bundle configuration template..."
+mkdir -p "$TEMP_CONFIG_DIR/.bundle"
+cd "$REPO_PATH"
+
+# Create the config file directly
+CONFIG_FILE="$TEMP_CONFIG_DIR/.bundle/config"
+echo "---" > "$CONFIG_FILE"
+
+# Disable local branch and revision checking to allow working on any branch/commit
+echo "BUNDLE_DISABLE_LOCAL_BRANCH_CHECK: \"true\"" >> "$CONFIG_FILE"
+echo "BUNDLE_DISABLE_LOCAL_REVISION_CHECK: \"true\"" >> "$CONFIG_FILE"
 
 GEM_COUNT=0
 while IFS= read -r gemspec_path; do
-  # Extract gem name from gemspec filename
   GEM_NAME=$(basename "$gemspec_path" .gemspec)
-
-  # Configure bundle to use local repository for this gem
-  if bundle config "local.$GEM_NAME" "$REPO_PATH" >/dev/null 2>&1; then
-    echo "  [OK] Configured local.$GEM_NAME"
-    ((GEM_COUNT++))
-  else
-    echo "  [FAILED] Failed to configure local.$GEM_NAME"
-  fi
+  # Convert gem name to bundle config format (replace - and _ with ___)
+  CONFIG_KEY=$(echo "$GEM_NAME" | sed 's/[-_]/___/g' | tr '[:lower:]' '[:upper:]')
+  echo "BUNDLE_LOCAL__${CONFIG_KEY}: \"$REPO_PATH\"" >> "$CONFIG_FILE"
+  ((GEM_COUNT++))
 done < <(find "$REPO_PATH" -name "*.gemspec" -type f)
 
+echo "[OK] Generated configuration with $GEM_COUNT local gem references"
 echo ""
-echo "[OK] Configuration complete! Configured $GEM_COUNT gems."
+
+# Copy template to each gem directory that has git dependencies
+echo "Copying configuration to gem directories..."
+echo ""
+
+DIR_COUNT=0
+
+# Find all directories with Gemfiles that reference git sources
+while IFS= read -r gemfile_path; do
+  GEM_DIR=$(dirname "$gemfile_path")
+
+  # Check if this Gemfile has git references to our repo
+  if grep -q "git:.*open-telemetry/opentelemetry-ruby-contrib" "$gemfile_path" 2>/dev/null; then
+    mkdir -p "$GEM_DIR/.bundle"
+    cp "$TEMP_CONFIG_DIR/.bundle/config" "$GEM_DIR/.bundle/config"
+    echo "  [OK] Configured $(basename $GEM_DIR)"
+    ((DIR_COUNT++))
+  fi
+
+done < <(find "$REPO_PATH" -name "Gemfile" -type f)
+
+# Clean up template
+rm -rf "$TEMP_CONFIG_DIR"
+
+echo ""
+echo "[OK] Configuration complete!"
+echo "[OK] Configured $DIR_COUNT gem directories with git dependencies"
 echo ""
 echo "You can now work on any gem and your changes will be"
 echo "immediately available to dependent gems."
@@ -64,7 +101,7 @@ echo ""
 echo "Your local changes from instrumentation/base will be used!"
 echo ""
 echo "To verify your configuration:"
-echo "  bundle config local.opentelemetry-instrumentation-base"
+echo "  cd instrumentation/rails && bundle config local.opentelemetry-instrumentation-base"
 echo ""
 echo "To remove all local overrides:"
 echo "  $REPO_PATH/bin/setup-local-dev --clean"
