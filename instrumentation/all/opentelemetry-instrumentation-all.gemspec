@@ -27,7 +27,6 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.2'
 
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.24.0'
-  spec.add_dependency 'opentelemetry-instrumentation-anthropic', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_lambda', '~> 0.6.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.11.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.24.0'
