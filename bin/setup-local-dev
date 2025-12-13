@@ -47,27 +47,23 @@ done < <(find "$REPO_PATH" -name "*.gemspec" -type f)
 echo "Generating bundle configuration template with all gems..."
 echo ""
 
-# Create template config directory with a dummy Gemfile
-mkdir -p "$TEMP_CONFIG_DIR"
-cd "$TEMP_CONFIG_DIR"
+# Create template config directory
+mkdir -p "$TEMP_CONFIG_DIR/.bundle"
 
-# Create a minimal Gemfile so bundle config works
-echo "source 'https://rubygems.org'" > Gemfile
+# Generate the .bundle/config file manually as YAML
+cat > "$TEMP_CONFIG_DIR/.bundle/config" << EOF
+---
+BUNDLE_DISABLE_LOCAL_BRANCH_CHECK: "true"
+BUNDLE_DISABLE_LOCAL_REVISION_CHECK: "true"
+EOF
 
-# Configure bundle settings in template
-bundle config --local disable_local_branch_check true >/dev/null 2>&1
-bundle config --local disable_local_revision_check true >/dev/null 2>&1
-
-# Configure local override for ALL gems in the template
+# Add local overrides for ALL gems to the template
 for GEM_NAME in "${ALL_GEM_NAMES[@]}"; do
-  bundle config --local "local.$GEM_NAME" "$REPO_PATH" >/dev/null 2>&1
+  # Convert gem name to bundle config key format:
+  # hyphens and underscores become triple underscores, then uppercase
+  CONFIG_KEY=$(echo "$GEM_NAME" | sed 's/[-_]/___/g' | tr '[:lower:]' '[:upper:]')
+  echo "BUNDLE_LOCAL__${CONFIG_KEY}: \"$REPO_PATH\"" >> "$TEMP_CONFIG_DIR/.bundle/config"
 done
-
-# Verify the config file was created
-if [ ! -f "$TEMP_CONFIG_DIR/.bundle/config" ]; then
-  echo "[FAILED] Template configuration file was not created"
-  exit 1
-fi
 
 echo "[OK] Template configuration generated with ${#ALL_GEM_NAMES[@]} gems"
 echo ""
