@@ -129,9 +129,6 @@ runs:
       shell: bash
       run: |
         # 🍿 Test Gem 🍿
-        echo "Bundle configuration:"
-        bundle config
-        echo ""
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
             echo "::group::🔎 Appraising ${i}"
@@ -141,6 +138,8 @@ runs:
             echo "::endgroup::"
           done
         else
+          echo "Installed gems:"
+          bundle show
           bundle exec rake test
         fi
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
