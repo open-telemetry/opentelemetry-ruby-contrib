@@ -129,6 +129,9 @@ runs:
       shell: bash
       run: |
         # 🍿 Test Gem 🍿
+        echo "Bundle configuration:"
+        bundle config
+        echo ""
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
             echo "::group::🔎 Appraising ${i}"
