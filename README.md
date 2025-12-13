@@ -20,7 +20,7 @@ We'd love your help! Use tags [good first issue][issues-good-first-issue] and
 
 Please review the [contribution instructions](CONTRIBUTING.md) for important
 information on setting up your environment, running the tests, and opening pull
-requests.
+requests. For local development setup, see the [local development guide](docs/local-development.md).
 
 The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 [community page][ruby-sig] repo for information on this and other language SIGs.

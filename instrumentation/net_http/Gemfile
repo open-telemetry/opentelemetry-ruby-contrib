@@ -21,7 +21,7 @@ group :test do
   gem 'webmock', '~> 3.24'
   gem 'yard', '~> 0.9'
   gem 'rspec-mocks'
-  gem 'opentelemetry-instrumentation-base', path: '../base'
+  gem 'opentelemetry-instrumentation-base', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'instrumentation/base/*.gemspec'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'mutex_m'

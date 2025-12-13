@@ -1,0 +1,72 @@
+#!/bin/bash
+# Setup script for local development with OpenTelemetry Ruby Contrib
+# This script configures Bundler to use your local repository for gem dependencies
+
+REPO_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Check if --clean flag is provided
+if [ "$1" = "--clean" ]; then
+  echo "OpenTelemetry Ruby Contrib - Removing Local Development Configuration"
+  echo "======================================================================"
+  echo ""
+
+  GEM_COUNT=0
+  while IFS= read -r gemspec_path; do
+    GEM_NAME=$(basename "$gemspec_path" .gemspec)
+    bundle config --delete "local.$GEM_NAME" 2>/dev/null && {
+      echo "  [OK] Removed local.$GEM_NAME"
+      ((GEM_COUNT++))
+    } || true
+  done < <(find "$REPO_PATH" -name "*.gemspec" -type f)
+
+  echo ""
+  echo "[OK] Removed $GEM_COUNT local gem configurations."
+  echo ""
+  exit 0
+fi
+
+echo "OpenTelemetry Ruby Contrib - Local Development Setup"
+echo "===================================================="
+echo ""
+echo "Repository path: $REPO_PATH"
+echo ""
+
+# Find all gemspec files and configure bundle to use local repository for each gem
+echo "Configuring Bundler to use local repository for all gems..."
+echo ""
+
+GEM_COUNT=0
+while IFS= read -r gemspec_path; do
+  # Extract gem name from gemspec filename
+  GEM_NAME=$(basename "$gemspec_path" .gemspec)
+
+  # Configure bundle to use local repository for this gem
+  if bundle config "local.$GEM_NAME" "$REPO_PATH" >/dev/null 2>&1; then
+    echo "  [OK] Configured local.$GEM_NAME"
+    ((GEM_COUNT++))
+  else
+    echo "  [FAILED] Failed to configure local.$GEM_NAME"
+  fi
+done < <(find "$REPO_PATH" -name "*.gemspec" -type f)
+
+echo ""
+echo "[OK] Configuration complete! Configured $GEM_COUNT gems."
+echo ""
+echo "You can now work on any gem and your changes will be"
+echo "immediately available to dependent gems."
+echo ""
+echo "Example workflow:"
+echo "  1. Edit code in instrumentation/base/"
+echo "  2. cd instrumentation/rails/"
+echo "  3. bundle install"
+echo "  4. bundle exec rake test"
+echo ""
+echo "Your local changes from instrumentation/base will be used!"
+echo ""
+echo "To verify your configuration:"
+echo "  bundle config local.opentelemetry-instrumentation-base"
+echo ""
+echo "To remove all local overrides:"
+echo "  $REPO_PATH/bin/setup-local-dev --clean"
+echo ""
+echo "For more information, see docs/local-development.md"
