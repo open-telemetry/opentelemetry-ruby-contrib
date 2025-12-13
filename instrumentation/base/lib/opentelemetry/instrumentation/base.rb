@@ -114,7 +114,6 @@ module OpenTelemetry
         # @yieldparam [Hash] config The instrumentation config will be yielded to the
         #   install block
         def install(&blk)
-          warn 'WE ARE USING LOCAL REFERENCES!!!!'
           @install_blk = blk
         end
 
