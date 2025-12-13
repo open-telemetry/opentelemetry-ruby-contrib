@@ -34,8 +34,9 @@ words:
   - faas
   - fanout
   - faraday
-  - gettime
   - gemfile
+  - gemspecs
+  - gettime
   - Gitter
   - gruf
   - hibachrach
@@ -60,6 +61,7 @@ words:
   - Railtie
   - Rakefile
   - Reopelle
+  - renovatebot
   - rdkafka
   - resque
   - restclient
