@@ -9,10 +9,10 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'opentelemetry-instrumentation-base', path: '../base'
-  gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
-  gem 'opentelemetry-helpers-mysql', path: '../../helpers/mysql'
-  gem 'opentelemetry-helpers-sql-processor', path: '../../helpers/sql-processor'
+  gem 'opentelemetry-instrumentation-base', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'instrumentation/base/*.gemspec'
+  gem 'opentelemetry-helpers-sql', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'helpers/sql/*.gemspec'
+  gem 'opentelemetry-helpers-mysql', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'helpers/mysql/*.gemspec'
+  gem 'opentelemetry-helpers-sql-processor', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'helpers/sql-processor/*.gemspec'
   gem 'appraisal', '~> 2.5'
   gem 'bundler', '~> 2.4'
   gem 'minitest', '~> 5.0'
