@@ -58,6 +58,22 @@ or
 git remote add upstream https://github.com/open-telemetry/opentelemetry-ruby-contrib.git
 ```
 
+### Configure local gem overrides
+
+This repository uses Git sources for internal gem dependencies. To enable local development without pushing to GitHub, run the setup script to configure Bundler to use your local repository:
+
+```sh
+bin/setup-local-dev
+```
+
+This configures all gems in the repository to use local overrides, allowing you to make changes across multiple gems and have them immediately reflected when running tests. To remove the configuration, run:
+
+```sh
+bin/setup-local-dev --clean
+```
+
+See [guides/local-development.md](guides/local-development.md) for more details.
+
 For more detailed information on this workflow read the
 [GitHub Workflow][otel-github-workflow].
 

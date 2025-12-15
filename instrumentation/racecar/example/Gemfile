@@ -7,7 +7,7 @@
 source 'https://rubygems.org'
 
 gem 'activesupport'
-gem 'opentelemetry-instrumentation-base', path: '../../base'
-gem 'opentelemetry-instrumentation-racecar', path: '../'
+gem 'opentelemetry-instrumentation-base', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'instrumentation/../base/*.gemspec'
+gem 'opentelemetry-instrumentation-racecar', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'instrumentation/racecar/*.gemspec'
 gem 'opentelemetry-sdk'
 gem 'racecar'

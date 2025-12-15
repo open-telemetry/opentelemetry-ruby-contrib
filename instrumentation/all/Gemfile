@@ -23,16 +23,21 @@ group :test do
     gem 'mutex_m'
   end
 
-  Dir.entries('../../helpers')
-     .select { |entry| File.directory?(File.join('../../helpers', entry)) }
-     .reject { |entry| %w[. ..].include?(entry) } # rubocop:disable Performance/CollectionLiteralInLoop
-     .sort
-     .each { |dir| gem "opentelemetry-helpers-#{dir}", path: "../../helpers/#{dir}" }
+  # Dynamically load all helper gems
+  %w[mysql sql sql-obfuscation sql-processor].each do |dir|
+    gem "opentelemetry-helpers-#{dir}", git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: "helpers/#{dir}/*.gemspec"
+  end
 
-  excluded_instrumentations = %w[. .. all logger]
-  Dir.entries('../')
-     .select { |entry| File.directory?(File.join('../', entry)) }
-     .reject { |entry| excluded_instrumentations.include?(entry) }
-     .sort
-     .each { |dir| gem "opentelemetry-instrumentation-#{dir}", path: "../#{dir}" }
+  # List all instrumentation directories
+  instrumentation_dirs = %w[
+    action_mailer action_pack action_view active_job active_model_serializers
+    active_record active_storage active_support anthropic aws_lambda aws_sdk
+    base bunny concurrent_ruby dalli delayed_job ethon excon factory_bot
+    faraday grape graphql grpc gruf http http_client httpx koala lmdb
+    mongo mysql2 net_http pg que racecar rack rails rake rdkafka redis
+    resque restclient rspec ruby_kafka sidekiq sinatra trilogy
+  ]
+  instrumentation_dirs.each do |dir|
+    gem "opentelemetry-instrumentation-#{dir}", git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: "instrumentation/#{dir}/*.gemspec"
+  end
 end

@@ -2,5 +2,5 @@
 
 source 'https://rubygems.org'
 
-gem 'opentelemetry-instrumentation-aws_lambda', path: '../'
+gem 'opentelemetry-instrumentation-aws_lambda', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'instrumentation/aws_lambda/*.gemspec'
 gem 'opentelemetry-sdk'

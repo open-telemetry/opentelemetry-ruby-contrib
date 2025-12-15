@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 gem 'opentelemetry-api'
 gem 'opentelemetry-common'
-gem 'opentelemetry-instrumentation-rack', path: '../'
+gem 'opentelemetry-instrumentation-rack', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'instrumentation/rack/*.gemspec'
 gem 'opentelemetry-sdk'
 gem 'opentelemetry-sdk-experimental'
 gem 'rack'
