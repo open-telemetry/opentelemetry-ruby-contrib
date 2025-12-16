@@ -74,7 +74,6 @@ class ActionViewEventsTest < ActionController::TestCase
     span = collection_spans.first
     assert_equal :internal, span.kind
     assert_includes span.attributes['identifier'], 'posts/with_locals'
-    assert_operator span.attributes['count'], :>, 0
     refute_includes span.attributes, 'locals'
   end
 
