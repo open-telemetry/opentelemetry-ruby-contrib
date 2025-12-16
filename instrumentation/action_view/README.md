@@ -59,8 +59,8 @@ Attributes that are specific to this instrumentation are recorded for each event
 
 | Attribute Name              | Type    | Notes                                                                                                                                  |
 | --------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `code.filepath`             | String  | Template or partial file path (e.g., `"posts/index"`, `"posts/_form"`)                                                              |
-| `view.layout.code.filepath` | String  | Layout file path (e.g., `"application"`) - only present for `render_template.action_view` events when a layout is used              |
+| `code.filepath`             | String  | Template or partial file path (e.g., `"posts/index"`, `"posts/_form"`)                                                                |
+| `view.layout.code.filepath` | String  | Layout file path (e.g., `"application"`) - only present for `render_template.action_view` events when a layout is used                |
 | `view.collection.count`     | Integer | Number of items rendered - only present for `render_collection.action_view` events                                                    |
 
 **Note:** The `locals` hash parameter is not recorded as an attribute because OpenTelemetry specification v1.10.0 only supports primitive types (string, boolean, numeric, and arrays of primitives) as span attributes, and the locals hash contains complex Ruby objects.
