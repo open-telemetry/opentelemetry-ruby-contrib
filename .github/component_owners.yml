@@ -2,6 +2,8 @@
 components:
   instrumentation/active_storage:
     - ymtdzzz
+  instrumentation/anthropic:
+    - robertlaurin
   instrumentation/aws_sdk:
     - jterapin
     - alextwoods
@@ -25,6 +27,8 @@ components:
     - chrisholmes
   instrumentation/que:
     - indrekj
+  instrumentation/sidekiq:
+    - dmathieu
   processor/baggage:
     - robbkidd
     - mikegoldsmith
