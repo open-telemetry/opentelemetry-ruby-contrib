@@ -47,11 +47,11 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 
 This instrumentation follows OpenTelemetry semantic conventions for view rendering. The Rails ActiveSupport notification payload keys are automatically transformed to semantic convention attribute names:
 
-| Rails Notification Key | Semantic Convention Attribute | Description |
-|------------------------|-------------------------------|-------------|
-| `identifier` | `code.filepath` | The template file path being rendered |
-| `layout` | `view.layout.code.filepath` | The layout template file path (if applicable) |
-| `count` | `view.collection.count` | The number of items in a collection render |
+| Rails Notification Key | Semantic Convention Attribute | Description                                       |
+| ---------------------- | ----------------------------- | ------------------------------------------------- |
+| `identifier`           | `code.filepath`               | The template file path being rendered             |
+| `layout`               | `view.layout.code.filepath`   | The layout template file path (if applicable)     |
+| `count`                | `view.collection.count`       | The number of items in a collection render        |
 
 ### Attributes
 
@@ -59,8 +59,8 @@ Attributes that are specific to this instrumentation are recorded for each event
 
 | Attribute Name              | Type    | Notes                                                                                                                                  |
 | --------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `code.filepath`             | String  | Template or partial file path (e.g., `"posts/index"`, `"posts/_form"`)                                                                |
-| `view.layout.code.filepath` | String  | Layout file path (e.g., `"application"`) - only present for `render_template.action_view` events when a layout is used                |
+| `code.filepath`             | String  | Template or partial file path (e.g., `"posts/index"`, `"posts/_form"`)                                                              |
+| `view.layout.code.filepath` | String  | Layout file path (e.g., `"application"`) - only present for `render_template.action_view` events when a layout is used              |
 | `view.collection.count`     | Integer | Number of items rendered - only present for `render_collection.action_view` events                                                    |
 
 **Note:** The `locals` hash parameter is not recorded as an attribute because OpenTelemetry specification v1.10.0 only supports primitive types (string, boolean, numeric, and arrays of primitives) as span attributes, and the locals hash contains complex Ruby objects.
