@@ -47,4 +47,20 @@ describe OpenTelemetry::Instrumentation::ActionView::Railtie do
       _(instrumentation.config[:legacy_span_names]).must_equal false
     end
   end
+
+  describe 'payload transformation' do
+    it 'transforms mapped keys and omits unmapped keys' do
+      transformed = OpenTelemetry::Instrumentation::ActionView::PAYLOAD_TRANSFORMER.call(
+        { identifier: '/app/views/posts/index.html.erb', layout: 'application', count: 5, custom_key: 'value' }
+      )
+
+      _(transformed['code.filepath']).must_equal '/app/views/posts/index.html.erb'
+      _(transformed['view.layout.code.filepath']).must_equal 'application'
+      _(transformed['view.collection.count']).must_equal 5
+      _(transformed).wont_include 'identifier'
+      _(transformed).wont_include 'layout'
+      _(transformed).wont_include 'count'
+      _(transformed).wont_include 'custom_key'
+    end
+  end
 end

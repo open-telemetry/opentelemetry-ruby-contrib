@@ -31,8 +31,8 @@ class ActionViewEventsTest < ActionController::TestCase
 
     span = template_spans.first
     assert_equal :internal, span.kind
-    assert_includes span.attributes['identifier'], 'posts/index'
-    assert_includes span.attributes['layout'], 'application'
+    assert_includes span.attributes['code.filepath'], 'posts/index'
+    assert_includes span.attributes['view.layout.code.filepath'], 'application'
   end
 
   def test_render_template_without_layout
@@ -41,7 +41,7 @@ class ActionViewEventsTest < ActionController::TestCase
     template_spans = spans.select { |s| s.name == 'render_template.action_view' }
 
     span = template_spans.first
-    assert_includes span.attributes['identifier'], 'posts/api'
+    assert_includes span.attributes['code.filepath'], 'posts/api'
   end
 
   def test_render_partial
@@ -52,7 +52,7 @@ class ActionViewEventsTest < ActionController::TestCase
 
     span = partial_spans.first
     assert_equal :internal, span.kind
-    assert_includes span.attributes['identifier'], '_form'
+    assert_includes span.attributes['code.filepath'], '_form'
   end
 
   def test_render_collection
@@ -62,19 +62,18 @@ class ActionViewEventsTest < ActionController::TestCase
 
     span = collection_spans.first
     assert_equal :internal, span.kind
-    assert_includes span.attributes['identifier'], '_item'
-    assert_equal 3, span.attributes['count']
+    assert_includes span.attributes['code.filepath'], '_item'
+    assert_equal 3, span.attributes['view.collection.count']
   end
 
   def test_render_template_with_local_params
     get :with_locals
 
-    collection_spans = spans.select { |s| s.name == 'render_template.action_view' }
+    template_spans = spans.select { |s| s.name == 'render_template.action_view' }
 
-    span = collection_spans.first
+    span = template_spans.first
     assert_equal :internal, span.kind
     assert_includes span.attributes['identifier'], 'posts/with_locals'
-    refute_includes span.attributes, 'locals'
   end
 
   def test_render_layout
@@ -84,6 +83,6 @@ class ActionViewEventsTest < ActionController::TestCase
 
     span = layout_spans.first
     assert_equal :internal, span.kind
-    assert_includes span.attributes['identifier'], 'application'
+    assert_includes span.attributes['code.filepath'], 'application'
   end
 end
