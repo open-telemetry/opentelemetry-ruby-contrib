@@ -76,7 +76,7 @@ jobs:
           build: true
     services:
       memcached:
-        image: memcached:alpine@sha256:c8503d4491edd3110cc07d0465089d3a41cf1daf8645e71149e39a51835e92cd
+        image: memcached:alpine@sha256:c77536380fd3c7740933767bb5279bd30e31c8d496081e5113a37d9b9eec43cb
         ports:
           - 11211:11211
       mongodb:
