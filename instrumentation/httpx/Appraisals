@@ -15,4 +15,8 @@ semconv_stability.each do |mode|
   appraise "httpx-1-#{mode}" do
     gem 'httpx', '~> 1.0'
   end
+
+  appraise "httpx-latest-#{mode}" do
+    gem 'httpx'
+  end
 end
