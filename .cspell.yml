@@ -3,6 +3,8 @@
 # https://www.streetsidesoftware.com/vscode-spell-checker/docs/configuration/
 version: '0.2'
 caseSensitive: false
+import:
+  - https://cdn.jsdelivr.net/npm/@cspell/dict-people-names/cspell-ext.json
 ignorePaths:
   - 'bin'
   - '**.conf'
@@ -44,6 +46,7 @@ languageSettings:
 dictionaries:
   - aws
   - companies
+  - people-names
   - ruby
   - softwareTerms
   - software-tools
@@ -59,29 +62,7 @@ words:
   - traceid
   - traceparent
   - traceresponse
-# Companies
-  - Lightstep
-# People Names
-  - Azuma
-  - Bogsanyi
-  - Laurin
-  - Mustin
-  - Reopelle
-  - Robb
-  - Šimánek
-  - Xuan
-# Software terms
-  - codeowners 
-  - FaaS
-  - microbenchmarking
-  - namespacing
-  - triager
-  - triagers
-  - untrace
-# Software tools
-  - Gitter
-  - RabbitMQ
-  - Vitess
+  
   # Ruby
   - dalli
   - ethon
