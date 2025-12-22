@@ -3,22 +3,14 @@
 # https://www.streetsidesoftware.com/vscode-spell-checker/docs/configuration/
 version: '0.2'
 caseSensitive: false
+useGitignore: true
 import:
   - https://cdn.jsdelivr.net/npm/@cspell/dict-people-names/cspell-ext.json
+  - https://cdn.jsdelivr.net/npm/@cspell/dict-redis/cspell-ext.json
 ignorePaths:
   - 'bin'
-  - '**.conf'
-  - '**.gemspec'
-  - '**.json'
   - '**.proto'
-  - '**.rb'
-  - '**.ru'
-  - '**.yml'
-  - 'Appraisals'
   - 'CODEOWNERS'
-  - 'Dockerfile'
-  - 'Gemfile'
-  - 'Rakefile'
 patterns:
   - name: CodeBlock
     pattern: |
@@ -37,12 +29,34 @@ patterns:
       /x
   - name: "GitHub Handle"
     pattern: "@[a-zA-Z0-9-_]+\\b"
+enabledLanguageIds:
+  - dockercompose
+  - dockerfile
+  - json
+  - jsonc
+  - markdown
+  - properties
+  - ruby
+  - yaml
 languageSettings:
+  - languageId: json, jsonc
+    includeRegExpList:
+      - CStyleComment
   - languageId: markdown
     ignoreRegExpList:
       - CodeBlock
       - CodeName
       - GitHub Handle
+  - languageId: ruby
+    includeRegExpList:
+      - "#.*/g"
+    ignoreRegExpList:
+      - CodeName
+  - languageId: dockerfile, dockercompose, properties, yaml
+    includeRegExpList:
+      - "/#.*/g"
+    ignoreRegExpList:
+      - CodeName
 dictionaries:
   - aws
   - companies
@@ -50,8 +64,14 @@ dictionaries:
   - ruby
   - softwareTerms
   - software-tools
+  - redis
+ignoreWords:
+  - sendfile
+  - millis
 words:
   - AWSXRayTrace
+  - AWSXRaySamplingClient
+  - AWSXRayRemoteSampler
   - enqueuers
   - myapp
   - otelcol
@@ -62,6 +82,12 @@ words:
   - traceid
   - traceparent
   - traceresponse
+  - tracestate
+
+  - Resolv
+  - rackup
+  - miniswan
+  - BSON
   
   # Ruby
   - dalli
