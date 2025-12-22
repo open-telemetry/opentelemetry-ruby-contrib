@@ -297,6 +297,6 @@ jobs:
           build: true
     services:
       rabbitmq:
-        image: rabbitmq:3.8-alpine@sha256:711d76bc8d9822adf32fd9bdbe33f53645a77e2bbd0675f8011eed397919f7a4
+        image: rabbitmq:3.13-alpine@sha256:d7af1c87c5f1eda13fcfca06db452bf3aeab6619fc3358b68535c0c02c4e52bc
         ports:
           - "5672:5672"
