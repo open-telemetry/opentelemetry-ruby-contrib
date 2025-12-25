@@ -178,7 +178,7 @@ services:
       - "27017:27017"
 
   mysql:
-    image: mysql:8.0.31@sha256:3d7ae561cf6095f6aca8eb7830e1d14734227b1fb4748092f2be2cfbccf7d614
+    image: mysql:8.4.7@sha256:1f5b0aca09cfa06d9a7b89b28d349c1e01ba0d31339a4786fbcb3d5927070130
     command: mysqld --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_DATABASE=mysql
@@ -211,12 +211,12 @@ services:
       - "16379:6379"
 
   rabbitmq:
-    image: rabbitmq:3.8-alpine@sha256:711d76bc8d9822adf32fd9bdbe33f53645a77e2bbd0675f8011eed397919f7a4
+    image: rabbitmq:3.13-alpine@sha256:d7af1c87c5f1eda13fcfca06db452bf3aeab6619fc3358b68535c0c02c4e52bc
     ports:
       - "5672:5672"
 
   memcached:
-    image: memcached:alpine@sha256:c8503d4491edd3110cc07d0465089d3a41cf1daf8645e71149e39a51835e92cd
+    image: memcached:alpine@sha256:c77536380fd3c7740933767bb5279bd30e31c8d496081e5113a37d9b9eec43cb
     command: memcached -m 64
     ports:
       - "11211:11211"
@@ -250,7 +250,7 @@ services:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.109.0@sha256:ba28c8595b9a57401acd4a1ed39203c3babc6738cc17407478bd5c3c6c524663
+    image: otel/opentelemetry-collector:0.142.0@sha256:27e249dac470545ed31beefc86f9e1dc260a21e85aaa256903a2b6e0393a2d91
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml

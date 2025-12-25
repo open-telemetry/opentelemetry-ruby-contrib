@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-racecar
 
+### v0.6.1 / 2025-12-23
+
+* FIXED: Use a unique consumer group in tests to fix racecar tests
+
 ### v0.6.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
