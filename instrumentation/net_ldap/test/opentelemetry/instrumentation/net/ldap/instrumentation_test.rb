@@ -129,7 +129,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['ldap.auth.method']).must_equal 'simple'
         _(span.attributes.values).wont_include 'test_password'
         _(span.attributes['ldap.operation.type']).must_equal 'search'
-        _(span.attributes['ldap.request.message']).must_equal 'Could not generate JSON'
+        _(span.attributes['ldap.request.message']).must_be_nil
         _(span.attributes['ldap.response.status_code']).must_equal 0
         _(span.attributes['ldap.tree.base']).must_equal 'dc=com'
         _(span.attributes['network.protocol.name']).must_equal 'ldap'
