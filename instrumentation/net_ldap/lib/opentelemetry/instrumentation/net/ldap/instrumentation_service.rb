@@ -34,7 +34,7 @@ module OpenTelemetry
               'ldap.request.message' => begin
                 payload.to_json
               rescue JSON::GeneratorError
-                'Could not generate JSON'
+                nil
               end,
               'ldap.tree.base' => base,
               OpenTelemetry::SemConv::SERVER::SERVER_ADDRESS => host || hosts,
