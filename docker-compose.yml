@@ -167,7 +167,7 @@ services:
       bash -c "bundle install && rake"
 
   mongo:
-    image: mongo:4.4@sha256:52c42cbab240b3c5b1748582cc13ef46d521ddacae002bbbda645cebed270ec0
+    image: mongo:4.4@sha256:4be76f674fc4b27859816811b8baa3c51830eb1dbf4ca81a51e26b79edd662ef
     expose:
       - "27017"
     ports:
