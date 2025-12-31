@@ -210,7 +210,7 @@ jobs:
           build: true
     services:
       redis:
-        image: bitnamilegacy/redis:6.2@sha256:116419dc09f37b2c37e47e1a2cef258620ca1a30bae379b3660cf78fc0e7fc99
+        image: bitnamilegacy/redis:8.2@sha256:25bf63f3caf75af4628c0dfcf39859ad1ac8abe135be85e99699f9637b16dc28
         ports:
           - 6379:6379
         options: >-
