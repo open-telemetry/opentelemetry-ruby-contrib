@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   app:
-    image: ruby:3.2-slim@sha256:0097f0eb041c3e565cf0ca0fdf8bcbddc291a7ccbc9dafa64c6e31828ade12d3
+    image: ruby:3.2-slim@sha256:141ac9dc8a063eda2cf647c04729ed19fe14828fe5df461c10692f4a1e96c491
     volumes:
       - ../.:/app
     working_dir: /app/example
