@@ -13,6 +13,11 @@
     {
       "matchUpdateTypes": ["minor", "major"],
       "schedule": ["before 8am on Monday"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "matchManagers": ["ruby"],
+      "dependencyDashboardApproval": true
     }
   ],
   "labels": [
