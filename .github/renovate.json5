@@ -13,6 +13,10 @@
     {
       "matchUpdateTypes": ["minor", "major"],
       "schedule": ["before 8am on Monday"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "ignoreDeps": ["ruby"]
     }
   ],
   "labels": [
