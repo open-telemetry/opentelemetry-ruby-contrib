@@ -88,7 +88,6 @@ runs:
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-        bundler:  "latest"
         bundler-cache: true
         cache-version: "${{ inputs.ruby }}-${{ steps.setup.outputs.cache_key }}"
 
@@ -98,7 +97,6 @@ runs:
       uses: ruby/setup-ruby@3fee6763234110473bd57dd4595c5199fce2c510 # v1.258.0
       with:
         ruby-version: "${{ inputs.ruby }}"
-        bundler:  "latest"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
     # Perms workaround. See https://github.com/actions/runner-images/issues/10215
     - name: Fix GEM_HOME permissions on GitHub Actions Runner
