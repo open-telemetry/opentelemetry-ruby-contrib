@@ -33,6 +33,7 @@ concurrency:
 
 jobs:
   helpers:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
@@ -73,6 +74,7 @@ jobs:
           ruby: "jruby-10.0.2.0"
 
   propagators:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
@@ -113,6 +115,7 @@ jobs:
           ruby: "jruby-10.0.2.0"
 
   resource-detectors:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
@@ -154,6 +157,7 @@ jobs:
           ruby: "jruby-10.0.2.0"
 
   processors:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
@@ -192,6 +196,7 @@ jobs:
           ruby: "jruby-10.0.2.0"
 
   samplers:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
