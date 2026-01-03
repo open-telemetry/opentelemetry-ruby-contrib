@@ -19,6 +19,10 @@
       "matchUpdateTypes": ["major"],
       "matchManagers": ["ruby"],
       "dependencyDashboardApproval": true
+    },
+    {
+      "matchFileNames": [".github/workflows/release-please.yaml"]
+      "ignoreDeps": ["ruby"]
     }
   ],
   "labels": [
