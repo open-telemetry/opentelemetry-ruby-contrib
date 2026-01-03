@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   markdownlint-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Markdown Lint Check
     runs-on: ubuntu-latest
     steps:
@@ -28,6 +29,7 @@ jobs:
             !**/CHANGELOG.md
 
   markdown-link-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Markdown Link Check
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +44,7 @@ jobs:
           fail_on_error: true
 
   spelling-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Spelling Check
     runs-on: ubuntu-latest
     steps:
