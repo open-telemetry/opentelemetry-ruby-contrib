@@ -21,7 +21,7 @@
       "dependencyDashboardApproval": true
     },
     {
-      "matchManagers": ["github-actions"],
+      "matchFileNames": [".github/workflows/release-please.yaml"]
       "ignoreDeps": ["ruby"]
     }
   ],
