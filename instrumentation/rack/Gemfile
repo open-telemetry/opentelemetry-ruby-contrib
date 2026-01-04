@@ -25,6 +25,7 @@ group :test do
   gem 'rack-test', '~> 2.2.0'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
+    gem 'logger'
     gem 'mutex_m'
   end
 end
