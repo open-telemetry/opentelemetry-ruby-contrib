@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %w[7.1.0 7.2.0 8.0.0].each do |version|
-  appraise "delayed_job_4.1-activejob-#{version}" do
-    gem 'delayed_job', '~> 4.1'
+  appraise "delayed_job_4.2-activejob-#{version}" do
+    gem 'delayed_job', '~> 4.2'
     gem 'activejob', "~> #{version}"
   end
 end
