@@ -37,6 +37,7 @@ on:
       - 'instrumentation/logger/**'
       - 'instrumentation/net_http/**'
       - 'instrumentation/rack/**'
+      - 'instrumentation/rage/**'
       - 'instrumentation/rails/**'
       - 'instrumentation/restclient/**'
       - 'instrumentation/rspec/**'
@@ -97,6 +98,7 @@ jobs:
           - logger
           - net_http
           - rack
+          - rage
           - rails
           - restclient
           - rspec
@@ -147,6 +149,7 @@ jobs:
           [[ "${{ matrix.gem }}" == "koala"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "lmdb"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "rack"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "rage"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "rails"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "grpc"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "gruf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT

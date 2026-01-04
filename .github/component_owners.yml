@@ -23,6 +23,8 @@ components:
     - johnnyshields
   instrumentation/racecar:
     - chrisholmes
+  instrumentation/rage:
+    - rsamoilov
   instrumentation/rspec:
     - chrisholmes
   instrumentation/que:
