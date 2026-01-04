@@ -11,24 +11,19 @@
 
 semconv_stability = %w[stable old dup]
 
+# https://github.com/rack/rack/tree/main?tab=readme-ov-file#version-support
 semconv_stability.each do |mode|
   appraise "rack-latest-#{mode}" do
     gem 'rack'
   end
 
-  appraise "rack-3.0-#{mode}" do
-    gem 'rack', '~> 3.0.0'
+  appraise "rack-3.1-#{mode}" do
+    gem 'rack', '~> 3.1.0'
   end
+
+  next unless Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
 
   appraise "rack-2.2.x-#{mode}" do
     gem 'rack', '~> 2.2.0'
-  end
-
-  appraise "rack-2.1-#{mode}" do
-    gem 'rack', '~> 2.1.2'
-  end
-
-  appraise "rack-2.0-#{mode}" do
-    gem 'rack', '~> 2.0.8'
   end
 end
