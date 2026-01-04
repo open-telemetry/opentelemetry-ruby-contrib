@@ -9,7 +9,7 @@
 # When the migration is complete, we should revert testing with different stability
 # modes. For more information see CHANGELOG: HTTP semantic convention stability
 semconv_stability = %w[dup stable old]
-sinatra_versions = %w[4.1 3.0 2.1]
+sinatra_versions = %w[4.2 4.1 3.0]
 
 semconv_stability.each do |mode|
   sinatra_versions.each do |version|
