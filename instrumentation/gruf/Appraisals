@@ -22,7 +22,7 @@ end
 
 # Gruf requires a max Ruby version of 3.4
 # https://github.com/bigcommerce/gruf/blob/541dd40372d4c01b45612d8019bac9c69fb9be88/gruf.gemspec#L39C45-L39C48
-if Gem::Version.new(RUBY_VERSION) <= Gem::Version.new('3.4')
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.5')
   appraise 'gruf-latest' do
     gem 'gruf'
   end
