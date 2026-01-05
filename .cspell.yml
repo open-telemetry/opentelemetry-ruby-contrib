@@ -62,6 +62,7 @@ dictionaries:
   - companies
   - people-names
   - ruby
+  - ruby-gems
   - softwareTerms
   - software-tools
   - redis
@@ -83,20 +84,3 @@ words:
   - traceparent
   - traceresponse
   - tracestate
-
-  - Resolv
-  - rackup
-  - miniswan
-  - BSON
-  
-  # Ruby
-  - dalli
-  - ethon
-  - gruf
-  - httpx
-  - lmdb
-  - Railtie
-  - racecar
-  - rdkafka
-  - restclient
-  - rubydocs
