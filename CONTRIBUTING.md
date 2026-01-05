@@ -443,7 +443,6 @@ index 42c5ecba..74fcc743 100644
 @@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
    gem 'bundler', '~> 2.4'
    gem 'minitest', '~> 5.0'
-   gem 'rake', '~> 13.0'
 -  gem 'rubocop', '~> 1.50.0'
 +  gem 'rubocop', '~> 1.56.1'
    gem 'simplecov', '~> 0.22.0'
@@ -458,7 +457,6 @@ index e29acbfc..85622d25 100644
 @@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
    gem 'bundler', '~> 2.4'
    gem 'minitest', '~> 5.0'
-   gem 'rake', '~> 13.0'
 -  gem 'rubocop', '~> 1.50.0'
 +  gem 'rubocop', '~> 1.56.1'
    gem 'simplecov', '~> 0.22.0'

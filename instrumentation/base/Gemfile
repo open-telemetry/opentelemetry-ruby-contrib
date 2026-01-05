@@ -12,7 +12,6 @@ group :test do
   gem 'bundler', '~> 2.4'
   gem 'minitest', '~> 5.0'
   gem 'opentelemetry-test-helpers', '~> 0.3'
-  gem 'rake', '~> 13.0'
   gem 'rubocop', '~> 1.82.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
