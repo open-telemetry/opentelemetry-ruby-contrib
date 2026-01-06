@@ -14,7 +14,6 @@ group :test do
   gem 'opentelemetry-helpers-mysql', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'helpers/mysql/*.gemspec'
   gem 'opentelemetry-helpers-sql-processor', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'helpers/sql-processor/*.gemspec'
   gem 'appraisal', '~> 2.5'
-  gem 'bundler', '~> 2.4'
   gem 'minitest', '~> 5.0'
   gem 'opentelemetry-sdk', '~> 1.1'
   gem 'opentelemetry-test-helpers', '~> 0.3'

@@ -11,11 +11,10 @@ gemspec
 group :test do
   gem 'opentelemetry-instrumentation-base', git: 'https://github.com/open-telemetry/opentelemetry-ruby-contrib.git', branch: 'main', glob: 'instrumentation/base/*.gemspec'
   gem 'appraisal', '~> 2.5'
-  gem 'bundler', '~> 2.4'
   gem 'minitest', '~> 5.0'
   gem 'opentelemetry-sdk', '~> 1.0'
   gem 'opentelemetry-test-helpers', '~> 0.3'
-  gem 'rake', '~> 13.0'
+  gem 'rake', '>= 13'
   gem 'rubocop', '~> 1.82.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'

@@ -102,7 +102,7 @@ module OpenTelemetry
           # Extracting logging-related resource attributes
           #
           # @param container_metadata [Hash] Container metadata from ECS metadata endpoint
-          # @returhn [Hash] Resource attributes for logging configuration
+          # @return [Hash] Resource attributes for logging configuration
           def get_logs_resource(container_metadata)
             log_attributes = {}
 

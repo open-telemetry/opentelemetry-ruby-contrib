@@ -130,7 +130,7 @@
 
 The default was to set the span name as the path of the request, we have
 corrected this as it was not adhering to the spec requirement using low
-cardinality span names.  You can restore the previous behaviour of high
+cardinality span names.  You can restore the previous behavior of high
 cardinality span names by passing in a url quantization function that
 forwards the uri path.  More details on this is available in the readme.
 

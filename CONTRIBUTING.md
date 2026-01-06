@@ -457,7 +457,6 @@ index 42c5ecba..74fcc743 100644
 --- a/propagator/ottrace/Gemfile
 +++ b/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
 @@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
-   gem 'bundler', '~> 2.4'
    gem 'minitest', '~> 5.0'
    gem 'rake', '~> 13.0'
 -  gem 'rubocop', '~> 1.50.0'
@@ -472,7 +471,6 @@ index e29acbfc..85622d25 100644
 --- a/propagator/xray/Gemfile
 +++ b/propagator/xray/Gemfile
 @@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
-   gem 'bundler', '~> 2.4'
    gem 'minitest', '~> 5.0'
    gem 'rake', '~> 13.0'
 -  gem 'rubocop', '~> 1.50.0'
