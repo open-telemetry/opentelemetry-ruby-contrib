@@ -69,9 +69,9 @@ class ActionViewEventsTest < ActionController::TestCase
   def test_render_template_with_local_params
     get :with_locals
 
-    collection_spans = spans.select { |s| s.name == 'render_template.action_view' }
+    template_spans = spans.select { |s| s.name == 'render_template.action_view' }
 
-    span = collection_spans.first
+    span = template_spans.first
     assert_equal :internal, span.kind
     assert_includes span.attributes['identifier'], 'posts/with_locals'
     refute_includes span.attributes, 'locals'
