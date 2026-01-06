@@ -193,7 +193,7 @@ Code that is not tested will not be accepted by maintainers. We understand that 
 
 Most of the libraries we instrument introduce changes outside of our control. For this reason, integration or state-based tests are preferred over interaction (mock) tests.
 
-When you do in fact run into cases where test doubles or API stubs are absolutely necessary, we recommend using the [`rspec-mocks`](https://github.com/rspec/rspec-mocks) and [`webmocks`](https://github.com/bblimke/webmock) gems.
+When you do in fact run into cases where test doubles or API stubs are absolutely necessary, we recommend using the [`rspec-mocks`](https://github.com/rspec/rspec-mocks) and [`WebMock`](https://github.com/bblimke/webmock) gems.
 
 ### Understand performance characteristics
 
@@ -202,7 +202,7 @@ The OTel Specification describes expectations around the performance of SDKs, wh
 Instrumentation libraries should be as lightweight as possible and must:
 
 * Rely on `rubocop-performance` linters to catch performance issues
-* Consider using [microbenchmarks](https://github.com/evanphx/benchmark-ips) and [profiling](https://ruby-prof.github.io/) to address any possible performance issues
+* Consider using [microbenchmarking](https://github.com/evanphx/benchmark-ips) and [profiling](https://ruby-prof.github.io/) to address any possible performance issues
 * Provide minimal solutions and code paths
 
 #### Provide minimal solutions and code paths
