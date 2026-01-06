@@ -23,7 +23,7 @@ end
 
 # Hack that allows us to reset the internal state of the tracer to test installation
 module SchemaTestPatches
-  # Reseting @graphql_definition is needed for tests running against version `1.9.x`
+  # Resetting @graphql_definition is needed for tests running against version `1.9.x`
   # Other variables are used by ~> 2.0.19
   def _reset_tracer_for_testing
     %w[own_tracers trace_modes trace_class tracers graphql_definition own_trace_modes].each do |name|

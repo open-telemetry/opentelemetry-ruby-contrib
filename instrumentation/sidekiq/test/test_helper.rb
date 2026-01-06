@@ -51,7 +51,7 @@ Sidekiq.configure_client do |config|
   config.redis = { password: 'passw0rd', url: redis_url }
 end
 
-# Silence Actibe Job logging noise
+# Silence Active Job logging noise
 ActiveJob::Base.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
 
 class SimpleJobWithActiveJob < ActiveJob::Base
