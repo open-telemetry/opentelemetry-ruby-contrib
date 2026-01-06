@@ -238,7 +238,16 @@ module OpenTelemetry
 
             # Stop if we hit certain keywords that end the object name or parameter lists
             should_terminate = false
-            if next_token_after_alias && %w[WITH SET WHERE BEGIN DROP ADD COLUMN START INCREMENT BY].include?(next_token_after_alias[VALUE_INDEX].upcase)
+            if next_token_after_alias && next_token_after_alias[VALUE_INDEX]&.upcase == 'START'
+              # Handle START WITH pattern (e.g., CREATE SEQUENCE ... START WITH) - check for WITH following
+              new_state = PARSING_STATE
+              following_token = tokens[index + 2 + skip_count]
+              if following_token && following_token[VALUE_INDEX]&.upcase == 'WITH'
+                skip_count += 2 # Skip both START and WITH
+              else
+                skip_count += 1 # Skip just START
+              end
+            elsif next_token_after_alias && %w[WITH SET WHERE BEGIN DROP ADD COLUMN INCREMENT BY].include?(next_token_after_alias[VALUE_INDEX].upcase)
               new_state = PARSING_STATE
               # Skip over the stopping keyword so it doesn't get processed again
               skip_count += 1
