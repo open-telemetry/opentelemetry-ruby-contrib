@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.11.2 / 2026-01-06
+
+* DOCS: Update ActionView Documentation
+
 ### v0.11.1 / 2025-10-22
 
 * FIXED: Update opentelemetry-instrumentation-base dependency
