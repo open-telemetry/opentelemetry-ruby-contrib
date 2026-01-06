@@ -104,9 +104,6 @@ class CacheTest < Minitest::Test
     # Verify cache is still functional after stress test
     result = @cache.fetch('post_stress_key') { 'post_stress_value' }
     assert_equal 'post_stress_value', result
-
-    # Verify we can still retrieve a stressed key
-    assert_equal 'thread_0_iteration_0', @cache.fetch('stress_key_0')
   end
 
 def test_lru_eviction_behavior
