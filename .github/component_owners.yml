@@ -2,6 +2,8 @@
 components:
   instrumentation/active_storage:
     - ymtdzzz
+  instrumentation/anthropic:
+    - robertlaurin
   instrumentation/aws_sdk:
     - jterapin
     - alextwoods
@@ -15,6 +17,8 @@ components:
     - rmoslogo
   instrumentation/grpc:
     - michal-kazmierczak
+  instrumentation/gruf:
+    - AS-AlStar
   instrumentation/httpx:
     - HoneyryderChuck
   instrumentation/mongo:

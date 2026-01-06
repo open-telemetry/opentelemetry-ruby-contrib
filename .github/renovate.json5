@@ -2,7 +2,8 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:best-practices",
-    "helpers:pinGitHubActionDigestsToSemver"
+    "helpers:pinGitHubActionDigestsToSemver",
+    ":separateMultipleMajorReleases"
   ],
   "packageRules": [
     {
@@ -11,8 +12,18 @@
       "schedule": ["before 8am every weekday"]
     },
     {
-      "matchUpdateTypes": ["minor", "major"],
+      "matchUpdateTypes": ["minor"],
       "schedule": ["before 8am on Monday"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "matchManagers": ["!ruby"],
+      "schedule": ["before 8am on Monday"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "matchManagers": ["ruby"],
+      "dependencyDashboardApproval": true
     }
   ],
   "labels": [

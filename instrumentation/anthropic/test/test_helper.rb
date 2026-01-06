@@ -10,7 +10,6 @@ Bundler.require(:default, :development, :test)
 require 'minitest/autorun'
 require 'webmock/minitest'
 require 'anthropic'
-require 'debug/prelude'
 require 'opentelemetry-instrumentation-net_http'
 
 # global opentelemetry-sdk setup:
