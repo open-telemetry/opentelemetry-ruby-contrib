@@ -49,12 +49,17 @@ describe OpenTelemetry::Instrumentation::Racecar do
 
     producer.close
   end
+  let(:config) do
+    config = Racecar::Config.new
+    config.group_id = "test-#{SecureRandom.hex(10)}"
+    config.brokers = ["#{host}:#{port}"]
+    config.pause_timeout = 0 # fail fast and exit
+    config
+  end
 
   let(:racecar) do
-    Racecar.config.brokers = ["#{host}:#{port}"]
-    Racecar.config.pause_timeout = 0 # fail fast and exit
-    Racecar.config.load_consumer_class(consumer_class)
-    Racecar::Runner.new(consumer_class.new, config: Racecar.config, logger: Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym), instrumenter: Racecar.instrumenter)
+    config.load_consumer_class(consumer_class)
+    Racecar::Runner.new(consumer_class.new, config: config, logger: Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym), instrumenter: Racecar.instrumenter)
   end
 
   def run_racecar(racecar)
