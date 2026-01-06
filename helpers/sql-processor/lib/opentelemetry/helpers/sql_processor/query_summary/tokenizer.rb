@@ -29,40 +29,36 @@ module OpenTelemetry
         #   :identifier        - table_name, column_name, @variable, schema.table
         #   :quoted_identifier - "table", `column`, [index]
         #   :operator          - =, <, >, +, -, *, (, ), ;
-        #   :numeric           - 123, -45.67, 1.2e-4, 0xFF
+        #   :numeric           - 123, -45.67, 1.2e-4
         #   :string            - 'literal text', 'O''Brien'
 
         KEYWORDS_ARRAY = %w[
-          # Core DML operations
           SELECT INSERT UPDATE DELETE
-
-          # Query structure and joins
-          FROM INTO JOIN WHERE SET ORDER GROUP BY HAVING LIMIT
-
-          # DDL operations
           CREATE ALTER DROP TRUNCATE
-
-          # Advanced query features
-          WITH UNION DISTINCT ALL EXISTS
-
-          # Database objects
-          TABLE INDEX PROCEDURE VIEW DATABASE SCHEMA SEQUENCE TRIGGER FUNCTION
-
-          # Conditions and logic
-          IF NOT AND OR AFTER BEFORE BEGIN END
-
-          # Data types and constraints
-          UNIQUE CLUSTERED
-
-          # System operations
-          EXEC EXECUTE ROLE USER RESTART TRANSFER
-
-          # Column operations
-          ADD MODIFY RENAME COLUMN TO INCLUDE REBUILD MEMBER PASSWORD
+          EXEC EXECUTE
+          FROM INTO JOIN IN
+          WITH SET WHERE BEGIN AS
+          TABLE INDEX PROCEDURE VIEW DATABASE SCHEMA SEQUENCE TRIGGER FUNCTION ROLE USER
+          ADD COLUMN
+          RESTART START INCREMENT BY
+          UNIQUE CLUSTERED DISTINCT
+          UNION ALL
         ].freeze
 
         # Hash-based keyword lookup performance optimization
         KEYWORDS = KEYWORDS_ARRAY.each_with_object({}) { |keyword, hash| hash[keyword] = true }.freeze
+
+        UPCASE_CACHE = {}
+        private_constant :UPCASE_CACHE
+
+        OPERATOR_REGEX = %r{<=|>=|<>|!=|[=<>+\-*/%,;()!?]}.freeze
+        NUMBER_REGEX = /[+-]?(?:\d+\.?\d*(?:[eE][+-]?\d+)?|\.\d+(?:[eE][+-]?\d+)?)/.freeze
+        STRING_REGEX = /'(?:''|[^'\r\n])*'/.freeze
+        QUOTED_ID_REGEX = /"(?:""|[^"\r\n])*"|`(?:``|[^`\r\n])*`|\[(?:[^\]\r\n])*\]/.freeze
+        IDENTIFIER_REGEX = /@?[a-zA-Z_\u0080-\uffff][a-zA-Z0-9_.\u0080-\uffff]*/u.freeze
+        COMMENT_LINE_REGEX = /--[^\r\n]*/.freeze
+        COMMENT_BLOCK_REGEX = %r{/\*.*?\*/}m.freeze
+        WHITESPACE_REGEX = /\s+/.freeze
 
         class << self
           def tokenize(query)
@@ -78,19 +74,19 @@ module OpenTelemetry
             return if skip_comments_and_whitespace(scanner)
 
             case
-            when (operator = scanner.scan(%r{<=|>=|<>|!=|[=<>+\-*/%,;()!?]}))
+            when (operator = scanner.scan(OPERATOR_REGEX))
               # SQL operators: comparison (<=, >=, <>, !=), equality (=), arithmetic (+, -, *, /), punctuation
               tokens << [:operator, operator.freeze]
-            when (number = scanner.scan(/[+-]?(?:\d+\.?\d*(?:[eE][+-]?\d+)?|0x[0-9a-fA-F]+|\.\d+(?:[eE][+-]?\d+)?)/))
-              # Numbers: signed integers, decimals, scientific notation (1.23e-4), hex (0xFF)
+            when (number = scanner.scan(NUMBER_REGEX))
+              # Numbers: signed integers, decimals, scientific notation (1.23e-4)
               tokens << [:numeric, number.freeze]
-            when (string_literal = scanner.scan(/'(?:''|[^'\r\n])*'/))
+            when (string_literal = scanner.scan(STRING_REGEX))
               # String literals with escaped quotes ('John''s Car')
               tokens << [:string, string_literal.freeze]
-            when (quoted_name = scanner.scan(/"(?:""|[^"\r\n])*"|`(?:``|[^`\r\n])*`|\[(?:[^\]\r\n])*\]/))
+            when (quoted_name = scanner.scan(QUOTED_ID_REGEX))
               # Quoted identifiers: "double", `backtick`, [bracket] for table/column names
               tokens << [:quoted_identifier, quoted_name.freeze]
-            when (identifier = scanner.scan(/@?[a-zA-Z_\u0080-\uffff][a-zA-Z0-9_.\u0080-\uffff]*/u))
+            when (identifier = scanner.scan(IDENTIFIER_REGEX))
               # Identifiers: table names, column names, variables (supports Unicode)
               type = classify_identifier(identifier)
               tokens << [type, identifier.freeze]
@@ -103,13 +99,18 @@ module OpenTelemetry
           private
 
           def skip_comments_and_whitespace(scanner)
-            scanner.scan(/--[^\r\n]*/) ||     # Single-line comments (-- comment)
-            scanner.scan(%r{/\*.*?\*/}m) ||   # Block comments (/* comment */)
-            scanner.scan(/\s+/)               # Whitespace (spaces, tabs, newlines)
+            scanner.scan(COMMENT_LINE_REGEX) ||     # Single-line comments (-- comment)
+            scanner.scan(COMMENT_BLOCK_REGEX) ||    # Block comments (/* comment */)
+            scanner.scan(WHITESPACE_REGEX)          # Whitespace (spaces, tabs, newlines)
+          end
+
+          def cached_upcase(str)
+            return str if str.nil? || str.empty?
+            UPCASE_CACHE[str] ||= str.upcase.freeze
           end
 
           def classify_identifier(identifier)
-            KEYWORDS[identifier.upcase] ? :keyword : :identifier
+            KEYWORDS[cached_upcase(identifier)] ? :keyword : :identifier
           end
         end
       end
