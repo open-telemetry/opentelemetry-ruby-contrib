@@ -80,7 +80,7 @@ Example usage can be seen in the [`./example/trace_request_demonstration.ru` fil
 ActionView instrumentation uses ActiveSupport notifications and in the case when a subscriber raises in start method an unclosed span would break successive spans ends. Example:
 
 ```ruby
-class CrashingEndSubscriber
+class CrashingStartSubscriber
   def start(name, id, payload)
     raise 'boom'
   end
