@@ -106,7 +106,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Dup::Client do
       _(span.attributes['http.target']).must_equal '/timeout'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 443
-      # stable semantic coventions
+      # stable semantic conventions
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.scheme']).must_equal 'https'
       _(span.attributes['http.response.status_code']).must_be_nil
