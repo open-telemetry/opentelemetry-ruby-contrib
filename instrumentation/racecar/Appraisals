@@ -4,19 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[2.8.0].each do |version|
+%w[2.8.0 2.9.0 2.10.0 2.11.0 2.12.0].each do |version|
   appraise "racecar-#{version}" do
     gem 'racecar', "~> #{version}"
   end
 end
 
-# TODO: CI failing racecar 2.11+
-# %w[2.9.0 2.10.0 2.11.0 2.12.0].each do |version|
-#   appraise "racecar-#{version}" do
-#     gem 'racecar', "~> #{version}"
-#   end
-# end
+appraise "racecar-latest" do
+  gem 'racecar'
+end
 
-# appraise 'racecar-latest' do
-#   gem 'racecar'
-# end
