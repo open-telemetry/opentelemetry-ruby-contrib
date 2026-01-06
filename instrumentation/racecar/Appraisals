@@ -11,3 +11,11 @@ end
 appraise 'racecar-2.8' do
   gem 'racecar', '~> 2.8.2'
 end
+
+appraise 'racecar-2.10' do
+  gem 'racecar', '~> 2.10'
+end
+
+appraise 'racecar-2.12' do
+  gem 'racecar', '~> 2.12'
+end
