@@ -68,7 +68,7 @@ module OpenTelemetry
             end
 
             def otel_before_request
-              span_data = HttpHelper.span_attrs_for(@otel_method)
+              span_data = HttpHelper.span_attrs_for_dup(@otel_method)
 
               @otel_span = tracer.start_span(
                 span_data.span_name,
@@ -90,11 +90,7 @@ module OpenTelemetry
             private
 
             def span_creation_attributes(span_data)
-              instrumentation_attrs = {
-                'http.method' => span_data.normalized_method,
-                'http.request.method' => span_data.normalized_method
-              }
-              instrumentation_attrs['http.request.method_original'] = span_data.original_method if span_data.original_method
+              instrumentation_attrs = {}
 
               uri = _otel_cleanse_uri(url)
               if uri
@@ -106,9 +102,7 @@ module OpenTelemetry
 
               config = Ethon::Instrumentation.instance.config
               instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
-              instrumentation_attrs.merge!(
-                OpenTelemetry::Common::HTTP::ClientContext.attributes
-              )
+              instrumentation_attrs.merge!(span_data.attributes)
             end
 
             # Returns a URL string with userinfo removed.

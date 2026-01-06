@@ -23,25 +23,19 @@ module OpenTelemetry
 
                 return super if untraced?
 
-                span_data = HttpHelper.span_attrs_for(req.method)
+                span_data = HttpHelper.span_attrs_for_dup(req.method)
 
-                attributes = {
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => span_data.normalized_method,
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port,
-                  'http.request.method' => span_data.normalized_method,
-                  'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
-                  'server.address' => @address,
-                  'server.port' => @port
-                }
-                attributes['http.request.method_original'] = span_data.original_method if span_data.original_method
+                attributes = { OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
+                               OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
+                               OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
+                               OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port, 'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
+                               'server.address' => @address,
+                               'server.port' => @port }
                 path, query = split_path_and_query(req.path)
                 attributes['url.path'] = path
                 attributes['url.query'] = query if query
 
-                attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+                attributes.merge!(span_data.attributes)
 
                 tracer.in_span(
                   span_data.span_name,
