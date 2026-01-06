@@ -32,7 +32,6 @@ group :test do
   Dir.entries('../')
      .select { |entry| File.directory?(File.join('../', entry)) }
      .reject { |entry| excluded_instrumentations.include?(entry) }
-     .reject { |entry| entry.start_with?('.') }
      .sort
      .each { |dir| gem "opentelemetry-instrumentation-#{dir}", path: "../#{dir}" }
 end
