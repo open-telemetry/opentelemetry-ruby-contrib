@@ -4,13 +4,16 @@
 version: '0.2'
 caseSensitive: false
 useGitignore: true
+enableGlobDot: true
 import:
   - https://cdn.jsdelivr.net/npm/@cspell/dict-people-names/cspell-ext.json
   - https://cdn.jsdelivr.net/npm/@cspell/dict-redis/cspell-ext.json
 ignorePaths:
+  - '.git'
   - 'bin'
-  - '**.proto'
+  - '*.proto'
   - 'CODEOWNERS'
+  - '*.tt'
 patterns:
   - name: CodeBlock
     pattern: |
@@ -29,15 +32,6 @@ patterns:
       /x
   - name: "GitHub Handle"
     pattern: "@[a-zA-Z0-9-_]+\\b"
-enabledLanguageIds:
-  - dockercompose
-  - dockerfile
-  - json
-  - jsonc
-  - markdown
-  - properties
-  - ruby
-  - yaml
 languageSettings:
   - languageId: json, jsonc
     includeRegExpList:
@@ -75,6 +69,7 @@ words:
   - AWSXRayRemoteSampler
   - enqueuers
   - myapp
+  - otelbot
   - otelcol
   - ottrace
   - ruboproof
@@ -84,3 +79,6 @@ words:
   - traceparent
   - traceresponse
   - tracestate
+
+  - linkspector
+  - sarif
