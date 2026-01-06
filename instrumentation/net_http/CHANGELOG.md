@@ -93,7 +93,7 @@
 
 ### v0.19.4 / 2022-02-02
 
-* FIXED: Clientcontext attrs overwrite in net::http
+* FIXED: Client Context attrs overwrite in net::http
 * FIXED: Excessive hash creation on context attr merging
 
 ### v0.19.3 / 2021-12-01

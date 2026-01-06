@@ -15,6 +15,7 @@ on:
       - 'instrumentation/active_record/**'
       - 'instrumentation/active_storage/**'
       - 'instrumentation/active_support/**'
+      - 'instrumentation/anthropic/**'
       - 'instrumentation/aws_sdk/**'
       - 'instrumentation/aws_lambda/**'
       - 'instrumentation/base/**'
@@ -61,7 +62,13 @@ concurrency:
   cancel-in-progress: true  # Cancel any previous runs of this workflow
 
 jobs:
+  check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Repository check passed"
   instrumentation:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
@@ -74,6 +81,7 @@ jobs:
           - active_record
           - active_storage
           - active_support
+          - anthropic
           - aws_sdk
           - aws_lambda
           - base
@@ -105,7 +113,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
