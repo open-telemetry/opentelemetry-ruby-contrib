@@ -86,7 +86,7 @@
 
 ### v0.1.3 / 2021-10-06
 
-* FIXED: Do not replace fanout
+* FIXED: Do not replace fan-out
 
 ### v0.1.2 / 2021-09-29
 
