@@ -9,7 +9,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'bundler', '~> 2.4'
   gem 'minitest', '~> 5.0'
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '>= 13'
