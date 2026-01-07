@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: streetsidesoftware/cspell-action@24fa8d3096a314ce263f39578744e9d9f8d80acf # v8.1.2
         with:
-          # Files should be consistent with check:spelling files
-          files: |
-            **/*.md
+          use_cspell_files: true
           config: .cspell.yml
+          suggestions: true
+          treat_flagged_words_as_errors: true

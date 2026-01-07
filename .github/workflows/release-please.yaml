@@ -60,7 +60,6 @@ jobs:
       - uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
         with:
           ruby-version: "3.2"
-          bundler: latest
           bundler-cache: false
           working-directory: ${{ matrix.path }}
 
