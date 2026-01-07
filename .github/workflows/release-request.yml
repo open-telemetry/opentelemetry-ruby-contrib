@@ -17,14 +17,12 @@ jobs:
       contents: write # required for creating releases
       pull-requests: write # required for creating release PRs
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    env:
-      RUBY_VERSION: "3.2"
     runs-on: ubuntu-latest
     steps:
-      - name: Install Ruby ${{ env.RUBY_VERSION }}
+      - name: Install Ruby
         uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
         with:
-          ruby-version: ${{ env.RUBY_VERSION }}
+          ruby-version: "3.2"
 
       - name: Checkout repo
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
