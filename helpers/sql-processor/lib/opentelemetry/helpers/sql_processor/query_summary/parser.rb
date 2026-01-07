@@ -67,7 +67,7 @@ module OpenTelemetry
           def build_summary_from_tokens(tokens)
             summary_parts = []
             state = PARSING_STATE
-            skip_until = 0 # Skip tokens we've already processed when looking ahead # Track if any table name is too long
+            skip_until = 0 # Skip tokens we've already processed when looking ahead
             in_clause_context = false # Track if we're in an IN clause context
 
             # First pass: check if any table names are too long
@@ -85,7 +85,10 @@ module OpenTelemetry
                 in_clause_context = false
               end
 
-              result = process_token(token, tokens, index, state, has_long_table_name, in_clause_context)
+              result = process_token(token, tokens, index,
+                                    state: state,
+                                    has_long_table_name: has_long_table_name,
+                                    in_clause_context: in_clause_context)
 
               summary_parts.concat(result[:parts])
               state = result[:new_state]
@@ -96,34 +99,39 @@ module OpenTelemetry
             consolidate_union_queries(summary_parts).join(' ')
           end
 
-          def process_token(token, tokens, index, state, has_long_table_name = false, in_clause_context = false)
+          def process_token(token, tokens, index, state:, has_long_table_name: false, in_clause_context: false)
             # In DDL body state, skip all tokens
             return { processed: true, parts: [], new_state: state, next_index: index + 1 } if state == DDL_BODY_STATE
 
-            operation_result = process_main_operation(token, tokens, index, state, in_clause_context)
+            operation_result = process_main_operation(token, tokens, index,
+                                                    state: state,
+                                                    in_clause_context: in_clause_context)
             return operation_result if operation_result[:processed]
 
-            collection_result = process_collection_token(token, tokens, index, state, has_long_table_name, in_clause_context)
+            collection_result = process_collection_token(token, tokens, index,
+                                                        state: state,
+                                                        has_long_table_name: has_long_table_name,
+                                                        in_clause_context: in_clause_context)
             return collection_result if collection_result[:processed]
 
             { processed: false, parts: [], new_state: state, next_index: index + 1 }
           end
 
-          def process_main_operation(token, tokens, index, current_state, in_clause_context = false)
+          def process_main_operation(token, tokens, index, state:, in_clause_context: false)
             # Skip processing main operations when inside IN clause subqueries
-            return not_processed(current_state, index + 1) if in_clause_context
+            return not_processed(state, index + 1) if in_clause_context
 
             upcased_value = cached_upcase(token[VALUE_INDEX])
 
             case upcased_value
             when 'AS'
               # AS in main parsing context might indicate DDL body start
-              handle_as_keyword(token, tokens, index, current_state)
+              handle_as_keyword(token, tokens, index, state)
             when *MAIN_OPERATIONS
               add_to_summary(token[VALUE_INDEX], PARSING_STATE, index + 1)
             when *COLLECTION_OPERATIONS
               # Check if this is WITH in OPENJSON context - if so, skip it
-              if upcased_value == 'WITH' && index > 0
+              if upcased_value == 'WITH' && index.positive?
                 # Optimized lookback - search backwards up to 5 tokens
                 start_idx = [0, index - 5].max
                 found_openjson = tokens[start_idx...index].any? do |t|
@@ -132,7 +140,7 @@ module OpenTelemetry
 
                 if found_openjson
                   # This is OPENJSON WITH syntax, not a CTE - skip it
-                  return not_processed(current_state, index + 1)
+                  return not_processed(state, index + 1)
                 end
               end
 
@@ -148,11 +156,11 @@ module OpenTelemetry
             when 'UNION'
               handle_union(token, tokens, index)
             else
-              not_processed(current_state, index + 1)
+              not_processed(state, index + 1)
             end
           end
 
-          def process_collection_token(token, tokens, index, state, has_long_table_name = false, in_clause_context = false)
+          def process_collection_token(token, tokens, index, state:, has_long_table_name: false, in_clause_context: false)
             return not_processed(state, index + 1) unless state == EXPECT_COLLECTION_STATE
 
             upcased_value = cached_upcase(token[VALUE_INDEX])
@@ -161,18 +169,17 @@ module OpenTelemetry
             if upcased_value == 'AS'
               # AS indicates start of DDL body - stop processing everything
               { processed: true, parts: [], new_state: DDL_BODY_STATE, next_index: index + 1 }
-            elsif STOP_COLLECTION_KEYWORDS.include?(upcased_value)
-              return_to_normal_parsing(token, index)
             elsif identifier_like?(token) || (token[TYPE_INDEX] == :string && !in_clause_context) || (token[TYPE_INDEX] == :keyword && can_be_table_name?(upcased_value))
-              process_table_name_and_alias(token, tokens, index, has_long_table_name)
+              process_table_name_and_alias(token, tokens, index, has_long_table_name: has_long_table_name)
             elsif token[VALUE_INDEX] == '(' || token[TYPE_INDEX] == :operator
               handle_collection_operator(token, state, index)
             else
+              # This handles STOP_COLLECTION_KEYWORDS and any other unhandled cases
               return_to_normal_parsing(token, index)
             end
           end
 
-          def process_table_name_and_alias(token, tokens, index, has_long_table_name = false)
+          def process_table_name_and_alias(token, tokens, index, has_long_table_name: false)
             # Special handling for PROCEDURE with AS BEGIN pattern FIRST (before general AS handling)
             # For "CREATE PROCEDURE name AS BEGIN SELECT * FROM table END" we want to extract the inner operations
             if token[VALUE_INDEX].length > 3 # Skip very short names
