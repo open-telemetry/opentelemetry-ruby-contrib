@@ -18,7 +18,7 @@ commit_lint:
   # Merge types allowed by the repo.
   merge: squash
 
-# List of all releaseable gems. Each gem should include:
+# List of all releasable gems. Each gem should include:
 #  *  name: The name of the gem. (Required.)
 #  *  directory: Gem directory relative to the repo root. (Required.)
 #  *  version_rb_path: Path to version.rb relative to the gem directory.
@@ -27,7 +27,7 @@ commit_lint:
 #  *  version_constant: The fully-qualified version constant as an array.
 #     (Required because the OpenTelemetry namespace does not match the gem
 #     name "opentelemetry".)
-#  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
+#  *  changelog_path: Path to CHANGELOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
   - name: opentelemetry-instrumentation-factory_bot
@@ -57,11 +57,6 @@ gems:
   - name: opentelemetry-helpers-mysql
     directory: helpers/mysql
     version_constant: [OpenTelemetry, Helpers, MySQL, VERSION]
-
-  - name: opentelemetry-helpers-sql-obfuscation
-    directory: helpers/sql-obfuscation
-    version_rb_path: lib/opentelemetry/helpers/sql_obfuscation/version.rb
-    version_constant: [OpenTelemetry, Helpers, SqlObfuscation, VERSION]
 
   - name: opentelemetry-helpers-sql-processor
     directory: helpers/sql-processor

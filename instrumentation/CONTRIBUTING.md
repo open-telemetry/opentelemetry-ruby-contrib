@@ -22,6 +22,8 @@ In addition to the requirements to maintain at least [community member status](h
     * Ruby language changes
     * Instrumented library changes
 
+When you become a component owner, you will be added to the `opentelemetry/ruby-contrib-triagers` group and will be automatically assigned to pull requests related to your component.
+
 If you do not have the capacity to maintain the instrumentation library, please consider contributing to the OpenTelemetry Ruby project in other ways or consider creating a separate project for the instrumentation library.
 
 > :warning: Libraries that do not meet these requirements may be removed from the project at any time at the discretion of OpenTelemetry Ruby Contrib Maintainers.
@@ -191,7 +193,7 @@ Code that is not tested will not be accepted by maintainers. We understand that 
 
 Most of the libraries we instrument introduce changes outside of our control. For this reason, integration or state-based tests are preferred over interaction (mock) tests.
 
-When you do in fact run into cases where test doubles or API stubs are absolutely necessary, we recommend using the [`rspec-mocks`](https://github.com/rspec/rspec-mocks) and [`webmocks`](https://github.com/bblimke/webmock) gems.
+When you do in fact run into cases where test doubles or API stubs are absolutely necessary, we recommend using the [`rspec-mocks`](https://github.com/rspec/rspec-mocks) and [`WebMock`](https://github.com/bblimke/webmock) gems.
 
 ### Understand performance characteristics
 
@@ -200,7 +202,7 @@ The OTel Specification describes expectations around the performance of SDKs, wh
 Instrumentation libraries should be as lightweight as possible and must:
 
 * Rely on `rubocop-performance` linters to catch performance issues
-* Consider using [microbenchmarks](https://github.com/evanphx/benchmark-ips) and [profiling](https://ruby-prof.github.io/) to address any possible performance issues
+* Consider using [microbenchmarking](https://github.com/evanphx/benchmark-ips) and [profiling](https://ruby-prof.github.io/) to address any possible performance issues
 * Provide minimal solutions and code paths
 
 #### Provide minimal solutions and code paths

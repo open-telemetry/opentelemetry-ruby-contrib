@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.26.1 / 2025-11-25
+
+* FIXED: Update support for unknown HTTP methods to match semantic conventions
+
 ### v0.26.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
@@ -89,7 +93,7 @@
 
 ### v0.19.4 / 2022-02-02
 
-* FIXED: Clientcontext attrs overwrite in net::http
+* FIXED: Client Context attrs overwrite in net::http
 * FIXED: Excessive hash creation on context attr merging
 
 ### v0.19.3 / 2021-12-01

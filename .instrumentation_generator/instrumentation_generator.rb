@@ -55,6 +55,16 @@ class InstrumentationGenerator < Thor::Group
     insert_into_file('.toys/.data/releases.yml', release_details, after: "gems:\n")
   end
 
+  def add_to_component_owners
+    release_details = <<-HEREDOC
+  instrumentation/#{instrumentation_gem_name}:
+    # TODO: Add your GitHub username
+    # - (your github username)
+    HEREDOC
+
+    insert_into_file('.github/component_owners.yml', release_details, after: "components:\n")
+  end
+
   def add_to_instrumentation_all
     instrumentation_all_path = 'instrumentation/all'
     gemfile_text = "\ngem '#{instrumentation_gem_name}', path: '../#{instrumentation_name}'"
