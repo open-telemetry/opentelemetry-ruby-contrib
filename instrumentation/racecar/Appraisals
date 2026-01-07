@@ -13,4 +13,3 @@ end
 appraise 'racecar-latest' do
   gem 'racecar'
 end
-
