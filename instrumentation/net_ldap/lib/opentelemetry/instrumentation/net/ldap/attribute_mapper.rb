@@ -8,9 +8,16 @@ module OpenTelemetry
   module Instrumentation
     module Net
       module LDAP
-        # attribute mapper to redact sensitive keys
+        # attribute mapper to redact keys which are not allowed
         class AttributeMapper
-          SENSITIVE_KEYS = %w[userPassword unicodePwd lmPassword msDS-ManagedPassword ntPassword authPassword krbPrincipalKey sambaNTPassword sambaLMPassword].freeze
+          LDAP_GENERAL_ATTRIBUTES = %w[attributes base filter ignore_server_caps left op operations paged_searches_supported replace right scope].freeze
+          LDAP_OBJECT_ATTRIBUTES  = %w[accountExpires codePage countryCode cn description displayName distinguishedName dn
+                                       givenName instanceType mail memberOf name objectCategory objectClass pwdChangedTime pwdLastSet
+                                       sAMAccountName userAccountControl userPrincipalName].freeze
+          SPAN_ATTRIBUTES =         %w[exception.message exception.stacktrace exception.type ldap.auth.method ldap.auth.username ldap.error.message
+                                       ldap.operation.type ldap.request.message ldap.response.status_code ldap.tree.base network.protocol.name
+                                       network.protocol.version network.transport peer.service server.address server.port].freeze
+          ALLOWED_KEYS = (LDAP_GENERAL_ATTRIBUTES + LDAP_OBJECT_ATTRIBUTES + SPAN_ATTRIBUTES).freeze
 
           def self.redact(_value)
             '[REDACTED]'
@@ -33,11 +40,11 @@ module OpenTelemetry
             when Hash
               obj.each_with_object({}) do |(k, v), result|
                 key_str = k.to_s
-                result[k] = SENSITIVE_KEYS.include?(key_str) ? redact(v) : deep_map(v)
+                result[k] = ALLOWED_KEYS.include?(key_str) ? deep_map(v) : redact(v)
               end
             when Array
               # Special case: LDAP operation tuple like ["replace", "unicodePwd", ["value"]]
-              if obj.size == 3 && obj[1].is_a?(String) && SENSITIVE_KEYS.include?(obj[1])
+              if obj.size == 3 && obj[1].is_a?(String) && !ALLOWED_KEYS.include?(obj[1])
                 [obj[0], obj[1], ['[REDACTED]']]
               else
                 obj.map { |item| deep_map(item) }

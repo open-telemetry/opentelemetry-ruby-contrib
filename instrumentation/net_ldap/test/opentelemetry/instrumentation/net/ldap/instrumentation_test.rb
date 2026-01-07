@@ -152,8 +152,8 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'LDAP add'
         _(span.kind).must_equal :client
-        _(span.attributes['error.message']).must_equal 'Connection timed out - user specified timeout'
-        _(span.attributes['error.type']).must_equal 'Net::LDAP::Error'
+        _(span.events[0].attributes['exception.message']).must_equal('Connection timed out - user specified timeout')
+        _(span.events[0].attributes['exception.type']).must_equal('Net::LDAP::Error')
         _(span.attributes['ldap.auth.username']).must_equal 'test_user'
         _(span.attributes['ldap.auth.method']).must_equal 'simple'
         _(span.attributes.values).wont_include 'test_password'

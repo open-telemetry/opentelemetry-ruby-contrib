@@ -44,7 +44,8 @@ module OpenTelemetry
               OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_NAME => 'ldap',
               OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_VERSION => ::Net::LDAP::Connection::LdapVersion
             }
-            attributes.delete_if { |_key, value| value.nil? }
+
+            attributes.compact!
 
             tracer.in_span(
               "LDAP #{operation_type}",
@@ -63,10 +64,7 @@ module OpenTelemetry
                 end
               end
             rescue ::Net::LDAP::Error => e
-              span.add_attributes({
-                                    'error.type' => e.class.to_s,
-                                    'error.message' => e.message.to_s
-                                  })
+              span.record_exception(e)
               span.status = OpenTelemetry::Trace::Status.error
               raise e
             end
@@ -98,7 +96,7 @@ module OpenTelemetry
               'ldap.response.status_code' => status_code
             }
             attributes['ldap.response.message'] = message unless message.empty?
-            attributes['error.message'] = error_message unless error_message.empty?
+            attributes['ldap.error.message'] = error_message unless error_message.empty?
             span.add_attributes(attributes)
 
             return if ::Net::LDAP::ResultCodesNonError.include?(status_code)
