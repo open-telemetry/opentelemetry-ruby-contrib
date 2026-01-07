@@ -10,7 +10,7 @@
   end
 end
 
-appraise "racecar-latest" do
+appraise 'racecar-latest' do
   gem 'racecar'
 end
 
