@@ -106,7 +106,7 @@ class CacheTest < Minitest::Test
     assert_equal 'post_stress_value', result
   end
 
-def test_lru_eviction_behavior
+  def test_lru_eviction_behavior
     lru_cache = OpenTelemetry::Helpers::QuerySummary::Cache.new(size: 2)
 
     # 1. Fill cache to capacity (A is LRU)
@@ -126,14 +126,14 @@ def test_lru_eviction_behavior
     # 4. Verify B was evicted (forces a cache miss)
     result = lru_cache.fetch('B') { 'newB' }
     assert_equal 'newB', result # Block should execute (cache miss)
-    
+
     # New key B is added, which evicts A (now the LRU key)
     # Cache state: [LRU] C -> B [MRU] (A is evicted, B is new MRU)
 
     # 5. Verify C and B are present
     # Check C (was LRU, now should still be present)
     assert_equal 'valueC', lru_cache.fetch('C') { 'should_not_execute' }
-    
+
     # Check B (just added)
     assert_equal 'newB', lru_cache.fetch('B') { 'should_not_execute' }
   end

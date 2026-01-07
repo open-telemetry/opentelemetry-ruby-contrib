@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'set'
-
 module OpenTelemetry
   module Helpers
     module QuerySummary
@@ -62,14 +60,14 @@ module OpenTelemetry
           # Optimized upcase with caching for common SQL keywords
           def cached_upcase(str)
             return str if str.nil? || str.empty?
+
             UPCASE_CACHE[str] ||= str.upcase.freeze
           end
 
           def build_summary_from_tokens(tokens)
             summary_parts = []
             state = PARSING_STATE
-            skip_until = 0 # Skip tokens we've already processed when looking ahead
-            has_long_table_name = false # Track if any table name is too long
+            skip_until = 0 # Skip tokens we've already processed when looking ahead # Track if any table name is too long
             in_clause_context = false # Track if we're in an IN clause context
 
             # First pass: check if any table names are too long
@@ -185,7 +183,7 @@ module OpenTelemetry
               if as_token && as_token[VALUE_INDEX]&.upcase == 'AS' && begin_token && begin_token[VALUE_INDEX]&.upcase == 'BEGIN'
                 # This is a PROCEDURE with AS BEGIN structure - we want to parse the body
                 # Continue normal processing but include the procedure name and skip AS BEGIN
-                table_parts = (has_long_table_name || !should_include_table_name?(token[VALUE_INDEX])) ? [] : [token[VALUE_INDEX]]
+                table_parts = has_long_table_name || !should_include_table_name?(token[VALUE_INDEX]) ? [] : [token[VALUE_INDEX]]
                 return { processed: true, parts: table_parts, new_state: PARSING_STATE, next_index: index + 3 }
               end
             end
@@ -198,7 +196,7 @@ module OpenTelemetry
               after_as_token = tokens[index + 2]
               if after_as_token && %w[SELECT INSERT UPDATE DELETE BEGIN].include?(after_as_token[VALUE_INDEX].upcase)
                 # This is DDL AS - transition to DDL_BODY_STATE and skip AS
-                table_parts = (has_long_table_name || !should_include_table_name?(token[VALUE_INDEX])) ? [] : [token[VALUE_INDEX]]
+                table_parts = has_long_table_name || !should_include_table_name?(token[VALUE_INDEX]) ? [] : [token[VALUE_INDEX]]
                 return { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: index + 2 }
               end
             end
@@ -224,11 +222,10 @@ module OpenTelemetry
 
               if found_as_with_begin
                 # This is a TRIGGER name - transition to DDL_BODY_STATE at the AS token
-                table_parts = (has_long_table_name || !should_include_table_name?(token[VALUE_INDEX])) ? [] : [token[VALUE_INDEX]]
+                table_parts = has_long_table_name || !should_include_table_name?(token[VALUE_INDEX]) ? [] : [token[VALUE_INDEX]]
                 return { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: look_ahead_index + 1 }
               end
             end
-
 
             # Regular alias handling for non-DDL cases
             skip_count = calculate_alias_skip(tokens, index)
@@ -242,11 +239,11 @@ module OpenTelemetry
               # Handle START WITH pattern (e.g., CREATE SEQUENCE ... START WITH) - check for WITH following
               new_state = PARSING_STATE
               following_token = tokens[index + 2 + skip_count]
-              if following_token && following_token[VALUE_INDEX]&.upcase == 'WITH'
-                skip_count += 2 # Skip both START and WITH
-              else
-                skip_count += 1 # Skip just START
-              end
+              skip_count += if following_token && following_token[VALUE_INDEX]&.upcase == 'WITH'
+                              2 # Skip both START and WITH
+                            else
+                              1 # Skip just START
+                            end
             elsif next_token_after_alias && %w[WITH SET WHERE BEGIN DROP ADD COLUMN INCREMENT BY].include?(next_token_after_alias[VALUE_INDEX].upcase)
               new_state = PARSING_STATE
               # Skip over the stopping keyword so it doesn't get processed again
@@ -255,11 +252,11 @@ module OpenTelemetry
               # Handle RESTART WITH pattern - skip both tokens
               new_state = PARSING_STATE
               following_token = tokens[index + 2 + skip_count]
-              if following_token && following_token[VALUE_INDEX]&.upcase == 'WITH'
-                skip_count += 2 # Skip both RESTART and WITH
-              else
-                skip_count += 1 # Skip just RESTART
-              end
+              skip_count += if following_token && following_token[VALUE_INDEX]&.upcase == 'WITH'
+                              2 # Skip both RESTART and WITH
+                            else
+                              1 # Skip just RESTART
+                            end
             elsif next_token_after_alias && next_token_after_alias[VALUE_INDEX].start_with?('@')
               # Handle SQL Server parameter syntax - stop at parameter definitions
               new_state = PARSING_STATE
@@ -273,7 +270,7 @@ module OpenTelemetry
 
             # Apply truncation logic - if any table name is too long, exclude all table names
             cleaned_table_name = clean_table_name(token[VALUE_INDEX])
-            table_parts = (has_long_table_name || !should_include_table_name?(cleaned_table_name)) ? [] : [cleaned_table_name]
+            table_parts = has_long_table_name || !should_include_table_name?(cleaned_table_name) ? [] : [cleaned_table_name]
 
             result = { processed: true, parts: table_parts, new_state: new_state, next_index: index + 1 + skip_count }
             result[:terminate_after_ddl] = true if should_terminate
@@ -379,9 +376,7 @@ module OpenTelemetry
               if tokens[index + 2] && tokens[index + 2][VALUE_INDEX]&.upcase == 'IF' &&
                  tokens[index + 3] && tokens[index + 3][VALUE_INDEX]&.upcase == 'EXISTS'
                 object_name = tokens[index + 4]
-                if object_name
-                  return { processed: true, parts: ["#{operation} #{object_type.upcase} #{object_name[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 5 }
-                end
+                return { processed: true, parts: ["#{operation} #{object_type.upcase} #{object_name[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 5 } if object_name
               end
             end
 
@@ -392,9 +387,7 @@ module OpenTelemetry
                  tokens[index + 3] && tokens[index + 3][VALUE_INDEX]&.upcase == 'NOT' &&
                  tokens[index + 4] && tokens[index + 4][VALUE_INDEX]&.upcase == 'EXISTS'
                 object_name = tokens[index + 5]
-                if object_name
-                  return { processed: true, parts: ["#{operation} #{object_type.upcase} #{object_name[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 6 }
-                end
+                return { processed: true, parts: ["#{operation} #{object_type.upcase} #{object_name[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 6 } if object_name
               end
             end
 
@@ -459,12 +452,12 @@ module OpenTelemetry
 
               if current == 'SELECT' && i + 2 < summary_parts.length
                 # Look for SELECT ... UNION SELECT pattern
-                select_parts = [current]
+                [current]
                 table_names = []
 
                 # Collect table names from first SELECT
                 i += 1
-                while i < summary_parts.length && !['UNION', 'SELECT'].include?(summary_parts[i])
+                while i < summary_parts.length && !%w[UNION SELECT].include?(summary_parts[i])
                   table_names << summary_parts[i]
                   i += 1
                 end
@@ -474,13 +467,13 @@ module OpenTelemetry
                   i += 1 # Skip UNION
                   i += 1 if i < summary_parts.length && summary_parts[i] == 'ALL' # Skip ALL if present
 
-                  if i < summary_parts.length && summary_parts[i] == 'SELECT'
-                    i += 1 # Skip SELECT
-                    # Collect table names from this SELECT
-                    while i < summary_parts.length && !['UNION', 'SELECT'].include?(summary_parts[i])
-                      table_names << summary_parts[i]
-                      i += 1
-                    end
+                  next unless i < summary_parts.length && summary_parts[i] == 'SELECT'
+
+                  i += 1 # Skip SELECT
+                  # Collect table names from this SELECT
+                  while i < summary_parts.length && !%w[UNION SELECT].include?(summary_parts[i])
+                    table_names << summary_parts[i]
+                    i += 1
                   end
                 end
 
@@ -500,9 +493,9 @@ module OpenTelemetry
             # Remove only SQL Server brackets - preserve standard SQL quotes
             case table_name
             when /^\[(.+)\]$/
-              $1 # Remove SQL Server brackets [table] -> table
+              ::Regexp.last_match(1) # Remove SQL Server brackets [table] -> table
             when /^`(.+)`$/
-              $1 # Remove MySQL backticks `table` -> table
+              ::Regexp.last_match(1) # Remove MySQL backticks `table` -> table
             else
               table_name # Preserve double quotes "table" and single quotes 'table'
             end
