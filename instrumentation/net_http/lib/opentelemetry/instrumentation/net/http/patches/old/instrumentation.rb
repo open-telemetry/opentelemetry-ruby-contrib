@@ -23,15 +23,12 @@ module OpenTelemetry
 
                 return super if untraced?
 
-                span_data = HttpHelper.span_attrs_for(req.method, semconv: :old)
+                span_data = HttpHelper.span_attrs_for_old(req.method)
 
-                attributes = {
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => span_data.normalized_method,
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
-                }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+                attributes = { OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
+                               OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
+                               OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
+                               OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port }.merge!(span_data.attributes)
 
                 tracer.in_span(
                   span_data.span_name,

@@ -17,6 +17,8 @@ components:
     - rmoslogo
   instrumentation/grpc:
     - michal-kazmierczak
+  instrumentation/gruf:
+    - AS-AlStar
   instrumentation/httpx:
     - HoneyryderChuck
   instrumentation/mongo:
