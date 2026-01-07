@@ -18,13 +18,13 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
         with:
-          ruby-version: "3.2"
+          ruby-version: "4.0"
 
       - name: Checkout repo
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+        run: "gem install --no-document toys -v 0.19.1"
 
       - name: Create otelbot app token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
@@ -39,5 +39,5 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           toys release request --yes --verbose \
-            "--release-ref=${{ github.ref }}" \
+            "--target-branch=${{ github.ref }}" \
             < /dev/null
