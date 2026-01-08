@@ -27,15 +27,15 @@ jobs:
 
           find . -type f -name "Gemfile" -not -path "*/example/*" -not -path "*/releases/*" | sort | while read gemfile; do
               gemfile_dir=$(dirname "$gemfile")
-              
+
               # Change to the Gemfile's directory
               echo "Changing to directory: $gemfile_dir"
-              
+
               cd "$gemfile_dir" || continue
 
               echo "Current directory: $(pwd)"
               echo "Creating lock file for: $gemfile"
-              
+
               # Generate the Gemfile.lock files
               bundle lock || echo "Warning: Failed to generate lock file for $gemfile, continuing..."
 

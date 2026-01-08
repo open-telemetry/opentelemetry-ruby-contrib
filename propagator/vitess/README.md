@@ -8,7 +8,7 @@ The `opentelemetry-propagator-vitess` gem contains injectors and extractors for 
 Vitess encodes trace context in a special SQL comment style. The format is a base64 string encoding of a JSON object that, at it simplest, looks something like this:
 
 ```json
-{"uber-trace-id":"{trace-id}:{span-id}:{parent-span-id}:{flags}"}
+{ "uber-trace-id": "{trace-id}:{span-id}:{parent-span-id}:{flags}" }
 ```
 
 To inform Vitess of the trace context, the context is prepended to a SQL query, e.g.:

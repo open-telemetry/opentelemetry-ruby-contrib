@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Notify us of an error or incorrect behavior
-title: ''
-labels: 'bug'
-assignees: ''
-
+title: ""
+labels: "bug"
+assignees: ""
 ---
 
 <!--

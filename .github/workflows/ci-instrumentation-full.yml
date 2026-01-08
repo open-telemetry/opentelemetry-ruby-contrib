@@ -6,47 +6,47 @@ on:
     branches:
       - main
     paths: &path_filters
-      - 'helpers/**'
-      - 'instrumentation/action_mailer/**'
-      - 'instrumentation/action_pack/**'
-      - 'instrumentation/action_view/**'
-      - 'instrumentation/active_job/**'
-      - 'instrumentation/active_model_serializers/**'
-      - 'instrumentation/active_record/**'
-      - 'instrumentation/active_storage/**'
-      - 'instrumentation/active_support/**'
-      - 'instrumentation/anthropic/**'
-      - 'instrumentation/aws_sdk/**'
-      - 'instrumentation/aws_lambda/**'
-      - 'instrumentation/base/**'
-      - 'instrumentation/concurrent_ruby/**'
-      - 'instrumentation/delayed_job/**'
-      - 'instrumentation/ethon/**'
-      - 'instrumentation/excon/**'
-      - 'instrumentation/factory_bot/**'
-      - 'instrumentation/faraday/**'
-      - 'instrumentation/grape/**'
-      - 'instrumentation/graphql/**'
-      - 'instrumentation/grpc/**'
-      - 'instrumentation/gruf/**'
-      - 'instrumentation/http/**'
-      - 'instrumentation/http_client/**'
-      - 'instrumentation/httpx/**'
-      - 'instrumentation/koala/**'
-      - 'instrumentation/lmdb/**'
-      - 'instrumentation/logger/**'
-      - 'instrumentation/net_http/**'
-      - 'instrumentation/rack/**'
-      - 'instrumentation/rails/**'
-      - 'instrumentation/restclient/**'
-      - 'instrumentation/rspec/**'
-      - 'instrumentation/sinatra/**'
-      - '.github/workflows/ci-instrumentation-full.yml'
-      - '.github/actions/**'
-      - 'Gemfile'
-      - 'Rakefile'
-      - '.rubocop.yml'
-      - 'gemspecs/**'
+      - "helpers/**"
+      - "instrumentation/action_mailer/**"
+      - "instrumentation/action_pack/**"
+      - "instrumentation/action_view/**"
+      - "instrumentation/active_job/**"
+      - "instrumentation/active_model_serializers/**"
+      - "instrumentation/active_record/**"
+      - "instrumentation/active_storage/**"
+      - "instrumentation/active_support/**"
+      - "instrumentation/anthropic/**"
+      - "instrumentation/aws_sdk/**"
+      - "instrumentation/aws_lambda/**"
+      - "instrumentation/base/**"
+      - "instrumentation/concurrent_ruby/**"
+      - "instrumentation/delayed_job/**"
+      - "instrumentation/ethon/**"
+      - "instrumentation/excon/**"
+      - "instrumentation/factory_bot/**"
+      - "instrumentation/faraday/**"
+      - "instrumentation/grape/**"
+      - "instrumentation/graphql/**"
+      - "instrumentation/grpc/**"
+      - "instrumentation/gruf/**"
+      - "instrumentation/http/**"
+      - "instrumentation/http_client/**"
+      - "instrumentation/httpx/**"
+      - "instrumentation/koala/**"
+      - "instrumentation/lmdb/**"
+      - "instrumentation/logger/**"
+      - "instrumentation/net_http/**"
+      - "instrumentation/rack/**"
+      - "instrumentation/rails/**"
+      - "instrumentation/restclient/**"
+      - "instrumentation/rspec/**"
+      - "instrumentation/sinatra/**"
+      - ".github/workflows/ci-instrumentation-full.yml"
+      - ".github/actions/**"
+      - "Gemfile"
+      - "Rakefile"
+      - ".rubocop.yml"
+      - "gemspecs/**"
   pull_request:
     branches:
       - main
@@ -58,8 +58,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
-  cancel-in-progress: true  # Cancel any previous runs of this workflow
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
   check:
