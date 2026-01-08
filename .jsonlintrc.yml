@@ -1,0 +1,10 @@
+check: true
+continue: true
+duplicate-keys: true
+trailing-newline: true
+quiet: true
+pretty-print: false
+patterns:
+  - "**/*.json"
+  - "!package-lock.json"
+  - "!**/node_modules"
