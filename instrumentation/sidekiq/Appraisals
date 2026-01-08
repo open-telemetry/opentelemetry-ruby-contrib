@@ -1,30 +1,15 @@
 # frozen_string_literal: true
 
 if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.2.0')
+  appraise 'sidekiq-latest' do
+    gem 'sidekiq'
+  end
+
   appraise 'sidekiq-8.0' do
     gem 'sidekiq', '~> 8.0'
   end
 end
 
-appraise 'sidekiq-7.0' do
-  gem 'sidekiq', '~> 7.0'
-end
-
-appraise 'sidekiq-6.5' do
-  gem 'sidekiq', '>= 6.5', '< 7.0'
-end
-
-appraise 'sidekiq-6.0' do
-  gem 'sidekiq', '>= 6.0', '< 6.5'
-  gem 'redis', '< 4.8'
-end
-
-appraise 'sidekiq-5.2' do
-  gem 'sidekiq', '~> 5.2'
-  gem 'redis', '< 4.8'
-end
-
-appraise 'sidekiq-4.2' do
-  gem 'sidekiq', '~> 4.2'
-  gem 'redis', '< 4.8'
+appraise 'sidekiq-7.3' do
+  gem 'sidekiq', '~> 7.3'
 end
