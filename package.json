@@ -1,8 +1,29 @@
 {
   "scripts": {
-    "check:lint:renovate": "renovate-config-validator"
+    "check:format": "prettier . --check",
+    "check:format:json": "prettier **/*.json --check",
+    "check:format:markdown": "prettier **/*.md --check",
+    "check:lint": "npm run check:lint:json && npm run check:lint:markdown",
+    "check:lint:json": "jsonlint --config ./.jsonlintrc.yml",
+    "check:lint:markdown": "markdownlint-cli2 '**/*.md'",
+    "check:lint:renovate": "renovate-config-validator",
+    "check:links": "linkspector check",
+    "check:spelling": "cspell -c .cspell.yml .",
+    "write:format": "prettier . --write",
+    "write:format:json": "prettier **/*.json --write",
+    "write:format:markdown": "prettier **/*.md --write",
+    "write:lint": "npm run write:lint:json && npm run write:lint:markdown",
+    "write:lint:json": "jsonlint --config ./.jsonlintrc.yml --in-place && npm run write:format:json",
+    "write:lint:markdown": "markdownlint-cli2 '**/*.md' --fix && npm run write:format:markdown"
   },
   "devDependencies": {
+    "@prantlf/jsonlint": "17.0.0",
+    "@umbrelladocs/linkspector": "0.4.7",
+    "markdownlint-cli2": "0.20.0",
+    "prettier": "3.7.4",
     "renovate": "^42.84.2"
+  },
+  "overrides": {
+    "glob": "7.2.3"
   }
 }

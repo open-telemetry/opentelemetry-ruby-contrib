@@ -26,11 +26,13 @@
       "dependencyDashboardApproval": true
     },
     {
-      "matchFileNames": [".github/workflows/release-*.yaml"],
+      "matchFileNames": [".github/workflows/release-*.yml"],
       "ignoreDeps": ["ruby"]
     }
   ],
-  "labels": [
-    "dependencies"
-  ]
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 8am on Monday"]
+  },
+  "labels": ["dependencies"]
 }

@@ -63,11 +63,13 @@ dictionaries:
 ignoreWords:
   - sendfile
   - millis
+  - jsonlintrc
 words:
   - AWSXRayTrace
   - AWSXRaySamplingClient
   - AWSXRayRemoteSampler
   - enqueuers
+  - jsonlint
   - myapp
   - otelbot
   - otelcol
