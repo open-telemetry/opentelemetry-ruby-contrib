@@ -10,16 +10,20 @@
 # https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
 semconv_stability = %w[stable old dup]
-gem_versions = %w[2.2.0 3.0.0 3.1.0 3.2.0]
 
+# https://github.com/rack/rack?tab=readme-ov-file#version-support
+gem_versions = %w[3.1.0 3.2.0]
+gem_versions << '2.2.0' if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
+
+# https://github.com/rack/rack/tree/main?tab=readme-ov-file#version-support
 semconv_stability.each do |mode|
+  appraise "rack-latest-#{mode}" do
+    gem 'rack'
+  end
+
   gem_versions.each do |version|
     appraise "rack-#{version}-#{mode}" do
       gem 'rack', "~> #{version}"
     end
-  end
-
-  appraise "rack-latest-#{mode}" do
-    gem 'rack'
   end
 end

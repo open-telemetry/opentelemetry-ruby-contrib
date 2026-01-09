@@ -25,4 +25,6 @@ group :test do
     gem 'base64'
     gem 'mutex_m'
   end
+  # https://github.com/collectiveidea/delayed_job/issues/1245
+  gem 'ostruct' if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('4')
 end
