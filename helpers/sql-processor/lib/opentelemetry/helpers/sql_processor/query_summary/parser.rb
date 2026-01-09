@@ -534,7 +534,6 @@ module OpenTelemetry
               truncated[0...last_space_index]
             end
           end
-
         end
       end
     end
