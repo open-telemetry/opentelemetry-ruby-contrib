@@ -48,7 +48,7 @@ module OpenTelemetry
         # Hash-based keyword lookup performance optimization
         KEYWORDS = KEYWORDS_ARRAY.each_with_object({}) { |keyword, hash| hash[keyword] = true }.freeze
 
-        UPCASE_CACHE = {}
+        UPCASE_CACHE = {} # rubocop:disable Style/MutableConstant
         private_constant :UPCASE_CACHE
 
         OPERATOR_REGEX = %r{<=|>=|<>|!=|[=<>+\-*/%,;()!?]}

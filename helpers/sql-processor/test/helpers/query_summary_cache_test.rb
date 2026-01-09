@@ -1,3 +1,11 @@
+# frozen_string_literal: true
+
+# rubocop:disable Style/RedundantFetchBlock
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 require_relative '../test_helper'
 require_relative '../../lib/opentelemetry/helpers/sql_processor/query_summary/cache'
 require 'benchmark'
@@ -138,3 +146,5 @@ class CacheTest < Minitest::Test
     assert_equal 'newB', lru_cache.fetch('B') { 'should_not_execute' }
   end
 end
+
+# rubocop:enable Style/RedundantFetchBlock
