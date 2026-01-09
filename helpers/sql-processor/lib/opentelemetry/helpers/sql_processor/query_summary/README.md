@@ -19,7 +19,7 @@ puts summary  # => "SELECT users orders"
 ## Examples
 
 | Input SQL | Output Summary |
-|-----------|----------------|
+| --------- | -------------- |
 | `SELECT * FROM users WHERE id = 1` | `SELECT users` |
 | `INSERT INTO orders VALUES (1, 2, 3)` | `INSERT orders` |
 | `CREATE TABLE products (id INT)` | `CREATE TABLE products` |
@@ -30,7 +30,7 @@ puts summary  # => "SELECT users orders"
 ## Complex Examples
 
 | Complex SQL | Summary | Why Useful |
-|-------------|---------|------------|
+| ----------- | ------- | ---------- |
 | `SELECT u.*, p.name FROM users u LEFT JOIN profiles p ON u.id=p.user_id WHERE u.created_at > '2023-01-01' AND p.active = 1` | `SELECT users profiles` | Shows JOIN handling, removes sensitive data |
 | `INSERT INTO audit_logs (user_id, action, details, created_at) VALUES (?, ?, ?, NOW())` | `INSERT audit_logs` | Removes parameter placeholders |
 | `CREATE PROCEDURE update_user(id INT) AS BEGIN UPDATE users SET last_seen=NOW() WHERE id=id; END` | `CREATE PROCEDURE update_user` | Handles stored procedures |
@@ -65,7 +65,7 @@ end
 
 The module uses a three-stage pipeline to transform SQL queries into summaries:
 
-```
+```text
 SQL Query → Tokenizer → Parser → Summary
                               ↕
                            Cache (stores results)
@@ -104,7 +104,7 @@ Breaks SQL strings into structured tokens using `StringScanner` for parsing.
 Uses a **finite state machine** with three states to extract operations and table names from tokens.
 
 ### Parser State Flow
-```
+```text
 SQL Token → PARSING → FROM/JOIN → EXPECT_COLLECTION → table names
                 ↓           ↓              ↓
             Operations   WHERE/END    Back to PARSING
