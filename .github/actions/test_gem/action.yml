@@ -48,7 +48,7 @@ runs:
       shell: bash
       run: |
         # 🛠️ Setup 🛠️
-        dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
+        dir=$(find . -name vendor -prune -o -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
         # We install multiple ruby versions here, and that makes for some
@@ -71,6 +71,14 @@ runs:
             echo "appraisals=true" >> $GITHUB_OUTPUT
           fi
         fi
+
+    - name: Configure local gem development
+      shell: bash
+      run: |
+        # 🔧 Configure Bundler for local gems 🔧
+        # Create a git reference for the main branch to satisfy bundler
+        git branch main 2>/dev/null || git branch -f main HEAD
+        bash bin/setup-local-dev --clean && bash bin/setup-local-dev
 
     # Install ImageMagick for active_storage testing.
     # Unfortunately, as of ubuntu-24.04, ImageMagick is no longer pre-installed in Github Actions.
@@ -128,6 +136,8 @@ runs:
             echo "::endgroup::"
           done
         else
+          echo "Installed gems:"
+          bundle show
           bundle exec rake test
         fi
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
