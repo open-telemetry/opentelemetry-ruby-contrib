@@ -43,7 +43,7 @@ module OpenTelemetry
         TRIGGER_COLLECTION = %w[FROM INTO JOIN IN].to_set.freeze
         TABLE_OPERATIONS = %w[CREATE ALTER DROP TRUNCATE].to_set.freeze
         TABLE_OBJECTS = %w[TABLE INDEX PROCEDURE VIEW DATABASE ROLE USER SCHEMA SEQUENCE TRIGGER FUNCTION].to_set.freeze
-        EXEC_OPERATIONS = %w[EXEC EXECUTE].to_set.freeze
+        EXEC_OPERATIONS = %w[EXEC EXECUTE CALL].to_set.freeze
 
         # Additional sets for common lookups
         STOP_COLLECTION_KEYWORDS = %w[WITH SET WHERE BEGIN RESTART START INCREMENT BY].to_set.freeze
@@ -397,7 +397,7 @@ module OpenTelemetry
           end
 
           def handle_exec_operation(token, tokens, index)
-            # Handle EXEC/EXECUTE operations - get the procedure name
+            # Handle EXEC/EXECUTE/CALL operations - get the procedure name
             next_token = tokens[index + 1]
             if next_token && identifier_like?(next_token)
               { processed: true, parts: ["#{token[VALUE_INDEX]} #{next_token[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 2 }

@@ -1316,5 +1316,70 @@
       ],
       "db.query.summary": "SELECT TableA TableB"
     }
+  },
+  {
+    "name": "call_stored_procedure_no_params",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CALL GetAllUsers"
+    },
+    "expected": {
+      "db.query.text": [
+        "CALL GetAllUsers"
+      ],
+      "db.query.summary": "CALL GetAllUsers"
+    }
+  },
+  {
+    "name": "call_stored_procedure_with_params",
+    "input": {
+      "db.system.name": "postgresql",
+      "query": "CALL update_user_profile(123, 'john@example.com', 'John Doe')"
+    },
+    "expected": {
+      "db.query.text": [
+        "CALL update_user_profile(?, ?, ?)"
+      ],
+      "db.query.summary": "CALL update_user_profile"
+    }
+  },
+  {
+    "name": "call_schema_qualified_procedure",
+    "input": {
+      "db.system.name": "mysql",
+      "query": "CALL myschema.calculate_statistics(@start_date, @end_date)"
+    },
+    "expected": {
+      "db.query.text": [
+        "CALL myschema.calculate_statistics(?, ?)"
+      ],
+      "db.query.summary": "CALL myschema.calculate_statistics"
+    }
+  },
+  {
+    "name": "call_lowercase_with_semicolon",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "call process_orders();"
+    },
+    "expected": {
+      "db.query.text": [
+        "call process_orders();"
+      ],
+      "db.query.summary": "call process_orders"
+    }
+  },
+  {
+    "name": "call_procedure_only_keyword",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CALL"
+    },
+    "expected": {
+      "db.query.text": [
+        "CALL"
+      ],
+      "db.query.summary": "CALL"
+    }
   }
 ]
