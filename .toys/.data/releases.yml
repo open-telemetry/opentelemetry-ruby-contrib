@@ -221,6 +221,10 @@ gems:
     directory: instrumentation/rack
     version_constant: [OpenTelemetry, Instrumentation, Rack, VERSION]
 
+  - name: opentelemetry-instrumentation-rage
+    directory: instrumentation/rage
+    version_constant: [OpenTelemetry, Instrumentation, Rage, VERSION]
+
   - name: opentelemetry-instrumentation-rails
     directory: instrumentation/rails
     version_constant: [OpenTelemetry, Instrumentation, Rails, VERSION]
