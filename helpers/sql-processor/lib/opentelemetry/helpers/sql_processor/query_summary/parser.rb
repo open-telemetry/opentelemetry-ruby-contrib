@@ -56,8 +56,7 @@ module OpenTelemetry
         UPCASE_CACHE = {} # rubocop:disable Style/MutableConstant
         private_constant :UPCASE_CACHE
 
-        # Maximum length for table names to avoid excessively long summaries
-        MAX_TABLE_NAME_LENGTH = 100
+        MAX_SUMMARY_LENGTH = 255
 
         class << self
           # Optimized upcase with caching for common SQL keywords
@@ -73,8 +72,7 @@ module OpenTelemetry
             skip_until = 0 # Skip tokens we've already processed when looking ahead
             in_clause_context = false # Track if we're in an IN clause context
 
-            # First pass: check if any table names are too long
-            has_long_table_name = tokens.any? { |token| identifier_like?(token) && token[VALUE_INDEX].length > MAX_TABLE_NAME_LENGTH }
+            # Process tokens to build summary parts
 
             tokens.each_with_index do |token, index|
               next if index < skip_until
@@ -90,7 +88,6 @@ module OpenTelemetry
 
               result = process_token(token, tokens, index,
                                      state: state,
-                                     has_long_table_name: has_long_table_name,
                                      in_clause_context: in_clause_context)
 
               summary_parts.concat(result[:parts])
@@ -99,12 +96,13 @@ module OpenTelemetry
             end
 
             # Post-process to consolidate UNION queries
-            consolidate_union_queries(summary_parts).join(' ')
+            summary = consolidate_union_queries(summary_parts).join(' ')
+
+            truncate_summary(summary)
           end
 
           def process_token(token, tokens, index, **options)
             state = options[:state]
-            has_long_table_name = options[:has_long_table_name] || false
             in_clause_context = options[:in_clause_context] || false
 
             # In DDL body state, skip all tokens
@@ -117,7 +115,6 @@ module OpenTelemetry
 
             collection_result = process_collection_token(token, tokens, index,
                                                          state: state,
-                                                         has_long_table_name: has_long_table_name,
                                                          in_clause_context: in_clause_context)
             return collection_result if collection_result[:processed]
 
@@ -169,7 +166,6 @@ module OpenTelemetry
 
           def process_collection_token(token, tokens, index, **options)
             state = options[:state]
-            has_long_table_name = options[:has_long_table_name] || false
             in_clause_context = options[:in_clause_context] || false
 
             return not_processed(state, index + 1) unless state == EXPECT_COLLECTION_STATE
@@ -181,7 +177,7 @@ module OpenTelemetry
               # AS indicates start of DDL body - stop processing everything
               { processed: true, parts: [], new_state: DDL_BODY_STATE, next_index: index + 1 }
             elsif identifier_like?(token) || (token[TYPE_INDEX] == :string && !in_clause_context) || (token[TYPE_INDEX] == :keyword && can_be_table_name?(upcased_value))
-              process_table_name_and_alias(token, tokens, index, has_long_table_name: has_long_table_name)
+              process_table_name_and_alias(token, tokens, index)
             elsif token[VALUE_INDEX] == '(' || token[TYPE_INDEX] == :operator
               handle_collection_operator(token, state, index)
             else
@@ -190,7 +186,7 @@ module OpenTelemetry
             end
           end
 
-          def process_table_name_and_alias(token, tokens, index, has_long_table_name: false)
+          def process_table_name_and_alias(token, tokens, index)
             # Special handling for PROCEDURE with AS BEGIN pattern FIRST (before general AS handling)
             # For "CREATE PROCEDURE name AS BEGIN SELECT * FROM table END" we want to extract the inner operations
             if token[VALUE_INDEX].length > 3 # Skip very short names
@@ -201,7 +197,7 @@ module OpenTelemetry
               if as_token && as_token[VALUE_INDEX]&.upcase == 'AS' && begin_token && begin_token[VALUE_INDEX]&.upcase == 'BEGIN'
                 # This is a PROCEDURE with AS BEGIN structure - we want to parse the body
                 # Continue normal processing but include the procedure name and skip AS BEGIN
-                table_parts = has_long_table_name || !should_include_table_name?(token[VALUE_INDEX]) ? [] : [token[VALUE_INDEX]]
+                table_parts = [token[VALUE_INDEX]]
                 return { processed: true, parts: table_parts, new_state: PARSING_STATE, next_index: index + 3 }
               end
             end
@@ -214,7 +210,7 @@ module OpenTelemetry
               after_as_token = tokens[index + 2]
               if after_as_token && %w[SELECT INSERT UPDATE DELETE BEGIN].include?(after_as_token[VALUE_INDEX].upcase)
                 # This is DDL AS - transition to DDL_BODY_STATE and skip AS
-                table_parts = has_long_table_name || !should_include_table_name?(token[VALUE_INDEX]) ? [] : [token[VALUE_INDEX]]
+                table_parts = [token[VALUE_INDEX]]
                 return { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: index + 2 }
               end
             end
@@ -240,7 +236,7 @@ module OpenTelemetry
 
               if found_as_with_begin
                 # This is a TRIGGER name - transition to DDL_BODY_STATE at the AS token
-                table_parts = has_long_table_name || !should_include_table_name?(token[VALUE_INDEX]) ? [] : [token[VALUE_INDEX]]
+                table_parts = [token[VALUE_INDEX]]
                 return { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: look_ahead_index + 1 }
               end
             end
@@ -273,9 +269,9 @@ module OpenTelemetry
               skip_count += 1 # Skip the comma
             end
 
-            # Apply truncation logic - if any table name is too long, exclude all table names
+            # Clean and include the table name
             cleaned_table_name = clean_table_name(token[VALUE_INDEX])
-            table_parts = has_long_table_name || !should_include_table_name?(cleaned_table_name) ? [] : [cleaned_table_name]
+            table_parts = [cleaned_table_name]
 
             result = { processed: true, parts: table_parts, new_state: new_state, next_index: index + 1 + skip_count }
             result[:terminate_after_ddl] = true if should_terminate
@@ -522,10 +518,23 @@ module OpenTelemetry
             end
           end
 
-          def should_include_table_name?(table_name)
-            # Skip excessively long table names to avoid cluttering summaries
-            table_name.length <= MAX_TABLE_NAME_LENGTH
+          def truncate_summary(summary)
+            return summary if summary.length <= MAX_SUMMARY_LENGTH
+
+            # Find the last complete word that fits within the limit
+            truncated = summary[0...MAX_SUMMARY_LENGTH]
+            last_space_index = truncated.rindex(' ')
+
+            # If no space found, or it would make the result too short (less than 80% of limit),
+            # truncate at the character limit to ensure we get something meaningful
+            if last_space_index.nil? || last_space_index < MAX_SUMMARY_LENGTH * 0.8
+              truncated
+            else
+              # Truncate at the last complete word boundary
+              truncated[0...last_space_index]
+            end
           end
+
         end
       end
     end
