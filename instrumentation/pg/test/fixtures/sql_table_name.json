@@ -1,62 +1,62 @@
 [
-    {
-      "name": "from",
-      "sql": "SELECT * FROM test_table"
-    },
-    {
-      "name": "select_count_from",
-      "sql": "SELECT COUNT(*) FROM test_table WHERE condition"
-    },
-    {
-      "name": "from_with_subquery",
-      "sql": "SELECT * FROM (SELECT * FROM test_table) AS table_alias"
-    },
-    {
-      "name": "insert_into",
-      "sql": "INSERT INTO test_table (column1, column2) VALUES (value1, value2)"
-    },
-    {
-      "name": "update",
-      "sql": "UPDATE test_table SET column1 = value1 WHERE condition"
-    },
-    {
-      "name": "delete_from",
-      "sql": "DELETE FROM test_table WHERE condition"
-    },
-    {
-      "name": "create_table",
-      "sql": "CREATE TABLE test_table (column1 datatype, column2 datatype)"
-    },
-    {
-      "name": "create_table_if_not_exists",
-      "sql": "CREATE TABLE IF NOT EXISTS test_table (column1 datatype, column2 datatype)"
-    },
-    {
-      "name": "alter_table",
-      "sql": "ALTER TABLE test_table ADD column_name datatype"
-    },
-    {
-      "name": "drop_table",
-      "sql": "DROP TABLE test_table"
-    },
-    {
-      "name": "drop_table_if_exists",
-      "sql": "DROP TABLE IF EXISTS test_table"
-    },
-    {
-      "name": "insert_into",
-      "sql": "INSERT INTO test_table values('', 'a''b c',0, 1 , 'd''e f''s h')"
-    },
-    {
-      "name": "from_with_join",
-      "sql": "SELECT columns FROM test_table JOIN table2 ON test_table.column = table2.column"
-    },
-    {
-      "name": "table_name_with_double_quotes",
-      "sql": "SELECT columns FROM \"test_table\""
-    },
-    {
-      "name": "merge",
-      "sql": "MERGE INTO test_table AS t USING other_table AS o ON (o.id = t.id) WHEN MATCHED THEN UPDATE SET x = t.x + 1 WHEN NOT MATCHED THEN INSERT (id, x, status) VALUES (o.id, o.x, o.status)"
-    }
+  {
+    "name": "from",
+    "sql": "SELECT * FROM test_table"
+  },
+  {
+    "name": "select_count_from",
+    "sql": "SELECT COUNT(*) FROM test_table WHERE condition"
+  },
+  {
+    "name": "from_with_subquery",
+    "sql": "SELECT * FROM (SELECT * FROM test_table) AS table_alias"
+  },
+  {
+    "name": "insert_into",
+    "sql": "INSERT INTO test_table (column1, column2) VALUES (value1, value2)"
+  },
+  {
+    "name": "update",
+    "sql": "UPDATE test_table SET column1 = value1 WHERE condition"
+  },
+  {
+    "name": "delete_from",
+    "sql": "DELETE FROM test_table WHERE condition"
+  },
+  {
+    "name": "create_table",
+    "sql": "CREATE TABLE test_table (column1 datatype, column2 datatype)"
+  },
+  {
+    "name": "create_table_if_not_exists",
+    "sql": "CREATE TABLE IF NOT EXISTS test_table (column1 datatype, column2 datatype)"
+  },
+  {
+    "name": "alter_table",
+    "sql": "ALTER TABLE test_table ADD column_name datatype"
+  },
+  {
+    "name": "drop_table",
+    "sql": "DROP TABLE test_table"
+  },
+  {
+    "name": "drop_table_if_exists",
+    "sql": "DROP TABLE IF EXISTS test_table"
+  },
+  {
+    "name": "insert_into",
+    "sql": "INSERT INTO test_table values('', 'a''b c',0, 1 , 'd''e f''s h')"
+  },
+  {
+    "name": "from_with_join",
+    "sql": "SELECT columns FROM test_table JOIN table2 ON test_table.column = table2.column"
+  },
+  {
+    "name": "table_name_with_double_quotes",
+    "sql": "SELECT columns FROM \"test_table\""
+  },
+  {
+    "name": "merge",
+    "sql": "MERGE INTO test_table AS t USING other_table AS o ON (o.id = t.id) WHEN MATCHED THEN UPDATE SET x = t.x + 1 WHEN NOT MATCHED THEN INSERT (id, x, status) VALUES (o.id, o.x, o.status)"
+  }
 ]

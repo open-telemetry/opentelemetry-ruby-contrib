@@ -49,12 +49,12 @@ end
 To run the example:
 
 1. Start MongoDB using docker-compose
-	* `docker-compose up mongo`
+   - `docker-compose up mongo`
 2. In a separate terminal window, `cd` to the examples directory and install gems
-	* `cd example`
-	* `bundle install`
+   - `cd example`
+   - `bundle install`
 3. Run the sample client script
-	* `ruby mongo.rb`
+   - `ruby mongo.rb`
 
 This will run a few MongoDB commands, printing OpenTelemetry traces to the console as it goes.
 
