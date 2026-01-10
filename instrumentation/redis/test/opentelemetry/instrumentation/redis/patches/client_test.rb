@@ -231,7 +231,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
       skip if redis_gte_5?
 
       client = Redis.new(host: 'example.com', port: 8321, timeout: 0.01)
-      expect { client.auth(password) }.must_raise Redis::CannotConnectError
+      _ { client.auth(password) }.must_raise Redis::CannotConnectError
 
       if redis_gte_5?
         skip(
@@ -252,7 +252,10 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
       skip unless redis_gte_5?
 
       client = Redis.new(host: 'example.com', port: 8321, timeout: 0.01)
-      expect { client.auth(password) }.must_raise Redis::CannotConnectError
+      error = _ { client.auth(password) }.must_raise StandardError
+      # Ruby 4 changed the timeout error class
+      # Prior to that the client library would wrap the timeout in a Redis::CannotConnectError
+      _([IO::TimeoutError, Redis::CannotConnectError]).must_include error.class
 
       # NOTE: Redis 5 is a wrapper around RedisClient, which calls
       # ensure_connected` before any of the middlewares are invoked, so we don't
