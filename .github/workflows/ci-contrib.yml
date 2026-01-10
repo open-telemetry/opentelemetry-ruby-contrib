@@ -6,17 +6,17 @@ on:
     branches:
       - main
     paths: &path_filters
-      - 'helpers/**'
-      - 'propagator/**'
-      - 'resources/**'
-      - 'processor/**'
-      - 'sampler/**'
-      - '.github/workflows/ci-contrib.yml'
-      - '.github/actions/**'
-      - 'Gemfile'
-      - 'Rakefile'
-      - '.rubocop.yml'
-      - 'gemspecs/**'
+      - "helpers/**"
+      - "propagator/**"
+      - "resources/**"
+      - "processor/**"
+      - "sampler/**"
+      - ".github/workflows/ci-contrib.yml"
+      - ".github/actions/**"
+      - "Gemfile"
+      - "Rakefile"
+      - ".rubocop.yml"
+      - "gemspecs/**"
   pull_request:
     branches:
       - main
@@ -28,8 +28,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
-  cancel-in-progress: true  # Cancel any previous runs of this workflow
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
   helpers:

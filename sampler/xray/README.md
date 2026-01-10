@@ -51,4 +51,3 @@ The `opentelemetry-sampler-xray` gem is distributed under the Apache 2.0 license
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
-[aws-xray]: https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html

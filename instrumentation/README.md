@@ -2,11 +2,11 @@
 
 [OpenTelemetry](https://opentelemetry.io/) is an open source observability framework, providing a general-purpose API, SDK, and related tools required for the instrumentation of cloud-native software, frameworks, and libraries.
 
-Instrumentation libraries provide pre-built OpenTelemetry instrumentation for popular libraries: Examples include Rails, Rack, Sinatra, and others.  This way you can start using OpenTelemetry with minimal changes to your application.
+Instrumentation libraries provide pre-built OpenTelemetry instrumentation for popular libraries: Examples include Rails, Rack, Sinatra, and others. This way you can start using OpenTelemetry with minimal changes to your application.
 
 ## Which instrumentations already exist, and which are currently in progress?
 
-Released instrumentations can be found at the [OpenTelemetry registry](https://opentelemetry.io/registry/?language=ruby&component=instrumentation#).  You can also look in this project's Github repository: Individual instrumentation libraries can be found in subdirectories under `/instrumentation`.
+Released instrumentations can be found at the [OpenTelemetry registry](https://opentelemetry.io/registry/?language=ruby&component=instrumentation#). You can also look in this project's Github repository: Individual instrumentation libraries can be found in subdirectories under `/instrumentation`.
 
 [In-progress instrumentations can be found here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aopen+label%3Ainstrumentation+-label%3A%22help+wanted%22+).
 
@@ -34,7 +34,7 @@ Instrumentation-specific documentation can be found in each subdirectory's `READ
 
 ### `opentelemetry-instrumentation-all`
 
-You also have the option of installing all of the instrumentation libraries by installing `opentelemetry-instrumentation-all`.  See that gem's [README](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/all) for more.
+You also have the option of installing all of the instrumentation libraries by installing `opentelemetry-instrumentation-all`. See that gem's [README](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation/all) for more.
 
 ### Maintenance and Version Compatibility
 
