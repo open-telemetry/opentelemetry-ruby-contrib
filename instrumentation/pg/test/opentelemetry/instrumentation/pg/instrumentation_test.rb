@@ -366,6 +366,48 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       client.query('DROP TABLE test_table') # Drop table to avoid conflicts
     end
 
+    describe 'when propagator is set to tracecontext' do
+      let(:config) { { propagator: 'tracecontext' } }
+
+      it 'injects context into SQL query' do
+        sql = +'SELECT * from users where users.id = 1'
+
+        expect do
+          client.exec(sql)
+        end.must_raise PG::UndefinedTable
+
+        # Verify the SQL was modified with trace context
+        _(sql).must_match(%r{/\*traceparent='00-#{last_span.hex_trace_id}-#{last_span.hex_span_id}-01'\*/})
+      end
+
+      it 'does not modify frozen strings' do
+        sql = 'SELECT * from users where users.id = 1'
+        _(sql).must_be :frozen?
+
+        expect do
+          client.exec(sql)
+        end.must_raise PG::UndefinedTable
+
+        # Frozen strings should not be modified
+        _(sql).wont_match(%r{/\*traceparent=})
+      end
+    end
+
+    describe 'when propagator is set to none' do
+      let(:config) { { propagator: 'none' } }
+
+      it 'does not inject context' do
+        sql = +'SELECT * from users where users.id = 1'
+        original_sql = sql.dup
+
+        expect do
+          client.exec(sql)
+        end.must_raise PG::UndefinedTable
+
+        _(sql).must_equal original_sql
+      end
+    end
+
     describe 'when db_statement is obfuscate' do
       let(:config) { { db_statement: :obfuscate } }
 
