@@ -26,11 +26,16 @@
       "dependencyDashboardApproval": true
     },
     {
-      "matchFileNames": [".github/workflows/release-*.yaml"],
+      "matchFileNames": [".github/actions/test_gem/action.yml", ".github/workflows/installation-tests.yml", ".github/workflows/release-*.yaml"],
       "ignoreDeps": ["ruby"]
     }
   ],
   "labels": [
     "dependencies"
+  ],
+  "ignoreDeps": ["base64", "bigdecimal", "drb", "logger", "mutex_m", "observer"],
+  "ignorePaths": [
+    "**/example/Gemfile",
+    "releases/Gemfile"
   ]
 }

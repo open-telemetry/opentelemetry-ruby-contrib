@@ -18,13 +18,13 @@ group :test do
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'
   gem 'yard', '~> 0.9'
-  gem 'rspec-mocks'
-  gem 'sqlite3'
+  gem 'rspec-mocks', '~> 3.13.7'
+  gem 'sqlite3', '~> 2.9'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'mutex_m'
   end
   # https://github.com/collectiveidea/delayed_job/issues/1245
-  gem 'ostruct' if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('4')
+  gem 'ostruct', '~> 0.6.3' if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('4')
 end

@@ -18,7 +18,7 @@ group :test do
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'yard', '~> 0.9'
-  gem 'pg'
+  gem 'pg', '~> 1.6.3'
   gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
   gem 'opentelemetry-helpers-sql-processor', path: '../../helpers/sql-processor'
   gem 'opentelemetry-instrumentation-base', path: '../base'

@@ -15,7 +15,7 @@ jobs:
       issues: write # required for labeling and closing stale issues
       pull-requests: write # required for labeling and closing stale PRs
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/stale@997185467fa4f803885201cee163a9f38240193d # v10.1.1
