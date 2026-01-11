@@ -1,15 +1,14 @@
 ---
 name: Bug report
-about: Notify us of an error or incorrect behaviour
-title: ''
-labels: 'bug'
-assignees: ''
-
+about: Notify us of an error or incorrect behavior
+title: ""
+labels: "bug"
+assignees: ""
 ---
 
 <!--
 
-NOTE: Please use this form to submit bugs or demonstrations of non spec compliant behaviour
+NOTE: Please use this form to submit bugs or demonstrations of non spec compliant behavior
 
 -->
 
@@ -17,7 +16,7 @@ NOTE: Please use this form to submit bugs or demonstrations of non spec complian
 
 <!--
 
-If this for behaviour that is not compliant with the OpenTelemetry Specification, please describe
+If this for behavior that is not compliant with the OpenTelemetry Specification, please describe
 what happened and what you expected with a link to the relevant portion of the spec.
 
 -->
@@ -26,8 +25,8 @@ what happened and what you expected with a link to the relevant portion of the s
 
 Operating system details: Linux, Ubuntu 20.04 LTS
 RUBY_ENGINE: "ruby"
-RUBY_VERSION: "3.1.1"
-RUBY_DESCRIPTION: "ruby 3.1.1p18 (2022-02-18 revision 53f5fc4236) [arm64-darwin21]"
+RUBY_VERSION: "3.4"
+RUBY_DESCRIPTION: "ruby 3.4.1 (2024-12-25 revision 48d4efcb85) arm64-darwin21]"
 
 **Share a simplified reproduction if possible**
 

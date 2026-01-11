@@ -10,7 +10,7 @@ Install the gem using:
 gem install opentelemetry-instrumentation-excon
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-excon` to your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-excon` in your `Gemfile`.
 
 ## Usage
 
@@ -48,7 +48,6 @@ The `opentelemetry-instrumentation-all` gem is distributed under the Apache 2.0 
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
-
 
 ## HTTP semantic convention stability
 

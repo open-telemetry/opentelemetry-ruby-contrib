@@ -21,18 +21,17 @@ module OpenTelemetry
               url = "#{uri.scheme}://#{uri.host}"
               request_method = req.header.request_method
 
-              attributes = {
-                'http.request.method' => request_method,
-                'url.scheme' => uri.scheme,
-                'url.path' => uri.path,
-                'url.full' => url,
-                'server.address' => uri.host,
-                'server.port' => uri.port
-              }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+              span_data = HttpHelper.span_attrs_for_stable(request_method)
+
+              attributes = { 'url.scheme' => uri.scheme,
+                             'url.path' => uri.path,
+                             'url.full' => url,
+                             'server.address' => uri.host,
+                             'server.port' => uri.port }.merge!(span_data.attributes)
 
               attributes['url.query'] = uri.query unless uri.query.nil?
 
-              tracer.in_span(request_method, attributes: attributes, kind: :client) do |span|
+              tracer.in_span(span_data.span_name, attributes: attributes, kind: :client) do |span|
                 OpenTelemetry.propagation.inject(req.header)
                 super.tap do
                   response = conn.pop

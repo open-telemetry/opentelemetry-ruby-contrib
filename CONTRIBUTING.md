@@ -67,24 +67,24 @@ _Setting up a running Ruby environment is outside the scope of this document._
 
 This repository contains multiple Ruby gems:
 
-* Various instrumentation gems located in subdirectories of `instrumentation`
-* Various resource detector gems located in subdirectories of `resources`
-* Various propagation gems located in the subdirectories of `propagator`
-* `opentelemetry-sampler-xray` located in the `sampler/xray` directory
+- Various instrumentation gems located in subdirectories of `instrumentation`
+- Various resource detector gems located in subdirectories of `resources`
+- Various propagation gems located in the subdirectories of `propagator`
+- `opentelemetry-sampler-xray` located in the `sampler/xray` directory
 
 Each of these gems has its configuration and tests.
 
 For example, to test `opentelemetry-instrumentation-action_pack` you would:
 
- 1. Change directory to `instrumentation/action_pack`
- 2. Install the bundle with `bundle install`
- 3. Run the tests with `bundle exec rake`
+1.  Change directory to `instrumentation/action_pack`
+2.  Install the bundle with `bundle install`
+3.  Run the tests with `bundle exec rake`
 
 Note: Some test suites make use of [Appraisal](https://github.com/thoughtbot/appraisal), a library for testing against different versions of dependencies. To run tests in suites that use Appraisal:
 
- 1. Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
- 2. Install the bundle with `bundle exec appraisal install`
- 3. Run the tests with `bundle exec appraisal rake test`
+1.  Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
+2.  Install the bundle with `bundle exec appraisal install`
+3.  Run the tests with `bundle exec appraisal rake test`
 
 ### Docker setup
 
@@ -95,21 +95,21 @@ configuration details.
 
 The services provided include:
 
-* `app` - main container environment scoped to the `/app` directory. Used
-    primarily to build and tag the `opentelemetry/opentelemetry-ruby-contrib:latest` image.
-* `x-instrumentation-<library_name>` - container environment scoped to a specific instrumentation library. See `docker-compose.yml` for available services.
+- `app` - main container environment scoped to the `/app` directory. Used
+  primarily to build and tag the `opentelemetry/opentelemetry-ruby-contrib:latest` image.
+- `x-instrumentation-<library_name>` - container environment scoped to a specific instrumentation library. See `docker-compose.yml` for available services.
 
 To test using Docker:
 
- 1. Install Docker and Docker Compose for your operating system
- 2. Get the latest code for the project
- 3. Build the `opentelemetry/opentelemetry-ruby-contrib` image
-    * `docker-compose build`
-    * This makes the image available locally
- 4. Install dependencies for the service you want to interact with
-    * `docker-compose run <service-name> bundle install`
- 5. Run the tests
-    * `docker-compose run <service-name> bundle exec rake test`
+1.  Install Docker and Docker Compose for your operating system
+2.  Get the latest code for the project
+3.  Build the `opentelemetry/opentelemetry-ruby-contrib` image
+    - `docker-compose build`
+    - This makes the image available locally
+4.  Install dependencies for the service you want to interact with
+    - `docker-compose run <service-name> bundle install`
+5.  Run the tests
+    - `docker-compose run <service-name> bundle exec rake test`
 
 ## Processing and visualizing traces locally
 
@@ -162,8 +162,8 @@ to ensure that your code complies before opening a pull request.
 We also use Yard to generate class documentation automatically. Among other
 things, this means:
 
-* Methods and arguments should include the appropriate type annotations
-* You can use markdown formatting in your documentation comments
+- Methods and arguments should include the appropriate type annotations
+- You can use markdown formatting in your documentation comments
 
 You can generate the docs locally to see the results, by running:
 
@@ -214,11 +214,11 @@ merge. You'll probably get some feedback from these fine folks which helps to
 make the project that much better. Respond to the feedback and work with your
 reviewer(s) to resolve any issues.
 
-The some of the things the code owners are looking for include:
+Some of the things the code owners are looking for include:
 
-* a signed [CNCF CLA][cncf-cla]
-* a passing CI build
-* adherence to the principles and features outlined in the
+- a signed [CNCF CLA][cncf-cla]
+- a passing CI build
+- adherence to the principles and features outlined in the
   [instrumentation author's guide](instrumentation/CONTRIBUTING.md)
 
 Reviewers are responsible for ensuring that each merged PR's commit message
@@ -231,6 +231,55 @@ In addition, when a change is complex or a reviewer is unfamiliar with the code,
 the reviewer may seek additional reviews from people more familiar with the
 change before merging a PR.
 
+## Component Ownership
+
+This repository contains many components which are maintained by more than the typical set of ruby-contrib maintainers and approvers.
+Each component in this repository SHOULD have a component owner who is responsible for maintaining it.
+The README.md for each component SHOULD contain its owner, but the source of truth for component ownership is in [.github/component_owners.yml](.github/component_owners.yml).
+
+Component owners are generally given authority to make decisions relating to implementation and feature requests for their components,
+provided they follow the best practices set out by the maintainers and the [mission, vision and values](https://github.com/open-telemetry/community/blob/main/mission-vision-values.md)
+of the OpenTelemetry Project. To facilitate independent triage of issues pertaining to the owned component, component owners are assigned
+[the Triager role](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#triager).
+
+Component owners MUST do their best to maintain a high level of quality, security, performance, and specification compliance within their components.
+Maintainers may override the decisions of component owners, but should only do so when they feel one or more of these traits is compromised.
+
+### Becoming a Component Owner
+
+To become a component owner, contributors MUST be a [member](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#member) of the OpenTelemetry GitHub organization.
+To become a member, follow the steps in the [community guidelines for membership requirements](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#requirements).
+
+To become a component owner, contributors SHOULD demonstrate prior knowledge of the instrumented package or the concepts therein.
+
+Ways do to so may be by providing proof of:
+
+- current or prior involvement with the community that develops the upstream package
+  - **Example:** A person working on MongoDB requesting ownership over a MongoDB instrumentation
+- current or prior involvement with a community that develops systems with similar concepts
+  - **Example:** A person previously working on MySQL requesting ownership of a instrumentation package that instruments another database client library instrumentation.
+- current or prior extensive use of the instrumented package in other project they are involved in
+  - **Example:** A person working at a company that makes extensive use of the `koala` library requesting ownership of the `opentelemetry-instrumentation-koala` package.
+- a vested interest in the telemetry being emitted from that instrumentation
+  - **Example:** A person employed at an observability vendor that relies on the continued maintenance of the instrumentation
+
+**Examples of proof may include but are not limited to:**
+
+- Links to issues/PRs they worked on
+- Links to blog posts authored by them on behalf of the organization developing that system
+- Membership in GitHub teams/organizations that are associated with the development of the upstream package
+
+Aspiring Component Owners MUST agree to uphold the [mission, vision and values](https://github.com/open-telemetry/community/blob/main/mission-vision-values.md) of the OpenTelemetry project.
+Further, aspiring component owners are expected to have knowledge of the [OpenTelemetry Semantic Conventions](https://github.com/open-telemetry/semantic-conventions)
+and MUST agree to adhere to the rules set out therein.
+
+If all these conditions are met, aspiring component owners are encouraged to self-nominate by opening an issue.
+@open-telemetry/ruby-contrib-maintainers will then engage on the issue, may ask questions, and will then - based on the
+information provided on the issue - either approve or deny the ownership request. If the ownership request has been
+approved, the new component owner opens a PR to add themselves to the list of owners ([.github/component_owners.yml](.github/component_owners.yml))
+for that package.
+@open-telemetry/ruby-contrib-maintainers will add the component owner to @open-telemetry/ruby-contrib-triagers.
+
 ## Releases
 
 This repository includes a set of tools for releasing gems. Only maintainers
@@ -240,43 +289,43 @@ can perform releases.
 
 Releases are normally performed using GitHub Actions.
 
- 1. Wait for the CI checks on the latest main branch commit to succeed. The
+1.  Wait for the CI checks on the latest main branch commit to succeed. The
     release scripts will not run unless the build is green.
- 2. In the GitHub UI, go to the `Actions` tab, select the
+2.  In the GitHub UI, go to the `Actions` tab, select the
     `Open release request` workflow, and run the workflow manually using the
     dropdown in the upper right.
-     * Releases must be run from the main branch.
-     * If you leave the `Gems to release` field, blank, and the script will
-        find all the gems that have had conventional-commit-tagged changes since
-        their last release. Alternately, you can specify which gems to release
-        by including their names, space-delimited, in this this field. You can
-        optionally append `:<version>` to any gem in the list to specify the
-        version to release, or omit the version to let the script decide based
-        on conventional commits. You can also use the special name `all` to
-        force release of all gems (and even `all:<version>` to release all gems
-        with the same version.)
- 3. The workflow will analyze the conventional commit messages for the gems to
+    - Releases must be run from the main branch.
+    - If you leave the `Gems to release` field blank, the script will
+      find all the gems that have had conventional-commit-tagged changes since
+      their last release. Alternately, you can specify which gems to release
+      by including their names, space-delimited, in this field. You can
+      optionally append `:<version>` to any gem in the list to specify the
+      version to release, or omit the version to let the script decide based
+      on conventional commits. You can also use the special name `all` to
+      force release of all gems (and even `all:<version>` to release all gems
+      with the same version.)
+3.  The workflow will analyze the conventional commit messages for the gems to
     release, and will open a _release pull request_. This pull request will
     include the appropriate changes to each gem's version constants, and an
     initial changelog entry for each gem. Note that it is possible to release
     more than one gem using a single release pull request.
- 4. You may optionally make further modifications to the pull request branch.
+4.  You may optionally make further modifications to the pull request branch.
     For example, the workflow will suggest a version number based on semver
     analysis of the conventional commit types, but you can choose to release a
     different version. You might also want to edit the changelog wording.
- 5. To trigger the release(s), merge the release pull request. Note that the
+5.  To trigger the release(s), merge the release pull request. Note that the
     label `release: pending` will have been applied to the pull request when it
     was opened; make sure the label is still there when you merge it.
- 6. The automated release script will run automatically, and will release the
+6.  The automated release script will run automatically, and will release the
     gem(s) once CI has completed. This includes:
-     * For each gem, it will create a release tag and a GitHub release.
-     * It will build and push the gems to rubygems.
-     * If the releases succeed, the script will update the release pull
-        request with the results and change its label to `release: complete`.
-        If something went wrong, the script will, if possible, report the error
-        on the release pull request and change its label to `release: error`.
-        It will also attempt to open an issue to alert you to the failure.
- 7. If you change your mind and do not want to follow through on a release pull
+    - For each gem, it will create a release tag and a GitHub release.
+    - It will build and push the gems to rubygems.
+    - If the releases succeed, the script will update the release pull
+      request with the results and change its label to `release: complete`.
+      If something went wrong, the script will, if possible, report the error
+      on the release pull request and change its label to `release: error`.
+      It will also attempt to open an issue to alert you to the failure.
+7.  If you change your mind and do not want to follow through on a release pull
     request, just close it without merging. (The release scripts will then
     automatically change its label to `release: aborted` for you.)
 
@@ -290,38 +339,38 @@ review the release logs for the GitHub Actions workflows.
 
 There are four GitHub actions workflows related to releases.
 
-* `Open release request` is the main release entrypoint, and is used to open
-   a release pull request. If something goes wrong with this process, the logs
-   will appear in the workflow run.
-* `Force release` is generally used only to restart a failed release.
-* `[release hook] Update open releases` is run on pushes to the main branch,
-   and pushes warnings to open release pull requests if you make modifications
-   before triggering the release (i.e. because you might need to update the
-   changelogs.)
-* `[release hook] Process release` is the main release automation script and
-   is run when a pull request is closed. If it determines that a release pull
-   request was merged, it kicks off the release process for the affected gems.
-   It also updates the label on a closed release pull request. Finally, it
-   deletes release branches when they are no longer being used. If something
-   goes wrong with any of these processes, the logs will appear here.
+- `Open release request` is the main release entrypoint, and is used to open
+  a release pull request. If something goes wrong with this process, the logs
+  will appear in the workflow run.
+- `Force release` is generally used only to restart a failed release.
+- `[release hook] Update open releases` is run on pushes to the main branch,
+  and pushes warnings to open release pull requests if you make modifications
+  before triggering the release (i.e. because you might need to update the
+  changelogs.)
+- `[release hook] Process release` is the main release automation script and
+  is run when a pull request is closed. If it determines that a release pull
+  request was merged, it kicks off the release process for the affected gems.
+  It also updates the label on a closed release pull request. Finally, it
+  deletes release branches when they are no longer being used. If something
+  goes wrong with any of these processes, the logs will appear here.
 
 #### Restarting a release
 
 If you've already merged a release pull request and want to retry a failed
 release, you can use the `Force release` workflow.
 
- 1. If the release tag has already been created, delete it manually using the
+1.  If the release tag has already been created, delete it manually using the
     GitHub UI.
- 2. In the GitHub UI, go to the `Actions` tab, select the `Force release`
+2.  In the GitHub UI, go to the `Actions` tab, select the `Force release`
     workflow, and run it manually.
-     * You must provide the gem name and version explicitly in the fields.
-     * The `Extra flags` field is useful for advanced cases. For example, if
-       the GitHub release tag is already created and the gem already pushed to
-       Rubygems, but the docs still need to be built, you can pass
-       `--only=docs` to perform only that one step. You can also force a
-       release even if the build is not green or the version/changelog checks
-       are failing, by passing `--skip-checks`. For more details, install the
-       `toys` gem and run `toys release perform --help` locally.
+    - You must provide the gem name and version explicitly in the fields.
+    - The `Extra flags` field is useful for advanced cases. For example, if
+      the GitHub release tag is already created and the gem already pushed to
+      Rubygems, but the docs still need to be built, you can pass
+      `--only=docs` to perform only that one step. You can also force a
+      release even if the build is not green or the version/changelog checks
+      are failing, by passing `--skip-checks`. For more details, install the
+      `toys` gem and run `toys release perform --help` locally.
 
 #### Running releases locally
 
@@ -359,12 +408,12 @@ not correspond exactly to the gem name.
 
 For releases to succeed, new gems MUST include the following:
 
-* The above configuration entry.
-* The `*.gemspec` file, with the name matching the gem name.
-* A `version.rb` file in the standard location, or in a location listed in
-   the configuration.
-* A `CHANGELOG.md` file.
-* A `yard` rake task.
+- The above configuration entry.
+- The `*.gemspec` file, with the name matching the gem name.
+- A `version.rb` file in the standard location, or in a location listed in
+  the configuration.
+- A `CHANGELOG.md` file.
+- A `yard` rake task.
 
 ## Dependabot updates
 
@@ -392,7 +441,6 @@ index 42c5ecba..74fcc743 100644
 --- a/propagator/ottrace/Gemfile
 +++ b/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
 @@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
-   gem 'bundler', '~> 2.4'
    gem 'minitest', '~> 5.0'
    gem 'rake', '~> 13.0'
 -  gem 'rubocop', '~> 1.50.0'
@@ -407,7 +455,6 @@ index e29acbfc..85622d25 100644
 --- a/propagator/xray/Gemfile
 +++ b/propagator/xray/Gemfile
 @@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
-   gem 'bundler', '~> 2.4'
    gem 'minitest', '~> 5.0'
    gem 'rake', '~> 13.0'
 -  gem 'rubocop', '~> 1.50.0'
@@ -417,6 +464,35 @@ index e29acbfc..85622d25 100644
    gem 'yard-doctest', '~> 0.1.6'
 (1/1) Stage this hunk [y,n,q,a,d,e,?]? y
 ```
+
+## Updating Ruby version requirements
+
+To update the minimum Ruby version requirement across all gems in the repository, use the `bin/update-ruby-version` script:
+
+```console
+# Update to Ruby 3.3 minimum
+bin/update-ruby-version 3.3
+
+# Supports patch versions and pre-releases
+bin/update-ruby-version 3.2.0
+bin/update-ruby-version 3.4.0.alpha
+```
+
+The script will:
+
+1. Validate the version format
+2. Update `spec.required_ruby_version` in all gemspec files
+3. Show a summary of changes
+
+After running the script:
+
+1. Review changes with `git diff`
+2. Test against the new minimum Ruby version
+3. Update CI configurations in `.github/workflows`
+4. Update `.rubocop.yml` to set the `TargetRubyVersion`
+5. Remove any conditional logic handling Ruby versions in Appraisal files that are no longer needed
+6. Remove any conditional logic in test cases that are no longer needed
+7. Commit with a message like `chore: update minimum Ruby version to 3.3`
 
 [cncf-cla]: https://identity.linuxfoundation.org/projects/cncf
 [github-draft]: https://github.blog/2019-02-14-introducing-draft-pull-requests/

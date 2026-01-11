@@ -33,9 +33,11 @@ end
 ```
 
 ### Configuration options
-This instrumentation offers the following configuration options: 
-* `enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with 
- span kind of `internal` are included in traces.
+
+This instrumentation offers the following configuration options:
+
+- `enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with
+  span kind of `internal` are included in traces.
 
 ## Examples
 

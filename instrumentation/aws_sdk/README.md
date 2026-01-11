@@ -32,22 +32,27 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+
 ### Configuration options
-This instrumentation offers the following configuration options: 
-* `:inject_messaging_context` (default: `false`): When set to `true`, adds context key/value 
- to Message Attributes for SQS/SNS messages.
-* `:enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with 
- span kind of `internal` are traced.
-* `:suppress_internal_instrumentation`: **Deprecated**. This configuration has been 
- deprecated in a favor of `:enable_internal_instrumentation`
+
+This instrumentation offers the following configuration options:
+
+- `:inject_messaging_context` (default: `false`): When set to `true`, adds context key/value
+  to Message Attributes for SQS/SNS messages.
+- `:enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with
+  span kind of `internal` are traced.
+- `:suppress_internal_instrumentation`: **Deprecated**. This configuration has been
+  deprecated in favor of `:enable_internal_instrumentation`
 
 ## Integration with SDK V3's Telemetry support
-AWS SDK for Ruby V3 added support for Observability which includes a new configuration, 
-`telemetry_provider` and an OpenTelemetry-based telemetry provider. Only applies to
-AWS service gems released after 2024-09-03. 
 
-Using later versions of these gems will give more details on the internal spans. 
+AWS SDK for Ruby V3 added support for Observability which includes a new configuration,
+`telemetry_provider` and an OpenTelemetry-based telemetry provider. Only applies to
+AWS service gems released after 2024-09-03.
+
+Using later versions of these gems will give more details on the internal spans.
 See below for example usage:
+
 ```ruby
 # configures the OpenTelemetry SDK with instrumentation defaults
 OpenTelemetry::SDK.configure do |c|
@@ -64,10 +69,10 @@ client = Aws::S3::Client.new(telemetry_provider: otel_provider)
 To run the example:
 
 1. `cd` to the examples directory and install gems
-	* `cd example`
-	* `bundle install`
+   - `cd example`
+   - `bundle install`
 2. Run the sample client script
-	* `ruby trace_demonstration.rb`
+   - `ruby trace_demonstration.rb`
 
 This will run SNS publish command, printing OpenTelemetry traces to the console as it goes.
 

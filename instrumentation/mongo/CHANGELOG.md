@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+### v0.25.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
 ### v0.24.1 / 2025-09-30
 
 * FIXED: Min OTel Ruby API 1.7
@@ -73,10 +79,10 @@
 
 ### v0.18.0 / 2021-05-21
 
-* BREAKING CHANGE: Replace Time.now with Process.clock_gettime
+* BREAKING CHANGE: Replace `Time.now` with `Process.clock_gettime`
 
 * ADDED: Updated API dependency for 1.0.0.rc1
-* FIXED: Replace Time.now with Process.clock_gettime
+* FIXED: Replace `Time.now` with `Process.clock_gettime`
 * FIXED: Mongodb test asserting error message
 
 ### v0.17.0 / 2021-04-22
@@ -102,7 +108,7 @@
 
 ### v0.13.0 / 2021-01-29
 
-* FIXED: Mongo Instrumenter: Do not send nil attributes
+* FIXED: Mongo Instrumentation: Do not send nil attributes
 
 ### v0.12.0 / 2020-12-24
 
@@ -118,4 +124,4 @@
 
 ### v0.9.0 / 2020-11-03
 
-* Initial release of Mongo instrumenter (ported from Datadog)
+* Initial release of Mongo Instrumentation (ported from Datadog)
