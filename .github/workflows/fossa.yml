@@ -11,7 +11,7 @@ permissions:
 jobs:
   fossa:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 

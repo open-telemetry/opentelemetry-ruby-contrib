@@ -17,7 +17,7 @@ jobs:
       pull-requests: write # required for creating release PRs
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Process Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         id: otelbot-token
@@ -35,7 +35,7 @@ jobs:
   publish:
     needs: prepare
     name: Publish Gems
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ needs.prepare.outputs.paths_released != '[]'}}
 
     strategy:
