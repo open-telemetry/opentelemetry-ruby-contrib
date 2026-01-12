@@ -10,13 +10,17 @@ module OpenTelemetry
       module LDAP
         # attribute mapper to redact keys which are not allowed
         class AttributeMapper
-          LDAP_GENERAL_ATTRIBUTES = %w[attributes base filter ignore_server_caps left op operations paged_searches_supported replace right scope].freeze
-          LDAP_OBJECT_ATTRIBUTES  = %w[accountExpires codePage countryCode cn description displayName distinguishedName dn
-                                       givenName instanceType mail memberOf name objectCategory objectClass pwdChangedTime pwdLastSet
-                                       sAMAccountName userAccountControl userPrincipalName].freeze
-          SPAN_ATTRIBUTES =         %w[exception.message exception.stacktrace exception.type ldap.auth.method ldap.auth.username ldap.error.message
-                                       ldap.operation.type ldap.request.message ldap.response.status_code ldap.tree.base network.protocol.name
-                                       network.protocol.version network.transport peer.service server.address server.port].freeze
+          LDAP_GENERAL_ATTRIBUTES = Set['attributes', 'base', 'filter', 'ignore_server_caps', 'left', 'op', 'operations',
+                                        'paged_searches_supported', 'replace', 'right', 'scope'].freeze
+          LDAP_OBJECT_ATTRIBUTES  = Set['accountExpires', 'codePage', 'countryCode', 'cn', 'description', 'displayName',
+                                        'distinguishedName', 'dn', 'givenName', 'instanceType', 'mail', 'memberOf', 'name',
+                                        'objectCategory', 'objectClass', 'pwdChangedTime', 'pwdLastSet', 'sAMAccountName',
+                                        'userAccountControl', 'userPrincipalName'].freeze
+          SPAN_ATTRIBUTES         = Set['exception.message', 'exception.stacktrace', 'exception.type', 'ldap.auth.method',
+                                        'ldap.auth.username', 'ldap.error.message', 'ldap.operation.type', 'ldap.request.message',
+                                        'ldap.response.status_code', 'ldap.tree.base', 'network.protocol.name',
+                                        'network.protocol.version', 'network.transport', 'peer.service', 'server.address',
+                                        'server.port'].freeze
           ALLOWED_KEYS = (LDAP_GENERAL_ATTRIBUTES + LDAP_OBJECT_ATTRIBUTES + SPAN_ATTRIBUTES).freeze
 
           def self.redact(_value)
@@ -50,6 +54,8 @@ module OpenTelemetry
                 obj.map { |item| deep_map(item) }
               end
             when String
+              return obj unless obj.strip.start_with?('{', '[')
+
               map_json(obj)
             else
               obj
