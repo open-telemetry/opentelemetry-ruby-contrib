@@ -14,8 +14,8 @@ group :test do
   gem 'opentelemetry-sdk', '~> 1.1'
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '~> 13.0.1'
-  gem 'rubocop', '~> 1.76.2'
-  gem 'rubocop-performance', '~> 1.24.0'
+  gem 'rubocop', '~> 1.82.0'
+  gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'
   gem 'yard', '~> 0.9'
@@ -24,4 +24,8 @@ group :test do
     gem 'base64'
     gem 'mutex_m'
   end
+
+  # ostruct is not part of the standard library from Ruby4+
+  # from net-ldap 0.20+ it is defined as a gem dependency
+  gem 'ostruct' if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('4')
 end
