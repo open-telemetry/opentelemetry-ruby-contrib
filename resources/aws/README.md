@@ -46,6 +46,7 @@ end
 ### AWS EC2 Detector
 
 <!-- cspell:ignore Fargate -->
+
 Populates `cloud` and `host` for processes running on Amazon EC2, including abstractions such as ECS on EC2. Notably, it does not populate anything on AWS Fargate.
 
 | Resource Attribute | Description |
@@ -63,6 +64,7 @@ Populates `cloud` and `host` for processes running on Amazon EC2, including abst
 
 <!-- cspell:ignore launchtype awslogs -->
 Populates `cloud`, `container`, and AWS ECS-specific attributes for processes running on Amazon ECS.
+
 | Resource Attribute | Description |
 | ------------------ | ----------- |
 | `cloud.platform` | The cloud platform. In this context, it's always "aws_ecs" |
@@ -80,6 +82,7 @@ Populates `cloud`, `container`, and AWS ECS-specific attributes for processes ru
 ### AWS EKS Detector
 
 Populates `cloud`, `container`, and Kubernetes (k8s) attributes for processes running on Amazon EKS.
+
 | Resource Attribute | Description |
 | ------------------ | ----------- |
 | `cloud.platform` | The cloud platform. In this context, it's always "aws_eks" |
@@ -88,12 +91,15 @@ Populates `cloud`, `container`, and Kubernetes (k8s) attributes for processes ru
 | `k8s.cluster.name` | The name of the EKS cluster from the `cluster-info` config map in the `amazon-cloudwatch` namespace |
 
 The EKS detector verifies that the process is running on EKS by checking:
+
 1. Presence of Kubernetes service account token and certificate
 2. Ability to access the `aws-auth` config map in the `kube-system` namespace
 3. Availability of either cluster name or container ID
 
 ### AWS Lambda Detector
+
 Populates `cloud` and `faas` (Function as a Service) attributes for processes running on AWS Lambda.
+
 | Resource Attribute | Description |
 | ------------------ | ----------- |
 | `cloud.platform` | The cloud platform. In this context, it's always "aws_lambda" |

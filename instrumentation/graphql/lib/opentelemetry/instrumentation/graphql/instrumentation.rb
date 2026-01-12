@@ -65,7 +65,7 @@ module OpenTelemetry
         #
         # The schemas key expects an array of Schemas, and is used to specify
         # which schemas are to be instrumented. If this value is not supplied
-        # the default behaviour is to instrument all schemas.
+        # the default behavior is to instrument all schemas.
         option :schemas,                      default: [],    validate: :array
         option :enable_platform_field,        default: false, validate: :boolean
         option :enable_platform_authorized,   default: false, validate: :boolean

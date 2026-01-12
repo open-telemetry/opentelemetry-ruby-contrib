@@ -12,13 +12,22 @@
       "schedule": ["before 8am every weekday"]
     },
     {
-      "matchUpdateTypes": ["minor", "major"],
+      "matchUpdateTypes": ["minor"],
+      "schedule": ["before 8am on Monday"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "matchManagers": ["!ruby"],
       "schedule": ["before 8am on Monday"]
     },
     {
       "matchUpdateTypes": ["major"],
       "matchManagers": ["ruby"],
       "dependencyDashboardApproval": true
+    },
+    {
+      "matchFileNames": [".github/workflows/release-*.yaml"],
+      "ignoreDeps": ["ruby"]
     }
   ],
   "labels": [

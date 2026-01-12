@@ -182,9 +182,10 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::RedisClientInstrume
     end
 
     it 'connect is uninstrumented' do
-      expect do
-        redis_with_auth(host: 'example.com', port: 8321, timeout: 0.01)
-      end.must_raise RedisClient::CannotConnectError
+      error = _ { redis_with_auth(host: 'example.com', port: 8321, timeout: 0.01) }.must_raise StandardError
+      # Ruby 4 changed the timeout error class
+      # Prior to that the client library would wrap the timeout in a RedisClient::CannotConnectError
+      _([IO::TimeoutError, RedisClient::CannotConnectError]).must_include error.class
 
       # NOTE: RedisClient runs `ensure_connected` before Otel's instrumentation
       # span is created. The 'connect' operation can be separately instrumented

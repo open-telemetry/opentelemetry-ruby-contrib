@@ -113,7 +113,7 @@
 
 ### v0.16.2 / 2021-03-29
 
-* FIXED: HTTP instrumenter should check for gem presence
+* FIXED: HTTP Instrumentation should check for gem presence
 
 ### v0.16.1 / 2021-03-25
 

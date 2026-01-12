@@ -80,4 +80,3 @@ The `opentelemetry-instrumentation-pg` gem is distributed under the Apache 2.0 l
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
-

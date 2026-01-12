@@ -22,6 +22,7 @@ group :test do
   gem 'opentelemetry-helpers-sql-processor', path: '../../helpers/sql-processor'
 end
 ```
+
 ## Obfuscation
 
 Make sure the `Instrumentation` class for your gem contains configuration options for:

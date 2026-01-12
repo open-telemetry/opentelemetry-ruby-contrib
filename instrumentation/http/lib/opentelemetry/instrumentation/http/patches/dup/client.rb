@@ -16,30 +16,27 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def perform(req, options)
-              span_data = HttpHelper.span_attrs_for(req.verb)
+              span_data = HttpHelper.span_attrs_for_dup(req.verb)
 
               uri = req.uri
               span_name = create_span_name(span_data, uri.path)
 
               attributes = {
                 # old semconv
-                'http.method' => span_data.normalized_method,
                 'http.scheme' => uri.scheme,
                 'http.target' => uri.path,
                 'http.url' => "#{uri.scheme}://#{uri.host}",
                 'net.peer.name' => uri.host,
                 'net.peer.port' => uri.port,
                 # stable semconv
-                'http.request.method' => span_data.normalized_method,
                 'url.scheme' => uri.scheme,
                 'url.path' => uri.path,
                 'url.full' => "#{uri.scheme}://#{uri.host}",
                 'server.address' => uri.host,
                 'server.port' => uri.port
               }
-              attributes['http.request.method_original'] = span_data.original_method if span_data.original_method
               attributes['url.query'] = uri.query unless uri.query.nil?
-              attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+              attributes.merge!(span_data.attributes)
 
               tracer.in_span(span_name, attributes: attributes, kind: :client) do |span|
                 OpenTelemetry.propagation.inject(req.headers)
@@ -68,7 +65,9 @@ module OpenTelemetry
               default_span_name = span_data.span_name
 
               if (implementation = config[:span_name_formatter])
-                updated_span_name = implementation.call(span_data.normalized_method, request_path)
+                # Extract the HTTP method from attributes (old semconv key)
+                http_method = span_data.attributes['http.method'] || span_data.attributes['http.request.method']
+                updated_span_name = implementation.call(http_method, request_path)
                 updated_span_name.is_a?(String) ? updated_span_name : default_span_name
               else
                 default_span_name

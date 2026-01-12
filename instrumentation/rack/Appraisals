@@ -4,31 +4,26 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# To faclitate HTTP semantic convention stability migration, we are using
+# To facilitate HTTP semantic convention stability migration, we are using
 # appraisal to test the different semantic convention modes along with different
 # HTTP gem versions. For more information on the semantic convention modes, see:
 # https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
 semconv_stability = %w[stable old dup]
 
+# https://github.com/rack/rack?tab=readme-ov-file#version-support
+gem_versions = %w[3.1.0 3.2.0]
+gem_versions << '2.2.0' if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
+
+# https://github.com/rack/rack/tree/main?tab=readme-ov-file#version-support
 semconv_stability.each do |mode|
   appraise "rack-latest-#{mode}" do
     gem 'rack'
   end
 
-  appraise "rack-3.0-#{mode}" do
-    gem 'rack', '~> 3.0.0'
-  end
-
-  appraise "rack-2.2.x-#{mode}" do
-    gem 'rack', '~> 2.2.0'
-  end
-
-  appraise "rack-2.1-#{mode}" do
-    gem 'rack', '~> 2.1.2'
-  end
-
-  appraise "rack-2.0-#{mode}" do
-    gem 'rack', '~> 2.0.8'
+  gem_versions.each do |version|
+    appraise "rack-#{version}-#{mode}" do
+      gem 'rack', "~> #{version}"
+    end
   end
 end

@@ -52,9 +52,9 @@ gem "opentelemetry-instrumentation-rails", require: "opentelemetry/instrumentati
 
 ### Configuration options
 
-The Rails instrumentation attempts to mirror the structure of the Ruby on Rails.  It is a collection of instrumentation gems for components of Rails such as Action View, Active Record, Action Pack, etc...
+The Rails instrumentation attempts to mirror the structure of the Ruby on Rails. It is a collection of instrumentation gems for components of Rails such as Action View, Active Record, Action Pack, etc...
 
-You may want to include all of the Rails instrumentation but disable a single instrumentation gem that it includes.  Here is an example of how you can disable Active Record when using this instrumentation gem.
+You may want to include all of the Rails instrumentation but disable a single instrumentation gem that it includes. Here is an example of how you can disable Active Record when using this instrumentation gem.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
