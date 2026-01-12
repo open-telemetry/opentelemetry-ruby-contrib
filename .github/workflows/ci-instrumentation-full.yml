@@ -36,7 +36,7 @@ on:
       - "instrumentation/lmdb/**"
       - "instrumentation/logger/**"
       - "instrumentation/net_http/**"
-      - 'instrumentation/net_ldap/**'
+      - "instrumentation/net_ldap/**"
       - "instrumentation/rack/**"
       - "instrumentation/rails/**"
       - "instrumentation/restclient/**"
