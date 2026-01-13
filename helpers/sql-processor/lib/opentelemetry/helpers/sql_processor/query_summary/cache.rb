@@ -52,25 +52,7 @@ module OpenTelemetry
             end
           end
 
-          # Configures the cache with a new size limit.
-          #
-          # If the new size is smaller than the current number of cached entries,
-          # the cache is cleared completely to ensure it fits within the new limit.
-          #
-          # @param size [Integer] Maximum number of entries to cache (default: 1000)
-          # @return [void]
-          def configure(size: DEFAULT_SIZE)
-            @cache_mutex.synchronize do
-              @cache_size = size
-              @cache.clear if @cache.size > size
-            end
-          end
-
           private
-
-          def clear
-            @cache.clear
-          end
 
           def evict_if_needed
             @cache.shift if @cache.size >= @cache_size
