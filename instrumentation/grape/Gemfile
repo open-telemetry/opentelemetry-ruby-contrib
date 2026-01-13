@@ -18,7 +18,7 @@ group :test do
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'
   gem 'yard', '~> 0.9'
-  gem 'activesupport'
+  gem 'activesupport', '~> 8.1.2'
   gem 'opentelemetry-test-helpers'
   gem 'rack-test'
   gem 'rspec-mocks'
