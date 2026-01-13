@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.33.0 / 2026-01-13
+
+* ADDED: Add SQL Comment Propagator
+
 ### v0.32.1 / 2025-12-03
 
 * FIXED: Update gemspec dependencies to sql-processor
