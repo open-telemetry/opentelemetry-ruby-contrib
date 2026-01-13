@@ -2,7 +2,7 @@
 
 ### v0.90.1 / 2026-01-13
 
-* (No significant changes)
+* ADDED: Fixed release version
 
 ### v0.90.0 / 2025-01-13
 
