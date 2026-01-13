@@ -33,7 +33,7 @@
   "labels": [
     "dependencies"
   ],
-  "ignoreDeps": ["base64", "bigdecimal", "drb", "logger", "mutex_m", "observer"],
+  "ignoreDeps": ["base64", "bigdecimal", "drb", "logger", "mutex_m", "observer", "ostruct"],
   "ignorePaths": [
     "**/example/Gemfile",
     "releases/Gemfile"
