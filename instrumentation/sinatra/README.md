@@ -75,7 +75,7 @@ The `opentelemetry-instrumentation-sinatra` gem is distributed under the Apache 
 
 ## HTTP semantic convention stability
 
-In the OpenTelemetry ecosystem, HTTP semantic conventions have now reached a stable state. However, the initial Rack instrumentation was introduced before this stability was achieved, which resulted in HTTP attributes being based on an older version of the semantic conventions. 
+In the OpenTelemetry ecosystem, HTTP semantic conventions have now reached a stable state. However, the initial Rack instrumentation was introduced before this stability was achieved, which resulted in HTTP attributes being based on an older version of the semantic conventions.
 
 To facilitate the migration to stable semantic conventions, you can use the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable. This variable allows you to opt-in to the new stable conventions, ensuring compatibility and future-proofing your instrumentation.
 

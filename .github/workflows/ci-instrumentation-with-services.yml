@@ -6,27 +6,27 @@ on:
     branches:
       - main
     paths: &path_filters
-      - 'helpers/**'
-      - 'instrumentation/base/**'
-      - 'instrumentation/bunny/**'
-      - 'instrumentation/dalli/**'
-      - 'instrumentation/mongo/**'
-      - 'instrumentation/mysql2/**'
-      - 'instrumentation/pg/**'
-      - 'instrumentation/que/**'
-      - 'instrumentation/racecar/**'
-      - 'instrumentation/rdkafka/**'
-      - 'instrumentation/redis/**'
-      - 'instrumentation/resque/**'
-      - 'instrumentation/ruby_kafka/**'
-      - 'instrumentation/sidekiq/**'
-      - 'instrumentation/trilogy/**'
-      - '.github/workflows/ci-instrumentation-with-services.yml'
-      - '.github/actions/**'
-      - 'Gemfile'
-      - 'Rakefile'
-      - '.rubocop.yml'
-      - 'gemspecs/**'
+      - "helpers/**"
+      - "instrumentation/base/**"
+      - "instrumentation/bunny/**"
+      - "instrumentation/dalli/**"
+      - "instrumentation/mongo/**"
+      - "instrumentation/mysql2/**"
+      - "instrumentation/pg/**"
+      - "instrumentation/que/**"
+      - "instrumentation/racecar/**"
+      - "instrumentation/rdkafka/**"
+      - "instrumentation/redis/**"
+      - "instrumentation/resque/**"
+      - "instrumentation/ruby_kafka/**"
+      - "instrumentation/sidekiq/**"
+      - "instrumentation/trilogy/**"
+      - ".github/workflows/ci-instrumentation-with-services.yml"
+      - ".github/actions/**"
+      - "Gemfile"
+      - "Rakefile"
+      - ".rubocop.yml"
+      - "gemspecs/**"
   pull_request:
     branches:
       - main
@@ -38,8 +38,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
-  cancel-in-progress: true  # Cancel any previous runs of this workflow
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
   check:
@@ -61,6 +61,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: "Test Ruby 4.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -86,7 +91,7 @@ jobs:
         ports:
           - 11211:11211
       mongodb:
-        image: mongo:4.4@sha256:4be76f674fc4b27859816811b8baa3c51830eb1dbf4ca81a51e26b79edd662ef
+        image: mongo:5.0@sha256:5e3e87afd24d75e722884d777c5713d254f7e88ba65381b5d6484f75a21b73e3
         ports:
           - 27017:27017
 
@@ -104,6 +109,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: "Test Ruby 4.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -143,6 +153,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: "Test Ruby 4.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -198,6 +213,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: "Test Ruby 4.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -244,6 +264,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: "Test Ruby 4.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -287,6 +312,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: "Test Ruby 4.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:

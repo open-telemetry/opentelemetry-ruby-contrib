@@ -1,4 +1,4 @@
-name: 'Component Owners'
+name: "Component Owners"
 on:
   pull_request_target:
 

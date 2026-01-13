@@ -167,7 +167,7 @@ services:
       bash -c "bundle install && rake"
 
   mongo:
-    image: mongo:4.4@sha256:4be76f674fc4b27859816811b8baa3c51830eb1dbf4ca81a51e26b79edd662ef
+    image: mongo:5.0@sha256:5e3e87afd24d75e722884d777c5713d254f7e88ba65381b5d6484f75a21b73e3
     expose:
       - "27017"
     ports:
@@ -246,7 +246,7 @@ services:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.142.0@sha256:27e249dac470545ed31beefc86f9e1dc260a21e85aaa256903a2b6e0393a2d91
+    image: otel/opentelemetry-collector:0.143.1@sha256:e38787c822875f4afe459a4e4b798b0cbfb7372669f06643ad293793d25762ce
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml

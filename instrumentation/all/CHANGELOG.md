@@ -1,5 +1,14 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.90.1 / 2026-01-13
+
+* ADDED: Fixed release version
+
+### v0.90.0 / 2025-01-13
+
+* ADDED: Add SQL Comment Propagator
+* ADDED: HTTP Client Semconv v1.17 Span Naming
+
 ### v0.89.1 / 2025-12-03
 
 * ADDED: Upgrade trilogy instrumentation to 0.65.1
