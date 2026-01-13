@@ -12,7 +12,7 @@ require 'benchmark'
 
 class CacheTest < Minitest::Test
   def setup
-    @cache = OpenTelemetry::Helpers::QuerySummary::Cache.new
+    @cache = OpenTelemetry::Helpers::SqlProcessor::QuerySummary::Cache.new
   end
 
   def test_fetch_returns_new_value_when_key_does_not_exist
@@ -28,7 +28,7 @@ class CacheTest < Minitest::Test
   end
 
   def test_eviction_when_cache_size_exceeded
-    small_cache = OpenTelemetry::Helpers::QuerySummary::Cache.new(size: 2)
+    small_cache = OpenTelemetry::Helpers::SqlProcessor::QuerySummary::Cache.new(size: 2)
 
     small_cache.fetch('key1') { 'value1' }
     small_cache.fetch('key2') { 'value2' }
@@ -115,7 +115,7 @@ class CacheTest < Minitest::Test
   end
 
   def test_lru_eviction_behavior
-    lru_cache = OpenTelemetry::Helpers::QuerySummary::Cache.new(size: 2)
+    lru_cache = OpenTelemetry::Helpers::SqlProcessor::QuerySummary::Cache.new(size: 2)
 
     # 1. Fill cache to capacity (A is LRU)
     lru_cache.fetch('A') { 'valueA' }

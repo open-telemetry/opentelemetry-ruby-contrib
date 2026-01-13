@@ -6,6 +6,7 @@
 
 require 'opentelemetry-common'
 require_relative 'sql_processor/obfuscator'
+require_relative 'sql_processor/query_summary'
 
 module OpenTelemetry
   module Helpers
@@ -30,6 +31,17 @@ module OpenTelemetry
       # @api public
       def obfuscate_sql(sql, obfuscation_limit: 2000, adapter: :default)
         Obfuscator.obfuscate_sql(sql, obfuscation_limit: obfuscation_limit, adapter: adapter)
+      end
+
+      # Generates a high-level summary of a SQL query using the provided cache.
+      #
+      # @param query [String] The SQL query to summarize
+      # @param cache [Cache] The cache instance to use for storing/retrieving summaries
+      # @return [String] The query summary or 'UNKNOWN' if parsing fails
+      #
+      # @api public
+      def generate_summary(query, cache:)
+        QuerySummary.generate_summary(query, cache: cache)
       end
     end
   end

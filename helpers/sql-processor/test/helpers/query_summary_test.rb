@@ -5,12 +5,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require_relative '../test_helper'
-require_relative '../../lib/opentelemetry/helpers/sql_processor/query_summary'
+require_relative '../../lib/opentelemetry/helpers/sql_processor'
 
 class QuerySummaryTest < Minitest::Test
   def setup
     # Create a cache for testing
-    @cache = OpenTelemetry::Helpers::QuerySummary::Cache.new(size: 1000)
+    @cache = OpenTelemetry::Helpers::SqlProcessor::QuerySummary::Cache.new(size: 1000)
   end
 
   def self.load_fixture
@@ -31,7 +31,7 @@ class QuerySummaryTest < Minitest::Test
     expected_summary = test_case['expected']['db.query.summary']
 
     define_method(:"test_query_summary_#{name}") do
-      actual_summary = OpenTelemetry::Helpers::QuerySummary.generate_summary(query, cache: @cache)
+      actual_summary = OpenTelemetry::Helpers::SqlProcessor.generate_summary(query, cache: @cache)
       message = build_failure_message(query, expected_summary, actual_summary)
 
       assert_equal(expected_summary, actual_summary, message)
