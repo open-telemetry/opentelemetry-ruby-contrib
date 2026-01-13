@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.90.1 / 2026-01-13
+
+* ADDED: Fixed release version
+
 ### v0.90.0 / 2025-01-13
 
 * ADDED: Add SQL Comment Propagator
