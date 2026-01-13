@@ -46,7 +46,8 @@ wget http://localhost:9292
 If you encounter an error like "You have already activated [gem] X.X.X, but your Gemfile requires [gem] Y.Y.Y", this indicates a version conflict with a default gem (such as `json` or `logger`).
 
 **Error example:**
-```
+
+```console
 You have already activated json 2.6.3, but your Gemfile requires json 2.16.0.
 Since json is a default gem, you can either remove your dependency on it or
 try updating to a newer version of bundler that supports json as a default gem.
@@ -61,6 +62,7 @@ gem install [gem-name] -v '[version]'
 ```
 
 For example:
+
 ```bash
 gem install json -v '2.16.0'
 ```

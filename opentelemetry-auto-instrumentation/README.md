@@ -131,7 +131,7 @@ OTEL_RUBY_REQUIRE_BUNDLER=true  OTEL_TRACES_EXPORTER=console RUBYOPT="-r opentel
 These environment variables are not standard OpenTelemetry environment variables; they are only feature flags for this gem.
 
 | Environment Variable | Description | Default | Example |
-|----------------------|-------------|---------|---------|
+| ---------------------- | ----------- | ------- | ------- |
 | `OTEL_RUBY_REQUIRE_BUNDLER` | Set to `true` if you are using Bundler to install gems but without `Bundler.require` in your script during initialization. | nil | N/A |
 | `OTEL_RUBY_ADDITIONAL_GEM_PATH` | Intended to be used for the OpenTelemetry Operator environment if you install `opentelemetry-auto-instrumentation` to a customized path. | nil | N/A |
 | `OTEL_RUBY_OPERATOR` | Set to `true` to set the binding path for the OpenTelemetry Operator. | `/otel-auto-instrumentation-ruby` | N/A |
