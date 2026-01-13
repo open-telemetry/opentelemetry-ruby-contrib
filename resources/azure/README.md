@@ -34,15 +34,15 @@ end
 
 This will populate the following resource attributes for compute running on Azure:
 
-* `cloud.provider`
-* `cloud.account.id`
-* `cloud.platform`
-* `cloud.region`
-* `cloud.availability_zone`
-* `host.id`
-* `host.image.id`
-* `host.name`
-* `host.type`
+- `cloud.provider`
+- `cloud.account.id`
+- `cloud.platform`
+- `cloud.region`
+- `cloud.availability_zone`
+- `host.id`
+- `host.image.id`
+- `host.name`
+- `host.type`
 
 ## How can I get involved?
 

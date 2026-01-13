@@ -15,11 +15,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
-  cancel-in-progress: true  # Cancel any previous runs of this workflow
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
   instrumentation_all:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
@@ -31,7 +32,12 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: "Test Ruby 4.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:

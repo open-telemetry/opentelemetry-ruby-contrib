@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-helpers-sql-obfuscation'
+require 'opentelemetry-helpers-sql-processor'
 require_relative '../constants'
 require_relative '../lru_cache'
 
@@ -79,7 +79,20 @@ module OpenTelemetry
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args, &block|
               span_name, attrs = span_attrs(:query, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
+              tracer.in_span(span_name, attributes: attrs, kind: :client) do |_span, context|
+                # Inject propagator context into SQL if propagator is configured
+                if propagator && args[0].is_a?(String)
+                  sql = args[0]
+                  if sql.frozen?
+                    sql = +sql
+                    propagator.inject(sql, context: context)
+                    sql.freeze
+                    args[0] = sql
+                  else
+                    propagator.inject(sql, context: context)
+                  end
+                end
+
                 if block
                   block.call(super(*args))
                 else
@@ -92,7 +105,21 @@ module OpenTelemetry
           PG::Constants::PREPARE_ISH_METHODS.each do |method|
             define_method method do |*args|
               span_name, attrs = span_attrs(:prepare, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
+              tracer.in_span(span_name, attributes: attrs, kind: :client) do |_span, context|
+                # Inject propagator context into SQL if propagator is configured
+                # For prepare, the SQL is in args[1]
+                if propagator && args[1].is_a?(String)
+                  sql = args[1]
+                  if sql.frozen?
+                    sql = +sql
+                    propagator.inject(sql, context: context)
+                    sql.freeze
+                    args[1] = sql
+                  else
+                    propagator.inject(sql, context: context)
+                  end
+                end
+
                 super(*args)
               end
             end
@@ -116,7 +143,7 @@ module OpenTelemetry
           def obfuscate_sql(sql)
             return sql unless config[:db_statement] == :obfuscate
 
-            OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(
+            OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(
               sql,
               obfuscation_limit: config[:obfuscation_limit],
               adapter: :postgres
@@ -247,6 +274,10 @@ module OpenTelemetry
             # string when there is exactly one.
             p = conninfo_hash[:port]
             p.to_i unless p.nil? || p.empty? || p.include?(',')
+          end
+
+          def propagator
+            OpenTelemetry::Instrumentation::PG::Instrumentation.instance.propagator
           end
         end
       end

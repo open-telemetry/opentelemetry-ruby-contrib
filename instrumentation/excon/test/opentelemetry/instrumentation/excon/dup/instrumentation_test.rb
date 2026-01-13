@@ -24,6 +24,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
     stub_request(:get, 'http://example.com/success?hello=there').to_return(status: 200)
     stub_request(:get, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'http://example.com/timeout').to_timeout
+    stub_request(:get, 'http://example.com/users/123').to_return(status: 200)
 
     # this is currently a noop but this will future proof the test
     @orig_propagation = OpenTelemetry.propagation
@@ -76,6 +77,34 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       Excon.new('http://example.com/success').request(method: 'GET')
 
       _(span.attributes['http.method']).must_equal 'GET'
+    end
+
+    it 'handles unknown HTTP method' do
+      stub_request(:purge, 'http://example.com/purge').to_return(status: 200)
+
+      Excon.new('http://example.com/purge').request(method: 'PURGE')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP'
+      # old semconv
+      _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['http.method']).must_equal '_OTHER'
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.target']).must_equal '/purge'
+      _(span.attributes['http.url']).must_equal 'http://example.com/purge'
+      # stable semconv
+      _(span.attributes['http.request.method']).must_equal '_OTHER'
+      _(span.attributes['http.request.method_original']).must_equal 'PURGE'
+      _(span.attributes['url.scheme']).must_equal 'http'
+      _(span.attributes['http.response.status_code']).must_equal 200
+      _(span.attributes['url.path']).must_equal '/purge'
+      _(span.attributes['url.full']).must_equal 'http://example.com/purge'
+      assert_requested(
+        :purge,
+        'http://example.com/purge',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
     end
 
     it 'after request with failure code' do
@@ -375,6 +404,24 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
         _(exporter.finished_spans.size).must_equal(0)
       end
+    end
+
+    it 'uses url.template in span name when present in client context' do
+      client_context_attrs = { 'url.template' => '/users/{id}' }
+      OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+        Excon.get('http://example.com/users/123')
+      end
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'GET /users/{id}'
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['url.template']).must_equal '/users/{id}'
+      assert_requested(
+        :get,
+        'http://example.com/users/123',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
     end
   end
 

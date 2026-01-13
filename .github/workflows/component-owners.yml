@@ -1,4 +1,4 @@
-name: 'Component Owners'
+name: "Component Owners"
 on:
   pull_request_target:
 
@@ -7,12 +7,13 @@ permissions:
 
 jobs:
   run_self:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     permissions:
       pull-requests: write # required for assigning reviewers to PRs
     runs-on: ubuntu-latest
     name: Auto Assign Owners
     steps:
-      - uses: dyladan/component-owners@v0.1.0
+      - uses: dyladan/component-owners@58bd86e9814d23f1525d0a970682cead459fa783 # v0.1.0
         with:
           config-file: .github/component_owners.yml
           repo-token: ${{ secrets.GITHUB_TOKEN }}

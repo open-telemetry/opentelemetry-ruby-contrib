@@ -44,6 +44,7 @@ For more information about the maintainer role, see the [community repository](h
 
 - [Josef Šimánek](https://github.com/simi)
 - [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
+- [Hannah Ramadan](https://github.com/HannahRamadan), New Relic
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
@@ -60,7 +61,7 @@ This repository also contains libraries that hold code shared among
 multiple instrumentation libraries.
 
 - [MySQL](helpers/mysql/)
-- [SQL Obfuscation](helpers/sql-obfuscation/)
+- [SQL Processor](helpers/sql-processor/)
 
 ## Additional Libraries
 

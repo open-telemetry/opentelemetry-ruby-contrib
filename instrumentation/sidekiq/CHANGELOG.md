@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.28.1 / 2025-12-02
+
+* FIXED: Sidekiq spans crashing when enqueued by Exq
+
 ### v0.28.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
@@ -123,7 +127,7 @@
 
 * BREAKING CHANGE: Sidekiq propagation config 
   - Config option enable_job_class_span_names renamed to span_naming and now expects a symbol of value :job_class, or :queue
-  - The default behaviour is no longer to have one continuous trace for the enqueue and process spans, using links is the new default.  To maintain the previous behaviour the config option propagation_style must be set to :child.
+  - The default behavior is no longer to have one continuous trace for the enqueue and process spans, using links is the new default.  To maintain the previous behavior the config option propagation_style must be set to :child.
 * BREAKING CHANGE: Total order constraint on span.status= 
 
 * FIXED: Sidekiq propagation config 
