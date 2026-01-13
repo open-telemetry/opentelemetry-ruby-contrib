@@ -209,12 +209,12 @@ module OpenTelemetry
               as_token = tokens[index + 1]
               begin_token = tokens[index + 2]
 
-              if as_token && as_token[VALUE_INDEX]&.upcase == 'AS' && begin_token && begin_token[VALUE_INDEX]&.upcase == 'BEGIN'
-                # This is a PROCEDURE with AS BEGIN structure - we want to parse the body
-                # Continue normal processing but include the procedure name and skip AS BEGIN
-                table_parts = [token[VALUE_INDEX]]
-                { processed: true, parts: table_parts, new_state: PARSING_STATE, next_index: index + 3 }
-              end
+              return unless as_token && as_token[VALUE_INDEX]&.upcase == 'AS' && begin_token && begin_token[VALUE_INDEX]&.upcase == 'BEGIN'
+
+              # This is a PROCEDURE with AS BEGIN structure - we want to parse the body
+              # Continue normal processing but include the procedure name and skip AS BEGIN
+              table_parts = [token[VALUE_INDEX]]
+              { processed: true, parts: table_parts, new_state: PARSING_STATE, next_index: index + 3 }
             end
 
             def handle_ddl_as_pattern(token, tokens, index)
@@ -225,11 +225,11 @@ module OpenTelemetry
               # In DDL operations, AS starts the body definition, not an alias
               # Check if this looks like DDL AS (followed by DDL keywords like SELECT, BEGIN, etc.)
               after_as_token = tokens[index + 2]
-              if after_as_token && %w[SELECT INSERT UPDATE DELETE BEGIN].include?(after_as_token[VALUE_INDEX].upcase)
-                # This is DDL AS - transition to DDL_BODY_STATE and skip AS
-                table_parts = [token[VALUE_INDEX]]
-                { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: index + 2 }
-              end
+              return unless after_as_token && %w[SELECT INSERT UPDATE DELETE BEGIN].include?(after_as_token[VALUE_INDEX].upcase)
+
+              # This is DDL AS - transition to DDL_BODY_STATE and skip AS
+              table_parts = [token[VALUE_INDEX]]
+              { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: index + 2 }
             end
 
             def handle_trigger_as_begin_pattern(token, tokens, index)
