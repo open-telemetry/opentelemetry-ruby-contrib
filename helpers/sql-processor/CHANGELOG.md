@@ -1,5 +1,9 @@
 # Release History: opentelemetry-helpers-sql-processor
 
+### v0.4.0 / 2026-01-13
+
+* ADDED: Add SQL Comment Propagator
+
 ### v0.3.1 / 2025-11-11
 
 * DOCS: Update example to match new gem namespace (sql-processor)
