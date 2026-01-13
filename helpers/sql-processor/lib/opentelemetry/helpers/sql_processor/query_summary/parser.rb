@@ -74,7 +74,6 @@ module OpenTelemetry
               in_clause_context = false # Track if we're in an IN clause context
 
               # Process tokens to build summary parts
-
               tokens.each_with_index do |token, index|
                 next if index < skip_until
 
@@ -82,7 +81,7 @@ module OpenTelemetry
                 if cached_upcase(token[VALUE_INDEX]) == 'IN'
                   in_clause_context = true
                 elsif token[VALUE_INDEX] == '(' && in_clause_context
-                  # Continue in IN clause context until we find closing parenthesis
+                # Continue in IN clause context until we find closing parenthesis
                 elsif token[VALUE_INDEX] == ')' && in_clause_context
                   in_clause_context = false
                 end
@@ -188,62 +187,96 @@ module OpenTelemetry
             end
 
             def process_table_name_and_alias(token, tokens, index)
+              # Try DDL pattern handlers first
+              result = handle_procedure_as_begin_pattern(token, tokens, index)
+              return result if result
+
+              result = handle_ddl_as_pattern(token, tokens, index)
+              return result if result
+
+              result = handle_trigger_as_begin_pattern(token, tokens, index)
+              return result if result
+
+              handle_regular_table_name(token, tokens, index)
+            end
+
+            def handle_procedure_as_begin_pattern(token, tokens, index)
               # Special handling for PROCEDURE with AS BEGIN pattern FIRST (before general AS handling)
               # For "CREATE PROCEDURE name AS BEGIN SELECT * FROM table END" we want to extract the inner operations
-              if token[VALUE_INDEX].length > 3 # Skip very short names
-                # Look for immediate AS BEGIN pattern (PROCEDURE name AS BEGIN...)
-                as_token = tokens[index + 1]
-                begin_token = tokens[index + 2]
+              return nil if token[VALUE_INDEX].length <= 3 # Skip very short names, unlikely to be procedure or trigger names
 
-                if as_token && as_token[VALUE_INDEX]&.upcase == 'AS' && begin_token && begin_token[VALUE_INDEX]&.upcase == 'BEGIN'
-                  # This is a PROCEDURE with AS BEGIN structure - we want to parse the body
-                  # Continue normal processing but include the procedure name and skip AS BEGIN
-                  table_parts = [token[VALUE_INDEX]]
-                  return { processed: true, parts: table_parts, new_state: PARSING_STATE, next_index: index + 3 }
-                end
+              # Look for immediate AS BEGIN pattern (PROCEDURE name AS BEGIN...)
+              as_token = tokens[index + 1]
+              begin_token = tokens[index + 2]
+
+              if as_token && as_token[VALUE_INDEX]&.upcase == 'AS' && begin_token && begin_token[VALUE_INDEX]&.upcase == 'BEGIN'
+                # This is a PROCEDURE with AS BEGIN structure - we want to parse the body
+                # Continue normal processing but include the procedure name and skip AS BEGIN
+                table_parts = [token[VALUE_INDEX]]
+                { processed: true, parts: table_parts, new_state: PARSING_STATE, next_index: index + 3 }
               end
+            end
 
+            def handle_ddl_as_pattern(token, tokens, index)
               # Check if the next token is AS in DDL context (not an alias)
               next_token = tokens[index + 1]
-              if next_token && next_token[VALUE_INDEX]&.upcase == 'AS'
-                # In DDL operations, AS starts the body definition, not an alias
-                # Check if this looks like DDL AS (followed by DDL keywords like SELECT, BEGIN, etc.)
-                after_as_token = tokens[index + 2]
-                if after_as_token && %w[SELECT INSERT UPDATE DELETE BEGIN].include?(after_as_token[VALUE_INDEX].upcase)
-                  # This is DDL AS - transition to DDL_BODY_STATE and skip AS
-                  table_parts = [token[VALUE_INDEX]]
-                  return { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: index + 2 }
-                end
-              end
+              return nil unless next_token && next_token[VALUE_INDEX]&.upcase == 'AS'
 
+              # In DDL operations, AS starts the body definition, not an alias
+              # Check if this looks like DDL AS (followed by DDL keywords like SELECT, BEGIN, etc.)
+              after_as_token = tokens[index + 2]
+              if after_as_token && %w[SELECT INSERT UPDATE DELETE BEGIN].include?(after_as_token[VALUE_INDEX].upcase)
+                # This is DDL AS - transition to DDL_BODY_STATE and skip AS
+                table_parts = [token[VALUE_INDEX]]
+                { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: index + 2 }
+              end
+            end
+
+            def handle_trigger_as_begin_pattern(token, tokens, index)
               # For TRIGGER patterns, look ahead for AS keyword after ON/AFTER/BEFORE clauses
               # Handle patterns like: "TRIGGER name ON table AFTER INSERT AS BEGIN"
-              if token[VALUE_INDEX].length > 3 # Skip very short names that are likely not real trigger names
-                look_ahead_index = index + 1
-                found_as_with_begin = false
+              return nil if token[VALUE_INDEX].length <= 3 # Skip very short names that are likely not real trigger names
 
-                # Look ahead up to 10 tokens for AS followed by BEGIN
-                while look_ahead_index < tokens.length && look_ahead_index < index + 10
-                  current_token = tokens[look_ahead_index]
-                  look_ahead_index += 1
-                  next unless current_token && current_token[VALUE_INDEX]&.upcase == 'AS'
+              look_ahead_index = find_as_begin_pattern(tokens, index + 1, index + 10)
+              return nil unless look_ahead_index
 
-                  next_after_as = tokens[look_ahead_index]
-                  if next_after_as && next_after_as[VALUE_INDEX]&.upcase == 'BEGIN'
-                    found_as_with_begin = true
-                    break
-                  end
-                end
+              # This is a TRIGGER name - transition to DDL_BODY_STATE at the AS token
+              table_parts = [token[VALUE_INDEX]]
+              { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: look_ahead_index + 1 }
+            end
 
-                if found_as_with_begin
-                  # This is a TRIGGER name - transition to DDL_BODY_STATE at the AS token
-                  table_parts = [token[VALUE_INDEX]]
-                  return { processed: true, parts: table_parts, new_state: DDL_BODY_STATE, next_index: look_ahead_index + 1 }
-                end
+            def find_as_begin_pattern(tokens, start_idx, end_idx)
+              # Look ahead up to 10 tokens for AS followed by BEGIN
+              look_ahead_index = start_idx
+
+              while look_ahead_index < tokens.length && look_ahead_index < end_idx
+                current_token = tokens[look_ahead_index]
+                look_ahead_index += 1
+                next unless current_token && current_token[VALUE_INDEX]&.upcase == 'AS'
+
+                next_after_as = tokens[look_ahead_index]
+                return look_ahead_index if next_after_as && next_after_as[VALUE_INDEX]&.upcase == 'BEGIN'
               end
 
+              nil
+            end
+
+            def handle_regular_table_name(token, tokens, index)
               # Regular alias handling for non-DDL cases
               skip_count = calculate_alias_skip(tokens, index)
+              state_result = determine_next_state_after_table(tokens, index, skip_count)
+
+              # Clean and include the table name
+              cleaned_table_name = clean_table_name(token[VALUE_INDEX])
+              table_parts = [cleaned_table_name]
+
+              result = { processed: true, parts: table_parts, new_state: state_result[:new_state], next_index: index + 1 + state_result[:skip_count] }
+              result[:terminate_after_ddl] = true if state_result[:should_terminate]
+              result
+            end
+
+            def determine_next_state_after_table(tokens, index, initial_skip_count)
+              skip_count = initial_skip_count
 
               # Check what comes after the table name and any aliases
               next_token_after_alias = tokens[index + 1 + skip_count]
@@ -254,13 +287,7 @@ module OpenTelemetry
               new_state = PARSING_STATE
 
               if next_token_after_alias && %w[START RESTART].include?(next_token_after_alias[VALUE_INDEX]&.upcase)
-                # Handle START WITH and RESTART WITH patterns - check for WITH following
-                following_token = tokens[index + 2 + skip_count]
-                skip_count += if following_token && following_token[VALUE_INDEX]&.upcase == 'WITH'
-                                2 # Skip both keyword and WITH
-                              else
-                                1 # Skip just the keyword
-                              end
+                skip_count += handle_start_restart_pattern(tokens, index, skip_count)
               elsif next_token_after_alias && %w[WITH SET WHERE BEGIN DROP ADD COLUMN INCREMENT BY].include?(next_token_after_alias[VALUE_INDEX].upcase)
                 # Skip over the stopping keyword so it doesn't get processed again
                 skip_count += 1
@@ -270,13 +297,17 @@ module OpenTelemetry
                 skip_count += 1 # Skip the comma
               end
 
-              # Clean and include the table name
-              cleaned_table_name = clean_table_name(token[VALUE_INDEX])
-              table_parts = [cleaned_table_name]
+              { new_state: new_state, skip_count: skip_count, should_terminate: should_terminate }
+            end
 
-              result = { processed: true, parts: table_parts, new_state: new_state, next_index: index + 1 + skip_count }
-              result[:terminate_after_ddl] = true if should_terminate
-              result
+            def handle_start_restart_pattern(tokens, index, current_skip)
+              # Handle START WITH and RESTART WITH patterns - check for WITH following
+              following_token = tokens[index + 2 + current_skip]
+              if following_token && following_token[VALUE_INDEX]&.upcase == 'WITH'
+                2 # Skip both keyword and WITH
+              else
+                1 # Skip just the keyword
+              end
             end
 
             def handle_collection_operator(token, state, index)
