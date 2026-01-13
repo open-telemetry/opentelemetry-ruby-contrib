@@ -49,7 +49,6 @@ The `opentelemetry-instrumentation-all` gem is distributed under the Apache 2.0 
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 
-
 ## HTTP semantic convention stability
 
 In the OpenTelemetry ecosystem, HTTP semantic conventions have now reached a stable state. However, the initial Excon instrumentation was introduced before this stability was achieved, which resulted in HTTP attributes being based on an older version of the semantic conventions.

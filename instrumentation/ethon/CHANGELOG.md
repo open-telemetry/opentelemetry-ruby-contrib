@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.27.0 / 2026-01-13
+
+* ADDED: HTTP Client Semconv v1.17 Span Naming
+
 ### v0.26.0 / 2025-11-26
 
 * BREAKING CHANGE: Update Ethon span name when unknown method

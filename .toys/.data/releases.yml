@@ -166,7 +166,8 @@ gems:
 
   - name: opentelemetry-instrumentation-active_model_serializers
     directory: instrumentation/active_model_serializers
-    version_constant: [OpenTelemetry, Instrumentation, ActiveModelSerializers, VERSION]
+    version_constant:
+      [OpenTelemetry, Instrumentation, ActiveModelSerializers, VERSION]
 
   - name: opentelemetry-instrumentation-concurrent_ruby
     directory: instrumentation/concurrent_ruby
@@ -259,7 +260,8 @@ gems:
 
   - name: opentelemetry-propagator-google_cloud_trace_context
     directory: propagator/google_cloud_trace_context
-    version_constant: [OpenTelemetry, Propagator, GoogleCloudTraceContext, VERSION]
+    version_constant:
+      [OpenTelemetry, Propagator, GoogleCloudTraceContext, VERSION]
 
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace
@@ -291,7 +293,8 @@ gems:
   - name: opentelemetry-resource-detector-google_cloud_platform
     directory: resources/google_cloud_platform
     version_rb_path: lib/opentelemetry/resource/detector/google_cloud_platform/version.rb
-    version_constant: [OpenTelemetry, Resource, Detector, GoogleCloudPlatform, VERSION]
+    version_constant:
+      [OpenTelemetry, Resource, Detector, GoogleCloudPlatform, VERSION]
 
   - name: opentelemetry-sampler-xray
     directory: sampler/xray

@@ -9,8 +9,8 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'bundler', '~> 2.4'
   gem 'minitest', '~> 5.0'
+  gem 'opentelemetry-sdk', '~> 1.5'
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '>= 13'
   gem 'rubocop', '~> 1.82.0'
@@ -20,6 +20,7 @@ group :test do
   gem 'yard-doctest', '~> 0.1.6'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
+    gem 'logger'
     gem 'mutex_m'
     gem 'benchmark'
   end

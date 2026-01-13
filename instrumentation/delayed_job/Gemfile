@@ -10,7 +10,6 @@ gemspec
 
 group :test do
   gem 'appraisal', '~> 2.5'
-  gem 'bundler', '~> 2.4'
   gem 'minitest', '~> 5.0'
   gem 'opentelemetry-sdk', '~> 1.1'
   gem 'opentelemetry-test-helpers', '~> 0.3'
@@ -26,4 +25,6 @@ group :test do
     gem 'base64'
     gem 'mutex_m'
   end
+  # https://github.com/collectiveidea/delayed_job/issues/1245
+  gem 'ostruct' if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('4')
 end

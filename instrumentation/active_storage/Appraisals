@@ -12,7 +12,7 @@
   end
 end
 
-%w[8.0.0].each do |version|
+%w[8.0.0 8.1.0].each do |version|
   appraise "activestorage-#{version}" do
     gem 'sqlite3', '>= 2.1'
     gem 'image_processing', '~> 1.2'

@@ -6,6 +6,7 @@
 
 require 'opentelemetry-common'
 require_relative 'sql_processor/obfuscator'
+require_relative 'sql_processor/commenter'
 require_relative 'sql_processor/query_summary'
 
 module OpenTelemetry
@@ -13,7 +14,8 @@ module OpenTelemetry
     # SQL processing utilities for OpenTelemetry instrumentation.
     #
     # This module provides a unified interface for SQL processing operations
-    # commonly needed in database adapter instrumentation, including SQL obfuscation.
+    # commonly needed in database adapter instrumentation, including SQL obfuscation
+    # and SQL comment-based trace context propagation.
     #
     # @api public
     module SqlProcessor
