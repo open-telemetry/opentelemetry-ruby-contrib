@@ -88,8 +88,8 @@ module OpenTelemetry
                 end
 
                 result = process_token(token, tokens, index,
-                                      state: state,
-                                      in_clause_context: in_clause_context)
+                                       state: state,
+                                       in_clause_context: in_clause_context)
 
                 summary_parts.concat(result[:parts])
                 state = result[:new_state]
@@ -115,8 +115,8 @@ module OpenTelemetry
               return operation_result if operation_result[:processed]
 
               collection_result = process_collection_token(token, tokens, index,
-                                                          state: state,
-                                                          in_clause_context: in_clause_context)
+                                                           state: state,
+                                                           in_clause_context: in_clause_context)
               return collection_result if collection_result[:processed]
 
               { processed: false, parts: [], new_state: state, next_index: index + 1 }
@@ -376,7 +376,7 @@ module OpenTelemetry
               if next_token && TABLE_OBJECTS.include?(next_token[VALUE_INDEX].upcase)
                 object_type = next_token[VALUE_INDEX]
                 if tokens[index + 2] && tokens[index + 2][VALUE_INDEX]&.upcase == 'IF' &&
-                  tokens[index + 3] && tokens[index + 3][VALUE_INDEX]&.upcase == 'EXISTS'
+                   tokens[index + 3] && tokens[index + 3][VALUE_INDEX]&.upcase == 'EXISTS'
                   object_name = tokens[index + 4]
                   return { processed: true, parts: ["#{operation} #{object_type.upcase} #{object_name[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 5 } if object_name
                 end
@@ -386,8 +386,8 @@ module OpenTelemetry
               if operation.upcase == 'CREATE' && next_token && TABLE_OBJECTS.include?(next_token[VALUE_INDEX].upcase)
                 object_type = next_token[VALUE_INDEX]
                 if tokens[index + 2] && tokens[index + 2][VALUE_INDEX]&.upcase == 'IF' &&
-                  tokens[index + 3] && tokens[index + 3][VALUE_INDEX]&.upcase == 'NOT' &&
-                  tokens[index + 4] && tokens[index + 4][VALUE_INDEX]&.upcase == 'EXISTS'
+                   tokens[index + 3] && tokens[index + 3][VALUE_INDEX]&.upcase == 'NOT' &&
+                   tokens[index + 4] && tokens[index + 4][VALUE_INDEX]&.upcase == 'EXISTS'
                   object_name = tokens[index + 5]
                   return { processed: true, parts: ["#{operation} #{object_type.upcase} #{object_name[VALUE_INDEX]}"], new_state: PARSING_STATE, next_index: index + 6 } if object_name
                 end
