@@ -63,10 +63,6 @@ module OpenTelemetry
                   annotate_span_with_response(span, response) if response
                 end
               end
-            rescue ::Net::LDAP::Error => e
-              span.record_exception(e)
-              span.status = OpenTelemetry::Trace::Status.error
-              raise e
             end
           end
 
