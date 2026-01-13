@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.28.0 / 2026-01-13
+
+* ADDED: HTTP Client Semconv v1.17 Span Naming
+
 ### v0.27.1 / 2025-11-25
 
 * FIXED: Update support for unknown HTTP methods to match semantic conventions
