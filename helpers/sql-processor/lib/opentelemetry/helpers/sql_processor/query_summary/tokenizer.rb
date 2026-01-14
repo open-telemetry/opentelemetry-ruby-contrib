@@ -28,7 +28,7 @@ module OpenTelemetry
           # Token Types:
           #   :keyword           - SELECT, FROM, WHERE, CREATE, etc.
           #   :identifier        - table_name, column_name, @variable, schema.table
-          #   :quoted_identifier - "table", `column`, [index]
+          #   :quoted_identifier - "table", `column`, [index], ect.
           #   :operator          - =, <, >, +, -, *, (, ), ;
           #   :numeric           - 123, -45.67, 1.2e-4
           #   :string            - 'literal text', 'O''Brien'

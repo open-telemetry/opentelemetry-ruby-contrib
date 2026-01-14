@@ -48,6 +48,7 @@ module OpenTelemetry
               result = yield
               evict_if_needed
               @cache[key] = result
+
               result
             end
           end
