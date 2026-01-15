@@ -1,34 +1,38 @@
-# This file controls the release system.
+# This file controls the toys-release gem.
 
 # The repo organization and name.
 repo: open-telemetry/opentelemetry-ruby-contrib
-# The main branch name. Releases must happen on this branch.
-main_branch: main
+
 # Time in seconds for release scripts to wait for CI to complete.
 required_checks_timeout: 1200
+
+# Regex matching which GitHub checks are required to pass before a release
+# can occur.
 required_checks: "^(ci|CI).*"
+
 # Git user attached to commits for release pull requests.
 git_user_name: otelbot
 git_user_email: 197425009+otelbot@users.noreply.github.com
 
-# Control the conventional commit linter.
-commit_lint:
-  # Whether conventional commit errors should cause a GitHub check fail.
-  fail_checks: true
-  # Merge types allowed by the repo.
-  merge: squash
-
-# List of all releasable gems. Each gem should include:
+# List of all releaseable gems. Each gem should include:
 #  *  name: The name of the gem. (Required.)
-#  *  directory: Gem directory relative to the repo root. (Required.)
+#  *  directory: Gem directory relative to the repo root.
+#     (Required unless the gem name matches the directory name exactly. This
+#     means it's always required in this repo because every gem directory is in
+#     a subdirectory of "instrumentation", "helpers", "propagator", etc..)
 #  *  version_rb_path: Path to version.rb relative to the gem directory.
 #     (Required only if it does not match the gem name. e.g. The gem
-#     "opentelemetry-sdk" would default to lib/opentelemetry/sdk/version.rb)
+#     "opentelemetry-helpers-sql" would default to
+#     "lib/opentelemetry/helpers/sql/version.rb", so this field is required
+#     only if the actual path is different.)
 #  *  version_constant: The fully-qualified version constant as an array.
-#     (Required because the OpenTelemetry namespace does not match the gem
-#     name "opentelemetry".)
-#  *  changelog_path: Path to CHANGELOG.md relative to the gem directory.
-#     (Required only if it is not in the expected location.)
+#     (Required if the actual constant name, including its capitalization,
+#     differs from what would be inferred from the gem name. This means it's
+#     always required in this repo, because the capitalization of the
+#     "OpenTelemetry" namespace does not match the gem name "opentelemetry".)
+#  *  changelog_path: Path to the changelog relative to the gem directory.
+#     (Required only if it is not in the expected location, which is the file
+#     "CHANGELOG.md" at the root of the gem directory.)
 gems:
   - name: opentelemetry-instrumentation-factory_bot
     directory: instrumentation/factory_bot
@@ -43,11 +47,7 @@ gems:
     version_constant: [OpenTelemetry, Instrumentation, ActiveStorage, VERSION]
 
   - name: opentelemetry-helpers-sql
-    # we append a slash here to avoid the naive substring start_with? directory-matching condition in underlying toys gem
-    # which causes helpers/sql to incorrectly match when changes occur in helpers/sql-processor or helpers/sql-obfuscation
-    # https://github.com/dazuma/toys/blob/17ed449da8299f272b834470ff6b279a59e8070b/.toys/release/.lib/release_utils.rb#L436
-    # https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1727
-    directory: helpers/sql/
+    directory: helpers/sql
     version_constant: [OpenTelemetry, Helpers, Sql, VERSION]
 
   - name: opentelemetry-instrumentation-gruf
@@ -141,11 +141,7 @@ gems:
     version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]
 
   - name: opentelemetry-instrumentation-http
-    # we append a slash here to avoid the naive substring start_with? directory-matching condition in underlying toys gem
-    # which causes instrumentation/http to incorrectly match when changes occur in instrumentation/httpx
-    # https://github.com/dazuma/toys/blob/17ed449da8299f272b834470ff6b279a59e8070b/.toys/release/.lib/release_utils.rb#L436
-    # https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1512
-    directory: instrumentation/http/
+    directory: instrumentation/http
     version_constant: [OpenTelemetry, Instrumentation, HTTP, VERSION]
 
   - name: opentelemetry-instrumentation-graphql
@@ -277,22 +273,18 @@ gems:
 
   - name: opentelemetry-resource-detector-aws
     directory: resources/aws
-    version_rb_path: lib/opentelemetry/resource/detector/aws/version.rb
     version_constant: [OpenTelemetry, Resource, Detector, AWS, VERSION]
 
   - name: opentelemetry-resource-detector-azure
     directory: resources/azure
-    version_rb_path: lib/opentelemetry/resource/detector/azure/version.rb
     version_constant: [OpenTelemetry, Resource, Detector, Azure, VERSION]
 
   - name: opentelemetry-resource-detector-container
     directory: resources/container
-    version_rb_path: lib/opentelemetry/resource/detector/container/version.rb
     version_constant: [OpenTelemetry, Resource, Detector, Container, VERSION]
 
   - name: opentelemetry-resource-detector-google_cloud_platform
     directory: resources/google_cloud_platform
-    version_rb_path: lib/opentelemetry/resource/detector/google_cloud_platform/version.rb
     version_constant:
       [OpenTelemetry, Resource, Detector, GoogleCloudPlatform, VERSION]
 
