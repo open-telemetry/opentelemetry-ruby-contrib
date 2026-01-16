@@ -50,7 +50,7 @@ module OpenTelemetry
           # Hash-based keyword lookup performance optimization
           KEYWORDS = KEYWORDS_ARRAY.each_with_object({}) { |keyword, hash| hash[keyword] = true }.freeze
 
-          # Optimized regex patterns ordered by frequency in typical SQL
+          # Regex patterns ordered by frequency in typical SQL
           # Most common tokens first to reduce scanning overhead
           IDENTIFIER_REGEX = /@?[a-zA-Z_\u0080-\uffff][a-zA-Z0-9_.\u0080-\uffff]*/u
           OPERATOR_REGEX = %r{<=|>=|<>|!=|[=<>+\-*/%,;()!?]}
@@ -58,60 +58,44 @@ module OpenTelemetry
           STRING_REGEX = /'(?:''|[^'\r\n])*'/
           QUOTED_ID_REGEX = /"(?:""|[^"\r\n])*"|`(?:``|[^`\r\n])*`|\[(?:[^\]\r\n])*\]/
 
-          # Comments and whitespace (handled separately for performance)
-          COMMENT_LINE_REGEX = /--[^\r\n]*/
-          COMMENT_BLOCK_REGEX = %r{/\*.*?\*/}m
-          WHITESPACE_REGEX = /\s+/
-
-          # Don't cache keywords to preserve original case as tests expect
+          # Comments and whitespace - combined for single-pass scanning
+          # Ordered by frequency: whitespace most common, then line comments, then block comments
+          SKIP_REGEX = /\s+|--[^\r\n]*|\/\*.*?\*\//m
 
           class << self
             def tokenize(query)
               scanner = StringScanner.new(query)
               tokens = []
 
-              scan_next_token(scanner, tokens) until scanner.eos?
+              until scanner.eos?
+                # Skip noise (whitespace/comments) in a single regex scan
+                next if scanner.scan(SKIP_REGEX)
+
+                # Scan in order of frequency: identifiers are most common in SQL
+                if (value = scanner.scan(IDENTIFIER_REGEX))
+                  # Identifiers: table names, column names, variables, keywords
+                  upcase_identifier = QuerySummary::Parser::Constants.cached_upcase(value)
+                  type = KEYWORDS[upcase_identifier] ? :keyword : :identifier
+                  tokens << [type, value.freeze]
+                elsif (value = scanner.scan(OPERATOR_REGEX))
+                  # SQL operators: comparison, equality, arithmetic, and punctuation
+                  tokens << [:operator, value.freeze]
+                elsif (value = scanner.scan(NUMBER_REGEX))
+                  # Numbers: signed integers, decimals, scientific notation
+                  tokens << [:numeric, value.freeze]
+                elsif (value = scanner.scan(STRING_REGEX))
+                  # String literals with escaped quotes
+                  tokens << [:string, value.freeze]
+                elsif (value = scanner.scan(QUOTED_ID_REGEX))
+                  # Quoted identifiers: "double", `backtick`, [bracket]
+                  tokens << [:quoted_identifier, value.freeze]
+                else
+                  # Fallback to prevent infinite loops by consuming unmatched characters
+                  scanner.getch
+                end
+              end
 
               tokens
-            end
-
-            def scan_next_token(scanner, tokens)
-              return if skip_comments_and_whitespace(scanner)
-
-              # Scan in order of frequency: identifiers are most common in SQL
-              if (identifier = scanner.scan(IDENTIFIER_REGEX))
-                # Identifiers: table names, column names, variables, keywords (most common)
-                type = classify_identifier(identifier)
-                tokens << [type, identifier.freeze]
-              elsif (operator = scanner.scan(OPERATOR_REGEX))
-                # SQL operators: comparison (<=, >=, <>, !=), equality (=), arithmetic (+, -, *, /), punctuation
-                tokens << [:operator, operator.freeze]
-              elsif (number = scanner.scan(NUMBER_REGEX))
-                # Numbers: signed integers, decimals, scientific notation (1.23e-4)
-                tokens << [:numeric, number.freeze]
-              elsif (string_literal = scanner.scan(STRING_REGEX))
-                # String literals with escaped quotes ('John''s Car')
-                tokens << [:string, string_literal.freeze]
-              elsif (quoted_name = scanner.scan(QUOTED_ID_REGEX))
-                # Quoted identifiers: "double", `backtick`, [bracket] for table/column names
-                tokens << [:quoted_identifier, quoted_name.freeze]
-              else
-                # Skip unmatched characters
-                scanner.getch
-              end
-            end
-
-            private
-
-            def skip_comments_and_whitespace(scanner)
-              scanner.scan(COMMENT_LINE_REGEX) || # Single-line comments (-- comment)
-                scanner.scan(COMMENT_BLOCK_REGEX) ||    # Block comments (/* comment */)
-                scanner.scan(WHITESPACE_REGEX)          # Whitespace (spaces, tabs, newlines)
-            end
-
-            def classify_identifier(identifier)
-              upcase_identifier = QuerySummary::Parser::Constants.cached_upcase(identifier)
-              KEYWORDS[upcase_identifier] ? :keyword : :identifier
             end
           end
         end
