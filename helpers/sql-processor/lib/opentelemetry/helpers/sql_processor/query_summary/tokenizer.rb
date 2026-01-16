@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'strscan'
+require_relative 'parser/constants'
 
 module OpenTelemetry
   module Helpers
@@ -49,17 +50,20 @@ module OpenTelemetry
           # Hash-based keyword lookup performance optimization
           KEYWORDS = KEYWORDS_ARRAY.each_with_object({}) { |keyword, hash| hash[keyword] = true }.freeze
 
-          UPCASE_CACHE = {} # rubocop:disable Style/MutableConstant
-          private_constant :UPCASE_CACHE
-
+          # Optimized regex patterns ordered by frequency in typical SQL
+          # Most common tokens first to reduce scanning overhead
+          IDENTIFIER_REGEX = /@?[a-zA-Z_\u0080-\uffff][a-zA-Z0-9_.\u0080-\uffff]*/u
           OPERATOR_REGEX = %r{<=|>=|<>|!=|[=<>+\-*/%,;()!?]}
           NUMBER_REGEX = /[+-]?(?:\d+\.?\d*(?:[eE][+-]?\d+)?|\.\d+(?:[eE][+-]?\d+)?)/
           STRING_REGEX = /'(?:''|[^'\r\n])*'/
           QUOTED_ID_REGEX = /"(?:""|[^"\r\n])*"|`(?:``|[^`\r\n])*`|\[(?:[^\]\r\n])*\]/
-          IDENTIFIER_REGEX = /@?[a-zA-Z_\u0080-\uffff][a-zA-Z0-9_.\u0080-\uffff]*/u
+
+          # Comments and whitespace (handled separately for performance)
           COMMENT_LINE_REGEX = /--[^\r\n]*/
           COMMENT_BLOCK_REGEX = %r{/\*.*?\*/}m
           WHITESPACE_REGEX = /\s+/
+
+          # Don't cache keywords to preserve original case as tests expect
 
           class << self
             def tokenize(query)
@@ -74,7 +78,12 @@ module OpenTelemetry
             def scan_next_token(scanner, tokens)
               return if skip_comments_and_whitespace(scanner)
 
-              if (operator = scanner.scan(OPERATOR_REGEX))
+              # Scan in order of frequency: identifiers are most common in SQL
+              if (identifier = scanner.scan(IDENTIFIER_REGEX))
+                # Identifiers: table names, column names, variables, keywords (most common)
+                type = classify_identifier(identifier)
+                tokens << [type, identifier.freeze]
+              elsif (operator = scanner.scan(OPERATOR_REGEX))
                 # SQL operators: comparison (<=, >=, <>, !=), equality (=), arithmetic (+, -, *, /), punctuation
                 tokens << [:operator, operator.freeze]
               elsif (number = scanner.scan(NUMBER_REGEX))
@@ -86,10 +95,6 @@ module OpenTelemetry
               elsif (quoted_name = scanner.scan(QUOTED_ID_REGEX))
                 # Quoted identifiers: "double", `backtick`, [bracket] for table/column names
                 tokens << [:quoted_identifier, quoted_name.freeze]
-              elsif (identifier = scanner.scan(IDENTIFIER_REGEX))
-                # Identifiers: table names, column names, variables (supports Unicode)
-                type = classify_identifier(identifier)
-                tokens << [type, identifier.freeze]
               else
                 # Skip unmatched characters
                 scanner.getch
@@ -104,14 +109,9 @@ module OpenTelemetry
                 scanner.scan(WHITESPACE_REGEX)          # Whitespace (spaces, tabs, newlines)
             end
 
-            def cached_upcase(str)
-              return str if str.nil? || str.empty?
-
-              UPCASE_CACHE[str] ||= str.upcase.freeze
-            end
-
             def classify_identifier(identifier)
-              KEYWORDS[cached_upcase(identifier)] ? :keyword : :identifier
+              upcase_identifier = QuerySummary::Parser::Constants.cached_upcase(identifier)
+              KEYWORDS[upcase_identifier] ? :keyword : :identifier
             end
           end
         end

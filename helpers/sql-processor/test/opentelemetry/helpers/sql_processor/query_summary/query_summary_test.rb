@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../test_helper'
-require_relative '../../lib/opentelemetry/helpers/sql_processor'
+require 'test_helper'
+require_relative '../../../../../lib/opentelemetry/helpers/sql_processor'
 
 class QuerySummaryTest < Minitest::Test
   def setup
