@@ -30,7 +30,7 @@ module OpenTelemetry
         # Fast path regex patterns ordered by frequency in typical SQL workloads
         # Most common patterns first to minimize regex testing overhead
         SIMPLE_PATTERNS = [
-          # HIGHEST FREQUENCY: Simple SELECT * FROM table (60-70% of queries)
+          # HIGHEST FREQUENCY: Simple SELECT * FROM table
           [/\A\s*(SELECT)\s+\*\s+FROM\s+(\w+)\s*(?:WHERE\s+\w+\s*[=<>]\s*[^;]*)?(?:\s*;\s*)?\z/i, '\1 \2'],
 
           # HIGH FREQUENCY: SELECT with specific columns
@@ -42,7 +42,7 @@ module OpenTelemetry
           [/\A\s*(UPDATE)\s+(\w+)\s+SET\s+\w+\s*=\s*[^(;]*(?:\s*;\s*)?\z/i, '\1 \2'],
           [/\A\s*(DELETE)\s+FROM\s+(\w+)\s*(?:WHERE\s+[^(;]*)?(?:\s*;\s*)?\z/i, '\1 \2'],
 
-          # LOWER FREQUENCY: DDL operations (but high performance impact when matched)
+          # LOWER FREQUENCY: DDL operations
           [/\A\s*(CREATE)\s+(TABLE)\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)\s*\(/i, '\1 \2 \3'],
           [/\A\s*(DROP)\s+(TABLE)\s+(?:IF\s+EXISTS\s+)?(\w+)\s*(?:\s*;\s*)?\z/i, '\1 \2 \3'],
           [/\A\s*(TRUNCATE)\s+(?:TABLE\s+)?(\w+)\s*(?:\s*;\s*)?\z/i, '\1 TABLE \2'],
@@ -51,42 +51,34 @@ module OpenTelemetry
           # LOWER FREQUENCY: Procedure calls
           [/\A\s*(EXEC|EXECUTE|CALL)\s+(\w+)(?:\s*\(|\s|;|\z)/i, '\1 \2'],
 
-          # LOWEST FREQUENCY: UNION queries (but biggest performance win when matched)
+          # LOWEST FREQUENCY: UNION queries
           [/\A\s*(SELECT)\s+[^(]*FROM\s+(\w+)\s+UNION(?:\s+ALL)?\s+SELECT\s+[^(]*FROM\s+(\w+)\s*(?:\s*;\s*)?\z/i, '\1 \2 UNION \1 \3']
         ].freeze
 
-        # Internal implementation of SQL obfuscation.
-        # Use SqlProcessor.obfuscate_sql for the public API.
-        #
-        # @api private
         def generate_summary(query, cache:)
           cache.fetch(query) do
-            # Try fast path for simple queries first (80% of cases)
-            if (summary = try_fast_path(query))
-              summary
-            else
-              # Fall back to full tokenization and parsing
-              tokens = Tokenizer.tokenize(query)
-              Parser.build_summary_from_tokens(tokens)
-            end
+            summary = try_fast_path(query) || parse_complex_query(query)
+
+            summary
           end
         rescue StandardError
           'UNKNOWN'
         end
 
-        # Attempt to match query against simple patterns for fast processing
-        #
-        # @api private
         def try_fast_path(query)
           SIMPLE_PATTERNS.each do |pattern, template|
             next unless (match = query.match(pattern))
 
-            # Use gsub to replace capture groups in template
-            result = template.gsub(/\\(\d+)/) { match[::Regexp.last_match(1).to_i] }
-            # Clean up extra whitespace that might result from complex templates
-            return result.gsub(/\s+/, ' ').strip
+            result = template.gsub(/\\(\d+)/) { match[::Regexp.last_match(1).to_i] } # Replace capture groups in template
+
+            return result.gsub(/\s+/, ' ').strip # Clean up extra whitespace
           end
           nil
+        end
+
+        def parse_complex_query(query)
+          tokens = Tokenizer.tokenize(query)
+          Parser.build_summary_from_tokens(tokens)
         end
       end
     end
