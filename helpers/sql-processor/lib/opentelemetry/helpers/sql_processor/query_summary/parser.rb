@@ -45,14 +45,12 @@ module OpenTelemetry
               tokens.each_with_index do |token, index|
                 next if index < skip_until
 
-                # Cache token value to reduce array access
                 token_value = token[Constants::VALUE_INDEX]
 
-                # Update IN clause context
-                if Constants.cached_upcase(token_value) == 'IN'
+                # Update context for IN clauses to avoid misidentifying values as tables
+                upcase_val = Constants.cached_upcase(token_value)
+                if upcase_val == 'IN'
                   in_clause_context = true
-                elsif token_value == '(' && in_clause_context
-                # Continue in IN clause context until we find closing parenthesis
                 elsif token_value == ')' && in_clause_context
                   in_clause_context = false
                 end

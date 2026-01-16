@@ -23,7 +23,7 @@
           "query": null 
       },
       "expected": {
-          "db.query.summary": "UNKNOWN"
+          "db.query.summary": null
       }
   },
   {

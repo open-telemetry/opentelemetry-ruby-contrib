@@ -56,6 +56,8 @@ module OpenTelemetry
         ].freeze
 
         def generate_summary(query, cache:)
+          return if query.nil? || query.strip.empty?
+
           cache.fetch(query) do
             summary = try_fast_path(query) || parse_complex_query(query)
 

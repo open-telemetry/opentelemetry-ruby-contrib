@@ -11,20 +11,18 @@ module OpenTelemetry
         class Parser
           # DDL-specific handling for procedures, triggers, and AS patterns
           module DdlHandler
-            # List of keywords that, when following 'AS', indicate a DDL body start
+            # Start keywords that indicate a body should be skipped
             DDL_BODY_START_KEYWORDS = %w[SELECT INSERT UPDATE DELETE BEGIN].each_with_object({}) { |kw, h| h[kw] = true }.freeze
 
             def process_table_name_and_alias(token, tokens, index)
-              # Try DDL pattern handlers first
-              result = handle_procedure_as_begin_pattern(token, tokens, index)
+              # Priority 1: Check for stored procedures and triggers
+              result = handle_procedure_as_begin_pattern(token, tokens, index) ||
+                       handle_ddl_as_pattern(token, tokens, index) ||
+                       handle_trigger_as_begin_pattern(token, tokens, index)
+
               return result if result
 
-              result = handle_ddl_as_pattern(token, tokens, index)
-              return result if result
-
-              result = handle_trigger_as_begin_pattern(token, tokens, index)
-              return result if result
-
+              # Priority 2: Standard table/alias handling
               TableProcessor.handle_regular_table_name(token, tokens, index)
             end
 
@@ -32,12 +30,16 @@ module OpenTelemetry
               as_token = tokens[index + 1]
               begin_token = tokens[index + 2]
 
-              # Use cached_upcase for consistent performance
               return unless as_token && Constants.cached_upcase(as_token[Constants::VALUE_INDEX]) == 'AS'
               return unless begin_token && Constants.cached_upcase(begin_token[Constants::VALUE_INDEX]) == 'BEGIN'
 
               # PROCEDURE name AS BEGIN -> we keep the name and stay in PARSING_STATE to see the body
-              { processed: true, parts: [token[Constants::VALUE_INDEX]], new_state: Constants::PARSING_STATE, next_index: index + 3 }
+              {
+                processed: true,
+                parts: [token[Constants::VALUE_INDEX]],
+                new_state: Constants::PARSING_STATE,
+                next_index: index + 3
+              }
             end
 
             def handle_ddl_as_pattern(token, tokens, index)
@@ -47,19 +49,28 @@ module OpenTelemetry
               after_as_token = tokens[index + 2]
               return unless after_as_token
 
-              # Check if the token after AS looks like the start of a query or block
               upcased_after = Constants.cached_upcase(after_as_token[Constants::VALUE_INDEX])
               return unless DDL_BODY_START_KEYWORDS[upcased_after]
 
-              # This is DDL AS - we've captured the object name, now skip the body
-              { processed: true, parts: [token[Constants::VALUE_INDEX]], new_state: Constants::DDL_BODY_STATE, next_index: index + 2 }
+              # For non-procedure DDL, skip the body entirely
+              {
+                processed: true,
+                parts: [token[Constants::VALUE_INDEX]],
+                new_state: Constants::DDL_BODY_STATE,
+                next_index: index + 2
+              }
             end
 
             def handle_trigger_as_begin_pattern(token, tokens, index)
-              look_ahead_index = find_as_begin_pattern(tokens, index + 1, index + 11) # increased range slightly for complex triggers
+              look_ahead_index = find_as_begin_pattern(tokens, index + 1, index + 11)
               return nil unless look_ahead_index
 
-              { processed: true, parts: [token[Constants::VALUE_INDEX]], new_state: Constants::DDL_BODY_STATE, next_index: look_ahead_index + 1 }
+              {
+                processed: true,
+                parts: [token[Constants::VALUE_INDEX]],
+                new_state: Constants::DDL_BODY_STATE,
+                next_index: look_ahead_index + 1
+              }
             end
 
             def find_as_begin_pattern(tokens, start_idx, end_idx)

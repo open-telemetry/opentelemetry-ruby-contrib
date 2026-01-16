@@ -27,12 +27,9 @@ module OpenTelemetry
             EXPECT_COLLECTION_STATE = :expect_collection
             DDL_BODY_STATE = :ddl_body
 
-            # Array indices for token access (matches tokenizer)
             TYPE_INDEX = 0
             VALUE_INDEX = 1
 
-            # Frozen sets for O(1) lookups
-            # These are used with the splat operator (*) in case statements
             MAIN_OPERATIONS = %w[SELECT INSERT DELETE].to_set.freeze
             COLLECTION_OPERATIONS = %w[WITH].to_set.freeze
             UPDATE_OPERATIONS = %w[UPDATE].to_set.freeze
@@ -41,28 +38,36 @@ module OpenTelemetry
             TABLE_OBJECTS = %w[TABLE INDEX PROCEDURE VIEW DATABASE ROLE USER SCHEMA SEQUENCE TRIGGER FUNCTION].to_set.freeze
             EXEC_OPERATIONS = %w[EXEC EXECUTE CALL].to_set.freeze
 
-            # Additional sets for common lookups
             STOP_COLLECTION_KEYWORDS = %w[WITH SET WHERE BEGIN RESTART START INCREMENT BY].to_set.freeze
             DDL_KEYWORDS = %w[CREATE ALTER].to_set.freeze
             UNION_SELECT_KEYWORDS = %w[UNION SELECT].to_set.freeze
             UNIQUE_KEYWORDS = %w[UNIQUE CLUSTERED DISTINCT].to_set.freeze
             DDL_OPERATIONS = %w[CREATE ALTER].to_set.freeze
 
-            # Shared cache for upcase operations to reduce string allocations
-            # Uses original string as key to avoid unnecessary upcasing
-            UPCASE_CACHE = {} # rubocop:disable Style/MutableConstant
-            private_constant :UPCASE_CACHE
-
             MAX_SUMMARY_LENGTH = 255
 
-            # Upcase with caching for common SQL keywords to reduce allocations.
-            # Check cache first to avoid unnecessary string operations.
+            CACHE_MUTEX = Mutex.new
+            UPCASE_CACHE = {} # rubocop:disable Style/MutableConstant
+            MAX_CACHE_SIZE = 1000
+            private_constant :UPCASE_CACHE, :CACHE_MUTEX, :MAX_CACHE_SIZE
+
             def cached_upcase(str)
               return nil if str.nil?
               return str if str.empty?
 
-              UPCASE_CACHE[str] ||= str.upcase.freeze
+              cached = UPCASE_CACHE[str]
+              return cached if cached
+
+              CACHE_MUTEX.synchronize do
+                return UPCASE_CACHE[str] if UPCASE_CACHE.key?(str)
+
+                UPCASE_CACHE.shift if UPCASE_CACHE.size >= MAX_CACHE_SIZE
+
+                UPCASE_CACHE[str] = str.upcase.freeze
+              end
             end
+
+            # Allows calling Constants.cached_upcase(str) directly
             module_function :cached_upcase
           end
         end

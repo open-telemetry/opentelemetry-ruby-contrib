@@ -25,27 +25,26 @@ module OpenTelemetry
               result = handle_ddl_with_if_exists(token, tokens, index)
               return result if result[:processed]
 
-              object_type_token = nil
               search_index = index + 1
               while search_index < tokens.length
                 candidate = tokens[search_index]
-                break unless candidate
-
                 upcased = Constants.cached_upcase(candidate[Constants::VALUE_INDEX])
+
                 if Constants::TABLE_OBJECTS.include?(upcased)
-                  object_type_token = candidate
-                  break
+                  return {
+                    processed: true,
+                    parts: ["#{token[Constants::VALUE_INDEX]} #{upcased}"],
+                    new_state: Constants::EXPECT_COLLECTION_STATE,
+                    next_index: search_index + 1
+                  }
                 elsif Constants::UNIQUE_KEYWORDS.include?(upcased)
                   search_index += 1
                 else
                   break
                 end
               end
-              if object_type_token
-                { processed: true, parts: ["#{token[Constants::VALUE_INDEX]} #{Constants.cached_upcase(object_type_token[Constants::VALUE_INDEX])}"], new_state: Constants::EXPECT_COLLECTION_STATE, next_index: search_index + 1 }
-              else
-                TokenProcessor.add_to_summary(token[Constants::VALUE_INDEX], Constants::PARSING_STATE, index + 1)
-              end
+
+              TokenProcessor.add_to_summary(token[Constants::VALUE_INDEX], Constants::PARSING_STATE, index + 1)
             end
 
             def handle_ddl_with_if_exists(token, tokens, index)

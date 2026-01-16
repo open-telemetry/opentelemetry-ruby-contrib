@@ -15,13 +15,10 @@ module OpenTelemetry
         # Uses mutex synchronization for thread safety in concurrent applications.
         #
         # @example Basic usage
-        #   cache = Cache.new
+        #   cache = Cache.new(size: 500)
         #   cache.fetch("SELECT * FROM users") { "SELECT users" } # => "SELECT users"
         #   cache.fetch("SELECT * FROM users") { "won't execute" } # => "SELECT users" (cached)
         #
-        # @example Custom size and configuration
-        #   cache = Cache.new(size: 500)
-        #   cache.configure(size: 100)  # Resize and clear if needed
         class Cache
           DEFAULT_SIZE = 1000
 
@@ -38,18 +35,13 @@ module OpenTelemetry
           # @return [Object] Cached value or result of block execution
           def fetch(key)
             @cache_mutex.synchronize do
-              if @cache.key?(key)
-                # Move to end (most recently used) by deleting and re-inserting
-                value = @cache.delete(key)
-                @cache[key] = value
-                return value
+              if (value = @cache.delete(key))
+                return @cache[key] = value
               end
 
               result = yield
               evict_if_needed
               @cache[key] = result
-
-              result
             end
           end
 

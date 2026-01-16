@@ -60,7 +60,7 @@ module OpenTelemetry
 
           # Comments and whitespace - combined for single-pass scanning
           # Ordered by frequency: whitespace most common, then line comments, then block comments
-          SKIP_REGEX = /\s+|--[^\r\n]*|\/\*.*?\*\//m
+          SKIP_REGEX = %r{\s+|--[^\r\n]*|/\*.*?\*/}m
 
           class << self
             def tokenize(query)
@@ -68,29 +68,23 @@ module OpenTelemetry
               tokens = []
 
               until scanner.eos?
-                # Skip noise (whitespace/comments) in a single regex scan
                 next if scanner.scan(SKIP_REGEX)
 
                 # Scan in order of frequency: identifiers are most common in SQL
                 if (value = scanner.scan(IDENTIFIER_REGEX))
-                  # Identifiers: table names, column names, variables, keywords
                   upcase_identifier = QuerySummary::Parser::Constants.cached_upcase(value)
                   type = KEYWORDS[upcase_identifier] ? :keyword : :identifier
                   tokens << [type, value.freeze]
                 elsif (value = scanner.scan(OPERATOR_REGEX))
-                  # SQL operators: comparison, equality, arithmetic, and punctuation
                   tokens << [:operator, value.freeze]
                 elsif (value = scanner.scan(NUMBER_REGEX))
-                  # Numbers: signed integers, decimals, scientific notation
                   tokens << [:numeric, value.freeze]
                 elsif (value = scanner.scan(STRING_REGEX))
-                  # String literals with escaped quotes
                   tokens << [:string, value.freeze]
                 elsif (value = scanner.scan(QUOTED_ID_REGEX))
-                  # Quoted identifiers: "double", `backtick`, [bracket]
                   tokens << [:quoted_identifier, value.freeze]
                 else
-                  # Fallback to prevent infinite loops by consuming unmatched characters
+                  # Skip unmatched characters
                   scanner.getch
                 end
               end
