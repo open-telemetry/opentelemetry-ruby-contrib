@@ -36,8 +36,8 @@ puts summary  # => "SELECT users orders"
 | `CREATE PROCEDURE update_user(id INT) AS BEGIN UPDATE users SET last_seen=NOW() WHERE id=id; END` | `CREATE PROCEDURE update_user` | Handles stored procedures |
 | `CALL generate_monthly_report(2023, 12, 'summary', @user_id)` | `CALL generate_monthly_report` | Stored procedure calls with parameters removed |
 | `SELECT * FROM users UNION SELECT * FROM customers` | `SELECT users customers` | UNION queries consolidated (table names merged) |
-| `SELECT * FROM orders UNION ALL SELECT * FROM returns` | `SELECT orders UNION ALL SELECT returns` | UNION ALL preserved (not consolidated like regular UNION) |
-| `WITH recent AS (SELECT * FROM orders WHERE date > ?) SELECT r.*, u.name FROM recent r JOIN users u` | `WITH recent SELECT orders SELECT recent users` | Handles CTEs and subqueries |
+| `SELECT * FROM orders UNION ALL SELECT * FROM returns` | `SELECT orders returns` | UNION ALL consolidated same as UNION (table names merged) |
+| `WITH recent AS (SELECT * FROM orders WHERE date > ?) SELECT r.*, u.name FROM recent r JOIN users u` | `WITH recent SELECT orders recent users` | Handles CTEs and subqueries |
 | `UPDATE users SET status = 'active' WHERE id IN (1,2,3,4,5)` | `UPDATE users` | Removes literal values |
 | `DELETE FROM sessions WHERE expires_at < NOW() AND user_id = ?` | `DELETE sessions` | Removes sensitive conditions |
 
