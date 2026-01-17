@@ -112,7 +112,7 @@ summary = OpenTelemetry::Helpers::SqlProcessor.generate_summary(
 The query summarization engine is highly optimized:
 
 | Query Type | Performance | Cache Hit Performance |
-|------------|-------------|----------------------|
+| ---------- | ----------- | -------------------- |
 | Simple SELECT | ~278K ops/sec | ~3M ops/sec |
 | Complex JOIN queries | ~5K ops/sec | ~1.7M ops/sec |
 | UNION queries | ~193K ops/sec | ~2M ops/sec |
