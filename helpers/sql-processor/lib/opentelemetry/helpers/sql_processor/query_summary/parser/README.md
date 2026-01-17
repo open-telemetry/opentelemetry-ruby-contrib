@@ -1,374 +1,487 @@
-# SQL Query Parser Architecture
+# SQL Query Summary Parser
 
-This directory contains a modular SQL query parser that generates high-level summaries of SQL queries. The parser transforms tokenized SQL queries into concise summaries like "SELECT users" or "CREATE TABLE orders".
+This directory contains a SQL query parser that converts tokenized SQL statements into summaries.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [State Machine](#state-machine)
+- [Module Reference](#module-reference)
+- [Processing Flow](#processing-flow)
+- [Key Concepts](#key-concepts)
+- [Database and SQL Terminology](#database-and-sql-terminology)
 
 ## Overview
 
-The parser uses a **state machine approach** with **explicit module namespacing** to process SQL tokens and extract key operations and table names. It's designed to handle complex SQL patterns including DDL operations, UNION queries, and various SQL dialects.
+The parser takes an array of tokens and produces a human-readable summary by:
 
-**Input**: Array of tokens from the tokenizer
-**Output**: String summary (e.g., "SELECT users orders" or "CREATE PROCEDURE GetUser")
+1. **Identifying SQL operations** (SELECT, INSERT, CREATE, etc.)
+2. **Extracting table names** from FROM, JOIN, INTO clauses
+3. **Handling complex patterns** like DDL procedures, UNION queries, and aliases
+4. **Consolidating results** into clean, deduplicated summaries
+
+**Example:**
+```ruby
+tokens = [Token.new(:keyword, "SELECT"), Token.new(:identifier, "users")]
+Parser.build_summary_from_tokens(tokens) # => "SELECT users"
+```
 
 ## Architecture
 
-The parser is split into focused modules, each with specific responsibilities:
+The parser uses a modular architecture where the main `Parser` class extends several specialized modules:
 
 ```
-Parser (Main Orchestrator)
-├── Constants (Configuration & State Definitions)
-├── TokenProcessor (Core Token Processing Logic)
-├── DdlHandler (DDL Pattern Recognition)
-├── TableProcessor (Table Name & Alias Handling)
-├── OperationHandler (SQL Operation Handlers)
-└── SummaryConsolidator (UNION Query Processing)
+Parser (main entry point)
+├── Constants          # Configuration and cached operations
+├── TokenProcessor     # Token routing and orchestration
+├── OperationHandler   # Specific SQL operation handling
+├── DdlHandler         # DDL constructs (procedures, triggers)
+├── TableProcessor     # Table name extraction and aliases
+└── SummaryConsolidator # Post-processing for UNION queries
 ```
 
-All modules use **explicit namespacing** (e.g., `TokenProcessor.process_token(...)`) for clear code paths and easy maintenance.
+This design provides:
+- **Separation of concerns** - each module has a specific responsibility
+- **Maintainability** - changes to one operation type don't affect others
+- **Performance** - optimized token processing with minimal object allocation
 
-## Core Concepts
+## State Machine
 
-### State Machine
+The parser operates using a three-state finite state machine to track parsing context:
 
-The parser operates as a state machine with three primary states:
+### States
 
-- **`PARSING_STATE`** - Default state looking for SQL operations (SELECT, CREATE, etc.)
-- **`EXPECT_COLLECTION_STATE`** - Collecting table names after FROM, INTO, JOIN keywords
-- **`DDL_BODY_STATE`** - Inside procedure/trigger bodies; skip all tokens until end
+**`PARSING_STATE` (default)**
+- Looking for SQL operations (SELECT, CREATE, etc.)
+- Processing main query structure
+- Transitions to `EXPECT_COLLECTION_STATE` when encountering table-related keywords
 
-### Token Structure
+**`EXPECT_COLLECTION_STATE`**
+- Actively collecting table names after FROM, INTO, JOIN keywords
+- Handles table aliases and comma-separated table lists
+- Returns to `PARSING_STATE` when hitting WHERE, SET, or other stop keywords
 
-Tokens are arrays with two elements:
-- `Constants::TYPE_INDEX` (0) - Token type (`:keyword`, `:identifier`, `:string`, etc.)
-- `Constants::VALUE_INDEX` (1) - Token value (the actual SQL text)
+**`DDL_BODY_STATE`**
+- Skipping content inside DDL procedure/trigger bodies
+- Entered when processing CREATE PROCEDURE ... AS BEGIN patterns
+- Stays in this state until end of input (DDL bodies are ignored)
 
-## Module Details
+### State Transitions
 
-### 1. Constants (`constants.rb`)
+```
+PARSING_STATE → EXPECT_COLLECTION_STATE
+  Triggers: FROM, INTO, JOIN, main operations
 
-**Purpose**: Centralized configuration, state definitions, and optimized keyword lookups.
+EXPECT_COLLECTION_STATE → PARSING_STATE
+  Triggers: WHERE, SET, stop keywords
 
-**Key Responsibilities**:
-- State machine constants (`PARSING_STATE`, `EXPECT_COLLECTION_STATE`, `DDL_BODY_STATE`)
-- SQL operation sets (`MAIN_OPERATIONS`, `TABLE_OPERATIONS`, etc.)
-- Token indices (`TYPE_INDEX`, `VALUE_INDEX`)
-- Cached upcase method for performance optimization
-
-**Key Methods**:
-- `Constants.cached_upcase(str)` - Optimized string uppercasing with caching
-
-**Example Usage**:
-```ruby
-if Constants::MAIN_OPERATIONS.include?(upcased_value)
-  # Handle SELECT, INSERT, DELETE operations
-end
+EXPECT_COLLECTION_STATE → DDL_BODY_STATE
+  Triggers: AS BEGIN (procedure/trigger body)
 ```
 
-### 2. TokenProcessor (`token_processor.rb`)
+## Module Reference
 
-**Purpose**: Core token processing engine and main dispatch logic.
+### Constants (`constants.rb`)
 
-**Key Responsibilities**:
-- Main token processing workflow
-- Operation vs. collection token routing
-- Basic token classification
-- State transitions
+**Purpose:** Configuration values, operation categorization, and performance optimizations.
 
-**Key Methods**:
-- `TokenProcessor.process_token(token, tokens, index, **options)` - Main entry point
-- `TokenProcessor.process_main_operation(...)` - Handle SQL operations
-- `TokenProcessor.process_collection_token(...)` - Handle table name collection
-- `TokenProcessor.add_to_summary(part, new_state, next_index)` - Add parts to result
+**Key Features:**
+- **Operation Sets:** Groups SQL keywords by purpose (MAIN_OPERATIONS, TABLE_OPERATIONS, etc.)
+- **State Definitions:** The three parser states and their constants
+- **Performance Cache:** Thread-safe upcase string cache with LRU eviction
+- **Token Indices:** Constants for accessing token array elements
 
-**Flow**:
-1. Check if in DDL_BODY_STATE (skip if true)
-2. Try processing as main operation
-3. Try processing as collection token
-4. Return appropriate state and parts
+**Important Constants:**
+- `MAIN_OPERATIONS`: Core query operations (SELECT, INSERT, DELETE)
+- `TABLE_OPERATIONS`: DDL operations (CREATE, ALTER, DROP, TRUNCATE)
+- `DDL_KEYWORDS`: Keywords that can start DDL statements
+- `MAX_SUMMARY_LENGTH`: 255 character limit for summaries
 
-### 3. DdlHandler (`ddl_handler.rb`)
+### TokenProcessor (`token_processor.rb`)
 
-**Purpose**: Specialized handling for DDL (Data Definition Language) patterns and complex AS constructs.
+**Purpose:** Central orchestrator that routes tokens to appropriate handlers based on current state.
 
-**Key Responsibilities**:
-- Procedure AS BEGIN pattern recognition
-- DDL AS pattern detection
-- Trigger pattern handling
-- Table name and alias processing coordination
-- Performance-optimized keyword detection
+**Key Functions:**
+- **`process_token()`**: Main entry point that determines how to handle each token
+- **`process_main_operation()`**: Handles SQL operation keywords
+- **`process_collection_token()`**: Processes tokens during table collection phase
 
-**Key Methods**:
-- `DdlHandler.process_table_name_and_alias(token, tokens, index)` - Main coordination
-- `DdlHandler.handle_procedure_as_begin_pattern(...)` - Detect "PROCEDURE name AS BEGIN"
-- `DdlHandler.handle_ddl_as_pattern(...)` - Handle DDL AS constructs
-- `DdlHandler.handle_trigger_as_begin_pattern(...)` - Process trigger definitions
+**Processing Logic:**
+1. Skip all tokens if in `DDL_BODY_STATE`
+2. Try to process as main operation (SELECT, CREATE, etc.)
+3. If in collection state, handle as table name or collection control
+4. Delegate complex patterns to specialized handlers
 
-**Performance Features**:
-- `DDL_BODY_START_KEYWORDS` - Optimized hash lookup for keywords that start DDL bodies
-- Consistent use of `Constants.cached_upcase` for performance
-- Improved bounds checking for token access
+**Special Handling:**
+- **IN clause context**: Avoids misidentifying values in IN clauses as table names
+- **OPENJSON WITH**: Special case for SQL Server's OPENJSON syntax
+- **String tokens**: Can be treated as table names when not in IN clauses
 
-**Example Patterns Handled**:
-- `CREATE PROCEDURE GetUser AS BEGIN SELECT * FROM users END`
-- `CREATE TRIGGER UpdateAudit ON users AFTER INSERT AS BEGIN ... END`
-- `CREATE VIEW UserView AS SELECT * FROM users`
+### OperationHandler (`operation_handler.rb`)
 
-### 4. TableProcessor (`table_processor.rb`)
+**Purpose:** Specialized handlers for specific SQL operations and complex patterns.
 
-**Purpose**: Table name extraction, alias resolution, and state management after table identification.
+**Key Handlers:**
 
-**Key Responsibilities**:
-- Clean table names (remove SQL Server brackets, MySQL backticks)
-- Handle table aliases (`table AS alias`, `table alias`)
-- Determine next parser state after table processing
-- Special pattern handling (START WITH, RESTART WITH)
-- Performance-optimized state transitions
+**`handle_union()`**
+- Processes UNION and UNION ALL operations
+- Looks ahead for ALL keyword and combines them
 
-**Key Methods**:
-- `TableProcessor.handle_regular_table_name(token, tokens, index)` - Main table processing
-- `TableProcessor.clean_table_name(table_name)` - Remove formatting characters with bounds checking
-- `TableProcessor.calculate_alias_skip(tokens, index)` - Skip alias tokens
-- `TableProcessor.determine_next_state_after_table(...)` - State transition logic
+**`handle_table_operation()`**
+- Handles DDL operations like CREATE TABLE, DROP INDEX
+- Processes IF EXISTS and IF NOT EXISTS patterns
+- Skips modifier keywords like UNIQUE, CLUSTERED
 
-**Performance Features**:
-- `STOP_KEYWORDS` - Hash-based lookup for keywords that end table collection
-- Optimized `clean_table_name` with bounds checking to prevent unnecessary operations
-- Consistent use of `Constants.cached_upcase` throughout
+**`handle_update_operation()`**
+- Special logic for UPDATE statements with SET clauses
+- Detects parenthesized constants to avoid false table detection
 
-**Table Cleaning Examples**:
-- `[users]` → `users` (SQL Server brackets removed)
-- `` `orders` `` → `orders` (MySQL backticks removed)
-- `"customers"` → `"customers"` (Standard SQL quotes preserved)
+**`handle_exec_operation()`**
+- Processes EXEC, EXECUTE, CALL statements
+- Extracts procedure/function names
 
-### 5. OperationHandler (`operation_handler.rb`)
+**`handle_as_keyword()`**
+- Determines if AS keyword starts a DDL body
+- Transitions to DDL_BODY_STATE for procedure definitions
 
-**Purpose**: Specialized handlers for different SQL operations and their unique patterns.
+### DdlHandler (`ddl_handler.rb`)
 
-**Key Responsibilities**:
-- UNION and UNION ALL processing
-- DDL operations (CREATE, ALTER, DROP) with modifiers
-- EXEC/EXECUTE/CALL procedure handling
-- UPDATE operation special cases
-- AS keyword context detection
+**Purpose:** Handles DDL (Data Definition Language) constructs, particularly procedures and triggers.
 
-**Key Methods**:
-- `OperationHandler.handle_union(token, tokens, index)` - Process UNION operations
-- `OperationHandler.handle_table_operation(...)` - Handle CREATE/ALTER/DROP
-- `OperationHandler.handle_exec_operation(...)` - Process stored procedure calls
-- `OperationHandler.handle_update_operation(...)` - Handle UPDATE with special rules
-- `OperationHandler.handle_ddl_with_if_exists(...)` - Process IF EXISTS patterns
+> **What is DDL?** Data Definition Language includes SQL statements that define database structure: CREATE, ALTER, DROP. Unlike DML (Data Manipulation Language) which works with data, DDL modifies schema objects like tables, procedures, and triggers.
 
-**Special Cases Handled**:
-- `DROP TABLE IF EXISTS users` → `DROP TABLE users`
-- `CREATE TABLE IF NOT EXISTS orders` → `CREATE TABLE orders`
-- `EXEC GetUserData @userId = 1` → `EXEC GetUserData`
-- `UNION ALL SELECT` → `UNION ALL`
+**Key Patterns:**
 
-### 6. SummaryConsolidator (`summary_consolidator.rb`)
+**Procedure AS BEGIN Pattern**
+```sql
+CREATE PROCEDURE MyProc AS BEGIN ... END
+```
+- Keeps procedure name in summary
+- Continues parsing to see procedure body content
 
-**Purpose**: Post-processing to consolidate UNION queries into cleaner summaries.
+**DDL AS Pattern**
+```sql
+CREATE VIEW MyView AS SELECT ...
+```
+- Keeps object name but skips the body definition
+- Transitions to DDL_BODY_STATE
 
-**Key Responsibilities**:
-- Detect UNION query chains
-- Merge table names from multiple SELECT statements
-- Preserve operation structure while reducing redundancy
-- Prevent duplicate table names in self-unions
+**Trigger AS BEGIN Pattern**
+```sql
+CREATE TRIGGER MyTrigger ... AS BEGIN ... END
+```
+- Uses look-ahead to find AS BEGIN pattern up to 10 tokens away
+- Skips entire trigger body
 
-**Key Methods**:
-- `SummaryConsolidator.consolidate_union_queries(summary_parts)` - Main consolidation
-- `SummaryConsolidator.collect_table_names_from_position(...)` - Extract table names
-- `SummaryConsolidator.process_union_chain(...)` - Process UNION sequences
+### TableProcessor (`table_processor.rb`)
 
-**Advanced Features**:
-- Uses `Constants` operation sets for consistent keyword detection
-- Applies `.uniq` to prevent duplicates like "SELECT users users" in self-unions
-- Robust handling of incomplete UNION chains
+**Purpose:** Extracts and processes table names, handles aliases, and manages state transitions.
 
-**Consolidation Examples**:
-- Input: `["SELECT", "users", "UNION", "SELECT", "orders"]`
-- Output: `["SELECT", "users", "orders"]`
-- Self-union: `["SELECT", "users", "UNION", "SELECT", "users"]`
-- Output: `["SELECT", "users"]` (duplicate removed)
+**Core Functions:**
 
+**`handle_regular_table_name()`**
+- Main entry point for table name processing
+- Calculates alias skipping and determines next state
+- Cleans quoted table names (removes brackets, backticks)
+
+**`calculate_alias_skip()`**
+- Determines how many tokens to skip for aliases
+- Handles both explicit (AS alias) and implicit (table alias) forms
+
+**`determine_next_state_after_table()`**
+- Decides whether to continue collecting table names or return to normal parsing
+- Handles comma-separated table lists
+- Processes RESTART/START WITH patterns for sequences
+
+**Table Name Cleaning:**
+- Removes SQL Server brackets: `[table_name]` → `table_name`
+- Removes MySQL backticks: `` `table_name` `` → `table_name`
+
+**State Management:**
+- Comma (`,`) → Stay in EXPECT_COLLECTION_STATE (more tables coming)
+- Stop keywords (WHERE, SET) → Return to PARSING_STATE
+- Other tokens → Return to PARSING_STATE
+
+### SummaryConsolidator (`summary_consolidator.rb`)
+
+**Purpose:** Post-processing to consolidate UNION queries and clean up the final summary.
+
+**Key Function: `consolidate_union_queries()`**
+
+Transforms:
+```
+["SELECT", "users", "UNION", "SELECT", "orders", "UNION", "ALL", "SELECT", "users"]
+```
+
+Into:
+```
+["SELECT", "users", "orders"]  # Note: duplicates removed
+```
+
+**Processing Logic:**
+1. Scan summary parts for SELECT statements
+2. Collect all table names following each SELECT
+3. Follow UNION/UNION ALL chains to gather all related tables
+4. Deduplicate table names (prevents "SELECT users users")
+5. Produce consolidated summary
+
+**Chain Processing:**
+- Handles complex patterns: `SELECT ... UNION SELECT ... UNION ALL SELECT ...`
+- Stops chain processing when encountering non-SELECT operations
+- Preserves other operation types unchanged
 
 ## Processing Flow
 
-### 1. Main Processing Loop (Parser.build_summary_from_tokens)
+### Main Processing Pipeline
 
-```ruby
-def build_summary_from_tokens(tokens)
-  summary_parts = []
-  state = Constants::PARSING_STATE
-  skip_until = 0
-  in_clause_context = false
+1. **Initialization** (`Parser.build_summary_from_tokens`)
+   - Pre-allocate summary parts array for performance
+   - Initialize parsing state and context flags
+   - Set up token skip tracking for look-ahead processing
 
-  tokens.each_with_index do |token, index|
-    # Skip processed tokens
-    next if index < skip_until
+2. **Token Processing Loop**
+   ```ruby
+   tokens.each_with_index do |token, index|
+     # Skip if we've already processed this token via look-ahead
+     next if index < skip_until
 
-    # Track IN clause context for subqueries
-    # ... context tracking logic ...
+     # Update IN clause context
+     # Process token through TokenProcessor
+     # Accumulate summary parts and update state
+   end
+   ```
 
-    # Process current token
-    result = TokenProcessor.process_token(token, tokens, index,
-                                         state: state,
-                                         in_clause_context: in_clause_context)
+3. **Post-Processing**
+   - Consolidate UNION queries via SummaryConsolidator
+   - Truncate summary if it exceeds MAX_SUMMARY_LENGTH
+   - Return final summary string
 
-    # Accumulate results
-    summary_parts.concat(result[:parts])
-    state = result[:new_state]
-    skip_until = result[:next_index]
-  end
-
-  # Post-process and finalize
-  summary = SummaryConsolidator.consolidate_union_queries(summary_parts).join(' ')
-  truncate_summary(summary)
-end
-```
-
-### 2. Token Processing Decision Tree
+### Token Decision Tree
 
 ```
-TokenProcessor.process_token()
+Token Received
 ├── In DDL_BODY_STATE? → Skip token
-├── Try Main Operation Processing
-│   ├── SELECT/INSERT/DELETE → Add to summary, continue parsing
-│   ├── CREATE/ALTER/DROP → Delegate to OperationHandler
-│   ├── UPDATE → Special handling in OperationHandler
-│   ├── UNION → Handle in OperationHandler
-│   ├── FROM/INTO/JOIN → Expect table names next
-│   └── AS → Check context in OperationHandler
-└── Try Collection Token Processing
-    ├── In EXPECT_COLLECTION_STATE?
-    ├── Identifier/String → Process via DdlHandler
-    ├── AS → Transition to DDL_BODY_STATE
-    └── Other → Return to PARSING_STATE
+├── Main Operation? → Add to summary, change state
+│   ├── SELECT/INSERT/DELETE → PARSING_STATE
+│   ├── CREATE/ALTER/DROP → Look for table object
+│   ├── UPDATE → Special SET clause handling
+│   └── UNION → Handle UNION ALL pattern
+├── Collection State?
+│   ├── Table-like token → Extract name, handle aliases
+│   ├── AS keyword → Check for DDL body transition
+│   ├── Comma → Stay in collection state
+│   └── Stop keyword → Return to parsing state
+└── Other → Continue processing
 ```
 
-### 3. DDL Pattern Recognition Flow
+### Error Handling and Edge Cases
 
-```
-DdlHandler.process_table_name_and_alias()
-├── Try Procedure AS BEGIN Pattern
-│   └── "name AS BEGIN" → Include name, skip to body
-├── Try DDL AS Pattern
-│   └── "name AS SELECT/INSERT..." → Include name, skip body
-├── Try Trigger AS BEGIN Pattern
-│   └── "name ... AS BEGIN" → Include name, skip body
-└── Fallback to Regular Table Processing
-    └── TableProcessor.handle_regular_table_name()
-```
+**Malformed Queries:** Parser continues processing and produces best-effort summaries
 
-## Example Processing Walkthrough
+**Token Look-ahead:** Uses `skip_until` index to avoid reprocessing tokens consumed by look-ahead operations
 
-Let's trace through processing `"SELECT * FROM users u UNION SELECT * FROM orders"`:
+**Memory Efficiency:** Pre-allocates arrays and uses string caching to minimize garbage collection
 
-### Step 1: Tokenization (done before parser)
-```
-[[:keyword, "SELECT"], [:operator, "*"], [:keyword, "FROM"],
- [:identifier, "users"], [:identifier, "u"], [:keyword, "UNION"],
- [:keyword, "SELECT"], [:operator, "*"], [:keyword, "FROM"],
- [:identifier, "orders"]]
-```
+## Key Concepts
 
-### Step 2: Token Processing
+### SQL Operation Types
 
-1. **"SELECT"** - `TokenProcessor.process_main_operation()`
-   - Matches `Constants::MAIN_OPERATIONS`
-   - Adds "SELECT" to summary_parts: `["SELECT"]`
-   - State remains `PARSING_STATE`
+**DML (Data Manipulation Language)**
+- SELECT: Query data from tables
+- INSERT: Add new rows to tables
+- UPDATE: Modify existing rows
+- DELETE: Remove rows from tables
 
-2. **"*"** - No matches, state continues
+**DDL (Data Definition Language)**
+- CREATE: Define new database objects (tables, procedures, etc.)
+- ALTER: Modify existing objects
+- DROP: Remove objects
+- TRUNCATE: Remove all data from table
 
-3. **"FROM"** - `TokenProcessor.process_main_operation()`
-   - Matches `Constants::TRIGGER_COLLECTION`
-   - State changes to `EXPECT_COLLECTION_STATE`
+**DCL (Data Control Language)**
+- Not actively parsed, but EXEC/CALL statements are handled
 
-4. **"users"** - `TokenProcessor.process_collection_token()`
-   - In `EXPECT_COLLECTION_STATE`, identifier detected
-   - `DdlHandler.process_table_name_and_alias()` called
-   - No DDL patterns, goes to `TableProcessor.handle_regular_table_name()`
-   - Cleans name: "users" → "users"
-   - Adds "users" to summary_parts: `["SELECT", "users"]`
+### Performance Considerations
 
-5. **"u"** - Detected as alias, skipped during table processing
+**String Caching:** The `cached_upcase()` function prevents repeated string allocations for common SQL keywords
 
-6. **"UNION"** - `TokenProcessor.process_main_operation()`
-   - `OperationHandler.handle_union()` called
-   - Adds "UNION" to summary_parts: `["SELECT", "users", "UNION"]`
+**Array Pre-allocation:** Summary parts array is pre-sized to reduce memory reallocations
 
-7. **"SELECT"** - Processed same as step 1
-   - Summary_parts: `["SELECT", "users", "UNION", "SELECT"]`
+**Look-ahead Optimization:** Complex patterns use bounded look-ahead to avoid processing entire token arrays
 
-8. **"FROM", "orders"** - Processed similar to steps 3-4
-   - Final summary_parts: `["SELECT", "users", "UNION", "SELECT", "orders"]`
+**State Machine:** Finite states minimize unnecessary processing by focusing on relevant tokens
 
-### Step 3: Post-Processing
+### Common SQL Patterns Handled
 
-1. **Union Consolidation** - `SummaryConsolidator.consolidate_union_queries()`
-   - Detects "SELECT ... UNION SELECT ..." pattern
-   - Consolidates to: `["SELECT", "users", "orders"]`
-
-2. **Final Summary** - `truncate_summary()` (private method in Parser)
-   - Joins with spaces: `"SELECT users orders"`
-   - Length OK, no truncation needed
-
-**Final Result**: `"SELECT users orders"`
-
-## State Transitions
-
-### Normal Flow
-```
-PARSING_STATE
-    ↓ (FROM/INTO/JOIN/table operation)
-EXPECT_COLLECTION_STATE
-    ↓ (table found, comma continues / WHERE/SET/other stops)
-PARSING_STATE
+**Table Aliases:**
+```sql
+SELECT * FROM users u WHERE u.id = 1
+-- Summary: "SELECT users"
 ```
 
-### DDL Flow
-```
-PARSING_STATE
-    ↓ (CREATE PROCEDURE/TRIGGER)
-EXPECT_COLLECTION_STATE
-    ↓ (procedure name found)
-EXPECT_COLLECTION_STATE
-    ↓ (AS detected in DDL context)
-DDL_BODY_STATE (skip until end)
+**Multiple Tables:**
+```sql
+SELECT * FROM users, orders WHERE users.id = orders.user_id
+-- Summary: "SELECT users orders"
 ```
 
-## Performance Optimizations
+**UNION Queries:**
+```sql
+SELECT * FROM users UNION SELECT * FROM admins
+-- Summary: "SELECT users admins"
+```
 
-The parser includes several performance optimizations:
+**DDL with Bodies:**
+```sql
+CREATE PROCEDURE GetUser AS BEGIN SELECT * FROM users END
+-- Summary: "CREATE PROCEDURE GetUser"
+```
 
-### Hash-Based Keyword Lookups
-- `DdlHandler::DDL_BODY_START_KEYWORDS` - O(1) lookup for DDL body start detection
-- `TableProcessor::STOP_KEYWORDS` - O(1) lookup for table collection termination
-- `Constants` operation sets use `.to_set.freeze` for O(1) membership testing
+**Complex DDL:**
+```sql
+CREATE TABLE users (id INT, name VARCHAR(50))
+-- Summary: "CREATE TABLE users"
+```
 
-### Caching & Efficiency
-- `Constants.cached_upcase(str)` - Caches uppercased strings to avoid repeated operations
-- Bounds checking in `TableProcessor.clean_table_name` prevents unnecessary string operations
-- Consistent use of cached upcase throughout all modules
+## Database and SQL Terminology
 
-### Smart Processing
-- Early termination in DDL body state skips unnecessary token processing
-- Duplicate removal in `SummaryConsolidator` prevents redundant table names
-- Optimized token lookahead with configurable limits
+This section explains database and SQL concepts used throughout the parser for engineers who may not be familiar with database systems.
 
-## Extension Points
+### SQL Language Categories
 
-To extend the parser:
+**DDL (Data Definition Language)**
+- SQL statements that define and modify database structure
+- Examples: CREATE, ALTER, DROP, TRUNCATE
+- Creates/modifies schema objects like tables, indexes, procedures
+- Often contains complex bodies (like procedure definitions) that need special handling
 
-1. **New SQL Operations** - Add to appropriate operation sets in `Constants`
-2. **New DDL Patterns** - Add handlers in `DdlHandler`
-3. **Special Processing** - Add methods to `OperationHandler`
-4. **Post-Processing** - Extend `SummaryConsolidator` or add methods to `Parser`
+**DML (Data Manipulation Language)**
+- SQL statements that work with data inside tables
+- Examples: SELECT, INSERT, UPDATE, DELETE
+- These are the most common operations in application queries
+- Focus on retrieving or modifying table contents
 
-## Testing
+**DCL (Data Control Language)**
+- SQL statements that control access and permissions
+- Examples: GRANT, REVOKE, EXEC/EXECUTE
+- Less commonly parsed, but EXEC statements are handled for stored procedures
 
-The parser is thoroughly tested with 119 test cases covering:
-- Basic SQL operations (SELECT, INSERT, UPDATE, DELETE)
-- Complex DDL patterns (procedures, triggers, views)
-- UNION query consolidation
-- Edge cases and error conditions
-- Performance optimizations
+### Database Objects
+
+**Table**
+- Primary data storage structure with rows and columns
+- Most queries target tables: `SELECT * FROM users`
+
+**View**
+- Virtual table based on query results
+- Created with: `CREATE VIEW user_summary AS SELECT ...`
+
+**Index**
+- Performance optimization structure for faster queries
+- Created with: `CREATE INDEX idx_name ON table (column)`
+
+**Procedure/Function**
+- Stored executable code blocks
+- Created with: `CREATE PROCEDURE name AS BEGIN ... END`
+- Can have complex bodies that the parser needs to skip
+
+**Trigger**
+- Code that automatically executes on table changes
+- Created with: `CREATE TRIGGER name ... AS BEGIN ... END`
+- Often has complex AS BEGIN patterns
+
+**Schema/Database**
+- Container for organizing database objects
+- Created with: `CREATE DATABASE name` or `CREATE SCHEMA name`
+
+### SQL Query Components
+
+**Clause**
+- Specific parts of SQL statements (FROM, WHERE, GROUP BY, etc.)
+- Parser tracks these to understand query structure
+
+**Table Alias**
+- Short names for tables in queries
+- `SELECT * FROM users u` (u is alias for users)
+- Can be explicit (`users AS u`) or implicit (`users u`)
+
+**Subquery**
+- Query nested inside another query
+- `SELECT * FROM (SELECT id FROM users) subq`
+
+**UNION**
+- Combines results from multiple SELECT statements
+- `SELECT * FROM users UNION SELECT * FROM admins`
+- Parser consolidates these into single summaries
+
+### Token Types
+
+**Keyword**
+- Reserved SQL words (SELECT, FROM, WHERE, etc.)
+- Parser categorizes these into operation sets
+
+**Identifier**
+- Names of tables, columns, variables, etc.
+- Usually table/column names in queries
+
+**Quoted Identifier**
+- Identifiers wrapped in quotes/brackets
+- `[table_name]`, `` `table_name` ``, `"table_name"`
+
+**String**
+- Literal string values in quotes
+- Can sometimes be confused with table names in certain contexts
+
+**Operator**
+- Symbols like `=`, `>`, `+`, `,`, `(`, `)`
+- Commas are important for detecting multiple tables
+
+### Parsing Concepts
+
+**Lexer/Tokenizer**
+- Breaks SQL text into individual tokens (words, symbols, etc.)
+- Runs before the parser - provides the token array input
+
+**Look-ahead**
+- Examining future tokens without processing them
+- Used for patterns like "CREATE TABLE IF NOT EXISTS"
+
+**State Machine**
+- Parser mode that determines how to interpret tokens
+- Prevents misidentifying tokens in wrong contexts
+
+**Context Sensitivity**
+- Same token can mean different things in different contexts
+- Example: identifier could be table name or alias depending on position
+
+**Summary Consolidation**
+- Post-processing to clean up and combine related operations
+- Especially important for UNION queries with multiple tables
+
+### Common SQL Patterns
+
+**IN Clause**
+- `WHERE column IN (value1, value2, value3)`
+- Parser must avoid treating values as table names
+
+**JOIN Operations**
+- `FROM table1 JOIN table2 ON condition`
+- Parser extracts both table names
+
+**SET Clauses**
+- `UPDATE table SET column = value`
+- Signals end of table name collection
+
+**Conditional DDL**
+- `CREATE TABLE IF NOT EXISTS name`
+- `DROP TABLE IF EXISTS name`
+- Requires look-ahead to parse correctly
+
+**Stored Procedure Bodies**
+- Complex blocks of code inside procedures/triggers
+- Parser skips these bodies since they're not part of the main operation
+
+This terminology reference helps decode the technical language used throughout the parser implementation and provides context for understanding SQL query structures.
+
+This parser provides a robust foundation for SQL query analysis while maintaining high performance and handling the complexity of real-world SQL statements.

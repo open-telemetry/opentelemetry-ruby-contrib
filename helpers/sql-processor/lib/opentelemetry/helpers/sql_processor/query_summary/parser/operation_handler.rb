@@ -10,7 +10,6 @@ module OpenTelemetry
       module QuerySummary
         class Parser
           # Handlers for specific SQL operations
-          # rubocop:disable Metrics/ModuleLength
           module OperationHandler
             def handle_union(token, tokens, index)
               next_token = tokens[index + 1]
@@ -129,7 +128,6 @@ module OpenTelemetry
 
             module_function :handle_union, :handle_table_operation, :handle_ddl_with_if_exists, :handle_exec_operation, :handle_update_operation, :handle_as_keyword, :identifier_like?, :ddl_summary
           end
-          # rubocop:enable Metrics/ModuleLength
         end
       end
     end
