@@ -31,7 +31,7 @@ Parser.build_summary_from_tokens(tokens) # => "SELECT users"
 
 The parser uses a modular architecture where the main `Parser` class extends several specialized modules:
 
-```
+```text
 Parser (main entry point)
 ├── Constants          # Configuration and cached operations
 ├── TokenProcessor     # Token routing and orchestration
@@ -69,7 +69,7 @@ The parser operates using a three-state finite state machine to track parsing co
 
 ### State Transitions
 
-```
+```text
 PARSING_STATE → EXPECT_COLLECTION_STATE
   Triggers: FROM, INTO, JOIN, main operations
 
@@ -115,7 +115,7 @@ EXPECT_COLLECTION_STATE → DDL_BODY_STATE
 
 **Special Handling:**
 - **IN clause context**: Avoids misidentifying values in IN clauses as table names
-- **OPENJSON WITH**: Special case for SQL Server's OPENJSON syntax
+- **OPEN JSON WITH**: Special case for SQL Server's OPEN JSON syntax
 - **String tokens**: Can be treated as table names when not in IN clauses
 
 ### OperationHandler (`operation_handler.rb`)
@@ -210,12 +210,12 @@ CREATE TRIGGER MyTrigger ... AS BEGIN ... END
 **Key Function: `consolidate_union_queries()`**
 
 Transforms:
-```
+```ruby
 ["SELECT", "users", "UNION", "SELECT", "orders", "UNION", "ALL", "SELECT", "users"]
 ```
 
 Into:
-```
+```ruby
 ["SELECT", "users", "orders"]  # Note: duplicates removed
 ```
 
@@ -259,7 +259,7 @@ Into:
 
 ### Token Decision Tree
 
-```
+```text
 Token Received
 ├── In DDL_BODY_STATE? → Skip token
 ├── Main Operation? → Add to summary, change state
