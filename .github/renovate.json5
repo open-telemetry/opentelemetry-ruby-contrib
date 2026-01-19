@@ -26,7 +26,7 @@
       "dependencyDashboardApproval": true
     },
     {
-      "matchFileNames": [".github/actions/test_gem/action.yml", ".github/workflows/installation-tests.yml", ".github/workflows/release-*.yaml"],
+      "matchFileNames": [".github/actions/test_gem/action.yml", ".github/workflows/installation-tests.yml", ".github/workflows/release-*.yml"],
       "ignoreDeps": ["ruby"]
     }
   ],
