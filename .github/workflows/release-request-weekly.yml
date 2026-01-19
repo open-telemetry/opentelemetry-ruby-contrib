@@ -3,6 +3,11 @@ name: Open release request - Weekly
 on:
   schedule:
     - cron: "0 15 * * 2"
+  pull_request:
+    branches:
+      - main
+    paths: &path_filters
+      - ".github/workflows/release-request-weekly.yml"
 
 permissions:
   contents: read
@@ -37,6 +42,7 @@ jobs:
         env:
           # Using the app token instead of GITHUB_TOKEN to trigger workflows
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        if: github.event_name != 'pull_request'
         run: |
           toys release request --yes --verbose \
             "--target-branch=${{ github.ref }}" \
