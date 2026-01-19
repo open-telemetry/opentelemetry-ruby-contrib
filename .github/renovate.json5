@@ -12,6 +12,11 @@
       "schedule": ["before 8am every weekday"]
     },
     {
+      "groupName": "all digest versions",
+      "matchUpdateTypes": ["digest"],
+      "schedule": ["before 8am every weekday"]
+    },
+    {
       "matchUpdateTypes": ["minor"],
       "schedule": ["before 8am on Monday"]
     },
