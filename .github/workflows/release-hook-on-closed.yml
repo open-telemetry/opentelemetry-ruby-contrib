@@ -3,6 +3,8 @@ name: "[release hook] Process release"
 on:
   pull_request:
     types: [closed]
+  pull_request:
+    types: [opened, reopened, synchronize]
     paths: &path_filters
       - ".github/workflows/release-hook-on-closed.yml"
 
