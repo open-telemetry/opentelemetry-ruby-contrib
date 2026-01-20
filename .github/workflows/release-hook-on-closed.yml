@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [closed]
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [opened, reopened, synchronize, edited, ready_for_review]
     paths: &path_filters
       - ".github/workflows/release-hook-on-closed.yml"
 
