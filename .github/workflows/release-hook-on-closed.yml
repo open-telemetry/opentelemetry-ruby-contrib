@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-    ouputs:
+    outputs:
       srcChanged: ${{ steps.changes.outputs.srcChanged }}
     steps:
       - uses: dorny/paths-filter@v3
@@ -20,7 +20,7 @@ jobs:
         with:
           filters: |
             srcChanged:
-             - ".github/workflows/release-hook-on-closed.yml"
+              - ".github/workflows/release-hook-on-closed.yml"
   release-process-request:
     permissions:
       contents: write # required for creating releases
