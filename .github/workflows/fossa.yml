@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+    paths: &path_filters
+      - ".github/workflows/fossa.yml"
 
 permissions:
   contents: read
@@ -43,6 +48,7 @@ jobs:
           done
 
       - uses: fossas/fossa-action@3ebcea1862c6ffbd5cf1b4d0bd6b3fe7bd6f2cac # v1.7.0
+        if: github.event_name != 'pull_request'
         with:
           api-key: ${{secrets.FOSSA_API_KEY}}
           team: OpenTelemetry
