@@ -3,19 +3,31 @@ name: "[release hook] Process release"
 on:
   pull_request:
     types: [closed, opened, reopened, synchronize, edited, ready_for_review]
-    paths: &path_filters
-      - ".github/workflows/release-hook-on-closed.yml"
 
 permissions:
   contents: read
 
 jobs:
+  check-files:
+    permissions:
+      contents: read
+      pull-requests: read
+    ouputs:
+      srcChanged: ${{ steps.changes.outputs.srcChanged }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            srcChanged:
+             - ".github/workflows/release-hook-on-closed.yml"
   release-process-request:
     permissions:
       contents: write # required for creating releases
       pull-requests: write # required for updating release PRs
       issues: write # required to create issues for failed releases
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    needs: check-files
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && (github.event.action == 'closed' || needs.check-files.outputs.srcChanged == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby
@@ -30,7 +42,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
-        if: github.event.pull_request.state == 'closed'
+        if: github.event.action == 'closed'
         run: |
           toys release _onclosed --verbose \
             "--event-path=${{ github.event_path }}" \
