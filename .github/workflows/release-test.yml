@@ -23,5 +23,9 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Install Toys
         run: "gem install --no-document toys -v 0.19.1"
+      # TODO: The invocation below simply tests that Toys will run and will
+      # successfully load the release system. We could also include additional
+      # test invocations that exercise key parts of the release system in
+      # dry-run mode if we want to further expand our checks.
       - name: Test CLI
-        run: "toys release --help < /dev/null"
+        run: "toys release request --help < /dev/null"
