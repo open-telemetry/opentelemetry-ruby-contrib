@@ -30,6 +30,17 @@
       "ignoreDeps": ["ruby"]
     }
   ],
+  "regexManagers": [
+    {
+      "fileMatch": ["(^|/)Dockerfile$"],
+      "matchStrings": [
+        "FROM\\s+(?<depName>\\S+):(?<tag>[^\\s@]+)-alpine(?<alpineVersion>\\d+(?:\\.\\d+)?)(?:[\\w.-]*)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver",
+      "extractVersionTemplate": "alpine${alpineVersion}"
+    }
+  ],
   "labels": [
     "dependencies"
   ]
