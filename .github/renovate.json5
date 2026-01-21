@@ -30,11 +30,12 @@
       "ignoreDeps": ["ruby"]
     }
   ],
-  "regexManagers": [
+  "customManagers": [
     {
+      "customType": "regex",
       "fileMatch": ["(^|/)Dockerfile$"],
       "matchStrings": [
-        "FROM\\s+(?<depName>\\S+):(?<tag>[^\\s@]+)-alpine(?<alpineVersion>\\d+(?:\\.\\d+)?)(?:[\\w.-]*)"
+        "FROM\s+(?<depName>\S+):\"(?<tag>[^\s@]+)-alpine(?<alpineVersion>\d+(?:\.\d+)?(?:\.\d+)?(?:-\w+)?)(?:(@(?<currentDigest>[sha256:]?\S+)))?\""
       ],
       "datasourceTemplate": "docker",
       "versioningTemplate": "semver",
