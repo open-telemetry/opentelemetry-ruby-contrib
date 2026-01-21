@@ -442,6 +442,366 @@ describe OpenTelemetry::Instrumentation::Base do
     end
   end
 
+  describe 'metrics support' do
+    let(:meter_enabled_instrumentation) do
+      Class.new(OpenTelemetry::Instrumentation::Base) do
+        instrumentation_name 'test_meter_instrumentation'
+        instrumentation_version '0.1.0'
+
+        present { true }
+        compatible { true }
+        install { true }
+      end
+    end
+
+    describe '#enable_metrics?' do
+      it 'is enabled when METRICS_ENABLED env var is true' do
+        OpenTelemetry::TestHelpers.with_env('TEST_INSTRUMENTATION_METRICS_ENABLED' => 'true') do
+          _(instrumentation.instance.enable_metrics?).must_equal(true)
+        end
+      end
+
+      it 'is disabled when METRICS_ENABLED env var is false' do
+        OpenTelemetry::TestHelpers.with_env('TEST_INSTRUMENTATION_METRICS_ENABLED' => 'false') do
+          _(instrumentation.instance.enable_metrics?).must_equal(false)
+        end
+      end
+
+      it 'is disabled when METRICS_ENABLED env var is not set' do
+        _(instrumentation.instance.enable_metrics?).must_equal(false)
+      end
+
+      it 'env var true overrides local config false' do
+        OpenTelemetry::TestHelpers.with_env('TEST_INSTRUMENTATION_METRICS_ENABLED' => 'true') do
+          _(instrumentation.instance.enable_metrics?(metrics: false)).must_equal(true)
+        end
+      end
+
+      it 'env var false overrides local config true' do
+        OpenTelemetry::TestHelpers.with_env('TEST_INSTRUMENTATION_METRICS_ENABLED' => 'false') do
+          _(instrumentation.instance.enable_metrics?(metrics: true)).must_equal(false)
+        end
+      end
+
+      it 'is enabled when metrics config is true and env var is not set' do
+        _(instrumentation.instance.enable_metrics?(metrics: true)).must_equal(true)
+      end
+
+      it 'is disabled when metrics config is false and env var is not set' do
+        _(instrumentation.instance.enable_metrics?(metrics: false)).must_equal(false)
+      end
+    end
+
+    describe '#meter' do
+      it 'returns nil if not installed' do
+        _(meter_enabled_instrumentation.instance.meter).must_be_nil
+      end
+
+      it 'returns nil when metrics are disabled (default)' do
+        instance = meter_enabled_instrumentation.instance
+        instance.install
+        _(instance.meter).must_be_nil
+      end
+
+      it 'returns nil when metrics config is explicitly false' do
+        instance = meter_enabled_instrumentation.instance
+        instance.install(metrics: false)
+        _(instance.meter).must_be_nil
+      end
+
+      it 'returns a meter when metrics are enabled and meter provider is available' do
+        instance = meter_enabled_instrumentation.instance
+
+        meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+        OpenTelemetry.stub(:meter_provider, meter_provider) do
+          instance.instance_variable_set(:@installed, false)
+          instance.install(metrics: true)
+
+          _(instance.meter).wont_be_nil
+          _(instance.meter).must_be_kind_of(OpenTelemetry::SDK::Metrics::Meter)
+          _(instance.meter.name).must_equal('test_meter_instrumentation')
+          _(instance.meter.instrumentation_version).must_equal('0.1.0')
+        end
+      end
+
+      it 'returns nil when meter provider is not an SDK MeterProvider' do
+        instance = meter_enabled_instrumentation.instance
+
+        fake_meter_provider = Object.new
+        OpenTelemetry.stub(:meter_provider, fake_meter_provider) do
+          instance.instance_variable_set(:@installed, false)
+          instance.install(metrics: true)
+          _(instance.meter).must_be_nil
+        end
+      end
+    end
+  end
+
+  describe '#initialize_metrics' do
+    let(:metrics_instrumentation) do
+      Class.new(OpenTelemetry::Instrumentation::Base) do
+        attr_reader :initialize_metrics_called, :meter_at_init
+
+        instrumentation_name 'test_metrics_instrumentation'
+        instrumentation_version '0.2.0'
+
+        present { true }
+        compatible { true }
+        install { true }
+
+        def initialize(*args)
+          super
+          @initialize_metrics_called = false
+        end
+
+        def initialize_metrics
+          @initialize_metrics_called = true
+          @meter_at_init = meter
+        end
+      end
+    end
+
+    it 'is called during installation' do
+      instance = metrics_instrumentation.instance
+      _(instance.initialize_metrics_called).must_equal(false)
+
+      instance.install
+      _(instance.initialize_metrics_called).must_equal(true)
+    end
+
+    it 'is called after meter is set when metrics are enabled' do
+      instance = metrics_instrumentation.instance
+
+      meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+      OpenTelemetry.stub(:meter_provider, meter_provider) do
+        instance.install(metrics: true)
+
+        _(instance.initialize_metrics_called).must_equal(true)
+        _(instance.meter_at_init).wont_be_nil
+        _(instance.meter_at_init).must_be_kind_of(OpenTelemetry::SDK::Metrics::Meter)
+      end
+    end
+
+    it 'is called even when metrics are disabled' do
+      instance = metrics_instrumentation.instance
+      instance.install(metrics: false)
+
+      _(instance.initialize_metrics_called).must_equal(true)
+      _(instance.meter_at_init).must_be_nil
+    end
+
+    it 'has access to config during initialization' do
+      config_aware_instrumentation = Class.new(OpenTelemetry::Instrumentation::Base) do
+        attr_reader :config_at_init
+
+        instrumentation_name 'test_config_aware_instrumentation'
+        instrumentation_version '0.3.0'
+
+        present { true }
+        compatible { true }
+        install { true }
+
+        option :test_option, default: 'default_value', validate: :string
+
+        def initialize_metrics
+          @config_at_init = config.dup
+        end
+      end
+
+      instance = config_aware_instrumentation.instance
+      instance.install(test_option: 'custom_value')
+
+      _(instance.config_at_init).must_equal(test_option: 'custom_value')
+    end
+
+    it 'does not raise when initialize_metrics raises an error' do
+      error_instrumentation = Class.new(OpenTelemetry::Instrumentation::Base) do
+        instrumentation_name 'test_error_instrumentation'
+        instrumentation_version '0.4.0'
+
+        present { true }
+        compatible { true }
+        install { true }
+
+        def initialize_metrics
+          raise StandardError, 'Metrics initialization error'
+        end
+      end
+
+      instance = error_instrumentation.instance
+
+      # Should not raise during install
+      _(-> { instance.install }).must_raise(StandardError)
+    end
+  end
+
+  describe 'metrics integration tests' do
+    let(:full_metrics_instrumentation) do
+      Class.new(OpenTelemetry::Instrumentation::Base) do
+        attr_reader :histogram, :counter
+
+        instrumentation_name 'opentelemetry_instrumentation_full_metrics'
+        instrumentation_version '1.0.0'
+
+        present { true }
+        compatible { true }
+        install { true }
+
+        def initialize_metrics
+          return unless meter
+
+          @histogram = meter.create_histogram('test.histogram', unit: 'ms', description: 'Test histogram')
+          @counter = meter.create_counter('test.counter', unit: '1', description: 'Test counter')
+        end
+      end
+    end
+
+    it 'creates metrics instruments when metrics are enabled' do
+      instance = full_metrics_instrumentation.instance
+
+      meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+      OpenTelemetry.stub(:meter_provider, meter_provider) do
+        instance.install(metrics: true)
+
+        _(instance.histogram).wont_be_nil
+        _(instance.counter).wont_be_nil
+        _(instance.histogram).must_respond_to(:record)
+        _(instance.counter).must_respond_to(:add)
+      end
+    end
+
+    it 'does not create metrics instruments when metrics are disabled by default' do
+      instance = full_metrics_instrumentation.instance
+      instance.install
+
+      _(instance.meter).must_be_nil
+      _(instance.histogram).must_be_nil
+      _(instance.counter).must_be_nil
+    end
+
+    it 'does not create metrics instruments when metrics config is false' do
+      instance = full_metrics_instrumentation.instance
+      instance.install(metrics: false)
+
+      _(instance.histogram).must_be_nil
+      _(instance.counter).must_be_nil
+    end
+
+    it 'enables metrics via environment variable (overriding default)' do
+      instance = full_metrics_instrumentation.instance
+
+      OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_FULL_METRICS_METRICS_ENABLED' => 'true') do
+        meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+        OpenTelemetry.stub(:meter_provider, meter_provider) do
+          instance.instance_variable_set(:@installed, false)
+          instance.install
+
+          _(instance.meter).wont_be_nil
+          _(instance.histogram).wont_be_nil
+          _(instance.counter).wont_be_nil
+        end
+      end
+    end
+
+    it 'enables metrics via environment variable (overriding local config false)' do
+      instance = full_metrics_instrumentation.instance
+
+      OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_FULL_METRICS_METRICS_ENABLED' => 'true') do
+        meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+        OpenTelemetry.stub(:meter_provider, meter_provider) do
+          instance.instance_variable_set(:@installed, false)
+          instance.install(metrics: false)
+
+          _(instance.meter).wont_be_nil
+        end
+      end
+    end
+
+    it 'env var false overrides local config true' do
+      instance = full_metrics_instrumentation.instance
+
+      OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_FULL_METRICS_METRICS_ENABLED' => 'false') do
+        meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+        OpenTelemetry.stub(:meter_provider, meter_provider) do
+          instance.instance_variable_set(:@installed, false)
+          instance.install(metrics: true)
+
+          _(instance.meter).must_be_nil
+        end
+      end
+    end
+
+    it 'enables metrics via local config when environment variable is not set' do
+      instance = full_metrics_instrumentation.instance
+
+      meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+      OpenTelemetry.stub(:meter_provider, meter_provider) do
+        instance.instance_variable_set(:@installed, false)
+        instance.install(metrics: true)
+
+        _(instance.meter).wont_be_nil
+      end
+    end
+  end
+
+  describe 'metrics with namespaced instrumentation' do
+    before do
+      module MetricsTest
+        module Instrumentation
+          module Custom
+            VERSION = '1.2.3'
+
+            class Instrumentation < OpenTelemetry::Instrumentation::Base
+              attr_reader :test_metric
+
+              present { true }
+              compatible { true }
+              install { true }
+
+              def initialize_metrics
+                return unless meter
+
+                @test_metric = meter.create_histogram('custom.metric', unit: 's', description: 'Custom metric')
+              end
+            end
+          end
+        end
+      end
+    end
+
+    after do
+      Object.send(:remove_const, :MetricsTest)
+    end
+
+    it 'uses correct environment variable name for namespaced instrumentation' do
+      instance = MetricsTest::Instrumentation::Custom::Instrumentation.instance
+
+      # The env var name is based on the full namespace: MetricsTest::Instrumentation::Custom
+      # After transformation: METRICSTEST_INSTRUMENTATION_CUSTOM_METRICS_ENABLED
+      OpenTelemetry::TestHelpers.with_env('METRICSTEST_INSTRUMENTATION_CUSTOM_METRICS_ENABLED' => 'true') do
+        meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+
+        OpenTelemetry.stub(:meter_provider, meter_provider) do
+          instance.install
+
+          _(instance.meter).wont_be_nil
+          _(instance.test_metric).wont_be_nil
+        end
+      end
+    end
+
+    it 'does not enable metrics with incorrect environment variable' do
+      instance = MetricsTest::Instrumentation::Custom::Instrumentation.instance
+
+      OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_WRONG_NAME_METRICS_ENABLED' => 'true') do
+        instance.install
+
+        _(instance.meter).must_be_nil
+        _(instance.test_metric).must_be_nil
+      end
+    end
+  end
+
   def define_instrumentation_subclass(name, version = nil)
     names = name.split('::').map(&:to_sym)
     names.inject(Object) do |object, const|
