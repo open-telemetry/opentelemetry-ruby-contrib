@@ -24,7 +24,7 @@ module OpenTelemetry
             kind = :producer
             attributes = {
               SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.events',
-              SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'publish',
+              SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'send',
               SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => event.class.name
             }
 

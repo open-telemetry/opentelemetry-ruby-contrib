@@ -22,7 +22,7 @@ module OpenTelemetry
           def self.create_enqueue_span(task_class:, task_context:)
             attributes = {
               SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.deferred',
-              SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'publish',
+              SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'send',
               SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => task_class.name,
               SemConv::Incubating::CODE::CODE_FUNCTION_NAME => "#{task_class}.enqueue"
             }

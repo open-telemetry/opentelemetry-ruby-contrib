@@ -90,7 +90,7 @@ module OpenTelemetry
                 SemConv::Incubating::CODE::CODE_FUNCTION_NAME => "#{channel.class}##{action}"
               }
 
-              attributes[SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE] = 'receive' unless action == :unsubscribed
+              attributes[SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE] = 'process' unless action == :unsubscribed
 
               span_name = if action == :subscribed
                             "#{channel.class} subscribe"
@@ -100,7 +100,7 @@ module OpenTelemetry
                             "#{channel.class} receive"
                           end
 
-              kind = action == :unsubscribed ? :internal : :server
+              kind = action == :unsubscribed ? :internal : :consumer
 
               span = Rage::Instrumentation.instance.tracer.start_root_span(
                 span_name,
@@ -126,7 +126,7 @@ module OpenTelemetry
           def self.create_broadcast_span(stream:)
             attributes = {
               SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.cable',
-              SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'publish',
+              SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'send',
               SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => stream
             }
 
