@@ -150,14 +150,22 @@ may ask you to amend the commit message.
 
 ### Documentation and style
 
-We use rubocop to check style rules for this repository. Please run rubocop:
+We use a combinations of tool to check style rules, linting, links and spelling of the files within this repo. To run these checks, please run:
 
 ```sh
 bundle install
-bundle exec rake rubocop
+npm ci
 ```
 
-to ensure that your code complies before opening a pull request.
+to ensure that the tools are installed.
+
+And prior to submitting a pr run the following to perform all the checks:
+
+```sh
+npm run check
+```
+
+which will help to ensure your code complies and it passes all the test required of a pull request.
 
 We also use Yard to generate class documentation automatically. Among other
 things, this means:

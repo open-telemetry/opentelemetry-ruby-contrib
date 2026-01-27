@@ -1,0 +1,23 @@
+extends: default
+
+ignore-from-file:
+  - .gitignore
+  - .yamllint-ignore
+
+rules:
+  document-start: disable
+  octal-values: enable
+  comments:
+    min-spaces-from-content: 1
+  truthy:
+    allowed-values: ['true', 'false', 'on']  # 'on' for GH action trigger
+  line-length:
+    max: 200
+    ignore: |
+      .github/*
+  indentation:
+    check-multi-line-strings: false
+    indent-sequences: consistent
+  brackets:
+    max-spaces-inside: 1
+    max-spaces-inside-empty: 0
