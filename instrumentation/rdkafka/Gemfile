@@ -18,7 +18,7 @@ group :test do
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'
   gem 'yard', '~> 0.9'
-  gem 'opentelemetry-sdk'
+  gem 'opentelemetry-sdk', '~> 1.1'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   if RUBY_VERSION >= '3.4'
     gem 'base64'

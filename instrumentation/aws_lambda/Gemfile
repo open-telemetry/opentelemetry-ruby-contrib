@@ -18,7 +18,7 @@ group :test do
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'
   gem 'yard', '~> 0.9'
-  gem 'rspec-mocks'
+  gem 'rspec-mocks', '~> 3.13.7'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'webrick', '~> 1.7'
   if RUBY_VERSION >= '3.4'
