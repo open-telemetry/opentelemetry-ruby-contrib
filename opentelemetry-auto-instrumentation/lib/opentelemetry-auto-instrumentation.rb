@@ -57,17 +57,14 @@ module OTelBundlerPatch
       env = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s
       additional_resource = ::OpenTelemetry::SDK::Resources::Resource.create({})
 
+      resource_map = {
+        'container' => (defined?(::OpenTelemetry::Resource::Detector::Container) ? ::OpenTelemetry::Resource::Detector::Container : nil),
+        'azure' => (defined?(::OpenTelemetry::Resource::Detector::Azure) ? ::OpenTelemetry::Resource::Detector::Azure : nil),
+        'aws' => (defined?(::OpenTelemetry::Resource::Detector::AWS) ? ::OpenTelemetry::Resource::Detector::AWS : nil)
+      }
+
       env.split(',').each do |detector|
-        case detector
-        when 'container'
-          additional_resource = additional_resource.merge(::OpenTelemetry::Resource::Detector::Container.detect) if defined? ::OpenTelemetry::Resource::Detector::Container
-        when 'google_cloud_platform'
-          additional_resource = additional_resource.merge(::OpenTelemetry::Resource::Detector::GoogleCloudPlatform.detect) if defined? ::OpenTelemetry::Resource::Detector::GoogleCloudPlatform
-        when 'azure'
-          additional_resource = additional_resource.merge(::OpenTelemetry::Resource::Detector::Azure.detect) if defined? ::OpenTelemetry::Resource::Detector::Azure
-        when 'aws'
-          additional_resource = additional_resource.merge(::OpenTelemetry::Resource::Detector::AWS.detect(%i[ec2 ecs eks lambda])) if defined? ::OpenTelemetry::Resource::Detector::AWS
-        end
+        additional_resource = additional_resource.merge(resource_map[detector].detect) if resource_map[detector]
       end
 
       additional_resource
@@ -84,17 +81,13 @@ module OTelBundlerPatch
 
       @initialized = true
 
-      lib = File.expand_path('..', __dir__)
-      $LOAD_PATH.reject! { |path| path.include?('opentelemetry-auto-instrumentation') }
-      $LOAD_PATH.unshift(lib)
-
       begin
         required_instrumentation = determine_enabled_instrumentation
 
         OpenTelemetry::SDK.configure do |c|
           c.resource = detect_resource_from_env
           if required_instrumentation.empty?
-            c.use_all # enables all instrumentation!
+            c.use_all
           else
             required_instrumentation.each do |instrumentation|
               c.use instrumentation
@@ -108,7 +101,6 @@ module OTelBundlerPatch
     end
   end
 
-  # ref: https://github.com/newrelic/newrelic-ruby-agent/blob/dev/lib/boot/strap.rb
   def require(...)
     super
     OTelInitializer.require_otel
@@ -117,44 +109,32 @@ end
 
 require 'bundler'
 
-aws = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('aws')
-container = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('container')
-google_cloud_platform = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('google_cloud_platform')
-azure = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.include?('azure')
+# /otel-auto-instrumentation-ruby is default path for otel operator (ruby.go)
+# If requires different gem path to load gem, set env OTEL_RUBY_ADDITIONAL_GEM_PATH
+gem_path = ENV['OTEL_RUBY_ADDITIONAL_GEM_PATH'] || '/otel-auto-instrumentation-ruby' || Gem.dir
+$stdout.puts "Loading the gem path from #{gem_path}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
 
-# set OTEL_OPERATOR to false if not in autoinstrumentation-ruby image, default to /otel-auto-instrumentation-ruby
-# /otel-auto-instrumentation-ruby is set in opentelemetry-operator ruby.go
-operator_gem_path = ENV['OTEL_RUBY_OPERATOR'].nil? || ENV['OTEL_RUBY_OPERATOR'] == 'true' ? '/otel-auto-instrumentation-ruby' : nil
-additional_gem_path = operator_gem_path || ENV['OTEL_RUBY_ADDITIONAL_GEM_PATH'] || Gem.dir
-$stdout.puts "Loading the additional gem path from #{additional_gem_path}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
-
-# use OTEL_RUBY_UNLOAD_LIBRARY to avoid certain gem preload (esp. google protobuf)
-# e.g export OTEL_RUBY_UNLOAD_LIBRARY=google-protobuf;googleapis-common-protos-types
-unload_libraries = ENV['OTEL_RUBY_UNLOAD_LIBRARY'].to_s.split(';')
-
-loaded_library_file_path = Dir.glob("#{additional_gem_path}/gems/*").select do |file_path|
-  gem_name = file_path.match(%r{/gems/([^/]+)-\d})[1]
-  (file_path.include?('opentelemetry') || file_path.include?('google')) && !unload_libraries.include?(gem_name)
+# Load OpenTelemetry components and their dependencies
+# googleapis-common-protos-types and google-protobuf are dependencies for otlp exporters
+loaded_library_file_path = Dir.glob("#{gem_path}/gems/*").select do |file_path|
+  file_path.include?('opentelemetry') ||
+    file_path.include?('googleapis-common-protos-types') ||
+    file_path.include?('google-protobuf')
 end
 
-# rubocop:disable Style/StderrPuts
-$stderr.puts "Loaded Library File Paths #{loaded_library_file_path.join(',')}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
-# rubocop:enable Style/StderrPuts
-
-loaded_library_file_path.each do |file_path|
-  $LOAD_PATH.unshift("#{file_path}/lib")
-end
-
+# unshift file_path add opentelemetry component at the top of $LOAD_PATH
+loaded_library_file_path.each { |file_path| $LOAD_PATH.unshift("#{file_path}/lib") }
 $stdout.puts "$LOAD_PATH after unshift: #{$LOAD_PATH.join(',')}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
 
+# These are required for the prepend OTelBundlerPatch to fetch OpenTelemetry::SDK.configure
 require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-all'
 require 'opentelemetry-exporter-otlp'
 
-require 'opentelemetry-resource-detector-container' if container
-require 'opentelemetry-resource-detector-google_cloud_platform' if google_cloud_platform
-require 'opentelemetry-resource-detector-azure' if azure
-require 'opentelemetry-resource-detector-aws' if aws
+resource_detectors = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s
+require 'opentelemetry-resource-detector-container' if resource_detectors.include?('container')
+require 'opentelemetry-resource-detector-azure' if resource_detectors.include?('azure')
+require 'opentelemetry-resource-detector-aws' if resource_detectors.include?('aws')
 
 Bundler::Runtime.prepend(OTelBundlerPatch)
 
