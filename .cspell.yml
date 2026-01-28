@@ -78,7 +78,14 @@ words:
   - traceid
   - traceparent
   - traceresponse
+  - Triager
+  - triagers
+  - Untrace
+  - vitess
+  - webmocks
+  - yardoc
+  - rackup
+  - traceparent
   - tracestate
-
   - linkspector
   - sarif
