@@ -49,8 +49,10 @@ module OpenTelemetry
 
             OpenTelemetry::Context.with_current(handshake_context) do
               attributes = {
-                SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.cable',
-                SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => connection.class.name
+                'websocket.framework' => 'rage.cable',
+                'websocket.direction' => 'inbound',
+                'websocket.handler' => connection.class.name,
+                'websocket.action' => action.to_s
               }
 
               kind = action == :connect ? :server : :internal
@@ -84,8 +86,10 @@ module OpenTelemetry
 
             OpenTelemetry::Context.with_current(handshake_context) do
               attributes = {
-                SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.cable',
-                SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => channel.class.name
+                'websocket.framework' => 'rage.cable',
+                'websocket.direction' => 'inbound',
+                'websocket.channel' => channel.class.name,
+                'websocket.action' => action.to_s
               }
 
               attributes[SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE] = 'process' unless action == :unsubscribed
@@ -123,9 +127,9 @@ module OpenTelemetry
           # @param stream [String] the name of the stream
           def self.create_broadcast_span(stream:)
             attributes = {
-              SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.cable',
-              SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'send',
-              SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => stream
+              'websocket.framework' => 'rage.cable',
+              'websocket.direction' => 'outbound',
+              'websocket.stream' => stream
             }
 
             Rage::Instrumentation.instance.tracer.in_span('Rage::Cable broadcast', kind: :producer, attributes:) do |span|
