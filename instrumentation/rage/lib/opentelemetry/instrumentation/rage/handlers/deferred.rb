@@ -20,13 +20,7 @@ module OpenTelemetry
           # @param task_class [Class] the class of the deferred task
           # @param task_context [Hash] the context for the deferred task
           def self.create_enqueue_span(task_class:, task_context:)
-            attributes = {
-              SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.deferred',
-              SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'send',
-              SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => task_class.name,
-            }
-
-            Rage::Instrumentation.instance.tracer.in_span("#{task_class} enqueue", attributes:, kind: :producer) do |span|
+            Rage::Instrumentation.instance.tracer.in_span("#{task_class} enqueue", kind: :producer) do |span|
               OpenTelemetry.propagation.inject(task_context)
 
               result = yield
@@ -46,12 +40,10 @@ module OpenTelemetry
 
             OpenTelemetry::Context.with_current(otel_context) do
               attributes = {
-                SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.deferred',
-                SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'process',
-                SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => task_class.name,
+                'workflow.platform.name' => 'rage.deferred',
+                'workflow.execution.result' => 'success',
+                'workflow.execution.attempt' => task.meta.attempts
               }
-
-              attributes['messaging.message.delivery_attempt'] = task.meta.attempts if task.meta.retrying?
 
               parent_span_context = OpenTelemetry::Trace.current_span(otel_context).context
               links = [OpenTelemetry::Trace::Link.new(parent_span_context)] if parent_span_context.valid?
@@ -67,6 +59,7 @@ module OpenTelemetry
                 result = yield
 
                 if result.error?
+                  span.set_attribute('workflow.execution.result', 'failure')
                   span.record_exception(result.exception)
                   span.status = OpenTelemetry::Trace::Status.error
                 end
