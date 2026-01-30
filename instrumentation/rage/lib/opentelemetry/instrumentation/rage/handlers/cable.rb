@@ -50,8 +50,7 @@ module OpenTelemetry
             OpenTelemetry::Context.with_current(handshake_context) do
               attributes = {
                 SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.cable',
-                SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => connection.class.name,
-                SemConv::Incubating::CODE::CODE_FUNCTION_NAME => "#{connection.class}##{action}"
+                SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => connection.class.name
               }
 
               kind = action == :connect ? :server : :internal
@@ -86,8 +85,7 @@ module OpenTelemetry
             OpenTelemetry::Context.with_current(handshake_context) do
               attributes = {
                 SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.cable',
-                SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => channel.class.name,
-                SemConv::Incubating::CODE::CODE_FUNCTION_NAME => "#{channel.class}##{action}"
+                SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => channel.class.name
               }
 
               attributes[SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE] = 'process' unless action == :unsubscribed

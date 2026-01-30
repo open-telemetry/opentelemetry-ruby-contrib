@@ -24,12 +24,7 @@ module OpenTelemetry
 
             http_route = request.route_uri_pattern
             span.name = "#{request.method} #{http_route}"
-
-            attributes = {
-              SemConv::HTTP::HTTP_ROUTE => http_route,
-              SemConv::Incubating::CODE::CODE_FUNCTION_NAME => "#{controller.class}##{controller.action_name}"
-            }
-            span.add_attributes(attributes)
+            span.set_attribute(SemConv::HTTP::HTTP_ROUTE, http_route)
 
             result = yield
             return unless result.error?

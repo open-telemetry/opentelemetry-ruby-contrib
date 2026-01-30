@@ -24,7 +24,6 @@ module OpenTelemetry
               SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.deferred',
               SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'send',
               SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => task_class.name,
-              SemConv::Incubating::CODE::CODE_FUNCTION_NAME => "#{task_class}.enqueue"
             }
 
             Rage::Instrumentation.instance.tracer.in_span("#{task_class} enqueue", attributes:, kind: :producer) do |span|
@@ -50,7 +49,6 @@ module OpenTelemetry
                 SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.deferred',
                 SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'process',
                 SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => task_class.name,
-                SemConv::Incubating::CODE::CODE_FUNCTION_NAME => "#{task_class}#perform"
               }
 
               attributes['messaging.message.delivery_attempt'] = task.meta.attempts if task.meta.retrying?

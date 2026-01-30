@@ -41,8 +41,7 @@ module OpenTelemetry
             attributes = {
               SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM => 'rage.events',
               SemConv::Incubating::MESSAGING::MESSAGING_OPERATION_TYPE => 'process',
-              SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => event.class.name,
-              SemConv::Incubating::CODE::CODE_FUNCTION_NAME => "#{subscriber.class}#call"
+              SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME => event.class.name
             }
 
             Rage::Instrumentation.instance.tracer.in_span("#{subscriber.class} process", kind:, attributes:) do |span|
