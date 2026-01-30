@@ -44,7 +44,7 @@
       "datasourceTemplate": "docker",
       "versioningTemplate": "loose",
       "currentValueTemplate": "{{depVersion}}-alpine{{alpineVersion}}",
-      "extractVersionTemplate": "^(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)-alpine{{alpineVersion}}$",
+      "extractVersionTemplate": "^(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)-alpine{{alpineVersion}}$"
     },
     {
       "customType": "regex",
