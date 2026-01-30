@@ -100,7 +100,7 @@ module OpenTelemetry
                             "#{channel.class} receive"
                           end
 
-              kind = action == :unsubscribed ? :internal : :consumer
+              kind = action == :unsubscribed ? :internal : :server
 
               span = Rage::Instrumentation.instance.tracer.start_root_span(
                 span_name,
