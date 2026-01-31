@@ -22,12 +22,16 @@
     },
     {
       "matchUpdateTypes": ["major"],
-      "matchManagers": ["!ruby"],
+      "matchCategories": ["!ruby"],
       "schedule": ["before 8am on Monday"]
     },
     {
       "matchUpdateTypes": ["major"],
-      "matchManagers": ["ruby"],
+      "matchCategories": ["ruby"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchUpdateTypes": ["multipleMajor"],
       "dependencyDashboardApproval": true
     },
     {
