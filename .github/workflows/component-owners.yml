@@ -10,7 +10,7 @@ jobs:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     permissions:
       pull-requests: write # required for assigning reviewers to PRs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Auto Assign Owners
     steps:
       - uses: dyladan/component-owners@58bd86e9814d23f1525d0a970682cead459fa783 # v0.1.0
