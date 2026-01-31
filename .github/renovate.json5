@@ -23,12 +23,12 @@
     {
       matchUpdateTypes: ["major"],
       matchCategories: ["!ruby"],
-      schedule": ["before 8am on Monday"]
+      schedule: ["before 8am on Monday"],
     },
     {
       matchUpdateTypes: ["major"],
       matchCategories: ["ruby"],
-      dependencyDashboardApproval": true
+      dependencyDashboardApproval: true,
     },
     {
       matchUpdateTypes: ["multipleMajor"],

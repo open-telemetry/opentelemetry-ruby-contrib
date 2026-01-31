@@ -64,6 +64,7 @@ ignoreWords:
   - sendfile
   - millis
   - jsonlintrc
+  - Dockerfiles
 words:
   - AWSXRayTrace
   - AWSXRaySamplingClient
