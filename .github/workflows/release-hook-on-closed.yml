@@ -16,6 +16,8 @@ jobs:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     runs-on: ubuntu-24.04
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Install Ruby
         uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
         env:
@@ -23,8 +25,6 @@ jobs:
         with:
           ruby-version: "4.0"
           bundler-cache: true
-      - name: Checkout repo
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Process release request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
