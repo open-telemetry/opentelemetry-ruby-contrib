@@ -13,7 +13,7 @@ group :test do
   gem 'minitest', '~> 5.0'
   gem 'opentelemetry-sdk', '~> 1.1'
   gem 'opentelemetry-test-helpers', '~> 0.3'
-  gem 'rspec-mocks'
+  gem 'rspec-mocks', '~> 3.13.7'
   gem 'rubocop', '~> 1.82.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
