@@ -22,6 +22,7 @@ jobs:
         uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
         env:
           BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
+          BUNDLE_SYSTEM_BINDIR: ${{ github.workspace }}/bin
         with:
           ruby-version: "4.0"
           bundler-cache: true
@@ -29,5 +30,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          toys release _onpush --verbose \
+          ${{ github.workspace }}/bin/toys release _onpush --verbose \
             < /dev/null

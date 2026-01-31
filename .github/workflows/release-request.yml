@@ -26,6 +26,7 @@ jobs:
         uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
         env:
           BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
+          BUNDLE_SYSTEM_BINDIR: ${{ github.workspace }}/bin
         with:
           ruby-version: "4.0"
           bundler-cache: true
@@ -41,7 +42,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          toys release request --yes --verbose \
+          ${{ github.workspace }}/bin/toys release request --yes --verbose \
             "--target-branch=${{ github.ref }}" \
             ${{ github.event.inputs.names }} \
             < /dev/null
