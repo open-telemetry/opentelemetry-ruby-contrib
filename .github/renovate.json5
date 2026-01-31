@@ -30,6 +30,39 @@
       "ignoreDeps": ["ruby"]
     }
   ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update Package version in Dockerfiles",
+      "managerFilePatterns": [
+        "/(^|/|\\.)Dockerfile$/",
+        "/(^|/)Dockerfile\\.[^/]*$/"
+      ],
+      "matchStrings": [
+        "FROM\\s+(?<packageName>.+?):(?<depVersion>[^\\s@]+?)-alpine(?<alpineVersion>\\d+(?:\\.\\d+)?(?:\\.\\d+)?(?:-\\w+)?)(?:(@(?<currentDigest>[sha256:]?\\s+)))?.*\\s"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "loose",
+      "currentValueTemplate": "{{depVersion}}-alpine{{alpineVersion}}",
+      "extractVersionTemplate": "^(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)-alpine{{alpineVersion}}$"
+    },
+    {
+      "customType": "regex",
+      "description": "Update os version in Dockerfiles",
+      "managerFilePatterns": [
+        "/(^|/|\\.)Dockerfile$/",
+        "/(^|/)Dockerfile\\.[^/]*$/"
+      ],
+      "matchStrings": [
+        "FROM\\s+(?<packageName>.+?):(?<depVersion>[^\\s@]+?)-alpine(?<alpineVersion>\\d+(?:\\.\\d+)?(?:\\.\\d+)?(?:-\\w+)?)(?:(@(?<currentDigest>[sha256:]?\\s+)))?.*\\s"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "loose",
+      "currentValueTemplate": "{{depVersion}}-alpine{{alpineVersion}}",
+      "extractVersionTemplate": "^{{depVersion}}-alpine(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)$",
+      "depNameTemplate": "{{packageName}}-alpine"
+    }
+  ],
   "labels": [
     "dependencies"
   ],
