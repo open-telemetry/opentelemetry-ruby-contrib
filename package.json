@@ -3,6 +3,6 @@
     "check:lint:renovate": "renovate-config-validator"
   },
   "devDependencies": {
-    "renovate": "^42.84.2"
+    "renovate": "42.84.2"
   }
 }
