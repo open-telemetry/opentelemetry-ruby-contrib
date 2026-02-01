@@ -60,7 +60,7 @@ jobs:
 
   ruby-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    name: Ruby Lint Check
+    name: RuboCop Check
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -80,7 +80,7 @@ jobs:
 
       - name: "Lint all ruby files"
         run: |
-          set -e # forces exit code to propogate
+          set -e # forces exit code to propagate
           npm run check:lint:ruby -- --format github
 
       - name: "Check all ruby source files"
