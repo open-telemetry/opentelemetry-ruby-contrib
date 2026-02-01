@@ -38,11 +38,11 @@ def main
   if new_version.nil? || new_version.empty?
     puts 'Error: No Ruby version specified.'
     puts
-    puts "Usage: #{$PROGRAM_NAME} <new_ruby_version>"
+    puts "Usage: #{$0} <new_ruby_version>"
     puts 'Examples:'
-    puts "  #{$PROGRAM_NAME} 3.2"
-    puts "  #{$PROGRAM_NAME} 3.3"
-    puts "  #{$PROGRAM_NAME} 3.1.0"
+    puts "  #{$0} 3.2"
+    puts "  #{$0} 3.3"
+    puts "  #{$0} 3.1.0"
     puts
     puts 'The version should be a valid Ruby version number (e.g., 3.2, 3.3, 3.1.0)'
     exit 1
@@ -63,7 +63,7 @@ def main
     puts '  - 3.4.0.alpha'
     puts '  - 3.3.0.beta1'
     puts
-    puts "Usage: #{$PROGRAM_NAME} <new_ruby_version>"
+    puts "Usage: #{$0} <new_ruby_version>"
     exit 1
   end
 
@@ -85,4 +85,4 @@ def main
   puts "\nDone! All gemspecs have been updated to require Ruby >= #{new_version}"
 end
 
-main if __FILE__ == $PROGRAM_NAME
+main if __FILE__ == $0

@@ -1,9 +1,12 @@
 {
   "scripts": {
+    "check:format:ruby": "rubocop --only Layout",
     "check:lint:renovate": "renovate-config-validator",
     "check:lint:ruby": "rubocop --only Lint,Naming,Style",
     "check:links": "linkspector check",
-    "check:spelling": "cspell -c .cspell.yml ."
+    "check:spelling": "cspell -c .cspell.yml .",
+    "write:format:ruby": "npm run check:format:ruby -- --autocorrect-all",
+    "write:lint:ruby": "npm run check:lint:ruby -- --autocorrect-all"
   },
   "devDependencies": {
     "@umbrelladocs/linkspector": "0.4.7",
