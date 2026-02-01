@@ -1,6 +1,7 @@
 {
   "scripts": {
     "check": "npm run check:lint && npm run check:format && npm run check:links && npm run check:spelling",
+    "check:format:ruby": "rubocop --only Layout",
     "check:links": "linkspector check",
     "check:lint": "npm run check:lint:json && npm run check:lint:markdown && npm run check:lint:ruby",
     "check:lint:json": "jsonlint --config ./.jsonlintrc.yml",
@@ -11,9 +12,11 @@
     "write:format": "npm run write:format:ruby && prettier . --write",
     "write:format:json": "prettier **/*.json --write",
     "write:format:markdown": "prettier **/*.md --write",
+    "write:format:ruby": "npm run check:format:ruby -- --autocorrect-all",
     "write:lint": "npm run write:lint:json && npm run write:lint:markdown",
     "write:lint:json": "jsonlint --config ./.jsonlintrc.yml --in-place && npm run write:format:json",
-    "write:lint:markdown": "markdownlint-cli2 '**/*.md' --fix && npm run write:format:markdown"
+    "write:lint:markdown": "markdownlint-cli2 '**/*.md' --fix && npm run write:format:markdown",
+    "write:lint:ruby": "npm run check:lint:ruby -- --autocorrect-all"
   },
   "devDependencies": {
     "@umbrelladocs/linkspector": "0.4.7",
