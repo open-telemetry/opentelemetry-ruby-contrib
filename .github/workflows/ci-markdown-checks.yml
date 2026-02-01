@@ -57,7 +57,7 @@ jobs:
       # equivalent cli: renovate-config-validator
       - name: "Renovate Lint Check"
         run: npm run check:lint:renovate
- 
+
   ruby-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: RuboCop Check
