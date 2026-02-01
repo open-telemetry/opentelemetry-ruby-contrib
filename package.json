@@ -8,6 +8,7 @@
     "check:lint:markdown": "markdownlint-cli2 '**/*.md'",
     "check:lint:renovate": "renovate-config-validator",
     "check:lint:ruby": "rubocop --only Lint,Naming,Style",
+    "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Security",
     "check:spelling": "cspell -c .cspell.yml .",
     "write:format": "npm run write:format:ruby && prettier . --write",
     "write:format:json": "prettier **/*.json --write",
@@ -16,7 +17,8 @@
     "write:lint": "npm run write:lint:json && npm run write:lint:markdown",
     "write:lint:json": "jsonlint --config ./.jsonlintrc.yml --in-place && npm run write:format:json",
     "write:lint:markdown": "markdownlint-cli2 '**/*.md' --fix && npm run write:format:markdown",
-    "write:lint:ruby": "npm run check:lint:ruby -- --autocorrect-all"
+    "write:lint:ruby": "npm run check:lint:ruby -- --autocorrect-all",
+    "write:source:ruby": "npm run check:source:ruby -- --autocorrect-all"
   },
   "devDependencies": {
     "@umbrelladocs/linkspector": "0.4.7",

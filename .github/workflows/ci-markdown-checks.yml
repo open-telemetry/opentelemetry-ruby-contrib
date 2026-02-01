@@ -58,7 +58,7 @@ jobs:
       - name: "Renovate Lint Check"
         run: npm run check:lint:renovate
 
-  ruby-lint-check:
+  ruby-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Ruby Lint Check
     runs-on: ubuntu-24.04
@@ -78,11 +78,15 @@ jobs:
       - name: Install Tools
         run: npm ci --ignore-scripts && bundle install
 
-      - name: "Lint all ruby document Check"
-        run: npm run write:lint:ruby -- --format github
+      - name: "Lint all ruby files"
+        run: |
+          set -e # forces exit code to propogate
+          npm run check:lint:ruby -- --format github
 
-      - name: validate files
-        run: git diff --exit-code ':*.*' || (echo 'Files are out of date, please run "npm run write:lint:ruby" and commit the changes in this PR.' && exit 1)
+      - name: "Check all ruby source files"
+        run: |
+          set -e # forces exit code to propagate
+          npm run check:souce:ruby -- --format github
 
 
   yaml-lint-check:
