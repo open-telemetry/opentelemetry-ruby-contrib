@@ -1,10 +1,13 @@
 {
   "scripts": {
     "check": "npm run check:lint && npm run check:format && npm run check:links && npm run check:spelling",
+    "check:links": "linkspector check",
     "check:lint": "npm run check:lint:json && npm run check:lint:markdown && npm run check:lint:ruby",
     "check:lint:json": "jsonlint --config ./.jsonlintrc.yml",
     "check:lint:markdown": "markdownlint-cli2 '**/*.md'",
     "check:lint:renovate": "renovate-config-validator",
+    "check:lint:ruby": "rubocop --only Lint,Naming,Style",
+    "check:spelling": "cspell -c .cspell.yml .",
     "write:format": "npm run write:format:ruby && prettier . --write",
     "write:format:json": "prettier **/*.json --write",
     "write:format:markdown": "prettier **/*.md --write",
@@ -13,8 +16,10 @@
     "write:lint:markdown": "markdownlint-cli2 '**/*.md' --fix && npm run write:format:markdown"
   },
   "devDependencies": {
+    "@umbrelladocs/linkspector": "0.4.7",
+    "cspell": "9.6.2",
     "@prantlf/jsonlint": "17.0.0",
     "markdownlint-cli2": "0.20.0",
-    "renovate": "^43.14.1"
+    "renovate": "43.14.1"
   }
 }
