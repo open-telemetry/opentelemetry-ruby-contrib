@@ -73,5 +73,36 @@ describe OpenTelemetry::Instrumentation::PG::Patches do
         end
       end
     end
+
+    describe 'method send_query' do
+      it 'returns nil immediately and the result can be obtained from a #get_result call' do
+        assert_nil(client.send_query('SELECT 1'))
+        assert_equal(['1'], client.get_last_result.column_values(0))
+      end
+    end
+
+    describe 'method send_query_params' do
+      it 'returns nil immediately and the result can be obtained from a #get_result call' do
+        assert_nil(client.send_query_params('SELECT $1', [1]))
+        assert_equal(['1'], client.get_last_result.column_values(0))
+      end
+    end
+
+    describe 'method send_prepare' do
+      it 'returns nil immediately and the result can be obtained from a #get_result call' do
+        assert_nil(client.send_prepare('foo', 'SELECT $1'))
+        assert_equal(PG::Constants::PGRES_COMMAND_OK, client.get_last_result.result_status)
+      end
+    end
+
+    describe 'method send_query_prepared' do
+      it 'returns nil immediately and the result can be obtained from a #get_result call' do
+        client.send_prepare('bar', 'SELECT $1')
+        assert_equal(PG::Constants::PGRES_COMMAND_OK, client.get_last_result.result_status)
+
+        assert_nil(client.send_query_prepared('bar', [1]))
+        assert_equal(['1'], client.get_result.column_values(0))
+      end
+    end
   end unless ENV['OMIT_SERVICES']
 end

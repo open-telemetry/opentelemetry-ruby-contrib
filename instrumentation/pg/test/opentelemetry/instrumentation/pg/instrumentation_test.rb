@@ -200,7 +200,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    %i[exec query sync_exec async_exec].each do |method|
+    %i[exec query sync_exec async_exec send_query].each do |method|
       it "after request (with method: #{method})" do
         client.send(method, 'SELECT 1')
 
@@ -214,7 +214,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    %i[exec_params async_exec_params sync_exec_params].each do |method|
+    %i[exec_params async_exec_params sync_exec_params send_query_params].each do |method|
       it "after request (with method: #{method}) " do
         client.send(method, 'SELECT $1 AS a', [1])
 
@@ -228,7 +228,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    %i[prepare async_prepare sync_prepare].each do |method|
+    %i[prepare async_prepare sync_prepare send_prepare].each do |method|
       it "after preparing a statement (with method: #{method})" do
         client.send(method, 'foo', 'SELECT $1 AS a')
 
@@ -243,7 +243,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    %i[exec_prepared async_exec_prepared sync_exec_prepared].each do |method|
+    %i[exec_prepared async_exec_prepared sync_exec_prepared send_query_prepared].each do |method|
       it "after executing prepared statement (with method: #{method})" do
         client.prepare('foo', 'SELECT $1 AS a')
         client.send(method, 'foo', [1])

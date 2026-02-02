@@ -75,6 +75,8 @@ module OpenTelemetry
           exec_params
           async_exec_params
           sync_exec_params
+          send_query
+          send_query_params
         ].freeze
 
         # The following methods all take a statement name as the first
@@ -84,6 +86,7 @@ module OpenTelemetry
           prepare
           async_prepare
           sync_prepare
+          send_prepare
         ].freeze
 
         # The following methods take a prepared statement name as their first
@@ -93,6 +96,7 @@ module OpenTelemetry
           exec_prepared
           async_exec_prepared
           sync_exec_prepared
+          send_query_prepared
         ].freeze
 
         CONNECTION_METHODS = %i[
