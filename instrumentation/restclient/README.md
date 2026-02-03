@@ -2,6 +2,11 @@
 
 The OpenTelemetry RestClient gem is a community maintained instrumentation for the [RestClient][restclient-home] library.
 
+> [!IMPORTANT]
+> 
+> **Deprecation Notice:**
+> This gem is deprecated due to the upstream dependency it relies on no longer being maintained. The code remains available for reference, but no further updates or fixes will be provided. Users should consider migrating to actively supported alternatives.
+
 ## How do I get started?
 
 Install the gem using:
