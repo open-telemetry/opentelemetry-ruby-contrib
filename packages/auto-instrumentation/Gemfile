@@ -22,4 +22,5 @@ group :test do
     gem 'bigdecimal'
     gem 'mutex_m'
   end
+  gem 'logger' if RUBY_VERSION >= '4.0.0'
 end
