@@ -31,7 +31,7 @@ module OpenTelemetry
 
         def add_patches
           if dalli_has_native_otel_support?
-            OpenTelemetry.logger.info("Dalli #{::Dalli::VERSION} has native OpenTelemetry support. Skipping community instrumentation") 
+            OpenTelemetry.logger.info("Dalli #{::Dalli::VERSION} has native OpenTelemetry support. Skipping community instrumentation")
 
             return
           end
