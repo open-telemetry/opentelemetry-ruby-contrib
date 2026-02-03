@@ -273,6 +273,43 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
+    it 'after connection entered pipeline_mode' do
+      client.enter_pipeline_mode
+
+      _(last_span.name).must_equal 'ENTER_PIPELINE_MODE'
+      _(last_span.attributes['db.system']).must_equal 'postgresql'
+      _(last_span.attributes['db.name']).must_equal 'postgres'
+      _(last_span.attributes['net.peer.name']).must_equal host.to_s
+      _(last_span.attributes['net.peer.port']).must_equal port.to_i
+
+      client.exit_pipeline_mode
+    end
+
+    it 'after pipeline_sync message' do
+      client.enter_pipeline_mode
+      client.pipeline_sync
+
+      _(last_span.name).must_equal 'PIPELINE_SYNC'
+      _(last_span.attributes['db.system']).must_equal 'postgresql'
+      _(last_span.attributes['db.name']).must_equal 'postgres'
+      _(last_span.attributes['net.peer.name']).must_equal host.to_s
+      _(last_span.attributes['net.peer.port']).must_equal port.to_i
+
+      client.get_result
+      client.exit_pipeline_mode
+    end
+
+    it 'after connection exited pipeline_mode' do
+      client.enter_pipeline_mode
+      client.exit_pipeline_mode
+
+      _(last_span.name).must_equal 'EXIT_PIPELINE_MODE'
+      _(last_span.attributes['db.system']).must_equal 'postgresql'
+      _(last_span.attributes['db.name']).must_equal 'postgres'
+      _(last_span.attributes['net.peer.name']).must_equal host.to_s
+      _(last_span.attributes['net.peer.port']).must_equal port.to_i
+    end
+
     it 'ignores prepend comment to extract operation' do
       client.query('/* comment */ SELECT 1')
 
