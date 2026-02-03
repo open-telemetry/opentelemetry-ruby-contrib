@@ -12,25 +12,76 @@
       "schedule": ["before 8am every weekday"]
     },
     {
+      "groupName": "all digest versions",
+      "matchUpdateTypes": ["digest"],
+      "schedule": ["before 8am every weekday"]
+    },
+    {
       "matchUpdateTypes": ["minor"],
       "schedule": ["before 8am on Monday"]
     },
     {
       "matchUpdateTypes": ["major"],
-      "matchManagers": ["!ruby"],
+      "matchCategories": ["!ruby"],
       "schedule": ["before 8am on Monday"]
     },
     {
       "matchUpdateTypes": ["major"],
-      "matchManagers": ["ruby"],
+      "matchCategories": ["ruby"],
       "dependencyDashboardApproval": true
     },
     {
-      "matchFileNames": [".github/workflows/release-*.yaml"],
+      "matchUpdateTypes": ["multipleMajor"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchFileNames": [".github/actions/test_gem/action.yml", ".github/workflows/installation-tests.yml", ".github/workflows/release-*.yml"],
       "ignoreDeps": ["ruby"]
     }
   ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update Package version in Dockerfiles",
+      "managerFilePatterns": [
+        "/(^|/|\\.)Dockerfile$/",
+        "/(^|/)Dockerfile\\.[^/]*$/"
+      ],
+      "matchStrings": [
+        "FROM\\s+(?<packageName>.+?):(?<depVersion>[^\\s@]+?)-alpine(?<alpineVersion>\\d+(?:\\.\\d+)?(?:\\.\\d+)?(?:-\\w+)?)(?:(@(?<currentDigest>[sha256:]?\\s+)))?.*\\s"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "loose",
+      "currentValueTemplate": "{{depVersion}}-alpine{{alpineVersion}}",
+      "extractVersionTemplate": "^(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)-alpine{{alpineVersion}}$"
+    },
+    {
+      "customType": "regex",
+      "description": "Update os version in Dockerfiles",
+      "managerFilePatterns": [
+        "/(^|/|\\.)Dockerfile$/",
+        "/(^|/)Dockerfile\\.[^/]*$/"
+      ],
+      "matchStrings": [
+        "FROM\\s+(?<packageName>.+?):(?<depVersion>[^\\s@]+?)-alpine(?<alpineVersion>\\d+(?:\\.\\d+)?(?:\\.\\d+)?(?:-\\w+)?)(?:(@(?<currentDigest>[sha256:]?\\s+)))?.*\\s"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "loose",
+      "currentValueTemplate": "{{depVersion}}-alpine{{alpineVersion}}",
+      "extractVersionTemplate": "^{{depVersion}}-alpine(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)$",
+      "depNameTemplate": "{{packageName}}-alpine"
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 8am on Monday"],
+  },
   "labels": [
     "dependencies"
+  ],
+  "ignoreDeps": ["base64", "bigdecimal", "drb", "logger", "mutex_m", "observer", "ostruct"],
+  "ignorePaths": [
+    "**/example/Gemfile",
+    "releases/Gemfile"
   ]
 }

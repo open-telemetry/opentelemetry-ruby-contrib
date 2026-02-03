@@ -212,13 +212,13 @@ services:
       - "5672:5672"
 
   memcached:
-    image: memcached:alpine@sha256:c77536380fd3c7740933767bb5279bd30e31c8d496081e5113a37d9b9eec43cb
+    image: memcached:1.6.40-alpine@sha256:8a82a3927694e42bc52679dc81532244de51e5faed5f9541a1283e3ad7271db1
     command: memcached -m 64
     ports:
       - "11211:11211"
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest@sha256:7610a50b13e7e9f6dc0dd00585ffdcb0bbed27392bef6b45791ef4087b2a746c
+    image: confluentinc/cp-zookeeper:7.7.7@sha256:fa29eaf783d80053fcf4a8f7cb8dff11fca7594ee30656609c6f96652bc01229
     ports:
       - 2181:2181
     environment:
