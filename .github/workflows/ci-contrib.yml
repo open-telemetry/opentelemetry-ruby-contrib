@@ -11,6 +11,7 @@ on:
       - "resources/**"
       - "processor/**"
       - "sampler/**"
+      - "packages/**"
       - ".github/workflows/ci-contrib.yml"
       - ".github/actions/**"
       - "Gemfile"
@@ -260,29 +261,35 @@ jobs:
           ruby: "jruby-10.0.2.0"
 
   auto-instrumentation:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
         os:
           - ubuntu-latest
-    name: "opentelemetry-auto-instrumentation / ${{ matrix.os }}"
+    name: "auto-instrumentation / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: "Test Ruby 4.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "auto-instrumentation"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
-          gem: "opentelemetry-auto-instrumentation"
+          gem: "auto-instrumentation"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
-          gem: "opentelemetry-auto-instrumentation"
+          gem: "auto-instrumentation"
           ruby: "3.3"
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
-          gem: "opentelemetry-auto-instrumentation"
+          gem: "auto-instrumentation"
           ruby: "3.2"
           yard: true
           rubocop: true

@@ -2,10 +2,10 @@
 
 ## Installation
 
-First, install the `opentelemetry-auto-instrumentation` gem using `gem install` (not through Bundler):
+First, install the `auto-instrumentation` gem using `gem install` (not through Bundler):
 
 ```bash
-gem install opentelemetry-auto-instrumentation
+gem install auto-instrumentation
 ```
 
 This gem should be installed outside your Gemfile so that it can be loaded globally through the `RUBYOPT` environment variable.
@@ -16,14 +16,14 @@ A basic Ruby application that demonstrates auto-instrumentation.
 
 ```bash
 bundle install
-OTEL_RUBY_REQUIRE_BUNDLER=true OTEL_TRACES_EXPORTER=console RUBYOPT="-r opentelemetry-auto-instrumentation" ruby app.rb
+OTEL_RUBY_REQUIRE_BUNDLER=true OTEL_TRACES_EXPORTER=console RUBYOPT="-r auto-instrumentation" ruby app.rb
 ```
 
 **What's happening:**
 
 - `OTEL_RUBY_REQUIRE_BUNDLER=true` tells the gem to call `Bundler.require` during initialization
 - `OTEL_TRACES_EXPORTER=console` outputs trace data to the console for visibility
-- `RUBYOPT` ensures `opentelemetry-auto-instrumentation` is loaded before your application code
+- `RUBYOPT` ensures `auto-instrumentation` is loaded before your application code
 
 ## Rails Example (rails-example)
 
@@ -39,7 +39,7 @@ bundle exec rackup config.ru
 
 ```bash
 bundle install
-OTEL_RUBY_REQUIRE_BUNDLER=false OTEL_TRACES_EXPORTER=console RUBYOPT="-r opentelemetry-auto-instrumentation" bundle exec rackup config.ru
+OTEL_RUBY_REQUIRE_BUNDLER=false OTEL_TRACES_EXPORTER=console RUBYOPT="-r auto-instrumentation" bundle exec rackup config.ru
 ```
 
 **What's happening:**
@@ -61,7 +61,7 @@ You should see trace output in the console where the Rails server is running.
 
 The correct sequence is:
 
-1. `opentelemetry-auto-instrumentation` is loaded (via `RUBYOPT`)
+1. `auto-instrumentation` is loaded (via `RUBYOPT`)
 2. User libraries are required
 3. `Bundler.require` is called (by Rails or manually)
 4. OpenTelemetry SDK is initialized

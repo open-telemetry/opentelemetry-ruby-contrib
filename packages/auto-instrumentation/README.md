@@ -1,6 +1,6 @@
 # OpenTelemetry Auto Instrumentation
 
-The `opentelemetry-auto-instrumentation` gem provides automatic loading and initialization of OpenTelemetry Ruby SDK for zero-code instrumentation of your applications.
+The `auto-instrumentation` gem provides automatic loading and initialization of OpenTelemetry Ruby SDK for zero-code instrumentation of your applications.
 
 ## What is OpenTelemetry?
 
@@ -21,14 +21,14 @@ This gem is particularly useful with the [OpenTelemetry Operator][opentelemetry-
 Install the gem:
 
 ```console
-gem install opentelemetry-auto-instrumentation
+gem install auto-instrumentation
 ```
 
 **Note:** Install via `gem install` rather than adding to your Gemfile, as this gem needs to load before your application starts.
 
 ### What gets installed?
 
-Installing `opentelemetry-auto-instrumentation` automatically includes:
+Installing `auto-instrumentation` automatically includes:
 
 ```console
 opentelemetry-sdk
@@ -49,7 +49,7 @@ opentelemetry-resource-detector-aws
 Instrument any Ruby application:
 
 ```console
-RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+RUBYOPT="-r auto-instrumentation" ruby application.rb
 ```
 
 ### With Configuration
@@ -62,7 +62,7 @@ export OTEL_EXPORTER_OTLP_ENDPOINT="your-endpoint"
 export OTEL_RUBY_RESOURCE_DETECTORS="container,azure"
 export OTEL_SERVICE_NAME="your-service-name"
 
-RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+RUBYOPT="-r auto-instrumentation" ruby application.rb
 ```
 
 ### Rails Applications
@@ -70,7 +70,7 @@ RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
 Rails automatically calls `Bundler.require`, so instrumentation works out of the box:
 
 ```console
-RUBYOPT="-r opentelemetry-auto-instrumentation" rails server
+RUBYOPT="-r auto-instrumentation" rails server
 ```
 
 ### Selective Instrumentation
@@ -79,14 +79,14 @@ RUBYOPT="-r opentelemetry-auto-instrumentation" rails server
 
 ```console
 export OTEL_RUBY_ENABLED_INSTRUMENTATIONS="mysql2,redis,faraday"
-RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+RUBYOPT="-r auto-instrumentation" ruby application.rb
 ```
 
 **Disable specific instrumentations:**
 
 ```console
 export OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED="false"
-RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+RUBYOPT="-r auto-instrumentation" ruby application.rb
 ```
 
 **Configure instrumentation options:**
@@ -94,7 +94,7 @@ RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
 ```console
 export OTEL_RUBY_ENABLED_INSTRUMENTATIONS="redis"
 export OTEL_RUBY_INSTRUMENTATION_REDIS_CONFIG_OPTS="peer_service=new_service;db_statement=omit"
-RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+RUBYOPT="-r auto-instrumentation" ruby application.rb
 ```
 
 ### Non-Rails Frameworks (Sinatra, Rackup, etc.)
@@ -103,7 +103,7 @@ For frameworks that don't automatically call `Bundler.require`, enable it explic
 
 ```console
 export OTEL_RUBY_REQUIRE_BUNDLER="true"
-RUBYOPT="-r opentelemetry-auto-instrumentation" rackup config.ru
+RUBYOPT="-r auto-instrumentation" rackup config.ru
 ```
 
 ### Advanced: Loading External Gems
@@ -111,7 +111,7 @@ RUBYOPT="-r opentelemetry-auto-instrumentation" rackup config.ru
 If you need to load gems outside your Gemfile (and have them instrumented), preload them before the auto-instrumentation:
 
 ```console
-RUBYOPT="-r mysql2 -r faraday -r opentelemetry-auto-instrumentation" ruby application.rb
+RUBYOPT="-r mysql2 -r faraday -r auto-instrumentation" ruby application.rb
 ```
 
 ## Troubleshooting
@@ -140,7 +140,7 @@ require 'faraday'  # Loaded too late - won't be instrumented
 **Solution:** Preload the gem via `RUBYOPT`:
 
 ```console
-RUBYOPT="-r faraday -r opentelemetry-auto-instrumentation" ruby application.rb
+RUBYOPT="-r faraday -r auto-instrumentation" ruby application.rb
 ```
 
 This ensures gems are loaded early enough for instrumentation to be applied.
@@ -157,7 +157,7 @@ The auto-instrumentation gem loads OpenTelemetry components into Ruby's `$LOAD_P
 **Solution:** If you experience protobuf-related errors:
 
 1. Remove `google-protobuf` and `googleapis-common-protos-types` from your Gemfile
-2. Let `opentelemetry-auto-instrumentation` manage these dependencies
+2. Let `auto-instrumentation` manage these dependencies
 3. In most cases, version mismatches won't cause issues, but this is the safest approach
 
 ### Using with bundle exec
@@ -165,10 +165,10 @@ The auto-instrumentation gem loads OpenTelemetry components into Ruby's `$LOAD_P
 Since the gem is installed via `gem install` (not in your Gemfile), you may need to specify the full path when using `bundle exec`:
 
 ```console
-RUBYOPT="-r /path/to/gems/opentelemetry-auto-instrumentation-X.X.X/lib/opentelemetry-auto-instrumentation" bundle exec rails server
+RUBYOPT="-r /path/to/gems/auto-instrumentation-X.X.X/lib/auto-instrumentation" bundle exec rails server
 ```
 
-Find the path using: `gem which opentelemetry-auto-instrumentation`
+Find the path using: `gem which auto-instrumentation`
 
 ## Example
 
@@ -189,13 +189,13 @@ The following environment variables are specific to this gem (not standard OpenT
 
 ## How can I get involved?
 
-The `opentelemetry-auto-instrumentation` gem source is on GitHub, along with related gems.
+The `auto-instrumentation` gem source is on GitHub, along with related gems.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
-The `opentelemetry-auto-instrumentation` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
+The `auto-instrumentation` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
 
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings

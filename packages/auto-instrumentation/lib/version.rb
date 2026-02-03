@@ -4,4 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-VERSION = '0.0.0'
+module OpenTelemetry
+  module AutoInstrumentation
+    VERSION = '0.0.0'
+  end
+end

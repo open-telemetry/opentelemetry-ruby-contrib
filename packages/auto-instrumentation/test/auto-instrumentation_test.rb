@@ -7,7 +7,7 @@
 require 'test_helper'
 
 describe 'AutoInstrumentation' do
-  let(:auto_instrumentation_path) { File.expand_path('../lib/opentelemetry-auto-instrumentation.rb', __dir__) }
+  let(:auto_instrumentation_path) { File.expand_path('../lib/auto-instrumentation.rb', __dir__) }
 
   before do
     ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'] = nil
