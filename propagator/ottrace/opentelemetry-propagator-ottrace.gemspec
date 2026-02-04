@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-commit = ENV["GITHUB_SHA"] || "main"
+commit = ENV['GITHUB_SHA'] || 'main'
 require_relative 'lib/opentelemetry/propagator/ottrace/version'
 
 Gem::Specification.new do |spec|
