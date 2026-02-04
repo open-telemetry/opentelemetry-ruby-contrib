@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-commit = ENV["GITHUB_SHA"] || "main"
+commit = ENV['GITHUB_SHA'] || 'main'
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'opentelemetry/instrumentation/action_view/version'
