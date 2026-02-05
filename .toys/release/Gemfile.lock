@@ -1,0 +1,23 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    base64 (0.3.0)
+    logger (1.7.0)
+    toys (0.19.1)
+      toys-core (= 0.19.1)
+    toys-core (0.19.1)
+      logger
+    toys-release (0.5.1)
+      toys-core (~> 0.17)
+
+PLATFORMS
+  ruby
+  x86_64-linux
+
+DEPENDENCIES
+  base64 (= 0.3.0)
+  toys (= 0.19.1)
+  toys-release (= 0.5.1)
+
+BUNDLED WITH
+   2.7.2

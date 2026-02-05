@@ -1,0 +1,587 @@
+PATH
+  remote: ../../helpers/mysql
+  specs:
+    opentelemetry-helpers-mysql (0.4.0)
+      opentelemetry-api (~> 1.7)
+      opentelemetry-common (~> 0.21)
+
+PATH
+  remote: ../../helpers/sql-obfuscation
+  specs:
+    opentelemetry-helpers-sql-obfuscation (0.5.0)
+      opentelemetry-common (~> 0.21)
+
+PATH
+  remote: ../../helpers/sql-processor
+  specs:
+    opentelemetry-helpers-sql-processor (0.4.0)
+      opentelemetry-api (~> 1.0)
+      opentelemetry-common (~> 0.21)
+
+PATH
+  remote: ../../helpers/sql
+  specs:
+    opentelemetry-helpers-sql (0.3.0)
+      opentelemetry-api (~> 1.7)
+
+PATH
+  remote: ../action_mailer
+  specs:
+    opentelemetry-instrumentation-action_mailer (0.6.1)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+
+PATH
+  remote: ../action_pack
+  specs:
+    opentelemetry-instrumentation-action_pack (0.15.1)
+      opentelemetry-instrumentation-rack (~> 0.29)
+
+PATH
+  remote: ../action_view
+  specs:
+    opentelemetry-instrumentation-action_view (0.11.2)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+
+PATH
+  remote: ../active_job
+  specs:
+    opentelemetry-instrumentation-active_job (0.10.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../active_model_serializers
+  specs:
+    opentelemetry-instrumentation-active_model_serializers (0.24.0)
+      opentelemetry-instrumentation-active_support (>= 0.7.0)
+
+PATH
+  remote: ../active_record
+  specs:
+    opentelemetry-instrumentation-active_record (0.11.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../active_storage
+  specs:
+    opentelemetry-instrumentation-active_storage (0.3.1)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+
+PATH
+  remote: ../active_support
+  specs:
+    opentelemetry-instrumentation-active_support (0.10.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../anthropic
+  specs:
+    opentelemetry-instrumentation-anthropic (0.3.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../aws_lambda
+  specs:
+    opentelemetry-instrumentation-aws_lambda (0.6.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../aws_sdk
+  specs:
+    opentelemetry-instrumentation-aws_sdk (0.11.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../base
+  specs:
+    opentelemetry-instrumentation-base (0.25.0)
+      opentelemetry-api (~> 1.7)
+      opentelemetry-common (~> 0.21)
+      opentelemetry-registry (~> 0.1)
+
+PATH
+  remote: ../bunny
+  specs:
+    opentelemetry-instrumentation-bunny (0.24.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../concurrent_ruby
+  specs:
+    opentelemetry-instrumentation-concurrent_ruby (0.24.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../dalli
+  specs:
+    opentelemetry-instrumentation-dalli (0.29.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../delayed_job
+  specs:
+    opentelemetry-instrumentation-delayed_job (0.25.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../ethon
+  specs:
+    opentelemetry-instrumentation-ethon (0.27.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../excon
+  specs:
+    opentelemetry-instrumentation-excon (0.27.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../factory_bot
+  specs:
+    opentelemetry-instrumentation-factory_bot (0.1.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../faraday
+  specs:
+    opentelemetry-instrumentation-faraday (0.31.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../grape
+  specs:
+    opentelemetry-instrumentation-grape (0.5.0)
+      opentelemetry-instrumentation-rack (~> 0.29)
+
+PATH
+  remote: ../graphql
+  specs:
+    opentelemetry-instrumentation-graphql (0.31.2)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../grpc
+  specs:
+    opentelemetry-instrumentation-grpc (0.4.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../gruf
+  specs:
+    opentelemetry-instrumentation-gruf (0.5.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../http_client
+  specs:
+    opentelemetry-instrumentation-http_client (0.27.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../http
+  specs:
+    opentelemetry-instrumentation-http (0.28.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../httpx
+  specs:
+    opentelemetry-instrumentation-httpx (0.6.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../koala
+  specs:
+    opentelemetry-instrumentation-koala (0.23.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../lmdb
+  specs:
+    opentelemetry-instrumentation-lmdb (0.25.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../mongo
+  specs:
+    opentelemetry-instrumentation-mongo (0.25.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../mysql2
+  specs:
+    opentelemetry-instrumentation-mysql2 (0.33.0)
+      opentelemetry-helpers-mysql
+      opentelemetry-helpers-sql
+      opentelemetry-helpers-sql-processor
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../net_http
+  specs:
+    opentelemetry-instrumentation-net_http (0.27.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../pg
+  specs:
+    opentelemetry-instrumentation-pg (0.35.0)
+      opentelemetry-helpers-sql
+      opentelemetry-helpers-sql-processor
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../que
+  specs:
+    opentelemetry-instrumentation-que (0.12.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../racecar
+  specs:
+    opentelemetry-instrumentation-racecar (0.6.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../rack
+  specs:
+    opentelemetry-instrumentation-rack (0.29.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../rails
+  specs:
+    opentelemetry-instrumentation-rails (0.39.1)
+      opentelemetry-instrumentation-action_mailer (~> 0.6)
+      opentelemetry-instrumentation-action_pack (~> 0.15)
+      opentelemetry-instrumentation-action_view (~> 0.11)
+      opentelemetry-instrumentation-active_job (~> 0.10)
+      opentelemetry-instrumentation-active_record (~> 0.11)
+      opentelemetry-instrumentation-active_storage (~> 0.3)
+      opentelemetry-instrumentation-active_support (~> 0.10)
+      opentelemetry-instrumentation-concurrent_ruby (~> 0.23)
+
+PATH
+  remote: ../rake
+  specs:
+    opentelemetry-instrumentation-rake (0.5.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../rdkafka
+  specs:
+    opentelemetry-instrumentation-rdkafka (0.9.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../redis
+  specs:
+    opentelemetry-instrumentation-redis (0.28.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../resque
+  specs:
+    opentelemetry-instrumentation-resque (0.8.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../restclient
+  specs:
+    opentelemetry-instrumentation-restclient (0.26.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../rspec
+  specs:
+    opentelemetry-instrumentation-rspec (0.7.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../ruby_kafka
+  specs:
+    opentelemetry-instrumentation-ruby_kafka (0.24.0)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../sidekiq
+  specs:
+    opentelemetry-instrumentation-sidekiq (0.28.1)
+      opentelemetry-instrumentation-base (~> 0.25)
+
+PATH
+  remote: ../sinatra
+  specs:
+    opentelemetry-instrumentation-sinatra (0.28.0)
+      opentelemetry-instrumentation-rack (~> 0.29)
+
+PATH
+  remote: ../trilogy
+  specs:
+    opentelemetry-instrumentation-trilogy (0.66.0)
+      opentelemetry-helpers-mysql
+      opentelemetry-helpers-sql
+      opentelemetry-helpers-sql-processor
+      opentelemetry-instrumentation-base (~> 0.25)
+      opentelemetry-semantic_conventions (>= 1.8.0)
+
+PATH
+  remote: .
+  specs:
+    opentelemetry-instrumentation-all (0.90.1)
+      opentelemetry-instrumentation-active_model_serializers (~> 0.24.0)
+      opentelemetry-instrumentation-anthropic (~> 0.3.0)
+      opentelemetry-instrumentation-aws_lambda (~> 0.6.0)
+      opentelemetry-instrumentation-aws_sdk (~> 0.11.0)
+      opentelemetry-instrumentation-bunny (~> 0.24.0)
+      opentelemetry-instrumentation-concurrent_ruby (~> 0.24.0)
+      opentelemetry-instrumentation-dalli (~> 0.29.0)
+      opentelemetry-instrumentation-delayed_job (~> 0.25.1)
+      opentelemetry-instrumentation-ethon (~> 0.27.0)
+      opentelemetry-instrumentation-excon (~> 0.27.0)
+      opentelemetry-instrumentation-faraday (~> 0.31.0)
+      opentelemetry-instrumentation-grape (~> 0.5.0)
+      opentelemetry-instrumentation-graphql (~> 0.31.1)
+      opentelemetry-instrumentation-grpc (~> 0.4.1)
+      opentelemetry-instrumentation-gruf (~> 0.5.0)
+      opentelemetry-instrumentation-http (~> 0.28.0)
+      opentelemetry-instrumentation-http_client (~> 0.27.0)
+      opentelemetry-instrumentation-httpx (~> 0.6.0)
+      opentelemetry-instrumentation-koala (~> 0.23.0)
+      opentelemetry-instrumentation-lmdb (~> 0.25.0)
+      opentelemetry-instrumentation-mongo (~> 0.25.0)
+      opentelemetry-instrumentation-mysql2 (~> 0.33.0)
+      opentelemetry-instrumentation-net_http (~> 0.27.0)
+      opentelemetry-instrumentation-pg (~> 0.35.0)
+      opentelemetry-instrumentation-que (~> 0.12.0)
+      opentelemetry-instrumentation-racecar (~> 0.6.0)
+      opentelemetry-instrumentation-rack (~> 0.29.0)
+      opentelemetry-instrumentation-rails (~> 0.39.1)
+      opentelemetry-instrumentation-rake (~> 0.5.0)
+      opentelemetry-instrumentation-rdkafka (~> 0.9.0)
+      opentelemetry-instrumentation-redis (~> 0.28.0)
+      opentelemetry-instrumentation-resque (~> 0.8.0)
+      opentelemetry-instrumentation-restclient (~> 0.26.0)
+      opentelemetry-instrumentation-ruby_kafka (~> 0.24.0)
+      opentelemetry-instrumentation-sidekiq (~> 0.28.1)
+      opentelemetry-instrumentation-sinatra (~> 0.28.0)
+      opentelemetry-instrumentation-trilogy (~> 0.66.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    actionpack (8.1.2)
+      actionview (= 8.1.2)
+      activesupport (= 8.1.2)
+      nokogiri (>= 1.8.5)
+      rack (>= 2.2.4)
+      rack-session (>= 1.0.1)
+      rack-test (>= 0.6.3)
+      rails-dom-testing (~> 2.2)
+      rails-html-sanitizer (~> 1.6)
+      useragent (~> 0.16)
+    actionview (8.1.2)
+      activesupport (= 8.1.2)
+      builder (~> 3.1)
+      erubi (~> 1.11)
+      rails-dom-testing (~> 2.2)
+      rails-html-sanitizer (~> 1.6)
+    active_model_serializers (0.10.16)
+      actionpack (>= 4.1)
+      activemodel (>= 4.1)
+      case_transform (>= 0.2)
+      jsonapi-renderer (>= 0.1.1.beta1, < 0.3)
+    activemodel (8.1.2)
+      activesupport (= 8.1.2)
+    activesupport (8.1.2)
+      base64
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.3.1)
+      connection_pool (>= 2.2.5)
+      drb
+      i18n (>= 1.6, < 2)
+      json
+      logger (>= 1.4.2)
+      minitest (>= 5.1)
+      securerandom (>= 0.3)
+      tzinfo (~> 2.0, >= 2.0.5)
+      uri (>= 0.13.1)
+    ast (2.4.3)
+    base64 (0.3.0)
+    bigdecimal (4.0.1)
+    builder (3.3.0)
+    case_transform (0.2)
+      activesupport
+    concurrent-ruby (1.3.6)
+    connection_pool (3.0.2)
+    crass (1.0.6)
+    docile (1.4.1)
+    drb (2.2.3)
+    erubi (1.13.1)
+    i18n (1.14.8)
+      concurrent-ruby (~> 1.0)
+    json (2.18.1)
+    jsonapi-renderer (0.2.2)
+    language_server-protocol (3.17.0.5)
+    lint_roller (1.1.0)
+    logger (1.7.0)
+    loofah (2.25.0)
+      crass (~> 1.0.2)
+      nokogiri (>= 1.12.0)
+    minitest (5.27.0)
+    mutex_m (0.3.0)
+    nokogiri (1.19.0-aarch64-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.19.0-aarch64-linux-musl)
+      racc (~> 1.4)
+    nokogiri (1.19.0-arm-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.19.0-arm-linux-musl)
+      racc (~> 1.4)
+    nokogiri (1.19.0-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.19.0-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.19.0-x86_64-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.19.0-x86_64-linux-musl)
+      racc (~> 1.4)
+    opentelemetry-api (1.7.0)
+    opentelemetry-common (0.23.0)
+      opentelemetry-api (~> 1.0)
+    opentelemetry-registry (0.4.0)
+      opentelemetry-api (~> 1.1)
+    opentelemetry-semantic_conventions (1.36.0)
+      opentelemetry-api (~> 1.0)
+    parallel (1.27.0)
+    parser (3.3.10.1)
+      ast (~> 2.4.1)
+      racc
+    prism (1.9.0)
+    racc (1.8.1)
+    rack (3.2.4)
+    rack-session (2.1.1)
+      base64 (>= 0.1.0)
+      rack (>= 3.0.0)
+    rack-test (2.2.0)
+      rack (>= 1.3)
+    rails-dom-testing (2.3.0)
+      activesupport (>= 5.0.0)
+      minitest
+      nokogiri (>= 1.6)
+    rails-html-sanitizer (1.6.2)
+      loofah (~> 2.21)
+      nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
+    rainbow (3.1.1)
+    rake (13.3.1)
+    regexp_parser (2.11.3)
+    rubocop (1.82.1)
+      json (~> 2.3)
+      language_server-protocol (~> 3.17.0.2)
+      lint_roller (~> 1.1.0)
+      parallel (~> 1.10)
+      parser (>= 3.3.0.2)
+      rainbow (>= 2.2.2, < 4.0)
+      regexp_parser (>= 2.9.3, < 3.0)
+      rubocop-ast (>= 1.48.0, < 2.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 2.4.0, < 4.0)
+    rubocop-ast (1.49.0)
+      parser (>= 3.3.7.2)
+      prism (~> 1.7)
+    rubocop-performance (1.26.1)
+      lint_roller (~> 1.1)
+      rubocop (>= 1.75.0, < 2.0)
+      rubocop-ast (>= 1.47.1, < 2.0)
+    ruby-progressbar (1.13.0)
+    securerandom (0.4.1)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.13.2)
+    simplecov_json_formatter (0.1.4)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
+    unicode-display_width (3.2.0)
+      unicode-emoji (~> 4.1)
+    unicode-emoji (4.2.0)
+    uri (1.1.1)
+    useragent (0.16.11)
+    yard (0.9.38)
+
+PLATFORMS
+  aarch64-linux-gnu
+  aarch64-linux-musl
+  arm-linux-gnu
+  arm-linux-musl
+  arm64-darwin
+  x86_64-darwin
+  x86_64-linux-gnu
+  x86_64-linux-musl
+
+DEPENDENCIES
+  active_model_serializers
+  activesupport
+  base64
+  minitest (~> 5.0)
+  mutex_m
+  opentelemetry-helpers-mysql!
+  opentelemetry-helpers-sql!
+  opentelemetry-helpers-sql-obfuscation!
+  opentelemetry-helpers-sql-processor!
+  opentelemetry-instrumentation-action_mailer!
+  opentelemetry-instrumentation-action_pack!
+  opentelemetry-instrumentation-action_view!
+  opentelemetry-instrumentation-active_job!
+  opentelemetry-instrumentation-active_model_serializers!
+  opentelemetry-instrumentation-active_record!
+  opentelemetry-instrumentation-active_storage!
+  opentelemetry-instrumentation-active_support!
+  opentelemetry-instrumentation-all!
+  opentelemetry-instrumentation-anthropic!
+  opentelemetry-instrumentation-aws_lambda!
+  opentelemetry-instrumentation-aws_sdk!
+  opentelemetry-instrumentation-base!
+  opentelemetry-instrumentation-bunny!
+  opentelemetry-instrumentation-concurrent_ruby!
+  opentelemetry-instrumentation-dalli!
+  opentelemetry-instrumentation-delayed_job!
+  opentelemetry-instrumentation-ethon!
+  opentelemetry-instrumentation-excon!
+  opentelemetry-instrumentation-factory_bot!
+  opentelemetry-instrumentation-faraday!
+  opentelemetry-instrumentation-grape!
+  opentelemetry-instrumentation-graphql!
+  opentelemetry-instrumentation-grpc!
+  opentelemetry-instrumentation-gruf!
+  opentelemetry-instrumentation-http!
+  opentelemetry-instrumentation-http_client!
+  opentelemetry-instrumentation-httpx!
+  opentelemetry-instrumentation-koala!
+  opentelemetry-instrumentation-lmdb!
+  opentelemetry-instrumentation-mongo!
+  opentelemetry-instrumentation-mysql2!
+  opentelemetry-instrumentation-net_http!
+  opentelemetry-instrumentation-pg!
+  opentelemetry-instrumentation-que!
+  opentelemetry-instrumentation-racecar!
+  opentelemetry-instrumentation-rack!
+  opentelemetry-instrumentation-rails!
+  opentelemetry-instrumentation-rake!
+  opentelemetry-instrumentation-rdkafka!
+  opentelemetry-instrumentation-redis!
+  opentelemetry-instrumentation-resque!
+  opentelemetry-instrumentation-restclient!
+  opentelemetry-instrumentation-rspec!
+  opentelemetry-instrumentation-ruby_kafka!
+  opentelemetry-instrumentation-sidekiq!
+  opentelemetry-instrumentation-sinatra!
+  opentelemetry-instrumentation-trilogy!
+  rake (>= 13)
+  rubocop (~> 1.82.0)
+  rubocop-performance (~> 1.26.0)
+  simplecov (~> 0.22.0)
+  yard (~> 0.9)
+
+BUNDLED WITH
+   2.7.2
