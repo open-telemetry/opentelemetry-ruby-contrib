@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ruby_kafka
 
+## v0.25.0 / 2026-02-05
+
+* [#1769](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1769) Archive the instrumentation after upstream `ruby-kafka` deprecation.
+
 ### v0.24.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
