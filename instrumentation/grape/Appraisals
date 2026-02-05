@@ -14,6 +14,7 @@ appraise 'grape-1.x' do
   gem 'rack', '~> 2.0'
   gem 'grape', '~> 1.8'
 end
+
 appraise 'grape-latest' do
   gem 'grape'
 end
