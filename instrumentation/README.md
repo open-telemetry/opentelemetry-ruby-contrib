@@ -45,6 +45,15 @@ Should you need to instrument an _older_ version of a library you will have to e
 
 Please review the individual instrumentation READMEs for more information about version compatibility.
 
+### Archived instrumentations
+
+Some instrumentations target dependencies that are no longer maintained. These
+codebases remain in `instrumentation/archive` for reference, but they are not
+released alongside the actively maintained gems.
+
+- [`ruby_kafka`](archive/ruby_kafka): archived in February 2026 after the upstream
+  `ruby-kafka` client was deprecated.
+
 ## How can I get involved?
 
 The source for all OpenTelemetry Ruby instrumentation gems is [on github](https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation).

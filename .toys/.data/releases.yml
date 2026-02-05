@@ -230,10 +230,6 @@ gems:
     directory: instrumentation/rspec
     version_constant: [OpenTelemetry, Instrumentation, RSpec, VERSION]
 
-  - name: opentelemetry-instrumentation-ruby_kafka
-    directory: instrumentation/ruby_kafka
-    version_constant: [OpenTelemetry, Instrumentation, RubyKafka, VERSION]
-
   - name: opentelemetry-instrumentation-sidekiq
     directory: instrumentation/sidekiq
     version_constant: [OpenTelemetry, Instrumentation, Sidekiq, VERSION]

@@ -303,7 +303,6 @@ instrumentation_kafka:
       gem:
         - racecar
         - rdkafka
-        - ruby_kafka
         - werewolf
       os:
         - ubuntu-latest

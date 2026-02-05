@@ -18,7 +18,6 @@ on:
       - "instrumentation/rdkafka/**"
       - "instrumentation/redis/**"
       - "instrumentation/resque/**"
-      - "instrumentation/ruby_kafka/**"
       - "instrumentation/sidekiq/**"
       - "instrumentation/trilogy/**"
       - ".github/workflows/ci-instrumentation-with-services.yml"
@@ -146,7 +145,6 @@ jobs:
         gem:
           - racecar
           - rdkafka
-          - ruby_kafka
         os:
           - ubuntu-latest
     name: kafka / ${{ matrix.gem }} / ${{ matrix.os }}
