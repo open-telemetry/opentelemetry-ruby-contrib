@@ -1,11 +1,6 @@
 name: FOSSA scanning
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths: &path_filters
-      - ".github/workflows/fossa.yml"
   push:
     branches:
       - main
