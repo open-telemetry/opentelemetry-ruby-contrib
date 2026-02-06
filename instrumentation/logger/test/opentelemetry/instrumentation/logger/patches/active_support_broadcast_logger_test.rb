@@ -25,10 +25,11 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
   describe '#add' do
     it 'emits the log to the broadcasted loggers' do
       body = 'Ground control to Major Tom'
-      broadcast.add(Logger::DEBUG, body)
+      return_value = broadcast.add(Logger::DEBUG, body)
 
       assert_includes(LOG_STREAM.string, body)
       assert_includes(BROADCASTED_STREAM.string, body)
+      assert_equal true, return_value
     end
 
     it 'emits only one OpenTelemetry log record' do
@@ -46,10 +47,11 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
   describe '#unknown' do
     it 'emits the log to the broadcasted loggers' do
       body = 'I know when to go out'
-      broadcast.unknown(body)
+      return_value = broadcast.unknown(body)
 
       assert_includes(LOG_STREAM.string, body)
       assert_includes(BROADCASTED_STREAM.string, body)
+      assert_equal true, return_value
     end
 
     it 'emits only one OpenTelemetry log record' do
@@ -69,10 +71,11 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
     describe "##{severity}" do
       it 'emits the log to the broadcasted loggers' do
         body = "Still don't know what I was waiting for...#{rand(7)}"
-        broadcast.send(severity.to_sym, body)
+        return_value = broadcast.send(severity.to_sym, body)
 
         assert_includes(LOG_STREAM.string, body)
         assert_includes(BROADCASTED_STREAM.string, body)
+        assert_equal true, return_value
       end
 
       it 'emits only one OpenTelemetry log record' do
