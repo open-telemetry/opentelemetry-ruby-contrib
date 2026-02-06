@@ -52,7 +52,7 @@
       ],
       "datasourceTemplate": "docker",
       "versioningTemplate": "loose",
-      "currentValueTemplate": "{{depVersion}}-alpine{{alpineVersion}}",
+      "currentValueTemplate": "{{depVersion}}",
       "extractVersionTemplate": "^(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)-alpine{{alpineVersion}}$"
     },
     {
@@ -67,7 +67,7 @@
       ],
       "datasourceTemplate": "docker",
       "versioningTemplate": "loose",
-      "currentValueTemplate": "{{depVersion}}-alpine{{alpineVersion}}",
+      "currentValueTemplate": "{{alpineVersion}}",
       "extractVersionTemplate": "^{{depVersion}}-alpine(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)$",
       "depNameTemplate": "{{packageName}}-alpine"
     }
