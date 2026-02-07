@@ -163,6 +163,7 @@ And prior to submitting a pr run the following to perform all the checks:
 
 ```sh
 npm run check
+bundle exec rake rubocop
 ```
 
 which will help to ensure your code complies and it passes all the test required of a pull request.
