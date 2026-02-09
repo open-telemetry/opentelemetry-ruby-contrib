@@ -8,6 +8,7 @@
   "packageRules": [
     {
       "groupName": "all patch versions",
+      "excludeManagers": ["regex"]
       "matchUpdateTypes": ["patch"],
       "schedule": ["before 8am every weekday"]
     },
