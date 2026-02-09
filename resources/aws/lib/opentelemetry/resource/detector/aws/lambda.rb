@@ -17,6 +17,9 @@ module OpenTelemetry
           # Create a constant for resource semantic conventions
           RESOURCE = OpenTelemetry::SemanticConventions::Resource
 
+          # Path to the symlink created by the OTel Lambda extension containing the AWS account ID
+          ACCOUNT_ID_SYMLINK_PATH = '/tmp/.otel-account-id'
+
           def detect
             # Return empty resource if not running on Lambda
             return OpenTelemetry::SDK::Resources::Resource.create({}) unless lambda_environment?
@@ -34,6 +37,14 @@ module OpenTelemetry
 
               # Convert memory size to integer
               resource_attributes[RESOURCE::FAAS_MAX_MEMORY] = ENV['AWS_LAMBDA_FUNCTION_MEMORY_SIZE'].to_i if ENV['AWS_LAMBDA_FUNCTION_MEMORY_SIZE']
+
+              # Read cloud.account.id from symlink created by the OTel Lambda extension
+              begin
+                account_id = File.readlink(ACCOUNT_ID_SYMLINK_PATH)
+                resource_attributes[RESOURCE::CLOUD_ACCOUNT_ID] = account_id
+              rescue Errno::ENOENT, Errno::EINVAL
+                # Symlink doesn't exist or is not a symlink — silently skip
+              end
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e, message: 'Lambda resource detection failed')
               return OpenTelemetry::SDK::Resources::Resource.create({})
