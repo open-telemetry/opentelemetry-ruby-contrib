@@ -8,7 +8,7 @@
   "packageRules": [
     {
       "groupName": "all patch versions",
-      "excludeManagers": ["regex"],
+      "matchPackageNames": ["!ruby"],
       "matchUpdateTypes": ["patch"],
       "schedule": ["before 8am every weekday"]
     },
