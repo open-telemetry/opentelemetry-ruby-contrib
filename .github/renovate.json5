@@ -40,6 +40,7 @@
     {
       "allowedVersions": "<={{add major 1}}",
       "matchCategories": ["docker"],
+      "schedule": ["before 8am on Monday"],
       "dependencyDashboardApproval": false
     },
     {
