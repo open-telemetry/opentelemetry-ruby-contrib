@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_lambda
 
+### Unreleased
+
+* ADDED: Read `cloud.account.id` from symlink created by the OTel Lambda Extension
+
 ### v0.6.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
