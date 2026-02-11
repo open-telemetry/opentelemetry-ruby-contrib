@@ -8,13 +8,19 @@
   "packageRules": [
     {
       "groupName": "all patch versions",
-      "matchPackageNames": ["!ruby"],
+      "matchDepNames": ["!ruby"],
       "matchUpdateTypes": ["patch"],
       "schedule": ["before 8am every weekday"]
     },
     {
       "groupName": "all digest versions",
+      "matchDepNames": ["!ruby"],
       "matchUpdateTypes": ["digest"],
+      "schedule": ["before 8am every weekday"]
+    },
+    {
+      "matchDepNames": ["ruby"],
+      "matchUpdateTypes": ["digest","patch"],
       "schedule": ["before 8am every weekday"]
     },
     {
@@ -23,17 +29,18 @@
     },
     {
       "matchUpdateTypes": ["major"],
-      "matchCategories": ["!ruby"],
+      "matchCategories": ["ci", "js"],
       "schedule": ["before 8am on Monday"]
     },
     {
       "matchUpdateTypes": ["major"],
-      "matchCategories": ["ruby"],
+      "matchCategories": ["ruby", "docker"],
       "dependencyDashboardApproval": true
     },
     {
-      "matchUpdateTypes": ["multipleMajor"],
-      "dependencyDashboardApproval": true
+      "allowedVersions": "<={{add major 1}}",
+      "matchCategories": ["docker"],
+      "dependencyDashboardApproval": false
     },
     {
       "matchFileNames": [".github/actions/test_gem/action.yml", ".github/workflows/installation-tests.yml", ".github/workflows/release-*.yml"],
