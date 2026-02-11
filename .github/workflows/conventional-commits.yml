@@ -1,0 +1,32 @@
+name: Conventional Commits Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true # Cancel any previous runs of this workflow
+
+jobs:
+  validate-commits:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: Conventional Commits Validation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: dev-build-deploy/commit-me@27d14296ec218488c543616d9128d7e75ab7463a # v1.5.3
+        env:
+          FORCE_COLOR: 3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          include-commits: false
+          update-labels: false
+          config: ".commit-me.json"

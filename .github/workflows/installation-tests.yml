@@ -9,8 +9,12 @@ on:
     # Everyday at 2 PM UTC
     - cron: "0 14 * * *"
 
+permissions:
+  contents: read
+
 jobs:
   installation-tests:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
@@ -18,14 +22,13 @@ jobs:
           - 3.4
           - 3.3
           - 3.2
-          - 3.1
     name: ${{ matrix.ruby-version }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         # ATTENTION: Dependabot does not know how to update shared actions file.
         # If you see it update setup-ruby here also update it as part of actions/test_gem/action.yml
-      - uses: ruby/setup-ruby@v1.245.0
+      - uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
       - name: "Install Latest Gem Versions on ${{ matrix.ruby-version }}"

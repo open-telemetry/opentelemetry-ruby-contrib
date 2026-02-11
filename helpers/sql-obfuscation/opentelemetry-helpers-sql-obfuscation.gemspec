@@ -14,8 +14,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'SQL Obfuscation Instrumentation Helpers for the OpenTelemetry framework'
-  spec.description = 'SQL Obfuscation Instrumentation Helpers for the OpenTelemetry framework'
+  spec.summary     = 'This gem is deprecated and no longer maintained. It has been replaced by opentelemetry-helpers-sql-processor.'
+  spec.description = 'This gem is deprecated and no longer maintained. It has been replaced by opentelemetry-helpers-sql-processor.'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
+  spec.required_ruby_version = '>= 3.2'
 
   spec.add_dependency 'opentelemetry-common', '~> 0.21'
 

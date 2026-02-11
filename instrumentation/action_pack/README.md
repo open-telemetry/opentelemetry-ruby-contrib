@@ -38,8 +38,8 @@ This instrumentation now relies on `ActiveSupport::Notifications` and registers 
 
 See the table below for details of what [Rails Framework Hook Events](https://guides.rubyonrails.org/active_support_instrumentation.html#action-controller) are recorded by this instrumentation:
 
-| Event Name | Subscribe? | Creates Span? |  Notes |
-| - | - | - | - |
+| Event Name | Subscribe? | Creates Span? | Notes |
+| ---- | --- | --- | --- |
 | `process_action.action_controller` | :white_check_mark: | :x: | It modifies the existing Rack span |
 
 ## Semantic Conventions
@@ -47,8 +47,6 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 This instrumentation generally uses [HTTP server semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/http-spans/) to update the existing Rack span.
 
 For Rails 7.1+, the span name is updated to match the HTTP method and route that was matched for the request using [`ActionDispatch::Request#route_uri_pattern`](https://api.rubyonrails.org/classes/ActionDispatch/Request.html#method-i-route_uri_pattern), e.g.: `GET /users/:id`
-
-For older versions of Rails the span name is updated to match the HTTP method, controller, and action name that was the target of the request, e.g.: `GET /example/index`
 
 > ![NOTE]: Users may override the `span_naming` option to default to Legacy Span Naming Behavior that uses the controller's class name and action in Ruby documentation syntax, e.g. `ExampleController#index`.
 
@@ -58,7 +56,7 @@ This instrumentation does not emit any custom attributes.
 | - | - | - |
 | `code.namespace` | String | `ActionController` class name |
 | `code.function` | String | `ActionController` action name e.g. `index`, `show`, `edit`, etc... |
-| `http.route` | String | (Rails 7.1+) the route that was matched for the request |
+| `http.route` | String | The route that was matched for the request |
 | `http.target` | String | The `request.filtered_path` |
 
 ### Error Handling for Action Controller
@@ -89,3 +87,21 @@ The `opentelemetry-instrumentation-action_pack` gem is distributed under the Apa
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [rails-home]: https://rubyonrails.org/
+
+## HTTP semantic convention stability
+
+In the OpenTelemetry ecosystem, HTTP semantic conventions have now reached a stable state. However, the initial Rack instrumentation, which Action Pack relies on, was introduced before this stability was achieved, which resulted in HTTP attributes being based on an older version of the semantic conventions.
+
+To facilitate the migration to stable semantic conventions, you can use the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable. This variable allows you to opt-in to the new stable conventions, ensuring compatibility and future-proofing your instrumentation.
+
+Sinatra instrumentation installs Rack middleware, but the middleware version it installs depends on which `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable is set.
+
+When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
+
+- `http` - Emits the stable HTTP and networking conventions and ceases emitting the old conventions previously emitted by the instrumentation.
+- `http/dup` - Emits both the old and stable HTTP and networking conventions, enabling a phased rollout of the stable semantic conventions.
+- Default behavior (in the absence of either value) is to continue emitting the old HTTP and networking conventions the instrumentation previously emitted.
+
+During the transition from old to stable conventions, Rack instrumentation code comes in three patch versions: `dup`, `old`, and `stable`. These versions are identical except for the attributes they send. Any changes to Rack instrumentation should consider all three patches.
+
+For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/).

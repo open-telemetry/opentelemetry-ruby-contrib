@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Anthropic gem requires Ruby 3.2 but is not compatible with Ruby 4+
+# https://github.com/anthropics/anthropic-sdk-ruby/issues/147
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
+  appraise 'anthropic-latest' do
+    gem 'anthropic'
+  end
+
+  appraise 'anthropic-1.9.0' do
+    gem 'anthropic', '~> 1.9.0'
+  end
+end

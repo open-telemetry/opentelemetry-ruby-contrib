@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "check": "npm run check:lint && npm run check:format && npm run check:links && npm run check:spelling",
+    "check:lint": "npm run check:lint:json && npm run check:lint:markdown && npm run check:lint:ruby",
+    "check:lint:json": "jsonlint --config ./.jsonlintrc.yml",
+    "check:lint:markdown": "markdownlint-cli2 '**/*.md'",
+    "check:lint:renovate": "renovate-config-validator",
+    "write:format": "npm run write:format:ruby && prettier . --write",
+    "write:format:json": "prettier **/*.json --write",
+    "write:format:markdown": "prettier **/*.md --write",
+    "write:lint": "npm run write:lint:json && npm run write:lint:markdown",
+    "write:lint:json": "jsonlint --config ./.jsonlintrc.yml --in-place && npm run write:format:json",
+    "write:lint:markdown": "markdownlint-cli2 '**/*.md' --fix && npm run write:format:markdown"
+  },
+  "devDependencies": {
+    "@prantlf/jsonlint": "17.0.0",
+    "markdownlint-cli2": "0.20.0",
+    "renovate": "^42.84.2"
+  }
+}

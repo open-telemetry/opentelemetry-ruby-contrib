@@ -1,5 +1,23 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+### v0.25.1 / 2025-10-22
+
+* FIXED: Update opentelemetry-instrumentation-base dependency
+
+### v0.25.0 / 2025-10-21
+
+* BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+
+* ADDED: Min Ruby Version 3.2 and Rails 7.1
+
+### v0.24.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.24.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.23.0 / 2025-01-16
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1
@@ -78,7 +96,7 @@
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Updated API dependency for 1.0.0.rc1
-* BREAKING CHANGE: Replace Time.now with Process.clock_gettime
+* BREAKING CHANGE: Replace `Time.now` with `Process.clock_gettime`
 
 ### v0.17.0 / 2021-04-22
 

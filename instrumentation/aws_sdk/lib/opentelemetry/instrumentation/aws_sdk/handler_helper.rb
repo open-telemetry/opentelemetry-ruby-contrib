@@ -14,6 +14,10 @@ module OpenTelemetry
             AwsSdk::Instrumentation.instance.config
           end
 
+          def skip_internal_instrumentation?
+            instrumentation_config[:enable_internal_instrumentation] == false
+          end
+
           def client_method(service_id, context)
             "#{service_id}.#{context.operation.name}".delete(' ')
           end

@@ -6,8 +6,9 @@
 # https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/
 
 semconv_stability = %w[old stable dup]
+
 semconv_stability.each do |stability|
-  appraise "mysql2-0.4.0-#{stability}" do
+  appraise "mysql2-latest-#{stability}" do
     gem 'mysql2'
   end
 end

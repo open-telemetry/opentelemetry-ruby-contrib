@@ -1,0 +1,40 @@
+# Keep all in alphabetical order
+components:
+  instrumentation/active_storage:
+    - ymtdzzz
+  instrumentation/anthropic:
+    - robertlaurin
+  instrumentation/aws_sdk:
+    - jterapin
+    - alextwoods
+    - NathanielRN
+  instrumentation/factory_bot:
+    - americodls
+  instrumentation/grape:
+    - muripic
+  instrumentation/graphql:
+    - swalkinsha
+    - rmoslogo
+  instrumentation/grpc:
+    - michal-kazmierczak
+  instrumentation/gruf:
+    - AS-AlStar
+  instrumentation/httpx:
+    - HoneyryderChuck
+  instrumentation/mongo:
+    - johnnyshields
+  instrumentation/racecar:
+    - chrisholmes
+  instrumentation/rspec:
+    - chrisholmes
+  instrumentation/que:
+    - indrekj
+  instrumentation/sidekiq:
+    - dmathieu
+  processor/baggage:
+    - robbkidd
+    - mikegoldsmith
+  resources/container:
+    - scbjans
+  sampler/xray:
+    - jj22ee

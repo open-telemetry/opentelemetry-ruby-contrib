@@ -277,6 +277,18 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.events.first.attributes['exception.message']).wont_be_nil
         _(span.events.first.attributes['exception.stacktrace']).wont_be_nil
       end
+
+      describe 'when record_exception is false' do
+        let(:config) { { record_exception: false } }
+
+        it 'does not record exception when record_exception is false' do
+          expect do
+            client.query('SELECT INVALID')
+          end.must_raise Trilogy::Error
+
+          _(span.events).must_be_nil
+        end
+      end
     end
 
     describe 'when db_statement is set to include' do
@@ -410,6 +422,55 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         encoded = Base64.strict_encode64("{\"uber-trace-id\":\"#{span.hex_trace_id}:#{span.hex_span_id}:0:1\"}")
         assert_equal(sql, "/*VT_SPAN_CONTEXT=#{encoded}*/#{cached_sql}")
         refute(sql.frozen?)
+      end
+    end
+
+    describe 'when propagator is set to tracecontext' do
+      let(:config) { { propagator: 'tracecontext' } }
+
+      it 'injects context on frozen strings' do
+        sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        _(sql).must_be :frozen?
+        propagator = OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
+
+        arg_cache = {} # maintain handles to args
+        allow(client).to receive(:query).and_wrap_original do |m, *args|
+          arg_cache[:query_input] = args[0]
+          _(args[0]).must_be :frozen?
+          m.call(args[0])
+        end
+
+        allow(propagator).to receive(:inject).and_wrap_original do |m, *args|
+          arg_cache[:inject_input] = args[0]
+          _(args[0]).wont_be :frozen?
+          _(args[0]).must_match(sql)
+          m.call(args[0], context: args[1][:context])
+        end
+
+        expect do
+          client.query(sql)
+        end.must_raise Trilogy::Error
+
+        # arg_cache[:inject_input] _was_ a mutable string, so it has the context injected
+        # The tracecontext propagator injects traceparent and tracestate headers as SQL comments
+        _(arg_cache[:inject_input]).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
+
+        # arg_cache[:inject_input] is now frozen
+        _(arg_cache[:inject_input]).must_be :frozen?
+      end
+
+      it 'injects context on unfrozen strings' do
+        # inbound SQL is not frozen (string prefixed with +)
+        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
+        _(sql).wont_be :frozen?
+
+        expect do
+          client.query(sql)
+        end.must_raise Trilogy::Error
+
+        # The tracecontext propagator injects traceparent header as SQL comment
+        _(sql).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
+        _(sql).wont_be :frozen?
       end
     end
 

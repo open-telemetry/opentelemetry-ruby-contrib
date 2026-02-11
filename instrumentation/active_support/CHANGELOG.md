@@ -1,5 +1,23 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+### v0.10.1 / 2025-10-22
+
+* FIXED: Update opentelemetry-instrumentation-base dependency
+
+### v0.10.0 / 2025-10-21
+
+* BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+
+* ADDED: Min Ruby Version 3.2 and Rails 7.1
+
+### v0.9.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.9.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.8.0 / 2025-01-16
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1

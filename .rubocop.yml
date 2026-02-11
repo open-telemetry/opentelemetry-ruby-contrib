@@ -1,7 +1,7 @@
 plugins: rubocop-performance
 
 AllCops:
-  TargetRubyVersion: '3.1'
+  TargetRubyVersion: 3.2
   NewCops: enable
   Exclude:
     - Rakefile
@@ -9,6 +9,7 @@ AllCops:
     - "**/example/*"
     - "bin/instrumentation_generator"
     - "**/**/vendor/bundle/**/*"
+    - "**/proto/**"
 Bundler/OrderedGems:
   Enabled: false
 Gemspec/DevelopmentDependencies:
@@ -37,7 +38,7 @@ Metrics/PerceivedComplexity:
   Enabled: false
 Naming/FileName:
   Exclude:
-    - '**/opentelemetry-*'
+    - "**/opentelemetry-*"
 Style/Documentation:
   Exclude:
     - "**/test/**/*"
@@ -49,7 +50,7 @@ Style/ModuleFunction:
   Enabled: false
 Style/MultilineIfModifier:
   Exclude:
-     - "**/test/**/*"
+    - "**/test/**/*"
 Style/RedundantRegexpEscape:
   Enabled: false
 Style/StringLiterals:

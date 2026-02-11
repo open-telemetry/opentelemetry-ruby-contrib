@@ -268,6 +268,48 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       end
     end
 
+    describe 'when propagator is set to tracecontext' do
+      let(:config) { { propagator: 'tracecontext' } }
+
+      it 'injects context into SQL query' do
+        sql = +'SELECT * from users where users.id = 1'
+
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        # Verify the SQL was modified with trace context
+        _(sql).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
+      end
+
+      it 'does not modify frozen strings' do
+        sql = 'SELECT * from users where users.id = 1'
+        _(sql).must_be :frozen?
+
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        # Frozen strings should not be modified
+        _(sql).wont_match(%r{/\*traceparent=})
+      end
+    end
+
+    describe 'when propagator is set to none' do
+      let(:config) { { propagator: 'none' } }
+
+      it 'does not inject context' do
+        sql = +'SELECT * from users where users.id = 1'
+        original_sql = sql.dup
+
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        _(sql).must_equal original_sql
+      end
+    end
+
     describe 'when db_statement is configured via environment variable' do
       describe 'when db_statement set as omit' do
         it 'omits db.statement attribute' do

@@ -1,5 +1,35 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.35.0 / 2026-01-13
+
+* ADDED: Add SQL Comment Propagator
+
+### v0.34.1 / 2025-12-03
+
+* FIXED: Update gemspec dependencies to sql-processor
+
+### v0.34.0 / 2025-12-02
+
+* ADDED: Replace references sql-obfuscation -> sql-processor
+
+### v0.33.0 / 2025-11-03
+
+* ADDED: Instrument PG connect
+
+### v0.32.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
+### v0.31.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.31.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.30.1 / 2025-04-16
 
 * refactor: Use SQL helpers for context attributes #1271

@@ -6,25 +6,20 @@
 
 source 'https://rubygems.org'
 
-# DO NOT ADD DEPENDENCIES HERE!
-# Please declare a minimum development dependency in the gemspec,
-# then target specific versions in the Appraisals file.
-
 gemspec
 
 group :test do
   gem 'appraisal', '~> 2.5'
-  gem 'bundler', '>= 1.17'
   gem 'minitest', '~> 5.0'
   gem 'opentelemetry-sdk', '~> 1.0'
-  gem 'rake', '~> 12.3.3'
-  gem 'rubocop', '~> 1.76.2'
-  gem 'rubocop-performance', '~> 1.24.0'
+  gem 'rake', '>= 13'
+  gem 'rubocop', '~> 1.82.0'
+  gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'
   gem 'yard', '~> 0.9'
-  gem 'grpc_mock'
-  gem 'opentelemetry-test-helpers'
+  gem 'grpc_mock', '~> 0.4.6'
+  gem 'opentelemetry-test-helpers', '~> 0.7.0'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   if RUBY_VERSION >= '3.4'
     gem 'base64'

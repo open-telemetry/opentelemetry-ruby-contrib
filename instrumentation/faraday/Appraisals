@@ -4,12 +4,25 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[1.0 2.0].each do |version|
-  appraise "faraday-#{version}" do
-    gem 'faraday', "~> #{version}"
-  end
-end
+# To facilitate HTTP semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
-appraise 'faraday-latest' do
-  gem 'faraday'
+semconv_stability = %w[old stable dup]
+
+gem_versions = %w[2.14.0]
+
+gem_versions << '1.10.0' if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
+
+semconv_stability.each do |mode|
+  gem_versions.each do |version|
+    appraise "faraday-#{version}-#{mode}" do
+      gem 'faraday', "~> #{version}"
+    end
+  end
+
+  appraise "faraday-latest-#{mode}" do
+    gem 'faraday'
+  end
 end

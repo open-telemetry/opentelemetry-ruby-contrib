@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-helpers-sql-obfuscation'
+require 'opentelemetry-helpers-sql-processor'
 require_relative '../constants'
 require_relative '../lru_cache'
 
@@ -12,15 +12,87 @@ module OpenTelemetry
   module Instrumentation
     module PG
       module Patches
+        # Utility methods for setting connection attributes from Connect module
+        module ConnectionHelper
+          module_function
+
+          def set_connection_attributes(span, conn, config)
+            attributes = {
+              'db.system' => 'postgresql',
+              'db.name' => conn.db,
+              'db.user' => conn.user
+            }
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+            h = conn.host
+            if h&.start_with?('/')
+              attributes['net.sock.family'] = 'unix'
+              attributes['net.peer.name'] = h
+            else
+              attributes['net.transport'] = 'ip_tcp'
+              attributes['net.peer.name'] = h
+              attributes['net.peer.port'] = conn.port if defined?(::PG::DEF_PGPORT)
+            end
+
+            attributes.merge!(OpenTelemetry::Instrumentation::PG.attributes)
+            attributes.compact!
+
+            span.add_attributes(attributes)
+          end
+        end
+
+        # Module to prepend to PG::Connection singleton class for connection initialization
+        # We override `new` instead of `initialize` because PG::Connection.new is implemented
+        # as a Ruby method that calls the C-level connect_start, bypassing initialize.
+        # We also need to override the aliases (open, connect, async_connect) because they
+        # were aliased before our prepend, so they point to the original method.
+        # See: https://github.com/ged/ruby-pg/blob/master/lib/pg/connection.rb#L870
+        module Connect
+          def new(...)
+            tracer = OpenTelemetry::Instrumentation::PG::Instrumentation.instance.tracer
+            config = OpenTelemetry::Instrumentation::PG::Instrumentation.instance.config
+
+            tracer.in_span('connect', kind: :client) do |span|
+              if block_given?
+                super do |conn|
+                  ConnectionHelper.set_connection_attributes(span, conn, config)
+                  yield conn
+                end
+              else
+                conn = super
+                ConnectionHelper.set_connection_attributes(span, conn, config)
+                conn
+              end
+            end
+          end
+
+          PG::Constants::CONNECTION_METHODS.each do |method|
+            alias_method method, :new
+          end
+        end
+
         # Module to prepend to PG::Connection for instrumentation
         module Connection # rubocop:disable Metrics/ModuleLength
           # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
-          TABLE_NAME = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE(?:\s+IF\s+EXISTS)?)\s+["]?([\w\.]+)["]?/i
+          TABLE_NAME = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE(?:\s+IF\s+EXISTS)?)\s+"?([\w\.]+)"?/i
 
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args, &block|
               span_name, attrs = span_attrs(:query, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
+              tracer.in_span(span_name, attributes: attrs, kind: :client) do |_span, context|
+                # Inject propagator context into SQL if propagator is configured
+                if propagator && args[0].is_a?(String)
+                  sql = args[0]
+                  if sql.frozen?
+                    sql = +sql
+                    propagator.inject(sql, context: context)
+                    sql.freeze
+                    args[0] = sql
+                  else
+                    propagator.inject(sql, context: context)
+                  end
+                end
+
                 if block
                   block.call(super(*args))
                 else
@@ -33,7 +105,21 @@ module OpenTelemetry
           PG::Constants::PREPARE_ISH_METHODS.each do |method|
             define_method method do |*args|
               span_name, attrs = span_attrs(:prepare, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
+              tracer.in_span(span_name, attributes: attrs, kind: :client) do |_span, context|
+                # Inject propagator context into SQL if propagator is configured
+                # For prepare, the SQL is in args[1]
+                if propagator && args[1].is_a?(String)
+                  sql = args[1]
+                  if sql.frozen?
+                    sql = +sql
+                    propagator.inject(sql, context: context)
+                    sql.freeze
+                    args[1] = sql
+                  else
+                    propagator.inject(sql, context: context)
+                  end
+                end
+
                 super(*args)
               end
             end
@@ -57,7 +143,7 @@ module OpenTelemetry
           def obfuscate_sql(sql)
             return sql unless config[:db_statement] == :obfuscate
 
-            OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(
+            OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(
               sql,
               obfuscation_limit: config[:obfuscation_limit],
               adapter: :postgres
@@ -188,6 +274,10 @@ module OpenTelemetry
             # string when there is exactly one.
             p = conninfo_hash[:port]
             p.to_i unless p.nil? || p.empty? || p.include?(',')
+          end
+
+          def propagator
+            OpenTelemetry::Instrumentation::PG::Instrumentation.instance.propagator
           end
         end
       end

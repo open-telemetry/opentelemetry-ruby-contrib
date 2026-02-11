@@ -1,5 +1,35 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.66.0 / 2026-01-13
+
+* ADDED: Add SQL Comment Propagator
+
+### v0.65.1 / 2025-12-03
+
+* FIXED: Update gemspec dependencies to sql-processor
+
+### v0.65.0 / 2025-12-02
+
+* ADDED: Replace references sql-obfuscation -> sql-processor
+
+### v0.64.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+
+* ADDED: Min Ruby Version 3.2
+
+### v0.63.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.63.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.62.0 / 2025-09-25
+
+* ADDED: Trilogy: introduce record_exception setting
+
 ### v0.61.1 / 2025-04-16
 
 * refactor: Use SQL helpers for context attributes #1271
