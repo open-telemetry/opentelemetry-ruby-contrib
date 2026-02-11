@@ -25,265 +25,195 @@ git_user_email: 197425009+otelbot@users.noreply.github.com
 #     "opentelemetry-helpers-sql" would default to
 #     "lib/opentelemetry/helpers/sql/version.rb", so this field is required
 #     only if the actual path is different.)
-#  *  version_constant: The fully-qualified version constant as an array.
-#     (Required if the actual constant name, including its capitalization,
-#     differs from what would be inferred from the gem name. This means it's
-#     always required in this repo, because the capitalization of the
-#     "OpenTelemetry" namespace does not match the gem name "opentelemetry".)
 #  *  changelog_path: Path to the changelog relative to the gem directory.
 #     (Required only if it is not in the expected location, which is the file
 #     "CHANGELOG.md" at the root of the gem directory.)
 gems:
   - name: opentelemetry-instrumentation-factory_bot
     directory: instrumentation/factory_bot
-    version_constant: [OpenTelemetry, Instrumentation, FactoryBot, VERSION]
 
   - name: opentelemetry-instrumentation-anthropic
     directory: instrumentation/anthropic
-    version_constant: [OpenTelemetry, Instrumentation, Anthropic, VERSION]
 
   - name: opentelemetry-instrumentation-active_storage
     directory: instrumentation/active_storage
-    version_constant: [OpenTelemetry, Instrumentation, ActiveStorage, VERSION]
 
   - name: opentelemetry-helpers-sql
     directory: helpers/sql
-    version_constant: [OpenTelemetry, Helpers, Sql, VERSION]
 
   - name: opentelemetry-helpers-mysql
     directory: helpers/mysql
-    version_constant: [OpenTelemetry, Helpers, MySQL, VERSION]
 
   - name: opentelemetry-helpers-sql-processor
     directory: helpers/sql-processor
     version_rb_path: lib/opentelemetry/helpers/sql_processor/version.rb
-    version_constant: [OpenTelemetry, Helpers, SqlProcessor, VERSION]
 
   - name: opentelemetry-instrumentation-grape
     directory: instrumentation/grape
-    version_constant: [OpenTelemetry, Instrumentation, Grape, VERSION]
 
   - name: opentelemetry-instrumentation-gruf
     directory: instrumentation/gruf
-    version_constant: [OpenTelemetry, Instrumentation, Gruf, VERSION]
 
   - name: opentelemetry-instrumentation-logger
     directory: instrumentation/logger
-    version_constant: [OpenTelemetry, Instrumentation, Logger, VERSION]
 
   - name: opentelemetry-instrumentation-racecar
     directory: instrumentation/racecar
-    version_constant: [OpenTelemetry, Instrumentation, Racecar, VERSION]
 
   - name: opentelemetry-instrumentation-rake
     directory: instrumentation/rake
-    version_constant: [OpenTelemetry, Instrumentation, Rake, VERSION]
 
   - name: opentelemetry-instrumentation-rdkafka
     directory: instrumentation/rdkafka
-    version_constant: [OpenTelemetry, Instrumentation, Rdkafka, VERSION]
 
   - name: opentelemetry-instrumentation-trilogy
     directory: instrumentation/trilogy
-    version_constant: [OpenTelemetry, Instrumentation, Trilogy, VERSION]
 
   - name: opentelemetry-instrumentation-active_support
     directory: instrumentation/active_support
-    version_constant: [OpenTelemetry, Instrumentation, ActiveSupport, VERSION]
 
   - name: opentelemetry-instrumentation-action_mailer
     directory: instrumentation/action_mailer
-    version_constant: [OpenTelemetry, Instrumentation, ActionMailer, VERSION]
 
   - name: opentelemetry-instrumentation-action_view
     directory: instrumentation/action_view
-    version_constant: [OpenTelemetry, Instrumentation, ActionView, VERSION]
 
   - name: opentelemetry-instrumentation-action_pack
     directory: instrumentation/action_pack
-    version_constant: [OpenTelemetry, Instrumentation, ActionPack, VERSION]
 
   - name: opentelemetry-instrumentation-active_job
     directory: instrumentation/active_job
-    version_constant: [OpenTelemetry, Instrumentation, ActiveJob, VERSION]
 
   - name: opentelemetry-instrumentation-resque
     directory: instrumentation/resque
-    version_constant: [OpenTelemetry, Instrumentation, Resque, VERSION]
 
   - name: opentelemetry-instrumentation-bunny
     directory: instrumentation/bunny
-    version_constant: [OpenTelemetry, Instrumentation, Bunny, VERSION]
 
   - name: opentelemetry-instrumentation-base
     directory: instrumentation/base
     version_rb_path: lib/opentelemetry/instrumentation/version.rb
-    version_constant: [OpenTelemetry, Instrumentation, VERSION]
 
   - name: opentelemetry-instrumentation-active_record
     directory: instrumentation/active_record
-    version_constant: [OpenTelemetry, Instrumentation, ActiveRecord, VERSION]
 
   - name: opentelemetry-instrumentation-aws_sdk
     directory: instrumentation/aws_sdk
-    version_constant: [OpenTelemetry, Instrumentation, AwsSdk, VERSION]
 
   - name: opentelemetry-instrumentation-aws_lambda
     directory: instrumentation/aws_lambda
-    version_constant: [OpenTelemetry, Instrumentation, AwsLambda, VERSION]
 
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb
-    version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]
 
   - name: opentelemetry-instrumentation-http
     directory: instrumentation/http
-    version_constant: [OpenTelemetry, Instrumentation, HTTP, VERSION]
 
   - name: opentelemetry-instrumentation-graphql
     directory: instrumentation/graphql
-    version_constant: [OpenTelemetry, Instrumentation, GraphQL, VERSION]
 
   - name: opentelemetry-instrumentation-http_client
     directory: instrumentation/http_client
-    version_constant: [OpenTelemetry, Instrumentation, HttpClient, VERSION]
 
   - name: opentelemetry-instrumentation-httpx
     directory: instrumentation/httpx
-    version_constant: [OpenTelemetry, Instrumentation, HTTPX, VERSION]
 
   - name: opentelemetry-instrumentation-koala
     directory: instrumentation/koala
-    version_constant: [OpenTelemetry, Instrumentation, Koala, VERSION]
 
   - name: opentelemetry-instrumentation-active_model_serializers
     directory: instrumentation/active_model_serializers
-    version_constant:
-      [OpenTelemetry, Instrumentation, ActiveModelSerializers, VERSION]
 
   - name: opentelemetry-instrumentation-concurrent_ruby
     directory: instrumentation/concurrent_ruby
-    version_constant: [OpenTelemetry, Instrumentation, ConcurrentRuby, VERSION]
 
   - name: opentelemetry-instrumentation-dalli
     directory: instrumentation/dalli
-    version_constant: [OpenTelemetry, Instrumentation, Dalli, VERSION]
 
   - name: opentelemetry-instrumentation-delayed_job
     directory: instrumentation/delayed_job
-    version_constant: [OpenTelemetry, Instrumentation, DelayedJob, VERSION]
 
   - name: opentelemetry-instrumentation-ethon
     directory: instrumentation/ethon
-    version_constant: [OpenTelemetry, Instrumentation, Ethon, VERSION]
 
   - name: opentelemetry-instrumentation-excon
     directory: instrumentation/excon
-    version_constant: [OpenTelemetry, Instrumentation, Excon, VERSION]
 
   - name: opentelemetry-instrumentation-faraday
     directory: instrumentation/faraday
-    version_constant: [OpenTelemetry, Instrumentation, Faraday, VERSION]
 
   - name: opentelemetry-instrumentation-grpc
     directory: instrumentation/grpc
-    version_constant: [OpenTelemetry, Instrumentation, Grpc, VERSION]
 
   - name: opentelemetry-instrumentation-mongo
     directory: instrumentation/mongo
-    version_constant: [OpenTelemetry, Instrumentation, Mongo, VERSION]
 
   - name: opentelemetry-instrumentation-mysql2
     directory: instrumentation/mysql2
-    version_constant: [OpenTelemetry, Instrumentation, Mysql2, VERSION]
 
   - name: opentelemetry-instrumentation-net_http
     directory: instrumentation/net_http
     version_rb_path: lib/opentelemetry/instrumentation/net/http/version.rb
-    version_constant: [OpenTelemetry, Instrumentation, Net, HTTP, VERSION]
 
   - name: opentelemetry-instrumentation-pg
     directory: instrumentation/pg
-    version_constant: [OpenTelemetry, Instrumentation, PG, VERSION]
 
   - name: opentelemetry-instrumentation-que
     directory: instrumentation/que
-    version_constant: [OpenTelemetry, Instrumentation, Que, VERSION]
 
   - name: opentelemetry-instrumentation-rack
     directory: instrumentation/rack
-    version_constant: [OpenTelemetry, Instrumentation, Rack, VERSION]
 
   - name: opentelemetry-instrumentation-rails
     directory: instrumentation/rails
-    version_constant: [OpenTelemetry, Instrumentation, Rails, VERSION]
 
   - name: opentelemetry-instrumentation-redis
     directory: instrumentation/redis
-    version_constant: [OpenTelemetry, Instrumentation, Redis, VERSION]
 
   - name: opentelemetry-instrumentation-restclient
     directory: instrumentation/restclient
-    version_constant: [OpenTelemetry, Instrumentation, RestClient, VERSION]
 
   - name: opentelemetry-instrumentation-rspec
     directory: instrumentation/rspec
-    version_constant: [OpenTelemetry, Instrumentation, RSpec, VERSION]
 
   - name: opentelemetry-instrumentation-ruby_kafka
     directory: instrumentation/ruby_kafka
-    version_constant: [OpenTelemetry, Instrumentation, RubyKafka, VERSION]
 
   - name: opentelemetry-instrumentation-sidekiq
     directory: instrumentation/sidekiq
-    version_constant: [OpenTelemetry, Instrumentation, Sidekiq, VERSION]
 
   - name: opentelemetry-instrumentation-sinatra
     directory: instrumentation/sinatra
-    version_constant: [OpenTelemetry, Instrumentation, Sinatra, VERSION]
 
   - name: opentelemetry-instrumentation-all
     directory: instrumentation/all
-    version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
 
   - name: opentelemetry-processor-baggage
     directory: processor/baggage
-    version_constant: [OpenTelemetry, Processor, Baggage, VERSION]
 
   - name: opentelemetry-propagator-google_cloud_trace_context
     directory: propagator/google_cloud_trace_context
-    version_constant:
-      [OpenTelemetry, Propagator, GoogleCloudTraceContext, VERSION]
 
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace
-    version_constant: [OpenTelemetry, Propagator, OTTrace, VERSION]
 
   - name: opentelemetry-propagator-vitess
     directory: propagator/vitess
-    version_constant: [OpenTelemetry, Propagator, Vitess, VERSION]
 
   - name: opentelemetry-propagator-xray
     directory: propagator/xray
-    version_constant: [OpenTelemetry, Propagator, XRay, VERSION]
 
   - name: opentelemetry-resource-detector-aws
     directory: resources/aws
-    version_constant: [OpenTelemetry, Resource, Detector, AWS, VERSION]
 
   - name: opentelemetry-resource-detector-azure
     directory: resources/azure
-    version_constant: [OpenTelemetry, Resource, Detector, Azure, VERSION]
 
   - name: opentelemetry-resource-detector-container
     directory: resources/container
-    version_constant: [OpenTelemetry, Resource, Detector, Container, VERSION]
 
   - name: opentelemetry-resource-detector-google_cloud_platform
     directory: resources/google_cloud_platform
-    version_constant:
-      [OpenTelemetry, Resource, Detector, GoogleCloudPlatform, VERSION]
 
   - name: opentelemetry-sampler-xray
     directory: sampler/xray
-    version_constant: [OpenTelemetry, Sampler, XRay, VERSION]
