@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry-helpers-mysql'
-require 'opentelemetry-helpers-sql-obfuscation'
+require 'opentelemetry-helpers-sql-processor'
 
 module OpenTelemetry
   module Instrumentation
@@ -55,11 +55,11 @@ module OpenTelemetry
                 attributes['db.query.text'] = sql
               when :obfuscate
                 attributes[SemanticConventions::Trace::DB_STATEMENT] =
-                  OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(
+                  OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(
                     sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql
                   )
                 attributes['db.query.text'] =
-                  OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(
+                  OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(
                     sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql
                   )
               end
