@@ -15,6 +15,6 @@
   "devDependencies": {
     "@prantlf/jsonlint": "17.0.0",
     "markdownlint-cli2": "0.20.0",
-    "renovate": "^42.84.2"
+    "renovate": "^42.96.3"
   }
 }
