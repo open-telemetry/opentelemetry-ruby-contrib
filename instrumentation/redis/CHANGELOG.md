@@ -50,41 +50,41 @@
 
 ### v0.25.1 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.25.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.24.1 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.24.0 / 2022-09-14
 
-* ADDED: Redis-rb 5.0 and redis-client support 
+* ADDED: Redis-rb 5.0 and redis-client support
 
 ### v0.23.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.22.1 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.22.0 / 2022-05-02
 
-* ADDED: Validate Using Enums 
-* FIXED: Add appraisals for redis 4.2-4.6 
+* ADDED: Validate Using Enums
+* FIXED: Add appraisals for redis 4.2-4.6
 
 ### v0.21.3 / 2022-02-02
 
-* FIXED: Prevent redis instrumentation from mutating the command 
+* FIXED: Prevent redis instrumentation from mutating the command
 
 ### v0.21.2 / 2021-12-01
 
@@ -96,13 +96,13 @@
 
 ### v0.21.0 / 2021-08-12
 
-* ADDED: Add toggle for redis db.statement attribute 
+* ADDED: Add toggle for redis db.statement attribute
 
 ### v0.20.0 / 2021-06-23
 
-* BREAKING CHANGE: Total order constraint on span.status= 
+* BREAKING CHANGE: Total order constraint on span.status=
 
-* FIXED: Total order constraint on span.status= 
+* FIXED: Total order constraint on span.status=
 
 ### v0.19.0 / 2021-05-28
 

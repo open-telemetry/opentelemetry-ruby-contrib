@@ -65,7 +65,7 @@
 
 ### v0.24.1 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.24.0 / 2023-05-15
 
@@ -73,32 +73,32 @@
 
 ### v0.23.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.22.2 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.22.1 / 2022-11-28
 
-* FIXED: `format_command`'s terrible performance 
+* FIXED: `format_command`'s terrible performance
 
 ### v0.22.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.21.0 / 2022-05-02
 
-* ADDED: Validate Using Enums 
+* ADDED: Validate Using Enums
 
 ### v0.20.0 / 2021-12-01
 
-* ADDED: Add dalli obfuscation for db_statement 
-* FIXED: Resolve Dalli::Server deprecation in 3.0+ 
+* ADDED: Add dalli obfuscation for db_statement
+* FIXED: Resolve Dalli::Server deprecation in 3.0+
 
 ### v0.19.1 / 2021-09-29
 
@@ -106,8 +106,8 @@
 
 ### v0.19.0 / 2021-08-12
 
-* ADDED: Add configuration options for dalli 
-* DOCS: Update docs to rely more on environment variable configuration 
+* ADDED: Add configuration options for dalli
+* DOCS: Update docs to rely more on environment variable configuration
 
 ### v0.18.1 / 2021-06-23
 

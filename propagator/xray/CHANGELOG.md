@@ -34,14 +34,14 @@
 
 ### v0.22.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.21.1 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.21.0 / 2022-06-09
 
@@ -53,12 +53,12 @@
 
 ### v0.20.0 / 2021-08-12
 
-* ADDED: Xray compliant ids 
+* ADDED: Xray compliant ids
 
 ### v0.19.0 / 2021-06-23
 
 * FIXED: XRay propagator null exception (#833)
-* ADDED: Add Tracer.non_recording_span to API 
+* ADDED: Add Tracer.non_recording_span to API
 
 ### v0.18.0 / 2021-05-21
 

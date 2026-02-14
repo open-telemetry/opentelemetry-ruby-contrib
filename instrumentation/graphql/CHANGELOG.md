@@ -81,8 +81,8 @@
 
 ### v0.26.2 / 2023-06-05
 
-* FIXED: Base config options 
-* FIXED: GraphQL resolve_type_lazy 
+* FIXED: Base config options
+* FIXED: GraphQL resolve_type_lazy
 
 ### v0.26.1 / 2023-05-30
 
@@ -90,15 +90,15 @@
 
 ### v0.26.0 / 2023-05-17
 
-* BREAKING CHANGE: GraphQL instrumentation: support new tracing API 
+* BREAKING CHANGE: GraphQL instrumentation: support new tracing API
 
 * ADDED: GraphQL instrumentation: support new tracing API
 
 ### v0.25.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.24.0 / 2023-03-15
 
@@ -114,21 +114,21 @@
 
 ### v0.22.0 / 2023-01-27
 
-* ADDED: Normalize GraphQL span names for easier aggregation analysis 
+* ADDED: Normalize GraphQL span names for easier aggregation analysis
 
 ### v0.21.1 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.21.0 / 2022-07-12
 
-* FIXED: Use semantic graphql attribute names 
+* FIXED: Use semantic graphql attribute names
 
 ### v0.20.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.19.3 / 2022-05-05
 
@@ -144,8 +144,8 @@
 
 ### v0.19.0 / 2021-08-12
 
-* ADDED: Add support for graphql errors 
-* DOCS: Update docs to rely more on environment variable configuration 
+* ADDED: Add support for graphql errors
+* DOCS: Update docs to rely more on environment variable configuration
 
 ### v0.18.1 / 2021-06-23
 
