@@ -73,7 +73,7 @@ FIXED: Reduce Object allocation
 
 ### v0.3.0 / 2023-02-01
 
-* BREAKING CHANE: Drop Rails 5 Support
+* BREAKING CHANGE: Drop Rails 5 Support
 * ADDED: Drop Rails 5 Support
 
 ### v0.2.2 / 2023-01-14
