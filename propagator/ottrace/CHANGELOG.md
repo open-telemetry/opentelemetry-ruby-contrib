@@ -3,7 +3,6 @@
 ### v0.24.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
-
 * ADDED: Min Ruby Version 3.2
 
 ### v0.23.0 / 2025-09-30
@@ -13,7 +12,6 @@
 ### v0.22.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.21.4 / 2024-11-26
@@ -35,7 +33,6 @@
 ### v0.21.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 * DOCS: Update URLs to rubydocs
 
@@ -63,7 +60,6 @@
 ### v0.19.0 / 2021-06-23
 
 * BREAKING CHANGE: Refactor Baggage to remove Noop*
-
 * ADDED: Add Tracer.non_recording_span to API
 * FIXED: Support Case Insensitive Trace and Span IDs
 * FIXED: Refactor Baggage to remove Noop*

@@ -11,7 +11,6 @@
 ### v0.11.0 / 2025-10-21
 
 * BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
-
 * ADDED: Min Ruby Version 3.2 and Rails 7.1
 
 ### v0.10.1 / 2025-09-30
@@ -26,7 +25,6 @@
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Drop Support for EoL Rails 6.1
 * ADDED: Set minimum supported version to Ruby 3.1
 
@@ -70,7 +68,6 @@
 ### v0.6.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 * FIXED: Drop Rails dependency for ActiveSupport Instrumentation
 

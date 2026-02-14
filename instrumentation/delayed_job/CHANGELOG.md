@@ -7,7 +7,6 @@
 ### v0.25.0 / 2025-10-21
 
 * BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
-
 * ADDED: Min Ruby Version 3.2 and Rails 7.1
 
 ### v0.24.1 / 2025-09-30
@@ -22,7 +21,6 @@
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Drop Support for EoL Rails 6.1
 * ADDED: Set minimum supported version to Ruby 3.1
 
@@ -45,7 +43,6 @@
 ### v0.22.0 / 2023-10-16
 
 * BREAKING CHANGE: Drop DelayedJob ActiveRecord in Tests
-
 * FIXED: Drop DelayedJob ActiveRecord in Tests
 
 ### v0.21.0 / 2023-09-07
@@ -59,7 +56,6 @@
 ### v0.20.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.19.1 / 2023-01-14
@@ -114,7 +110,6 @@
 ### v0.14.0 / 2021-02-03
 
 * BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
-
 * ADDED: Replace getter and setter callables and remove rack specific propagators
 
 ### v0.13.0 / 2021-01-29

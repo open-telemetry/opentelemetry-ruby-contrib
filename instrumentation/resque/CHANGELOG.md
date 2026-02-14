@@ -3,7 +3,6 @@
 ### v0.8.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
-
 * ADDED: Min Ruby Version 3.2
 
 ### v0.7.1 / 2025-09-30
@@ -17,7 +16,6 @@
 ### v0.6.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.5.2 / 2024-04-30
@@ -43,7 +41,6 @@
 ### v0.4.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 * ADDED: Add :force_flush option to Resque instrumentation
 * FIXED: Fix flaky tests for resque.

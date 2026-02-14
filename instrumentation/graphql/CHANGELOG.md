@@ -12,7 +12,6 @@
 ### v0.31.0 / 2025-10-21
 
 * BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
-
 * ADDED: Min Ruby Version 3.2 and Rails 7.1
 
 ### v0.30.1 / 2025-09-30
@@ -26,7 +25,6 @@
 ### v0.29.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.28.4 / 2024-07-30
@@ -48,7 +46,6 @@
 ### v0.28.0 / 2024-02-16
 
 * BREAKING CHANGE: GraphQL Legacy Tracer perf improvements [#867](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867).
-
 * ADDED: GraphQL Legacy Tracer perf improvements [#867](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867).
 
 ### v0.27.0 / 2023-11-28
@@ -91,25 +88,21 @@
 ### v0.26.0 / 2023-05-17
 
 * BREAKING CHANGE: GraphQL instrumentation: support new tracing API
-
 * ADDED: GraphQL instrumentation: support new tracing API
 
 ### v0.25.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.24.0 / 2023-03-15
 
 * BREAKING CHANGE: Add support for GraphQL 2.0.19
-
 * FIXED: Add support for GraphQL 2.0.19
 
 ### v0.23.0 / 2023-03-13
 
 * BREAKING CHANGE: Lock graphql max version to 2.0.17
-
 * FIXED: Lock graphql max version to 2.0.17
 
 ### v0.22.0 / 2023-01-27

@@ -7,7 +7,6 @@
 ### v0.28.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
-
 * ADDED: Min Ruby Version 3.2
 
 ### v0.27.1 / 2025-09-30
@@ -25,7 +24,6 @@
 ### v0.26.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.25.7 / 2024-07-23
@@ -79,13 +77,11 @@
 ### v0.24.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.23.0 / 2023-02-01
 
 * BREAKING CHANGE: Drop Rails 5 Support
-
 * ADDED: Drop Rails 5 Support
 
 ### v0.22.1 / 2023-01-14
@@ -129,7 +125,6 @@
   - Config option enable_job_class_span_names renamed to span_naming and now expects a symbol of value :job_class, or :queue
   - The default behavior is no longer to have one continuous trace for the enqueue and process spans, using links is the new default.  To maintain the previous behavior the config option propagation_style must be set to :child.
 * BREAKING CHANGE: Total order constraint on span.status=
-
 * FIXED: Sidekiq propagation config
 * FIXED: Total order constraint on span.status=
 
@@ -138,7 +133,6 @@
 * ADDED: Updated API dependency for 1.0.0.rc1
 * TEST: update test for redis instrumentation refactor [#760](https://github.com/open-telemetry/opentelemetry-ruby/pull/760)
 * BREAKING CHANGE: Remove optional parent_context from in_span
-
 * FIXED: Remove optional parent_context from in_span
 * FIXED: Instrument Redis more thoroughly by patching Client#process.
 
@@ -158,7 +152,6 @@
 ### v0.14.0 / 2021-02-03
 
 * BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
-
 * ADDED: Replace getter and setter callables and remove rack specific propagators
 
 ### v0.13.0 / 2021-01-29
@@ -182,7 +175,6 @@
 ### v0.9.0 / 2020-11-27
 
 * BREAKING CHANGE: Add timeout for force_flush and shutdown
-
 * ADDED: Add timeout for force_flush and shutdown
 
 ### v0.8.0 / 2020-10-27

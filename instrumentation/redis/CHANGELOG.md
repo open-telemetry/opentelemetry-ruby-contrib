@@ -3,7 +3,6 @@
 ### v0.28.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
-
 * ADDED: Min Ruby Version 3.2
 
 ### v0.27.1 / 2025-09-30
@@ -21,7 +20,6 @@
 ### v0.26.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.25.7 / 2024-07-23
@@ -55,7 +53,6 @@
 ### v0.25.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.24.1 / 2023-01-14
@@ -101,7 +98,6 @@
 ### v0.20.0 / 2021-06-23
 
 * BREAKING CHANGE: Total order constraint on span.status=
-
 * FIXED: Total order constraint on span.status=
 
 ### v0.19.0 / 2021-05-28
@@ -160,14 +156,12 @@ test: split redis instrumentation test [#754](https://github.com/open-telemetry/
 ### v0.9.0 / 2020-11-27
 
 * BREAKING CHANGE: Add timeout for force_flush and shutdown
-
 * ADDED: Redis attribute propagation
 * ADDED: Add timeout for force_flush and shutdown
 
 ### v0.8.0 / 2020-10-27
 
 * BREAKING CHANGE: Remove 'canonical' from status codes
-
 * FIXED: Remove 'canonical' from status codes
 
 ### v0.7.0 / 2020-10-07
