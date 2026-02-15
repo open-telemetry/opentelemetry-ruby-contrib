@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
-appraise 'mysql2-latest' do
-  gem 'mysql2'
+# To facilitate database semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/
+
+semconv_stability = %w[old stable dup]
+
+semconv_stability.each do |stability|
+  appraise "mysql2-latest-#{stability}" do
+    gem 'mysql2'
+  end
 end
