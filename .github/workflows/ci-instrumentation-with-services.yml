@@ -195,17 +195,12 @@ jobs:
           KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
           KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-          KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
         options: >-
           --health-cmd="kafka-broker-api-versions.sh --bootstrap-server=localhost:9092"
           --health-interval=10s
           --health-timeout=10s
           --health-retries=10
           --health-start-period=30s
-          --entrypoint=bash
-          --command=-c "mkdir -p /tmp/kraft-combined-logs &&
-          kafka-storage format --ignore-formatted --cluster-id=`kafka-storage random-uuid` --config /etc/kafka/kraft/server.properties &&
-          /etc/confluent/docker/run"
 
   instrumentation_redis:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
