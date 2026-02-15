@@ -182,19 +182,30 @@ jobs:
         image: confluentinc/cp-kafka:8.1.1@sha256:d20bd62f01826c454e88530efc6d73654cb4697182f37206742b96c7b947236e
         ports:
           - 9092:9092
+          - 9093:9093
           - 29092:29092
         env:
           KAFKA_BROKER_ID: 1
           KAFKA_NODE_ID: 1
           KAFKA_PROCESS_ROLES: broker,controller
           KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
-          KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
+          KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
           KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
           KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
           KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-        options: --health-cmd="kafka-broker-api-versions.sh --bootstrap-server=localhost:29092" --health-interval=10s --health-timeout=10s --health-retries=10 --health-start-period=30s
+          KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+        options: >-
+          --health-cmd="kafka-broker-api-versions.sh --bootstrap-server=localhost:9092"
+          --health-interval=10s
+          --health-timeout=10s
+          --health-retries=10
+          --health-start-period=30s
+          --entrypoint=bash
+          --command=-c "mkdir -p /tmp/kraft-combined-logs &&
+          kafka-storage format --ignore-formatted --cluster-id=`kafka-storage random-uuid` --config /etc/kafka/kraft/server.properties &&
+          /etc/confluent/docker/run"
 
   instrumentation_redis:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
