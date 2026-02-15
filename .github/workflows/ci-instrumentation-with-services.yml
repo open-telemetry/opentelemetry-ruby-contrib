@@ -194,12 +194,7 @@ jobs:
           KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
           KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-        options: >-
-          --health-cmd "kafka-broker-api-versions.sh --bootstrap-server=localhost:29092"
-          --health-interval 10s
-          --health-timeout 10s
-          --health-retries 10
-          --health-start-period 30s
+        options: --health-cmd="kafka-broker-api-versions.sh --bootstrap-server=localhost:29092" --health-interval=10s --health-timeout=10s --health-retries=10 --health-start-period=30s
 
   instrumentation_redis:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
