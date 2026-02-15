@@ -14,7 +14,7 @@
     "write:format:json": "prettier **/*.json --write",
     "write:format:markdown": "prettier **/*.md --write",
     "write:format:ruby": "npm run check:format:ruby -- --autocorrect-all",
-    "write:lint": "npm run write:lint:json && npm run write:lint:markdown",
+    "write:lint": "npm run write:lint:json && npm run write:lint:markdown && npm run write:lint:ruby",
     "write:lint:json": "jsonlint --config ./.jsonlintrc.yml --in-place && npm run write:format:json",
     "write:lint:markdown": "markdownlint-cli2 '**/*.md' --fix && npm run write:format:markdown",
     "write:lint:ruby": "npm run check:lint:ruby -- --autocorrect-all",
