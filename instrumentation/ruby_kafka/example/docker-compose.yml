@@ -7,13 +7,6 @@ services:
       - ../.:/app
     working_dir: /app/example
     command: ["bash", "-c", "sleep infinity"]
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest@sha256:7610a50b13e7e9f6dc0dd00585ffdcb0bbed27392bef6b45791ef4087b2a746c
-    ports:
-      - 2181:2181
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
   kafka:
     image: confluentinc/cp-kafka:8.1.1@sha256:d20bd62f01826c454e88530efc6d73654cb4697182f37206742b96c7b947236e
     ports:
@@ -21,13 +14,15 @@ services:
       - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://kafka:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    depends_on:
-      - zookeeper
   jaeger:
     image: jaegertracing/jaeger:2.15.1@sha256:a7dd965687d45507072676db81e6903706ba334dfc92f0c248125cfd9a70c483
     ports:
