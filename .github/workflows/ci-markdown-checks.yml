@@ -98,7 +98,7 @@ jobs:
 
       # equivalent cli: yamllint .
       - name: "YAML Lint Check"
-        uses: ibiqlik/action-yamllint@v3.1.1
+        uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c #v3.1.1
         with:
           config_file: .yamllint
 
