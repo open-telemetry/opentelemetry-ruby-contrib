@@ -7,7 +7,6 @@
 ### v0.26.0 / 2025-11-26
 
 * BREAKING CHANGE: Update Ethon span name when unknown method
-
 * ADDED: Update Ethon span name when unknown method
 
 ### v0.25.1 / 2025-11-25
@@ -17,7 +16,6 @@
 ### v0.25.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
-
 * ADDED: Min Ruby Version 3.2
 
 ### v0.24.2 / 2025-10-14
@@ -43,7 +41,6 @@
 ### v0.22.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.21.9 / 2024-11-26
@@ -85,7 +82,6 @@
 ### v0.21.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.20.1 / 2023-01-14
@@ -121,7 +117,6 @@
 ### v0.19.0 / 2021-06-23
 
 * BREAKING CHANGE: Total order constraint on span.status=
-
 * FIXED: Total order constraint on span.status=
 
 ### v0.18.0 / 2021-05-21
@@ -146,7 +141,6 @@
 ### v0.14.0 / 2021-02-03
 
 * BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
-
 * ADDED: Replace getter and setter callables and remove rack specific propagators
 
 ### v0.13.0 / 2021-01-29
@@ -168,14 +162,12 @@
 ### v0.9.0 / 2020-11-27
 
 * BREAKING CHANGE: Add timeout for force_flush and shutdown
-
 * ADDED: Add timeout for force_flush and shutdown
 
 ### v0.8.0 / 2020-10-27
 
 * BREAKING CHANGE: Move context/span methods to Trace module
 * BREAKING CHANGE: Remove 'canonical' from status codes
-
 * FIXED: Move context/span methods to Trace module
 * FIXED: Remove 'canonical' from status codes
 

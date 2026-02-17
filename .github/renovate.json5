@@ -8,12 +8,19 @@
   "packageRules": [
     {
       "groupName": "all patch versions",
+      "matchDepNames": ["!ruby"],
       "matchUpdateTypes": ["patch"],
       "schedule": ["before 8am every weekday"]
     },
     {
       "groupName": "all digest versions",
+      "matchDepNames": ["!ruby"],
       "matchUpdateTypes": ["digest"],
+      "schedule": ["before 8am every weekday"]
+    },
+    {
+      "matchDepNames": ["ruby"],
+      "matchUpdateTypes": ["digest","patch"],
       "schedule": ["before 8am every weekday"]
     },
     {
@@ -22,17 +29,19 @@
     },
     {
       "matchUpdateTypes": ["major"],
-      "matchCategories": ["!ruby"],
+      "matchCategories": ["ci", "js"],
       "schedule": ["before 8am on Monday"]
     },
     {
       "matchUpdateTypes": ["major"],
-      "matchCategories": ["ruby"],
+      "matchCategories": ["ruby", "docker"],
       "dependencyDashboardApproval": true
     },
     {
-      "matchUpdateTypes": ["multipleMajor"],
-      "dependencyDashboardApproval": true
+      "allowedVersions": "<={{add major 1}}",
+      "matchCategories": ["docker"],
+      "schedule": ["before 8am on Monday"],
+      "dependencyDashboardApproval": false
     },
     {
       "matchFileNames": [".github/actions/test_gem/action.yml", ".github/workflows/installation-tests.yml", ".github/workflows/release-*.yml"],
@@ -52,7 +61,7 @@
       ],
       "datasourceTemplate": "docker",
       "versioningTemplate": "loose",
-      "currentValueTemplate": "{{depVersion}}-alpine{{alpineVersion}}",
+      "currentValueTemplate": "{{depVersion}}",
       "extractVersionTemplate": "^(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)-alpine{{alpineVersion}}$"
     },
     {
@@ -67,7 +76,7 @@
       ],
       "datasourceTemplate": "docker",
       "versioningTemplate": "loose",
-      "currentValueTemplate": "{{depVersion}}-alpine{{alpineVersion}}",
+      "currentValueTemplate": "{{alpineVersion}}",
       "extractVersionTemplate": "^{{depVersion}}-alpine(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)$",
       "depNameTemplate": "{{packageName}}-alpine"
     }
