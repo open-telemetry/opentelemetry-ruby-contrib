@@ -25,7 +25,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.2'
 
-  spec.add_dependency 'dalli', '< 4.2.0' # Dalli 4.2.0+ has native OpenTelemetry instrumentation
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.25'
 
   if spec.respond_to?(:metadata)
