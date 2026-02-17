@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.2'
 
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.25'
+  spec.add_dependency 'dalli', '< 4.2.0' # Dalli 4.2.0+ has native OpenTelemetry instrumentation
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"

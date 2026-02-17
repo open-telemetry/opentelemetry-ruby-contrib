@@ -19,17 +19,6 @@ module OpenTelemetry
           defined?(::Dalli)
         end
 
-        compatible do
-          version = Gem::Version.new(::Dalli::VERSION)
-          
-          if version >= Gem::Version.new('4.2.0') # Dalli 4.2.0+ has native OpenTelemetry instrumentation
-            OpenTelemetry.logger.info("Dalli #{version} has native OpenTelemetry support. Skipping community instrumentation.")
-            return false
-          end
-
-          true
-        end
-
         option :peer_service, default: nil, validate: :string
         option :db_statement, default: :obfuscate, validate: %I[omit obfuscate include]
 
