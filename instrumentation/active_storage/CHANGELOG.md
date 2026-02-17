@@ -7,7 +7,6 @@
 ### v0.3.0 / 2025-10-21
 
 * BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
-
 * ADDED: Min Ruby Version 3.2 and Rails 7.1
 
 ### v0.2.0 / 2025-09-30
