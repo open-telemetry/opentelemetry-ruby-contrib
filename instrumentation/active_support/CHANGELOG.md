@@ -7,7 +7,6 @@
 ### v0.10.0 / 2025-10-21
 
 * BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
-
 * ADDED: Min Ruby Version 3.2 and Rails 7.1
 
 ### v0.9.1 / 2025-09-30
@@ -22,7 +21,6 @@
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Drop Support for EoL Rails 6.1
 * ADDED: Set minimum supported version to Ruby 3.1
 
@@ -33,7 +31,6 @@
 ### v0.6.0 / 2024-07-02
 
 * BREAKING CHANGE: Custom ActiveSupport Span Names
-
 * ADDED: Custom ActiveSupport Span Names
 
 ### v0.5.3 / 2024-06-20
@@ -51,7 +48,6 @@
 ### v0.5.0 / 2023-11-22
 
 * BREAKING CHANGE: Drop Rails 6.0 EOL
-
 * ADDED: Drop Rails 6.0 EOL
 
 ### v0.4.4 / 2023-10-31
@@ -68,33 +64,31 @@ FIXED: Reduce Object allocation
 
 ### v0.4.1 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.4.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
-
-* ADDED: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.3.0 / 2023-02-01
 
-* BREAKING CHANGE: Drop Rails 5 Support 
-
-* ADDED: Drop Rails 5 Support 
+* BREAKING CHANGE: Drop Rails 5 Support
+* ADDED: Drop Rails 5 Support
 
 ### v0.2.2 / 2023-01-14
 
-* FIXED: Drop Rails dependency for ActiveSupport Instrumentation 
+* FIXED: Drop Rails dependency for ActiveSupport Instrumentation
 
 ### v0.2.1 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.2.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.1.2 / 2022-05-05
 
