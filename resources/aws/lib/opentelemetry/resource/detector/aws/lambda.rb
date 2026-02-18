@@ -18,7 +18,7 @@ module OpenTelemetry
           RESOURCE = OpenTelemetry::SemanticConventions::Resource
 
           # Path to the symlink created by the OTel Lambda extension containing the AWS account ID
-          ACCOUNT_ID_SYMLINK_PATH = '/tmp/.otel-account-id'
+          ACCOUNT_ID_SYMLINK_PATH = '/tmp/.otel-aws-account-id'
 
           def detect
             # Return empty resource if not running on Lambda
