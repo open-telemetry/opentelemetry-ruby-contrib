@@ -179,7 +179,7 @@ jobs:
           build: true
     services:
       zookeeper:
-        image: confluentinc/cp-zookeeper:7.7.7@sha256:fa29eaf783d80053fcf4a8f7cb8dff11fca7594ee30656609c6f96652bc01229
+        image: confluentinc/cp-zookeeper:7.9.5@sha256:61e960bcbe5796d2987edc61fab297387f63d6f831754576cd107543d2cdc8bb
         ports:
           - 2181:2181
         env:
