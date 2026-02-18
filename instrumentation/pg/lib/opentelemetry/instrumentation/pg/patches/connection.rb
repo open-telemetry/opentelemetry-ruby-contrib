@@ -138,6 +138,24 @@ module OpenTelemetry
             end
           end
 
+          define_method :enter_pipeline_mode do |*args|
+            tracer.in_span('ENTER_PIPELINE_MODE', attributes: client_attributes, kind: :client) do
+              super(*args)
+            end
+          end
+
+          define_method :pipeline_sync do |*args|
+            tracer.in_span('PIPELINE_SYNC', attributes: client_attributes, kind: :client) do
+              super(*args)
+            end
+          end
+
+          define_method :exit_pipeline_mode do |*args|
+            tracer.in_span('EXIT_PIPELINE_MODE', attributes: client_attributes, kind: :client) do
+              super(*args)
+            end
+          end
+
           private
 
           def obfuscate_sql(sql)
