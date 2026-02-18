@@ -186,7 +186,7 @@ jobs:
           ZOOKEEPER_CLIENT_PORT: 2181
           ZOOKEEPER_TICK_TIME: 2000
       kafka:
-        image: confluentinc/cp-kafka:7.9.5@sha256:c4c6b755551da17fff056b9c8b39700f99020083bd2d69a171ece4784f33e640
+        image: confluentinc/cp-kafka:8.1.1@sha256:d20bd62f01826c454e88530efc6d73654cb4697182f37206742b96c7b947236e
         ports:
           - 9092:9092
           - 29092:29092
