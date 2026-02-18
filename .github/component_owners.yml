@@ -23,6 +23,8 @@ components:
     - HoneyryderChuck
   instrumentation/mongo:
     - johnnyshields
+  instrumentation/net_ldap:
+    - scbjans
   instrumentation/racecar:
     - chrisholmes
   instrumentation/rspec:
