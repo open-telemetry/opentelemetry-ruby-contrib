@@ -43,7 +43,7 @@ module OpenTelemetry
                 account_id = File.readlink(ACCOUNT_ID_SYMLINK_PATH)
                 resource_attributes[RESOURCE::CLOUD_ACCOUNT_ID] = account_id
               rescue Errno::ENOENT, Errno::EINVAL
-                # Symlink doesn't exist or is not a symlink — silently skip
+                OpenTelemetry.logger.debug('Lambda: cloud.account.id not available via symlink')
               end
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e, message: 'Lambda resource detection failed')
