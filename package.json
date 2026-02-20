@@ -13,7 +13,7 @@
     "write:lint:markdown": "markdownlint-cli2 '**/*.md' --fix && npm run write:format:markdown"
   },
   "devDependencies": {
-    "@prantlf/jsonlint": "17.0.0",
+    "@prantlf/jsonlint": "17.0.1",
     "markdownlint-cli2": "0.20.0",
     "renovate": "^43.14.1"
   }
