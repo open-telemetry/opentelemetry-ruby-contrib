@@ -3,7 +3,6 @@
 ### v0.29.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
-
 * ADDED: Min Ruby Version 3.2
 
 ### v0.28.2 / 2025-10-07
@@ -29,7 +28,6 @@
 ### v0.26.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.25.0 / 2024-10-23
@@ -63,7 +61,6 @@
 ### v0.24.0 / 2024-01-06
 
 * BREAKING CHANGE: Use Rack Events By Default
-
 * ADDED: Use Rack Events By Default
 * FIXED: Backport Rack proxy event to middleware
 
@@ -91,7 +88,6 @@
 
 * BREAKING CHANGE: Remove retain_middleware_names Rack Option
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Remove retain_middleware_names Rack Option
 * ADDED: Drop support for EoL Ruby 2.7
 * ADDED: Use Rack::Events for instrumentation
@@ -149,7 +145,6 @@ forwards the uri path.  More details on this is available in the readme.
 ### v0.19.0 / 2021-06-23
 
 * BREAKING CHANGE: Total order constraint on span.status=
-
 * ADDED: Add Tracer.non_recording_span to API
 * FIXED: Total order constraint on span.status=
 
@@ -165,7 +160,6 @@ forwards the uri path.  More details on this is available in the readme.
 ### v0.16.0 / 2021-03-17
 
 * BREAKING CHANGE: Pass env to url quantization rack config to allow more flexibility
-
 * ADDED: Pass env to url quantization rack config to allow more flexibility
 * ADDED: Add rack instrumentation config option to accept callable to filter requests to trace
 * FIXED: Example scripts now reference local common lib
@@ -178,7 +172,6 @@ forwards the uri path.  More details on this is available in the readme.
 ### v0.14.0 / 2021-02-03
 
 * BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
-
 * ADDED: Replace getter and setter callables and remove rack specific propagators
 * ADDED: Add untraced endpoints config to rack middleware
 
@@ -205,7 +198,6 @@ forwards the uri path.  More details on this is available in the readme.
 ### v0.9.0 / 2020-11-27
 
 * BREAKING CHANGE: Add timeout for force_flush and shutdown
-
 * ADDED: Instrument rails
 * ADDED: Add timeout for force_flush and shutdown
 
@@ -213,7 +205,6 @@ forwards the uri path.  More details on this is available in the readme.
 
 * BREAKING CHANGE: Move context/span methods to Trace module
 * BREAKING CHANGE: Remove 'canonical' from status codes
-
 * FIXED: Move context/span methods to Trace module
 * FIXED: Remove 'canonical' from status codes
 

@@ -1,37 +1,33 @@
-name: Markdown Checks
+name: File Checks
 
 on:
   pull_request:
-    paths:
-      - '**/*.md'
-      - .github/workflows/ci-markdown-checks.yml
 
 permissions:
   contents: read
   pull-requests: write # required for posting PR review comments
 
 jobs:
-  markdownlint-check:
+  markdown-lint-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Markdown Lint Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
-      # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md"  --config .markdownlint.json
+      # equivalent cli: markdownlint-cli2  "**/*.md" "!**/CHANGELOG.md"  --config .markdownlint-cli2.yaml
       - name: "Markdown Lint Check"
         uses: DavidAnson/markdownlint-cli2-action@07035fd053f7be764496c0f8d8f9f41f98305101 # v22.0.0
         with:
-          config: .markdownlint.json
+          config: .markdownlint-cli2.yaml
           fix: false
           globs: |
             **/*.md
-            !**/CHANGELOG.md
 
   markdown-link-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Markdown Link Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
@@ -43,10 +39,42 @@ jobs:
           reporter: github-pr-review
           fail_on_error: true
 
+  renovate-config-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: Renovate Config Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: install dependencies
+        run: npm ci --ignore-scripts
+
+      # equivalent cli: renovate-config-validator
+      - name: "Renovate Lint Check"
+        run: npm run check:lint:renovate
+
+  yaml-lint-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: YAML Lint Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      # equivalent cli: yamllint .
+      - name: "YAML Lint Check"
+        uses: ibiqlik/action-yamllint@v3.1.1
+        with:
+          config_file: .yamllint
+
   spelling-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Spelling Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: streetsidesoftware/cspell-action@24fa8d3096a314ce263f39578744e9d9f8d80acf # v8.1.2
