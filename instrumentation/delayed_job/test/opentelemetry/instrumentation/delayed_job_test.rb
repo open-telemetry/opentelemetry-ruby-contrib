@@ -29,15 +29,13 @@ describe OpenTelemetry::Instrumentation::DelayedJob do
 
   describe 'compatible' do
     it 'when older gem version installed' do
-      Gem.stub(:loaded_specs, { 'delayed_job' => Gem::Specification.new { |s| s.version = '4.0.3' } }) do
-        _(instrumentation.compatible?).must_equal false
-      end
+      allow(Gem).to receive(:loaded_specs).and_return({ 'delayed_job' => Gem::Specification.new { |s| s.version = '4.0.3' } })
+      _(instrumentation.compatible?).must_equal false
     end
 
     it 'when future gem version installed' do
-      Gem.stub(:loaded_specs, { 'delayed_job' => Gem::Specification.new { |s| s.version = '5.3.0' } }) do
-        _(instrumentation.compatible?).must_equal true
-      end
+      allow(Gem).to receive(:loaded_specs).and_return({ 'delayed_job' => Gem::Specification.new { |s| s.version = '5.3.0' } })
+      _(instrumentation.compatible?).must_equal true
     end
   end
 

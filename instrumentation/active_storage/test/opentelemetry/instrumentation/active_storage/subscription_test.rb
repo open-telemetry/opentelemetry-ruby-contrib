@@ -13,25 +13,23 @@ describe OpenTelemetry::Instrumentation::ActiveStorage do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveStorage::Instrumentation.instance }
   let(:key_png) { 'sample.png' }
   let(:blob_png) do
-    ActiveStorage::Blob.stub(:generate_unique_secure_token, key_png) do
-      file = File.open("#{Dir.pwd}/test/fixtures/sample.png")
-      ActiveStorage::Blob.create_and_upload!(
-        io: file,
-        filename: 'sample.png',
-        content_type: 'image/png'
-      )
-    end
+    allow(ActiveStorage::Blob).to receive(:generate_unique_secure_token).and_return(key_png)
+    file = File.open("#{Dir.pwd}/test/fixtures/sample.png")
+    ActiveStorage::Blob.create_and_upload!(
+      io: file,
+      filename: 'sample.png',
+      content_type: 'image/png'
+    )
   end
   let(:key_pdf) { 'sample.pdf' }
   let(:blob_pdf) do
-    ActiveStorage::Blob.stub(:generate_unique_secure_token, key_pdf) do
-      file = File.open("#{Dir.pwd}/test/fixtures/sample.pdf")
-      ActiveStorage::Blob.create_and_upload!(
-        io: file,
-        filename: 'sample.pdf',
-        content_type: 'application/pdf'
-      )
-    end
+    allow(ActiveStorage::Blob).to receive(:generate_unique_secure_token).and_return(key_pdf)
+    file = File.open("#{Dir.pwd}/test/fixtures/sample.pdf")
+    ActiveStorage::Blob.create_and_upload!(
+      io: file,
+      filename: 'sample.pdf',
+      content_type: 'application/pdf'
+    )
   end
 
   before do

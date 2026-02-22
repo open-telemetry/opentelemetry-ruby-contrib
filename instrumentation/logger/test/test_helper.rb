@@ -9,6 +9,7 @@ require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'test_helpers/app_config'
 
 EXPORTER = OpenTelemetry::SDK::Logs::Export::InMemoryLogRecordExporter.new

@@ -11,6 +11,7 @@ gemspec
 group :test do
   gem 'appraisal', '~> 2.5'
   gem 'minitest', '~> 5.0'
+  gem 'rspec-mocks'
   gem 'opentelemetry-sdk', '~> 1.1'
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '>= 13'
@@ -23,5 +24,6 @@ group :test do
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'mutex_m'
+    gem 'logger'
   end
 end

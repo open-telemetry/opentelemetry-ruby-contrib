@@ -111,30 +111,24 @@ describe OpenTelemetry::Resource::Detector::Container do
       end
 
       it 'returns a resource with container id for cgroup v1' do
-        File.stub :readable?, proc { |arg| arg == cgroup_v1_path } do
-          File.stub(:readlines, cgroup_v1) do
-            _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-            _(detected_resource_attributes).must_equal(expected_resource_attributes_v1)
-          end
-        end
+        allow(File).to receive(:readable?) { |arg| arg == cgroup_v1_path }
+        allow(File).to receive(:readlines).and_return(cgroup_v1)
+        _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+        _(detected_resource_attributes).must_equal(expected_resource_attributes_v1)
       end
 
       it 'returns a resource with container id for cgroup v2 using docker' do
-        File.stub :readable?, proc { |arg| arg == cgroup_v2_path } do
-          File.stub(:readlines, cgroup_v2) do
-            _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-            _(detected_resource_attributes).must_equal(expected_resource_attributes_v2)
-          end
-        end
+        allow(File).to receive(:readable?) { |arg| arg == cgroup_v2_path }
+        allow(File).to receive(:readlines).and_return(cgroup_v2)
+        _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+        _(detected_resource_attributes).must_equal(expected_resource_attributes_v2)
       end
 
       it 'returns a resource with container id for cgroup v2 using podman' do
-        File.stub :readable?, proc { |arg| arg == cgroup_v2_path } do
-          File.stub(:readlines, cgroup_v2_podman) do
-            _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-            _(detected_resource_attributes).must_equal(expected_resource_attributes_v2)
-          end
-        end
+        allow(File).to receive(:readable?) { |arg| arg == cgroup_v2_path }
+        allow(File).to receive(:readlines).and_return(cgroup_v2_podman)
+        _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+        _(detected_resource_attributes).must_equal(expected_resource_attributes_v2)
       end
 
       describe 'and a nil resource value is detected' do

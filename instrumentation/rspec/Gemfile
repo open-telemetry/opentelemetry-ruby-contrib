@@ -11,6 +11,7 @@ gemspec
 group :test do
   gem 'appraisal', '~> 2.5'
   gem 'minitest', '~> 5.0'
+  gem 'rspec-mocks'
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '>= 13'
   gem 'rubocop', '~> 1.82.0'
@@ -25,5 +26,6 @@ group :test do
     gem 'base64'
     gem 'logger'
     gem 'mutex_m'
+    gem 'logger'
   end
 end

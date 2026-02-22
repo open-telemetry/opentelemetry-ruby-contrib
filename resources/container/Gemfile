@@ -10,6 +10,7 @@ gemspec
 
 group :test do
   gem 'minitest', '~> 5.0'
+  gem 'rspec-mocks'
   gem 'rake', '>= 13'
   gem 'rubocop', '~> 1.82.0'
   gem 'rubocop-performance', '~> 1.26.0'
@@ -20,5 +21,6 @@ group :test do
     gem 'base64'
     gem 'logger'
     gem 'mutex_m'
+    gem 'logger'
   end
 end
