@@ -8,7 +8,7 @@
   packageRules: [
     {
       groupName: "all patch versions",
-      matchDepNames": ["!ruby"]
+      matchDepNames": ["!ruby"],
       matchUpdateTypes: ["patch"],
       schedule: ["before 8am every weekday"],
     },
