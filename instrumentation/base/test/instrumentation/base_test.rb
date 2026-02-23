@@ -386,7 +386,8 @@ describe OpenTelemetry::Instrumentation::Base do
 
   describe 'minimal_instrumentation' do
     before do
-      MinimalBase = Class.new(OpenTelemetry::Instrumentation::Base)
+      class MinimalBase < OpenTelemetry::Instrumentation::Base
+      end
     end
 
     after do

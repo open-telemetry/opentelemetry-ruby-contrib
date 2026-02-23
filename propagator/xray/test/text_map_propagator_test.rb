@@ -54,6 +54,18 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
       _(extracted_context).must_be(:remote?)
     end
 
+    it 'extracts context with self field' do
+      parent_context = OpenTelemetry::Context.empty
+      carrier = { 'X-Amzn-Trace-Id' => 'Self=1-696f97a4-68ce1b2e0232080e03cce4f7;Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1' }
+
+      context = propagator.extract(carrier, context: parent_context)
+      extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+      _(extracted_context.hex_trace_id).must_equal('80f198eae56343ba864fe8b2a57d3eff')
+      _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+      _(extracted_context).must_be(:remote?)
+    end
+
     it 'converts debug flag to sampled' do
       parent_context = OpenTelemetry::Context.empty
       carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=d' }
