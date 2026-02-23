@@ -86,7 +86,7 @@ jobs:
       - name: "Check all ruby source files"
         run: |
           set -e # forces exit code to propagate
-          npm run check:souce:ruby -- --format github
+          npm run check:source:ruby -- --format github
 
 
   yaml-lint-check:
