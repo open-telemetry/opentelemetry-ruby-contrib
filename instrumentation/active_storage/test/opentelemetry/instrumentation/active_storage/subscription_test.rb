@@ -15,21 +15,25 @@ describe OpenTelemetry::Instrumentation::ActiveStorage do
   let(:blob_png) do
     allow(ActiveStorage::Blob).to receive(:generate_unique_secure_token).and_return(key_png)
     file = File.open("#{Dir.pwd}/test/fixtures/sample.png")
-    ActiveStorage::Blob.create_and_upload!(
+    blob = ActiveStorage::Blob.create_and_upload!(
       io: file,
       filename: 'sample.png',
       content_type: 'image/png'
     )
+    allow(ActiveStorage::Blob).to receive(:generate_unique_secure_token).and_call_original
+    blob
   end
   let(:key_pdf) { 'sample.pdf' }
   let(:blob_pdf) do
     allow(ActiveStorage::Blob).to receive(:generate_unique_secure_token).and_return(key_pdf)
     file = File.open("#{Dir.pwd}/test/fixtures/sample.pdf")
-    ActiveStorage::Blob.create_and_upload!(
+    blob = ActiveStorage::Blob.create_and_upload!(
       io: file,
       filename: 'sample.pdf',
       content_type: 'application/pdf'
     )
+    allow(ActiveStorage::Blob).to receive(:generate_unique_secure_token).and_call_original
+    blob
   end
 
   before do
