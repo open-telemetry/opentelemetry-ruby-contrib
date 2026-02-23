@@ -44,7 +44,6 @@ module OpenTelemetry
               raise e
             end
           end
-          # rubocop:enable Metrics/MethodLength
 
           private
 
