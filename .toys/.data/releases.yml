@@ -155,6 +155,11 @@ gems:
     directory: instrumentation/net_http
     version_rb_path: lib/opentelemetry/instrumentation/net/http/version.rb
 
+  - name: opentelemetry-instrumentation-net_ldap
+    directory: instrumentation/net_ldap
+    version_rb_path: lib/opentelemetry/instrumentation/net/ldap/version.rb
+    version_constant: [OpenTelemetry, Instrumentation, Net, LDAP, VERSION]
+
   - name: opentelemetry-instrumentation-pg
     directory: instrumentation/pg
 
