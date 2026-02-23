@@ -2,11 +2,11 @@
   "NextToken": null,
   "SamplingRuleRecords": [
     {
-      "CreatedAt": 0,
-      "ModifiedAt": 1611564245,
+      "CreatedAt": 0.0,
+      "ModifiedAt": 1.611564245e9,
       "SamplingRule": {
         "Attributes": {},
-        "FixedRate": 1,
+        "FixedRate": 1.0,
         "HTTPMethod": "*",
         "Host": "*",
         "Priority": 10000,

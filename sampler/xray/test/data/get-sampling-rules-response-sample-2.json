@@ -2,8 +2,8 @@
   "NextToken": null,
   "SamplingRuleRecords": [
     {
-      "CreatedAt": 1676038494,
-      "ModifiedAt": 1676038494,
+      "CreatedAt": 1.676038494e9,
+      "ModifiedAt": 1.676038494e9,
       "SamplingRule": {
         "Attributes": {
           "foo": "bar",
@@ -24,8 +24,8 @@
       }
     },
     {
-      "CreatedAt": 1677999330,
-      "ModifiedAt": 1677999330,
+      "CreatedAt": 1.677999330e9,
+      "ModifiedAt": 1.677999330e9,
       "SamplingRule": {
         "Attributes": {
           "abc": "1234"
