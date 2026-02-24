@@ -25,6 +25,7 @@ group :test do
 
   if RUBY_VERSION >= '3.4'
     gem 'base64'
+    gem 'logger'
     gem 'mutex_m'
   end
 end
