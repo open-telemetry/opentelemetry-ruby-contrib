@@ -171,7 +171,7 @@ services:
       bash -c "bundle install && rake"
 
   mongo:
-    image: mongo:5.0@sha256:5e3e87afd24d75e722884d777c5713d254f7e88ba65381b5d6484f75a21b73e3
+    image: mongo:5.0.32@sha256:5e3e87afd24d75e722884d777c5713d254f7e88ba65381b5d6484f75a21b73e3
     expose:
       - "27017"
     ports:
@@ -191,7 +191,7 @@ services:
       - "3306:3306"
 
   postgres:
-    image: postgres:13@sha256:4689940c683801b4ab839ab3b0a0a3555a5fe425371422310944e89eca7d8068
+    image: postgres:13.23@sha256:4689940c683801b4ab839ab3b0a0a3555a5fe425371422310944e89eca7d8068
     environment:
       - POSTGRES_PASSWORD=postgres
     expose:
@@ -202,7 +202,7 @@ services:
       - postgres_socket:/var/run/postgresql
 
   redis:
-    image: bitnamilegacy/redis:8.2@sha256:25bf63f3caf75af4628c0dfcf39859ad1ac8abe135be85e99699f9637b16dc28
+    image: redis:8.2.5@sha256:ab119e78560f3817a26ce21325d1b14b8a3278237fcbc1afaa2013dfa0420000
     environment:
       - REDIS_PASSWORD=passw0rd
     volumes:
@@ -211,7 +211,7 @@ services:
       - "16379:6379"
 
   rabbitmq:
-    image: rabbitmq:3.13-alpine@sha256:d7af1c87c5f1eda13fcfca06db452bf3aeab6619fc3358b68535c0c02c4e52bc
+    image: rabbitmq:3.13.7-alpine@sha256:d7af1c87c5f1eda13fcfca06db452bf3aeab6619fc3358b68535c0c02c4e52bc
     ports:
       - "5672:5672"
 
@@ -245,7 +245,7 @@ services:
       - zookeeper
 
   jaeger:
-    image: jaegertracing/all-in-one@sha256:ab6f1a1f0fb49ea08bcd19f6b84f6081d0d44b364b6de148e1798eb5816bacac
+    image: jaegertracing/all-in-one:1.7.6@sha256:ab6f1a1f0fb49ea08bcd19f6b84f6081d0d44b364b6de148e1798eb5816bacac
     ports:
       - "16686:16686"
 
