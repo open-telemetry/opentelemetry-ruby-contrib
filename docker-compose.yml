@@ -202,7 +202,7 @@ services:
       - postgres_socket:/var/run/postgresql
 
   redis:
-    image: redis:8.2.5@sha256:ab119e78560f3817a26ce21325d1b14b8a3278237fcbc1afaa2013dfa0420000
+    image: redis:8.2.5@sha256:d15219c8d079378028a0e6a4c37cdd1edb4526acecf24f3c12e5b6122e786f60
     command: ["redis-server", "--requirepass", "passw0rd"]
     volumes:
       - redis_data:/data
