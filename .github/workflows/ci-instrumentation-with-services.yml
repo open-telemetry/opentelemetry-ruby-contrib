@@ -239,14 +239,16 @@ jobs:
           build: true
     services:
       redis:
-        image: redis:8.2.5@sha256:615e9c2c0b63102224f5a2d90cea0ece47b413c93e0faaf87d8d413e41a8c7c2
+        image: redis:8.2.5@sha256:d15219c8d079378028a0e6a4c37cdd1edb4526acecf24f3c12e5b6122e786f60
         ports:
           - 6379:6379
         options: >-
-          --health-cmd "redis-cli ping"
+          --health-cmd "redis-cli -a \"$REDIS_PASSWORD\" ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+          -e REDIS_PASSWORD=passw0rd
+          --entrypoint sh redis:8.2.5@sha256:d15219c8d079378028a0e6a4c37cdd1edb4526acecf24f3c12e5b6122e786f60 -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
         env:
           REDIS_PASSWORD: "passw0rd"
 
