@@ -136,7 +136,7 @@ jobs:
     services:
       mysql:
         image: mysql:8.4.8@sha256:a2d126916bc2ba79a890a4bf62d305eb8b68fcbdd35c6e582d529df18faf5ebb
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3 -e MYSQL_DATABASE=mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_PASSWORD=mysql -e MYSQL_USER=mysql -p 3306:3306 --entrypoint sh mysql:8.4.8@sha256:a2d126916bc2ba79a890a4bf62d305eb8b68fcbdd35c6e582d529df18faf5ebb -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3 -e MYSQL_DATABASE=mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_PASSWORD=mysql -e MYSQL_USER=mysql -p 3306:3306 --entrypoint sh mysql:8.4.8@sha256:a2d126916bc2ba79a890a4bf62d305eb8b68fcbdd35c6e582d529df18faf5ebb -c "exec docker-entrypoint.sh mysqld --mysql-native-password=ON"
 
   instrumentation_kafka:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}

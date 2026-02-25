@@ -68,7 +68,7 @@
       versioningTemplate: "docker",
       currentValueTemplate: "{{depVersion}}",
       extractVersionTemplate: "^(?<version>[0-9.]+)-alpine{{alpineVersion}}$",
-      autoReplaceStringTemplate: "FROM {{packageName}}:{{newVersion}}-alpine{{alpineVersion}}@{{newDigest}}"
+      autoReplaceStringTemplate: "FROM {{packageName}}:{{newVersion}}-alpine{{alpineVersion}}@{{newDigest}}",
     },
     {
       customType: "regex",
@@ -86,7 +86,7 @@
       currentValueTemplate: "{{alpineVersion}}",
       extractVersionTemplate: "^{{depVersion}}-alpine(?<version>[0-9.]+)$",
       depNameTemplate: "{{packageName}}-alpine",
-      autoReplaceStringTemplate: "FROM {{packageName}}:{{depVersion}}-alpine{{newVersion}}@{{newDigest}}"
+      autoReplaceStringTemplate: "FROM {{packageName}}:{{depVersion}}-alpine{{newVersion}}@{{newDigest}}",
     },
     {
       customType: "regex",
@@ -101,7 +101,7 @@
       datasourceTemplate: "docker",
       versioningTemplate: "docker",
       currentValueTemplate: "{{depVersion}}",
-      autoReplaceStringTemplate: "entrypoint sh {{packageName}}:{{newVersion}}@{{newDigest}} -c"
+      autoReplaceStringTemplate: "entrypoint sh {{packageName}}:{{newVersion}}@{{newDigest}} -c",
     },
   ],
   lockFileMaintenance: {
