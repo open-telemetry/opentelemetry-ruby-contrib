@@ -21,21 +21,44 @@
     {
       matchDepNames: ["ruby"],
       matchUpdateTypes: ["digest", "patch"],
+      matchFileNames: ["!.github/workflows/ci-markdown-checks.yml"],
       schedule: ["before 8am every weekday"],
     },
     {
-      matchUpdateTypes: ["minor"],
-      schedule: ["before 8am on Monday"],
-    },
-    {
-      matchUpdateTypes: ["major"],
-      matchCategories: ["!ruby"],
-      schedule: ["before 8am on Monday"],
-    },
-    {
-      matchUpdateTypes: ["major"],
-      matchCategories: ["ruby"],
+      groupName: "Min-Ruby-sdk",
+      matchDepNames: ["ruby"],
+      matchFileNames: [".github/workflows/ci-markdown-checks.yml"],
       dependencyDashboardApproval: true,
+      separateMultipleMinor: true,
+      separateMinorPatch: true,
+    },
+    {
+      matchUpdateTypes: ["minor"],
+      matchDepNames: ["!ruby"],
+      matchFileNames: ["!.github/workflows/ci-markdown-checks.yml"],
+      schedule: ["before 8am on Monday"],
+    },
+    {
+      matchUpdateTypes: ["major"],
+      matchCategories: ["ci", "js"],
+      schedule: ["before 8am on Monday"],
+    },
+    {
+      matchUpdateTypes: ["major"],
+      matchCategories: ["ruby", "docker"],
+      dependencyDashboardApproval: true,
+    },
+    {
+      matchDepNames: ["setup-node", "setup-ruby"],
+      schedule: ["before 7am every weekday"],
+      prConcurrentLimit: 0,
+      automerge: true,
+    },
+    {
+      allowedVersions: "<={{add major 1}}",
+      matchDepTypes: ["service"],
+      schedule: ["before 8am on Monday"],
+      dependencyDashboardApproval: false,
     },
     {
       allowedVersions: "<={{add major 1}}",
@@ -61,8 +84,8 @@
         "/(^|/)Dockerfile\\.[^/]*$/",
       ],
       matchStrings: [
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)",
       ],
       datasourceTemplate: "docker",
       versioningTemplate: "docker",
@@ -78,8 +101,8 @@
         "/(^|/)Dockerfile\\.[^/]*$/",
       ],
       matchStrings: [
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)s",
       ],
       datasourceTemplate: "docker",
       versioningTemplate: "docker",
