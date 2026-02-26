@@ -21,17 +21,13 @@
     {
       matchDepNames: ["ruby"],
       matchUpdateTypes: ["digest", "patch"],
-      matchFileNames: [
-        "!.github/workflows/ci-markdown-checks.yml",
-      ],
+      matchFileNames: ["!.github/workflows/ci-markdown-checks.yml"],
       schedule: ["before 8am every weekday"],
     },
     {
       groupName: "Min-Ruby-sdk",
       matchDepNames: ["ruby"],
-      matchFileNames: [
-        ".github/workflows/ci-markdown-checks.yml",
-      ],
+      matchFileNames: [".github/workflows/ci-markdown-checks.yml"],
       dependencyDashboardApproval: true,
       separateMultipleMinor: true,
       separateMinorPatch: true,
@@ -39,9 +35,7 @@
     {
       matchUpdateTypes: ["minor"],
       matchDepNames: ["!ruby"],
-      matchFileNames: [
-        "!.github/workflows/ci-markdown-checks.yml",
-      ],
+      matchFileNames: ["!.github/workflows/ci-markdown-checks.yml"],
       schedule: ["before 8am on Monday"],
     },
     {
@@ -55,10 +49,7 @@
       dependencyDashboardApproval: true,
     },
     {
-      matchDepNames: [
-        "setup-node",
-        "setup-ruby",
-      ],
+      matchDepNames: ["setup-node", "setup-ruby"],
       schedule: ["before 7am every weekday"],
       prConcurrentLimit: 0,
       automerge: true,
