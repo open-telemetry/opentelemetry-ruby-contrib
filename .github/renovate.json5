@@ -29,7 +29,7 @@
     },
     {
       matchUpdateTypes: ["major"],
-      matchCategories: ["!ruby"],
+      matchCategories: ["ci", "js", "docker"],
       schedule: ["before 8am on Monday"],
     },
     {
@@ -61,10 +61,10 @@
         "/(^|/)Dockerfile\\.[^/]*$/",
       ],
       matchStrings: [
-        "FROM\\s+(?<packageName>.+?):(?<depVersion>[^\\s@]+?)-alpine(?<alpineVersion>\\d+(?:\\.\\d+)?(?:\\.\\d+)?(?:-\\w+)?)(?:(@(?<currentDigest>[sha256:]?\\s+)))?.*\\s",
+        "FROM\\s+(?<packageName>.+?):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})",
       ],
       datasourceTemplate: "docker",
-      versioningTemplate: "loose",
+      versioningTemplate: "docker",
       currentValueTemplate: "{{depVersion}}",
       extractVersionTemplate: "^(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)-alpine{{alpineVersion}}$",
     },
@@ -76,10 +76,10 @@
         "/(^|/)Dockerfile\\.[^/]*$/",
       ],
       matchStrings: [
-        "FROM\\s+(?<packageName>.+?):(?<depVersion>[^\\s@]+?)-alpine(?<alpineVersion>\\d+(?:\\.\\d+)?(?:\\.\\d+)?(?:-\\w+)?)(?:(@(?<currentDigest>[sha256:]?\\s+)))?.*\\s",
+        "FROM\\s+(?<packageName>.+?):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})",
       ],
       datasourceTemplate: "docker",
-      versioningTemplate: "loose",
+      versioningTemplate: "docker",
       currentValueTemplate: "{{alpineVersion}}",
       extractVersionTemplate: "^{{depVersion}}-alpine(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)$",
       depNameTemplate: "{{packageName}}-alpine",
