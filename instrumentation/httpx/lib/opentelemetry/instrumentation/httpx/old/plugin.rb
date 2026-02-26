@@ -34,16 +34,7 @@ module OpenTelemetry
               end
 
               request.on(:response) do |response|
-                unless span
-                  next unless response.is_a?(::HTTPX::ErrorResponse) && response.error.respond_to?(:connection)
-
-                  # handles the case when the +error+ happened during name resolution, which means
-                  # that the tracing start point hasn't been triggered yet; in such cases, the approximate
-                  # initial resolving time is collected from the connection, and used as span start time,
-                  # and the tracing object in inserted before the on response callback is called.
-                  span = initialize_span(request, response.error.connection.init_time)
-
-                end
+                span = initialize_span(request, request.init_time) if !span && request.init_time
 
                 finish(response, span)
               end
@@ -105,21 +96,40 @@ module OpenTelemetry
 
           # Request patch to initiate the trace on initialization.
           module RequestMethods
+           attr_accessor :init_time
+
+            # intercepts request initialization to inject the tracing logic.
             def initialize(*)
               super
 
+              @init_time = nil
+
               RequestTracer.call(self)
+            end
+
+            def response=(*)
+              # init_time should be set when it's send to a connection.
+              # However, there are situations where connection initialization fails.
+              # Example is the :ssrf_filter plugin, which raises an error on
+              # initialize if the host is an IP which matches against the known set.
+              # in such cases, we'll just set here right here.
+              @init_time ||=  ::Time.now
+
+              super
             end
           end
 
-          # Connection patch to start monitoring on initialization.
           module ConnectionMethods
-            attr_reader :init_time
-
             def initialize(*)
               super
 
               @init_time = ::Time.now
+            end
+
+            def send(request)
+              request.init_time ||= @init_time
+
+              super
             end
           end
         end
