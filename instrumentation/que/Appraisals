@@ -7,9 +7,11 @@
 appraise 'que-2.x' do
   gem 'que', '~> 2.4'
   gem 'activerecord', '~> 7.2.0'
+  gem 'pg', '~> 1.5'
 end
 
 appraise 'que-latest' do
   gem 'que'
   gem 'activerecord'
+  gem 'pg'
 end
