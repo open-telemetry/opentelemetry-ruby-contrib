@@ -9,7 +9,7 @@ semconv_stability = %w[dup stable old]
 
 semconv_stability.each do |mode|
   appraise "ethon-0.18.0-#{mode}" do
-    gem 'ethon', '~> 0.18.0'
+    gem 'ethon', '~> 0.18'
   end
 
   appraise "ethon-#{mode}" do
