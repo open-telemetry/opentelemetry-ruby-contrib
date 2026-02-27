@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 appraise 'trilogy-2.9' do
-  gem 'trilogy', '~> 2.9.0'
+  gem 'trilogy', '~> 2.9'
 end
 
 appraise 'trilogy-latest' do
