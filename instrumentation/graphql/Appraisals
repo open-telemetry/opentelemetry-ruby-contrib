@@ -14,7 +14,7 @@ end
 
 appraise 'graphql-c_parser-1.0.x' do
   gem 'graphql', '< 2.3.1'
-  gem 'graphql-c_parser', '~> 1.0'
+  gem 'graphql-c_parser', '~> 1.0.0'
 end
 
 appraise 'graphql-c_parser-1.x' do
