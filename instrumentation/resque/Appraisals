@@ -6,4 +6,5 @@
 
 appraise 'resque-latest' do
   gem 'resque'
+  gem 'activejob'
 end
