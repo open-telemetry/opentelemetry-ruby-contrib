@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.29.2 / 2026-02-27
+
+* FIXED: Replace return with implicit block value in compatible block (#2029)
+* FIXED: Replace return with implicit block value in compatible block
+
 ### v0.29.1 / 2026-02-24
 
 * FIXED: Skip instrumenting dalli 4.2.0 (#1982)

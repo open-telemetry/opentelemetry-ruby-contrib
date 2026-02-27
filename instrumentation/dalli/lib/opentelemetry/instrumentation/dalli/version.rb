@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Dalli
-      VERSION = '0.29.1'
+      VERSION = '0.29.2'
     end
   end
 end
