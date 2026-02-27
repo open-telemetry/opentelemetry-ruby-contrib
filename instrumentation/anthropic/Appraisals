@@ -12,6 +12,6 @@ if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
   end
 
   appraise 'anthropic-1.9' do
-    gem 'anthropic', '~> 1.9'
+    gem 'anthropic', '~> 1.9.0'
   end
 end
