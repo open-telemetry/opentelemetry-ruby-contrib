@@ -53,6 +53,18 @@
       schedule: ["before 8am on Monday"],
     },
     {
+      matchUpdateTypes: ["major"],
+      matchCategories: ["ruby", "docker", "custom"],
+      matchDepTypes: ["development_dependency"],
+      schedule: ["before 8am on Monday"],
+    },
+    {
+      matchUpdateTypes: ["major"],
+      matchCategories: ["ruby", "docker", "custom"],
+      matchDepTypes: ["!development_dependency"],
+      dependencyDashboardApproval: true,
+    },
+    {
       matchDepNames: ["actions/setup-node", "ruby/setup-ruby"],
       schedule: ["before 6am every weekday"],
       prConcurrentLimit: 0,
@@ -130,6 +142,18 @@
       versioningTemplate: "docker",
       currentValueTemplate: "{{depVersion}}",
       autoReplaceStringTemplate: "entrypoint sh {{packageName}}:{{newVersion}}@{{newDigest}} -c",
+    },
+    {
+      customType: "regex",
+      description: "Update dependencies in gemspecs",
+      managerFilePatterns: ["**/*.gemspec"],
+      matchStrings: [
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'\\S+\\s(?<depVersion>[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
+      depTypeTemplate: "{{depType}}",
     },
   ],
   lockFileMaintenance: {
