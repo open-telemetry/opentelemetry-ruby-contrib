@@ -46,13 +46,6 @@
     {
       matchUpdateTypes: ["major"],
       matchCategories: ["ruby", "docker", "custom"],
-      matchDepTypes: ["development_dependency"],
-      schedule: ["before 8am on Monday"],
-    },
-    {
-      matchUpdateTypes: ["major"],
-      matchCategories: ["ruby", "docker", "custom"],
-      matchDepTypes: ["!development_dependency"],
       dependencyDashboardApproval: true,
     },
     {
@@ -72,6 +65,12 @@
       matchCategories: ["docker"],
       schedule: ["before 8am on Monday"],
       dependencyDashboardApproval: false,
+    },
+    {
+      matchCategories: ["custom"],
+      matchDepTypes: ["!dependency"],
+      matchFileNames: ["**/*.gemspec"],
+      enabled: false,
     },
     {
       matchFileNames: [
