@@ -160,6 +160,10 @@ gems:
     version_rb_path: lib/opentelemetry/instrumentation/net/ldap/version.rb
     version_constant: [OpenTelemetry, Instrumentation, Net, LDAP, VERSION]
 
+  - name: opentelemetry-instrumentation-openai
+    directory: instrumentation/openai
+    version_constant: [OpenTelemetry, Instrumentation, OpenAI, VERSION]
+
   - name: opentelemetry-instrumentation-pg
     directory: instrumentation/pg
 

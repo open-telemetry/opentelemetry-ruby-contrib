@@ -33,6 +33,8 @@ components:
     - indrekj
   instrumentation/sidekiq:
     - dmathieu
+  instrumentation/openai:
+    - xuan-cao-swi
   processor/baggage:
     - robbkidd
     - mikegoldsmith
