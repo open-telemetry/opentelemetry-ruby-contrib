@@ -38,6 +38,7 @@ module OpenTelemetry
 
         option :ignored_events, default: [], validate: :array
         option :install_rack, default: true, validate: :boolean
+        option :version_format, default: ->(version) { version&.to_s }, validate: :callable
 
         private
 
