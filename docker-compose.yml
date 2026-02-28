@@ -178,7 +178,7 @@ services:
       - "27017:27017"
 
   mysql:
-    image: mysql:8.0.31@sha256:3d7ae561cf6095f6aca8eb7830e1d14734227b1fb4748092f2be2cfbccf7d614
+    image: mysql:9.6.0@sha256:e5dc14f6e01c3e577e669337d2855c6d1561b30d8ef2c592e63e4e8a9a52650a
     command: mysqld --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_DATABASE=mysql
