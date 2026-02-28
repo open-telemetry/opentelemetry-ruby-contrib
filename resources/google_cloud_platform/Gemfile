@@ -10,6 +10,7 @@ gemspec
 
 group :test do
   gem 'minitest', '~> 5.0'
+  gem 'rspec-mocks', '~> 3.13.7'
   gem 'rake', '>= 13'
   gem 'rubocop', '~> 1.84.0'
   gem 'rubocop-performance', '~> 1.26.0'
@@ -20,5 +21,6 @@ group :test do
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'mutex_m'
+    gem 'logger'
   end
 end

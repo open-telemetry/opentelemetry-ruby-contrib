@@ -149,12 +149,11 @@ describe OpenTelemetry::Helpers::MySQL do
       it 'logs a message' do
         result = nil
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-          OpenTelemetry::Common::Utilities.stub(:utf8_encode, ->(_) { raise 'boom!' }) do
-            extract_statement_type
+          allow(OpenTelemetry::Common::Utilities).to receive(:utf8_encode) { |_| raise 'boom!' }
+          extract_statement_type
 
-            assert_nil(result)
-            assert_match(/Error extracting/, log_stream.string)
-          end
+          assert_nil(result)
+          assert_match(/Error extracting/, log_stream.string)
         end
       end
     end

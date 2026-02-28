@@ -35,5 +35,6 @@ group :test do
     gem 'base64'
     gem 'drb'
     gem 'mutex_m'
+    gem 'logger'
   end
 end

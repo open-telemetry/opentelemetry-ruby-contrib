@@ -221,9 +221,8 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         def fake_socket.close; end
 
         # Replace the TCP socket creation with our fake socket
-        TCPSocket.stub(:open, fake_socket) do
-          http.send(:connect)
-        end
+        allow(TCPSocket).to receive(:open).and_return(fake_socket)
+        http.send(:connect)
 
         http.send(:do_finish)
         _(exporter.finished_spans.size).must_equal 1

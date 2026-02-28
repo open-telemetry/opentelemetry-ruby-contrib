@@ -65,57 +65,56 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
         let(:span) { easy.instance_eval { @otel_span } }
 
         it 'creates a span' do
-          Ethon::Curl.stub(:easy_perform, 0) do
-            # NOTE: suppress call to #complete to isolate #perform functionality
-            easy.stub(:complete, nil) do
-              easy.perform
+          allow(Ethon::Curl).to receive(:easy_perform).and_return(0)
+          # NOTE: suppress call to #complete to isolate #perform functionality
+          allow(easy).to receive(:complete).and_return(nil)
 
-              _(span.name).must_equal 'HTTP'
-              _(span.attributes['http.method']).must_equal '_OTHER'
-              _(span.attributes['http.status_code']).must_be_nil
-              _(span.attributes['http.url']).must_equal 'http://example.com/test'
-              _(span.attributes['net.peer.name']).must_equal 'example.com'
-              _(span.attributes['http.request.method']).must_equal '_OTHER'
-              _(span.attributes['http.response.status_code']).must_be_nil
-              _(span.attributes['url.full']).must_equal 'http://example.com/test'
-              _(span.attributes['server.address']).must_equal 'example.com'
-            end
-          end
+          easy.perform
+
+          _(span.name).must_equal 'HTTP'
+          _(span.attributes['http.method']).must_equal '_OTHER'
+          _(span.attributes['http.status_code']).must_be_nil
+          _(span.attributes['http.url']).must_equal 'http://example.com/test'
+          _(span.attributes['net.peer.name']).must_equal 'example.com'
+          _(span.attributes['http.request.method']).must_equal '_OTHER'
+          _(span.attributes['http.response.status_code']).must_be_nil
+          _(span.attributes['url.full']).must_equal 'http://example.com/test'
+          _(span.attributes['server.address']).must_equal 'example.com'
         end
 
         describe 'when the perform fails before complete with an exception' do
           it 'raises the original error and closes the span with error status' do
-            Ethon::Curl.stub(:easy_perform, ->(_handle) { raise StandardError, 'Connection failed' }) do
-              assert_raises StandardError, 'Connection failed' do
-                easy.perform
-              end
-              # NOTE: check the finished spans since we expect to have closed it
-              span = exporter.finished_spans.first
-              _(span.name).must_equal 'HTTP'
-              _(span.attributes['http.method']).must_equal '_OTHER'
-              _(span.attributes['http.status_code']).must_be_nil
-              _(span.attributes['http.url']).must_equal 'http://example.com/test'
-              _(span.attributes['http.request.method']).must_equal '_OTHER'
-              _(span.attributes['http.response.status_code']).must_be_nil
-              _(span.attributes['url.full']).must_equal 'http://example.com/test'
-              _(span.status.code).must_equal(
-                OpenTelemetry::Trace::Status::ERROR
-              )
-              _(easy.instance_eval { @otel_span }).must_be_nil
+            allow(Ethon::Curl).to receive(:easy_perform) { |_handle| raise StandardError, 'Connection failed' }
+
+            assert_raises StandardError, 'Connection failed' do
+              easy.perform
             end
+            # NOTE: check the finished spans since we expect to have closed it
+            span = exporter.finished_spans.first
+            _(span.name).must_equal 'HTTP'
+            _(span.attributes['http.method']).must_equal '_OTHER'
+            _(span.attributes['http.status_code']).must_be_nil
+            _(span.attributes['http.url']).must_equal 'http://example.com/test'
+            _(span.attributes['http.request.method']).must_equal '_OTHER'
+            _(span.attributes['http.response.status_code']).must_be_nil
+            _(span.attributes['url.full']).must_equal 'http://example.com/test'
+            _(span.status.code).must_equal(
+              OpenTelemetry::Trace::Status::ERROR
+            )
+            _(easy.instance_eval { @otel_span }).must_be_nil
           end
         end
       end
 
       describe '#complete' do
         def stub_response(options)
-          easy.stub(:mirror, Ethon::Easy::Mirror.new(options)) do
-            easy.otel_before_request
-            # NOTE: perform calls complete
-            easy.complete
+          allow(easy).to receive(:mirror).and_return(Ethon::Easy::Mirror.new(options))
 
-            yield
-          end
+          easy.otel_before_request
+          # NOTE: perform calls complete
+          easy.complete
+
+          yield
         end
 
         it 'when response is successful' do
@@ -259,13 +258,13 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
       describe 'with unknown HTTP method' do
         def stub_response(options)
-          easy.stub(:mirror, Ethon::Easy::Mirror.new(options)) do
-            easy.otel_before_request
-            # NOTE: perform calls complete
-            easy.complete
+          allow(easy).to receive(:mirror).and_return(Ethon::Easy::Mirror.new(options))
 
-            yield
-          end
+          easy.otel_before_request
+          # NOTE: perform calls complete
+          easy.complete
+
+          yield
         end
 
         it 'normalizes unknown HTTP methods' do
