@@ -26,6 +26,7 @@
     },
     {
       groupName: "Min-Ruby-sdk",
+      dependencyDashboardCategory: "Min Ruby SDK",
       matchDepNames: ["ruby"],
       matchFileNames: [".github/workflows/ci-markdown-checks.yml"],
       dependencyDashboardApproval: true,
@@ -65,6 +66,14 @@
       matchCategories: ["docker"],
       schedule: ["before 8am on Monday"],
       dependencyDashboardApproval: false,
+    },
+    {
+      groupName: "Min-Ruby-sdk",
+      dependencyDashboardCategory: "Min Ruby SDK",
+      matchCategories: ["custom"],
+      matchDepTypes: ["gemspec.required_ruby_version"],
+      separateMultipleMinor: true,
+      dependencyDashboardApproval: true,
     },
     {
       matchFileNames: [
@@ -125,6 +134,22 @@
       versioningTemplate: "docker",
       currentValueTemplate: "{{depVersion}}",
       autoReplaceStringTemplate: "entrypoint sh {{packageName}}:{{newVersion}}@{{newDigest}} -c",
+    },
+    {
+      customType: "regex",
+      description: "Update min sdk in gemspec",
+      managerFilePatterns: ["**/*.gemspec"],
+      matchStrings: [
+        "required_ruby_version = \'>= (?<depVersion>[0-9]+.[0-9]+)\'",
+      ],
+      datasourceTemplate: "ruby-version",
+      packageNameTemplate: "ruby/ruby",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
+      extractVersionTemplate: "(?<version>[0-9]+.[0-9]+).0",
+      depNameTemplate: "ruby",
+      depTypeTemplate: "gemspec.required_ruby_version",
+      packageNameTemplate: "Min.Required.Ruby",
     },
   ],
   lockFileMaintenance: {
