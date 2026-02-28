@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
-%w[2.7.0 3.2.0].each do |version|
+%w[2.7.0 3.2.0 4.1.0].each do |version|
   appraise "dalli-#{version}" do
     gem 'dalli', "~> #{version}"
   end
 end
 
-appraise 'dalli-latest' do
-  gem 'dalli'
-end
+# Dalli 4.2.0+ has native OpenTelemetry support, so we no longer need
+# to test our instrumentation against it.
+# appraise 'dalli-latest' do
+#   gem 'dalli'
+# end
