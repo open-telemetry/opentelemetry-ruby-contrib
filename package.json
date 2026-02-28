@@ -1,20 +1,34 @@
 {
   "scripts": {
     "check": "npm run check:lint && npm run check:format && npm run check:links && npm run check:spelling",
+    "check:format": "npm run check:format:ruby && prettier . --check",
+    "check:format:json": "prettier **/*.json --check",
+    "check:format:markdown": "prettier **/*.md --check",
+    "check:format:ruby": "rubocop --only Layout",
+    "check:links": "linkspector check",
     "check:lint": "npm run check:lint:json && npm run check:lint:markdown && npm run check:lint:ruby",
     "check:lint:json": "jsonlint --config ./.jsonlintrc.yml",
     "check:lint:markdown": "markdownlint-cli2 '**/*.md'",
     "check:lint:renovate": "renovate-config-validator",
+    "check:lint:ruby": "rubocop --only Lint,Naming,Style",
+    "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Security",
+    "check:spelling": "cspell -c .cspell.yml .",
     "write:format": "npm run write:format:ruby && prettier . --write",
     "write:format:json": "prettier **/*.json --write",
     "write:format:markdown": "prettier **/*.md --write",
-    "write:lint": "npm run write:lint:json && npm run write:lint:markdown",
+    "write:format:ruby": "npm run check:format:ruby -- --autocorrect-all",
+    "write:lint": "npm run write:lint:json && npm run write:lint:markdown && npm run write:lint:ruby",
     "write:lint:json": "jsonlint --config ./.jsonlintrc.yml --in-place && npm run write:format:json",
-    "write:lint:markdown": "markdownlint-cli2 '**/*.md' --fix && npm run write:format:markdown"
+    "write:lint:markdown": "markdownlint-cli2 '**/*.md' --fix && npm run write:format:markdown",
+    "write:lint:ruby": "npm run check:lint:ruby -- --autocorrect-all",
+    "write:source:ruby": "npm run check:source:ruby -- --autocorrect-all"
   },
   "devDependencies": {
-    "@prantlf/jsonlint": "17.0.0",
-    "markdownlint-cli2": "0.20.0",
-    "renovate": "^42.84.2"
+    "@umbrelladocs/linkspector": "0.4.7",
+    "cspell": "9.6.4",
+    "@prantlf/jsonlint": "17.0.1",
+    "markdownlint-cli2": "0.21.0",
+    "prettier": "3.8.1",
+    "renovate": "43.14.1"
   }
 }

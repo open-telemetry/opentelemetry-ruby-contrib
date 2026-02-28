@@ -374,7 +374,8 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddle
   end
 
   describe '#call with error' do
-    SimulatedError = Class.new(StandardError)
+    class SimulatedError < StandardError
+    end
 
     let(:app) do
       ->(_env) { raise SimulatedError }

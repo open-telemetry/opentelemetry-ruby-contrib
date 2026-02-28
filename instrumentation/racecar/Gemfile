@@ -9,7 +9,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'activesupport'
   gem 'opentelemetry-instrumentation-base', path: '../base'
 
   gem 'appraisal', '~> 2.5'
@@ -18,7 +17,7 @@ group :test do
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '>= 13'
   gem 'rspec-mocks', '~> 3.13.7'
-  gem 'rubocop', '~> 1.82.0'
+  gem 'rubocop', '~> 1.84.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'
@@ -26,6 +25,7 @@ group :test do
 
   if RUBY_VERSION >= '3.4'
     gem 'base64'
+    gem 'logger'
     gem 'mutex_m'
   end
 end

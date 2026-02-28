@@ -19,7 +19,6 @@
 ### v0.32.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
-
 * ADDED: Min Ruby Version 3.2
 
 ### v0.31.1 / 2025-09-30
@@ -38,7 +37,6 @@
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Drop Support for EoL Rails 6.1
 * ADDED: Set minimum supported version to Ruby 3.1
 
