@@ -55,13 +55,6 @@
     {
       matchUpdateTypes: ["major"],
       matchCategories: ["ruby", "docker", "custom"],
-      matchDepTypes: ["development_dependency"],
-      schedule: ["before 8am on Monday"],
-    },
-    {
-      matchUpdateTypes: ["major"],
-      matchCategories: ["ruby", "docker", "custom"],
-      matchDepTypes: ["!development_dependency"],
       dependencyDashboardApproval: true,
     },
     {
@@ -90,6 +83,20 @@
       matchUpdateTypes: ["major"],
       matchDepNames: ["mysql"],
       minimumReleaseAge: "1765 days",
+    },
+    {
+      matchCategories: ["custom"],
+      matchDepTypes: ["!dependency"],
+      matchFileNames: ["**/*.gemspec"],
+      enabled: false,
+    },
+    {
+      matchFileNames: [
+        ".github/actions/test_gem/action.yml",
+        ".github/workflows/installation-tests.yml",
+        ".github/workflows/release-*.yml",
+      ],
+      ignoreDeps: ["ruby"],
     },
   ],
   customManagers: [
