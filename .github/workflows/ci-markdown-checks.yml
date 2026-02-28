@@ -46,7 +46,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           cache: "npm"
           node-version: "24"
@@ -84,7 +84,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           cache: "npm"
           node-version: "24"
@@ -107,7 +107,6 @@ jobs:
           set -e # forces exit code to propagate
           npm run check:source:ruby -- --format github
 
-
   yaml-lint-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: YAML Lint Check
@@ -127,9 +126,35 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: streetsidesoftware/cspell-action@24fa8d3096a314ce263f39578744e9d9f8d80acf # v8.1.2
+      - uses: streetsidesoftware/cspell-action@9cd41bb518a24fefdafd9880cbab8f0ceba04d28 # v8.3.0
         with:
           use_cspell_files: true
           config: .cspell.yml
           suggestions: true
           treat_flagged_words_as_errors: true
+
+  format-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: File Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
+        with:
+          ruby-version: "3.2"
+
+      - name: Install Tools
+        run: npm ci --ignore-scripts && bundle install
+
+      - name: "Format all document Check"
+        run: npm run write:format
+
+      - name: validate files
+        run: git diff --exit-code ':*.*' || (echo 'Files are out of date, please run "npm run write:format" and commit the changes in this PR.' && exit 1)

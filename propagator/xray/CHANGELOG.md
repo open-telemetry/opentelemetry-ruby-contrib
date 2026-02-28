@@ -1,5 +1,10 @@
 # Release History: opentelemetry-propagator-xray
 
+### v0.26.1 / 2026-02-24
+
+* FIXED: Handle `Self` field in X-Amzn-Trace-Id header (#1958)
+* FIXED: Parse X-Amzn-Trace-Id header fields individually by name
+
 ### v0.26.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
