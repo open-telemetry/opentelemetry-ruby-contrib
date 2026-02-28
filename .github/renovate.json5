@@ -45,7 +45,7 @@
     },
     {
       matchUpdateTypes: ["major"],
-      matchCategories: ["ruby", "docker"],
+      matchCategories: ["ruby", "docker", "custom"],
       dependencyDashboardApproval: true,
     },
     {
@@ -125,6 +125,30 @@
       versioningTemplate: "docker",
       currentValueTemplate: "{{depVersion}}",
       autoReplaceStringTemplate: "entrypoint sh {{packageName}}:{{newVersion}}@{{newDigest}} -c",
+    },
+    {
+      customType: "regex",
+      description: "Update ~> dependencies in appraisals",
+      managerFilePatterns: ["**/Appraisals"],
+      matchStrings: [
+        "gem\\s'(?<packageName>.+?)',\\s'~>\\s(?<depVersion>[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "~> {{depVersion}}",
+      depTypeTemplate: "test_dependency-pinned",
+    },
+    {
+      customType: "regex",
+      description: "Update >= dependencies in appraisals",
+      managerFilePatterns: ["**/Appraisals"],
+      matchStrings: [
+        "gem\\s'(?<packageName>.+?)',\\s'>=\\s(?<depVersion>[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
+      depTypeTemplate: "test_dependency",
     },
   ],
   lockFileMaintenance: {
