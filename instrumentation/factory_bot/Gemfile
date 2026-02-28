@@ -11,7 +11,7 @@ gemspec
 group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'appraisal', '~> 2.5'
-  gem 'minitest', '~> 5.0'
+  gem 'minitest', '~> 6.0'
   gem 'opentelemetry-sdk', '~> 1.0'
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '>= 13'
