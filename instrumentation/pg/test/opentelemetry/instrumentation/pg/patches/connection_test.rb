@@ -73,5 +73,37 @@ describe OpenTelemetry::Instrumentation::PG::Patches do
         end
       end
     end
+
+    it 'can execute a pipeline of SELECT queries' do
+      #
+      # From https://www.postgresql.org/docs/current/libpq-pipeline-mode.html#LIBPQ-PIPELINE-RESULTS
+      #
+      # To process the result of one query in a pipeline, the application
+      # calls PQgetResult repeatedly and handles each result until
+      # PQgetResult returns null.
+      #
+      # The result from the next query in the pipeline may then be retrieved
+      # using PQgetResult again and the cycle repeated. The application
+      # handles individual statement results as normal.
+      #
+      # When the results of all the queries in the pipeline have been
+      # returned, PQgetResult returns a result containing the status value
+      # PGRES_PIPELINE_SYNC
+      #
+      client.enter_pipeline_mode
+      client.send_query_params('SELECT $1', [1])
+      client.send_query_params('SELECT $1', [2])
+      client.pipeline_sync
+
+      assert_equal(['1'], client.get_result.column_values(0))
+      assert_nil(client.get_result)
+
+      assert_equal(['2'], client.get_result.column_values(0))
+      assert_nil(client.get_result)
+
+      assert_equal(PG::Constants::PGRES_PIPELINE_SYNC, client.get_result.result_status)
+
+      client.exit_pipeline_mode
+    end
   end unless ENV['OMIT_SERVICES']
 end
