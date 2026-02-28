@@ -2,18 +2,33 @@ name: "[release hook] Process release"
 
 on:
   pull_request:
-    types: [closed]
+    types: [closed, opened, reopened, synchronize, edited, ready_for_review]
 
 permissions:
   contents: read
 
 jobs:
+  check-files:
+    permissions:
+      contents: read
+      pull-requests: read
+    runs-on: ubuntu-latest
+    outputs:
+      srcChanged: ${{ steps.changes.outputs.srcChanged }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            srcChanged:
+              - ".github/workflows/release-hook-on-closed.yml"
   release-process-request:
     permissions:
       contents: write # required for creating releases
       pull-requests: write # required for updating release PRs
       issues: write # required to create issues for failed releases
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    needs: check-files
+    if: github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && (github.event.action == 'closed' || needs.check-files.outputs.srcChanged == 'true')
     runs-on: ubuntu-24.04
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
@@ -29,6 +44,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        if: github.event.action == 'closed'
         run: |
           bundle exec toys release _onclosed --verbose \
             "--event-path=${{ github.event_path }}" \

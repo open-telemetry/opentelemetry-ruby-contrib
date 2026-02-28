@@ -7,6 +7,11 @@ on:
         description: Components to release (leave blank to release all components)
         required: false
         default: ""
+  pull_request:
+    branches:
+      - main
+    paths: &path_filters
+      - ".github/workflows/release-request.yml"
 
 permissions:
   contents: read
@@ -40,6 +45,7 @@ jobs:
       - name: Open release pull request
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        if: github.event_name != 'pull_request'
         run: |
           bundle exec toys release request --yes --verbose \
             "--target-branch=${{ github.ref }}" \
