@@ -76,12 +76,32 @@ module OTelBundlerPatch
       env.split(',').map { |instrumentation| OTEL_INSTRUMENTATION_MAP[instrumentation] }
     end
 
+    def self.check_for_bundled_otel_gems
+      bundled_otel_gems = Bundler.definition.dependencies.select do |dep|
+        dep.name.start_with?('opentelemetry-')
+      end
+
+      return if bundled_otel_gems.empty?
+
+      gem_names = bundled_otel_gems.map(&:name).sort.join(', ')
+      warn '[OpenTelemetry] WARNING: Detected OpenTelemetry gems in your Gemfile: ' \
+           "#{gem_names}. When using auto-instrumentation, OpenTelemetry gems are loaded " \
+           'from the auto-instrumentation gem path, NOT from your bundle. The gem versions ' \
+           'in your Gemfile/Gemfile.lock are not used and may cause version conflicts or ' \
+           'unexpected behavior. Please remove these gems from your Gemfile when using ' \
+           'auto-instrumentation.'
+    rescue StandardError => e
+      warn "[OpenTelemetry] WARNING: Unable to check Gemfile for OpenTelemetry gems: #{e.message}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
+    end
+
     def self.require_otel
       return if @initialized
 
       @initialized = true
 
       begin
+        check_for_bundled_otel_gems
+
         required_instrumentation = determine_enabled_instrumentation
 
         OpenTelemetry::SDK.configure do |c|
