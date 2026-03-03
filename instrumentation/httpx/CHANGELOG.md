@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-httpx
 
+### v0.6.1 / 2026-02-27
+
+* FIXED: Httpx support to ~> 1.6 adapt to request init_time (#2030)
+
 ### v0.6.0 / 2026-01-13
 
 * ADDED: HTTP Client Semconv v1.17 Span Naming

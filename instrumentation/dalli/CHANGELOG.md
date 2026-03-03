@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.29.2 / 2026-02-27
+
+* FIXED: Replace return with implicit block value in compatible block (#2029)
+
+### v0.29.1 / 2026-02-24
+
+* FIXED: Skip instrumenting dalli 4.2.0 (#1982)
+
 ### v0.29.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2

@@ -24,10 +24,10 @@ module OpenTelemetry
         compatible do
           if gem_version > MAX_VERSION
             OpenTelemetry.logger.info("Dalli #{gem_version} has native OpenTelemetry support. Skipping community instrumentation.")
-            return false
+            false
+          else
+            true
           end
-
-          true
         end
 
         option :peer_service, default: nil, validate: :string
