@@ -150,14 +150,23 @@ may ask you to amend the commit message.
 
 ### Documentation and style
 
-We use rubocop to check style rules for this repository. Please run rubocop:
+We use a combinations of tool to check style rules, linting, links and spelling of the files within this repo. To run these checks, please run:
 
 ```sh
 bundle install
+npm ci
+```
+
+to ensure that the tools are installed.
+
+And prior to submitting a pr run the following to perform all the checks:
+
+```sh
+npm run check
 bundle exec rake rubocop
 ```
 
-to ensure that your code complies before opening a pull request.
+which will help to ensure your code complies and it passes all the test required of a pull request.
 
 We also use Yard to generate class documentation automatically. Among other
 things, this means:
@@ -416,6 +425,10 @@ For releases to succeed, new gems MUST include the following:
 - A `yard` rake task.
 
 ## Dependabot updates
+
+> [!NOTE]
+>
+> This repository is in the process of migrating to Renovate.
 
 This repository uses [Dependabot](https://dependabot.com/) to keep dependencies up to date, however there shared development dependencies are often scattered across multiple gems. Dependabot does not currently support the ability to group dependencies for gems in multiple subdirectories, so we use a custom script to bulk update dependencies across all gems.
 

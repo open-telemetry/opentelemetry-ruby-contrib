@@ -10,26 +10,39 @@ module OpenTelemetry
       module Patches
         # Instrumentation for methods from Ruby's Logger class
         module Logger
+          IN_OTEL_EMIT_KEY = :in_otel_emit
+
           attr_writer :skip_otel_emit
 
           def format_message(severity, datetime, progname, msg)
             formatted_message = super
-            return formatted_message if skip_otel_emit?
 
-            OpenTelemetry.logger_provider.logger(
-              name: OpenTelemetry::Instrumentation::Logger::NAME,
-              version: OpenTelemetry::Instrumentation::Logger::VERSION
-            ).on_emit(
-              severity_text: severity,
-              severity_number: severity_number(severity),
-              timestamp: datetime,
-              body: formatted_message,
-              context: OpenTelemetry::Context.current
-            )
+            emit_to_otel(severity, datetime, formatted_message)
+
             formatted_message
           end
 
           private
+
+          def emit_to_otel(severity, datetime, body)
+            return if skip_otel_emit? || Thread.current[IN_OTEL_EMIT_KEY]
+
+            Thread.current[IN_OTEL_EMIT_KEY] = true
+            begin
+              OpenTelemetry.logger_provider.logger(
+                name: OpenTelemetry::Instrumentation::Logger::NAME,
+                version: OpenTelemetry::Instrumentation::Logger::VERSION
+              ).on_emit(
+                severity_text: severity,
+                severity_number: severity_number(severity),
+                timestamp: datetime,
+                body: body,
+                context: OpenTelemetry::Context.current
+              )
+            ensure
+              Thread.current[IN_OTEL_EMIT_KEY] = false
+            end
+          end
 
           def skip_otel_emit?
             @skip_otel_emit || false

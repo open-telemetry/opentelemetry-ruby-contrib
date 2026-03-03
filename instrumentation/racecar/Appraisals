@@ -7,9 +7,11 @@
 %w[2.8.0 2.9.0 2.10.0 2.11.0 2.12.0].each do |version|
   appraise "racecar-#{version}" do
     gem 'racecar', "~> #{version}"
+    gem 'activesupport', '~> 7.0'
   end
 end
 
 appraise 'racecar-latest' do
   gem 'racecar'
+  gem 'activesupport'
 end
