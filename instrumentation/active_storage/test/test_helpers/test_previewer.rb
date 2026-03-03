@@ -14,7 +14,7 @@ class TestPreviewer < ActiveStorage::Previewer
   def preview(**options)
     download_blob_to_tempfile do |input|
       draw_sample_image input do |_output|
-        file = File.open("#{Dir.pwd}/test/fixtures/sample.png")
+        file = File.open { "#{Dir.pwd}/test/fixtures/sample.png" }
         yield io: file, filename: 'sample.png', content_type: 'image/png', **options
       end
     end
