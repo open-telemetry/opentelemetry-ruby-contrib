@@ -409,7 +409,9 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler' 
 
     describe 'response propagators that raise errors' do
       class EventMockPropagator < OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator
-        CustomError = Class.new(StandardError)
+        class CustomError < StandardError
+        end
+
         def inject(carrier)
           raise CustomError, 'Injection failed'
         end
@@ -427,7 +429,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler' 
   end
 
   describe '#call with error' do
-    EventHandlerError = Class.new(StandardError)
+    class EventHandlerError < StandardError
+    end
 
     let(:service) do
       ->(_env) { raise EventHandlerError }

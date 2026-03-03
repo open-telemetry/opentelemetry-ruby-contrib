@@ -36,6 +36,7 @@ on:
       - "instrumentation/lmdb/**"
       - "instrumentation/logger/**"
       - "instrumentation/net_http/**"
+      - "instrumentation/net_ldap/**"
       - "instrumentation/rack/**"
       - "instrumentation/rails/**"
       - "instrumentation/restclient/**"
@@ -102,6 +103,7 @@ jobs:
           - lmdb
           - logger
           - net_http
+          - net_ldap
           - rack
           - rails
           - restclient
@@ -113,7 +115,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -161,6 +163,7 @@ jobs:
           [[ "${{ matrix.gem }}" == "rails"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "grpc"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "gruf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "net_ldap"                 ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test JRuby"
