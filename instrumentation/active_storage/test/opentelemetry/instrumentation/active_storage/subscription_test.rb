@@ -14,7 +14,7 @@ describe OpenTelemetry::Instrumentation::ActiveStorage do
   let(:key_png) { 'sample.png' }
   let(:blob_png) do
     ActiveStorage::Blob.stub(:generate_unique_secure_token, key_png) do
-      file = File.open { "#{Dir.pwd}/test/fixtures/sample.png" }
+      file = File.open("#{Dir.pwd}/test/fixtures/sample.png") # rubocop:disable Style/FileOpen
       ActiveStorage::Blob.create_and_upload!(
         io: file,
         filename: 'sample.png',
@@ -25,7 +25,7 @@ describe OpenTelemetry::Instrumentation::ActiveStorage do
   let(:key_pdf) { 'sample.pdf' }
   let(:blob_pdf) do
     ActiveStorage::Blob.stub(:generate_unique_secure_token, key_pdf) do
-      file = File.open { "#{Dir.pwd}/test/fixtures/sample.pdf" }
+      file = File.open("#{Dir.pwd}/test/fixtures/sample.pdf") # rubocop:disable Style/FileOpen
       ActiveStorage::Blob.create_and_upload!(
         io: file,
         filename: 'sample.pdf',
