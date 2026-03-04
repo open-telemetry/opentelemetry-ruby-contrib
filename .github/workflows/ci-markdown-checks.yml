@@ -90,7 +90,7 @@ jobs:
           node-version: "24"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
+        uses: ruby/setup-ruby@19a43a6a2428d455dbd1b85344698725179c9d8c # v1.289.0
         with:
           ruby-version: "3.2"
 
@@ -146,7 +146,7 @@ jobs:
           node-version: "24"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
+        uses: ruby/setup-ruby@19a43a6a2428d455dbd1b85344698725179c9d8c # v1.289.0
         with:
           ruby-version: "3.2"
 
