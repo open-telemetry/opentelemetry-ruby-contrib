@@ -5,6 +5,16 @@ name: Installation Tests
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths: &path_filters
+      - ".github/workflows/installation-tests.yml"
+      - "releases/**"
+  pull_request:
+    branches:
+      - main
+    paths: *path_filters
   schedule:
     # Everyday at 2 PM UTC
     - cron: "0 14 * * *"
@@ -30,5 +40,19 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
       - name: "Install Latest Gem Versions on ${{ matrix.ruby-version }}"
+        working-directory: releases
+        run: ./run.sh
+  installation-latest-tests:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    strategy:
+      fail-fast: false
+    name: Latest
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ruby/setup-ruby@19a43a6a2428d455dbd1b85344698725179c9d8c # v1.289.0
+        with:
+          ruby-version: 4.0.1
+      - name: "Install Latest Gem Versions on Latest Ruby"
         working-directory: releases
         run: ./run.sh
