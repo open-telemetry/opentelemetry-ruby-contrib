@@ -35,8 +35,6 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddle
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
-
     # clear captured spans:
     exporter.reset
 

@@ -17,7 +17,6 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Stable::Client do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
     exporter.reset
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
