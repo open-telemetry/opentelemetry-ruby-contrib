@@ -69,7 +69,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
   end
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
+    skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
     Sinatra::Base.reset!
 

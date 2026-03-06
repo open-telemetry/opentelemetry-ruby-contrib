@@ -42,11 +42,11 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
     _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
 
-    _(span.attributes['http.method']).must_equal 'GET'
-    _(span.attributes['http.host']).must_equal 'example.org'
-    _(span.attributes['http.scheme']).must_equal 'http'
-    _(span.attributes['http.target']).must_equal '/ok'
-    _(span.attributes['http.status_code']).must_equal 200
+    _(span.attributes['http.request.method']).must_equal 'GET'
+    _(span.attributes['server.address']).must_equal 'example.org'
+    _(span.attributes['url.scheme']).must_equal 'http'
+    _(span.attributes['url.path']).must_equal '/ok'
+    _(span.attributes['http.response.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
     _(span.attributes['code.namespace']).must_equal 'ExampleController'
     _(span.attributes['code.function']).must_equal 'ok'
@@ -77,11 +77,11 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
     _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
 
-    _(span.attributes['http.method']).must_equal 'GET'
-    _(span.attributes['http.host']).must_equal 'example.org'
-    _(span.attributes['http.scheme']).must_equal 'http'
-    _(span.attributes['http.target']).must_equal '/items/new'
-    _(span.attributes['http.status_code']).must_equal 200
+    _(span.attributes['http.request.method']).must_equal 'GET'
+    _(span.attributes['server.address']).must_equal 'example.org'
+    _(span.attributes['url.scheme']).must_equal 'http'
+    _(span.attributes['url.path']).must_equal '/items/new'
+    _(span.attributes['http.response.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
     _(span.attributes['code.namespace']).must_equal 'ExampleController'
     _(span.attributes['code.function']).must_equal 'new_item'
@@ -97,11 +97,11 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
       _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
       _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
 
-      _(span.attributes['http.method']).must_equal 'GET'
-      _(span.attributes['http.host']).must_equal 'example.org'
-      _(span.attributes['http.scheme']).must_equal 'http'
-      _(span.attributes['http.target']).must_equal '/internal_server_error'
-      _(span.attributes['http.status_code']).must_equal 500
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['server.address']).must_equal 'example.org'
+      _(span.attributes['url.scheme']).must_equal 'http'
+      _(span.attributes['url.path']).must_equal '/internal_server_error'
+      _(span.attributes['http.response.status_code']).must_equal 500
       _(span.attributes['http.user_agent']).must_be_nil
       _(span.attributes['code.namespace']).must_equal 'ExampleController'
       _(span.attributes['code.function']).must_equal 'internal_server_error'
@@ -111,18 +111,18 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
   it 'does not set the span name when an exception is raised in middleware' do
     get '/ok?raise_in_middleware'
 
-    _(span.name).must_equal 'HTTP GET'
+    _(span.name).must_equal 'GET'
     _(span.kind).must_equal :server
     _(span.status.ok?).must_equal false
 
     _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
     _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
 
-    _(span.attributes['http.method']).must_equal 'GET'
-    _(span.attributes['http.host']).must_equal 'example.org'
-    _(span.attributes['http.scheme']).must_equal 'http'
-    _(span.attributes['http.target']).must_equal '/ok?raise_in_middleware'
-    _(span.attributes['http.status_code']).must_equal 500
+    _(span.attributes['http.request.method']).must_equal 'GET'
+    _(span.attributes['server.address']).must_equal 'example.org'
+    _(span.attributes['url.scheme']).must_equal 'http'
+    _(span.attributes['url.path']).must_equal '/ok?raise_in_middleware'
+    _(span.attributes['http.response.status_code']).must_equal 500
     _(span.attributes['http.user_agent']).must_be_nil
     _(span.attributes['code.namespace']).must_be_nil
     _(span.attributes['code.function']).must_be_nil
@@ -131,15 +131,15 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
   it 'does not set the span name when the request is redirected in middleware' do
     get '/ok?redirect_in_middleware'
 
-    _(span.name).must_equal 'HTTP GET'
+    _(span.name).must_equal 'GET'
     _(span.kind).must_equal :server
     _(span.status.ok?).must_equal true
 
-    _(span.attributes['http.method']).must_equal 'GET'
-    _(span.attributes['http.host']).must_equal 'example.org'
-    _(span.attributes['http.scheme']).must_equal 'http'
-    _(span.attributes['http.target']).must_equal '/ok?redirect_in_middleware'
-    _(span.attributes['http.status_code']).must_equal 307
+    _(span.attributes['http.request.method']).must_equal 'GET'
+    _(span.attributes['server.address']).must_equal 'example.org'
+    _(span.attributes['url.scheme']).must_equal 'http'
+    _(span.attributes['url.path']).must_equal '/ok?redirect_in_middleware'
+    _(span.attributes['http.response.status_code']).must_equal 307
     _(span.attributes['http.user_agent']).must_be_nil
     _(span.attributes['code.namespace']).must_be_nil
     _(span.attributes['code.function']).must_be_nil
@@ -195,11 +195,11 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
       _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
       _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
 
-      _(span.attributes['http.method']).must_equal 'GET'
-      _(span.attributes['http.host']).must_equal 'example.org'
-      _(span.attributes['http.scheme']).must_equal 'http'
-      _(span.attributes['http.target']).must_equal '/internal_server_error'
-      _(span.attributes['http.status_code']).must_equal 500
+      _(span.attributes['http.request.method']).must_equal 'GET'
+      _(span.attributes['server.address']).must_equal 'example.org'
+      _(span.attributes['url.scheme']).must_equal 'http'
+      _(span.attributes['url.path']).must_equal '/internal_server_error'
+      _(span.attributes['http.response.status_code']).must_equal 500
       _(span.attributes['http.user_agent']).must_be_nil
       _(span.attributes['code.namespace']).must_equal 'ExceptionsController'
       _(span.attributes['code.function']).must_equal 'show'
@@ -216,7 +216,7 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     get '/ok?param_to_be_filtered=bar&unfiltered_param=baz', {}
     _(last_response.body).must_equal 'actually ok'
     _(last_response.ok?).must_equal true
-    _(span.attributes['http.target']).must_equal '/ok?param_to_be_filtered=[FILTERED]&unfiltered_param=baz'
+    _(span.attributes['url.path']).must_equal '/ok?param_to_be_filtered=[FILTERED]&unfiltered_param=baz'
   end
 
   describe 'when the application does not have the tracing rack middleware' do
