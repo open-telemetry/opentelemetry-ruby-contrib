@@ -1,0 +1,26 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+source 'https://rubygems.org'
+
+gemspec
+
+group :test do
+  gem 'bundler'
+  gem 'minitest'
+  gem 'rake'
+  gem 'rubocop'
+  gem 'rubocop-performance'
+  gem 'simplecov'
+  gem 'yard'
+  gem 'opentelemetry-test-helpers'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'bigdecimal'
+    gem 'mutex_m'
+  end
+  gem 'logger' if RUBY_VERSION >= '4.0.0'
+end
