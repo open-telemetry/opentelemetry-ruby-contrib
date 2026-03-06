@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:get, 'http://example.com/failure').to_return(status: 500)
@@ -24,7 +25,10 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
   end
 
   # Force re-install of instrumentation
-  after { instrumentation.instance_variable_set(:@installed, false) }
+  after do
+    instrumentation.instance_variable_set(:@installed, false)
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
+  end
 
   describe 'tracing' do
     before do
