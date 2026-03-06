@@ -4,13 +4,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+%w[2.0.0 2.1.0 2.2.0 2.3.0 2.4.0 3.0.0].each do |version|
+  appraise "grape-#{version}" do
+    gem 'grape', "~> #{version}"
+  end
+end
+
 appraise 'grape-1.x' do
   gem 'rack', '~> 2.0'
   gem 'grape', '~> 1.8'
-end
-
-appraise 'grape-2.0.x' do
-  gem 'grape', '~> 2.0.0'
 end
 
 appraise 'grape-latest' do

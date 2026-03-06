@@ -1,5 +1,30 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.31.0 / 2026-01-13
+
+* ADDED: HTTP Client Semconv v1.17 Span Naming
+
+### v0.30.1 / 2025-11-25
+
+* FIXED: Update support for unknown HTTP methods to match semantic conventions
+
+### v0.30.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+* ADDED: Min Ruby Version 3.2
+
+### v0.29.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.29.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.28.0 / 2025-08-13
+
+* ADDED: Add Faraday `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1592](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1592)
+
 ### v0.27.0 / 2025-06-03
 
 * ADDED: Suppress internal spans with Faraday instrumentation
@@ -7,7 +32,6 @@
 ### v0.26.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.25.0 / 2025-01-07
@@ -64,25 +88,24 @@
 
 ### v0.23.1 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.23.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
-
-* ADDED: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.22.0 / 2023-01-14
 
-* ADDED: Add request/response hooks to more http clients 
-* FIXED: Stop leaking basic authentication credentials in Faraday instrumentation 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* ADDED: Add request/response hooks to more http clients
+* FIXED: Stop leaking basic authentication credentials in Faraday instrumentation
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.21.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.20.1 / 2022-05-03
 
@@ -90,8 +113,8 @@
 
 ### v0.20.0 / 2022-02-02
 
-* ADDED: Add net.peer.name to faraday instrumentation 
-* FIXED: Excessive hash creation on context attr merging 
+* ADDED: Add net.peer.name to faraday instrumentation
+* FIXED: Excessive hash creation on context attr merging
 
 ### v0.19.3 / 2021-12-02
 
@@ -103,17 +126,16 @@
 
 ### v0.19.1 / 2021-08-12
 
-* DOCS: Update docs to rely more on environment variable configuration 
+* DOCS: Update docs to rely more on environment variable configuration
 
 ### v0.19.0 / 2021-06-23
 
-* BREAKING CHANGE: Total order constraint on span.status= 
-
-* FIXED: Total order constraint on span.status= 
+* BREAKING CHANGE: Total order constraint on span.status=
+* FIXED: Total order constraint on span.status=
 
 ### v0.18.1 / 2021-06-08
 
-* FIXED: Missing require to common in faraday 
+* FIXED: Missing require to common in faraday
 
 ### v0.18.0 / 2021-05-21
 
@@ -138,7 +160,6 @@
 ### v0.14.0 / 2021-02-03
 
 * BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
-
 * ADDED: Replace getter and setter callables and remove rack specific propagators
 
 ### v0.13.0 / 2021-01-29
@@ -160,7 +181,6 @@
 ### v0.9.0 / 2020-11-27
 
 * BREAKING CHANGE: Add timeout for force_flush and shutdown
-
 * ADDED: Add timeout for force_flush and shutdown
 
 ### v0.8.0 / 2020-10-27

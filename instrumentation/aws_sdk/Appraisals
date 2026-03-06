@@ -21,10 +21,12 @@ appraise 'aws-sdk-3.202' do
   gem 'aws-sdk-sqs', '~> 1.80'
 end
 
-appraise 'aws-sdk-2.11' do
-  gem 'aws-sdk', '~> 2.11'
-end
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
+  appraise 'aws-sdk-2.11' do
+    gem 'aws-sdk', '~> 2.11'
+  end
 
-appraise 'aws-sdk-2.0' do
-  gem 'aws-sdk', '~> 2.0'
+  appraise 'aws-sdk-2.0' do
+    gem 'aws-sdk', '~> 2.0'
+  end
 end

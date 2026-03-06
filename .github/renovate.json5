@@ -1,0 +1,146 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:best-practices",
+    "helpers:pinGitHubActionDigestsToSemver",
+    ":separateMultipleMajorReleases",
+  ],
+  prConcurrentLimit: 12,
+  packageRules: [
+    {
+      groupName: "all patch versions",
+      matchDepNames: ["!ruby"],
+      matchUpdateTypes: ["patch"],
+      schedule: ["before 6am every weekday"],
+    },
+    {
+      groupName: "all digest versions",
+      matchDepNames: ["!ruby"],
+      matchUpdateTypes: ["digest"],
+      schedule: ["before 6am every weekday"],
+    },
+    {
+      matchDepNames: ["ruby"],
+      matchUpdateTypes: ["digest", "patch"],
+      matchFileNames: ["!.github/workflows/ci-markdown-checks.yml"],
+      schedule: ["before 6am every weekday"],
+    },
+    {
+      groupName: "Min-Ruby-sdk",
+      matchDepNames: ["ruby"],
+      matchFileNames: [".github/workflows/ci-markdown-checks.yml"],
+      dependencyDashboardApproval: true,
+      separateMultipleMinor: true,
+      separateMinorPatch: true,
+    },
+    {
+      matchUpdateTypes: ["minor"],
+      matchDepNames: ["!ruby"],
+      matchFileNames: ["!.github/workflows/ci-markdown-checks.yml"],
+      schedule: ["before 7am on Monday"],
+    },
+    {
+      matchUpdateTypes: ["major"],
+      matchCategories: ["ci", "js"],
+      schedule: ["before 8am on Monday"],
+    },
+    {
+      matchUpdateTypes: ["major"],
+      matchCategories: ["ruby", "docker"],
+      dependencyDashboardApproval: true,
+    },
+    {
+      matchDepNames: ["actions/setup-node", "ruby/setup-ruby"],
+      schedule: ["before 6am every weekday"],
+      prConcurrentLimit: 0,
+      automerge: true,
+    },
+    {
+      allowedVersions: "<={{add major 1}}",
+      matchDepTypes: ["service"],
+      schedule: ["before 8am on Monday"],
+      dependencyDashboardApproval: false,
+    },
+    {
+      allowedVersions: "<={{add major 1}}",
+      matchCategories: ["docker"],
+      schedule: ["before 8am on Monday"],
+      dependencyDashboardApproval: false,
+    },
+    {
+      matchFileNames: [
+        ".github/actions/test_gem/action.yml",
+        ".github/workflows/installation-tests.yml",
+        ".github/workflows/release-*.yml",
+      ],
+      ignoreDeps: ["ruby"],
+    },
+  ],
+  customManagers: [
+    {
+      customType: "regex",
+      description: "Update Package version in Dockerfiles",
+      managerFilePatterns: [
+        "/(^|/|\\.)Dockerfile$/",
+        "/(^|/)Dockerfile\\.[^/]*$/",
+      ],
+      matchStrings: [
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
+      ],
+      datasourceTemplate: "docker",
+      versioningTemplate: "docker",
+      currentValueTemplate: "{{depVersion}}",
+      extractVersionTemplate: "^(?<version>[0-9.]+)-alpine{{alpineVersion}}$",
+      autoReplaceStringTemplate: "FROM {{packageName}}:{{newVersion}}-alpine{{alpineVersion}}@{{newDigest}} ",
+    },
+    {
+      customType: "regex",
+      description: "Update os version in Dockerfiles",
+      managerFilePatterns: [
+        "/(^|/|\\.)Dockerfile$/",
+        "/(^|/)Dockerfile\\.[^/]*$/",
+      ],
+      matchStrings: [
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
+      ],
+      datasourceTemplate: "docker",
+      versioningTemplate: "docker",
+      currentValueTemplate: "{{alpineVersion}}",
+      extractVersionTemplate: "^{{depVersion}}-alpine(?<version>[0-9.]+)$",
+      depNameTemplate: "{{packageName}}-alpine",
+      autoReplaceStringTemplate: "FROM {{packageName}}:{{depVersion}}-alpine{{newVersion}}@{{newDigest}} ",
+    },
+    {
+      customType: "regex",
+      description: "Update entrypoint docker versions in services",
+      managerFilePatterns: [
+        ".github/workflows/ci-instrumentation-with-services.yml",
+      ],
+      matchStrings: [
+        "entrypoint sh (?<packageName>.+?):(?<depVersion>[0-9.]+?)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s-c",
+        "entrypoint sh (?<packageName>.+?):(?<depVersion>[0-9.]+?)\\s-c",
+      ],
+      datasourceTemplate: "docker",
+      versioningTemplate: "docker",
+      currentValueTemplate: "{{depVersion}}",
+      autoReplaceStringTemplate: "entrypoint sh {{packageName}}:{{newVersion}}@{{newDigest}} -c",
+    },
+  ],
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ["before 8am on Monday"],
+  },
+  labels: ["dependencies"],
+  ignoreDeps: [
+    "base64",
+    "bigdecimal",
+    "drb",
+    "logger",
+    "mutex_m",
+    "observer",
+    "ostruct",
+  ],
+  ignorePaths: ["**/example/Gemfile", "releases/Gemfile"],
+}

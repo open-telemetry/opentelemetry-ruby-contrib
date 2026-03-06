@@ -221,6 +221,28 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
         end
       end
 
+      describe 'when platform_resolve_type is disabled' do
+        let(:config) { { enable_platform_resolve_type: false } }
+
+        it 'does not trace .resolve_type' do
+          skip unless supports_authorized_and_resolved_types?
+          SomeGraphQLAppSchema.execute('{ vehicle { __typename } }')
+
+          parent = spans.find { |s| s.name == 'graphql.execute_query' }
+          span = spans.find { |s| s.parent_span_id == parent.span_id }
+          _(span).must_be_nil
+        end
+
+        it 'does not traces .resolve_type_lazy' do
+          skip unless supports_authorized_and_resolved_types?
+          SomeGraphQLAppSchema.execute('{ vehicle { __typename } }', context: { lazy_type_resolve: true })
+
+          parent = spans.find { |s| s.name == 'graphql.execute_query_lazy' }
+          span = spans.find { |s| s.parent_span_id == parent.span_id }
+          _(span).must_be_nil
+        end
+      end
+
       describe 'when platform_resolve_type is enabled with legacy naming' do
         let(:config) { { enable_platform_resolve_type: true, legacy_platform_span_names: true } }
 

@@ -3,4 +3,4 @@ inherit_from: ../../.rubocop.yml
 Metrics/MethodLength:
   Enabled: true
   Exclude:
-  - lib/opentelemetry/instrumentation/active_support/span_subscriber.rb
+    - lib/opentelemetry/instrumentation/active_support/span_subscriber.rb

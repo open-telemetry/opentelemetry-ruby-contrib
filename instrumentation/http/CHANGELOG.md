@@ -1,5 +1,26 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.28.0 / 2026-01-13
+
+* ADDED: HTTP Client Semconv v1.17 Span Naming
+
+### v0.27.1 / 2025-11-25
+
+* FIXED: Update support for unknown HTTP methods to match semantic conventions
+
+### v0.27.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+* ADDED: Min Ruby Version 3.2
+
+### v0.26.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.26.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.25.1 / 2025-07-01
 
 * FIXED: Update span name when semconv stability is enabled
@@ -11,7 +32,6 @@
 ### v0.24.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.23.5 / 2024-11-26
@@ -41,7 +61,6 @@
 ### v0.22.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.21.0 / 2023-01-14
@@ -82,7 +101,6 @@
 ### v0.19.0 / 2021-06-23
 
 * BREAKING CHANGE: Total order constraint on span.status=
-
 * FIXED: Total order constraint on span.status=
 
 ### v0.18.0 / 2021-05-21
@@ -95,7 +113,7 @@
 
 ### v0.16.2 / 2021-03-29
 
-* FIXED: HTTP instrumenter should check for gem presence
+* FIXED: HTTP Instrumentation should check for gem presence
 
 ### v0.16.1 / 2021-03-25
 

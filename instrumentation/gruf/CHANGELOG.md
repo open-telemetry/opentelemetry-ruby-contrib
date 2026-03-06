@@ -1,9 +1,21 @@
 # Release History: opentelemetry-instrumentation-gruf
 
+### v0.5.0 / 2025-10-22
+
+* BREAKING CHANGE: Min Ruby Version 3.2
+* ADDED: Min Ruby Version 3.2
+
+### v0.4.1 / 2025-09-30
+
+* FIXED: Min OTel Ruby API 1.7
+
+### v0.4.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
 ### v0.3.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.2.1 / 2024-04-30

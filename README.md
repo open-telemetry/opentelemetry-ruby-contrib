@@ -44,6 +44,7 @@ For more information about the maintainer role, see the [community repository](h
 
 - [Josef Šimánek](https://github.com/simi)
 - [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
+- [Hannah Ramadan](https://github.com/HannahRamadan), New Relic
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
@@ -60,7 +61,7 @@ This repository also contains libraries that hold code shared among
 multiple instrumentation libraries.
 
 - [MySQL](helpers/mysql/)
-- [SQL Obfuscation](helpers/sql-obfuscation/)
+- [SQL Processor](helpers/sql-processor/)
 
 ## Additional Libraries
 
@@ -78,7 +79,9 @@ OpenTelemetry Ruby follows the [versioning and stability document][otel-versioni
 
 ### Ruby and Library Compatibility
 
-All libraries in this repository require Ruby Versions 3.1 or newer.
+All libraries in this repository require Ruby Versions 3.2 or newer.
+
+- Ruby 3.1 EoL 2025-03-31 No longer receiving OTel Contrib updates as of 2025-09-30
 
 This project is managed on a volunteer basis and therefore we have limited capacity to support compatibility with unmaintained or EOL libraries.
 

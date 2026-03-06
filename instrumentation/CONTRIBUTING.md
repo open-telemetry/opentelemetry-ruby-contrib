@@ -18,9 +18,11 @@ In addition to the requirements to maintain at least [community member status](h
 2. Performing timely code reviews and responding to issues
 3. Addressing security vulnerabilities
 4. Keeping the instrumentation library up to date with the latest:
-    * OpenTelemetry Ruby API and SDK changes
-    * Ruby language changes
-    * Instrumented library changes
+   - OpenTelemetry Ruby API and SDK changes
+   - Ruby language changes
+   - Instrumented library changes
+
+When you become a component owner, you will be added to the `opentelemetry/ruby-contrib-triagers` group and will be automatically assigned to pull requests related to your component.
 
 If you do not have the capacity to maintain the instrumentation library, please consider contributing to the OpenTelemetry Ruby project in other ways or consider creating a separate project for the instrumentation library.
 
@@ -38,16 +40,16 @@ The following steps are required to contribute a new instrumentation library:
 2. Implement the instrumentation library, including comprehensive automated tests
 3. Add the instrumentation library to the appropriate CI workflows
 4. Include documentation for your instrumentation
-    * Document all instrumentation-specific configuration options in the `README.md` and `yardoc` class comments
-    * Document all semantic conventions used by the instrumentation in the `README.md`
-    * Provide executable examples in an `examples` directory
+   - Document all instrumentation-specific configuration options in the `README.md` and `yardoc` class comments
+   - Document all semantic conventions used by the instrumentation in the `README.md`
+   - Provide executable examples in an `examples` directory
 5. Submit a pull request
 
 ## Generate the gem
 
 This repository contains a script to generate a new instrumentation library.
 
-The snippet below demonstrates how to generate a an instrumentation for the `werewolf` gem, starting from the repository root.
+The snippet below demonstrates how to generate an instrumentation for the `werewolf` gem, starting from the repository root.
 
 ```console
 
@@ -57,7 +59,7 @@ $bash opentelemetry-ruby-contrib> bin/instrumentation_generator werewolf
 
 The output of the generator shows that it creates a new directory in the `instrumentation` directory using the name of the gem:
 
-``` console
+```console
 
 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
 
@@ -92,22 +94,22 @@ The output of the generator shows that it creates a new directory in the `instru
 
 The original design and implementation of this project was heavily influenced by Datadog's `dd-trace-rb` project. You may refer to the [Datadog Porting Guide](datadog-porting-guide.md) as a reference for implementing instrumentations, however, the following guidelines are specific to OpenTelemetry Ruby:
 
-* Use `OpenTelemetry::Instrumentation::Base`
-* Use the OpenTelemetry API
-* Use first-party extension points
-* Use Semantic Conventions
-* Write comprehensive automated tests
-* Understand performance characteristics
+- Use `OpenTelemetry::Instrumentation::Base`
+- Use the OpenTelemetry API
+- Use first-party extension points
+- Use Semantic Conventions
+- Write comprehensive automated tests
+- Understand performance characteristics
 
 ### Use `OpenTelemetry::Instrumentation::Base`
 
 The entry point of your instrumentation should be implemented as a subclass of `OpenTelemetry::Instrumentation::Base`:
 
-* Implement an `install` block, where all of the integration work happens
-* Implement a `present` block, which checks whether the library you are instrumenting was loaded
-* Implement a `compatible` block and check for at least the minimum required library version
-  * OpenTelemetry Ruby Contrib generally supports only versions of gems that are within the maintenance window
-* Add any custom configuration `options` you want to support
+- Implement an `install` block, where all of the integration work happens
+- Implement a `present` block, which checks whether the library you are instrumenting was loaded
+- Implement a `compatible` block and check for at least the minimum required library version
+  - OpenTelemetry Ruby Contrib generally supports only versions of gems that are within the maintenance window
+- Add any custom configuration `options` you want to support
 
 The example below demonstrates how to implement the `Werewolf` instrumentation:
 
@@ -137,7 +139,7 @@ module OpenTelemetry
         end
 
         compatible do
-          Gem::Version.new(::Wereworlf::VERSION) >= MINIMUM_VERSION
+          Gem::Version.new(::Werewolf::VERSION) >= MINIMUM_VERSION
         end
       end
     end
@@ -146,10 +148,10 @@ end
 
 ```
 
-* The `install` block lazily requires the instrumentation handlers, which subscribe to events published by the `Werewolf` event hooks.
-* The `present` block checks if the `Werewolf` and `ActiveSupport` libraries are loaded, which it will use to subscribe to events and generate spans. It will skip the installation if those dependencies were not loaded before the instrumentation was initialized.
-* The `compatible` block checks if the `Werewolf` library version is at least `0.1.0` and will skip installation if it is not.
-* The `options` section allows you to define custom configuration options that can be passed to the instrumentation. In this example, the `transformations` option is defined with a default value of `:omit` and a validation rule that only allows `:omit` or `:include` values.
+- The `install` block lazily requires the instrumentation handlers, which subscribe to events published by the `Werewolf` event hooks.
+- The `present` block checks if the `Werewolf` and `ActiveSupport` libraries are loaded, which it will use to subscribe to events and generate spans. It will skip the installation if those dependencies were not loaded before the instrumentation was initialized.
+- The `compatible` block checks if the `Werewolf` library version is at least `0.1.0` and will skip installation if it is not.
+- The `options` section allows you to define custom configuration options that can be passed to the instrumentation. In this example, the `transformations` option is defined with a default value of `:omit` and a validation rule that only allows `:omit` or `:include` values.
 
 ### Use the OpenTelemetry API
 
@@ -189,9 +191,9 @@ If the attribute is specific to your instrumentation, then consider namespacing 
 
 Code that is not tested will not be accepted by maintainers. We understand that providing 100% test coverage is not always possible but we still ask that you provide your best effort when writing automated tests.
 
-Most of the libraries instrument introduce changes outside of our control. For this reason, integration or state-based tests are preferred over interaction (mock) tests.
+Most of the libraries we instrument introduce changes outside of our control. For this reason, integration or state-based tests are preferred over interaction (mock) tests.
 
-When you do in fact run into cases where test doubles or API stubs are absolutely necessary, we recommend using the [`rspec-mocks`](https://github.com/rspec/rspec-mocks) and [`webmocks`](https://github.com/bblimke/webmock) gems.
+When you do in fact run into cases where test doubles or API stubs are absolutely necessary, we recommend using the [`rspec-mocks`](https://github.com/rspec/rspec-mocks) and [`WebMock`](https://github.com/bblimke/webmock) gems.
 
 ### Understand performance characteristics
 
@@ -199,9 +201,9 @@ The OTel Specification describes expectations around the performance of SDKs, wh
 
 Instrumentation libraries should be as lightweight as possible and must:
 
-* Rely on `rubocop-performance` linters to catch performance issues
-* Consider using [microbenchmarks](https://github.com/evanphx/benchmark-ips) and [profiling](https://ruby-prof.github.io/) to address any possible performance issues
-* Provide minimal solutions and code paths
+- Rely on `rubocop-performance` linters to catch performance issues
+- Consider using [microbenchmarking](https://github.com/evanphx/benchmark-ips) and [profiling](https://ruby-prof.github.io/) to address any possible performance issues
+- Provide minimal solutions and code paths
 
 #### Provide minimal solutions and code paths
 
@@ -219,12 +221,12 @@ In the near future, [OTel Profiling](https://opentelemetry.io/blog/2024/profilin
 
 Here are some examples of performance fixes that reduced object allocations and method dispatching:
 
-* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867>
-* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/723>
-* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/665>
-* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/642>
-* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/207>
-* <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/232>
+- <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/867>
+- <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/723>
+- <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/665>
+- <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/642>
+- <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/207>
+- <https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/232>
 
 #### Avoid adding custom extensions
 
@@ -242,8 +244,7 @@ This project contains multiple CI workflows that execute tests and ensure the ge
 
 For standalone instrumentation that does not have any external service dependencies, add the gem to the `/.github/workflows/ci-instrumentation.yml` file under `jobs/instrumentation/strategy/matrix/gem`:
 
-``` yaml
-
+```yaml
 jobs:
   instrumentation:
     strategy:
@@ -257,24 +258,23 @@ jobs:
           - werewolf
         os:
           - ubuntu-latest
-
 ```
 
 #### JRuby Compatibility
 
 If your gem is incompatible with `JRuby`, you can exclude it from the matrix by adding an entry to the `/.github/workflows/ci-instrumentation.yml` file under `jobs/instrumentation/steps/[name="JRuby Filter"]`:
 
-``` yaml
-      - name: "JRuby Filter"
-        id: jruby_skip
-        shell: bash
-        run: |
-          echo "skip=false" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "action_pack"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          # ...
-          [[ "${{ matrix.gem }}" == "werewolf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
-          true
+```yaml
+- name: "JRuby Filter"
+  id: jruby_skip
+  shell: bash
+  run: |
+    echo "skip=false" >> $GITHUB_OUTPUT
+    [[ "${{ matrix.gem }}" == "action_pack"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
+    # ...
+    [[ "${{ matrix.gem }}" == "werewolf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+    # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
+    true
 ```
 
 ### External service instrumentations
@@ -285,29 +285,28 @@ Adding jobs for instrumentation with external service dependencies may be a bit 
 
 CI is currently configured to support the following services:
 
-* kafka
-* memcached
-* mongodb
-* mysql
-* postgresql
-* rabbitmq
-* redis
+- kafka
+- memcached
+- mongodb
+- mysql
+- postgresql
+- rabbitmq
+- redis
 
 If your gem depends on one of those services, then great! The next step is to add the gem to matrix in the `/.github/workflows/ci-service-instrumentation.yml` file under `jobs/instrumentation_*/strategy/matrix/gem`:
 
 ```yaml
-
-  instrumentation_kafka:
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - racecar
-          - rdkafka
-          - ruby_kafka
-          - werewolf
-        os:
-          - ubuntu-latest
+instrumentation_kafka:
+  strategy:
+    fail-fast: false
+    matrix:
+      gem:
+        - racecar
+        - rdkafka
+        - ruby_kafka
+        - werewolf
+      os:
+        - ubuntu-latest
 ```
 
 #### Adding a New Service
@@ -317,22 +316,21 @@ Assuming your external service is not supported, you may consider adding it as a
 Add the service container to `jobs/instrumentation_with_services/services` and add the gem to the matrix in `jobs/instrumentation_with_services/strategy/matrix/gem`:
 
 ```yaml
-
-  instrumentation_with_services:
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - dalli
-          - mongo
-          - werewolf
-        os:
-          - ubuntu-latest
-    services:
+instrumentation_with_services:
+  strategy:
+    fail-fast: false
+    matrix:
+      gem:
+        - dalli
+        - mongo
+        - werewolf
+      os:
+        - ubuntu-latest
+  services:
+    # ...
+    my_service:
+      image: my_service:latest
       # ...
-      my_service:
-        image: my_service:latest
-        # ...
 ```
 
 > :information_source: Please refer to the official [GitHub Actions Documentation](https://docs.github.com/en/actions/using-containerized-services/about-service-containers) for more information on how to add a service container.
@@ -340,52 +338,46 @@ Add the service container to `jobs/instrumentation_with_services/services` and a
 If we determine the service container slows down the test suite significantly, it may make sense to copy the matrix and steps stanzas from an existing instrumentation and update it to use the new service container as a dependency:
 
 ```yaml
-
-  instrumentation_silver:
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - werewolf
-        os:
-          - ubuntu-latest
-    name: other / ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.1"
-          yard: true
-          rubocop: true
-          build: true
-      - name: "Test JRuby"
-        uses: ./.github/actions/test_gem
-        with:
-          gem:  "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-9.4.2.0"
-    services:
+instrumentation_silver:
+  strategy:
+    fail-fast: false
+    matrix:
+      gem:
+        - werewolf
+      os:
+        - ubuntu-latest
+  name: other / ${{ matrix.gem }} / ${{ matrix.os }}
+  runs-on: ${{ matrix.os }}
+  steps:
+    - uses: actions/checkout@v4
+    - name: "Test Ruby 3.4"
+      uses: ./.github/actions/test_gem
+      with:
+        gem: "opentelemetry-helpers-${{ matrix.gem }}"
+        ruby: "3.4"
+    - name: "Test Ruby 3.3"
+      uses: ./.github/actions/test_gem
+      with:
+        gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+        ruby: "3.3"
+    - name: "Test Ruby 3.2"
+      uses: ./.github/actions/test_gem
+      with:
+        gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+        ruby: "3.2"
+        yard: true
+        rubocop: true
+        build: true
+    - name: "Test JRuby"
+      uses: ./.github/actions/test_gem
+      with:
+        gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+        ruby: "jruby-9.4.2.0"
+  services:
+    # ...
+    my_service:
+      image: my_service:latest
       # ...
-      my_service:
-        image: my_service:latest
-        # ...
 ```
 
 ## Documentation

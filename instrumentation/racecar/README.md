@@ -36,7 +36,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the [`./example` directory](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/racecar/example). Run `./trace_demonstration.sh` to see its behaviour.
+Example usage can be seen in the [`./example` directory](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/racecar/example). Run `./trace_demonstration.sh` to see its behavior.
 
 ## How can I get involved?
 

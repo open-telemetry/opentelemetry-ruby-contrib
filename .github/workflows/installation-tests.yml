@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   installation-tests:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
@@ -21,14 +22,11 @@ jobs:
           - 3.4
           - 3.3
           - 3.2
-          - 3.1
     name: ${{ matrix.ruby-version }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-        # ATTENTION: Dependabot does not know how to update shared actions file.
-        # If you see it update setup-ruby here also update it as part of actions/test_gem/action.yml
-      - uses: ruby/setup-ruby@v1.254.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ruby/setup-ruby@19a43a6a2428d455dbd1b85344698725179c9d8c # v1.289.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
       - name: "Install Latest Gem Versions on ${{ matrix.ruby-version }}"

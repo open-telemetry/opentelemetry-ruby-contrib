@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry-helpers-mysql'
-require 'opentelemetry-helpers-sql-obfuscation'
+require 'opentelemetry-helpers-sql-processor'
 
 module OpenTelemetry
   module Instrumentation
@@ -18,8 +18,16 @@ module OpenTelemetry
               _otel_span_name(sql),
               attributes: _otel_span_attributes(sql),
               kind: :client
-            ) do
-              super
+            ) do |_span, context|
+              if propagator && sql.frozen?
+                sql = +sql
+                propagator.inject(sql, context: context)
+                sql.freeze
+              elsif propagator
+                propagator.inject(sql, context: context)
+              end
+
+              super(sql, options)
             end
           end
 
@@ -28,8 +36,16 @@ module OpenTelemetry
               _otel_span_name(sql),
               attributes: _otel_span_attributes(sql),
               kind: :client
-            ) do
-              super
+            ) do |_span, context|
+              if propagator && sql.frozen?
+                sql = +sql
+                propagator.inject(sql, context: context)
+                sql.freeze
+              elsif propagator
+                propagator.inject(sql, context: context)
+              end
+
+              super(sql)
             end
           end
 
@@ -53,7 +69,7 @@ module OpenTelemetry
               attributes[SemanticConventions::Trace::DB_STATEMENT] = sql
             when :obfuscate
               attributes[SemanticConventions::Trace::DB_STATEMENT] =
-                OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(
+                OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(
                   sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql
                 )
             end
@@ -92,6 +108,10 @@ module OpenTelemetry
 
           def config
             Mysql2::Instrumentation.instance.config
+          end
+
+          def propagator
+            Mysql2::Instrumentation.instance.propagator
           end
         end
       end

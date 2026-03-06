@@ -1,5 +1,22 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.39.1 / 2025-10-22
+
+* FIXED: Update opentelemetry-instrumentation-base dependency
+
+### v0.39.0 / 2025-10-21
+
+* BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+* ADDED: Min Ruby Version 3.2 and Rails 7.1
+
+### v0.38.0 / 2025-09-30
+
+* ADDED: Bump minimum API Version to 1.7
+
+### v0.37.0 / 2025-08-19
+
+ADDED: Add action_pack `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility for Rack integration [#1594](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1594)
+
 ### v0.36.0 / 2025-02-04
 
 * ADDED: Add active_storage instrumentation to `rails`
@@ -13,7 +30,6 @@
 
 * BREAKING CHANGE: Drop Support for EoL Rails 6.1
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Drop Support for EoL Rails 6.1
 * ADDED: Set minimum supported version to Ruby 3.1
 
@@ -71,7 +87,6 @@
 ### v0.29.0 / 2023-11-22
 
 * BREAKING CHANGE: Drop Rails 6.0 EOL
-
 * ADDED: Drop Rails 6.0 EOL
 
 ### v0.28.1 / 2023-10-16
@@ -94,14 +109,12 @@
 ### v0.26.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.25.0 / 2023-02-08
 
 * BREAKING CHANGE: Update Instrumentations GraphQL, HttpClient, Rails [#303](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/303)
 * BREAKING CHANGE: Drop Rails 5 Support [#315](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/315)
-
 * DOCS: Rails Instrumentation Compatibility
 
 ### v0.24.1 / 2023-01-14
@@ -111,7 +124,6 @@
 ### v0.24.0 / 2022-12-06
 
 * BREAKING CHANGE: Remove enable_recognize_route and span_naming options
-
 * FIXED: Remove enable_recognize_route and span_naming options
 
 ### v0.23.1 / 2022-11-08
@@ -159,7 +171,6 @@
 * ADDED: Add ActionView instrumentation via ActiveSupport::Notifications
 * FIXED: Rails instrumentation to not explicitly install sub gems
 * DOCS: Update docs to rely more on environment variable configuration
-
 * This release adds support for Active Record and Action View.
 * The `enable_recognize_route` configuration option has been moved to the ActionPack gem.
 * See readme for details on how to configure the sub instrumentation gems.

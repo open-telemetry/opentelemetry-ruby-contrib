@@ -3,8 +3,8 @@ name: Force release
 on:
   workflow_dispatch:
     inputs:
-      gem:
-        description: Gem to release
+      name:
+        description: Component to release
         required: true
       version:
         description: Version to release
@@ -21,28 +21,27 @@ jobs:
   release-perform:
     permissions:
       contents: write # required for creating releases
-      pull-requests: write # required for creating release PRs
+      pull-requests: write # required for updating label on PR, posting comments
+      issues: write # required for creating new issues on failed releases
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    runs-on: ubuntu-24.04
     env:
-      ruby_version: "3.1"
-    runs-on: ubuntu-latest
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.254.0
-        with:
-          ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install Ruby
+        uses: ruby/setup-ruby@19a43a6a2428d455dbd1b85344698725179c9d8c # v1.289.0
+        with:
+          ruby-version: "4.0"
+          bundler-cache: true
       - name: Perform release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
         run: |
-          toys release perform --yes --verbose \
-            "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
-            "--release-sha=${{ github.sha }}" \
-            "--rubygems-api-key=${{ secrets.RUBYGEMS_API_KEY }}" \
+          bundle exec toys release perform --yes --verbose \
+            "--release-ref=${{ github.sha }}" \
             ${{ github.event.inputs.flags }} \
-            "${{ github.event.inputs.gem }}" "${{ github.event.inputs.version }}" \
+            "${{ github.event.inputs.name }}" "${{ github.event.inputs.version }}" \
             < /dev/null
