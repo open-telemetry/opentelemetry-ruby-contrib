@@ -121,7 +121,8 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     _(span.attributes['http.request.method']).must_equal 'GET'
     _(span.attributes['server.address']).must_equal 'example.org'
     _(span.attributes['url.scheme']).must_equal 'http'
-    _(span.attributes['url.path']).must_equal '/ok?raise_in_middleware'
+    _(span.attributes['url.path']).must_equal '/ok'
+    _(span.attributes['url.query']).must_equal 'raise_in_middleware'
     _(span.attributes['http.response.status_code']).must_equal 500
     _(span.attributes['http.user_agent']).must_be_nil
     _(span.attributes['code.namespace']).must_be_nil
@@ -138,7 +139,8 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     _(span.attributes['http.request.method']).must_equal 'GET'
     _(span.attributes['server.address']).must_equal 'example.org'
     _(span.attributes['url.scheme']).must_equal 'http'
-    _(span.attributes['url.path']).must_equal '/ok?redirect_in_middleware'
+    _(span.attributes['url.path']).must_equal '/ok'
+    _(span.attributes['url.query']).must_equal 'redirect_in_middleware'
     _(span.attributes['http.response.status_code']).must_equal 307
     _(span.attributes['http.user_agent']).must_be_nil
     _(span.attributes['code.namespace']).must_be_nil
@@ -216,7 +218,8 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     get '/ok?param_to_be_filtered=bar&unfiltered_param=baz', {}
     _(last_response.body).must_equal 'actually ok'
     _(last_response.ok?).must_equal true
-    _(span.attributes['url.path']).must_equal '/ok?param_to_be_filtered=[FILTERED]&unfiltered_param=baz'
+    _(span.attributes['url.path']).must_equal '/ok'
+    _(span.attributes['url.query']).must_equal 'param_to_be_filtered=[FILTERED]&unfiltered_param=baz'
   end
 
   describe 'when the application does not have the tracing rack middleware' do
