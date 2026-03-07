@@ -14,6 +14,9 @@ update_existing_requests: true
 git_user_name: otelbot
 git_user_email: 197425009+otelbot@users.noreply.github.com
 
+# Sets the list symbol used for bullet points in the generated changelog to be "-" which complies with markdownlint and prettier. Note The default is "*".
+changelog_bullet: "-"
+
 # List of all releasable gems. Each gem should include:
 #  *  name: The name of the gem. (Required.)
 #  *  directory: Gem directory relative to the repo root.

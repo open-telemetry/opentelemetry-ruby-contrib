@@ -6,41 +6,41 @@
 
 ### v0.66.0 / 2026-01-13
 
-* ADDED: Add SQL Comment Propagator
+- ADDED: Add SQL Comment Propagator
 
 ### v0.65.1 / 2025-12-03
 
-* FIXED: Update gemspec dependencies to sql-processor
+- FIXED: Update gemspec dependencies to sql-processor
 
 ### v0.65.0 / 2025-12-02
 
-* ADDED: Replace references sql-obfuscation -> sql-processor
+- ADDED: Replace references sql-obfuscation -> sql-processor
 
 ### v0.64.0 / 2025-10-22
 
-* BREAKING CHANGE: Min Ruby Version 3.2
-* ADDED: Min Ruby Version 3.2
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
 
 ### v0.63.1 / 2025-09-30
 
-* FIXED: Min OTel Ruby API 1.7
+- FIXED: Min OTel Ruby API 1.7
 
 ### v0.63.0 / 2025-09-30
 
-* ADDED: Bump minimum API Version to 1.7
+- ADDED: Bump minimum API Version to 1.7
 
 ### v0.62.0 / 2025-09-25
 
-* ADDED: Trilogy: introduce record_exception setting
+- ADDED: Trilogy: introduce record_exception setting
 
 ### v0.61.1 / 2025-04-16
 
-* refactor: Use SQL helpers for context attributes #1271
+- refactor: Use SQL helpers for context attributes #1271
 
 ### v0.61.0 / 2025-01-16
 
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-* ADDED: Set minimum supported version to Ruby 3.1
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.60.0 / 2024-09-12
 
