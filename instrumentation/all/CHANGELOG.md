@@ -2,66 +2,66 @@
 
 ### v0.90.1 / 2026-01-13
 
-* ADDED: Fixed release version
+- ADDED: Fixed release version
 
 ### v0.90.0 / 2025-01-13
 
-* ADDED: Add SQL Comment Propagator
-* ADDED: HTTP Client Semconv v1.17 Span Naming
+- ADDED: Add SQL Comment Propagator
+- ADDED: HTTP Client Semconv v1.17 Span Naming
 
 ### v0.89.1 / 2025-12-03
 
-* ADDED: Upgrade trilogy instrumentation to 0.65.1
-* ADDED: Upgrade mysql2 instrumentation to 0.32.1
-* ADDED: Upgrade pg instrumentation to 0.34.1
+- ADDED: Upgrade trilogy instrumentation to 0.65.1
+- ADDED: Upgrade mysql2 instrumentation to 0.32.1
+- ADDED: Upgrade pg instrumentation to 0.34.1
 
 ### v0.89.0 / 2025-12-02
 
-* ADDED: Upgrade trilogy instrumentation to 0.65.0
-* ADDED: Upgrade mysql2 instrumentation to 0.32.0
-* ADDED: Upgrade pg instrumentation to 0.34.0
-* ADDED: Upgrade que instrumentation to 0.12.0
-* ADDED: Upgrade sidekiq instrumentation to 0.28.1
+- ADDED: Upgrade trilogy instrumentation to 0.65.0
+- ADDED: Upgrade mysql2 instrumentation to 0.32.0
+- ADDED: Upgrade pg instrumentation to 0.34.0
+- ADDED: Upgrade que instrumentation to 0.12.0
+- ADDED: Upgrade sidekiq instrumentation to 0.28.1
 
 ### v0.88.0 / 2025-11-26
 
-* BREAKING CHANGE: Update Ethon span name when unknown method
-* ADDED: Update Ethon span name when unknown method
+- BREAKING CHANGE: Update Ethon span name when unknown method
+- ADDED: Update Ethon span name when unknown method
 
 ### v0.87.0 / 2025-11-05
 
-* ADDED: upgrade opentelemetry-instrumentation-pg to 0.33.0
+- ADDED: upgrade opentelemetry-instrumentation-pg to 0.33.0
 
 ### v0.86.1 / 2025-10-22
 
-* ADDED: Updated minimum gem versions for dependent instrumentations
+- ADDED: Updated minimum gem versions for dependent instrumentations
 
 ### v0.86.0 / 2025-10-21
 
-* BREAKING CHANGE: Min Version Support For Ruby 3.2 and Rails 7.1
-* ADDED: Min Version Support For Ruby 3.2 and Rails 7.1
+- BREAKING CHANGE: Min Version Support For Ruby 3.2 and Rails 7.1
+- ADDED: Min Version Support For Ruby 3.2 and Rails 7.1
 
 ### v0.85.0 / 2025-10-11
 
-* BREAKING CHANGE: aws_sdk Suppress internal spans by default
+- BREAKING CHANGE: aws_sdk Suppress internal spans by default
 
 ### v0.84.0 / 2025-09-27
 
-* ADDED: Minimum version of opentelemetry-api v1.7.0
+- ADDED: Minimum version of opentelemetry-api v1.7.0
 
 ### v0.83.0 / 2025-09-27
 
-* ADDED: Update trilogy instrumentation to v0.62.0
+- ADDED: Update trilogy instrumentation to v0.62.0
 
 ### v0.82.0 / 2025-09-18
 
-* BREAKING CHANGE: AWS Lambda: Check if span has the attributes method to avoid internal error
-* FIXED: AWS Lambda: Check if span has the attributes method to avoid internal error
+- BREAKING CHANGE: AWS Lambda: Check if span has the attributes method to avoid internal error
+- FIXED: AWS Lambda: Check if span has the attributes method to avoid internal error
 
 ### v0.81.0 / 2025-09-16
 
-* ADDED: Anthropic initial instrumentation
-* ADDED: Add Net::HTTP `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1572](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1572)
+- ADDED: Anthropic initial instrumentation
+- ADDED: Add Net::HTTP `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1572](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1572)
 
 ### v0.80.0 / 2025-08-19
 
@@ -69,93 +69,93 @@ ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility fo
 
 ### v0.79.0 / 2025-08-18
 
-* ADDED: Add HTTPX instrumentation to all
-* ADDED: Add Ethon `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1561](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1561)
-* ADDED: Add Excon `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1569](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1569)
-* ADDED: Add Faraday `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1592](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1592)
-* ADDED: Add HTTPClient `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1588](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1588)
-* ADDED: HTTPX `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1589](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1589)
-* ADDED: Add REST Client `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1568](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1568)
+- ADDED: Add HTTPX instrumentation to all
+- ADDED: Add Ethon `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1561](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1561)
+- ADDED: Add Excon `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1569](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1569)
+- ADDED: Add Faraday `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1592](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1592)
+- ADDED: Add HTTPClient `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1588](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1588)
+- ADDED: HTTPX `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1589](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1589)
+- ADDED: Add REST Client `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1568](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1568)
 
 ### v0.78.0 / 2025-06-17
 
-* ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable to HTTP.rb instrumentation [#1547](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1547)
+- ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable to HTTP.rb instrumentation [#1547](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1547)
 
 ### v0.77.0 / 2025-06-03
 
-* ADDED: Suppress internal spans with Faraday instrumentation
-* FIXED: Handle force_flush for rake task with arguments
+- ADDED: Suppress internal spans with Faraday instrumentation
+- FIXED: Handle force_flush for rake task with arguments
 
 ### v0.76.0 / 2025-05-06
 
-* ADDED: Update minimum required version of rdkafka to 0.18.0
+- ADDED: Update minimum required version of rdkafka to 0.18.0
 
 ### v0.75.1 / 2025-04-16
 
-* (No significant changes)
+- (No significant changes)
 
 ### v0.75.0 / 2025-04-15
 
-* ADDED: Add `opentelemetry-instrumentation-grpc` to `-all`
-* ADDED: Support meta protocol instrumentation for Dalli
+- ADDED: Add `opentelemetry-instrumentation-grpc` to `-all`
+- ADDED: Support meta protocol instrumentation for Dalli
 
 ### v0.74.0 / 2025-02-11
 
-* ADDED: Rdkafka support to v0.19 including
+- ADDED: Rdkafka support to v0.19 including
 
 ### v0.73.1 / 2025-02-05
 
-* FIXED: Add require active_storage instrumentation to `all`
+- FIXED: Add require active_storage instrumentation to `all`
 
 ### v0.73.0 / 2025-02-04
 
-* CHANGED: opentelemetry-instrumentation-redis v0.26.1
-* CHANGED: opentelemetry-instrumentation-rails v0.36.0
-* CHANGED: opentelemetry-instrumentation-aws_lambda v0.3.0
-* CHANGED: opentelemetry-instrumentation-action_pack v0.12.0
+- CHANGED: opentelemetry-instrumentation-redis v0.26.1
+- CHANGED: opentelemetry-instrumentation-rails v0.36.0
+- CHANGED: opentelemetry-instrumentation-aws_lambda v0.3.0
+- CHANGED: opentelemetry-instrumentation-action_pack v0.12.0
 
 ### v0.72.0 / 2025-01-16
 
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-* ADDED: Set minimum supported version to Ruby 3.1
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.71.1 / 2025-01-14
 
-* No Significant Changes
+- No Significant Changes
 
 ### v0.71.0 / 2025-01-07
 
-* ADDED: Faraday Minimum v1.0
+- ADDED: Faraday Minimum v1.0
 
 ### v0.70.0 / 2024-12-19
 
-* ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
+- ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
 
 ### v0.69.1 / 2024-11-26
 
-* (No significant changes)
+- (No significant changes)
 
 ### v0.69.0 / 2024-11-19
 
-* ADDED: Use Semconv Naming For ActionPack
+- ADDED: Use Semconv Naming For ActionPack
 
 ### v0.68.0 / 2024-10-23
 
-* ADDED: Set span error only for 5xx response range
+- ADDED: Set span error only for 5xx response range
 
 ### v0.67.0 / 2024-10-22
 
-* BREAKING CHANGE: Rename Active Record find_by_sql spans to query
-* FIXED: Emit Active Record query spans for Rails 7.0+
-* ADDED: Subscribe to process.action_mailer notifications
+- BREAKING CHANGE: Rename Active Record find_by_sql spans to query
+- FIXED: Emit Active Record query spans for Rails 7.0+
+- ADDED: Subscribe to process.action_mailer notifications
 
 ### v0.66.0 / 2024-10-08
 
-* ADDED: Integration with V3 telemetry provider for the aws-sdk
+- ADDED: Integration with V3 telemetry provider for the aws-sdk
 
 ### v0.65.0 / 2024-09-19
 
-* ADDED: All AWS services emit traces
+- ADDED: All AWS services emit traces
 
 ### v0.64.0 / 2024-09-12
 

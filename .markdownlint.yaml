@@ -1,5 +1,7 @@
 default: true
 
+ul-style:
+  style: dash
 emphasis-style: false
 line-length: false
 link-fragments: false
