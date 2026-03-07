@@ -7,7 +7,6 @@ components:
   instrumentation/aws_sdk:
     - jterapin
     - alextwoods
-    - NathanielRN
   instrumentation/factory_bot:
     - americodls
   instrumentation/grape:
