@@ -76,15 +76,15 @@ Each of these gems has its configuration and tests.
 
 For example, to test `opentelemetry-instrumentation-action_pack` you would:
 
-1.  Change directory to `instrumentation/action_pack`
-2.  Install the bundle with `bundle install`
-3.  Run the tests with `bundle exec rake`
+1. Change directory to `instrumentation/action_pack`
+2. Install the bundle with `bundle install`
+3. Run the tests with `bundle exec rake`
 
 Note: Some test suites make use of [Appraisal](https://github.com/thoughtbot/appraisal), a library for testing against different versions of dependencies. To run tests in suites that use Appraisal:
 
-1.  Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
-2.  Install the bundle with `bundle exec appraisal install`
-3.  Run the tests with `bundle exec appraisal rake test`
+1. Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
+2. Install the bundle with `bundle exec appraisal install`
+3. Run the tests with `bundle exec appraisal rake test`
 
 ### Docker setup
 
@@ -101,15 +101,15 @@ The services provided include:
 
 To test using Docker:
 
-1.  Install Docker and Docker Compose for your operating system
-2.  Get the latest code for the project
-3.  Build the `opentelemetry/opentelemetry-ruby-contrib` image
-    - `docker-compose build`
-    - This makes the image available locally
-4.  Install dependencies for the service you want to interact with
-    - `docker-compose run <service-name> bundle install`
-5.  Run the tests
-    - `docker-compose run <service-name> bundle exec rake test`
+1. Install Docker and Docker Compose for your operating system
+2. Get the latest code for the project
+3. Build the `opentelemetry/opentelemetry-ruby-contrib` image
+   - `docker-compose build`
+   - This makes the image available locally
+4. Install dependencies for the service you want to interact with
+   - `docker-compose run <service-name> bundle install`
+5. Run the tests
+   - `docker-compose run <service-name> bundle exec rake test`
 
 ## Processing and visualizing traces locally
 
@@ -298,45 +298,45 @@ can perform releases.
 
 Releases are normally performed using GitHub Actions.
 
-1.  Wait for the CI checks on the latest main branch commit to succeed. The
-    release scripts will not run unless the build is green.
-2.  In the GitHub UI, go to the `Actions` tab, select the
-    `Open release request` workflow, and run the workflow manually using the
-    dropdown in the upper right.
-    - Releases must be run from the main branch.
-    - If you leave the `Gems to release` field blank, the script will
-      find all the gems that have had conventional-commit-tagged changes since
-      their last release. Alternately, you can specify which gems to release
-      by including their names, space-delimited, in this field. You can
-      optionally append `:<version>` to any gem in the list to specify the
-      version to release, or omit the version to let the script decide based
-      on conventional commits. You can also use the special name `all` to
-      force release of all gems (and even `all:<version>` to release all gems
-      with the same version.)
-3.  The workflow will analyze the conventional commit messages for the gems to
-    release, and will open a _release pull request_. This pull request will
-    include the appropriate changes to each gem's version constants, and an
-    initial changelog entry for each gem. Note that it is possible to release
-    more than one gem using a single release pull request.
-4.  You may optionally make further modifications to the pull request branch.
-    For example, the workflow will suggest a version number based on semver
-    analysis of the conventional commit types, but you can choose to release a
-    different version. You might also want to edit the changelog wording.
-5.  To trigger the release(s), merge the release pull request. Note that the
-    label `release: pending` will have been applied to the pull request when it
-    was opened; make sure the label is still there when you merge it.
-6.  The automated release script will run automatically, and will release the
-    gem(s) once CI has completed. This includes:
-    - For each gem, it will create a release tag and a GitHub release.
-    - It will build and push the gems to rubygems.
-    - If the releases succeed, the script will update the release pull
-      request with the results and change its label to `release: complete`.
-      If something went wrong, the script will, if possible, report the error
-      on the release pull request and change its label to `release: error`.
-      It will also attempt to open an issue to alert you to the failure.
-7.  If you change your mind and do not want to follow through on a release pull
-    request, just close it without merging. (The release scripts will then
-    automatically change its label to `release: aborted` for you.)
+1. Wait for the CI checks on the latest main branch commit to succeed. The
+   release scripts will not run unless the build is green.
+2. In the GitHub UI, go to the `Actions` tab, select the
+   `Open release request` workflow, and run the workflow manually using the
+   dropdown in the upper right.
+   - Releases must be run from the main branch.
+   - If you leave the `Gems to release` field blank, the script will
+     find all the gems that have had conventional-commit-tagged changes since
+     their last release. Alternately, you can specify which gems to release
+     by including their names, space-delimited, in this field. You can
+     optionally append `:<version>` to any gem in the list to specify the
+     version to release, or omit the version to let the script decide based
+     on conventional commits. You can also use the special name `all` to
+     force release of all gems (and even `all:<version>` to release all gems
+     with the same version.)
+3. The workflow will analyze the conventional commit messages for the gems to
+   release, and will open a _release pull request_. This pull request will
+   include the appropriate changes to each gem's version constants, and an
+   initial changelog entry for each gem. Note that it is possible to release
+   more than one gem using a single release pull request.
+4. You may optionally make further modifications to the pull request branch.
+   For example, the workflow will suggest a version number based on semver
+   analysis of the conventional commit types, but you can choose to release a
+   different version. You might also want to edit the changelog wording.
+5. To trigger the release(s), merge the release pull request. Note that the
+   label `release: pending` will have been applied to the pull request when it
+   was opened; make sure the label is still there when you merge it.
+6. The automated release script will run automatically, and will release the
+   gem(s) once CI has completed. This includes:
+   - For each gem, it will create a release tag and a GitHub release.
+   - It will build and push the gems to rubygems.
+   - If the releases succeed, the script will update the release pull
+     request with the results and change its label to `release: complete`.
+     If something went wrong, the script will, if possible, report the error
+     on the release pull request and change its label to `release: error`.
+     It will also attempt to open an issue to alert you to the failure.
+7. If you change your mind and do not want to follow through on a release pull
+   request, just close it without merging. (The release scripts will then
+   automatically change its label to `release: aborted` for you.)
 
 ### Release troubleshooting
 
@@ -368,18 +368,18 @@ There are four GitHub actions workflows related to releases.
 If you've already merged a release pull request and want to retry a failed
 release, you can use the `Force release` workflow.
 
-1.  If the release tag has already been created, delete it manually using the
-    GitHub UI.
-2.  In the GitHub UI, go to the `Actions` tab, select the `Force release`
-    workflow, and run it manually.
-    - You must provide the gem name and version explicitly in the fields.
-    - The `Extra flags` field is useful for advanced cases. For example, if
-      the GitHub release tag is already created and the gem already pushed to
-      Rubygems, but the docs still need to be built, you can pass
-      `--only=docs` to perform only that one step. You can also force a
-      release even if the build is not green or the version/changelog checks
-      are failing, by passing `--skip-checks`. For more details, install the
-      `toys` gem and run `toys release perform --help` locally.
+1. If the release tag has already been created, delete it manually using the
+   GitHub UI.
+2. In the GitHub UI, go to the `Actions` tab, select the `Force release`
+   workflow, and run it manually.
+   - You must provide the gem name and version explicitly in the fields.
+   - The `Extra flags` field is useful for advanced cases. For example, if
+     the GitHub release tag is already created and the gem already pushed to
+     Rubygems, but the docs still need to be built, you can pass
+     `--only=docs` to perform only that one step. You can also force a
+     release even if the build is not green or the version/changelog checks
+     are failing, by passing `--skip-checks`. For more details, install the
+     `toys` gem and run `toys release perform --help` locally.
 
 #### Running releases locally
 

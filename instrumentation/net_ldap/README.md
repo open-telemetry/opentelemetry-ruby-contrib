@@ -34,10 +34,12 @@ end
 ```
 
 ### Configuration options
+
 This instrumentation offers the following configuration options:
-* `enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with
+
+- `enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with
  span kind of `internal` are included in traces.
-* `peer_service`: When set, it adds the `peer.service` attribute (the `service.name` of the remote service).
+- `peer_service`: When set, it adds the `peer.service` attribute (the `service.name` of the remote service).
 
 ## How can I get involved?
 
