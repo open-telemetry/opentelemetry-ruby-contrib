@@ -424,59 +424,9 @@ For releases to succeed, new gems MUST include the following:
 - A `CHANGELOG.md` file.
 - A `yard` rake task.
 
-## Dependabot updates
+## Dependency updates
 
-> [!NOTE]
->
-> This repository is in the process of migrating to Renovate.
-
-This repository uses [Dependabot](https://dependabot.com/) to keep dependencies up to date, however there shared development dependencies are often scattered across multiple gems. Dependabot does not currently support the ability to group dependencies for gems in multiple subdirectories, so we use a custom script to bulk update dependencies across all gems.
-
-**Note:** This script uses a version of sed that isn't available on MacOS bash. You'll need to use an ubuntu-linux machine to execute it. One way to accomplish this is to run `docker-compose run app` and execute the script within the container.
-
-E.g. if you want to update Rubocop to version 1.56.1, you would run:
-
-```console
-
-$> bin/update-dependencies rubocop 1.56.1
-
-Review your changes and commit
-Press any key to continue
-
-```
-
-This will then run a bulk update on all of the gems in the repository, and then prompt you to review the changes and stage them for a commit:
-
-```console
-
-diff --git a/propagator/ottrace/Gemfile b/propagator/ottrace/Gemfile
-index 42c5ecba..74fcc743 100644
---- a/propagator/ottrace/Gemfile
-+++ b/propagator/ottrace/opentelemetry-propagator-ottrace.gemspec
-@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
-   gem 'minitest', '~> 5.0'
-   gem 'rake', '~> 13.0'
--  gem 'rubocop', '~> 1.50.0'
-+  gem 'rubocop', '~> 1.56.1'
-   gem 'simplecov', '~> 0.22.0'
-   gem 'yard', '~> 0.9'
-   gem 'yard-doctest', '~> 0.1.6'
-(1/1) Stage this hunk [y,n,q,a,d,e,?]? y
-
-diff --git a/propagator/xray/Gemfile b/propagator/xray/Gemfile
-index e29acbfc..85622d25 100644
---- a/propagator/xray/Gemfile
-+++ b/propagator/xray/Gemfile
-@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
-   gem 'minitest', '~> 5.0'
-   gem 'rake', '~> 13.0'
--  gem 'rubocop', '~> 1.50.0'
-+  gem 'rubocop', '~> 1.56.1'
-   gem 'simplecov', '~> 0.22.0'
-   gem 'yard', '~> 0.9'
-   gem 'yard-doctest', '~> 0.1.6'
-(1/1) Stage this hunk [y,n,q,a,d,e,?]? y
-```
+This repository uses [Renovate](https://docs.renovatebot.com/) to keep dependencies up to date. Major updates to ruby dependencies will require a OpenTelemetry member's approval to be created via the [Dashboard](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1803). All other updates will be created according to the schedule with a limit of 10 pr's open simultaneously.
 
 ## Updating Ruby version requirements
 
