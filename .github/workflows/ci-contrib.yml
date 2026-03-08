@@ -29,8 +29,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }} # Ensure that only one instance of this workflow is running per Pull Request
-  cancel-in-progress: true # Cancel any previous runs of this workflow
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }} # Ensure that only one instance of this workflow is running per event type and ref
+  cancel-in-progress: true # Cancel any previous runs of this workflow for the same event type and ref
 
 jobs:
   helpers:
