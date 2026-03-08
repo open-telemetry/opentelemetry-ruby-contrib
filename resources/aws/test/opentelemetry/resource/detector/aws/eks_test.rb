@@ -134,7 +134,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
         # Mock container ID retrieval
         allow(detector).to receive(:container_id).and_return(mock_container_id)
         # Mock cluster name retrieval
-        allow(detector).to receive(:cluster_name).and_return(->(_) { mock_cluster_name })
+        allow(detector).to receive(:cluster_name).with(anything).and_return(mock_cluster_name)
         # Mock HTTP requests
         allow(detector).to receive(:aws_http_request) do |path, _auth|
           case path
@@ -163,7 +163,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
         allow(detector).to receive(:k8s?).and_return(true)
         allow(detector).to receive(:k8s_cred_value).and_return(mock_cred_value)
         allow(detector).to receive(:eks?).and_return(true)
-        allow(detector).to receive(:cluster_name).and_return(->(_) { '' })
+        allow(detector).to receive(:cluster_name).with(anything).and_return('')
         allow(detector).to receive(:container_id).and_return(mock_container_id)
         resource = detector.detect
         attributes = resource.attribute_enumerator.to_h
@@ -184,7 +184,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
         allow(detector).to receive(:k8s?).and_return(true)
         allow(detector).to receive(:k8s_cred_value).and_return(mock_cred_value)
         allow(detector).to receive(:eks?).and_return(true)
-        allow(detector).to receive(:cluster_name).and_return(->(_) { mock_cluster_name })
+        allow(detector).to receive(:cluster_name).with(anything).and_return(mock_cluster_name)
         allow(detector).to receive(:container_id).and_return('')
         resource = detector.detect
         attributes = resource.attribute_enumerator.to_h
@@ -208,7 +208,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
         allow(detector).to receive(:k8s?).and_return(true)
         allow(detector).to receive(:k8s_cred_value).and_return(mock_cred_value)
         allow(detector).to receive(:eks?).and_return(true)
-        allow(detector).to receive(:cluster_name).and_return(->(_) { '' })
+        allow(detector).to receive(:cluster_name).with(anything).and_return('')
         allow(detector).to receive(:container_id).and_return('')
         resource = detector.detect
         _(resource.attribute_enumerator.to_h).must_equal({})
