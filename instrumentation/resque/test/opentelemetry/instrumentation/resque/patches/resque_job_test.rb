@@ -192,11 +192,10 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         it 'asks the job and skips forcibly flushing the tracer' do
           mock_tracer_provider = instance_double(OpenTelemetry::SDK::Trace::TracerProvider)
           allow(mock_tracer_provider).to receive(:force_flush).and_return(true)
+          allow(OpenTelemetry).to receive(:tracer_provider).and_return(mock_tracer_provider)
 
-          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
-            Resque.enqueue(DummyJob)
-            work_off_jobs
-          end
+          Resque.enqueue(DummyJob)
+          work_off_jobs
 
           expect(mock_tracer_provider).not_to have_received(:force_flush)
         end
@@ -208,11 +207,10 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         it 'does forcibly flush the tracer' do
           mock_tracer_provider = instance_double(OpenTelemetry::SDK::Trace::TracerProvider)
           allow(mock_tracer_provider).to receive(:force_flush).and_return(true)
+          allow(OpenTelemetry).to receive(:tracer_provider).and_return(mock_tracer_provider)
 
-          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
-            Resque.enqueue(DummyJob)
-            work_off_jobs
-          end
+          Resque.enqueue(DummyJob)
+          work_off_jobs
 
           expect(mock_tracer_provider).to have_received(:force_flush)
         end
@@ -224,11 +222,10 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         it 'does not forcibly flush the tracer' do
           mock_tracer_provider = instance_double(OpenTelemetry::SDK::Trace::TracerProvider)
           allow(mock_tracer_provider).to receive(:force_flush).and_return(true)
+          allow(OpenTelemetry).to receive(:tracer_provider).and_return(mock_tracer_provider)
 
-          OpenTelemetry.stub :tracer_provider, mock_tracer_provider do
-            Resque.enqueue(DummyJob)
-            work_off_jobs
-          end
+          Resque.enqueue(DummyJob)
+          work_off_jobs
 
           expect(mock_tracer_provider).not_to have_received(:force_flush)
         end

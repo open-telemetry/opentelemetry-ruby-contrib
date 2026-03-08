@@ -40,57 +40,48 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
       @token_path_exists = false
       @cert_path_exists = false
 
-      File.stub :exist?, lambda { |path|
-        if path == token_path
-          @token_path_exists
-        elsif path == cert_path
-          @cert_path_exists
-        else
-          false
+      allow(File).to receive(:exist?) do |path|
+        case path
+        when token_path then @token_path_exists
+        when cert_path  then @cert_path_exists
+        else false
         end
-      } do
-        resource = detector.detect
-        _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-        _(resource.attribute_enumerator.to_h).must_equal({})
       end
+      resource = detector.detect
+      _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+      _(resource.attribute_enumerator.to_h).must_equal({})
     end
 
     it 'returns empty resource when only token exists' do
       @token_path_exists = true
       @cert_path_exists = false
 
-      File.stub :exist?, lambda { |path|
-        if path == token_path
-          @token_path_exists
-        elsif path == cert_path
-          @cert_path_exists
-        else
-          false
+      allow(File).to receive(:exist?) do |path|
+        case path
+        when token_path then @token_path_exists
+        when cert_path  then @cert_path_exists
+        else false
         end
-      } do
-        resource = detector.detect
-        _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-        _(resource.attribute_enumerator.to_h).must_equal({})
       end
+      resource = detector.detect
+      _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+      _(resource.attribute_enumerator.to_h).must_equal({})
     end
 
     it 'returns empty resource when only cert exists' do
       @token_path_exists = false
       @cert_path_exists = true
 
-      File.stub :exist?, lambda { |path|
-        if path == token_path
-          @token_path_exists
-        elsif path == cert_path
-          @cert_path_exists
-        else
-          false
+      allow(File).to receive(:exist?) do |path|
+        case path
+        when token_path then @token_path_exists
+        when cert_path  then @cert_path_exists
+        else false
         end
-      } do
-        resource = detector.detect
-        _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-        _(resource.attribute_enumerator.to_h).must_equal({})
       end
+      resource = detector.detect
+      _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+      _(resource.attribute_enumerator.to_h).must_equal({})
     end
 
     describe 'when running on K8s' do
@@ -129,6 +120,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
         # Mock token file read
         allow(File).to receive(:read) do |path|
           raise "Unexpected file read: #{path}" unless path == token_path
+
           mock_token
         end
         # Mock container ID retrieval
