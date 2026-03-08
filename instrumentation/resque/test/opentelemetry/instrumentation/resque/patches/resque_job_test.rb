@@ -198,7 +198,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
             work_off_jobs
           end
 
-          expect(mock_tracer_provider).to have_received(:force_flush)
+          expect(mock_tracer_provider).not_to have_received(:force_flush)
         end
       end
 
@@ -230,7 +230,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
             work_off_jobs
           end
 
-          expect(mock_tracer_provider).to have_received(:force_flush)
+          expect(mock_tracer_provider).not_to have_received(:force_flush)
         end
       end
     end
