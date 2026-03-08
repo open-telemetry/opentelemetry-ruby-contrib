@@ -10,6 +10,7 @@ Bundler.require(:default, :development, :test)
 
 require 'opentelemetry-resource-detector-google_cloud_platform'
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
 OpenTelemetry.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)

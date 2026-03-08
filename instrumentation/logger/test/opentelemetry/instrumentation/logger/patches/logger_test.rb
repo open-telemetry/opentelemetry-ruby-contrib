@@ -43,14 +43,13 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
       timestamp = Time.now
       nano_timestamp = OpenTelemetry::SDK::Logs::LogRecord.new.send(:to_integer_nanoseconds, timestamp)
 
-      Time.stub(:now, timestamp) do
-        ruby_logger.debug(msg)
-        assert_includes(log_record.body, msg)
-        assert_includes(log_record.body, 'DEBUG')
-        assert_equal('DEBUG', log_record.severity_text)
-        assert_equal(5, log_record.severity_number)
-        assert_equal(nano_timestamp, log_record.timestamp)
-      end
+      allow(Time).to receive(:now).and_return(timestamp)
+      ruby_logger.debug(msg)
+      assert_includes(log_record.body, msg)
+      assert_includes(log_record.body, 'DEBUG')
+      assert_equal('DEBUG', log_record.severity_text)
+      assert_equal(5, log_record.severity_number)
+      assert_equal(nano_timestamp, log_record.timestamp)
     end
 
     it 'does not emit when @skip_otel_emit is true' do
