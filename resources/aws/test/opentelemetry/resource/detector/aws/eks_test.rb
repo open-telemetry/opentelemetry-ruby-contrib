@@ -118,35 +118,32 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
 
       it 'detects EKS resources' do
         # Mock file existence check
-        allow(File).to receive(:exist?).and_return(lambda { |path|
-          if path == token_path
-            @token_path_exists
-          elsif path == cert_path
-            @cert_path_exists
-          else
-            false
+        allow(File).to receive(:exist?) do |path|
+          case path
+          when token_path then @token_path_exists
+          when cert_path  then @cert_path_exists
+          else false
           end
-        })
-        # Mock token file read
-        allow(File).to receive(:read).and_return(lambda { |path|
-          raise "Unexpected file read: #{path}" unless path == token_path
+        end
 
+        # Mock token file read
+        allow(File).to receive(:read) do |path|
+          raise "Unexpected file read: #{path}" unless path == token_path
           mock_token
-        })
+        end
         # Mock container ID retrieval
         allow(detector).to receive(:container_id).and_return(mock_container_id)
         # Mock cluster name retrieval
         allow(detector).to receive(:cluster_name).and_return(->(_) { mock_cluster_name })
         # Mock HTTP requests
-        allow(detector).to receive(:aws_http_request).and_return(lambda { |path, _auth|
-          if path == aws_auth_path
-            mock_aws_auth_response
-          elsif path == cluster_info_path
-            mock_cluster_info_response
-          else
-            raise "Unexpected HTTP request to #{path}"
+        allow(detector).to receive(:aws_http_request) do |path, _auth|
+          case path
+          when aws_auth_path     then mock_aws_auth_response
+          when cluster_info_path then mock_cluster_info_response
+          else raise "Unexpected HTTP request to #{path}"
           end
-        })
+        end
+
         resource = detector.detect
         attributes = resource.attribute_enumerator.to_h
 
