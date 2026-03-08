@@ -269,7 +269,7 @@ describe OpenTelemetry::Resource::Detector::AWS do
 
             # Stub both detectors
             allow(OpenTelemetry::Resource::Detector::AWS::EC2).to receive(:detect).and_return(ec2_resource)
-            allow(OpenTelemetry::Resource::Detector::AWS::EKS).to_recieve(:detect).and_return(eks_resource)
+            allow(OpenTelemetry::Resource::Detector::AWS::EKS).to receive(:detect).and_return(eks_resource)
             resource = detector.detect(%i[ec2 eks])
             attributes = resource.attribute_enumerator.to_h
 
