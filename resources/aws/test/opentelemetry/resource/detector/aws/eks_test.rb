@@ -118,7 +118,7 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
 
       it 'detects EKS resources' do
         # Mock file existence check
-        File.stub :exist?, lambda { |path|
+        allow(File).to receive(:exist?).and_return(lambda { |path|
           if path == token_path
             @token_path_exists
           elsif path == cert_path
@@ -126,38 +126,33 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
           else
             false
           end
-        } do
-          # Mock token file read
-          File.stub :read, lambda { |path|
-            raise "Unexpected file read: #{path}" unless path == token_path
+        })
+        # Mock token file read
+        allow(File).to receive(:read).and_return(lambda { |path|
+          raise "Unexpected file read: #{path}" unless path == token_path
 
-            mock_token
-          } do
-            # Mock container ID retrieval
-            detector.stub :container_id, mock_container_id do
-              # Mock cluster name retrieval
-              detector.stub :cluster_name, ->(_) { mock_cluster_name } do
-                # Mock HTTP requests
-                detector.stub :aws_http_request, lambda { |path, _auth|
-                  if path == aws_auth_path
-                    mock_aws_auth_response
-                  elsif path == cluster_info_path
-                    mock_cluster_info_response
-                  else
-                    raise "Unexpected HTTP request to #{path}"
-                  end
-                } do
-                  resource = detector.detect
-                  attributes = resource.attribute_enumerator.to_h
-
-                  # Check attributes
-                  _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-                  _(attributes).must_equal(expected_resource_attributes)
-                end
-              end
-            end
+          mock_token
+        })
+        # Mock container ID retrieval
+        allow(detector).to receive(:container_id).and_return(mock_container_id)
+        # Mock cluster name retrieval
+        allow(detector).to receive(:cluster_name).and_return(->(_) { mock_cluster_name })
+        # Mock HTTP requests
+        allow(detector.stub).to receive(:aws_http_request).and_return(lambda { |path, _auth|
+          if path == aws_auth_path
+            mock_aws_auth_response
+          elsif path == cluster_info_path
+            mock_cluster_info_response
+          else
+            raise "Unexpected HTTP request to #{path}"
           end
-        end
+        })
+        resource = detector.detect
+        attributes = resource.attribute_enumerator.to_h
+
+        # Check attributes
+        _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+        _(attributes).must_equal(expected_resource_attributes)
       end
 
       it 'handles missing cluster name' do
@@ -168,22 +163,17 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
           OpenTelemetry::SemanticConventions::Resource::CONTAINER_ID => mock_container_id
         }
 
-        detector.stub :k8s?, true do
-          detector.stub :k8s_cred_value, mock_cred_value do
-            detector.stub :eks?, true do
-              detector.stub :cluster_name, ->(_) { '' } do
-                detector.stub :container_id, mock_container_id do
-                  resource = detector.detect
-                  attributes = resource.attribute_enumerator.to_h
+        allow(detector).to receive(:k8s?).and_return(true)
+        allow(detector).to receive(:k8s_cred_value).and_return(mock_cred_value)
+        allow(detector).to receive(:eks?).and_return(true)
+        allow(detector).to receive(:cluster_name).and_return(->(_) { '' })
+        allow(detector).to receive(:container_id).and_return(mock_container_id)
+        resource = detector.detect
+        attributes = resource.attribute_enumerator.to_h
 
-                  # Should still have container ID but no cluster name
-                  _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-                  _(attributes).must_equal(expected_attrs)
-                end
-              end
-            end
-          end
-        end
+        # Should still have container ID but no cluster name
+        _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+        _(attributes).must_equal(expected_attrs)
       end
 
       it 'handles missing container ID' do
@@ -194,50 +184,37 @@ describe OpenTelemetry::Resource::Detector::AWS::EKS do
           OpenTelemetry::SemanticConventions::Resource::K8S_CLUSTER_NAME => mock_cluster_name
         }
 
-        detector.stub :k8s?, true do
-          detector.stub :k8s_cred_value, mock_cred_value do
-            detector.stub :eks?, true do
-              detector.stub :cluster_name, ->(_) { mock_cluster_name } do
-                detector.stub :container_id, '' do
-                  resource = detector.detect
-                  attributes = resource.attribute_enumerator.to_h
+        allow(detector).to receive(:k8s?).and_return(true)
+        allow(detector).to receive(:k8s_cred_value).and_return(mock_cred_value)
+        allow(detector).to receive(:eks?).and_return(true)
+        allow(detector).to receive(:cluster_name).and_return(->(_) { mock_cluster_name })
+        allow(detector).to receive(:container_id).and_return('')
+        resource = detector.detect
+        attributes = resource.attribute_enumerator.to_h
 
-                  # Should still have cluster name but no container ID
-                  _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-                  _(attributes).must_equal(expected_attrs)
-                end
-              end
-            end
-          end
-        end
+        # Should still have cluster name but no container ID
+        _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+        _(attributes).must_equal(expected_attrs)
       end
 
       it 'returns empty resource when aws-auth check fails' do
         # Simplified test with direct stubs
-        detector.stub :k8s?, true do
-          detector.stub :k8s_cred_value, mock_cred_value do
-            detector.stub :eks?, false do
-              resource = detector.detect
-              _(resource.attribute_enumerator.to_h).must_equal({})
-            end
-          end
-        end
+        allow(detector).to receive(:k8s?).and_return(true)
+        allow(detector).to receive(:k8s_cred_value).and_return(mock_cred_value)
+        allow(detector).to receive(:eks?).and_return(false)
+        resource = detector.detect
+        _(resource.attribute_enumerator.to_h).must_equal({})
       end
 
       it 'returns empty resource when both cluster name and container ID are missing' do
         # Simplified test with direct stubs
-        detector.stub :k8s?, true do
-          detector.stub :k8s_cred_value, mock_cred_value do
-            detector.stub :eks?, true do
-              detector.stub :cluster_name, ->(_) { '' } do
-                detector.stub :container_id, '' do
-                  resource = detector.detect
-                  _(resource.attribute_enumerator.to_h).must_equal({})
-                end
-              end
-            end
-          end
-        end
+        allow(detector).to receive(:k8s?).and_return(true)
+        allow(detector).to receive(:k8s_cred_value).and_return(mock_cred_value)
+        allow(detector).to receive(:eks?).and_return(true)
+        allow(detector).to receive(:cluster_name).and_return(->(_) { '' })
+        allow(detector).to receive(:container_id).and_return('')
+        resource = detector.detect
+        _(resource.attribute_enumerator.to_h).must_equal({})
       end
     end
   end

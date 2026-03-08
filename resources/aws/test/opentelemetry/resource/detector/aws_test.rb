@@ -154,35 +154,30 @@ describe OpenTelemetry::Resource::Detector::AWS do
 
         it 'detects ECS resources when specified' do
           # Properly stub the fetch_container_id method
-          OpenTelemetry::Resource::Detector::AWS::ECS.stub :fetch_container_id, '0123456789abcdef' * 4 do
-            # Also stub the hostname method
-            Socket.stub :gethostname, 'test-container' do
-              resource = detector.detect([:ecs])
-              attributes = resource.attribute_enumerator.to_h
+          allow(OpenTelemetry::Resource::Detector::AWS::ECS).to receive(:fetch_container_id).and_return('0123456789abcdef' * 4)
+          # Also stub the hostname method
+          allow(Socket).to receive(:gethostname).and_return('test-container')
+          resource = detector.detect([:ecs])
+          attributes = resource.attribute_enumerator.to_h
 
-              _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
-              _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_ecs')
-            end
-          end
+          _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+          _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_ecs')
         end
 
         it 'returns combined resources when multiple detectors are used' do
           # Stub the container ID and hostname methods
-          OpenTelemetry::Resource::Detector::AWS::ECS.stub :fetch_container_id, '0123456789abcdef' * 4 do
-            Socket.stub :gethostname, 'test-container' do
-              # Mock EC2 detector to return a simple resource
-              ec2_resource = OpenTelemetry::SDK::Resources::Resource.create({ 'ec2.instance.id' => 'i-1234567890abcdef0' })
-              OpenTelemetry::Resource::Detector::AWS::EC2.stub :detect, ec2_resource do
-                resource = detector.detect(%i[ec2 ecs])
-                attributes = resource.attribute_enumerator.to_h
+          allow(OpenTelemetry::Resource::Detector::AWS::ECS).to receive(:fetch_container_id).and_return('0123456789abcdef' * 4)
+          allow(Socket).to receive(:gethostname).and_return('test-container')
+          # Mock EC2 detector to return a simple resource
+          ec2_resource = OpenTelemetry::SDK::Resources::Resource.create({ 'ec2.instance.id' => 'i-1234567890abcdef0' })
+          allow(OpenTelemetry::Resource::Detector::AWS::EC2).to receive(:detect).and_return(ec2_resource)
+          resource = detector.detect(%i[ec2 ecs])
+          attributes = resource.attribute_enumerator.to_h
 
-                # Should include attributes from both detectors
-                _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
-                _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_ecs')
-                _(attributes['ec2.instance.id']).must_equal('i-1234567890abcdef0')
-              end
-            end
-          end
+          # Should include attributes from both detectors
+          _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+          _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_ecs')
+          _(attributes['ec2.instance.id']).must_equal('i-1234567890abcdef0')
         end
 
         describe 'with successful Lambda detection' do
@@ -215,16 +210,15 @@ describe OpenTelemetry::Resource::Detector::AWS do
                                                                           })
 
             # Stub EC2 detection to return the mock resource
-            OpenTelemetry::Resource::Detector::AWS::EC2.stub :detect, ec2_resource do
-              resource = detector.detect(%i[ec2 lambda])
-              attributes = resource.attribute_enumerator.to_h
+            allow(OpenTelemetry::Resource::Detector::AWS::EC2).to receive(:detect).and_return(ec2_resource)
+            resource = detector.detect(%i[ec2 lambda])
+            attributes = resource.attribute_enumerator.to_h
 
-              # Should include attributes from both detectors
-              _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
-              _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_lambda')
-              _(attributes[RESOURCE::FAAS_NAME]).must_equal('my-function')
-              _(attributes[RESOURCE::HOST_ID]).must_equal('i-1234567890abcdef0')
-            end
+            # Should include attributes from both detectors
+            _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+            _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_lambda')
+            _(attributes[RESOURCE::FAAS_NAME]).must_equal('my-function')
+            _(attributes[RESOURCE::HOST_ID]).must_equal('i-1234567890abcdef0')
           end
         end
 
@@ -247,16 +241,15 @@ describe OpenTelemetry::Resource::Detector::AWS do
                                                                           })
 
             # Stub EKS detection to return the mock resource
-            OpenTelemetry::Resource::Detector::AWS::EKS.stub :detect, eks_resource do
-              resource = detector.detect([:eks])
-              attributes = resource.attribute_enumerator.to_h
+            allow(OpenTelemetry::Resource::Detector::AWS::EKS).to receive(:detect).and_return(eks_resource)
+            resource = detector.detect([:eks])
+            attributes = resource.attribute_enumerator.to_h
 
-              # Check EKS attributes
-              _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
-              _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_eks')
-              _(attributes[RESOURCE::K8S_CLUSTER_NAME]).must_equal(cluster_name)
-              _(attributes[RESOURCE::CONTAINER_ID]).must_equal(container_id)
-            end
+            # Check EKS attributes
+            _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+            _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_eks')
+            _(attributes[RESOURCE::K8S_CLUSTER_NAME]).must_equal(cluster_name)
+            _(attributes[RESOURCE::CONTAINER_ID]).must_equal(container_id)
           end
 
           it 'combines EC2 and EKS resources when both are detected' do
@@ -275,20 +268,18 @@ describe OpenTelemetry::Resource::Detector::AWS do
                                                                           })
 
             # Stub both detectors
-            OpenTelemetry::Resource::Detector::AWS::EC2.stub :detect, ec2_resource do
-              OpenTelemetry::Resource::Detector::AWS::EKS.stub :detect, eks_resource do
-                resource = detector.detect(%i[ec2 eks])
-                attributes = resource.attribute_enumerator.to_h
+            allow(OpenTelemetry::Resource::Detector::AWS::EC2).to receive(:detect).and_return(ec2_resource)
+            allow(OpenTelemetry::Resource::Detector::AWS::EKS).to_recieve(:detect).and_return(eks_resource)
+            resource = detector.detect(%i[ec2 eks])
+            attributes = resource.attribute_enumerator.to_h
 
-                # Should include attributes from both detectors
-                _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
-                _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_eks')
-                _(attributes[RESOURCE::K8S_CLUSTER_NAME]).must_equal(cluster_name)
-                _(attributes[RESOURCE::CONTAINER_ID]).must_equal(container_id)
-                _(attributes[RESOURCE::HOST_ID]).must_equal('i-1234567890abcdef0')
-                _(attributes[RESOURCE::HOST_TYPE]).must_equal('m5.xlarge')
-              end
-            end
+            # Should include attributes from both detectors
+            _(attributes[RESOURCE::CLOUD_PROVIDER]).must_equal('aws')
+            _(attributes[RESOURCE::CLOUD_PLATFORM]).must_equal('aws_eks')
+            _(attributes[RESOURCE::K8S_CLUSTER_NAME]).must_equal(cluster_name)
+            _(attributes[RESOURCE::CONTAINER_ID]).must_equal(container_id)
+            _(attributes[RESOURCE::HOST_ID]).must_equal('i-1234567890abcdef0')
+            _(attributes[RESOURCE::HOST_TYPE]).must_equal('m5.xlarge')
           end
         end
       end
