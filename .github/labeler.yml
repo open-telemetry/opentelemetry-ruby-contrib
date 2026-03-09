@@ -2,7 +2,7 @@ ci:
   - changed-files:
       - any-glob-to-any-file:
           - ".github/**"
-          
+
 helpers-mysql:
   - changed-files:
       - any-glob-to-any-file:
