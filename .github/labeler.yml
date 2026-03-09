@@ -1,0 +1,253 @@
+helpers-mysql:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "helpers/mysql/**"
+helpers-sql:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "helpers/sql/**"
+helpers-sql-obfuscation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "helpers/sql-obfuscation/**"
+helpers-sql-processor:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "helpers/sql-processor/**"
+
+instrumentation-action_mailer:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/action_mailer/**"
+instrumentation-action_pack:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/action_pack/**"
+instrumentation-action_view:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/action_view/**"
+instrumentation-active_job:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/active_job/**"
+instrumentation-active_model_serializers:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/active_model_serializers/**"
+instrumentation-active_record:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/active_record/**"
+instrumentation-active_storage:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/active_storage/**"
+instrumentation-active_support:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/active_support/**"
+instrumentation-anthropic:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/anthropic/**"
+instrumentation-aws_sdk:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/aws_sdk/**"
+instrumentation-aws_lambda:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/aws_lambda/**"
+instrumentation-base:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/base/**"
+instrumentation-bunny:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/bunny/**"
+instrumentation-concurrent_ruby:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/concurrent_ruby/**"
+instrumentation-dalli:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/dalli/**"
+instrumentation-delayed_job:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/delayed_job/**"
+instrumentation-ethon:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/ethon/**"
+instrumentation-excon:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/excon/**"
+instrumentation-factory_bot:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/factory_bot/**"
+instrumentation-faraday:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/faraday/**"
+instrumentation-grape:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/grape/**"
+instrumentation-graphql:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/graphql/**"
+instrumentation-grpc:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/grpc/**"
+instrumentation-gruf:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/gruf/**"
+instrumentation-httpc:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/http/**"
+instrumentation-http_client:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/http_client/**"
+instrumentation-httpx:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/httpx/**"
+instrumentation-koala:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/koala/**"
+instrumentation-lmdb:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/lmdb/**"
+instrumentation-logger:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/logger/**"
+instrumentation-mongo:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/mongo/**"
+instrumentation-mysql2:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/mysql2/**"
+instrumentation-net_http:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/net_http/**"
+instrumentation-net_ldap:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/net_ldap/**"
+instrumentation-pg:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/pg/**"
+instrumentation-que:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/que/**"
+instrumentation-racecar:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/racecar/**"
+instrumentation-rack:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/rack/**"
+instrumentation-rails:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/rails/**"
+instrumentation-rdkafka:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/rdkafka/**"
+instrumentation-redis:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/redis/**"
+instrumentation-resque:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/resque/**"
+instrumentation-restclient:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/restclient/**"
+instrumentation-respec:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/rspec/**"
+instrumentation-ruby_kafka:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/ruby_kafka/**"
+instrumentation-sidekiq:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/sidekiq/**"
+instrumentation-sinatra:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/sinatra/**"
+instrumentation-trilogy:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/trilogy/**"
+
+processor-baggage:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "processor/baggage/**"
+
+propagator-google_cloud_trace_context:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "propagator/google_cloud_trace_context/**"
+propagator-ottrace:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "propagator/ottrace/**"
+propagator-vitess:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "propagator/vitess/**"
+propagator-xray:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "propagator/xray/**"
+
+resource-detector-aws:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "resources/aws/**"
+resource-detector-azure:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "resources/azure/**"
+resource-detector-container:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "resources/container/**"
+resource-detector-google_cloud_platform:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "resources/google_cloud_platform/**"
+
+sampler-xray:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "sampler/xray/**"
