@@ -27,5 +27,6 @@ group :test do
     gem 'bigdecimal'
     gem 'logger'
     gem 'mutex_m'
+    gem 'logger'
   end
 end
