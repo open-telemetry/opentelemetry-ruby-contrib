@@ -15,9 +15,7 @@ semconv_stability.each do |mode|
   appraise "trilogy-2-#{mode}" do
     gem 'trilogy', '~> 2.9'
   end
-end
 
-semconv_stability.each do |mode|
   appraise "trilogy-latest-#{mode}" do
     gem 'trilogy'
   end
