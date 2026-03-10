@@ -26,7 +26,6 @@
 ### v0.88.0 / 2025-11-26
 
 * BREAKING CHANGE: Update Ethon span name when unknown method
-
 * ADDED: Update Ethon span name when unknown method
 
 ### v0.87.0 / 2025-11-05
@@ -40,7 +39,6 @@
 ### v0.86.0 / 2025-10-21
 
 * BREAKING CHANGE: Min Version Support For Ruby 3.2 and Rails 7.1
-
 * ADDED: Min Version Support For Ruby 3.2 and Rails 7.1
 
 ### v0.85.0 / 2025-10-11
@@ -58,7 +56,6 @@
 ### v0.82.0 / 2025-09-18
 
 * BREAKING CHANGE: AWS Lambda: Check if span has the attributes method to avoid internal error
-
 * FIXED: AWS Lambda: Check if span has the attributes method to avoid internal error
 
 ### v0.81.0 / 2025-09-16
@@ -120,7 +117,6 @@ ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility fo
 ### v0.72.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.71.1 / 2025-01-14

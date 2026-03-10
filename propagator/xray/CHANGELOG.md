@@ -1,9 +1,13 @@
 # Release History: opentelemetry-propagator-xray
 
+### v0.26.1 / 2026-02-24
+
+* FIXED: Handle `Self` field in X-Amzn-Trace-Id header (#1958)
+* FIXED: Parse X-Amzn-Trace-Id header fields individually by name
+
 ### v0.26.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
-
 * ADDED: Min Ruby Version 3.2
 
 ### v0.25.0 / 2025-09-30
@@ -17,7 +21,6 @@
 ### v0.23.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.22.3 / 2024-11-26
@@ -34,14 +37,13 @@
 
 ### v0.22.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
-
-* ADDED: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.21.1 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.21.0 / 2022-06-09
 
@@ -53,12 +55,12 @@
 
 ### v0.20.0 / 2021-08-12
 
-* ADDED: Xray compliant ids 
+* ADDED: Xray compliant ids
 
 ### v0.19.0 / 2021-06-23
 
 * FIXED: XRay propagator null exception (#833)
-* ADDED: Add Tracer.non_recording_span to API 
+* ADDED: Add Tracer.non_recording_span to API
 
 ### v0.18.0 / 2021-05-21
 

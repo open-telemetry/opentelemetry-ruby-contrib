@@ -3,7 +3,6 @@
 ### v0.28.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
-
 * ADDED: Min Ruby Version 3.2
 
 ### v0.27.1 / 2025-10-07
@@ -21,7 +20,6 @@
 ### v0.25.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 
 ### v0.24.1 / 2024-07-23
@@ -60,7 +58,6 @@
 ### v0.22.0 / 2023-04-17
 
 * BREAKING CHANGE: Drop support for EoL Ruby 2.7
-
 * ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.21.5 / 2023-02-13
@@ -113,14 +110,12 @@
 ### v0.19.0 / 2021-06-23
 
 * BREAKING CHANGE: Total order constraint on span.status=
-
 * FIXED: Total order constraint on span.status=
 
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Updated API dependency for 1.0.0.rc1
 * BREAKING CHANGE: Remove optional parent_context from in_span
-
 * FIXED: Remove optional parent_context from in_span
 * FIXED: Removed http.status_text attribute #750
 
@@ -140,7 +135,6 @@
 ### v0.14.0 / 2021-02-03
 
 * BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
-
 * ADDED: Replace getter and setter callables and remove rack specific propagators
 
 ### v0.13.0 / 2021-01-29
@@ -162,13 +156,11 @@
 ### v0.9.0 / 2020-11-27
 
 * BREAKING CHANGE: Add timeout for force_flush and shutdown
-
 * ADDED: Add timeout for force_flush and shutdown
 
 ### v0.8.0 / 2020-10-27
 
 * BREAKING CHANGE: Remove 'canonical' from status codes
-
 * FIXED: Remove 'canonical' from status codes
 
 ### v0.7.1 / 2020-10-08

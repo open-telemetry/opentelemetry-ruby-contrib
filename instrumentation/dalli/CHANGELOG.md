@@ -1,9 +1,16 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.29.2 / 2026-02-27
+
+* FIXED: Replace return with implicit block value in compatible block (#2029)
+
+### v0.29.1 / 2026-02-24
+
+* FIXED: Skip instrumenting dalli 4.2.0 (#1982)
+
 ### v0.29.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
-
 * ADDED: Min Ruby Version 3.2
 
 ### v0.28.1 / 2025-09-30
@@ -33,7 +40,6 @@
 ### v0.26.0 / 2025-01-16
 
 * BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-
 * ADDED: Set minimum supported version to Ruby 3.1
 * FIXED: Format gat commands
 
@@ -56,7 +62,6 @@
 ### v0.25.0 / 2023-10-16
 
 * BREAKING CHANGE: Obfuscation for mysql2, dalli and postgresql as default option for db_statement
-
 * ADDED: Obfuscation for mysql2, dalli and postgresql as default option for db_statement
 
 ### v0.24.2 / 2023-07-21
@@ -65,7 +70,7 @@
 
 ### v0.24.1 / 2023-06-05
 
-* FIXED: Base config options 
+* FIXED: Base config options
 
 ### v0.24.0 / 2023-05-15
 
@@ -73,32 +78,31 @@
 
 ### v0.23.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
-
-* ADDED: Drop support for EoL Ruby 2.7 
+* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+* ADDED: Drop support for EoL Ruby 2.7
 
 ### v0.22.2 / 2023-01-14
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+* DOCS: Fix gem homepage
+* DOCS: More gem documentation fixes
 
 ### v0.22.1 / 2022-11-28
 
-* FIXED: `format_command`'s terrible performance 
+* FIXED: `format_command`'s terrible performance
 
 ### v0.22.0 / 2022-06-09
 
 * Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+* FIXED: Broken test file requirements
 
 ### v0.21.0 / 2022-05-02
 
-* ADDED: Validate Using Enums 
+* ADDED: Validate Using Enums
 
 ### v0.20.0 / 2021-12-01
 
-* ADDED: Add dalli obfuscation for db_statement 
-* FIXED: Resolve Dalli::Server deprecation in 3.0+ 
+* ADDED: Add dalli obfuscation for db_statement
+* FIXED: Resolve Dalli::Server deprecation in 3.0+
 
 ### v0.19.1 / 2021-09-29
 
@@ -106,8 +110,8 @@
 
 ### v0.19.0 / 2021-08-12
 
-* ADDED: Add configuration options for dalli 
-* DOCS: Update docs to rely more on environment variable configuration 
+* ADDED: Add configuration options for dalli
+* DOCS: Update docs to rely more on environment variable configuration
 
 ### v0.18.1 / 2021-06-23
 
@@ -155,7 +159,6 @@
 ### v0.9.0 / 2020-11-27
 
 * BREAKING CHANGE: Add timeout for force_flush and shutdown
-
 * ADDED: Add timeout for force_flush and shutdown
 
 ### v0.8.0 / 2020-10-27

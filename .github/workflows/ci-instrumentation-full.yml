@@ -36,6 +36,7 @@ on:
       - "instrumentation/lmdb/**"
       - "instrumentation/logger/**"
       - "instrumentation/net_http/**"
+      - "instrumentation/net_ldap/**"
       - "instrumentation/rack/**"
       - "instrumentation/rails/**"
       - "instrumentation/restclient/**"
@@ -51,6 +52,7 @@ on:
     branches:
       - main
     paths: *path_filters
+  merge_group:
   schedule:
     - cron: "0 0 * * *"
 
@@ -58,7 +60,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }} # Ensure that only one instance of this workflow is running per Pull Request/branch/ref
   cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
@@ -102,6 +104,7 @@ jobs:
           - lmdb
           - logger
           - net_http
+          - net_ldap
           - rack
           - rails
           - restclient
@@ -113,7 +116,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -161,6 +164,7 @@ jobs:
           [[ "${{ matrix.gem }}" == "rails"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "grpc"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "gruf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "net_ldap"                 ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test JRuby"
