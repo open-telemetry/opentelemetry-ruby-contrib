@@ -308,6 +308,8 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.attributes['db.namespace']).must_equal(database)
         _(span.attributes['db.system.name']).must_equal 'mysql'
         _(span.attributes['db.query.text']).must_equal 'SELECT INVALID'
+        _(span.attributes['error.type']).must_match(/Trilogy.*Error/)
+        _(span.attributes['db.response.status_code']).wont_be_nil
 
         _(span.status.code).must_equal(
           OpenTelemetry::Trace::Status::ERROR

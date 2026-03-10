@@ -20,7 +20,7 @@ module OpenTelemetry
               tracer.in_span(
                 'connect',
                 attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
-                kind: :client
+                kind: :client,
                 record_exception: config[:record_exception]
               ) do
                 super
@@ -31,7 +31,7 @@ module OpenTelemetry
               tracer.in_span(
                 'ping',
                 attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
-                kind: :client
+                kind: :client,
                 record_exception: config[:record_exception]
               ) do
                 super
@@ -53,7 +53,7 @@ module OpenTelemetry
                 ),
                 kind: :client,
                 record_exception: config[:record_exception]
-              ) do |_span, context|
+              ) do |span, context|
                 if propagator && sql.frozen?
                   sql = +sql
                   propagator.inject(sql, context: context)
@@ -63,6 +63,10 @@ module OpenTelemetry
                 end
 
                 super
+              rescue ::Trilogy::Error => e
+                span.set_attribute('error.type', e.class.name)
+                span.set_attribute('db.response.status_code', e.error_code.to_s) if e.respond_to?(:error_code) && e.error_code
+                raise
               end
             end
 
@@ -75,6 +79,13 @@ module OpenTelemetry
                 'db.system.name' => 'mysql',
                 'server.address' => connection_options&.fetch(:host, 'unknown sock') || 'unknown sock'
               }
+
+              # Add server.port if explicitly provided (both old and new conventions)
+              port = connection_options&.fetch(:port, nil)
+              if port
+                attributes[::OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT] = port
+                attributes['server.port'] = port
+              end
 
               attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
               attributes['db.namespace'] = database_name if database_name

@@ -51,9 +51,9 @@ module OpenTelemetry
                 attributes: client_attributes(sql).merge!(
                   OpenTelemetry::Instrumentation::Trilogy.attributes
                 ),
-                kind: :client
+                kind: :client,
                 record_exception: config[:record_exception]
-              ) do |_span, context|
+              ) do |span, context|
                 if propagator && sql.frozen?
                   sql = +sql
                   propagator.inject(sql, context: context)
@@ -63,6 +63,10 @@ module OpenTelemetry
                 end
 
                 super
+              rescue ::Trilogy::Error => e
+                span.set_attribute('error.type', e.class.name)
+                span.set_attribute('db.response.status_code', e.error_code.to_s) if e.respond_to?(:error_code) && e.error_code
+                raise
               end
             end
 
@@ -73,6 +77,10 @@ module OpenTelemetry
                 'db.system.name' => 'mysql',
                 'server.address' => connection_options&.fetch(:host, 'unknown sock') || 'unknown sock'
               }
+
+              # Add server.port if explicitly provided
+              port = connection_options&.fetch(:port, nil)
+              attributes['server.port'] = port if port
 
               attributes['db.namespace'] = database_name if database_name
               attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
