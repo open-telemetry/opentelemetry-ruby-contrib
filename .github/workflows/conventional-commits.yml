@@ -8,12 +8,13 @@ on:
       - synchronize
       - reopened
       - edited
+  merge_group:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }} # Ensure that only one instance of this workflow is running per Pull Request or ref
   cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
