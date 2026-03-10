@@ -102,10 +102,6 @@ module OpenTelemetry
               connection_options[:database]
             end
 
-            def database_user
-              connection_options[:username]
-            end
-
             def tracer
               Trilogy::Instrumentation.instance.tracer
             end

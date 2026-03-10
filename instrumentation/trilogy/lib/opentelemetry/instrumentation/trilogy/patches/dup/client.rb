@@ -42,9 +42,8 @@ module OpenTelemetry
               tracer.in_span(
                 OpenTelemetry::Helpers::MySQL.database_span_name(
                   sql,
-                  OpenTelemetry::Instrumentation::Trilogy.attributes[
-                    'db.operation.name'
-                  ],
+                  OpenTelemetry::Instrumentation::Trilogy.attributes[OpenTelemetry::SemanticConventions::Trace::DB_OPERATION] ||
+                    OpenTelemetry::Instrumentation::Trilogy.attributes['db.operation.name'],
                   database_name,
                   config
                 ),
