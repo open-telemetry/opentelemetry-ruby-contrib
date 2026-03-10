@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry-helpers-mysql'
-require 'opentelemetry-helpers-sql-obfuscation'
+require 'opentelemetry-helpers-sql-processor'
 
 module OpenTelemetry
   module Instrumentation
@@ -20,7 +20,8 @@ module OpenTelemetry
               tracer.in_span(
                 'connect',
                 attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
-                kind: :client
+                kind: :client,
+                record_exception: config[:record_exception]
               ) do
                 super
               end
@@ -30,7 +31,8 @@ module OpenTelemetry
               tracer.in_span(
                 'ping',
                 attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
-                kind: :client
+                kind: :client,
+                record_exception: config[:record_exception]
               ) do
                 super
               end
@@ -50,6 +52,7 @@ module OpenTelemetry
                   OpenTelemetry::Instrumentation::Trilogy.attributes
                 ),
                 kind: :client
+                record_exception: config[:record_exception]
               ) do |_span, context|
                 if propagator && sql.frozen?
                   sql = +sql
@@ -78,7 +81,7 @@ module OpenTelemetry
                 case config[:db_statement]
                 when :obfuscate
                   attributes['db.query.text'] =
-                    OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql)
+                    OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql)
                 when :include
                   attributes['db.query.text'] = sql
                 end

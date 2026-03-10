@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry-helpers-mysql'
-require 'opentelemetry-helpers-sql-obfuscation'
+require 'opentelemetry-helpers-sql-processor'
 
 module OpenTelemetry
   module Instrumentation
@@ -21,6 +21,7 @@ module OpenTelemetry
                 'connect',
                 attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
                 kind: :client
+                record_exception: config[:record_exception]
               ) do
                 super
               end
@@ -31,6 +32,7 @@ module OpenTelemetry
                 'ping',
                 attributes: client_attributes.merge!(OpenTelemetry::Instrumentation::Trilogy.attributes),
                 kind: :client
+                record_exception: config[:record_exception]
               ) do
                 super
               end
@@ -49,7 +51,8 @@ module OpenTelemetry
                 attributes: client_attributes(sql).merge!(
                   OpenTelemetry::Instrumentation::Trilogy.attributes
                 ),
-                kind: :client
+                kind: :client,
+                record_exception: config[:record_exception]
               ) do |_span, context|
                 if propagator && sql.frozen?
                   sql = +sql
@@ -83,9 +86,9 @@ module OpenTelemetry
                 case config[:db_statement]
                 when :obfuscate
                   attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] =
-                    OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql)
+                    OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql)
                   attributes['db.query.text'] =
-                    OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql)
+                    OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql)
                 when :include
                   attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] = sql
                   attributes['db.query.text'] = sql
