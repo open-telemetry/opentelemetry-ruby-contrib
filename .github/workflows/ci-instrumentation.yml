@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - main
+  merge_group:
   schedule:
     - cron: "0 0 * * *"
 
@@ -15,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }} # Ensure that only one instance of this workflow is running per event/PR/ref
   cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
@@ -32,7 +33,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
