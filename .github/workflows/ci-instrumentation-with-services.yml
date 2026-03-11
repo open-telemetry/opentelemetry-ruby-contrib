@@ -240,7 +240,7 @@ jobs:
           build: true
     services:
       redis:
-        image: redis:8.2.5@sha256:d15219c8d079378028a0e6a4c37cdd1edb4526acecf24f3c12e5b6122e786f60
+        image: redis:8.6.1@sha256:1c054d54ecd1597bba52f4304bca5afbc5565ebe614c5b3d7dc5b7f8a0cd768d
         ports:
           - 6379:6379
         options: >-
@@ -249,7 +249,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
           -e REDIS_PASSWORD=passw0rd
-          --entrypoint sh redis:8.2.5@sha256:d15219c8d079378028a0e6a4c37cdd1edb4526acecf24f3c12e5b6122e786f60 -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
+          --entrypoint sh redis:8.6.1@sha256:1c054d54ecd1597bba52f4304bca5afbc5565ebe614c5b3d7dc5b7f8a0cd768d -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
         env:
           REDIS_PASSWORD: "passw0rd"
 
