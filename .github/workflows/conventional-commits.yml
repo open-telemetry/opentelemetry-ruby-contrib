@@ -8,12 +8,13 @@ on:
       - synchronize
       - reopened
       - edited
+  merge_group:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }} # Ensure that only one instance of this workflow is running per Pull Request or ref
   cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
@@ -22,7 +23,9 @@ jobs:
     name: Conventional Commits Validation
     runs-on: ubuntu-24.04
     steps:
-      - uses: dev-build-deploy/commit-me@27d14296ec218488c543616d9128d7e75ab7463a # v1.5.3
+      # restrict checks to pull requests to avoid issues blocking the merge queue
+      - if: ${{ github.event_name == 'pull_request' }}
+        uses: dev-build-deploy/commit-me@27d14296ec218488c543616d9128d7e75ab7463a # v1.5.3
         env:
           FORCE_COLOR: 3
         with:
