@@ -21,17 +21,27 @@
     {
       matchDepNames: ["ruby"],
       matchUpdateTypes: ["digest", "patch"],
-      matchFileNames: ["!.github/workflows/ci-markdown-checks.yml"],
       schedule: ["before 8am every weekday"],
     },
     {
-      groupName: "Min-Ruby-sdk",
-      dependencyDashboardCategory: "Min Ruby SDK",
       matchDepNames: ["ruby"],
-      matchFileNames: [".github/workflows/ci-markdown-checks.yml"],
-      dependencyDashboardApproval: true,
+      matchFileNames: [
+        ".github/workflows/ci-markdown-checks.yml",
+        "**/*.gemspec",
+      ],
       separateMultipleMinor: true,
       separateMinorPatch: true,
+    },
+    {
+      groupName: "Min-Ruby-sdk",
+      dependencyDashboardCategory: "Min Ruby Runtime",
+      matchDepNames: ["ruby"],
+      matchFileNames: [
+        ".github/workflows/ci-markdown-checks.yml",
+        "**/*.gemspec",
+      ],
+      matchUpdateTypes: ["minor", "major"],
+      dependencyDashboardApproval: true,
     },
     {
       matchUpdateTypes: ["minor"],
@@ -66,14 +76,6 @@
       matchCategories: ["docker"],
       schedule: ["before 8am on Monday"],
       dependencyDashboardApproval: false,
-    },
-    {
-      groupName: "Min-Ruby-sdk",
-      dependencyDashboardCategory: "Min Ruby SDK",
-      matchCategories: ["custom"],
-      matchDepTypes: ["gemspec.required_ruby_version"],
-      separateMultipleMinor: true,
-      dependencyDashboardApproval: true,
     },
     {
       matchFileNames: [
@@ -143,13 +145,11 @@
         "required_ruby_version = \'>= (?<depVersion>[0-9]+.[0-9]+)\'",
       ],
       datasourceTemplate: "ruby-version",
-      packageNameTemplate: "ruby/ruby",
       versioningTemplate: "ruby",
       currentValueTemplate: "{{depVersion}}",
       extractVersionTemplate: "(?<version>[0-9]+.[0-9]+).0",
       depNameTemplate: "ruby",
       depTypeTemplate: "gemspec.required_ruby_version",
-      packageNameTemplate: "Min.Required.Ruby",
     },
   ],
   lockFileMaintenance: {
