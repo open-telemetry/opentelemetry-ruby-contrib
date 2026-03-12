@@ -78,6 +78,10 @@ module OpenTelemetry
                 'server.address' => connection_options&.fetch(:host, 'unknown sock') || 'unknown sock'
               }
 
+              # Add server.port only if non-default
+              port = connection_options[:port]
+              attributes['server.port'] = port if port && port != 3306
+
               attributes['db.namespace'] = database_name if database_name
               attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
 

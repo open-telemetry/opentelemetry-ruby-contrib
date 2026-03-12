@@ -79,6 +79,10 @@ module OpenTelemetry
                 'server.address' => connection_options&.fetch(:host, 'unknown sock') || 'unknown sock'
               }
 
+              # Add server.port only if non-default
+              port = connection_options[:port]
+              attributes['server.port'] = port if port && port != 3306
+
               attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
               attributes['db.namespace'] = database_name if database_name
               attributes[::OpenTelemetry::SemanticConventions::Trace::DB_USER] = database_user if database_user

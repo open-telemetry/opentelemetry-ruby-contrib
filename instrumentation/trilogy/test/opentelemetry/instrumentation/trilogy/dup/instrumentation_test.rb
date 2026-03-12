@@ -199,6 +199,36 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       end
     end
 
+    describe 'server.port attribute' do
+      describe 'when using default port (3306)' do
+        let(:port) { 3306 }
+        let(:span) { exporter.finished_spans.first }
+
+        it 'does not include server.port attribute' do  
+          _(span.attributes['server.port']).must_be_nil
+        end
+      end
+
+      describe 'when using non-default port' do
+        let(:non_default_port) { 3307 }
+        let(:span) { exporter.finished_spans.first }
+        let(:client_with_non_default_port) do
+          Trilogy.new(
+            host: host,
+            port: non_default_port,
+            username: username,
+            password: password,
+            database: database,
+            ssl: false
+          )
+        end
+
+        it 'includes server.port attribute when port is not 3306' do
+          _(span.attributes['server.port']).must_equal(non_default_port)
+        end
+      end
+    end
+
     describe 'when pinging' do
       let(:span) { exporter.finished_spans[2] }
 
@@ -309,7 +339,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.attributes['db.system.name']).must_equal 'mysql'
         _(span.attributes['db.query.text']).must_equal 'SELECT INVALID'
         _(span.attributes['error.type']).must_match(/Trilogy.*Error/)
-        _(span.attributes['db.response.status_code']).wont_be_nil
+        _(span.attributes['db.response.status_code']).must_equal '1054'
 
         _(span.status.code).must_equal(
           OpenTelemetry::Trace::Status::ERROR
