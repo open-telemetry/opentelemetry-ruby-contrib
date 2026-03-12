@@ -86,6 +86,7 @@
     },
     {
       matchCategories: ["custom"],
+      matchDepNames: ["!ruby"],
       matchDepTypes: ["!dependency"],
       matchFileNames: ["**/*.gemspec"],
       enabled: false,
