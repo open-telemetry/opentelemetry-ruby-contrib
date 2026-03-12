@@ -134,10 +134,23 @@
     },
     {
       customType: "regex",
-      description: "Update dependencies in gemspecs",
+      description: "Update Pessimistic dependencies in gemspecs",
       managerFilePatterns: ["**/*.gemspec"],
       matchStrings: [
-        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'\\S+\\s(?<depVersion>[0-9.]+)'",
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'~>\\s(?<depVersion>[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "~> {{depVersion}}",
+      depTypeTemplate: "{{depType}}",
+    },
+    {
+      customType: "regex",
+      description: "Update Non-Pessimistic dependencies in gemspecs",
+      managerFilePatterns: ["**/*.gemspec"],
+      matchStrings: [
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'>=\\s(?<depVersion>[0-9.]+)'",
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'(?<depVersion>[0-9.]+)'",
       ],
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
