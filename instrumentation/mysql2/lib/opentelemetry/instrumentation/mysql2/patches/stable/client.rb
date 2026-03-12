@@ -19,8 +19,20 @@ module OpenTelemetry
                 _otel_span_name(sql),
                 attributes: _otel_span_attributes(sql),
                 kind: :client
-              ) do
-                super
+              ) do |span, context|
+                if propagator && sql.frozen?
+                  sql = +sql
+                  propagator.inject(sql, context: context)
+                  sql.freeze
+                elsif propagator
+                  propagator.inject(sql, context: context)
+                end
+
+                super(sql, options)
+              rescue ::Mysql2::Error => e
+                span.set_attribute('error.type', e.class.name)
+                span.set_attribute('db.response.status_code', e.error_number.to_s) if e.respond_to?(:error_number) && e.error_number
+                raise
               end
             end
 
@@ -29,8 +41,20 @@ module OpenTelemetry
                 _otel_span_name(sql),
                 attributes: _otel_span_attributes(sql),
                 kind: :client
-              ) do
-                super
+              ) do |span, context|
+                if propagator && sql.frozen?
+                  sql = +sql
+                  propagator.inject(sql, context: context)
+                  sql.freeze
+                elsif propagator
+                  propagator.inject(sql, context: context)
+                end
+
+                super(sql)
+              rescue ::Mysql2::Error => e
+                span.set_attribute('error.type', e.class.name)
+                span.set_attribute('db.response.status_code', e.error_number.to_s) if e.respond_to?(:error_number) && e.error_number
+                raise
               end
             end
 
@@ -74,13 +98,15 @@ module OpenTelemetry
               # exposed on the mysql2 Client
               # https://github.com/brianmario/mysql2/blob/ca08712c6c8ea672df658bb25b931fea22555f27/lib/mysql2/client.rb#L25-L26
               host = (query_options[:host] || query_options[:hostname]).to_s
-              port = query_options[:port].to_s
 
               attributes = {
                 'db.system.name' => 'mysql',
-                'server.address' => host,
-                'server.port' => port
+                'server.address' => host
               }
+
+              # Add server.port only if explicitly provided
+              port = query_options[:port]
+              attributes['server.port'] = port if port
 
               attributes['db.namespace'] = _otel_database_name
               attributes[SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
@@ -93,6 +119,10 @@ module OpenTelemetry
 
             def config
               Mysql2::Instrumentation.instance.config
+            end
+
+            def propagator
+              Mysql2::Instrumentation.instance.propagator
             end
           end
         end
