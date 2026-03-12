@@ -65,7 +65,7 @@
 - BREAKING CHANGE: Drop Rails 6.0 EOL
 - ADDED: Drop Rails 6.0 EOL
 - BREAKING CHANGE: Use ActiveSupport Instrumentation instead of Monkey Patches
-- CHANGED: Use ActiveSupport Instrumentation instead of Money Patches [#677](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/677)
+- CHANGED: Use ActiveSupport Instrumentation instead of Monkey Patches [#677](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/677)
 
 ## v0.6.1 / 2023-10-16
 
