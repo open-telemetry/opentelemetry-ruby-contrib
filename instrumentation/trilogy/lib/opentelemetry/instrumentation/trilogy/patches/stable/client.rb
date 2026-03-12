@@ -80,7 +80,7 @@ module OpenTelemetry
 
               # Add server.port only if non-default
               port = connection_options[:port]
-              attributes['server.port'] = port if port && port != 3306
+              attributes['server.port'] = port.to_s if port && port != 3306
 
               attributes['db.namespace'] = database_name if database_name
               attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?

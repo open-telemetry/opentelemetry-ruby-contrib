@@ -81,7 +81,7 @@ module OpenTelemetry
 
               # Add server.port only if non-default
               port = connection_options[:port]
-              attributes['server.port'] = port if port && port != 3306
+              attributes['server.port'] = port.to_s if port && port != 3306
 
               attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
               attributes['db.namespace'] = database_name if database_name

@@ -208,7 +208,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
             nil # Expected - connection fails but span is still recorded
           end
 
-          _(connect_span.attributes['server.port']).must_equal(non_default_port)
+          _(connect_span.attributes['server.port']).must_equal('3307')
         end
       end
     end
