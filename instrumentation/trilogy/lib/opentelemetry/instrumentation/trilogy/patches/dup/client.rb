@@ -79,13 +79,6 @@ module OpenTelemetry
                 'server.address' => connection_options&.fetch(:host, 'unknown sock') || 'unknown sock'
               }
 
-              # Add server.port if explicitly provided (both old and new conventions)
-              port = connection_options&.fetch(:port, nil)
-              if port
-                attributes[::OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT] = port
-                attributes['server.port'] = port
-              end
-
               attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
               attributes['db.namespace'] = database_name if database_name
               attributes[::OpenTelemetry::SemanticConventions::Trace::DB_USER] = database_user if database_user
