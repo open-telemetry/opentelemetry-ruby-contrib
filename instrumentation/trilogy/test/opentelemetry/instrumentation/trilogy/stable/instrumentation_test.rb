@@ -182,29 +182,32 @@ describe OpenTelemetry::Instrumentation::Trilogy do
     describe 'server.port attribute' do
       describe 'when using default port (3306)' do
         let(:port) { 3306 }
-        let(:span) { exporter.finished_spans.first }
+        let(:connect_span) { exporter.finished_spans.first }
 
         it 'does not include server.port attribute' do
-          _(span.attributes['server.port']).must_be_nil
+          client
+          _(connect_span.attributes['server.port']).must_be_nil
         end
       end
 
       describe 'when using non-default port' do
         let(:non_default_port) { 3307 }
-        let(:span) { exporter.finished_spans.first }
-        let(:client_with_non_default_port) do
-          Trilogy.new(
-            host: host,
-            port: non_default_port,
-            username: username,
-            password: password,
-            database: database,
-            ssl: false
-          )
-        end
+        let(:connect_span) { exporter.finished_spans.first }
 
         it 'includes server.port attribute when port is not 3306' do
-          _(span.attributes['server.port']).must_equal(non_default_port)
+          begin
+            Trilogy.new(
+              host: host,
+              port: non_default_port,
+              username: username,
+              password: password,
+              database: database,
+              ssl: false
+            )
+          rescue Trilogy::Error # Expected - connection fails but span is still recorded
+          end
+
+          _(connect_span.attributes['server.port']).must_equal(non_default_port)
         end
       end
     end
