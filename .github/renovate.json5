@@ -133,7 +133,7 @@
     },
     {
       customType: "regex",
-      description: "Update ~> dependencies in appraisals",
+      description: "Update Pessimistic dependencies in Appraisals",
       managerFilePatterns: ["**/Appraisals"],
       matchStrings: [
         "gem\\s'(?<packageName>.+?)',\\s'~>\\s(?<depVersion>[0-9.]+)'",
@@ -141,11 +141,11 @@
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
       currentValueTemplate: "~> {{depVersion}}",
-      depTypeTemplate: "test_dependency",
+      depTypeTemplate: "testDependencies",
     },
     {
       customType: "regex",
-      description: "Update >= dependencies in appraisals",
+      description: "Update Non-Pessimistic dependencies in Appraisals",
       managerFilePatterns: ["**/Appraisals"],
       matchStrings: [
         "gem\\s'(?<packageName>.+?)',\\s'>=\\s(?<depVersion>[0-9.]+)'",
@@ -154,7 +154,7 @@
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
       currentValueTemplate: "{{depVersion}}",
-      depTypeTemplate: "test_dependency",
+      depTypeTemplate: "testDependencies",
     },
   ],
   lockFileMaintenance: {
