@@ -224,7 +224,8 @@ describe OpenTelemetry::Instrumentation::Trilogy do
               database: database,
               ssl: false
             )
-          rescue Trilogy::Error # Expected - connection fails but span is still recorded
+          rescue Trilogy::Error
+            nil # Expected - connection fails but span is still recorded
           end
 
           _(connect_span.attributes['server.port']).must_equal(non_default_port)
