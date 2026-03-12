@@ -141,7 +141,7 @@
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
       currentValueTemplate: "~> {{depVersion}}",
-      depTypeTemplate: "test_dependency-pinned",
+      depTypeTemplate: "test_dependency",
     },
     {
       customType: "regex",
@@ -149,6 +149,7 @@
       managerFilePatterns: ["**/Appraisals"],
       matchStrings: [
         "gem\\s'(?<packageName>.+?)',\\s'>=\\s(?<depVersion>[0-9.]+)'",
+        "gem\\s'(?<packageName>.+?)',\\s'(?<depVersion>[0-9.]+)'",
       ],
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
