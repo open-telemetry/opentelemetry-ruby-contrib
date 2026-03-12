@@ -98,15 +98,13 @@ module OpenTelemetry
               # exposed on the mysql2 Client
               # https://github.com/brianmario/mysql2/blob/ca08712c6c8ea672df658bb25b931fea22555f27/lib/mysql2/client.rb#L25-L26
               host = (query_options[:host] || query_options[:hostname]).to_s
+              port = query_options[:port].to_s
 
               attributes = {
                 'db.system.name' => 'mysql',
-                'server.address' => host
+                'server.address' => host,
+                'server.port' => port
               }
-
-              # Add server.port only if explicitly provided
-              port = query_options[:port]
-              attributes['server.port'] = port if port
 
               attributes['db.namespace'] = _otel_database_name
               attributes[SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
