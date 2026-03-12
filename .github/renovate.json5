@@ -149,13 +149,11 @@
         "required_ruby_version = \'>= (?<depVersion>[0-9]+.[0-9]+)\'",
       ],
       datasourceTemplate: "ruby-version",
-      packageNameTemplate: "ruby/ruby",
       versioningTemplate: "ruby",
       currentValueTemplate: "{{depVersion}}",
       extractVersionTemplate: "(?<version>[0-9]+.[0-9]+).0",
       depNameTemplate: "ruby",
       depTypeTemplate: "gemspec.required_ruby_version",
-      packageNameTemplate: "Min.Required.Ruby",
     },
   ],
   lockFileMaintenance: {
