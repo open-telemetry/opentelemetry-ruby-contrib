@@ -12,6 +12,7 @@ Bundler.require(:default, :development, :test)
 
 require 'active_storage'
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'test_helpers/app_config'
 
 # global opentelemetry-sdk setup:

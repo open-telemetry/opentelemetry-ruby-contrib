@@ -24,6 +24,7 @@ group :test do
     gem 'base64' # Required for activesupport < 7.1 on Ruby 3.4+
     gem 'logger' # Required for Ruby 3.4+
     gem 'mutex_m' # Required for activesupport < 7.1 on Ruby 3.4+
+    gem 'logger'
     gem 'observer' # Required for factory_bot 4.x on Ruby 3.4+
   end
 end
