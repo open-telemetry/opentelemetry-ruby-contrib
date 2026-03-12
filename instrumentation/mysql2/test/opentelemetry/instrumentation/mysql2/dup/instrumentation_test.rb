@@ -70,6 +70,34 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['peer.service']).must_equal 'readonly:mysql'
     end
 
+    describe 'server.port attribute' do
+      it 'does not include server.port when using default port (3306)' do
+        client.query('SELECT 1')
+
+        _(span.attributes['server.port']).must_be_nil
+      end
+
+      describe 'when using non-default port' do
+        let(:non_default_port) { 3307 }
+
+        it 'includes server.port attribute as integer when port is not 3306' do
+          begin
+            Mysql2::Client.new(
+              host: host,
+              port: non_default_port,
+              database: database,
+              username: username,
+              password: password
+            )
+          rescue Mysql2::Error
+            nil # Expected - connection fails but span is still recorded
+          end
+
+          _(span.attributes['server.port']).must_equal(non_default_port)
+        end
+      end
+    end
+
     describe '.attributes' do
       let(:attributes) { { 'db.statement' => 'foobar', 'db.query.text' => 'foobar' } }
 
@@ -107,7 +135,6 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         _(span.attributes['db.namespace']).must_equal 'mysql'
         _(span.attributes['db.query.text']).must_equal 'SELECT 1'
         _(span.attributes['server.address']).must_equal host.to_s
-        _(span.attributes['server.port']).must_equal port.to_s
       end
 
       it 'after requests with prepare select ?' do
@@ -123,7 +150,6 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         _(span.attributes['db.namespace']).must_equal 'mysql'
         _(span.attributes['db.query.text']).must_equal 'SELECT ?'
         _(span.attributes['server.address']).must_equal host.to_s
-        _(span.attributes['server.port']).must_equal port.to_s
       end
 
       it 'query ? sequences for db.statement with prepare' do
@@ -141,7 +167,6 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         _(span.attributes['net.peer.port']).must_equal port.to_s
         _(span.attributes['db.query.text']).must_equal sql
         _(span.attributes['server.address']).must_equal host.to_s
-        _(span.attributes['server.port']).must_equal port.to_s
       end
 
       it 'query invalid byte sequences for db.statement without prepare' do
@@ -167,8 +192,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.namespace']).must_equal 'mysql'
       _(span.attributes['db.query.text']).must_equal 'SELECT 1'
       _(span.attributes['server.address']).must_equal host.to_s
-      _(span.attributes['server.port']).must_equal port.to_s
-    end
+          end
 
     it 'after error' do
       expect do
@@ -185,8 +209,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.namespace']).must_equal 'mysql'
       _(span.attributes['db.query.text']).must_equal 'SELECT INVALID'
       _(span.attributes['server.address']).must_equal host.to_s
-      _(span.attributes['server.port']).must_equal port.to_s
-
+      
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -212,8 +235,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.namespace']).must_equal 'mysql'
       _(span.attributes['db.query.text']).must_equal explain_sql
       _(span.attributes['server.address']).must_equal host.to_s
-      _(span.attributes['server.port']).must_equal port.to_s
-    end
+          end
 
     it 'uses component.name and instance.name as span.name fallbacks with invalid sql' do
       expect do
@@ -230,8 +252,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.namespace']).must_equal 'mysql'
       _(span.attributes['db.query.text']).must_equal 'DESELECT 1'
       _(span.attributes['server.address']).must_equal host.to_s
-      _(span.attributes['server.port']).must_equal port.to_s
-
+      
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -261,7 +282,6 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         _(span.attributes['net.peer.port']).must_equal port.to_s
         _(span.attributes['db.query.text']).must_equal obfuscated_sql
         _(span.attributes['server.address']).must_equal host.to_s
-        _(span.attributes['server.port']).must_equal port.to_s
       end
 
       it 'encodes invalid byte sequences for db.statement' do
@@ -313,7 +333,6 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         _(span.attributes['net.peer.port']).must_equal port.to_s
         _(span.attributes).wont_include('db.query.text')
         _(span.attributes['server.address']).must_equal host.to_s
-        _(span.attributes['server.port']).must_equal port.to_s
       end
     end
 
@@ -339,8 +358,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
             _(span.name).must_equal 'select'
             _(span.attributes).wont_include('db.query.text')
             _(span.attributes['server.address']).must_equal host.to_s
-            _(span.attributes['server.port']).must_equal port.to_s
-          end
+                      end
         end
       end
 
@@ -366,8 +384,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
             _(span.attributes['net.peer.port']).must_equal port.to_s
             _(span.attributes['db.query.text']).must_equal obfuscated_sql
             _(span.attributes['server.address']).must_equal host.to_s
-            _(span.attributes['server.port']).must_equal port.to_s
-          end
+                      end
         end
       end
 
@@ -395,8 +412,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
             _(span.attributes['net.peer.port']).must_equal port.to_s
             _(span.attributes['db.query.text']).must_equal obfuscated_sql
             _(span.attributes['server.address']).must_equal host.to_s
-            _(span.attributes['server.port']).must_equal port.to_s
-          end
+                      end
         end
       end
 
@@ -456,7 +472,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
               sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
               expect do
                 client.query(sql)
-              end.must_raise Mysql2::Error
+      end.must_raise Mysql2::Error
 
               _(span.name).must_equal 'mysql'
             end
@@ -474,7 +490,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
             OpenTelemetry::Instrumentation::Mysql2.with_attributes('db.operation.name' => 'foo') do
               expect do
                 client.query(sql)
-              end.must_raise Mysql2::Error
+      end.must_raise Mysql2::Error
             end
 
             _(span.name).must_equal 'foo mysql'
@@ -508,7 +524,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
                 expect do
                   client.query(sql)
                 end.must_raise Mysql2::Error
-              end
+      end
 
               _(span.name).must_equal 'foo'
             end
@@ -522,7 +538,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
               sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
               expect do
                 client.query(sql)
-              end.must_raise Mysql2::Error
+      end.must_raise Mysql2::Error
 
               _(span.name).must_equal 'mysql'
             end
