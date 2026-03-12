@@ -47,7 +47,7 @@
 
 ## v0.19.3 / 2021-10-29
 
-- FIXED: Add Support fo OTTrace Bit Encoded Sampled Flags
+- FIXED: Add Support for OTTrace Bit Encoded Sampled Flags
 
 ## v0.19.2 / 2021-09-29
 
