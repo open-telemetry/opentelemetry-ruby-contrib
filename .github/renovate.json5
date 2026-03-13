@@ -27,10 +27,6 @@
     {
       description: "Separate ruby updates so that patches can be installed after new minor has been released.",
       matchDepNames: ["ruby"],
-      matchFileNames: [
-        ".github/workflows/ci-markdown-checks.yml",
-        "**/*.gemspec",
-      ],
       separateMultipleMinor: true,
       separateMinorPatch: true,
     },
