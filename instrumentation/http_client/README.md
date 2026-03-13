@@ -61,6 +61,6 @@ When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify whic
 
 - `http` - Emits the stable HTTP and networking conventions.
 - `http/dup` - **DEPRECATED: Will be removed on April 15, 2026.** Emits both the old and stable HTTP and networking conventions.
-- `http/old` - **DEPRECATED: Will be removed on April 15, 2026.** Emits the old HTTP and networking conventions.
+- `old` - **DEPRECATED: Will be removed on April 15, 2026.** Emits the old HTTP and networking conventions.
 
 For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/).
