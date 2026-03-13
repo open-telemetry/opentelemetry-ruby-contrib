@@ -81,17 +81,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         let(:non_default_port) { 3307 }
 
         it 'includes server.port attribute as integer when port is not 3306' do
-          begin
-            Mysql2::Client.new(
-              host: host,
-              port: non_default_port,
-              database: database,
-              username: username,
-              password: password
-            )
-          rescue Mysql2::Error
-            nil # Expected - connection fails but span is still recorded
-          end
+          client.query_options[:port] = non_default_port
+          client.query('SELECT 1')
 
           _(span.attributes['server.port']).must_equal(non_default_port)
         end
