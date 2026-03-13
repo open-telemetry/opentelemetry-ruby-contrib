@@ -37,7 +37,11 @@ module OpenTelemetry
               OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(payload[:action])
             }
             attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE] = http_route if http_route
-            attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET] = request.filtered_path if request.filtered_path != request.fullpath
+
+            if request.filtered_path != request.fullpath
+              filtered_query = request.filtered_path.split('?', 2)[1]
+              attributes['url.query'] = filtered_query if filtered_query
+            end
 
             if @span_naming == :semconv
               span.name = if http_route

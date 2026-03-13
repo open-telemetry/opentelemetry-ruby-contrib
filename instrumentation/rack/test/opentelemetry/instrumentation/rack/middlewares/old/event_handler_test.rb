@@ -62,11 +62,16 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler' 
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
 
     # simulate a fresh install:
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(config)
+  end
+
+  after do
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   # Simulating buggy instrumentation that starts a span, sets the ctx

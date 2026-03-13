@@ -17,7 +17,6 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Stable::Session do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
     exporter.reset
     instrumentation.install({})
   end
