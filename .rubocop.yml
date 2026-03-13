@@ -51,6 +51,8 @@ Style/ModuleFunction:
 Style/MultilineIfModifier:
   Exclude:
     - "**/test/**/*"
+Style/OneClassPerFile:
+  Enabled: false
 Style/RedundantRegexpEscape:
   Enabled: false
 Style/StringLiterals:
