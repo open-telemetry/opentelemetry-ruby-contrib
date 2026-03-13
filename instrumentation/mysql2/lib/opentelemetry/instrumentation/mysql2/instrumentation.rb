@@ -11,11 +11,11 @@ module OpenTelemetry
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
 
-        install do |_config|
+        install do |config|
           patch_type = determine_semconv
           send(:"require_dependencies_#{patch_type}")
           send(:"patch_client_#{patch_type}")
-          configure_propagator(_config)
+          configure_propagator(config)
         end
 
         present do
