@@ -163,7 +163,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.namespace']).must_equal 'mysql'
       _(span.attributes['db.query.text']).must_equal 'SELECT 1'
       _(span.attributes['server.address']).must_equal host.to_s
-          end
+    end
 
     it 'after error' do
       expect do
@@ -175,7 +175,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.namespace']).must_equal 'mysql'
       _(span.attributes['db.query.text']).must_equal 'SELECT INVALID'
       _(span.attributes['server.address']).must_equal host.to_s
-      
+
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -196,7 +196,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.namespace']).must_equal 'mysql'
       _(span.attributes['db.query.text']).must_equal explain_sql
       _(span.attributes['server.address']).must_equal host.to_s
-          end
+    end
 
     it 'uses component.name and instance.name as span.name fallbacks with invalid sql' do
       expect do
@@ -208,7 +208,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.namespace']).must_equal 'mysql'
       _(span.attributes['db.query.text']).must_equal 'DESELECT 1'
       _(span.attributes['server.address']).must_equal host.to_s
-      
+
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -296,7 +296,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
             _(span.name).must_equal 'select'
             _(span.attributes).wont_include('db.query.text')
             _(span.attributes['server.address']).must_equal host.to_s
-                      end
+          end
         end
       end
 
@@ -317,7 +317,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
             _(span.name).must_equal 'select'
             _(span.attributes['db.query.text']).must_equal obfuscated_sql
             _(span.attributes['server.address']).must_equal host.to_s
-                      end
+          end
         end
       end
 
@@ -340,7 +340,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
             _(span.name).must_equal 'select'
             _(span.attributes['db.query.text']).must_equal obfuscated_sql
             _(span.attributes['server.address']).must_equal host.to_s
-                      end
+          end
         end
       end
 
@@ -400,7 +400,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
               sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
               expect do
                 client.query(sql)
-      end.must_raise Mysql2::Error
+              end.must_raise Mysql2::Error
 
               _(span.name).must_equal 'mysql'
             end
@@ -418,7 +418,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
             OpenTelemetry::Instrumentation::Mysql2.with_attributes('db.operation.name' => 'foo') do
               expect do
                 client.query(sql)
-      end.must_raise Mysql2::Error
+              end.must_raise Mysql2::Error
             end
 
             _(span.name).must_equal 'foo mysql'
@@ -452,7 +452,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
                 expect do
                   client.query(sql)
                 end.must_raise Mysql2::Error
-      end
+              end
 
               _(span.name).must_equal 'foo'
             end
@@ -466,7 +466,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
               sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
               expect do
                 client.query(sql)
-      end.must_raise Mysql2::Error
+              end.must_raise Mysql2::Error
 
               _(span.name).must_equal 'mysql'
             end
