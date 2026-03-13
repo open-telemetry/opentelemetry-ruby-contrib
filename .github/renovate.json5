@@ -46,7 +46,7 @@
     },
     {
       matchUpdateTypes: ["major"],
-      matchCategories: ["ruby", "docker"],
+      matchCategories: ["ruby", "docker", "custom"],
       dependencyDashboardApproval: true,
     },
     {
@@ -66,6 +66,21 @@
       matchCategories: ["docker"],
       schedule: ["before 8am on Monday"],
       dependencyDashboardApproval: false,
+    },
+    {
+      description: "Only update general dependencies and ruby in gemspec files",
+      matchCategories: ["custom"],
+      matchDepNames: ["!ruby"],
+      matchDepTypes: ["!dependency"],
+      matchFileNames: ["**/*.gemspec"],
+      enabled: false,
+    },
+    {
+      description: "Bump dependencies in gemspec files",
+      matchCategories: ["custom"],
+      matchDepNames: ["!ruby"],
+      matchFileNames: ["**/*.gemspec"],
+      rangeStrategy: "bump",
     },
     {
       matchFileNames: [
@@ -125,6 +140,29 @@
       versioningTemplate: "docker",
       currentValueTemplate: "{{depVersion}}",
       autoReplaceStringTemplate: "entrypoint sh {{packageName}}:{{newVersion}}@{{newDigest}} -c",
+    },
+    {
+      customType: "regex",
+      description: "Update Pessimistic dependencies in gemspecs",
+      managerFilePatterns: ["**/*.gemspec"],
+      matchStrings: [
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'~>\\s(?<depVersion>[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "~> {{depVersion}}",
+    },
+    {
+      customType: "regex",
+      description: "Update Non-Pessimistic dependencies in gemspecs",
+      managerFilePatterns: ["**/*.gemspec"],
+      matchStrings: [
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'>=\\s(?<depVersion>[0-9.]+)'",
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'(?<depVersion>[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
     },
   ],
   lockFileMaintenance: {
