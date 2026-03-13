@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/trilogy'
-require_relative '../../../../lib/opentelemetry/instrumentation/trilogy/patches/client'
+require_relative '../../../../../lib/opentelemetry/instrumentation/trilogy'
+require_relative '../../../../../lib/opentelemetry/instrumentation/trilogy/patches/stable/client'
 
 describe OpenTelemetry::Instrumentation::Trilogy do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance }
@@ -35,6 +35,10 @@ describe OpenTelemetry::Instrumentation::Trilogy do
   let(:password) { ENV.fetch('TEST_MYSQL_PASSWORD', 'root') }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
+
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database'
+
     exporter.reset
   end
 
@@ -101,7 +105,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
     end
 
     describe '.attributes' do
-      let(:attributes) { { 'db.statement' => 'foobar' } }
+      let(:attributes) { { 'db.query.text' => 'foobar' } }
 
       it 'returns an empty hash by default' do
         _(OpenTelemetry::Instrumentation::Trilogy.attributes).must_equal({})
@@ -118,7 +122,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
           client.query('SELECT 1')
         end
 
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'foobar'
+        _(span.attributes['db.query.text']).must_equal 'foobar'
       end
     end
 
@@ -127,19 +131,17 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         client.query('SELECT 1')
 
         _(span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
+        _(span.attributes['db.query.text']).must_equal 'SELECT ?'
       end
 
       it 'includes database connection information' do
         client.query('SELECT 1')
 
         _(span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
-        _(span.attributes['db.instance.id']).must_be_nil
+        _(span.attributes['db.namespace']).must_equal(database)
+        _(span.attributes['db.system.name']).must_equal 'mysql'
+        _(span.attributes['db.query.text']).must_equal 'SELECT ?'
+        _(span.attributes['server.address']).must_equal(host)
       end
 
       it 'extracts statement type' do
@@ -147,10 +149,9 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         client.query(explain_sql)
 
         _(span.name).must_equal 'explain'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'EXPLAIN SELECT ?'
+        _(span.attributes['db.namespace']).must_equal(database)
+        _(span.attributes['db.system.name']).must_equal 'mysql'
+        _(span.attributes['db.query.text']).must_equal 'EXPLAIN SELECT ?'
       end
 
       it 'uses component.name and instance.name as span.name fallbacks with invalid sql' do
@@ -159,10 +160,9 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         end.must_raise Trilogy::Error
 
         _(span.name).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'DESELECT ?'
+        _(span.attributes['db.namespace']).must_equal(database)
+        _(span.attributes['db.system.name']).must_equal 'mysql'
+        _(span.attributes['db.query.text']).must_equal 'DESELECT ?'
       end
     end
 
@@ -173,11 +173,43 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(client.connected_host).wont_be_nil
 
         _(span.name).must_equal 'connect'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
-        _(span.attributes['db.instance.id']).must_be_nil
+        _(span.attributes['db.namespace']).must_equal(database)
+        _(span.attributes['db.system.name']).must_equal 'mysql'
+        _(span.attributes['server.address']).must_equal(host)
+      end
+    end
+
+    describe 'server.port attribute' do
+      describe 'when using default port (3306)' do
+        let(:port) { 3306 }
+        let(:connect_span) { exporter.finished_spans.first }
+
+        it 'does not include server.port attribute' do
+          client
+          _(connect_span.attributes['server.port']).must_be_nil
+        end
+      end
+
+      describe 'when using non-default port' do
+        let(:non_default_port) { 3307 }
+        let(:connect_span) { exporter.finished_spans.first }
+
+        it 'includes server.port attribute when port is not 3306' do
+          begin
+            Trilogy.new(
+              host: host,
+              port: non_default_port,
+              username: username,
+              password: password,
+              database: database,
+              ssl: false
+            )
+          rescue Trilogy::Error
+            nil # Expected - connection fails but span is still recorded
+          end
+
+          _(connect_span.attributes['server.port']).must_equal(3307)
+        end
       end
     end
 
@@ -190,10 +222,8 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         client.ping
 
         _(span.name).must_equal 'ping'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
+        _(span.attributes['db.namespace']).must_equal(database)
+        _(span.attributes['db.system.name']).must_equal 'mysql'
       end
     end
 
@@ -202,24 +232,20 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(client.connected_host).wont_be_nil
 
         _(span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'select @@hostname'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
-        _(span.attributes['db.instance.id']).must_be_nil
+        _(span.attributes['db.namespace']).must_equal(database)
+        _(span.attributes['db.system.name']).must_equal 'mysql'
+        _(span.attributes['db.query.text']).must_equal 'select @@hostname'
+        _(span.attributes['server.address']).must_equal(host)
 
         client.query('SELECT 1')
 
         last_span = exporter.finished_spans.last
 
         _(last_span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
-        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
-        _(last_span.attributes['db.instance.id']).must_equal client.connected_host
+        _(span.attributes['db.namespace']).must_equal(database)
+        _(last_span.attributes['db.system.name']).must_equal 'mysql'
+        _(last_span.attributes['db.query.text']).must_equal 'SELECT ?'
+        _(last_span.attributes['server.address']).must_equal(host)
       end
     end
 
@@ -237,23 +263,21 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(client.connected_host).wont_be_nil
 
         _(span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'select @@hostname'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_match(/sock/)
+        _(span.attributes['db.namespace']).must_equal(database)
+        _(span.attributes['db.system.name']).must_equal 'mysql'
+        _(span.attributes['db.query.text']).must_equal 'select @@hostname'
+        _(span.attributes['server.address']).must_match(/sock/)
 
         client.query('SELECT 1')
 
         last_span = exporter.finished_spans.last
 
         _(last_span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
-        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).wont_equal(/sock/)
-        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal client.connected_host
+        _(span.attributes['db.namespace']).must_equal(database)
+        _(last_span.attributes['db.system.name']).must_equal 'mysql'
+        _(last_span.attributes['db.query.text']).must_equal 'SELECT ?'
+        _(last_span.attributes['server.address']).wont_equal(/sock/)
+        _(last_span.attributes['server.address']).must_equal client.connected_host
       end
     end
 
@@ -264,10 +288,11 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         end.must_raise Trilogy::Error
 
         _(span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT INVALID'
+        _(span.attributes['db.namespace']).must_equal(database)
+        _(span.attributes['db.system.name']).must_equal 'mysql'
+        _(span.attributes['db.query.text']).must_equal 'SELECT INVALID'
+        _(span.attributes['error.type']).must_match(/Trilogy.*Error/)
+        _(span.attributes['db.response.status_code']).must_equal '1054'
 
         _(span.status.code).must_equal(
           OpenTelemetry::Trace::Status::ERROR
@@ -276,18 +301,6 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.events.first.attributes['exception.type']).must_match(/Trilogy.*Error/)
         _(span.events.first.attributes['exception.message']).wont_be_nil
         _(span.events.first.attributes['exception.stacktrace']).wont_be_nil
-      end
-
-      describe 'when record_exception is false' do
-        let(:config) { { record_exception: false } }
-
-        it 'does not record exception when record_exception is false' do
-          expect do
-            client.query('SELECT INVALID')
-          end.must_raise Trilogy::Error
-
-          _(span.events).must_be_nil
-        end
       end
     end
 
@@ -301,14 +314,14 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         end.must_raise Trilogy::Error
 
         _(span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal sql
+        _(span.attributes['db.query.text']).must_equal sql
       end
     end
 
     describe 'when db_statement is set to obfuscate' do
       let(:config) { { db_statement: :obfuscate } }
 
-      it 'obfuscates SQL parameters in db.statement' do
+      it 'obfuscates SQL parameters in db.query.text' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
         expect do
@@ -316,10 +329,10 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         end.must_raise Trilogy::Error
 
         _(span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal obfuscated_sql
+        _(span.attributes['db.query.text']).must_equal obfuscated_sql
       end
 
-      it 'encodes invalid byte sequences for db.statement' do
+      it 'encodes invalid byte sequences for db.query.text' do
         # \255 is off-limits https://en.wikipedia.org/wiki/UTF-8#Codepage_layout
         sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com\255'"
         obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
@@ -329,7 +342,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         end.must_raise Trilogy::Error
 
         _(span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal obfuscated_sql
+        _(span.attributes['db.query.text']).must_equal obfuscated_sql
       end
 
       describe 'with obfuscation_limit' do
@@ -342,7 +355,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
             client.query(sql)
           end.must_raise Trilogy::Error
 
-          _(span.attributes['db.statement']).must_equal obfuscated_sql
+          _(span.attributes['db.query.text']).must_equal obfuscated_sql
         end
       end
     end
@@ -425,72 +438,23 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       end
     end
 
-    describe 'when propagator is set to tracecontext' do
-      let(:config) { { propagator: 'tracecontext' } }
-
-      it 'injects context on frozen strings' do
-        sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
-        _(sql).must_be :frozen?
-        propagator = OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
-
-        arg_cache = {} # maintain handles to args
-        allow(client).to receive(:query).and_wrap_original do |m, *args|
-          arg_cache[:query_input] = args[0]
-          _(args[0]).must_be :frozen?
-          m.call(args[0])
-        end
-
-        allow(propagator).to receive(:inject).and_wrap_original do |m, *args|
-          arg_cache[:inject_input] = args[0]
-          _(args[0]).wont_be :frozen?
-          _(args[0]).must_match(sql)
-          m.call(args[0], context: args[1][:context])
-        end
-
-        expect do
-          client.query(sql)
-        end.must_raise Trilogy::Error
-
-        # arg_cache[:inject_input] _was_ a mutable string, so it has the context injected
-        # The tracecontext propagator injects traceparent and tracestate headers as SQL comments
-        _(arg_cache[:inject_input]).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
-
-        # arg_cache[:inject_input] is now frozen
-        _(arg_cache[:inject_input]).must_be :frozen?
-      end
-
-      it 'injects context on unfrozen strings' do
-        # inbound SQL is not frozen (string prefixed with +)
-        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
-        _(sql).wont_be :frozen?
-
-        expect do
-          client.query(sql)
-        end.must_raise Trilogy::Error
-
-        # The tracecontext propagator injects traceparent header as SQL comment
-        _(sql).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
-        _(sql).wont_be :frozen?
-      end
-    end
-
     describe 'when db_statement is set to omit' do
       let(:config) { { db_statement: :omit } }
 
-      it 'does not include SQL statement as db.statement attribute' do
+      it 'does not include SQL statement as db.query.text attribute' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         expect do
           client.query(sql)
         end.must_raise Trilogy::Error
 
         _(span.name).must_equal 'select'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
+        _(span.attributes['db.query.text']).must_be_nil
       end
     end
 
     describe 'when db_statement is configured via environment variable' do
       describe 'when db_statement set as omit' do
-        it 'omits db.statement attribute' do
+        it 'omits db.query.text attribute' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'db_statement=omit;') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
@@ -499,15 +463,15 @@ describe OpenTelemetry::Instrumentation::Trilogy do
               client.query(sql)
             end.must_raise Trilogy::Error
 
-            _(span.attributes['db.system']).must_equal 'mysql'
+            _(span.attributes['db.system.name']).must_equal 'mysql'
             _(span.name).must_equal 'select'
-            _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
+            _(span.attributes['db.query.text']).must_be_nil
           end
         end
       end
 
       describe 'when db_statement set as obfuscate' do
-        it 'obfuscates SQL parameters in db.statement' do
+        it 'obfuscates SQL parameters in db.query.text' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'db_statement=obfuscate;') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
@@ -518,9 +482,9 @@ describe OpenTelemetry::Instrumentation::Trilogy do
               client.query(sql)
             end.must_raise Trilogy::Error
 
-            _(span.attributes['db.system']).must_equal 'mysql'
+            _(span.attributes['db.system.name']).must_equal 'mysql'
             _(span.name).must_equal 'select'
-            _(span.attributes['db.statement']).must_equal obfuscated_sql
+            _(span.attributes['db.query.text']).must_equal obfuscated_sql
           end
         end
       end
@@ -528,7 +492,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       describe 'when db_statement is set differently than local config' do
         let(:config) { { db_statement: :omit } }
 
-        it 'overrides local config and obfuscates SQL parameters in db.statement' do
+        it 'overrides local config and obfuscates SQL parameters in db.query.text' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'db_statement=obfuscate') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
@@ -539,9 +503,9 @@ describe OpenTelemetry::Instrumentation::Trilogy do
               client.query(sql)
             end.must_raise Trilogy::Error
 
-            _(span.attributes['db.system']).must_equal 'mysql'
+            _(span.attributes['db.system.name']).must_equal 'mysql'
             _(span.name).must_equal 'select'
-            _(span.attributes['db.statement']).must_equal obfuscated_sql
+            _(span.attributes['db.query.text']).must_equal obfuscated_sql
           end
         end
       end
@@ -618,7 +582,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
           instrumentation.install
 
           sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-          OpenTelemetry::Instrumentation::Trilogy.with_attributes('db.operation' => 'foo') do
+          OpenTelemetry::Instrumentation::Trilogy.with_attributes('db.operation.name' => 'foo') do
             expect do
               client.query(sql)
             end.must_raise Trilogy::Error
@@ -628,7 +592,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         end
       end
 
-      it 'sets span name to db name when db.operation is not set' do
+      it 'sets span name to db name when db.operation.name is not set' do
         OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
           instrumentation.instance_variable_set(:@installed, false)
           instrumentation.install
@@ -651,7 +615,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
             instrumentation.install
 
             sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-            OpenTelemetry::Instrumentation::Trilogy.with_attributes('db.operation' => 'foo') do
+            OpenTelemetry::Instrumentation::Trilogy.with_attributes('db.operation.name' => 'foo') do
               expect do
                 client.query(sql)
               end.must_raise Trilogy::Error
@@ -661,7 +625,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
           end
         end
 
-        it 'sets span name to mysql when db.operation is not set' do
+        it 'sets span name to mysql when db.operation.name is not set' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'span_name=db_operation_and_name') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
