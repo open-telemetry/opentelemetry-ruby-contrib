@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+    paths: &path_filters
+      - ".github/workflows/release-hook-on-push.yml"
 
 permissions:
   contents: read
@@ -28,6 +33,7 @@ jobs:
       - name: Update open releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: github.event_name != 'pull_request'
         run: |
           bundle exec toys release _onpush --verbose \
             < /dev/null
