@@ -85,11 +85,19 @@
       minimumReleaseAge: "1765 days",
     },
     {
+      description: "Only update general dependencies and ruby in gemspec files",
       matchCategories: ["custom"],
       matchDepNames: ["!ruby"],
       matchDepTypes: ["!dependency"],
       matchFileNames: ["**/*.gemspec"],
       enabled: false,
+    },
+    {
+      description: "Bump dependencies in gemspec files",
+      matchCategories: ["custom"],
+      matchDepNames: ["!ruby"],
+      matchFileNames: ["**/*.gemspec"],
+      rangeStrategy: "bump",
     },
     {
       matchFileNames: [
@@ -161,7 +169,6 @@
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
       currentValueTemplate: "~> {{depVersion}}",
-      depTypeTemplate: "{{depType}}",
     },
     {
       customType: "regex",
@@ -174,7 +181,6 @@
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
       currentValueTemplate: "{{depVersion}}",
-      depTypeTemplate: "{{depType}}",
     },
   ],
   lockFileMaintenance: {
