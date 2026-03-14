@@ -33,6 +33,8 @@ jobs:
         env:
           LOG_LEVEL: debug
           RENOVATE_DRY_RUN: full
+          RENOVATE_SCHEDULE: off
+          RENOVATE_FORCE: {"schedule": null}
         run: |
           rm -rf renovate/
           npm run generate:renovate:pr
