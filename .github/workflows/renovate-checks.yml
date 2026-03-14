@@ -35,8 +35,17 @@ jobs:
           rm -rf renovate/
           mkdir renovate
 
-          npx json5 -c "$GITHUB_WORKSPACE/.github/renovate.json5" > renovate/base.json
-          npx json5 -c "$GITHUB_WORKSPACE/.github/renovate-ci.json5" > renovate/ci.json
+          # Parse JSON5 using Node (same parser Renovate uses)
+          node - <<'EOF'
+          const fs = require("fs");
+          const JSON5 = require("json5");
+
+          const base = JSON5.parse(fs.readFileSync(".github/renovate.json5", "utf8"));
+          const ci = JSON5.parse(fs.readFileSync(".github/renovate-ci.json5", "utf8"));
+
+          fs.writeFileSync("renovate/base.json", JSON.stringify(base, null, 2));
+          fs.writeFileSync("renovate/ci.json", JSON.stringify(ci, null, 2));
+          EOF
 
       - name: Merge configs
         run: |
