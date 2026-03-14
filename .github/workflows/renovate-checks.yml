@@ -70,7 +70,7 @@ jobs:
           LOG_LEVEL: debug
           RENOVATE_DRY_RUN: full
           RENOVATE_CONFIG_FILE: renovate/merged.json
-          RENOVATE_IGNORE_REPO_CONFIG: "true"
+          RENOVATE_ONBOARDING: false
           RENOVATE_GITHUB_COM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run generate:renovate:pr
 
