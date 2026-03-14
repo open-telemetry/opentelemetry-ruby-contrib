@@ -7,11 +7,11 @@
       matchFileNames: [
         "!.github/workflows/ci-markdown-checks.yml",
         ".github/workflows/installation-tests.yml",
-        ".github/workflows/ci-markdown-checks.yml
+        ".github/workflows/ci-markdown-checks.yml",
       ],
       matchCategories: ["ci", "js", "ruby", "docker", "custom"],
       schedule: ["at any time"],
-      dependencyDashboardApproval: false
+      dependencyDashboardApproval: false,
     }
   ]
 }
