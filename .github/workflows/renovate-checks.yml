@@ -40,39 +40,30 @@ jobs:
           const fs = require("fs");
           const JSON5 = require("json5");
 
+          function merge(a, b) {
+            if (Array.isArray(a) && Array.isArray(b)) {
+              return a.concat(b);
+            }
+            if (a && b && typeof a === "object" && typeof b === "object") {
+              const out = { ...a };
+              for (const key of Object.keys(b)) {
+                if (key === "packageRules" && Array.isArray(a[key]) && Array.isArray(b[key])) {
+                  out[key] = a[key].concat(b[key]);
+                } else {
+                  out[key] = merge(a[key], b[key]);
+                }
+              }
+              return out;
+            }
+            return b;
+          }
+
           const base = JSON5.parse(fs.readFileSync(".github/renovate.json5", "utf8"));
           const ci = JSON5.parse(fs.readFileSync(".github/renovate-ci.json5", "utf8"));
 
-          fs.writeFileSync("renovate/base.json", JSON.stringify(base, null, 2));
-          fs.writeFileSync("renovate/ci.json", JSON.stringify(ci, null, 2));
+          const merged = merge(base, ci);
+          fs.writeFileSync("renovate/merged.json", JSON.stringify(merged, null, 2));
           EOF
-
-      - name: Merge configs
-        run: |
-          # Merge configs with correct Renovate semantics:
-          # - objects: deep merge
-          # - packageRules: concatenate
-          # - other arrays: override
-          jq -s '
-            def merge(a; b):
-              if (a|type) == "object" and (b|type) == "object" then
-                reduce (a|keys_unsorted + b|keys_unsorted | unique[]) as $k
-                  ({}; .[$k] =
-                    if ($k == "packageRules")
-                       and (a[$k]|type == "array")
-                       and (b[$k]|type == "array")
-                    then
-                      a[$k] + b[$k]
-                    else
-                      merge(a[$k]; b[$k])
-                    end
-                  )
-              else
-                b
-              end;
-
-            merge(.[0]; .[1])
-          ' renovate/base.json renovate/ci.json > renovate/merged.json
 
       - name: Upload generated config
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
