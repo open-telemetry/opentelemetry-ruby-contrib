@@ -1,9 +1,10 @@
 {
-  "extends": ["renovate.json5"],
+  "extends": ["file:.github/renovate.json5"],
   "packageRules": [
     {
       "matchPackagePatterns": [".*"],
-      "schedule": ["at any time"]
+      "schedule": ["at any time"],
+      "dependencyDashboardApproval": false
     }
   ]
 }
