@@ -202,7 +202,7 @@ services:
       - postgres_socket:/var/run/postgresql
 
   redis:
-    image: redis:8.2.5@sha256:d15219c8d079378028a0e6a4c37cdd1edb4526acecf24f3c12e5b6122e786f60
+    image: redis:8.6.1@sha256:1c054d54ecd1597bba52f4304bca5afbc5565ebe614c5b3d7dc5b7f8a0cd768d
     command: ["redis-server", "--requirepass", "passw0rd"]
     volumes:
       - redis_data:/data
@@ -244,12 +244,12 @@ services:
       - zookeeper
 
   jaeger:
-    image: jaegertracing/jaeger:2.15.1@sha256:a7dd965687d45507072676db81e6903706ba334dfc92f0c248125cfd9a70c483
+    image: jaegertracing/jaeger:2.16.0@sha256:bf7f805da4c2bc8d58a6c81ee650fdb6b8e4287698f95fbe231c09c865bc397f
     ports:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.143.1@sha256:e38787c822875f4afe459a4e4b798b0cbfb7372669f06643ad293793d25762ce
+    image: otel/opentelemetry-collector:0.147.0@sha256:b66294ff3a9eadc446ec4d0e78b6f4980c2a85b0ccc27f2cdc4641bd0fe401a7
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml

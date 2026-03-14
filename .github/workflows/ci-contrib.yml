@@ -21,6 +21,7 @@ on:
     branches:
       - main
     paths: *path_filters
+  merge_group:
   schedule:
     - cron: "0 0 * * *"
 
@@ -28,8 +29,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
-  cancel-in-progress: true # Cancel any previous runs of this workflow
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }} # Ensure that only one instance of this workflow is running per event type and ref
+  cancel-in-progress: true # Cancel any previous runs of this workflow for the same event type and ref
 
 jobs:
   helpers:

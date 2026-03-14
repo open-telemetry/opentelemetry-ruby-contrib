@@ -2,6 +2,7 @@ name: File Checks
 
 on:
   pull_request:
+  merge_group:
 
 permissions:
   contents: read
@@ -36,7 +37,7 @@ jobs:
         uses: umbrelladocs/action-linkspector@652f85bc57bb1e7d4327260decc10aa68f7694c3 # v1.4.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
+          reporter: github-annotations
           fail_on_error: true
 
   json-lint-check:
@@ -90,7 +91,7 @@ jobs:
           node-version: "24"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@19a43a6a2428d455dbd1b85344698725179c9d8c # v1.289.0
+        uses: ruby/setup-ruby@4eb9f110bac952a8b68ecf92e3b5c7a987594ba6 # v1.292.0
         with:
           ruby-version: "3.2"
 
@@ -146,7 +147,7 @@ jobs:
           node-version: "24"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@19a43a6a2428d455dbd1b85344698725179c9d8c # v1.289.0
+        uses: ruby/setup-ruby@4eb9f110bac952a8b68ecf92e3b5c7a987594ba6 # v1.292.0
         with:
           ruby-version: "3.2"
 
