@@ -35,8 +35,8 @@ jobs:
           rm -rf renovate/
           mkdir renovate
 
-          npx json5 -c .github/renovate.json5 > renovate/base.json
-          npx json5 -c .github/renovate-ci.json5 > renovate/ci.json
+          npx json5 -c "$GITHUB_WORKSPACE/.github/renovate.json5" > renovate/base.json
+          npx json5 -c "$GITHUB_WORKSPACE/.github/renovate-ci.json5" > renovate/ci.json
 
       - name: Merge configs
         run: |
