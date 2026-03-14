@@ -30,20 +30,16 @@ jobs:
       - name: Renovate Lint Check
         run: npm run check:lint:renovate
 
-      - name: Renovate PR generation
-        env:
-          LOG_LEVEL: debug
-          RENOVATE_DRY_RUN: full
-          RENOVATE_CONFIG_FILE: renovate/merged.json
-          RENOVATE_GITHUB_COM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Convert JSON5 → JSON
         run: |
           rm -rf renovate/
           mkdir renovate
 
-          # Convert JSON5 → JSON
           npx json5 -c .github/renovate.json5 > renovate/base.json
           npx json5 -c .github/renovate-ci.json5 > renovate/ci.json
 
+      - name: Merge configs
+        run: |
           # Merge configs with correct Renovate semantics:
           # - objects: deep merge
           # - packageRules: concatenate
@@ -69,7 +65,20 @@ jobs:
             merge(.[0]; .[1])
           ' renovate/base.json renovate/ci.json > renovate/merged.json
 
-          npm run generate:renovate:pr
+      - name: Upload generated config
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: renovate-config
+          path: renovate
+          if-no-files-found: warn
+
+      - name: Renovate PR generation
+        env:
+          LOG_LEVEL: debug
+          RENOVATE_DRY_RUN: full
+          RENOVATE_CONFIG_FILE: renovate/merged.json
+          RENOVATE_GITHUB_COM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run generate:renovate:pr
 
       - name: Upload generated PR folders
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
