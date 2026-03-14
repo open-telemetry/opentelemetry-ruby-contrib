@@ -39,18 +39,36 @@ jobs:
         run: |
           rm -rf renovate/
           mkdir renovate
+
+          # Convert JSON5 → JSON
           npx json5 -c .github/renovate.json5 > renovate/base.json
           npx json5 -c .github/renovate-ci.json5 > renovate/ci.json
+
+          # Merge configs with correct Renovate semantics:
+          # - objects: deep merge
+          # - packageRules: concatenate
+          # - other arrays: override
           jq -s '
-            def merge(a;b):
+            def merge(a; b):
               if (a|type) == "object" and (b|type) == "object" then
-                reduce (a|keys_unsorted + b|keys_unsorted | unique[]) as $key
-                  ({}; .[$key] = merge(a[$key]; b[$key]))
-              elif (a|type) == "array" and (b|type) == "array" then
-                if $key == "packageRules" then a + b else b end
-              else b end;
+                reduce (a|keys_unsorted + b|keys_unsorted | unique[]) as $k
+                  ({}; .[$k] =
+                    if ($k == "packageRules")
+                       and (a[$k]|type == "array")
+                       and (b[$k]|type == "array")
+                    then
+                      a[$k] + b[$k]
+                    else
+                      merge(a[$k]; b[$k])
+                    end
+                  )
+              else
+                b
+              end;
+
             merge(.[0]; .[1])
           ' renovate/base.json renovate/ci.json > renovate/merged.json
+
           npm run generate:renovate:pr
 
       - name: Upload generated PR folders
