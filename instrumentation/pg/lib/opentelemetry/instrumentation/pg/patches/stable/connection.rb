@@ -74,7 +74,6 @@ module OpenTelemetry
 
           # Module to prepend to PG::Connection for instrumentation
           module Connection # rubocop:disable Metrics/ModuleLength
-
             PG::Constants::EXEC_ISH_METHODS.each do |method|
               define_method method do |*args, &block|
                 span_name, attrs = span_attrs(:query, *args)

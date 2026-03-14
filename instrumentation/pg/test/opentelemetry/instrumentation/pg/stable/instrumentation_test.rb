@@ -185,8 +185,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
           'db.query.text' => 'foobar',
           'db.operation.name' => 'PREPARE FOR SELECT 1',
           'db.postgresql.prepared_statement_name' => 'bar',
-          'peer.service' => 'example:custom',
-          'db.collection.name' => 'test_table'
+          'peer.service' => 'example:custom'
         }
       end
 
@@ -372,13 +371,6 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       assert(!last_span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
-    it 'extracts table name' do
-      client.query('CREATE TABLE test_table (personid int, name VARCHAR(50))')
-
-      _(last_span.attributes['db.collection.name']).must_equal 'test_table'
-      client.query('DROP TABLE test_table') # Drop table to avoid conflicts
-    end
-
     describe 'when propagator is set to tracecontext' do
       let(:config) { { propagator: 'tracecontext' } }
 
@@ -470,24 +462,6 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(last_span.attributes['server.address']).must_equal host.to_s
 
         _(last_span.attributes['db.query.text']).must_be_nil
-      end
-    end
-
-    describe '#connection_name' do
-      def self.load_fixture
-        data = File.read("#{Dir.pwd}/test/fixtures/sql_table_name.json")
-        JSON.parse(data)
-      end
-
-      load_fixture.each do |test_case|
-        name = test_case['name']
-        query = test_case['sql']
-
-        it "returns the table name for #{name}" do
-          table_name = client.send(:collection_name, query)
-
-          expect(table_name).must_equal('test_table')
-        end
       end
     end
   end unless ENV['OMIT_SERVICES']
