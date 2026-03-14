@@ -65,18 +65,12 @@ jobs:
           fs.writeFileSync("renovate/merged.json", JSON.stringify(merged, null, 2));
           EOF
 
-      - name: Upload generated config
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: renovate-config
-          path: renovate
-          if-no-files-found: warn
-
       - name: Renovate PR generation
         env:
           LOG_LEVEL: debug
           RENOVATE_DRY_RUN: full
           RENOVATE_CONFIG_FILE: renovate/merged.json
+          RENOVATE_IGNORE_REPO_CONFIG: "true"
           RENOVATE_GITHUB_COM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run generate:renovate:pr
 
