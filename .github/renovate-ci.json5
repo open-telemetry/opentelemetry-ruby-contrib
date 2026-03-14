@@ -1,5 +1,5 @@
 {
-  packageRules": [
+  packageRules: [
     {
       matchDepNames: ["!ruby", "ruby", "actions/setup-node", "ruby/setup-ruby"],
       matchDepTypes: ["service", "!service"],
