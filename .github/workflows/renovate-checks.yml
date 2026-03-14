@@ -33,7 +33,7 @@ jobs:
         env:
           LOG_LEVEL: debug
           RENOVATE_DRY_RUN: full
-          RENOVATE_FORCE: '{"schedule": ["at any time"]}'
+          RENOVATE_IGNORE_SCHEDULES: true
           RENOVATE_GITHUB_COM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           rm -rf renovate/
