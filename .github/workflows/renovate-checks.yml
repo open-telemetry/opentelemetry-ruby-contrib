@@ -1,17 +1,18 @@
-name: Renovate Local Run
+name: Renovate Checks
 
 on:
   workflow_dispatch:
   pull_request:
     branches:
       - main
-    paths: 
+    paths:
       - .github/renovate.json5
       - .github/workflow/renovate-checks.yml
 
 jobs:
-  renovate-local:
+  renovate:
     runs-on: ubuntu-24.04
+    name: Renovate Dry Run
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
