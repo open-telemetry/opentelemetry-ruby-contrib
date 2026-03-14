@@ -12,8 +12,9 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('1.1.0')
 
         install do |config|
-          require_dependencies
-          patch_client
+          patch_type = determine_semconv
+          send(:"require_dependencies_#{patch_type}")
+          send(:"patch_client_#{patch_type}")
           configure_propagator(config)
         end
 
@@ -38,13 +39,44 @@ module OpenTelemetry
           Gem::Version.new(::PG::VERSION)
         end
 
-        def require_dependencies
-          require_relative 'patches/connection'
+        def determine_semconv
+          stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+          values = stability_opt_in.split(',').map(&:strip)
+
+          if values.include?('database/dup')
+            'dup'
+          elsif values.include?('database')
+            'stable'
+          else
+            'old'
+          end
         end
 
-        def patch_client
-          ::PG::Connection.prepend(Patches::Connection)
-          ::PG::Connection.singleton_class.prepend(Patches::Connect)
+        def require_dependencies_dup
+          require_relative 'patches/dup/connection'
+        end
+
+        def require_dependencies_old
+          require_relative 'patches/old/connection'
+        end
+
+        def require_dependencies_stable
+          require_relative 'patches/stable/connection'
+        end
+
+        def patch_client_dup
+          ::PG::Connection.prepend(Patches::Dup::Connection)
+          ::PG::Connection.singleton_class.prepend(Patches::Dup::Connect)
+        end
+
+        def patch_client_old
+          ::PG::Connection.prepend(Patches::Old::Connection)
+          ::PG::Connection.singleton_class.prepend(Patches::Old::Connect)
+        end
+
+        def patch_client_stable
+          ::PG::Connection.prepend(Patches::Stable::Connection)
+          ::PG::Connection.singleton_class.prepend(Patches::Stable::Connect)
         end
 
         def configure_propagator(config)
