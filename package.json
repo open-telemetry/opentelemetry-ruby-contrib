@@ -13,7 +13,7 @@
     "check:lint:ruby": "rubocop --only Lint,Naming,Style",
     "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Security",
     "check:spelling": "cspell -c .cspell.yml .",
-    "generate:renovate:pr": "renovate --platform=local --force={\"schedule\":[\"at any time\"]",
+    "generate:renovate:pr": "renovate --platform=local --force={\"schedule\":[\"at any time\"]}",
     "write:format": "npm run write:format:ruby && prettier . --write",
     "write:format:json": "prettier **/*.json --write",
     "write:format:markdown": "prettier **/*.md --write",
