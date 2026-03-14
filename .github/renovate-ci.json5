@@ -1,9 +1,17 @@
 {
-  "packageRules": [
+  packageRules": [
     {
-      "matchPackagePatterns": [".*"],
-      "schedule": ["at any time"],
-      "dependencyDashboardApproval": false
+      matchDepNames: ["!ruby", "ruby", "actions/setup-node", "ruby/setup-ruby"],
+      matchDepTypes: ["service", "!service"],
+      matchUpdateTypes: ["patch", "digest", "minor", "major"],
+      matchFileNames: [
+        "!.github/workflows/ci-markdown-checks.yml",
+        ".github/workflows/installation-tests.yml",
+        ".github/workflows/ci-markdown-checks.yml
+      ],
+      matchCategories: ["ci", "js", "ruby", "docker", "custom"],
+      schedule: ["at any time"],
+      dependencyDashboardApproval: false
     }
   ]
 }
