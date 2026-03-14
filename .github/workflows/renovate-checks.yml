@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - .github/renovate.json5
-      - .github/workflow/renovate-checks.yml
+      - .github/workflows/renovate-checks.yml
 
 jobs:
   renovate:
