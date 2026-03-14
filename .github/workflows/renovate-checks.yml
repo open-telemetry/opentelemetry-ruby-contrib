@@ -1,0 +1,44 @@
+name: Renovate Local Run
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths: 
+      - .github/renovate.json5
+      - .github/workflow/renovate-checks.yml
+
+jobs:
+  renovate-local:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: install dependencies
+        run: npm ci --ignore-scripts
+
+      # equivalent cli: renovate-config-validator
+      - name: "Renovate Lint Check"
+        run: npm run check:lint:renovate
+
+      - name: Run Renovate in local mode
+        env:
+          LOG_LEVEL: debug
+          RENOVATE_DRY_RUN: full
+        run: |
+          rm -rf renovate/
+          npm run generate:renovate:pr
+
+      - name: Upload generated PR folders
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: renovate-generated-prs
+          path: renovate
+          if-no-files-found: warn
