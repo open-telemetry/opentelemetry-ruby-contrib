@@ -25,10 +25,10 @@ jobs:
         run: npm ci --ignore-scripts
 
       # equivalent cli: renovate-config-validator
-      - name: "Renovate Lint Check"
+      - name: Renovate Lint Check
         run: npm run check:lint:renovate
 
-      - name: Run Renovate in local mode
+      - name: Renovate PR generation
         env:
           LOG_LEVEL: debug
           RENOVATE_DRY_RUN: full
