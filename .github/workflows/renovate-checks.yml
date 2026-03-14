@@ -1,0 +1,82 @@
+name: Renovate Checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/renovate.json5
+      - .github/renovate-ci.json5
+      - .github/workflows/renovate-checks.yml
+
+jobs:
+  renovate:
+    runs-on: ubuntu-24.04
+    name: Renovate Dry Run
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: install dependencies
+        run: npm ci --ignore-scripts
+
+      # equivalent cli: renovate-config-validator
+      - name: Renovate Lint Check
+        run: npm run check:lint:renovate
+
+      - name: Convert JSON5 → JSON
+        run: |
+          rm -rf renovate/
+          mkdir renovate
+
+          # Parse JSON5 using Node (same parser Renovate uses)
+          node - <<'EOF'
+          const fs = require("fs");
+          const JSON5 = require("json5");
+
+          function merge(a, b) {
+            if (Array.isArray(a) && Array.isArray(b)) {
+              return a.concat(b);
+            }
+            if (a && b && typeof a === "object" && typeof b === "object") {
+              const out = { ...a };
+              for (const key of Object.keys(b)) {
+                if (key === "packageRules" && Array.isArray(a[key]) && Array.isArray(b[key])) {
+                  out[key] = a[key].concat(b[key]);
+                } else {
+                  out[key] = merge(a[key], b[key]);
+                }
+              }
+              return out;
+            }
+            return b;
+          }
+
+          const base = JSON5.parse(fs.readFileSync(".github/renovate.json5", "utf8"));
+          const ci = JSON5.parse(fs.readFileSync(".github/renovate-ci.json5", "utf8"));
+
+          const merged = merge(base, ci);
+          fs.writeFileSync("renovate/merged.json", JSON.stringify(merged, null, 2));
+          fs.writeFileSync("renovate.json", JSON.stringify(merged, null, 2));
+          EOF
+
+      - name: Renovate PR generation
+        env:
+          LOG_LEVEL: debug
+          RENOVATE_DRY_RUN: full
+          RENOVATE_ONBOARDING: false
+          RENOVATE_GITHUB_COM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run generate:renovate:pr
+
+      - name: Upload generated PR folders
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: renovate-generated-prs
+          path: renovate
+          if-no-files-found: warn

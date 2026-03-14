@@ -59,25 +59,6 @@ jobs:
       - name: "JSON Lint Check"
         run: npm run check:lint:json
 
-  renovate-config-check:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    name: Renovate Config Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
-        with:
-          cache: "npm"
-          node-version: "24"
-
-      - name: install dependencies
-        run: npm ci --ignore-scripts
-
-      # equivalent cli: renovate-config-validator
-      - name: "Renovate Lint Check"
-        run: npm run check:lint:renovate
-
   ruby-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: RuboCop Check
@@ -117,7 +98,7 @@ jobs:
 
       # equivalent cli: yamllint .
       - name: "YAML Lint Check"
-        uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c #v3.1.1
+        uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
         with:
           config_file: .yamllint
 
