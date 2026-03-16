@@ -70,9 +70,7 @@ module OpenTelemetry
       def extract_statement_type(sql)
         return unless sql
 
-        unless sql.encoding == ::Encoding::UTF_8 && sql.valid_encoding?
-          sql = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
-        end
+        sql = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true) unless sql.encoding == ::Encoding::UTF_8 && sql.valid_encoding?
 
         QUERY_NAME_REGEX.match(sql) { |match| match[1].downcase }
       rescue StandardError => e

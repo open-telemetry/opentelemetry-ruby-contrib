@@ -192,7 +192,7 @@ describe OpenTelemetry::Helpers::MySQL do
       end
 
       it 'handles comments with whitespace before and after' do
-        sql = "  /* comment */  SELECT 1"
+        sql = '  /* comment */  SELECT 1'
         assert_equal('select', OpenTelemetry::Helpers::MySQL.extract_statement_type(sql))
       end
 
@@ -204,17 +204,17 @@ describe OpenTelemetry::Helpers::MySQL do
 
     describe 'encoding handling' do
       it 'handles UTF-8 encoded strings' do
-        sql = 'SELECT * FROM users'.dup.force_encoding('UTF-8')
+        sql = (+'SELECT * FROM users').force_encoding('UTF-8')
         assert_equal('select', OpenTelemetry::Helpers::MySQL.extract_statement_type(sql))
       end
 
       it 'handles ASCII encoded strings' do
-        sql = 'SELECT * FROM users'.dup.force_encoding('ASCII')
+        sql = (+'SELECT * FROM users').force_encoding('ASCII')
         assert_equal('select', OpenTelemetry::Helpers::MySQL.extract_statement_type(sql))
       end
 
       it 'handles binary (ASCII-8BIT) encoded strings' do
-        sql = 'SELECT * FROM users'.dup.force_encoding('ASCII-8BIT')
+        sql = (+'SELECT * FROM users').force_encoding('ASCII-8BIT')
         assert_equal('select', OpenTelemetry::Helpers::MySQL.extract_statement_type(sql))
       end
 
@@ -224,7 +224,7 @@ describe OpenTelemetry::Helpers::MySQL do
       end
 
       it 'handles frozen strings' do
-        sql = 'SELECT * FROM users'.freeze
+        sql = 'SELECT * FROM users'
         assert_equal('select', OpenTelemetry::Helpers::MySQL.extract_statement_type(sql))
       end
     end
@@ -259,7 +259,7 @@ describe OpenTelemetry::Helpers::MySQL do
 
     describe 'when an error is raised' do
       it 'logs a message' do
-        sql = 'SELECT 1'.dup.force_encoding('ASCII-8BIT')
+        sql = (+'SELECT 1').force_encoding('ASCII-8BIT')
         result = nil
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
           allow(OpenTelemetry::Common::Utilities).to receive(:utf8_encode) { |_| raise 'boom!' }
