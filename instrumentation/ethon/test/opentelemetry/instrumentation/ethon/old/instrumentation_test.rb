@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
 
     # this is currently a noop but this will future proof the test
@@ -30,6 +31,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
     instrumentation.instance_variable_set(:@installed, false)
 
     OpenTelemetry.propagation = @orig_propagation
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe 'tracing' do
