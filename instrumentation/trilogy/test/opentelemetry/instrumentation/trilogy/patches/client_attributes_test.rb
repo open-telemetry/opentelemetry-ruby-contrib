@@ -35,13 +35,13 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Client do
     exporter.reset
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install({
-      db_statement: :omit,
-      span_name: :statement_type,
-      propagator: 'none',
-      record_exception: true,
-      obfuscation_limit: 2000,
-      peer_service: nil,
-    })
+                              db_statement: :omit,
+                              span_name: :statement_type,
+                              propagator: 'none',
+                              record_exception: true,
+                              obfuscation_limit: 2000,
+                              peer_service: nil
+                            })
   end
 
   after do
@@ -104,13 +104,13 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Client do
     it 'includes peer_service when configured' do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install({
-        db_statement: :omit,
-        span_name: :statement_type,
-        propagator: 'none',
-        record_exception: true,
-        obfuscation_limit: 2000,
-        peer_service: 'mysql-primary',
-      })
+                                db_statement: :omit,
+                                span_name: :statement_type,
+                                propagator: 'none',
+                                record_exception: true,
+                                obfuscation_limit: 2000,
+                                peer_service: 'mysql-primary'
+                              })
       attrs = client.send(:client_attributes)
       assert_equal 'mysql-primary', attrs[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE]
     end
@@ -130,40 +130,40 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Client do
 
       it 'includes SQL when db_statement is :include' do
         instrumentation.install({
-          db_statement: :include,
-          span_name: :statement_type,
-          propagator: 'none',
-          record_exception: true,
-          obfuscation_limit: 2000,
-          peer_service: nil,
-        })
+                                  db_statement: :include,
+                                  span_name: :statement_type,
+                                  propagator: 'none',
+                                  record_exception: true,
+                                  obfuscation_limit: 2000,
+                                  peer_service: nil
+                                })
         attrs = client.send(:client_attributes, 'SELECT * FROM users')
         assert_equal 'SELECT * FROM users', attrs[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]
       end
 
       it 'omits SQL when db_statement is :omit' do
         instrumentation.install({
-          db_statement: :omit,
-          span_name: :statement_type,
-          propagator: 'none',
-          record_exception: true,
-          obfuscation_limit: 2000,
-          peer_service: nil,
-        })
+                                  db_statement: :omit,
+                                  span_name: :statement_type,
+                                  propagator: 'none',
+                                  record_exception: true,
+                                  obfuscation_limit: 2000,
+                                  peer_service: nil
+                                })
         attrs = client.send(:client_attributes, 'SELECT * FROM users')
         refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT)
       end
 
       it 'obfuscates SQL when db_statement is :obfuscate' do
         instrumentation.install({
-          db_statement: :obfuscate,
-          span_name: :statement_type,
-          propagator: 'none',
-          record_exception: true,
-          obfuscation_limit: 2000,
-          peer_service: nil,
-        })
-        attrs = client.send(:client_attributes, "SELECT * FROM users WHERE id = 1")
+                                  db_statement: :obfuscate,
+                                  span_name: :statement_type,
+                                  propagator: 'none',
+                                  record_exception: true,
+                                  obfuscation_limit: 2000,
+                                  peer_service: nil
+                                })
+        attrs = client.send(:client_attributes, 'SELECT * FROM users WHERE id = 1')
         stmt = attrs[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]
         assert stmt, 'expected db.statement to be present'
         refute_includes stmt, '1'
