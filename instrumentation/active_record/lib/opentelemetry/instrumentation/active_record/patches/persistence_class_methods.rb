@@ -25,9 +25,15 @@ module OpenTelemetry
             end
 
             def create!(...)
-              tracer.in_span("#{self}.create!") do
+              record_invalid = nil
+              result = tracer.in_span("#{self}.create!") do
                 super
+              rescue ::ActiveRecord::RecordInvalid => e
+                record_invalid = e
               end
+              raise record_invalid if record_invalid
+
+              result
             end
 
             def update(...)

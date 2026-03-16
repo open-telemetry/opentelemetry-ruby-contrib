@@ -30,14 +30,13 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
       _(save_span).wont_be_nil
     end
 
-    it 'adds an exception event if it raises' do
+    it 'does not add an exception event if it raises a handled validation error' do
       _(-> { User.new(name: 'not otel').save! }).must_raise(ActiveRecord::RecordInvalid)
 
       save_span = spans.find { |s| s.name == 'User#save!' }
       _(save_span).wont_be_nil
-      save_span_event = save_span.events.first
-      _(save_span_event.attributes['exception.type']).must_equal('ActiveRecord::RecordInvalid')
-      _(save_span_event.attributes['exception.message']).must_equal('Validation failed: must be otel')
+      _(save_span.events).must_be_nil
+      _(save_span.status.code).must_equal(OpenTelemetry::Trace::Status::UNSET)
     end
   end
 
@@ -105,6 +104,17 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
       User.new.update!(updated_at: Time.current)
       update_span = spans.find { |s| s.name == 'User#update!' }
       _(update_span).wont_be_nil
+    end
+
+    it 'does not add an exception event if it raises a handled validation error' do
+      user = User.create!(name: 'otel')
+
+      _(-> { user.update!(name: 'not otel') }).must_raise(ActiveRecord::RecordInvalid)
+
+      update_span = spans.find { |s| s.name == 'User#update!' }
+      _(update_span).wont_be_nil
+      _(update_span.events).must_be_nil
+      _(update_span.status.code).must_equal(OpenTelemetry::Trace::Status::UNSET)
     end
   end
 
