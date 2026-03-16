@@ -14,7 +14,7 @@ group :test do
   gem 'opentelemetry-sdk', '~> 1.1'
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '>= 13'
-  gem 'rubocop', '~> 1.84.0'
+  gem 'rubocop', '~> 1.85.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'
@@ -23,5 +23,6 @@ group :test do
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'mutex_m'
+    gem 'logger'
   end
 end
