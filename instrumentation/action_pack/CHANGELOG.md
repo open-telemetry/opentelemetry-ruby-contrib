@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.16.0 / 2026-03-17
+
+* BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)
+* ADDED: Default to stable HTTP semantic conventions (#2051)
+
 ### v0.15.1 / 2025-10-22
 
 * FIXED: Update opentelemetry-instrumentation-base dependency
