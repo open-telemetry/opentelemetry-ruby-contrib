@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.32.0 / 2026-03-17
+
+* BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)
+* ADDED: Default to stable HTTP semantic conventions (#2051)
+
 ### v0.31.0 / 2026-01-13
 
 * ADDED: HTTP Client Semconv v1.17 Span Naming

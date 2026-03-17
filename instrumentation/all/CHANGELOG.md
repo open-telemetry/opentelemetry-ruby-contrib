@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.91.0 / 2026-03-17
+
+* No significant updates.
+
 ### v0.90.1 / 2026-01-13
 
 * ADDED: Fixed release version

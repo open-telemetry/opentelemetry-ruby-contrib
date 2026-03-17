@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-logger
 
+### v0.3.2 / 2026-03-17
+
+* FIXED: Return the original logger value instead of broadcasts array (#1988)
+* FIXED: Return the original value instead of broadcasts array
+
 ### v0.3.1 / 2026-02-11
 
 * FIXED: Prevent deadlock from recursive logging (#1944)

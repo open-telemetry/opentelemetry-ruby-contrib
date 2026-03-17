@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-restclient
 
+### v0.27.0 / 2026-03-17
+
+* BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)
+* ADDED: Default to stable HTTP semantic conventions (#2051)
+
 ### v0.26.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2
