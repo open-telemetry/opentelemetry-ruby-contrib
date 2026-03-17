@@ -2,7 +2,23 @@
 
 ### v0.91.0 / 2026-03-17
 
-* No significant updates.
+* ADDED: Upgrade opentelemetry-instrumentation-anthropic to 0.4.0
+* ADDED: Upgrade opentelemetry-instrumentation-dalli to 0.29.2
+* ADDED: Upgrade opentelemetry-instrumentation-ethon to 0.28.0
+* ADDED: Upgrade opentelemetry-instrumentation-excon to 0.28.0
+* ADDED: Upgrade opentelemetry-instrumentation-faraday to 0.32.0
+* ADDED: Upgrade opentelemetry-instrumentation-grape to 0.6.0
+* ADDED: Upgrade opentelemetry-instrumentation-graphql to 0.31.2
+* ADDED: Upgrade opentelemetry-instrumentation-http to 0.29.0
+* ADDED: Upgrade opentelemetry-instrumentation-http_client to 0.28.0
+* ADDED: Upgrade opentelemetry-instrumentation-httpx to 0.7.0
+* ADDED: Upgrade opentelemetry-instrumentation-net_http to 0.28.0
+* ADDED: Upgrade opentelemetry-instrumentation-racecar to 0.6.1
+* ADDED: Upgrade opentelemetry-instrumentation-rack to 0.30.0
+* ADDED: Upgrade opentelemetry-instrumentation-rails to 0.40.0
+* ADDED: Upgrade opentelemetry-instrumentation-restclient to 0.27.0
+* ADDED: Upgrade opentelemetry-instrumentation-sinatra to 0.29.0
+* ADDED: Upgrade opentelemetry-instrumentation-trilogy to 0.67.0
 
 ### v0.90.1 / 2026-01-13
 
