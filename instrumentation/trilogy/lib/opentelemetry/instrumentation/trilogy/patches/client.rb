@@ -15,7 +15,8 @@ module OpenTelemetry
         module Client
           def initialize(options = {})
             @connection_options = options # This is normally done by Trilogy#initialize
-            populate_base_attributes
+            @_otel_database_name = connection_options&.dig(:database)
+            @_otel_base_attributes = _build_otel_base_attributes.freeze
 
             tracer.in_span(
               'connect',
@@ -66,20 +67,16 @@ module OpenTelemetry
 
           private
 
-          def populate_base_attributes
-            @_otel_database_name = connection_options&.dig(:database)
-            @_otel_database_user = connection_options&.dig(:username)
-            @_otel_base_attributes = build_base_attributes.freeze
-          end
+          def _build_otel_base_attributes
+            database_user = connection_options&.dig(:username)
 
-          def build_base_attributes
             attributes = {
               ::OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM => 'mysql',
               ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => connection_options&.fetch(:host, 'unknown sock') || 'unknown sock'
             }
 
             attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = @_otel_database_name if @_otel_database_name
-            attributes[::OpenTelemetry::SemanticConventions::Trace::DB_USER] = @_otel_database_user if @_otel_database_user
+            attributes[::OpenTelemetry::SemanticConventions::Trace::DB_USER] = database_user if database_user
             attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
             attributes
           end
@@ -100,14 +97,6 @@ module OpenTelemetry
             end
 
             attributes
-          end
-
-          def database_name
-            @_otel_database_name
-          end
-
-          def database_user
-            @_otel_database_user
           end
 
           def tracer

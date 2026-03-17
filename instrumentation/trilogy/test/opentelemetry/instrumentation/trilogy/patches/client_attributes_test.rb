@@ -12,6 +12,16 @@ require_relative '../../../../../lib/opentelemetry/instrumentation/trilogy/patch
 # Unit tests for the client_attributes hot path that do not require
 # a MySQL connection.  We use Trilogy.allocate + manual ivar setup
 # to test attribute building in isolation.
+# Helper to build a test client without a real MySQL connection.
+# Mirrors what initialize does for attribute setup.
+def build_test_client(options)
+  c = Trilogy.allocate
+  c.instance_variable_set(:@connection_options, options)
+  c.instance_variable_set(:@_otel_database_name, options[:database])
+  c.instance_variable_set(:@_otel_base_attributes, c.send(:_build_otel_base_attributes).freeze)
+  c
+end
+
 describe OpenTelemetry::Instrumentation::Trilogy::Patches::Client do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance }
   let(:exporter) { EXPORTER }
@@ -24,12 +34,7 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Client do
     }
   end
 
-  let(:client) do
-    c = Trilogy.allocate
-    c.instance_variable_set(:@connection_options, connection_options)
-    c.send(:populate_base_attributes)
-    c
-  end
+  let(:client) { build_test_client(connection_options) }
 
   before do
     exporter.reset
@@ -70,23 +75,20 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Client do
     end
 
     it 'falls back to unknown sock when host is nil' do
-      client.instance_variable_set(:@connection_options, { database: 'test' })
-      client.send(:populate_base_attributes)
-      attrs = client.send(:client_attributes)
+      c = build_test_client({ database: 'test' })
+      attrs = c.send(:client_attributes)
       assert_equal 'unknown sock', attrs[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]
     end
 
     it 'omits db.name when database is nil' do
-      client.instance_variable_set(:@connection_options, { host: 'h' })
-      client.send(:populate_base_attributes)
-      attrs = client.send(:client_attributes)
+      c = build_test_client({ host: 'h' })
+      attrs = c.send(:client_attributes)
       refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_NAME)
     end
 
     it 'omits db.user when username is nil' do
-      client.instance_variable_set(:@connection_options, { host: 'h' })
-      client.send(:populate_base_attributes)
-      attrs = client.send(:client_attributes)
+      c = build_test_client({ host: 'h' })
+      attrs = c.send(:client_attributes)
       refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_USER)
     end
 
@@ -168,30 +170,6 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Client do
         assert stmt, 'expected db.statement to be present'
         refute_includes stmt, '1'
       end
-    end
-  end
-
-  describe '#database_name' do
-    it 'returns the database from connection options' do
-      assert_equal 'myapp_production', client.send(:database_name)
-    end
-
-    it 'returns nil when no database is set' do
-      client.instance_variable_set(:@connection_options, { host: 'h' })
-      client.send(:populate_base_attributes)
-      assert_nil client.send(:database_name)
-    end
-  end
-
-  describe '#database_user' do
-    it 'returns the username from connection options' do
-      assert_equal 'app_user', client.send(:database_user)
-    end
-
-    it 'returns nil when no username is set' do
-      client.instance_variable_set(:@connection_options, { host: 'h' })
-      client.send(:populate_base_attributes)
-      assert_nil client.send(:database_user)
     end
   end
 end
