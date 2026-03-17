@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-httpx
 
+### v0.7.0 / 2026-03-17
+
+* BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)
+* ADDED: Default to stable HTTP semantic conventions (#2051)
+
 ### v0.6.1 / 2026-02-27
 
 * FIXED: Httpx support to ~> 1.6 adapt to request init_time (#2030)

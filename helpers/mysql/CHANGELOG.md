@@ -1,5 +1,9 @@
 # Release History: opentelemetry-helpers-mysql
 
+### v0.5.0 / 2026-03-17
+
+* ADDED: Optimize extract_statement_type regex and encoding in helpers-mysql (#2088)
+
 ### v0.4.0 / 2025-10-22
 
 * BREAKING CHANGE: Min Ruby Version 3.2

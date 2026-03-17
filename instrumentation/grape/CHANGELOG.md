@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-grape
 
+### v0.6.0 / 2026-03-17
+
+* BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)
+* ADDED: Default to stable HTTP semantic conventions (#2051)
+
 ### v0.5.1 / 2026-02-11
 
 * FIXED: Support Grape 3.1.0 (#1969)

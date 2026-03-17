@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.67.0 / 2026-03-17
+
+* ADDED: Cache static span attributes in Trilogy instrumentation (#2089)
+
 ### v0.66.0 / 2026-01-13
 
 * ADDED: Add SQL Comment Propagator
