@@ -269,10 +269,10 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Stable::RedisClient
       set_span = exporter.finished_spans[1]
       _(set_span.attributes['server.address']).must_equal redis_host
       # server.port should only be present if non-default
-      if redis_port != 6379
-        _(set_span.attributes['server.port']).must_equal redis_port
-      else
+      if redis_port == 6379
         _(set_span.attributes['server.port']).must_be_nil
+      else
+        _(set_span.attributes['server.port']).must_equal redis_port
       end
     end
 
