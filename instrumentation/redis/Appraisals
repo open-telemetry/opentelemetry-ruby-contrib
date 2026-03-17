@@ -7,19 +7,20 @@
 
 semconv_stability = %w[old stable dup]
 
-if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
-  semconv_stability.each do |stability|
+semconv_stability.each do |stability|
+  # redis-4.x requires redis-client which has Ruby version constraints
+  if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
     appraise "redis-4.x-#{stability}" do
       gem 'redis-client', '~> 0.22'
       gem 'redis', '~> 4.8'
     end
+  end
 
-    appraise "redis-5.x-#{stability}" do
-      gem 'redis', '~> 5.0'
-    end
+  appraise "redis-5.x-#{stability}" do
+    gem 'redis', '~> 5.0'
+  end
 
-    appraise "redis-latest-#{stability}" do
-      gem 'redis'
-    end
+  appraise "redis-latest-#{stability}" do
+    gem 'redis'
   end
 end
