@@ -30,6 +30,19 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
       _(save_span).wont_be_nil
     end
 
+    it 'adds an exception event if it raises an unhandled error' do
+      user = User.new
+      user.define_singleton_method(:create_or_update) { |*_, **_| raise RuntimeError, 'boom' }
+
+      _(-> { user.save! }).must_raise(RuntimeError)
+
+      save_span = spans.find { |s| s.name == 'User#save!' }
+      _(save_span).wont_be_nil
+      save_span_event = save_span.events.first
+      _(save_span_event.attributes['exception.type']).must_equal('RuntimeError')
+      _(save_span_event.attributes['exception.message']).must_equal('boom')
+    end
+
     it 'does not add an exception event if it raises a handled validation error' do
       _(-> { User.new(name: 'not otel').save! }).must_raise(ActiveRecord::RecordInvalid)
 
