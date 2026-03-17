@@ -7,9 +7,10 @@
 require 'test_helper'
 
 require_relative '../../../lib/opentelemetry/instrumentation/redis'
-require_relative '../../../lib/opentelemetry/instrumentation/redis/middlewares/redis_client'
+require_relative '../../../lib/opentelemetry/instrumentation/redis/middlewares/old/redis_client'
 
-describe OpenTelemetry::Instrumentation::Redis::Middlewares::RedisClientInstrumentation do
+# Tests for old semantic convention attributes via RedisClient middleware
+describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientInstrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:password) { 'passw0rd' }
@@ -30,6 +31,8 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::RedisClientInstrume
   end
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('old')
+
     # ensure obfuscation is off if it was previously set in a different test
     config = { db_statement: :include }
     instrumentation.install(config)
