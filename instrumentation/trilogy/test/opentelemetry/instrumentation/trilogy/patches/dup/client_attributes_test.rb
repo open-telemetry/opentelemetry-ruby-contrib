@@ -56,14 +56,10 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
   end
 
   describe '#client_attributes' do
+    # Old attributes
     it 'includes db.system (old) as mysql' do
       attrs = client.send(:client_attributes)
       assert_equal 'mysql', attrs[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]
-    end
-
-    it 'includes db.system.name (stable) as mysql' do
-      attrs = client.send(:client_attributes)
-      assert_equal 'mysql', attrs['db.system.name']
     end
 
     it 'includes net.peer.name (old) from host option' do
@@ -71,19 +67,9 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
       assert_equal 'db-primary.example.com', attrs[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]
     end
 
-    it 'includes server.address (stable) from host option' do
-      attrs = client.send(:client_attributes)
-      assert_equal 'db-primary.example.com', attrs['server.address']
-    end
-
     it 'includes db.name (old) from database option' do
       attrs = client.send(:client_attributes)
       assert_equal 'myapp_production', attrs[OpenTelemetry::SemanticConventions::Trace::DB_NAME]
-    end
-
-    it 'includes db.namespace (stable) from database option' do
-      attrs = client.send(:client_attributes)
-      assert_equal 'myapp_production', attrs['db.namespace']
     end
 
     it 'includes db.user (old) from username option' do
@@ -91,17 +77,29 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
       assert_equal 'app_user', attrs[OpenTelemetry::SemanticConventions::Trace::DB_USER]
     end
 
-    it 'includes server.port (stable) when present' do
+    # Stable attributes
+    it 'includes db.system.name (stable) as mysql' do
+      attrs = client.send(:client_attributes)
+      assert_equal 'mysql', attrs['db.system.name']
+    end
+
+    it 'includes server.address (stable) from host option' do
+      attrs = client.send(:client_attributes)
+      assert_equal 'db-primary.example.com', attrs['server.address']
+    end
+
+    it 'includes server.port (stable) from port option' do
       attrs = client.send(:client_attributes)
       assert_equal 3307, attrs['server.port']
     end
 
-    it 'does not include net.peer.port (was not in old)' do
+    it 'includes db.namespace (stable) from database option' do
       attrs = client.send(:client_attributes)
-      refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT)
+      assert_equal 'myapp_production', attrs['db.namespace']
     end
 
-    it 'falls back to unknown sock when host is nil' do
+    # Fallbacks
+    it 'falls back to unknown sock when host is nil for both attributes' do
       c = build_test_client({ database: 'test' })
       attrs = c.send(:client_attributes)
       assert_equal 'unknown sock', attrs[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]

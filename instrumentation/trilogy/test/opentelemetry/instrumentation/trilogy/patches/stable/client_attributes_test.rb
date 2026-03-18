@@ -66,7 +66,7 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
       assert_equal 'db-primary.example.com', attrs['server.address']
     end
 
-    it 'includes server.port when present' do
+    it 'includes server.port from port option' do
       attrs = client.send(:client_attributes)
       assert_equal 3307, attrs['server.port']
     end
@@ -136,20 +136,6 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
         attrs = client.send(:client_attributes)
         refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_NAME)
       end
-
-      it 'does not include db.statement when db_statement is :include' do
-        instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.install({
-                                  db_statement: :include,
-                                  span_name: :statement_type,
-                                  propagator: 'none',
-                                  record_exception: true,
-                                  obfuscation_limit: 2000,
-                                  peer_service: nil
-                                })
-        attrs = client.send(:client_attributes, 'SELECT * FROM users')
-        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT)
-      end
     end
 
     describe 'with sql and db_statement config' do
@@ -168,6 +154,19 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
                                 })
         attrs = client.send(:client_attributes, 'SELECT * FROM users')
         assert_equal 'SELECT * FROM users', attrs['db.query.text']
+      end
+
+      it 'does not include db.statement when db_statement is :include' do
+        instrumentation.install({
+                                  db_statement: :include,
+                                  span_name: :statement_type,
+                                  propagator: 'none',
+                                  record_exception: true,
+                                  obfuscation_limit: 2000,
+                                  peer_service: nil
+                                })
+        attrs = client.send(:client_attributes, 'SELECT * FROM users')
+        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT)
       end
 
       it 'omits db.query.text when db_statement is :omit' do
