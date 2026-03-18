@@ -2,5 +2,5 @@ inherit_from: ../../.rubocop.yml
 
 Metrics/ModuleLength:
   Exclude:
-    - 'lib/opentelemetry/instrumentation/trilogy/patches/stable/client.rb'
-    - 'lib/opentelemetry/instrumentation/trilogy/patches/dup/client.rb'
+    - "lib/opentelemetry/instrumentation/trilogy/patches/stable/client.rb"
+    - "lib/opentelemetry/instrumentation/trilogy/patches/dup/client.rb"
