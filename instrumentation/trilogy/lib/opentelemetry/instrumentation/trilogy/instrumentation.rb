@@ -30,16 +30,47 @@ module OpenTelemetry
         option :propagator, default: 'none', validate: %w[none tracecontext vitess]
         option :record_exception, default: true, validate: :boolean
 
-        attr_reader :propagator
+        attr_reader :propagator, :semconv
 
         private
 
         def require_dependencies
-          require_relative 'patches/client'
+          @semconv = determine_semconv
+
+          case @semconv
+          when :old
+            require_relative 'patches/old/client'
+          when :stable
+            require_relative 'patches/stable/client'
+          when :dup
+            require_relative 'patches/dup/client'
+          end
         end
 
         def patch_client
-          ::Trilogy.prepend(Patches::Client)
+          case @semconv
+          when :old
+            ::Trilogy.prepend(Patches::Old::Client)
+          when :stable
+            ::Trilogy.prepend(Patches::Stable::Client)
+          when :dup
+            ::Trilogy.prepend(Patches::Dup::Client)
+          end
+        end
+
+        def determine_semconv
+          opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', nil)
+          return :old if opt_in.nil?
+
+          opt_in_values = opt_in.split(',').map(&:strip)
+
+          if opt_in_values.include?('database/dup')
+            :dup
+          elsif opt_in_values.include?('database')
+            :stable
+          else
+            :old
+          end
         end
 
         def configure_propagator(config)
