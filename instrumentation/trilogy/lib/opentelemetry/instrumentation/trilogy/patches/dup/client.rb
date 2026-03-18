@@ -14,7 +14,6 @@ module OpenTelemetry
         module Dup
           # Module to prepend to Trilogy for instrumentation (emits both old and stable semantic conventions)
           module Client
-
             def initialize(options = {})
               @connection_options = options # This is normally done by Trilogy#initialize
               @_otel_database_name = connection_options&.dig(:database)

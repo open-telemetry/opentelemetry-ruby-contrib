@@ -201,5 +201,4 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
       end
     end
   end
-
 end

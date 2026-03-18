@@ -208,9 +208,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
         end
 
         _(error).wont_be_nil
-        if error.error_code
-          _(span.attributes['db.response.status_code']).must_equal error.error_code.to_s
-        end
+        _(span.attributes['db.response.status_code']).must_equal error.error_code.to_s if error.error_code
       end
 
       describe 'when record_exception is true' do

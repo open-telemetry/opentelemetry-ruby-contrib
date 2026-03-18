@@ -181,5 +181,4 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
       end
     end
   end
-
 end
