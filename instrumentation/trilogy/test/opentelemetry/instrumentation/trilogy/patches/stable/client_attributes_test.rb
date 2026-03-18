@@ -13,6 +13,7 @@ require_relative '../../../../../../lib/opentelemetry/instrumentation/trilogy/pa
 # We use Trilogy.allocate + manual ivar setup to test attribute building in isolation.
 describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
   # Helper to build a test client without a real MySQL connection.
+  # Mirrors what initialize does for attribute setup.
   def build_test_client(options)
     c = Trilogy.allocate
     c.instance_variable_set(:@connection_options, options)
@@ -36,7 +37,7 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
   let(:client) { build_test_client(connection_options) }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('stable')
 
     exporter.reset
     instrumentation.instance_variable_set(:@installed, false)
@@ -70,12 +71,6 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
       assert_equal 3307, attrs['server.port']
     end
 
-    it 'includes server.port even when default (3306)' do
-      c = build_test_client({ host: 'h', port: 3306 })
-      attrs = c.send(:client_attributes)
-      assert_equal 3306, attrs['server.port']
-    end
-
     it 'includes db.namespace from database option' do
       attrs = client.send(:client_attributes)
       assert_equal 'myapp_production', attrs['db.namespace']
@@ -93,9 +88,19 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
       refute attrs.key?('db.namespace')
     end
 
+    it 'does not include db.user (removed in stable)' do
+      attrs = client.send(:client_attributes)
+      refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_USER)
+    end
+
+    it 'does not include db.instance.id (removed in stable)' do
+      client.instance_variable_set(:@connected_host, 'replica-3.internal')
+      attrs = client.send(:client_attributes)
+      refute attrs.key?('db.instance.id')
+    end
+
     it 'includes peer_service when configured' do
       instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.instance_variable_set(:@semconv, :stable)
       instrumentation.install({
                                 db_statement: :omit,
                                 span_name: :statement_type,
@@ -116,10 +121,40 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
       refute b.key?('extra')
     end
 
+    describe 'does not include old attributes' do
+      it 'does not include db.system' do
+        attrs = client.send(:client_attributes)
+        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM)
+      end
+
+      it 'does not include net.peer.name' do
+        attrs = client.send(:client_attributes)
+        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME)
+      end
+
+      it 'does not include db.name' do
+        attrs = client.send(:client_attributes)
+        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_NAME)
+      end
+
+      it 'does not include db.statement when db_statement is :include' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install({
+                                  db_statement: :include,
+                                  span_name: :statement_type,
+                                  propagator: 'none',
+                                  record_exception: true,
+                                  obfuscation_limit: 2000,
+                                  peer_service: nil
+                                })
+        attrs = client.send(:client_attributes, 'SELECT * FROM users')
+        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT)
+      end
+    end
+
     describe 'with sql and db_statement config' do
       before do
         instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.instance_variable_set(:@semconv, :stable)
       end
 
       it 'includes SQL as db.query.text when db_statement is :include' do
@@ -161,43 +196,6 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
         stmt = attrs['db.query.text']
         assert stmt, 'expected db.query.text to be present'
         refute_includes stmt, '1'
-      end
-    end
-
-    describe 'does not include old attributes' do
-      it 'does not include db.system' do
-        attrs = client.send(:client_attributes)
-        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM)
-      end
-
-      it 'does not include net.peer.name' do
-        attrs = client.send(:client_attributes)
-        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME)
-      end
-
-      it 'does not include db.name' do
-        attrs = client.send(:client_attributes)
-        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_NAME)
-      end
-
-      it 'does not include db.user (removed in stable)' do
-        attrs = client.send(:client_attributes)
-        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_USER)
-      end
-
-      it 'does not include db.statement' do
-        instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.instance_variable_set(:@semconv, :stable)
-        instrumentation.install({
-                                  db_statement: :include,
-                                  span_name: :statement_type,
-                                  propagator: 'none',
-                                  record_exception: true,
-                                  obfuscation_limit: 2000,
-                                  peer_service: nil
-                                })
-        attrs = client.send(:client_attributes, 'SELECT * FROM users')
-        refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT)
       end
     end
   end

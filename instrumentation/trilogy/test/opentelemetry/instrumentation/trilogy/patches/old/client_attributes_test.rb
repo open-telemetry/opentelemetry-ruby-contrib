@@ -12,17 +12,16 @@ require_relative '../../../../../../lib/opentelemetry/instrumentation/trilogy/pa
 # Unit tests for the client_attributes hot path that do not require
 # a MySQL connection.  We use Trilogy.allocate + manual ivar setup
 # to test attribute building in isolation.
-# Helper to build a test client without a real MySQL connection.
-# Mirrors what initialize does for attribute setup.
-def build_test_client(options)
-  c = Trilogy.allocate
-  c.instance_variable_set(:@connection_options, options)
-  c.instance_variable_set(:@_otel_database_name, options[:database])
-  c.instance_variable_set(:@_otel_base_attributes, c.send(:_build_otel_base_attributes).freeze)
-  c
-end
-
 describe OpenTelemetry::Instrumentation::Trilogy::Patches::Old::Client do
+  # Helper to build a test client without a real MySQL connection.
+  # Mirrors what initialize does for attribute setup.
+  def build_test_client(options)
+    c = Trilogy.allocate
+    c.instance_variable_set(:@connection_options, options)
+    c.instance_variable_set(:@_otel_database_name, options[:database])
+    c.instance_variable_set(:@_otel_base_attributes, c.send(:_build_otel_base_attributes).freeze)
+    c
+  end
   let(:instrumentation) { OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance }
   let(:exporter) { EXPORTER }
 
