@@ -31,7 +31,8 @@ module OpenTelemetry
               # Only add server.port if non-default
               attributes['server.port'] = port if port && port != Stable::REDIS_DEFAULT_PORT
 
-              attributes['db.redis.database_index'] = options[:db] unless options[:db].zero?
+              # db.namespace is the database index as a string (replaces db.redis.database_index in stable)
+              attributes['db.namespace'] = options[:db].to_s unless options[:db].zero?
               attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
               attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
 
@@ -43,15 +44,21 @@ module OpenTelemetry
               end
 
               span_name = if commands.length == 1
-                            commands[0][0].to_s.upcase
+                            op_name = commands[0][0].to_s.upcase
+                            attributes['db.operation.name'] = op_name
+                            op_name
                           else
-                            'PIPELINED'
+                            attributes['db.operation.name'] = 'PIPELINE'
+                            attributes['db.operation.batch.size'] = commands.length
+                            'PIPELINE'
                           end
 
               instrumentation_tracer.in_span(span_name, attributes: attributes, kind: :client) do |s|
                 super.tap do |reply|
                   if reply.is_a?(::Redis::CommandError)
-                    s.set_attribute('error.type', reply.class.name)
+                    error_type = extract_error_type(reply)
+                    s.set_attribute('error.type', error_type)
+                    s.set_attribute('db.response.status_code', error_type)
                     s.record_exception(reply)
                     s.status = Trace::Status.error(reply.message)
                   end
@@ -94,6 +101,16 @@ module OpenTelemetry
 
             def instrumentation_config
               Redis::Instrumentation.instance.config
+            end
+
+            def extract_error_type(error)
+              # Redis errors start with an error prefix like ERR, WRONGTYPE, CLUSTERDOWN
+              # Extract this prefix for db.response.status_code and error.type
+              if error.message
+                prefix = error.message.split.first
+                return prefix if prefix && prefix == prefix.upcase && prefix.match?(/\A[A-Z]+\z/)
+              end
+              error.class.name
             end
           end
         end

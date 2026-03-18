@@ -20,15 +20,15 @@ module OpenTelemetry
             def call(command, redis_config)
               return super unless instrumentation.config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
 
+              op_name = command[0].to_s.upcase
               attributes = span_attributes(redis_config)
-
+              attributes['db.operation.name'] = op_name
               attributes['db.query.text'] = serialize_commands([command]) unless instrumentation.config[:db_statement] == :omit
 
-              span_name = command[0].to_s.upcase
-              instrumentation.tracer.in_span(span_name, attributes: attributes, kind: :client) do |span|
+              instrumentation.tracer.in_span(op_name, attributes: attributes, kind: :client) do |span|
                 super
               rescue StandardError => e
-                span.set_attribute('error.type', e.class.name)
+                set_error_attributes(span, e)
                 raise
               end
             end
@@ -37,13 +37,14 @@ module OpenTelemetry
               return super unless instrumentation.config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
 
               attributes = span_attributes(redis_config)
-
+              attributes['db.operation.name'] = 'PIPELINE'
+              attributes['db.operation.batch.size'] = commands.size
               attributes['db.query.text'] = serialize_commands(commands) unless instrumentation.config[:db_statement] == :omit
 
-              instrumentation.tracer.in_span('PIPELINED', attributes: attributes, kind: :client) do |span|
+              instrumentation.tracer.in_span('PIPELINE', attributes: attributes, kind: :client) do |span|
                 super
               rescue StandardError => e
-                span.set_attribute('error.type', e.class.name)
+                set_error_attributes(span, e)
                 raise
               end
             end
@@ -60,10 +61,32 @@ module OpenTelemetry
               port = redis_config.port
               attributes['server.port'] = port if port && port != Stable::REDIS_DEFAULT_PORT
 
-              attributes['db.redis.database_index'] = redis_config.db unless redis_config.db.zero?
+              attributes['db.namespace'] = redis_config.db.to_s unless redis_config.db.zero?
               attributes['peer.service'] = instrumentation.config[:peer_service] if instrumentation.config[:peer_service]
               attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
               attributes
+            end
+
+            def set_error_attributes(span, error)
+              error_type = extract_error_type(error)
+              span.set_attribute('error.type', error_type)
+              span.set_attribute('db.response.status_code', error_type) if redis_error?(error)
+              span.record_exception(error)
+              span.status = OpenTelemetry::Trace::Status.error(error.message)
+            end
+
+            def extract_error_type(error)
+              # Redis errors start with an error prefix like ERR, WRONGTYPE, CLUSTERDOWN
+              # Extract this prefix for db.response.status_code and error.type
+              if redis_error?(error) && error.message
+                prefix = error.message.split.first
+                return prefix if prefix && prefix == prefix.upcase && prefix.match?(/\A[A-Z]+\z/)
+              end
+              error.class.name
+            end
+
+            def redis_error?(error)
+              error.is_a?(::RedisClient::CommandError)
             end
 
             def serialize_commands(commands)

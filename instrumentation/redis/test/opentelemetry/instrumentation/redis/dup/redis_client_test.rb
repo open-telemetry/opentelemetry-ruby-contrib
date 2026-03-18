@@ -72,7 +72,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
 
       _(client.connected?).must_equal(true)
 
-      _(last_span.name).must_equal 'PIPELINED'
+      _(last_span.name).must_equal 'PIPELINE'
       # Old attributes
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal 'HELLO ? ? ? ?'
@@ -156,7 +156,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(exporter.finished_spans.size).must_equal 2
 
       prelude_span = exporter.finished_spans.first
-      _(prelude_span.name).must_equal 'PIPELINED'
+      _(prelude_span.name).must_equal 'PIPELINE'
       # Both old and new attributes
       _(prelude_span.attributes['db.system']).must_equal 'redis'
       _(prelude_span.attributes['db.system.name']).must_equal 'redis'
@@ -171,7 +171,9 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(get_span.attributes['db.system.name']).must_equal 'redis'
       _(get_span.attributes['db.statement']).must_equal('GET K')
       _(get_span.attributes['db.query.text']).must_equal('GET K')
+      # Both old and new namespace attributes
       _(get_span.attributes['db.redis.database_index']).must_equal 1
+      _(get_span.attributes['db.namespace']).must_equal '1'
       _(get_span.attributes['net.peer.name']).must_equal redis_host
       _(get_span.attributes['server.address']).must_equal redis_host
     end
@@ -214,7 +216,9 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       )
       _(last_span.attributes['net.peer.name']).must_equal redis_host
       _(last_span.attributes['server.address']).must_equal redis_host
-      _(last_span.attributes['error.type']).must_equal 'RedisClient::CommandError'
+      # Redis error prefix is extracted for error.type and db.response.status_code
+      _(last_span.attributes['error.type']).must_equal 'ERR'
+      _(last_span.attributes['db.response.status_code']).must_equal 'ERR'
       _(last_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -238,7 +242,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       end
 
       _(exporter.finished_spans.size).must_equal 2
-      _(last_span.name).must_equal 'PIPELINED'
+      _(last_span.name).must_equal 'PIPELINE'
       # Both old and new attributes
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.system.name']).must_equal 'redis'
@@ -289,7 +293,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
         SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
       HEREDOC
 
-      _(last_span.name).must_equal 'PIPELINED'
+      _(last_span.name).must_equal 'PIPELINE'
       _(last_span.attributes['db.statement'].size).must_equal 500
       _(last_span.attributes['db.statement']).must_equal expected_statement
       _(last_span.attributes['db.query.text'].size).must_equal 500
@@ -346,7 +350,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
         _(exporter.finished_spans.size).must_equal 3
 
         set_span = exporter.finished_spans[0]
-        _(set_span.name).must_equal 'PIPELINED' # AUTH
+        _(set_span.name).must_equal 'PIPELINE' # AUTH
         _(set_span.attributes['db.system']).must_equal 'redis'
         _(set_span.attributes['db.system.name']).must_equal 'redis'
         _(set_span.attributes).wont_include('db.statement')
@@ -381,7 +385,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
         _(exporter.finished_spans.size).must_equal 3
 
         set_span = exporter.finished_spans[0]
-        _(set_span.name).must_equal 'PIPELINED'
+        _(set_span.name).must_equal 'PIPELINE'
         _(set_span.attributes['db.system']).must_equal 'redis'
         _(set_span.attributes['db.system.name']).must_equal 'redis'
         _(set_span.attributes['db.statement']).must_equal('HELLO ? ? ? ?')
