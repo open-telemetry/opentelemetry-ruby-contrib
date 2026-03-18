@@ -116,7 +116,7 @@ instrumentation-gruf:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/gruf/**"
-instrumentation-httpc:
+instrumentation-http:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/http/**"
