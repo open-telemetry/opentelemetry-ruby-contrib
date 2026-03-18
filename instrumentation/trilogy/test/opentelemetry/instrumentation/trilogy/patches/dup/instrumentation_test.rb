@@ -224,27 +224,20 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
       end
 
       it 'sets error.type to the exception class name' do
-        error = nil
-        begin
+        expect do
           client.query('SELECT INVALID')
-        rescue Trilogy::Error => e
-          error = e
-        end
+        end.must_raise Trilogy::Error
 
-        _(error).wont_be_nil
-        _(span.attributes['error.type']).must_equal error.class.name
+        _(span.attributes['error.type']).must_equal 'Trilogy::ProtocolError'
       end
 
       it 'sets db.response.status_code when error has error_code' do
-        error = nil
-        begin
+        expect do
           client.query('SELECT INVALID')
-        rescue Trilogy::Error => e
-          error = e
-        end
+        end.must_raise Trilogy::Error
 
-        _(error).wont_be_nil
-        _(span.attributes['db.response.status_code']).must_equal error.error_code.to_s if error.error_code
+        # 1054 is MySQL's "Unknown column" error code
+        _(span.attributes['db.response.status_code']).must_equal '1054'
       end
 
       describe 'when record_exception is true' do
