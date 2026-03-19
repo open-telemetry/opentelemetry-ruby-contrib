@@ -26,16 +26,47 @@ module OpenTelemetry
         option :obfuscation_limit, default: 2000, validate: :integer
         option :propagator, default: 'none', validate: %w[none tracecontext vitess]
 
-        attr_reader :propagator
+        attr_reader :propagator, :semconv
 
         private
 
+        def determine_semconv
+          opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', nil)
+          return :old if opt_in.nil?
+
+          opt_in_values = opt_in.split(',').map(&:strip)
+
+          if opt_in_values.include?('database/dup')
+            :dup
+          elsif opt_in_values.include?('database')
+            :stable
+          else
+            :old
+          end
+        end
+
         def require_dependencies
-          require_relative 'patches/client'
+          @semconv = determine_semconv
+
+          case @semconv
+          when :old
+            require_relative 'patches/old/client'
+          when :stable
+            require_relative 'patches/stable/client'
+          when :dup
+            require_relative 'patches/dup/client'
+          end
         end
 
         def patch_client
-          ::Mysql2::Client.prepend(Patches::Client)
+          case @semconv
+          when :old
+            ::Mysql2::Client.prepend(Patches::Old::Client)
+          when :stable
+            ::Mysql2::Client.prepend(Patches::Stable::Client)
+          when :dup
+            ::Mysql2::Client.prepend(Patches::Dup::Client)
+          end
         end
 
         def configure_propagator(config)

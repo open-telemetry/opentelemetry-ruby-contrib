@@ -63,6 +63,22 @@ The `opentelemetry-instrumentation-mysql2` gem source is [on github][repo-github
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
+## Database semantic convention stability
+
+In the OpenTelemetry ecosystem, database semantic conventions have now reached a stable state. However, the initial MYSQL2 instrumentation was introduced before this stability was achieved, which resulted in database attributes being based on an older version of the semantic conventions.
+
+To facilitate the migration to stable semantic conventions, you can use the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable. This variable allows you to opt-in to the new stable conventions, ensuring compatibility and future-proofing your instrumentation.
+
+When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
+
+- `database` - Emits the stable database and networking conventions and ceases emitting the old conventions previously emitted by the instrumentation.
+- `database/dup` - Emits both the old and stable database and networking conventions, enabling a phased rollout of the stable semantic conventions.
+- Default behavior (in the absence of either value) is to continue emitting the old database and networking conventions the instrumentation previously emitted.
+
+During the transition from old to stable conventions, MYSQL2 instrumentation code comes in three patch versions: `dup`, `old`, and `stable`. These versions are identical except for the attributes they send. Any changes to MYSQL2 instrumentation should consider all three patches.
+
+For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/).
+
 ## License
 
 The `opentelemetry-instrumentation-mysql2` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.

@@ -11,6 +11,14 @@ require 'rubocop/rake_task'
 
 RuboCop::RakeTask.new
 
+# Set OTEL_SEMCONV_STABILITY_OPT_IN based on appraisal name
+gemfile = ENV.fetch('BUNDLE_GEMFILE', '')
+if gemfile.include?('stable')
+  ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database'
+elsif gemfile.include?('dup')
+  ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database/dup'
+end
+
 Rake::TestTask.new :test do |t|
   t.libs << 'test'
   t.libs << 'lib'
