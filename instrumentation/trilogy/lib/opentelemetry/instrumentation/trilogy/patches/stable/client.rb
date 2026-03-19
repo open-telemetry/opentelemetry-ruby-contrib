@@ -26,7 +26,7 @@ module OpenTelemetry
                 record_exception: config[:record_exception]
               ) do |span|
                 super
-              rescue => e
+              rescue StandardError => e
                 set_error_attributes(span, e)
                 raise
               end
@@ -40,7 +40,7 @@ module OpenTelemetry
                 record_exception: config[:record_exception]
               ) do |span|
                 super
-              rescue => e
+              rescue StandardError => e
                 set_error_attributes(span, e)
                 raise
               end
@@ -69,7 +69,7 @@ module OpenTelemetry
                 end
 
                 super
-              rescue => e
+              rescue StandardError => e
                 set_error_attributes(span, e)
                 raise
               end
