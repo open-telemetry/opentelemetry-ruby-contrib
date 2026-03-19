@@ -30,7 +30,7 @@ module OpenTelemetry
                 end
 
                 super(sql, options)
-              rescue => e
+              rescue StandardError => e
                 set_error_attributes(span, e)
                 raise
               end
@@ -51,7 +51,7 @@ module OpenTelemetry
                 end
 
                 super(sql)
-              rescue => e
+              rescue StandardError => e
                 set_error_attributes(span, e)
                 raise
               end
