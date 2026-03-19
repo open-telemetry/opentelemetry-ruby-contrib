@@ -60,7 +60,7 @@ describe OpenTelemetry::Instrumentation::Rake::Patches::Task do
       it 'should call force_flush on OpenTelemetry.tracer_provider' do
         mock = instance_double(OpenTelemetry::SDK::Trace::TracerProvider)
         allow(mock).to receive(:force_flush).and_return(nil)
-        expect(mock_provider).to have_received(:force_flush).twice
+        expect(mock).to have_received(:force_flush).twice
 
         Rake::Task.define_task("#{task_name}[:arg]")
         task_string = "#{task_name}[test_arg]"
