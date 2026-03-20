@@ -39,6 +39,7 @@ on:
       - "instrumentation/net_ldap/**"
       - "instrumentation/rack/**"
       - "instrumentation/rails/**"
+      - "instrumentation/rake/**"
       - "instrumentation/restclient/**"
       - "instrumentation/rspec/**"
       - "instrumentation/sinatra/**"
@@ -107,6 +108,7 @@ jobs:
           - net_ldap
           - rack
           - rails
+          - rake
           - restclient
           - rspec
           - sinatra
