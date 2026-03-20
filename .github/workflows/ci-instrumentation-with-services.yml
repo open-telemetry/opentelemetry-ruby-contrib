@@ -25,7 +25,6 @@ on:
       - ".github/actions/**"
       - "Gemfile"
       - "Rakefile"
-      - ".rubocop.yml"
       - "gemspecs/**"
   pull_request:
     branches:
@@ -83,7 +82,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -131,7 +129,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -175,7 +172,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -235,7 +231,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -288,7 +283,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -336,7 +330,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
