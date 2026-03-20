@@ -22,7 +22,6 @@
     {
       matchDepNames: ["ruby"],
       matchUpdateTypes: ["digest", "patch"],
-      matchFileNames: ["!.github/workflows/ci-markdown-checks.yml"],
       schedule: ["before 6am every weekday"],
     },
     {
