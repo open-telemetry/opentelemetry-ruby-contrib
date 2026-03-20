@@ -68,9 +68,7 @@
       dependencyDashboardApproval: false,
     },
     {
-      matchFileNames: [
-        ".github/actions/test_gem/action.yml",
-      ],
+      matchFileNames: [".github/actions/test_gem/action.yml"],
       ignoreDeps: ["ruby"],
     },
   ],
