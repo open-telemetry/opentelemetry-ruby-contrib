@@ -76,10 +76,6 @@
       schedule: ["before 8am on Monday"],
       dependencyDashboardApproval: false,
     },
-    {
-      matchFileNames: [".github/actions/test_gem/action.yml"],
-      ignoreDeps: ["ruby"],
-    },
   ],
   customManagers: [
     {
