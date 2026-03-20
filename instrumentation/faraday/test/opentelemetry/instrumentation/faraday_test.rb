@@ -13,8 +13,13 @@ describe OpenTelemetry::Instrumentation::Faraday do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     instrumentation.install
     exporter.reset
+  end
+
+  after do
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe 'tracing' do

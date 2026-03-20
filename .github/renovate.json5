@@ -22,16 +22,25 @@
     {
       matchDepNames: ["ruby"],
       matchUpdateTypes: ["digest", "patch"],
-      matchFileNames: ["!.github/workflows/ci-markdown-checks.yml"],
       schedule: ["before 6am every weekday"],
     },
     {
-      groupName: "Min-Ruby-sdk",
+      description: "Separate ruby updates so that patches can be installed after new minor has been released.",
       matchDepNames: ["ruby"],
-      matchFileNames: [".github/workflows/ci-markdown-checks.yml"],
-      dependencyDashboardApproval: true,
       separateMultipleMinor: true,
       separateMinorPatch: true,
+    },
+    {
+      description: "Group min ruby updates into a single update which needs to be approved via the dashboard.",
+      groupName: "Min-Ruby-sdk",
+      dependencyDashboardCategory: "Min Ruby Runtime",
+      matchDepNames: ["ruby"],
+      matchFileNames: [
+        ".github/workflows/ci-markdown-checks.yml",
+        "**/*.gemspec",
+      ],
+      matchUpdateTypes: ["minor", "major"],
+      dependencyDashboardApproval: true,
     },
     {
       matchUpdateTypes: ["minor"],
@@ -66,13 +75,6 @@
       matchCategories: ["docker"],
       schedule: ["before 8am on Monday"],
       dependencyDashboardApproval: false,
-    },
-    {
-      matchFileNames: [
-        ".github/actions/test_gem/action.yml",
-        ".github/workflows/installation-tests.yml",
-      ],
-      ignoreDeps: ["ruby"],
     },
   ],
   customManagers: [
