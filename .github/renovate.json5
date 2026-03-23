@@ -94,7 +94,7 @@
       description: "Wait until current major mysql is EoL before updating",
       dependencyDashboardCategory: "Min Docker service",
       matchUpdateTypes: ["major"],
-      matchDepNames: ["confluentinc/cp-kafka"],
+      matchDepNames: ["mysql"],
       minimumReleaseAge: "1765 days",
     },
   ],
