@@ -59,7 +59,7 @@ module TestHelper
   def username
     ENV.fetch('TEST_MONGODB_USERNAME ', 'root')
   end
-  
+
   def password
     ENV.fetch('TEST_MONGODB_PASSWORD', 'password')
   end
