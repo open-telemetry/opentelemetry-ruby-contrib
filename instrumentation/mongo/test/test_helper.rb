@@ -41,7 +41,7 @@ module TestHelper
   end
 
   def client
-    @client ||= Mongo::Client.new(["#{host}:#{port}"], database: database)
+    @client ||= Mongo::Client.new(["#{host}:#{port}"], database: database, user: username, password: password, auth_source: "admin", auth_mech: :scram256)
   end
 
   def database
@@ -54,5 +54,13 @@ module TestHelper
 
   def port
     ENV.fetch('TEST_MONGODB_PORT', 27_017).to_i
+  end
+
+  def username
+    ENV.fetch('TEST_MONGODB_USERNAME ', 'root')
+  end
+  
+  def password
+    ENV.fetch('TEST_MONGODB_PASSWORD', 'password')
   end
 end

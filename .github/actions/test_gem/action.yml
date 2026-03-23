@@ -147,6 +147,8 @@ runs:
         TEST_MEMCACHED_PORT: 11211
         TEST_MONGODB_HOST: localhost
         TEST_MONGODB_PORT: 27017
+        TEST_MONGODB_USERNAME: root
+        TEST_MONGODB_PASSWORD: password
         TEST_RABBITMQ_HOST: localhost
         TEST_RABBITMQ_PORT: 5672
         TEST_RABBITMQ_URL: amqp://guest:guest@localhost:5672

@@ -95,6 +95,9 @@ jobs:
         image: mongo:6.0.27@sha256:03cda579c8caad6573cb98c2b3d5ff5ead452a6450561129b89595b4b9c18de2
         ports:
           - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
 
   instrumentation_mysql:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
