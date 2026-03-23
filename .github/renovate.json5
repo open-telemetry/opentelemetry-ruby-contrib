@@ -50,13 +50,7 @@
     },
     {
       matchUpdateTypes: ["major"],
-      matchCategories: ["ci", "js", "docker"],
       schedule: ["before 8am on Monday"],
-    },
-    {
-      matchUpdateTypes: ["major"],
-      matchCategories: ["ruby"],
-      dependencyDashboardApproval: true,
     },
     {
       matchDepNames: ["actions/setup-node", "ruby/setup-ruby"],
