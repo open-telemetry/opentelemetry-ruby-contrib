@@ -41,7 +41,7 @@ module TestHelper
   end
 
   def client
-    @client ||= Mongo::Client.new(["#{host}:#{port}"], database: database)
+    @client ||= Mongo::Client.new(["#{host}:#{port}"], database: database, auth: nil)
   end
 
   def database
