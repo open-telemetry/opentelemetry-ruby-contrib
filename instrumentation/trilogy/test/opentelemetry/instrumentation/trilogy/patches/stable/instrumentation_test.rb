@@ -54,8 +54,6 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
     _(instrumentation.version).wont_be_empty
   end
 
-  describe '#install' do
-
   describe '#compatible?' do
     describe 'when an unsupported version is installed' do
       it 'is incompatible' do
