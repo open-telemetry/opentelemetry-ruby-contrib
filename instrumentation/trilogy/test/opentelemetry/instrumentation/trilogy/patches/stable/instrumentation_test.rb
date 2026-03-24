@@ -55,22 +55,6 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
   end
 
   describe '#install' do
-    it 'accepts peer service name from config' do
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install(peer_service: 'readonly:mysql')
-      client.query('SELECT 1')
-
-      _(span.attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE]).must_equal 'readonly:mysql'
-    end
-
-    it 'omits peer service by default' do
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install({})
-      client.query('SELECT 1')
-
-      _(span.attributes.keys).wont_include(OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE)
-    end
-  end
 
   describe '#compatible?' do
     describe 'when an unsupported version is installed' do

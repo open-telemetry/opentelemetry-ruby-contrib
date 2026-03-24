@@ -99,19 +99,6 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
       refute attrs.key?('db.instance.id')
     end
 
-    it 'includes peer_service when configured' do
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install({
-                                db_statement: :omit,
-                                span_name: :statement_type,
-                                propagator: 'none',
-                                record_exception: true,
-                                obfuscation_limit: 2000,
-                                peer_service: 'mysql-primary'
-                              })
-      attrs = client.send(:client_attributes)
-      assert_equal 'mysql-primary', attrs[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE]
-    end
 
     it 'returns independent hash instances on each call' do
       a = client.send(:client_attributes)

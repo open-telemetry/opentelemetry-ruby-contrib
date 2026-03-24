@@ -87,7 +87,6 @@ module OpenTelemetry
               attributes['server.port'] = mysql_port if mysql_port
 
               attributes['db.namespace'] = @_otel_database_name if @_otel_database_name
-              attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
               attributes
             end
 
