@@ -13,9 +13,6 @@ module OpenTelemetry
     module PG
       module Patches
         module Dup
-          # Default PostgreSQL port used to determine whether to include server.port
-          POSTGRESQL_DEFAULT_PORT = 5432
-
           # Utility methods for setting connection attributes from Connect module
           module ConnectionHelper
             module_function
@@ -44,9 +41,8 @@ module OpenTelemetry
               attributes['db.namespace'] = conn.db
               attributes['server.address'] = conn.host
 
-              # Only add server.port if non-default
               port = conn.port.to_i if defined?(::PG::DEF_PGPORT)
-              attributes['server.port'] = port if port && port != POSTGRESQL_DEFAULT_PORT
+              attributes['server.port'] = port if port
 
               attributes.merge!(OpenTelemetry::Instrumentation::PG.attributes)
               attributes.compact!
@@ -271,9 +267,8 @@ module OpenTelemetry
               attributes['db.namespace'] = db
               attributes['server.address'] = host
 
-              # Only add server.port if non-default
               p = transport_port
-              attributes['server.port'] = p if p && p != Dup::POSTGRESQL_DEFAULT_PORT
+              attributes['server.port'] = p if p
 
               attributes.merge!(OpenTelemetry::Instrumentation::PG.attributes)
               attributes.compact!

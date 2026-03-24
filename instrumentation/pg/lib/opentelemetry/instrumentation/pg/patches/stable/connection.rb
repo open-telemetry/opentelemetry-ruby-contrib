@@ -13,9 +13,6 @@ module OpenTelemetry
     module PG
       module Patches
         module Stable
-          # Default PostgreSQL port used to determine whether to include server.port
-          POSTGRESQL_DEFAULT_PORT = 5432
-
           # Utility methods for setting connection attributes from Connect module
           module ConnectionHelper
             module_function
@@ -26,16 +23,24 @@ module OpenTelemetry
                 'db.namespace' => conn.db,
                 'server.address' => conn.host
               }
-              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
-
-              # Only add server.port if non-default
-              port = conn.port.to_i if defined?(::PG::DEF_PGPORT)
-              attributes['server.port'] = port if port && port != POSTGRESQL_DEFAULT_PORT
+              port = transport_port(conn)
+              attributes['server.port'] = port if port
 
               attributes.merge!(OpenTelemetry::Instrumentation::PG.attributes)
               attributes.compact!
 
               span.add_attributes(attributes)
+            end
+
+            def transport_port(conn)
+              # The port method can fail in older versions of the gem. It is
+              # accurate and safe to use when the DEF_PGPORT constant is defined.
+              return conn.port.to_i if defined?(::PG::DEF_PGPORT)
+
+              # As a fallback, we can use the port of the parsed connection
+              # string when there is exactly one.
+              p = conn.conninfo_hash[:port]
+              p.to_i unless p.nil? || p.empty? || p.include?(',')
             end
           end
 
@@ -229,11 +234,9 @@ module OpenTelemetry
                 'db.namespace' => db,
                 'server.address' => host
               }
-              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
-              # Only add server.port if non-default
               p = transport_port
-              attributes['server.port'] = p if p && p != Stable::POSTGRESQL_DEFAULT_PORT
+              attributes['server.port'] = p if p
 
               attributes.merge!(OpenTelemetry::Instrumentation::PG.attributes)
               attributes.compact!
@@ -241,14 +244,7 @@ module OpenTelemetry
             end
 
             def transport_port
-              # The port method can fail in older versions of the gem. It is
-              # accurate and safe to use when the DEF_PGPORT constant is defined.
-              return port.to_i if defined?(::PG::DEF_PGPORT)
-
-              # As a fallback, we can use the port of the parsed connection
-              # string when there is exactly one.
-              p = conninfo_hash[:port]
-              p.to_i unless p.nil? || p.empty? || p.include?(',')
+              ConnectionHelper.transport_port(self)
             end
 
             def propagator

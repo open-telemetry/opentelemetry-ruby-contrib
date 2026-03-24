@@ -171,11 +171,11 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
     end
 
     describe 'server.port attribute' do
-      it 'does not include server.port when using default port (5432)' do
+      it 'includes server.port when available' do
         client.query('SELECT 1')
 
-        _(last_span.attributes['server.port']).must_be_nil
-        # But old convention should still have net.peer.port
+        _(last_span.attributes['server.port']).must_equal port.to_i
+        # Old convention should also have net.peer.port
         _(last_span.attributes['net.peer.port']).must_equal port.to_i
       end
     end

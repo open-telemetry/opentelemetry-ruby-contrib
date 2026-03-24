@@ -125,23 +125,6 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(connect_span.attributes['db.system.name']).must_equal 'postgresql'
       end
 
-      it 'accepts peer service name from config for connection' do
-        instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.install(peer_service: 'readonly:postgres')
-
-        conn = PG::Connection.open(
-          host: host,
-          port: port,
-          user: user,
-          dbname: dbname,
-          password: password
-        )
-        conn.close
-
-        connect_span = exporter.finished_spans.first
-        _(connect_span.attributes['peer.service']).must_equal 'readonly:postgres'
-      end
-
       it 'records connection errors with error.type' do
         expect do
           PG::Connection.open(
@@ -163,19 +146,11 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
     end
 
     describe 'server.port attribute' do
-      it 'does not include server.port when using default port (5432)' do
+      it 'includes server.port when available' do
         client.query('SELECT 1')
 
-        _(last_span.attributes['server.port']).must_be_nil
+        _(last_span.attributes['server.port']).must_equal port.to_i
       end
-    end
-
-    it 'accepts peer service name from config' do
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install(peer_service: 'readonly:postgres')
-      client.query('SELECT 1')
-
-      _(last_span.attributes['peer.service']).must_equal 'readonly:postgres'
     end
 
     describe '.attributes' do
@@ -184,8 +159,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
           'db.namespace' => 'pg',
           'db.query.text' => 'foobar',
           'db.operation.name' => 'PREPARE FOR SELECT 1',
-          'db.postgresql.prepared_statement_name' => 'bar',
-          'peer.service' => 'example:custom'
+          'db.postgresql.prepared_statement_name' => 'bar'
         }
       end
 
@@ -208,7 +182,6 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(last_span.attributes['db.query.text']).must_equal 'foobar'
         _(last_span.attributes['db.operation.name']).must_equal 'PREPARE FOR SELECT 1'
         _(last_span.attributes['db.postgresql.prepared_statement_name']).must_equal 'bar'
-        _(last_span.attributes['peer.service']).must_equal 'example:custom'
       end
     end
 
