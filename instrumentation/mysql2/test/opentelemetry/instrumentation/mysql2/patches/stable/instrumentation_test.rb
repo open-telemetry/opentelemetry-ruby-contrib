@@ -60,14 +60,6 @@ describe 'OpenTelemetry::Instrumentation::Mysql2 (stable semconv)' do
       _(exporter.finished_spans.size).must_equal 0
     end
 
-    it 'accepts peer service name from config' do
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install(peer_service: 'readonly:mysql')
-      client.query('SELECT 1')
-
-      _(span.attributes['peer.service']).must_equal 'readonly:mysql'
-    end
-
     describe '.attributes' do
       let(:attributes) { { 'db.query.text' => 'foobar' } }
 

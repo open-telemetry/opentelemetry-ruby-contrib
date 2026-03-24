@@ -103,7 +103,6 @@ module OpenTelemetry
 
               attributes['server.port'] = port if port
               attributes['db.namespace'] = _otel_database_name
-              attributes[SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
               attributes
             end
 
