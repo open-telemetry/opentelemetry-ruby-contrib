@@ -66,11 +66,6 @@
       minimumReleaseAge: "1460 days",
     },
     {
-      matchUpdateTypes: ["minor"],
-      matchDepNames: ["mongo"],
-      enabled: false,
-    },
-    {
       description: "Wait until current major/minor kafka is EoL before updating",
       dependencyDashboardCategory: "Min Docker service",
       matchUpdateTypes: ["major", "minor"],
