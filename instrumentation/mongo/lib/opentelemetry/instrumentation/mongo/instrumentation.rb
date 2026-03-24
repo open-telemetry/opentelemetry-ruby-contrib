@@ -10,6 +10,7 @@ module OpenTelemetry
       # Instrumentation class that detects and installs the Mongo instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('2.5.0')
+        MAX_VERSION = Gem::Version.new('2.22.0') # Mongo 2.32.0+ has native OpenTelemetry instrumentation
 
         install do |_config|
           require_dependencies
@@ -21,7 +22,14 @@ module OpenTelemetry
         end
 
         compatible do
-          gem_version >= MINIMUM_VERSION
+          if gem_version < MINIMUM_VERSION
+            false
+          elsif gem_version > MAX_VERSION
+            OpenTelemetry.logger.info("Mongo #{gem_version} has native OpenTelemetry support. Skipping community instrumentation.")
+            false
+          else
+            true
+          end
         end
 
         option :peer_service, default: nil, validate: :string
