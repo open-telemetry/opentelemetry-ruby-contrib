@@ -50,13 +50,7 @@
     },
     {
       matchUpdateTypes: ["major"],
-      matchCategories: ["ci", "js"],
       schedule: ["before 8am on Monday"],
-    },
-    {
-      matchUpdateTypes: ["major"],
-      matchCategories: ["ruby", "docker"],
-      dependencyDashboardApproval: true,
     },
     {
       matchDepNames: ["actions/setup-node", "ruby/setup-ruby"],
@@ -65,16 +59,25 @@
       automerge: true,
     },
     {
-      allowedVersions: "<={{add major 1}}",
-      matchDepTypes: ["service"],
-      schedule: ["before 8am on Monday"],
-      dependencyDashboardApproval: false,
+      description: "Wait until current major postgres is EoL before updating",
+      dependencyDashboardCategory: "Min Docker service",
+      matchUpdateTypes: ["major"],
+      matchDepNames: ["postgres"],
+      minimumReleaseAge: "1460 days",
     },
     {
-      allowedVersions: "<={{add major 1}}",
-      matchCategories: ["docker"],
-      schedule: ["before 8am on Monday"],
-      dependencyDashboardApproval: false,
+      description: "Wait until current major/minor kafka is EoL before updating",
+      dependencyDashboardCategory: "Min Docker service",
+      matchUpdateTypes: ["major", "minor"],
+      matchDepNames: ["confluentinc/cp-kafka"],
+      minimumReleaseAge: "730 days",
+    },
+    {
+      description: "Wait until current major mysql is EoL before updating",
+      dependencyDashboardCategory: "Min Docker service",
+      matchUpdateTypes: ["major"],
+      matchDepNames: ["mysql"],
+      minimumReleaseAge: "1765 days",
     },
   ],
   customManagers: [
