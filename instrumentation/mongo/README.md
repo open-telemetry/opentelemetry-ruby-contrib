@@ -5,6 +5,7 @@ The OpenTelemetry Mongo Ruby gem is a community maintained instrumentation for [
 > [!NOTE]
 >
 > **Development Frozen:**
+>
 > Mongo Ruby Driver 2.23.0+ includes native OpenTelemetry instrumentation. For the best experience and continued support, we recommend:
 >
 > - **Mongo Ruby Driver < 2.23.0**: Use `opentelemetry-instrumentation-mongo` gem
