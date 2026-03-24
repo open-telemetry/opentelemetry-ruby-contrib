@@ -43,6 +43,7 @@
       ],
       matchUpdateTypes: ["minor", "major"],
       dependencyDashboardApproval: true,
+      minimumReleaseAge: "820 days",
     },
     {
       matchUpdateTypes: ["minor"],
