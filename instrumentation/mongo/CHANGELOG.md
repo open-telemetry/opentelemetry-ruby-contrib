@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+## v0.25.1 / 2026-03-24
+
+- FIXED: Constrain mongo to versions lacking native otel (#2119)
+
 ## v0.25.0 / 2025-10-22
 
 - BREAKING CHANGE: Min Ruby Version 3.2
