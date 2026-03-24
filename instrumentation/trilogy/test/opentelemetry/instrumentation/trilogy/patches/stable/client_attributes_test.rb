@@ -99,7 +99,6 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Stable::Client do
       refute attrs.key?('db.instance.id')
     end
 
-
     it 'returns independent hash instances on each call' do
       a = client.send(:client_attributes)
       b = client.send(:client_attributes)
