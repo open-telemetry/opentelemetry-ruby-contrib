@@ -298,6 +298,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
 
       # Stable convention error handling
       _(last_span.attributes['error.type']).must_equal 'PG::UndefinedColumn'
+      _(last_span.attributes['db.response.status_code']).must_equal '42703'
 
       _(last_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
@@ -334,6 +335,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(last_span.attributes['db.operation.name']).must_be_nil
       _(last_span.attributes['server.address']).must_equal host.to_s
       _(last_span.attributes['error.type']).must_equal 'PG::SyntaxError'
+      _(last_span.attributes['db.response.status_code']).must_equal '42601'
 
       _(last_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR

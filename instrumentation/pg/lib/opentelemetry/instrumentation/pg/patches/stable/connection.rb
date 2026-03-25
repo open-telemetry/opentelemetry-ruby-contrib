@@ -42,6 +42,14 @@ module OpenTelemetry
               p = conn.conninfo_hash[:port]
               p.to_i unless p.nil? || p.empty? || p.include?(',')
             end
+
+            def set_error_attributes(span, error)
+              span.set_attribute('error.type', error.class.name)
+              return unless error.result
+
+              sqlstate = error.result.result_error_field(::PG::PG_DIAG_SQLSTATE)
+              span.set_attribute('db.response.status_code', sqlstate) if sqlstate
+            end
           end
 
           # Module to prepend to PG::Connection singleton class for connection initialization
@@ -67,7 +75,7 @@ module OpenTelemetry
                   conn
                 end
               rescue ::PG::Error => e
-                span.set_attribute('error.type', e.class.name)
+                ConnectionHelper.set_error_attributes(span, e)
                 raise
               end
             end
@@ -102,7 +110,7 @@ module OpenTelemetry
                     super(*args)
                   end
                 rescue ::PG::Error => e
-                  span.set_attribute('error.type', e.class.name)
+                  set_error_attributes(span, e)
                   raise
                 end
               end
@@ -128,7 +136,7 @@ module OpenTelemetry
 
                   super(*args)
                 rescue ::PG::Error => e
-                  span.set_attribute('error.type', e.class.name)
+                  set_error_attributes(span, e)
                   raise
                 end
               end
@@ -144,7 +152,7 @@ module OpenTelemetry
                     super(*args)
                   end
                 rescue ::PG::Error => e
-                  span.set_attribute('error.type', e.class.name)
+                  set_error_attributes(span, e)
                   raise
                 end
               end
@@ -245,6 +253,10 @@ module OpenTelemetry
 
             def transport_port
               ConnectionHelper.transport_port(self)
+            end
+
+            def set_error_attributes(span, error)
+              ConnectionHelper.set_error_attributes(span, error)
             end
 
             def propagator

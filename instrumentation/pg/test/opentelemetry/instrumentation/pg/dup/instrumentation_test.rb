@@ -383,6 +383,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(last_span.attributes['db.system.name']).must_equal 'postgresql'
       _(last_span.attributes['db.query.text']).must_equal 'SELECT INVALID'
       _(last_span.attributes['error.type']).must_equal 'PG::UndefinedColumn'
+      _(last_span.attributes['db.response.status_code']).must_equal '42703'
 
       _(last_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
@@ -417,6 +418,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       # New
       _(last_span.attributes['db.operation.name']).must_be_nil
       _(last_span.attributes['error.type']).must_equal 'PG::SyntaxError'
+      _(last_span.attributes['db.response.status_code']).must_equal '42601'
     end
 
     it 'extracts table name' do
