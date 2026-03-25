@@ -4,9 +4,18 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'mongo-2.22' do
-  gem 'mongo', '~> 2.22.0'
+# To facilitate database semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/
 
-  # TODO: bson 5.1.0 isn't compatible with JRuby as of 2025/06/17
-  gem 'bson', '< 5.1.0' if defined?(JRUBY_VERSION)
+semconv_stability = %w[old stable dup]
+
+semconv_stability.each do |mode|
+  appraise "mongo-latest-#{mode}" do
+    gem 'mongo'
+
+    # TODO: bson 5.1.0 isn't compatible with JRuby as of 2025/06/17
+    gem 'bson', '< 5.1.0' if defined?(JRUBY_VERSION)
+  end
 end
