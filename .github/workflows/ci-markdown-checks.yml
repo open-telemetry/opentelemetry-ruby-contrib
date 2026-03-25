@@ -137,6 +137,7 @@ jobs:
           config: .cspell.yml
           suggestions: true
           treat_flagged_words_as_errors: true
+          incremental_files_only: false
 
   format-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
