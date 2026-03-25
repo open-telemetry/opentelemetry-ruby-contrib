@@ -9,9 +9,6 @@ module OpenTelemetry
     module Redis
       module Patches
         module Dup
-          # Default Redis port used to determine whether to include server.port
-          REDIS_DEFAULT_PORT = 6379
-
           # Module to prepend to Redis::Client for instrumentation
           module RedisV4Client
             MAX_STATEMENT_LENGTH = 500
@@ -33,8 +30,7 @@ module OpenTelemetry
               # New stable conventions
               attributes['db.system.name'] = 'redis'
               attributes['server.address'] = host
-              # Only add server.port if non-default
-              attributes['server.port'] = port if port && port != Dup::REDIS_DEFAULT_PORT
+              attributes['server.port'] = port if port
 
               unless options[:db].zero?
                 # Old convention

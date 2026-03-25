@@ -14,7 +14,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Stable::RedisV4Client d
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:password) { 'passw0rd' }
-  let(:redis_host) { ENV.fetch('TEST_REDIS_HOST', nil) }
+  let(:redis_host) { ENV['TEST_REDIS_HOST'] }
   let(:redis_port) { ENV['TEST_REDIS_PORT'].to_i }
   let(:last_span) { exporter.finished_spans.last }
 
@@ -60,12 +60,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Stable::RedisV4Client d
       _(last_span.attributes['db.system.name']).must_equal 'redis'
       _(last_span.attributes['db.query.text']).must_equal 'AUTH ?'
       _(last_span.attributes['server.address']).must_equal redis_host
-      # server.port only included if non-default (6379)
-      if redis_port == 6379
-        _(last_span.attributes['server.port']).must_be_nil
-      else
-        _(last_span.attributes['server.port']).must_equal redis_port
-      end
+      _(last_span.attributes['server.port']).must_equal redis_port
     end
 
     it 'after requests' do
@@ -192,7 +187,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Stable::RedisV4Client d
       _(last_span.attributes['server.address']).must_equal redis_host
     end
 
-    it 'records server.address and server.port for non-default port' do
+    it 'records server.address and server.port' do
       skip if redis_gte_5?
 
       client = Redis.new(host: 'example.com', port: 8321, timeout: 0.01)

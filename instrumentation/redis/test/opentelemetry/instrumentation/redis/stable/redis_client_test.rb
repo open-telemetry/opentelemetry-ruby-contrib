@@ -14,7 +14,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Stable::RedisClient
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:password) { 'passw0rd' }
-  let(:redis_host) { ENV.fetch('TEST_REDIS_HOST', nil) }
+  let(:redis_host) { ENV['TEST_REDIS_HOST'] }
   let(:redis_port) { ENV['TEST_REDIS_PORT'].to_i }
   let(:last_span) { exporter.finished_spans.last }
 
@@ -47,26 +47,6 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Stable::RedisClient
       _(exporter.finished_spans.size).must_equal 0
     end
 
-    it 'accepts peer service name from config' do
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install(peer_service: 'readonly:redis')
-      redis_with_auth
-
-      _(last_span.attributes['peer.service']).must_equal 'readonly:redis'
-    end
-
-    it 'context attributes take priority' do
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install(peer_service: 'readonly:redis')
-      redis = redis_with_auth
-
-      OpenTelemetry::Instrumentation::Redis.with_attributes('peer.service' => 'foo') do
-        redis.call('set', 'K', 'x')
-      end
-
-      _(last_span.attributes['peer.service']).must_equal 'foo'
-    end
-
     it 'after authorization with Redis server uses stable attributes' do
       client = redis_with_auth
 
@@ -76,17 +56,13 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Stable::RedisClient
       _(last_span.attributes['db.system.name']).must_equal 'redis'
       _(last_span.attributes['db.query.text']).must_equal 'HELLO ? ? ? ?'
       _(last_span.attributes['server.address']).must_equal redis_host
-      # server.port only included if non-default (6379)
-      if redis_port == 6379
-        _(last_span.attributes['server.port']).must_be_nil
-      else
-        _(last_span.attributes['server.port']).must_equal redis_port
-      end
+      _(last_span.attributes['server.port']).must_equal redis_port
       # Old attributes should NOT be present
       _(last_span.attributes).wont_include('db.system')
       _(last_span.attributes).wont_include('db.statement')
       _(last_span.attributes).wont_include('net.peer.name')
       _(last_span.attributes).wont_include('net.peer.port')
+      _(last_span.attributes).wont_include('peer.service')
     end
 
     it 'after calling auth lowercase' do
@@ -151,7 +127,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Stable::RedisClient
 
     it 'merges context attributes' do
       redis = redis_with_auth
-      OpenTelemetry::Instrumentation::Redis.with_attributes('peer.service' => 'foo') do
+      OpenTelemetry::Instrumentation::Redis.with_attributes('custom.attribute' => 'foo') do
         redis.call('set', 'K', 'x')
       end
 
@@ -161,7 +137,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Stable::RedisClient
       _(set_span.name).must_equal 'SET'
       _(set_span.attributes['db.system.name']).must_equal 'redis'
       _(set_span.attributes['db.query.text']).must_equal('SET K x')
-      _(set_span.attributes['peer.service']).must_equal 'foo'
+      _(set_span.attributes['custom.attribute']).must_equal 'foo'
       _(set_span.attributes['server.address']).must_equal redis_host
     end
 
@@ -264,18 +240,13 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Stable::RedisClient
       _(last_span.attributes['db.query.text']).must_equal 'SET K x'
     end
 
-    it 'records server.port for non-default port' do
+    it 'records server.port' do
       client = redis_with_auth
       client.call('set', 'K', 'x')
 
       set_span = exporter.finished_spans[1]
       _(set_span.attributes['server.address']).must_equal redis_host
-      # server.port should only be present if non-default
-      if redis_port == 6379
-        _(set_span.attributes['server.port']).must_be_nil
-      else
-        _(set_span.attributes['server.port']).must_equal redis_port
-      end
+      _(set_span.attributes['server.port']).must_equal redis_port
     end
 
     describe 'when trace_root_spans is disabled' do

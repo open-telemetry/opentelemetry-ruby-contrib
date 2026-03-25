@@ -9,9 +9,6 @@ module OpenTelemetry
     module Redis
       module Patches
         module Stable
-          # Default Redis port used to determine whether to include server.port
-          REDIS_DEFAULT_PORT = 6379
-
           # Module to prepend to Redis::Client for instrumentation
           module RedisV4Client
             MAX_STATEMENT_LENGTH = 500
@@ -28,12 +25,10 @@ module OpenTelemetry
                 'server.address' => host
               }
 
-              # Only add server.port if non-default
-              attributes['server.port'] = port if port && port != Stable::REDIS_DEFAULT_PORT
+              attributes['server.port'] = port if port
 
               # db.namespace is the database index as a string (replaces db.redis.database_index in stable)
               attributes['db.namespace'] = options[:db].to_s unless options[:db].zero?
-              attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
               attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
 
               unless instrumentation_config[:db_statement] == :omit
