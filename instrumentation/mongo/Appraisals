@@ -13,7 +13,7 @@ semconv_stability = %w[old stable dup]
 
 semconv_stability.each do |mode|
   appraise "mongo-latest-#{mode}" do
-    gem 'mongo'
+    gem 'mongo', '< 2.23.0' # Mongo 2.23.0+ has native OpenTelemetry instrumentation
 
     # TODO: bson 5.1.0 isn't compatible with JRuby as of 2025/06/17
     gem 'bson', '< 5.1.0' if defined?(JRUBY_VERSION)
