@@ -14,7 +14,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Stable::RedisClient
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:password) { 'passw0rd' }
-  let(:redis_host) { ENV['TEST_REDIS_HOST'] }
+  let(:redis_host) { ENV.fetch('TEST_REDIS_HOST', nil) }
   let(:redis_port) { ENV['TEST_REDIS_PORT'].to_i }
   let(:last_span) { exporter.finished_spans.last }
 
