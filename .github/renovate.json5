@@ -53,11 +53,6 @@
       schedule: ["before 8am on Monday"],
     },
     {
-      matchUpdateTypes: ["major"],
-      matchCategories: ["ruby", "docker", "custom"],
-      dependencyDashboardApproval: true,
-    },
-    {
       matchDepNames: ["actions/setup-node", "ruby/setup-ruby"],
       schedule: ["before 6am every weekday"],
       prConcurrentLimit: 0,
@@ -85,27 +80,13 @@
       minimumReleaseAge: "1765 days",
     },
     {
-      description: "Only update general dependencies and ruby in gemspec files",
+      description: "Require non-general dependencies in gemspec files to be approved",
+      dependencyDashboardCategory: "{{depType}} should be migrated to Gemfile",
       matchCategories: ["custom"],
       matchDepNames: ["!ruby"],
       matchDepTypes: ["!dependency"],
       matchFileNames: ["**/*.gemspec"],
-      enabled: false,
-    },
-    {
-      description: "Bump dependencies in gemspec files",
-      matchCategories: ["custom"],
-      matchDepNames: ["!ruby"],
-      matchFileNames: ["**/*.gemspec"],
-      rangeStrategy: "bump",
-    },
-    {
-      matchFileNames: [
-        ".github/actions/test_gem/action.yml",
-        ".github/workflows/installation-tests.yml",
-        ".github/workflows/release-*.yml",
-      ],
-      ignoreDeps: ["ruby"],
+      dependencyDashboardApproval: true,
     },
   ],
   customManagers: [
@@ -161,22 +142,10 @@
     },
     {
       customType: "regex",
-      description: "Update Pessimistic dependencies in gemspecs",
+      description: "Update dependencies in gemspecs",
       managerFilePatterns: ["**/*.gemspec"],
       matchStrings: [
-        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'~>\\s(?<depVersion>[0-9.]+)'",
-      ],
-      datasourceTemplate: "rubygems",
-      versioningTemplate: "ruby",
-      currentValueTemplate: "~> {{depVersion}}",
-    },
-    {
-      customType: "regex",
-      description: "Update Non-Pessimistic dependencies in gemspecs",
-      managerFilePatterns: ["**/*.gemspec"],
-      matchStrings: [
-        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'>=\\s(?<depVersion>[0-9.]+)'",
-        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'(?<depVersion>[0-9.]+)'",
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'(?<depVersion>.+\\s[0-9.]+)'",
       ],
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
