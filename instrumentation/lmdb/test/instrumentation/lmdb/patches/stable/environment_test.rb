@@ -44,6 +44,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Environment' do
 
       _(last_span.name).must_equal('TRANSACTION')
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.operation.name']).must_equal('TRANSACTION')
       _(last_span.attributes).wont_include('db.system')
       _(last_span.attributes).wont_include('peer.service')
     end

@@ -38,6 +38,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       _(span.name).must_equal('CLEAR')
       _(span.kind).must_equal(:client)
       _(span.attributes['db.system.name']).must_equal('lmdb')
+      _(span.attributes['db.operation.name']).must_equal('CLEAR')
       _(span.attributes['db.query.text']).must_equal('CLEAR')
     end
 
@@ -59,6 +60,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       _(span.name).must_equal('PUT foo')
       _(span.kind).must_equal(:client)
       _(span.attributes['db.system.name']).must_equal('lmdb')
+      _(span.attributes['db.operation.name']).must_equal('PUT')
       _(span.attributes['db.query.text']).must_equal('PUT foo bar')
     end
 
@@ -105,6 +107,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       _(last_span.name).must_equal('GET foo')
       _(last_span.kind).must_equal(:client)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.operation.name']).must_equal('GET')
       _(last_span.attributes['db.query.text']).must_equal('GET foo')
       _(last_span.attributes).wont_include('db.system')
       _(last_span.attributes).wont_include('db.statement')
@@ -132,6 +135,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       _(last_span.name).must_equal('DELETE foo')
       _(last_span.kind).must_equal(:client)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.operation.name']).must_equal('DELETE')
       _(last_span.attributes['db.query.text']).must_equal('DELETE foo')
       _(last_span.attributes).wont_include('db.system')
       _(last_span.attributes).wont_include('db.statement')

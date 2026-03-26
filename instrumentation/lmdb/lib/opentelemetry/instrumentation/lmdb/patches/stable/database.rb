@@ -18,7 +18,8 @@ module OpenTelemetry
             def get(key)
               statement = formatted_statement('GET', "GET #{key}")
               attributes = {
-                'db.system.name' => 'lmdb'
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'GET'
               }
               attributes['db.query.text'] = statement if config[:db_statement] == :include
 
@@ -30,7 +31,8 @@ module OpenTelemetry
             def delete(key, value = nil)
               statement = formatted_statement('DELETE', "DELETE #{key} #{value}".strip)
               attributes = {
-                'db.system.name' => 'lmdb'
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'DELETE'
               }
               attributes['db.query.text'] = statement if config[:db_statement] == :include
 
@@ -42,7 +44,8 @@ module OpenTelemetry
             def put(key, value)
               statement = formatted_statement('PUT', "PUT #{key} #{value}")
               attributes = {
-                'db.system.name' => 'lmdb'
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'PUT'
               }
               attributes['db.query.text'] = statement if config[:db_statement] == :include
 
@@ -53,7 +56,8 @@ module OpenTelemetry
 
             def clear
               attributes = {
-                'db.system.name' => 'lmdb'
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'CLEAR'
               }
               attributes['db.query.text'] = 'CLEAR' if config[:db_statement] == :include
 

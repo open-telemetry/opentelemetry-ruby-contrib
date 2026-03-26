@@ -51,6 +51,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Dup::Environment' do
       _(last_span.attributes['db.system']).must_equal('lmdb')
       # Stable attributes
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.operation.name']).must_equal('TRANSACTION')
     end
   end
 end

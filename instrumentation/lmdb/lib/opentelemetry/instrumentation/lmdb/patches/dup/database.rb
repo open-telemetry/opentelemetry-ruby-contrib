@@ -19,7 +19,8 @@ module OpenTelemetry
               statement = formatted_statement('GET', "GET #{key}")
               attributes = {
                 'db.system' => 'lmdb',
-                'db.system.name' => 'lmdb'
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'GET'
               }
               if config[:db_statement] == :include
                 attributes['db.statement'] = statement
@@ -36,7 +37,8 @@ module OpenTelemetry
               statement = formatted_statement('DELETE', "DELETE #{key} #{value}".strip)
               attributes = {
                 'db.system' => 'lmdb',
-                'db.system.name' => 'lmdb'
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'DELETE'
               }
               if config[:db_statement] == :include
                 attributes['db.statement'] = statement
@@ -53,7 +55,8 @@ module OpenTelemetry
               statement = formatted_statement('PUT', "PUT #{key} #{value}")
               attributes = {
                 'db.system' => 'lmdb',
-                'db.system.name' => 'lmdb'
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'PUT'
               }
               if config[:db_statement] == :include
                 attributes['db.statement'] = statement
@@ -69,7 +72,8 @@ module OpenTelemetry
             def clear
               attributes = {
                 'db.system' => 'lmdb',
-                'db.system.name' => 'lmdb'
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'CLEAR'
               }
               if config[:db_statement] == :include
                 attributes['db.statement'] = 'CLEAR'
