@@ -6,10 +6,10 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/lmdb'
-require_relative '../../../../lib/opentelemetry/instrumentation/lmdb/patches/environment'
+require_relative '../../../../../lib/opentelemetry/instrumentation/lmdb'
+require_relative '../../../../../lib/opentelemetry/instrumentation/lmdb/patches/stable/environment'
 
-describe OpenTelemetry::Instrumentation::LMDB::Patches::Environment do
+describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Environment' do
   let(:instrumentation) { OpenTelemetry::Instrumentation::LMDB::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
@@ -19,6 +19,7 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Environment do
   let(:lmdb) { LMDB.new(db_path) }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('stable')
     exporter.reset
     instrumentation.install({})
     FileUtils.rm_rf(db_path)
@@ -32,17 +33,19 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Environment do
   end
 
   describe '#transaction' do
-    it 'traces' do
+    it 'traces with stable attributes' do
       lmdb.transaction do
         lmdb.database['foo'] = 'bar'
       end
 
       _(span.name).must_equal('PUT foo')
-      _(span.attributes['db.system']).must_equal 'lmdb'
-      _(span.attributes['db.statement']).must_equal 'PUT foo bar'
+      _(span.attributes['db.system.name']).must_equal('lmdb')
+      _(span.attributes['db.query.text']).must_equal('PUT foo bar')
 
       _(last_span.name).must_equal('TRANSACTION')
-      _(last_span.attributes['db.system']).must_equal 'lmdb'
+      _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes).wont_include('db.system')
+      _(last_span.attributes).wont_include('peer.service')
     end
   end
 end
