@@ -82,7 +82,6 @@ OpenTelemetry Ruby follows the [versioning and stability document][otel-versioni
 All libraries in this repository require Ruby Versions 3.3 or newer.
 
 - Ruby 3.2 EoL 2026-03-31 No longer receiving OTel Contrib updates as of 2026-03-31
-- Ruby 3.1 EoL 2025-03-31 No longer receiving OTel Contrib updates as of 2025-09-30
 
 This project is managed on a volunteer basis and therefore we have limited capacity to support compatibility with unmaintained or EOL libraries.
 
