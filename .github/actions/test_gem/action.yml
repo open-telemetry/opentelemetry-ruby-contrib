@@ -153,10 +153,10 @@ runs:
       # but merges with the existing coverage reports generated during testing.
       # Enforce coverage once across all Appraisals
       run: bundle exec ruby -e '
-        require "simplecov";
-        SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i);
-        SimpleCov.collate Dir["coverage/**/.resultset.json"];
-      '
+          require "simplecov";
+          SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i);
+          SimpleCov.collate Dir["coverage/**/.resultset.json"];
+        '
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: YARD
