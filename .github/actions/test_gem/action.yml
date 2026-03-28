@@ -108,12 +108,6 @@ runs:
         bundle exec appraisal generate
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
-    - name: Coverage
-      shell: bash
-      # This sets the required line coverage for simplecov test reports.
-      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }})'''
-      working-directory: "${{ steps.setup.outputs.gem_dir }}"
-
     - name: Test Gem
       shell: bash
       run: |
@@ -151,6 +145,19 @@ runs:
         TEST_RABBITMQ_URL: amqp://guest:guest@localhost:5672
         TEST_REDIS_HOST: localhost
         TEST_REDIS_PORT: 6379
+
+    - name: Coverage
+      shell: bash
+      if: "${{ inputs.coverage == 'true' }}"
+      # This starts a new simplecov run which tracks nothing of its own,
+      # but merges with the existing coverage reports generated during testing.
+      # Enforce coverage once across all Appraisals
+      run: bundle exec ruby -e '
+        require "simplecov";
+        SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i);
+        SimpleCov.collate Dir["coverage/**/.resultset.json"];
+      '
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: YARD
       shell: bash
