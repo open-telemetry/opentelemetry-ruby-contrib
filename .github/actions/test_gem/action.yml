@@ -108,6 +108,12 @@ runs:
         bundle exec appraisal generate
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
+    - name: Coverage
+      shell: bash
+      # This sets the required line coverage for simplecov test reports.
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }})'''
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
     - name: Test Gem
       shell: bash
       run: |
@@ -160,14 +166,6 @@ runs:
       run: |
         # 🤖 Rubocop 🤖
         bundle exec rake rubocop
-      working-directory: "${{ steps.setup.outputs.gem_dir }}"
-
-    - name: Coverage
-      shell: bash
-      if: "${{ inputs.coverage == 'true' }}"
-      # This starts a new simplecov run which tracks nothing of its own,
-      # but merges with the existing coverage reports generated during testing.
-      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }})'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem
