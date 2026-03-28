@@ -28,7 +28,7 @@ inputs:
     description: Minimum test coverage
     required: false
     type: string
-    default: 85
+    default: 99
   build:
     description: Build gem
     required: false
@@ -108,12 +108,6 @@ runs:
         bundle exec appraisal generate
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
-    - name: Coverage
-      shell: bash
-      # This sets the required line coverage for simplecov test reports.
-      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }})'''
-      working-directory: "${{ steps.setup.outputs.gem_dir }}"
-
     - name: Test Gem
       shell: bash
       run: |
@@ -151,6 +145,12 @@ runs:
         TEST_RABBITMQ_URL: amqp://guest:guest@localhost:5672
         TEST_REDIS_HOST: localhost
         TEST_REDIS_PORT: 6379
+  
+    - name: Coverage
+      shell: bash
+      # This sets the required line coverage for simplecov test reports.
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }})'''
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: YARD
       shell: bash
