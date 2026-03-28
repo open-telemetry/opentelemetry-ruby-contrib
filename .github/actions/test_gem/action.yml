@@ -169,7 +169,7 @@ runs:
       # Enforce coverage once across all Appraisals
       run: bundle exec ruby -e '
         require "simplecov";
-        SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i);
+        SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }});
         SimpleCov.collate Dir["coverage/**/.resultset.json"];
         '
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
