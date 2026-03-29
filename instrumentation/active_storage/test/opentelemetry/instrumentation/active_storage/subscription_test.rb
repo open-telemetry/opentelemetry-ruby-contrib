@@ -341,10 +341,9 @@ describe OpenTelemetry::Instrumentation::ActiveStorage do
   end
 
   def create_blob(key:, filename:, content_type:)
-    allow(ActiveStorage::Blob).to receive(:generate_unique_secure_token).and_return(key)
     io = StringIO.new(File.read("#{Dir.pwd}/test/fixtures/#{filename}"))
-    blob = ActiveStorage::Blob.create_and_upload!(io: io, filename: filename, content_type: content_type)
-    allow(ActiveStorage::Blob).to receive(:generate_unique_secure_token).and_call_original
-    blob
+    ActiveStorage::Blob.stub(:generate_unique_secure_token, key) do
+      ActiveStorage::Blob.create_and_upload!(io: io, filename: filename, content_type: content_type)
+    end
   end
 end

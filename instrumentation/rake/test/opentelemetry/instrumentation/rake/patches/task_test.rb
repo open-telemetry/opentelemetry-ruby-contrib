@@ -67,10 +67,11 @@ describe OpenTelemetry::Instrumentation::Rake::Patches::Task do
 
         Rake.application.instance_eval { @top_level_tasks = [task_string] }
 
-        allow(OpenTelemetry).to receive(:tracer_provider).and_return(mock)
-        Rake.application.invoke_task(task_string)
+        OpenTelemetry.stub(:tracer_provider, mock) do
+          Rake.application.invoke_task(task_string)
 
-        mock.verify
+          mock.verify
+        end
       end
     end
 

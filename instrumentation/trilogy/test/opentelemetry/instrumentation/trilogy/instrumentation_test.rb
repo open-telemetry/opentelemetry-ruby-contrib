@@ -382,29 +382,31 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         propagator = OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
 
         arg_cache = {} # maintain handles to args
-        allow(client).to receive(:query).and_wrap_original do |m, *args|
+        original_query = client.method(:query)
+        client.stub(:query, ->(*args) {
           arg_cache[:query_input] = args[0]
           assert(args[0].frozen?)
-          m.call(args[0])
+          original_query.call(args[0])
+        }) do
+          original_inject = propagator.method(:inject)
+          propagator.stub(:inject, ->(*args) {
+            arg_cache[:inject_input] = args[0]
+            refute(args[0].frozen?)
+            assert_match(sql, args[0])
+            original_inject.call(args[0], context: args[1][:context])
+          }) do
+            expect do
+              client.query(sql)
+            end.must_raise Trilogy::Error
+
+            # arg_cache[:inject_input] _was_ a mutable string, so it has the context injected
+            encoded = Base64.strict_encode64("{\"uber-trace-id\":\"#{span.hex_trace_id}:#{span.hex_span_id}:0:1\"}")
+            assert_equal(arg_cache[:inject_input], "/*VT_SPAN_CONTEXT=#{encoded}*/#{sql}")
+
+            # arg_cache[:inject_input] is now frozen
+            assert(arg_cache[:inject_input].frozen?)
+          end
         end
-
-        allow(propagator).to receive(:inject).and_wrap_original do |m, *args|
-          arg_cache[:inject_input] = args[0]
-          refute(args[0].frozen?)
-          assert_match(sql, args[0])
-          m.call(args[0], context: args[1][:context])
-        end
-
-        expect do
-          client.query(sql)
-        end.must_raise Trilogy::Error
-
-        # arg_cache[:inject_input] _was_ a mutable string, so it has the context injected
-        encoded = Base64.strict_encode64("{\"uber-trace-id\":\"#{span.hex_trace_id}:#{span.hex_span_id}:0:1\"}")
-        assert_equal(arg_cache[:inject_input], "/*VT_SPAN_CONTEXT=#{encoded}*/#{sql}")
-
-        # arg_cache[:inject_input] is now frozen
-        assert(arg_cache[:inject_input].frozen?)
       end
 
       it 'does inject context on unfrozen strings' do
@@ -434,29 +436,31 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         propagator = OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
 
         arg_cache = {} # maintain handles to args
-        allow(client).to receive(:query).and_wrap_original do |m, *args|
+        original_query = client.method(:query)
+        client.stub(:query, ->(*args) {
           arg_cache[:query_input] = args[0]
           _(args[0]).must_be :frozen?
-          m.call(args[0])
+          original_query.call(args[0])
+        }) do
+          original_inject = propagator.method(:inject)
+          propagator.stub(:inject, ->(*args) {
+            arg_cache[:inject_input] = args[0]
+            _(args[0]).wont_be :frozen?
+            _(args[0]).must_match(sql)
+            original_inject.call(args[0], context: args[1][:context])
+          }) do
+            expect do
+              client.query(sql)
+            end.must_raise Trilogy::Error
+
+            # arg_cache[:inject_input] _was_ a mutable string, so it has the context injected
+            # The tracecontext propagator injects traceparent and tracestate headers as SQL comments
+            _(arg_cache[:inject_input]).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
+
+            # arg_cache[:inject_input] is now frozen
+            _(arg_cache[:inject_input]).must_be :frozen?
+          end
         end
-
-        allow(propagator).to receive(:inject).and_wrap_original do |m, *args|
-          arg_cache[:inject_input] = args[0]
-          _(args[0]).wont_be :frozen?
-          _(args[0]).must_match(sql)
-          m.call(args[0], context: args[1][:context])
-        end
-
-        expect do
-          client.query(sql)
-        end.must_raise Trilogy::Error
-
-        # arg_cache[:inject_input] _was_ a mutable string, so it has the context injected
-        # The tracecontext propagator injects traceparent and tracestate headers as SQL comments
-        _(arg_cache[:inject_input]).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
-
-        # arg_cache[:inject_input] is now frozen
-        _(arg_cache[:inject_input]).must_be :frozen?
       end
 
       it 'injects context on unfrozen strings' do

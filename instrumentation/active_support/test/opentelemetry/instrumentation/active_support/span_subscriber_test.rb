@@ -264,14 +264,14 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
 
         describe 'when using a unstable formatter' do
           it 'defaults to the notification name' do
-            allow(OpenTelemetry).to receive(:handle_error).with(exception: RuntimeError, message: String)
+            OpenTelemetry.stub(:handle_error, ->(**_kwargs) { nil }) do
+              OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: ->(_) { raise 'boom' })
+              ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
 
-            OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_name, nil, nil, span_name_formatter: ->(_) { raise 'boom' })
-            ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
-
-            _(last_span).wont_be_nil
-            _(last_span.name).must_equal(notification_name)
-            _(last_span.attributes['extra']).must_equal('context')
+              _(last_span).wont_be_nil
+              _(last_span.name).must_equal(notification_name)
+              _(last_span.attributes['extra']).must_equal('context')
+            end
           end
         end
       end
@@ -383,14 +383,14 @@ describe 'OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber' do
 
         describe 'when using a unstable formatter' do
           it 'defaults to the notification name' do
-            allow(OpenTelemetry).to receive(:handle_error).with(exception: RuntimeError, message: String)
+            OpenTelemetry.stub(:handle_error, ->(**_kwargs) { nil }) do
+              OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern, nil, nil, span_name_formatter: ->(_) { raise 'boom' })
+              ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
 
-            OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, notification_pattern, nil, nil, span_name_formatter: ->(_) { raise 'boom' })
-            ActiveSupport::Notifications.instrument(notification_name, extra: 'context')
-
-            _(last_span).wont_be_nil
-            _(last_span.name).must_equal(notification_name)
-            _(last_span.attributes['extra']).must_equal('context')
+              _(last_span).wont_be_nil
+              _(last_span.name).must_equal(notification_name)
+              _(last_span.attributes['extra']).must_equal('context')
+            end
           end
         end
       end
