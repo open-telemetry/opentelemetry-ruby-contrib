@@ -17,13 +17,16 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler::Resil
   before { skip unless ENV['BUNDLE_GEMFILE'].include?('old') }
 
   it 'reports unexpected errors without causing request errors' do
-    allow(OpenTelemetry::Instrumentation::Rack).to receive(:current_span).and_raise('Bad news!')
-    expect(OpenTelemetry).to receive(:handle_error).exactly(5).times
-
-    handler.on_start(nil, nil)
-    handler.on_commit(nil, nil)
-    handler.on_send(nil, nil)
-    handler.on_error(nil, nil, nil)
-    handler.on_finish(nil, nil)
+    call_count = 0
+    OpenTelemetry::Instrumentation::Rack.stub(:current_span, -> { raise 'Bad news!' }) do
+      OpenTelemetry.stub(:handle_error, ->(*_args, **_kwargs) { call_count += 1 }) do
+        handler.on_start(nil, nil)
+        handler.on_commit(nil, nil)
+        handler.on_send(nil, nil)
+        handler.on_error(nil, nil, nil)
+        handler.on_finish(nil, nil)
+      end
+    end
+    assert_equal 5, call_count
   end
 end

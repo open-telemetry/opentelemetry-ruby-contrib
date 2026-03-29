@@ -55,61 +55,66 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
 
     describe 'configuring the Sidekiq Client' do
       before do
-        allow(Sidekiq).to receive(:server?).and_return(false)
-        Sidekiq.configure_client do |config|
-          config.client_middleware do |chain|
-            chain.add(Frontkiq::SweetClientMiddleware)
+        Sidekiq.stub(:server?, false) do
+          Sidekiq.configure_client do |config|
+            config.client_middleware do |chain|
+              chain.add(Frontkiq::SweetClientMiddleware)
+            end
           end
         end
       end
 
       it 'prepends the Client::TracerMiddleware to the Sidekiq Client middleware chain' do
-        allow(Sidekiq).to receive(:server?).and_return(false)
-        instrumentation.install
+        Sidekiq.stub(:server?, false) do
+          instrumentation.install
 
-        middlewares = @sidekiq_config.client_middleware.entries
-        _(middlewares.first.klass).must_equal(OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Client::TracerMiddleware)
-        _(middlewares.last.klass).must_equal(Frontkiq::SweetClientMiddleware)
+          middlewares = @sidekiq_config.client_middleware.entries
+          _(middlewares.first.klass).must_equal(OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Client::TracerMiddleware)
+          _(middlewares.last.klass).must_equal(Frontkiq::SweetClientMiddleware)
+        end
       end
     end
 
     describe 'configuring the Sidekiq Server' do
       before do
-        allow(Sidekiq).to receive(:server?).and_return(true)
-        Sidekiq.configure_server do |config|
-          config.client_middleware do |chain|
-            chain.add(Frontkiq::SweetClientMiddleware)
+        Sidekiq.stub(:server?, true) do
+          Sidekiq.configure_server do |config|
+            config.client_middleware do |chain|
+              chain.add(Frontkiq::SweetClientMiddleware)
+            end
+            config.server_middleware do |chain|
+              chain.add(Frontkiq::SweetServerMiddleware)
+            end
           end
-          config.server_middleware do |chain|
+
+          Sidekiq::Testing.server_middleware do |chain|
             chain.add(Frontkiq::SweetServerMiddleware)
           end
-        end
-
-        Sidekiq::Testing.server_middleware do |chain|
-          chain.add(Frontkiq::SweetServerMiddleware)
         end
       end
 
       it 'prepends the Client::TracerMiddleware to the Sidekiq Client middleware chain' do
-        allow(Sidekiq).to receive(:server?).and_return(true)
-        instrumentation.install
+        Sidekiq.stub(:server?, true) do
+          instrumentation.install
 
-        middlewares = @sidekiq_config.client_middleware.entries
-        _(middlewares.first.klass).must_equal(OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Client::TracerMiddleware)
-        _(middlewares.last.klass).must_equal(Frontkiq::SweetClientMiddleware)
+          middlewares = @sidekiq_config.client_middleware.entries
+          _(middlewares.first.klass).must_equal(OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Client::TracerMiddleware)
+          _(middlewares.last.klass).must_equal(Frontkiq::SweetClientMiddleware)
+        end
       end
 
       it 'prepends the Server::TracerMiddleware to the Sidekiq Server middleware chain' do
-        allow(Sidekiq).to receive(:server?).and_return(true)
-        instrumentation.install
+        Sidekiq.stub(:server?, true) do
+          instrumentation.install
 
-        middlewares = @sidekiq_config.server_middleware.entries
-        _(middlewares.first.klass).must_equal(OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMiddleware)
-        _(middlewares.last.klass).must_equal(Frontkiq::SweetServerMiddleware)
+          middlewares = @sidekiq_config.server_middleware.entries
+          _(middlewares.first.klass).must_equal(OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMiddleware)
+          _(middlewares.last.klass).must_equal(Frontkiq::SweetServerMiddleware)
 
-        testing_wares = Sidekiq::Testing.server_middleware.entries
-        _(testing_wares.first.klass).must_equal(OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMiddleware)
-        _(testing_wares.last.klass).must_equal(Frontkiq::SweetServerMiddleware)
+          testing_wares = Sidekiq::Testing.server_middleware.entries
+          _(testing_wares.first.klass).must_equal(OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMiddleware)
+          _(testing_wares.last.klass).must_equal(Frontkiq::SweetServerMiddleware)
+        end
       end
     end
   end

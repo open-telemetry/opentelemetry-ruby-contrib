@@ -258,18 +258,19 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         def fake_socket.close; end
 
         # Replace the TCP socket creation with our fake socket
-        allow(TCPSocket).to receive(:open).and_return(fake_socket)
-        http.send(:connect)
+        TCPSocket.stub(:open, fake_socket) do
+          http.send(:connect)
 
-        http.send(:do_finish)
-        _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal('connect')
-        _(span.kind).must_equal(:internal)
-        _(span.attributes['net.peer.name']).must_equal('example.com')
-        _(span.attributes['net.peer.port']).must_equal(80)
-        # stable semantic conventions
-        _(span.attributes['server.address']).must_equal('example.com')
-        _(span.attributes['server.port']).must_equal(80)
+          http.send(:do_finish)
+          _(exporter.finished_spans.size).must_equal 1
+          _(span.name).must_equal('connect')
+          _(span.kind).must_equal(:internal)
+          _(span.attributes['net.peer.name']).must_equal('example.com')
+          _(span.attributes['net.peer.port']).must_equal(80)
+          # stable semantic conventions
+          _(span.attributes['server.address']).must_equal('example.com')
+          _(span.attributes['server.port']).must_equal(80)
+        end
       end
     end
 
@@ -278,30 +279,30 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         # Calling `tracer.in_span` within an untraced context causes the logging of "called
         # finish on an ended Span" messages. To avoid log noise, the instrumentation must
         # no-op (i.e., not call `tracer.in_span`) when the context is untraced.
-        expect(instrumentation.tracer).not_to receive(:in_span)
+        instrumentation.tracer.stub(:in_span, ->(*) { flunk 'in_span should not be called' }) do
+          OpenTelemetry::Common::Utilities.untraced do
+            Net::HTTP.get('example.com', '/body')
+          end
 
-        OpenTelemetry::Common::Utilities.untraced do
-          Net::HTTP.get('example.com', '/body')
+          _(exporter.finished_spans.size).must_equal 0
         end
-
-        _(exporter.finished_spans.size).must_equal 0
       end
 
       it 'no-ops on #connect' do
-        expect(instrumentation.tracer).not_to receive(:in_span)
+        instrumentation.tracer.stub(:in_span, ->(*) { flunk 'in_span should not be called' }) do
+          OpenTelemetry::Common::Utilities.untraced do
+            uri = URI.parse('http://example.com/body')
+            http = Net::HTTP.new(uri.host, uri.port)
 
-        OpenTelemetry::Common::Utilities.untraced do
-          uri = URI.parse('http://example.com/body')
-          http = Net::HTTP.new(uri.host, uri.port)
+            # Mock the connect
+            http.define_singleton_method(:connect) { true }
 
-          # Mock the connect
-          http.define_singleton_method(:connect) { true }
+            http.send(:connect)
+            http.send(:do_finish)
+          end
 
-          http.send(:connect)
-          http.send(:do_finish)
+          _(exporter.finished_spans.size).must_equal 0
         end
-
-        _(exporter.finished_spans.size).must_equal 0
       end
     end
   end
