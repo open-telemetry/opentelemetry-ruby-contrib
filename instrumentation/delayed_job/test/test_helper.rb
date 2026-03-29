@@ -18,7 +18,7 @@ require 'active_support/core_ext/array/extract_options'
 require 'opentelemetry-instrumentation-delayed_job'
 
 require 'minitest/autorun'
-require 'rspec/mocks/minitest_integration'
+require 'minitest/mock'
 require 'webmock/minitest'
 
 # global opentelemetry-sdk setup:

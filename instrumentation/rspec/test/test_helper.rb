@@ -13,7 +13,7 @@ require_relative 'rspec_patches'
 require 'rspec/core'
 
 require 'minitest/autorun'
-require 'rspec/mocks/minitest_integration'
+require 'minitest/mock'
 require 'webmock/minitest'
 
 # global opentelemetry-sdk setup:

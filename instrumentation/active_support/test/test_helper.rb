@@ -13,7 +13,7 @@ require 'active_support/core_ext'
 require 'opentelemetry-instrumentation-active_support'
 
 require 'minitest/autorun'
-require 'rspec/mocks/minitest_integration'
+require 'minitest/mock'
 require 'webmock/minitest'
 
 # global opentelemetry-sdk setup:

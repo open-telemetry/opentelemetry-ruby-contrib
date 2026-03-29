@@ -12,7 +12,7 @@ require 'active_support/all'
 require 'opentelemetry-instrumentation-active_model_serializers'
 
 require 'minitest/autorun'
-require 'rspec/mocks/minitest_integration'
+require 'minitest/mock'
 require 'webmock/minitest'
 
 # disable logging

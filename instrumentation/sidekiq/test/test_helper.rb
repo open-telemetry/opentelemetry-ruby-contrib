@@ -9,7 +9,7 @@ require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
-require 'rspec/mocks/minitest_integration'
+require 'minitest/mock'
 require 'rails'
 require 'active_job'
 require 'sidekiq/rails'

@@ -12,7 +12,7 @@ Bundler.require(:default, :development, :test)
 require 'active_job'
 require 'opentelemetry-instrumentation-active_job'
 require 'minitest/autorun'
-require 'rspec/mocks/minitest_integration'
+require 'minitest/mock'
 
 class TestJob < ActiveJob::Base
   def perform; end

@@ -11,7 +11,7 @@ require 'rack/events'
 require 'opentelemetry-instrumentation-rack'
 
 require 'minitest/autorun'
-require 'rspec/mocks/minitest_integration'
+require 'minitest/mock'
 require 'webmock/minitest'
 
 # global opentelemetry-sdk setup:
