@@ -210,7 +210,7 @@ services:
       - "16379:6379"
 
   rabbitmq:
-    image: rabbitmq:3.13.7-alpine@sha256:d7af1c87c5f1eda13fcfca06db452bf3aeab6619fc3358b68535c0c02c4e52bc
+    image: rabbitmq:4.2.5-alpine@sha256:53e51f8469ef13d0a1a2b03c0d36dcf4efbf13089f552440ec5620ca07f2c64e
     ports:
       - "5672:5672"
 
