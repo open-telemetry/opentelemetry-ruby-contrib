@@ -17,5 +17,5 @@ gem 'opentelemetry-registry', '~> 0.1'
 gem 'opentelemetry-sdk', '~> 1.1'
 
 gem 'rake', '>= 13'
-gem 'rubocop', '~> 1.85.0'
+gem 'rubocop', '~> 1.86.0'
 gem 'rubocop-performance', '~> 1.26.0'
