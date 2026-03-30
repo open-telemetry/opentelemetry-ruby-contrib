@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "check": "npm run check:lint && npm run check:format && npm run check:links && npm run check:spelling",
+    "check": "npm run check:lint && npm run check:format && npm run check:links && npm run check:spelling && npm run check:source:ruby",
     "check:format": "npm run check:format:ruby && prettier . --check",
     "check:format:json": "prettier **/*.json --check",
     "check:format:markdown": "prettier **/*.md --check",
@@ -13,6 +13,7 @@
     "check:lint:ruby": "rubocop --only Lint,Naming,Style",
     "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Security",
     "check:spelling": "cspell -c .cspell.yml .",
+    "write": "npm run write:lint && npm run write:format && npm run write:source:ruby",
     "write:format": "npm run write:format:ruby && prettier . --write",
     "write:format:json": "prettier **/*.json --write",
     "write:format:markdown": "prettier **/*.md --write",

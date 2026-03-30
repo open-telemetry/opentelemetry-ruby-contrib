@@ -1,0 +1,41 @@
+name: File Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "Gemfile"
+      - "Gemfile.lock"
+      - ".github/workflows/ci-checks-local.yml"
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  automated-checks:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    name: Automated Checks / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run All Checks
+        run: npm run check
