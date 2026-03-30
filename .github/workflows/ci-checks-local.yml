@@ -34,8 +34,13 @@ jobs:
           cache: "npm"
           node-version: "24"
 
-      - name: install dependencies
-        run: npm ci --ignore-scripts
+      - name: Install Ruby
+        uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1.299.0
+        with:
+          ruby-version: "3.2.10"
+
+      - name: Install Tools
+        run: npm ci --ignore-scripts && bundle install
 
       - name: Run All Checks
         run: npm run check
