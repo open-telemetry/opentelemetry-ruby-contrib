@@ -309,6 +309,8 @@ instrumentation_kafka:
         - ubuntu-latest
 ```
 
+The final step is adding the path to the docker-compose.yml snippet to the path list for your instrumentation in `.github/labeler.yml` which is necessary for the build system.
+
 #### Adding a New Service
 
 Assuming your external service is not supported, you may consider adding it as a new job in the `/.github/workflows/ci-service-instrumentation.yml` file, however we will accept new services on a case-by-case basis.
