@@ -1,0 +1,725 @@
+name: opentelemetry-ruby-contrib
+services:
+  app:
+    build:
+      context: /home/james/repos/opentelemetry-ruby-contrib
+      dockerfile: Dockerfile
+    command:
+      - /bin/bash
+    depends_on:
+      jaeger:
+        condition: service_started
+        required: true
+      kafka:
+        condition: service_started
+        required: true
+      memcached:
+        condition: service_started
+        required: true
+      mongo:
+        condition: service_started
+        required: true
+      mysql:
+        condition: service_started
+        required: true
+      otelcol:
+        condition: service_started
+        required: true
+      postgres:
+        condition: service_started
+        required: true
+      rabbitmq:
+        condition: service_started
+        required: true
+      redis:
+        condition: service_started
+        required: true
+    environment:
+      MEMCACHED_URL: memcached:11211
+      TEST_MYSQ_DB: mysql
+      TEST_MYSQL_HOST: mysql
+      TEST_MYSQL_PORT: "3306"
+      TEST_MYSQL_ROOT_PASSWORD: root
+      TEST_MYSQL_USER: root
+      TEST_POSTGRES_DB: postgres
+      TEST_POSTGRES_HOST: postgres
+      TEST_POSTGRES_PASSWORD: postgres
+      TEST_POSTGRES_PORT: "5432"
+      TEST_POSTGRES_USER: postgres
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app
+  base:
+    command:
+      - /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+  ex-instrumentation-bunny:
+    command:
+      - /bin/bash
+    depends_on:
+      rabbitmq:
+        condition: service_started
+        required: true
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/bunny/example
+  ex-instrumentation-concurrent-ruby:
+    command:
+      - /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/concurrent_ruby/example
+  ex-instrumentation-dalli:
+    command:
+      - /bin/bash
+    depends_on:
+      memcached:
+        condition: service_started
+        required: true
+    environment:
+      MEMCACHED_URL: memcached:11211
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/dalli/example
+  ex-instrumentation-delayed_job:
+    command:
+      - /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/delayed_job/example
+  ex-instrumentation-ethon:
+    command:
+      - /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/ethon/example
+  ex-instrumentation-excon:
+    command:
+      - /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/excon/example
+  ex-instrumentation-faraday:
+    command:
+      - /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/faraday/example
+  ex-instrumentation-mysql2:
+    command:
+      - /bin/bash
+    depends_on:
+      mysql:
+        condition: service_started
+        required: true
+    environment:
+      TEST_MYSQ_DB: mysql
+      TEST_MYSQL_HOST: mysql
+      TEST_MYSQL_PORT: "3306"
+      TEST_MYSQL_ROOT_PASSWORD: root
+      TEST_MYSQL_USER: root
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/mysql2/example
+  ex-instrumentation-mysql2-test:
+    command:
+      - /bin/bash
+    depends_on:
+      mysql:
+        condition: service_started
+        required: true
+    environment:
+      TEST_MYSQ_DB: mysql
+      TEST_MYSQL_HOST: mysql
+      TEST_MYSQL_PORT: "3306"
+      TEST_MYSQL_ROOT_PASSWORD: root
+      TEST_MYSQL_USER: root
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/mysql2/
+  ex-instrumentation-net-http:
+    command:
+      - /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/net_http/example
+  ex-instrumentation-net-ldap:
+    command:
+      - /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/net_ldap/example
+  ex-instrumentation-pg:
+    command:
+      - /bin/bash
+    depends_on:
+      postgres:
+        condition: service_started
+        required: true
+    environment:
+      OTEL_TRACES_EXPORTER: console
+      TEST_POSTGRES_DB: postgres
+      TEST_POSTGRES_HOST: postgres
+      TEST_POSTGRES_PASSWORD: postgres
+      TEST_POSTGRES_PORT: "5432"
+      TEST_POSTGRES_USER: postgres
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/pg/example
+  ex-instrumentation-pg-test:
+    command:
+      - /bin/bash
+    depends_on:
+      postgres:
+        condition: service_started
+        required: true
+    environment:
+      TEST_POSTGRES_DB: postgres
+      TEST_POSTGRES_HOST: postgres
+      TEST_POSTGRES_PASSWORD: postgres
+      TEST_POSTGRES_PORT: "5432"
+      TEST_POSTGRES_USER: postgres
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+      - type: volume
+        source: postgres_socket
+        target: /var/run/postgresql
+        volume: {}
+    working_dir: /app/instrumentation/pg/
+  ex-instrumentation-que:
+    command:
+      - /bin/bash
+    depends_on:
+      postgres:
+        condition: service_started
+        required: true
+    environment:
+      TEST_POSTGRES_DB: postgres
+      TEST_POSTGRES_HOST: postgres
+      TEST_POSTGRES_PASSWORD: postgres
+      TEST_POSTGRES_PORT: "5432"
+      TEST_POSTGRES_USER: postgres
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/que
+  ex-instrumentation-rack:
+    command:
+      - /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/rack/example
+  ex-instrumentation-restclient:
+    command:
+      - /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/restclient/example
+  ex-instrumentation-sinatra:
+    command:
+      - ./start_server.sh
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/instrumentation/sinatra/example
+  jaeger:
+    image: jaegertracing/jaeger:2.16.0@sha256:bf7f805da4c2bc8d58a6c81ee650fdb6b8e4287698f95fbe231c09c865bc397f
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 16686
+        published: "16686"
+        protocol: tcp
+  kafka:
+    depends_on:
+      zookeeper:
+        condition: service_started
+        required: true
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://kafka:9092
+      KAFKA_BROKER_ID: "1"
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    image: confluentinc/cp-kafka:7.9.6@sha256:9e178783dba8cf44cd8b1d260f548a587a21235921957edd4ed7aa7d060b0852
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 9092
+        published: "9092"
+        protocol: tcp
+      - mode: ingress
+        target: 29092
+        published: "29092"
+        protocol: tcp
+  memcached:
+    command:
+      - memcached
+      - -m
+      - "64"
+    image: memcached:1.6.40-alpine@sha256:8a82a3927694e42bc52679dc81532244de51e5faed5f9541a1283e3ad7271db1
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 11211
+        published: "11211"
+        protocol: tcp
+  mongo:
+    expose:
+      - "27017"
+    image: mongo:6.0.27@sha256:03cda579c8caad6573cb98c2b3d5ff5ead452a6450561129b89595b4b9c18de2
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 27017
+        published: "27017"
+        protocol: tcp
+  mysql:
+    command:
+      - mysqld
+      - --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: mysql
+      MYSQL_PASSWORD: mysql
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: mysql
+    expose:
+      - "3306"
+    image: mysql:8.0.31@sha256:3d7ae561cf6095f6aca8eb7830e1d14734227b1fb4748092f2be2cfbccf7d614
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 3306
+        published: "3306"
+        protocol: tcp
+  otelcol:
+    command:
+      - --config=/etc/otelcol-config.yml
+    depends_on:
+      jaeger:
+        condition: service_started
+        required: true
+    image: otel/opentelemetry-collector:0.148.0@sha256:1c7c8745b2f64fe1c4e4cd47afa77178e8efa22ecb756e788d7e0b74a316d88c
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 4317
+        published: "4317"
+        protocol: tcp
+      - mode: ingress
+        target: 4318
+        published: "4318"
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib/otelcol-config.yml
+        target: /etc/otelcol-config.yml
+        bind:
+          create_host_path: true
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: postgres
+    expose:
+      - "5432"
+    image: postgres:14.22@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 5432
+        published: "5432"
+        protocol: tcp
+    volumes:
+      - type: volume
+        source: postgres_socket
+        target: /var/run/postgresql
+        volume: {}
+  processor-baggage-test:
+    command:
+      - bash
+      - -c
+      - bundle install && rake
+    image: opentelemetry/opentelemetry-ruby-contrib
+    networks:
+      default: null
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: 1000:1000
+    volumes:
+      - type: bind
+        source: /home/james/repos/opentelemetry-ruby-contrib
+        target: /app
+        bind:
+          create_host_path: true
+      - type: volume
+        source: bundle
+        target: /bundle
+        volume: {}
+    working_dir: /app/processor/baggage
+  rabbitmq:
+    image: rabbitmq:4.2.5-alpine@sha256:53e51f8469ef13d0a1a2b03c0d36dcf4efbf13089f552440ec5620ca07f2c64e
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 5672
+        published: "5672"
+        protocol: tcp
+  redis:
+    command:
+      - redis-server
+      - --requirepass
+      - passw0rd
+    image: redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 6379
+        published: "16379"
+        protocol: tcp
+    volumes:
+      - type: volume
+        source: redis_data
+        target: /data
+        volume: {}
+  zookeeper:
+    environment:
+      ZOOKEEPER_CLIENT_PORT: "2181"
+      ZOOKEEPER_TICK_TIME: "2000"
+    image: confluentinc/cp-zookeeper:7.9.6@sha256:d3294ad2b353ac5a155ad9abe37884f75c482f387af553679210303b7118a0d3
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 2181
+        published: "2181"
+        protocol: tcp
+networks:
+  default:
+    name: opentelemetry-ruby-contrib_default
+volumes:
+  bundle:
+    name: opentelemetry-ruby-contrib_bundle
+  postgres_socket:
+    name: opentelemetry-ruby-contrib_postgres_socket
+  redis_data:
+    name: opentelemetry-ruby-contrib_redis_data
+x-shared-config:
+  base:
+    extends:
+      file: ./base.yml
