@@ -72,6 +72,7 @@ instrumentation-bunny:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/bunny/**"
+          - ".docker/infra/rabbitmq/**"
 instrumentation-concurrent_ruby:
   - changed-files:
       - any-glob-to-any-file:
@@ -80,6 +81,8 @@ instrumentation-dalli:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/dalli/**"
+          - ".docker/infra/memcached/**"
+          - ".docker/infra/mongo/**"
 instrumentation-delayed_job:
   - changed-files:
       - any-glob-to-any-file:
@@ -144,10 +147,12 @@ instrumentation-mongo:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/mongo/**"
+          - ".docker/infra/mongo/**"
 instrumentation-mysql2:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/mysql2/**"
+          - ".docker/infra/mysql/**"
 instrumentation-net_http:
   - changed-files:
       - any-glob-to-any-file:
@@ -160,14 +165,17 @@ instrumentation-pg:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/pg/**"
+          - ".docker/infra/postgres/**"
 instrumentation-que:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/que/**"
+          - ".docker/infra/postgres/**"
 instrumentation-racecar:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/racecar/**"
+          - ".docker/infra/kafka/**"
 instrumentation-rack:
   - changed-files:
       - any-glob-to-any-file:
@@ -180,14 +188,17 @@ instrumentation-rdkafka:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/rdkafka/**"
+          - ".docker/infra/kafka/**"
 instrumentation-redis:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/redis/**"
+          - ".docker/infra/redis/**"
 instrumentation-resque:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/resque/**"
+          - ".docker/infra/redis/**"
 instrumentation-restclient:
   - changed-files:
       - any-glob-to-any-file:
@@ -200,10 +211,12 @@ instrumentation-ruby_kafka:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/ruby_kafka/**"
+          - ".docker/infra/kafka/**"
 instrumentation-sidekiq:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/sidekiq/**"
+          - ".docker/infra/redis/**"
 instrumentation-sinatra:
   - changed-files:
       - any-glob-to-any-file:
@@ -212,6 +225,7 @@ instrumentation-trilogy:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/trilogy/**"
+          - ".docker/infra/mysql/**"
 
 processor-baggage:
   - changed-files:

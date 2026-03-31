@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:14.22@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_socket:/var/run/postgresql
+
+volumes:
+  postgres_socket:
