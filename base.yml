@@ -1,5 +1,5 @@
-x-shared-config:
-  base: &base
+services:
+  base:
     command: /bin/bash
     image: opentelemetry/opentelemetry-ruby-contrib
     stdin_open: true
@@ -10,3 +10,6 @@ x-shared-config:
     volumes:
       - .:/app:cached
       - bundle:/bundle
+
+volumes:
+  bundle:
