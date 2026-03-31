@@ -13,9 +13,7 @@ on:
       - "sampler/**"
       - ".github/workflows/ci-contrib.yml"
       - ".github/actions/**"
-      - "Gemfile"
       - "Rakefile"
-      - ".rubocop.yml"
       - "gemspecs/**"
   pull_request:
     branches:

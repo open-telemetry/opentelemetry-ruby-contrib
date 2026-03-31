@@ -45,9 +45,7 @@ on:
       - "instrumentation/sinatra/**"
       - ".github/workflows/ci-instrumentation-full.yml"
       - ".github/actions/**"
-      - "Gemfile"
       - "Rakefile"
-      - ".rubocop.yml"
       - "gemspecs/**"
   pull_request:
     branches:
