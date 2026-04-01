@@ -6,7 +6,8 @@ on:
     branches:
       - main
     paths: &path_filters
-      - "instrumentation/all/**"
+      - "helpers/**"
+      - "instrumentation/**"
       - ".github/workflows/ci-instrumentation.yml"
       - ".github/actions/**"
       - "gemspecs/**"
