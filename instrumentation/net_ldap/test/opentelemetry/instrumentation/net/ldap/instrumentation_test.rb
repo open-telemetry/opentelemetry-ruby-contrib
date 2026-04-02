@@ -14,8 +14,7 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
   let(:ldap) do
-    Net::LDAP.new \
-      host: 'test.mocked.com', port: 636,
+    Net::LDAP.new host: 'test.mocked.com', port: 636,
       auth: {
         method: :simple,
         username: 'test_user',

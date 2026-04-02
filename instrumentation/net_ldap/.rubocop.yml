@@ -1,6 +1,1 @@
 inherit_from: ../../.rubocop.yml
-
-Style/RedundantLineContinuation:
-  Enabled: true
-  Exclude:
-    - "test/opentelemetry/instrumentation/net/ldap/instrumentation_test.rb"
