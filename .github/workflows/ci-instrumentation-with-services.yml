@@ -23,9 +23,7 @@ on:
       - "instrumentation/trilogy/**"
       - ".github/workflows/ci-instrumentation-with-services.yml"
       - ".github/actions/**"
-      - "Gemfile"
       - "Rakefile"
-      - ".rubocop.yml"
       - "gemspecs/**"
   pull_request:
     branches:
