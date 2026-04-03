@@ -380,7 +380,7 @@ instrumentation_silver:
       # ...
 ```
 
-The final step in adding a new service is to define a renovate package rule which manages the min major version of the service tested against.
+The final step in adding a new service is to define a renovate package rule to `.github/renovate.json5` which manages the min major version of the service tested against.
 
 ```json
     {
