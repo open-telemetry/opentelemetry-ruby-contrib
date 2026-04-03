@@ -32,7 +32,6 @@ jobs:
           - 4.0
           - 3.4
           - 3.3
-          - 3.2
     name: ${{ matrix.ruby-version }}
     runs-on: ubuntu-24.04
     steps:
