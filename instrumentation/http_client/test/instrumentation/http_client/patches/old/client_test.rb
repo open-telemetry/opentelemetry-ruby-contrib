@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
@@ -32,6 +33,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Old::Client do
     instrumentation.instance_variable_set(:@installed, false)
 
     OpenTelemetry.propagation = @orig_propagation
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe '#do_request' do

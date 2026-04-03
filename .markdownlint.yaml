@@ -1,13 +1,13 @@
 default: true
 
-emphasis-style: false
-line-length: false
-link-fragments: false
-list-marker-space: false
-no-emphasis-as-heading: false
-no-hard-tabs: false
+ul-style:
+  style: dash
+emphasis-style:
+  style: underscore
+strong-style:
+  style: asterisk
+line-length:
+  line_length: 500
 no-inline-html: false
-no-trailing-punctuation: false
-no-trailing-spaces: true
 custom-rules-below-this-point: false
-trim-code-block-and-unindent: true
+no-bare-urls: false

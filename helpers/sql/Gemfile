@@ -13,7 +13,7 @@ group :test do
   gem 'minitest', '~> 5.0'
   gem 'opentelemetry-test-helpers', '~> 0.3'
   gem 'rake', '>= 13'
-  gem 'rubocop', '~> 1.84.0'
+  gem 'rubocop', '~> 1.86.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'yard', '~> 0.9'
@@ -21,5 +21,6 @@ group :test do
     gem 'base64'
     gem 'logger'
     gem 'mutex_m'
+    gem 'logger'
   end
 end
