@@ -39,12 +39,12 @@ on:
       - "instrumentation/net_ldap/**"
       - "instrumentation/rack/**"
       - "instrumentation/rails/**"
+      - "instrumentation/rake/**"
       - "instrumentation/restclient/**"
       - "instrumentation/rspec/**"
       - "instrumentation/sinatra/**"
       - ".github/workflows/ci-instrumentation-full.yml"
       - ".github/actions/**"
-      - "Gemfile"
       - "Rakefile"
       - "gemspecs/**"
   pull_request:
@@ -106,6 +106,7 @@ jobs:
           - net_ldap
           - rack
           - rails
+          - rake
           - restclient
           - rspec
           - sinatra
@@ -131,11 +132,6 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
           coverage: true
           build: true
