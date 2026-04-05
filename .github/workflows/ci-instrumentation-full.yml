@@ -117,32 +117,34 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Set coverage threshold
-        id: cov
+      - name: Set environment variables
+        id: inputs
+        shell: bash
         run: |
-          echo "coverage=85" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "ethon"       ]] && echo "coverage=55" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "excon"       ]] && echo "coverage=57" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "faraday"     ]] && echo "coverage=65" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "http"        ]] && echo "coverage=59" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "http_client" ]] && echo "coverage=62" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "httpx"       ]] && echo "coverage=57" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "net_http"    ]] && echo "coverage=57" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "rack"        ]] && echo "coverage=58" >> $GITHUB_OUTPUT
-          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
-          true
+          dir=$(find . -iname 'opentelemetry-instrumentation-${{ matrix.gem }}.gemspec' -exec dirname {} \;)
+          echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
+
+          FILE="${dir}/.github-ci.yml"
+
+          if [[ -f "$FILE" ]]; then
+            echo "Loading env from $FILE"
+            # Convert YAML to key=value and export to GITHUB_ENV
+            yq '.env | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
+          else
+            echo "No env file found for this combination ($FILE). Skipping."
+          fi
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "4.0"
-          minimum_coverage: ${{ steps.cov.outputs.coverage }}
+          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
-          minimum_coverage: ${{ steps.cov.outputs.coverage }}
+          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -151,7 +153,7 @@ jobs:
           yard: true
           rubocop: true
           build: true
-          minimum_coverage: ${{ steps.cov.outputs.coverage }}
+          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
       - name: "JRuby Filter"
         id: jruby_skip
         shell: bash
@@ -184,4 +186,4 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "jruby-10.0.2.0"
-          minimum_coverage: ${{ steps.cov.outputs.coverage }}
+          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
