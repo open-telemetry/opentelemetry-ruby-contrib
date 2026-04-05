@@ -2,6 +2,7 @@ ci:
   - changed-files:
       - any-glob-to-any-file:
           - ".github/**"
+          - "**/.github-ci.yml"
 
 helpers-mysql:
   - changed-files:

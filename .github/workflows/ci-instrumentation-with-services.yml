@@ -208,7 +208,7 @@ jobs:
             # Convert YAML to key=value and export to GITHUB_ENV
             yq '.inputs | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
           else
-            echo "No env file found for this combination ($FILE). Skipping."
+            echo "No github ci file found in ($dir). Skipping."
           fi
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
