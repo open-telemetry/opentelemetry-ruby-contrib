@@ -138,13 +138,15 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "4.0"
-          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
+          minimum_coverage: ${{ env.minimum_coverage || 85 }}
+
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
-          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
+          minimum_coverage: ${{ env.minimum_coverage || 85 }}
+
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -153,7 +155,8 @@ jobs:
           yard: true
           rubocop: true
           build: true
-          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
+          minimum_coverage: ${{ env.minimum_coverage || 85 }}
+
       - name: "JRuby Filter"
         id: jruby_skip
         shell: bash
@@ -186,4 +189,5 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "jruby-10.0.2.0"
-          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
+          minimum_coverage: ${{ env.minimum_coverage || 85 }}
+
