@@ -129,6 +129,8 @@ jobs:
           [[ "${{ matrix.gem }}" == "httpx"       ]] && echo "coverage=57" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "net_http"    ]] && echo "coverage=57" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "rack"        ]] && echo "coverage=58" >> $GITHUB_OUTPUT
+          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
+          true
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
