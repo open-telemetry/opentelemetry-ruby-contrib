@@ -141,7 +141,6 @@ jobs:
           ruby: "3.2"
           yard: true
           rubocop: true
-          coverage: true
           build: true
       - name: "JRuby Filter"
         id: jruby_skip
