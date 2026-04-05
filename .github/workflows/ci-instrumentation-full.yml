@@ -184,3 +184,4 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "jruby-10.0.2.0"
+          minimum_coverage: ${{ steps.cov.outputs.coverage }}
