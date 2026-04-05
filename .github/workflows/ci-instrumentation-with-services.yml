@@ -194,25 +194,34 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Set coverage threshold
+      - name: Set environment variables
         id: inputs
+        shell: bash
         run: |
-          echo "minimum_coverage=85" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "redis" ]] && echo "minimum_coverage=75" >> $GITHUB_OUTPUT
-          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
-          true
+          dir=$(find . -iname 'opentelemetry-instrumentation-${{ matrix.gem }}.gemspec' -exec dirname {} \;)
+          echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
+
+          FILE="${dir}/.github-ci.yml"
+
+          if [[ -f "$FILE" ]]; then
+            echo "Loading env from $FILE"
+            # Convert YAML to key=value and export to GITHUB_ENV
+            yq '.inputs | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
+          else
+            echo "No env file found for this combination ($FILE). Skipping."
+          fi
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "4.0"
-          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
+          minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
-          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
+          minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -221,7 +230,7 @@ jobs:
           yard: true
           rubocop: true
           build: true
-          minimum_coverage: ${{ steps.inputs.outputs.minimum_coverage }}
+          minimum_coverage: ${{ env.minimum_coverage }}
     services:
       redis:
         image: redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93

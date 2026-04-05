@@ -161,7 +161,7 @@ runs:
       shell: bash
       # This starts a new simplecov run which tracks nothing of its own,
       # but merges with the existing coverage reports generated during testing.
-      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }}); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage || 85 }}); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem
