@@ -20,6 +20,8 @@ if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.5')
   end
 end
 
-appraise 'gruf-latest' do
-  gem 'gruf'
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('5')
+  appraise 'gruf-latest' do
+    gem 'gruf'
+  end
 end
