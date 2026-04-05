@@ -4,16 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.3')
-  appraise 'gruf-2.17' do
-    gem 'gruf', '~> 2.17.0'
-  end
-
-  appraise 'gruf-2.18' do
-    gem 'gruf', '~> 2.18.0'
-  end
-end
-
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.4')
   appraise 'gruf-2.19' do
     gem 'gruf', '~> 2.19.0'
@@ -21,6 +11,10 @@ if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.4')
 end
 
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.5')
+  appraise 'gruf-2.20' do
+    gem 'gruf', '~> 2.20.0'
+  end
+
   appraise 'gruf-2.21' do
     gem 'gruf', '~> 2.21.0'
   end
