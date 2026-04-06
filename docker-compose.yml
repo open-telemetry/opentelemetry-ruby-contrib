@@ -249,7 +249,7 @@ services:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.148.0@sha256:1c7c8745b2f64fe1c4e4cd47afa77178e8efa22ecb756e788d7e0b74a316d88c
+    image: otel/opentelemetry-collector:0.149.0@sha256:dd56aed607fd02f8ac01dddb27a859c0c2cc750539abce927803778fafc736ae
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml
