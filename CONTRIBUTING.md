@@ -426,7 +426,9 @@ For releases to succeed, new gems MUST include the following:
 
 ## Dependency updates
 
-This repository uses [Renovate](https://docs.renovatebot.com/) to keep dependencies up to date. Major updates to ruby dependencies will require a OpenTelemetry member's approval to be created via the [Dashboard](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1803). All other updates will be created according to the schedule with a limit of 10 pr's open simultaneously.
+This repository uses [Renovate](https://docs.renovatebot.com/) to keep dependencies up to date.
+Major updates to ruby dependencies will require a OpenTelemetry member's approval to be created via the [Dashboard](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1803). 
+All other updates will be created according to the schedule with a limit of 10 pr's open simultaneously.
 
 ## Updating Ruby version requirements
 
