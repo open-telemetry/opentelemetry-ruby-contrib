@@ -1,2 +1,2 @@
-inputs:
+env:
   minimum_coverage: 62

@@ -129,7 +129,7 @@ jobs:
           if [[ -f "$FILE" ]]; then
             echo "Loading env from $FILE"
             # Convert YAML to key=value and export to GITHUB_ENV
-            yq '.inputs | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
+            yq '.env // {} | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
           else
             echo "No github file found for this combination ($FILE). Skipping."
           fi
