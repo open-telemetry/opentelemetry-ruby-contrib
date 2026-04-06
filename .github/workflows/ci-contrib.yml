@@ -13,14 +13,13 @@ on:
       - "sampler/**"
       - ".github/workflows/ci-contrib.yml"
       - ".github/actions/**"
-      - "Gemfile"
       - "Rakefile"
-      - ".rubocop.yml"
       - "gemspecs/**"
   pull_request:
     branches:
       - main
     paths: *path_filters
+  merge_group:
   schedule:
     - cron: "0 0 * * *"
 
@@ -28,8 +27,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
-  cancel-in-progress: true # Cancel any previous runs of this workflow
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }} # Ensure that only one instance of this workflow is running per event type and ref
+  cancel-in-progress: true # Cancel any previous runs of this workflow for the same event type and ref
 
 jobs:
   helpers:
@@ -46,7 +45,7 @@ jobs:
     name: "helpers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -62,11 +61,6 @@ jobs:
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
           rubocop: true
           coverage: true
@@ -93,7 +87,7 @@ jobs:
     name: "propagator-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -109,11 +103,6 @@ jobs:
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
           rubocop: true
           build: true
@@ -139,7 +128,7 @@ jobs:
     name: "opentelemetry-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -155,11 +144,6 @@ jobs:
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
           rubocop: true
           coverage: true
@@ -183,7 +167,7 @@ jobs:
     name: "processors-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -199,11 +183,6 @@ jobs:
         with:
           gem: "opentelemetry-processor-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
           rubocop: true
           coverage: true
@@ -227,7 +206,7 @@ jobs:
     name: "samplers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -243,11 +222,6 @@ jobs:
         with:
           gem: "opentelemetry-sampler-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-sampler-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
           rubocop: true
           coverage: true

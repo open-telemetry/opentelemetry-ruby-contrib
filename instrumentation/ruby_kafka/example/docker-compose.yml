@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   app:
-    image: ruby:3.4-slim@sha256:dcc535e858eeeac1f70eaf8c39ef7ee257b183a9e495cc5a9ef3e340eadf2d3d
+    image: ruby:3.4.8-slim@sha256:ff7780d9fc05a54690c722ee0621bae2aa818331be88ebbeb0f5e7bd7cdb7f37
     volumes:
       - ../.:/app
     working_dir: /app/example
@@ -15,7 +15,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
   kafka:
-    image: confluentinc/cp-kafka:7.9.5@sha256:c4c6b755551da17fff056b9c8b39700f99020083bd2d69a171ece4784f33e640
+    image: confluentinc/cp-kafka:7.9.6@sha256:9e178783dba8cf44cd8b1d260f548a587a21235921957edd4ed7aa7d060b0852
     ports:
       - "9092:9092"
       - "29092:29092"
@@ -29,7 +29,7 @@ services:
     depends_on:
       - zookeeper
   jaeger:
-    image: jaegertracing/all-in-one@sha256:ab6f1a1f0fb49ea08bcd19f6b84f6081d0d44b364b6de148e1798eb5816bacac
+    image: jaegertracing/jaeger:2.16.0@sha256:bf7f805da4c2bc8d58a6c81ee650fdb6b8e4287698f95fbe231c09c865bc397f
     ports:
       - "16686:16686"
       - "4318:4318"

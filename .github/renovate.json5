@@ -1,96 +1,159 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
     "config:best-practices",
     "helpers:pinGitHubActionDigestsToSemver",
-    ":separateMultipleMajorReleases"
+    ":separateMultipleMajorReleases",
   ],
-  "packageRules": [
+  prConcurrentLimit: 12,
+  packageRules: [
     {
-      "groupName": "all patch versions",
-      "matchDepNames": ["!ruby"],
-      "matchUpdateTypes": ["patch"],
-      "schedule": ["before 8am every weekday"]
+      groupName: "all patch versions",
+      matchDepNames: ["!ruby"],
+      matchUpdateTypes: ["patch"],
+      schedule: ["before 6am every weekday"],
     },
     {
-      "groupName": "all digest versions",
-      "matchDepNames": ["!ruby"],
-      "matchUpdateTypes": ["digest"],
-      "schedule": ["before 8am every weekday"]
+      groupName: "all digest versions",
+      matchDepNames: ["!ruby"],
+      matchUpdateTypes: ["digest"],
+      schedule: ["before 6am every weekday"],
     },
     {
-      "matchDepNames": ["ruby"],
-      "matchUpdateTypes": ["digest","patch"],
-      "schedule": ["before 8am every weekday"]
+      matchDepNames: ["ruby"],
+      matchUpdateTypes: ["digest", "patch"],
+      schedule: ["before 6am every weekday"],
     },
     {
-      "matchUpdateTypes": ["minor"],
-      "schedule": ["before 8am on Monday"]
+      description: "Separate ruby updates so that patches can be installed after new minor has been released.",
+      matchDepNames: ["ruby"],
+      separateMultipleMinor: true,
+      separateMinorPatch: true,
     },
     {
-      "matchUpdateTypes": ["major"],
-      "matchCategories": ["ci", "js"],
-      "schedule": ["before 8am on Monday"]
+      description: "Group min ruby updates into a single update which needs to be approved via the dashboard.",
+      groupName: "Min-Ruby-sdk",
+      dependencyDashboardCategory: "Min Ruby Runtime",
+      matchDepNames: ["ruby"],
+      matchFileNames: [
+        ".github/workflows/ci-markdown-checks.yml",
+        "**/*.gemspec",
+      ],
+      matchUpdateTypes: ["minor", "major"],
+      dependencyDashboardApproval: true,
     },
     {
-      "matchUpdateTypes": ["major"],
-      "matchCategories": ["ruby", "docker"],
-      "dependencyDashboardApproval": true
+      matchUpdateTypes: ["minor"],
+      matchDepNames: ["!ruby"],
+      matchFileNames: ["!.github/workflows/ci-markdown-checks.yml"],
+      schedule: ["before 7am on Monday"],
     },
     {
-      "allowedVersions": "<={{add major 1}}",
-      "matchCategories": ["docker"],
-      "schedule": ["before 8am on Monday"],
-      "dependencyDashboardApproval": false
+      matchUpdateTypes: ["major"],
+      schedule: ["before 8am on Monday"],
     },
     {
-      "matchFileNames": [".github/actions/test_gem/action.yml", ".github/workflows/installation-tests.yml", ".github/workflows/release-*.yml"],
-      "ignoreDeps": ["ruby"]
-    }
+      matchDepNames: ["actions/setup-node", "ruby/setup-ruby"],
+      schedule: ["before 6am every weekday"],
+      prConcurrentLimit: 0,
+      automerge: true,
+    },
+    {
+      description: "Wait until current major postgres is EoL before updating",
+      dependencyDashboardCategory: "Min Docker service",
+      matchUpdateTypes: ["major"],
+      matchDepNames: ["postgres"],
+      minimumReleaseAge: "1460 days",
+    },
+    {
+      description: "Wait until current major/minor kafka is EoL before updating",
+      dependencyDashboardCategory: "Min Docker service",
+      matchUpdateTypes: ["major", "minor"],
+      matchDepNames: ["confluentinc/cp-kafka"],
+      minimumReleaseAge: "730 days",
+    },
+    {
+      description: "Wait until current major mysql is EoL before updating",
+      dependencyDashboardCategory: "Min Docker service",
+      matchUpdateTypes: ["major"],
+      matchDepNames: ["mysql"],
+      minimumReleaseAge: "1765 days",
+    },
   ],
-  "customManagers": [
+  customManagers: [
     {
-      "customType": "regex",
-      "description": "Update Package version in Dockerfiles",
-      "managerFilePatterns": [
+      customType: "regex",
+      description: "Update Package version in Dockerfiles",
+      managerFilePatterns: [
         "/(^|/|\\.)Dockerfile$/",
-        "/(^|/)Dockerfile\\.[^/]*$/"
+        "/(^|/)Dockerfile\\.[^/]*$/",
       ],
-      "matchStrings": [
-        "FROM\\s+(?<packageName>.+?):(?<depVersion>[^\\s@]+?)-alpine(?<alpineVersion>\\d+(?:\\.\\d+)?(?:\\.\\d+)?(?:-\\w+)?)(?:(@(?<currentDigest>[sha256:]?\\s+)))?.*\\s"
+      matchStrings: [
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
       ],
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "loose",
-      "currentValueTemplate": "{{depVersion}}",
-      "extractVersionTemplate": "^(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)-alpine{{alpineVersion}}$"
+      datasourceTemplate: "docker",
+      versioningTemplate: "docker",
+      currentValueTemplate: "{{depVersion}}",
+      extractVersionTemplate: "^(?<version>[0-9.]+)-alpine{{alpineVersion}}$",
+      autoReplaceStringTemplate: "FROM {{packageName}}:{{newVersion}}-alpine{{alpineVersion}}@{{newDigest}} ",
     },
     {
-      "customType": "regex",
-      "description": "Update os version in Dockerfiles",
-      "managerFilePatterns": [
+      customType: "regex",
+      description: "Update os version in Dockerfiles",
+      managerFilePatterns: [
         "/(^|/|\\.)Dockerfile$/",
-        "/(^|/)Dockerfile\\.[^/]*$/"
+        "/(^|/)Dockerfile\\.[^/]*$/",
       ],
-      "matchStrings": [
-        "FROM\\s+(?<packageName>.+?):(?<depVersion>[^\\s@]+?)-alpine(?<alpineVersion>\\d+(?:\\.\\d+)?(?:\\.\\d+)?(?:-\\w+)?)(?:(@(?<currentDigest>[sha256:]?\\s+)))?.*\\s"
+      matchStrings: [
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
       ],
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "loose",
-      "currentValueTemplate": "{{alpineVersion}}",
-      "extractVersionTemplate": "^{{depVersion}}-alpine(?<version>\\d+(?:\\.\\d+)?(?:\\.\\d+)?)$",
-      "depNameTemplate": "{{packageName}}-alpine"
-    }
+      datasourceTemplate: "docker",
+      versioningTemplate: "docker",
+      currentValueTemplate: "{{alpineVersion}}",
+      extractVersionTemplate: "^{{depVersion}}-alpine(?<version>[0-9.]+)$",
+      depNameTemplate: "{{packageName}}-alpine",
+      autoReplaceStringTemplate: "FROM {{packageName}}:{{depVersion}}-alpine{{newVersion}}@{{newDigest}} ",
+    },
+    {
+      customType: "regex",
+      description: "Update entrypoint docker versions in services",
+      managerFilePatterns: [
+        ".github/workflows/ci-instrumentation-with-services.yml",
+      ],
+      matchStrings: [
+        "entrypoint sh (?<packageName>.+?):(?<depVersion>[0-9.]+?)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s-c",
+        "entrypoint sh (?<packageName>.+?):(?<depVersion>[0-9.]+?)\\s-c",
+      ],
+      datasourceTemplate: "docker",
+      versioningTemplate: "docker",
+      currentValueTemplate: "{{depVersion}}",
+      autoReplaceStringTemplate: "entrypoint sh {{packageName}}:{{newVersion}}@{{newDigest}} -c",
+    },
   ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": ["before 8am on Monday"],
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ["before 8am on Monday"],
   },
-  "labels": [
-    "dependencies"
+  labels: ["dependencies"],
+  ignoreDeps: [
+    "base64",
+    "bigdecimal",
+    "drb",
+    "logger",
+    "memcached",
+    "mongo",
+    "mutex_m",
+    "observer",
+    "ostruct",
   ],
-  "ignoreDeps": ["base64", "bigdecimal", "drb", "logger", "mutex_m", "observer", "ostruct"],
-  "ignorePaths": [
+  ignorePaths: [
     "**/example/Gemfile",
-    "releases/Gemfile"
-  ]
+    "releases/Gemfile",
+    "instrumentation/dalli/**",
+    "instrumentation/mongo/**",
+    "instrumentation/restclient/**",
+    "instrumentation/ruby_kafka/**",
+  ],
 }

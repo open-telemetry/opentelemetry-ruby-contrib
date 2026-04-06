@@ -18,7 +18,6 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
     exporter.reset
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:get, 'http://example.com/success?hello=there').to_return(status: 200)
@@ -230,7 +229,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
     it 'does not create a span on connect when request ignored using a regexp' do
       uri = URI.parse('http://bazqux.com')
 
-      Excon::Socket.new(hostname: uri.host, port: uri.port)
+      Excon::Socket.new(excon_socket_options(hostname: uri.host, port: uri.port))
 
       _(exporter.finished_spans).must_be_empty
     end
@@ -246,7 +245,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
     it 'creates a span on connect for a non-ignored request' do
       uri = URI.parse('http://example.com')
 
-      Excon::Socket.new(hostname: uri.host, port: uri.port)
+      Excon::Socket.new(excon_socket_options(hostname: uri.host, port: uri.port))
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal('connect')

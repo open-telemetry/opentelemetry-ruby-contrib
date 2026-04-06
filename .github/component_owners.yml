@@ -7,7 +7,6 @@ components:
   instrumentation/aws_sdk:
     - jterapin
     - alextwoods
-    - NathanielRN
   instrumentation/factory_bot:
     - americodls
   instrumentation/grape:
@@ -36,7 +35,13 @@ components:
   processor/baggage:
     - robbkidd
     - mikegoldsmith
+  resources/aws:
+    - jterapin
+    - alextwoods
+    - xuan-cao-swi
   resources/container:
     - scbjans
   sampler/xray:
+    - jterapin
+    - alextwoods
     - jj22ee

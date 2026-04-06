@@ -63,9 +63,8 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
 
   describe '#wait' do
     it 'does not trace' do
-      poller.stub(:random_poll_interval, 0.0) do
-        poller.send(:wait)
-      end
+      allow(poller).to receive(:random_poll_interval).and_return(0.0)
+      poller.send(:wait)
 
       _(spans.size).must_equal(0)
     end
@@ -74,9 +73,8 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
       let(:config) { { trace_poller_wait: true } }
 
       it 'traces' do
-        poller.stub(:random_poll_interval, 0.0) do
-          poller.send(:wait)
-        end
+        allow(poller).to receive(:random_poll_interval).and_return(0.0)
+        poller.send(:wait)
 
         span_names = spans.map(&:name)
         _(span_names).must_include('Sidekiq::Scheduled::Poller#wait')
