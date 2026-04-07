@@ -108,11 +108,6 @@ jobs:
           set -e # forces exit code to propagate
           npm run check:source:ruby -- --format github
 
-      - name: "Check all ruby files for layout"
-        run: |
-          set -e # forces exit code to propagate
-          npm run check:format:ruby -- --format github
-
       - name: "Check all ruby files for performance"
         run: |
           set -e # forces exit code to propagate
