@@ -11,6 +11,7 @@
     "check:lint:markdown": "markdownlint-cli2 '**/*.md'",
     "check:lint:renovate": "renovate-config-validator",
     "check:lint:ruby": "rubocop --only Lint,Naming,Style",
+    "check:performance:ruby": "rubocop --only Performance",
     "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Security",
     "check:spelling": "cspell -c .cspell.yml .",
     "write:format": "npm run write:format:ruby && prettier . --write",
