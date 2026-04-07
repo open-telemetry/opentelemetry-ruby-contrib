@@ -392,7 +392,7 @@ The final step in adding a new service is to define a renovate package rule to `
     },
 ```
 
-The days is to be calculated based on the expected age of the major version when it becomes the lowest major version which is not end of life.
+The `minimumReleaseAge` days value should be calculated based on the expected age of the major version when it becomes the lowest major version which is not end of life.
 In the above example, we wait until a major version has been available for 1460 days (4 years) which is calculated based on each major version of Postgres being supported for 5 years with a new major each year.
 Hence 5 years - 1 year = 4 years which works out to be the 1460 days.
 
