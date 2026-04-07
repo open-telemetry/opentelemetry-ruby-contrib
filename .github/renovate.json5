@@ -131,6 +131,18 @@
       currentValueTemplate: "{{depVersion}}",
       autoReplaceStringTemplate: "entrypoint sh {{packageName}}:{{newVersion}}@{{newDigest}} -c",
     },
+    {
+      customType: "regex",
+      description: "Update dependencies in Appraisals",
+      managerFilePatterns: ["**/Appraisals"],
+      matchStrings: [
+        "gem\\s'(?<packageName>.+?)',\\s'(?<depVersion>.+\\s[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
+      depTypeTemplate: "testDependency",
+    },
   ],
   lockFileMaintenance: {
     enabled: true,
