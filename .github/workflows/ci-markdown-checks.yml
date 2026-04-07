@@ -114,6 +114,11 @@ jobs:
           set -e # forces exit code to propagate
           npm run check:source:ruby -- --format github
 
+      - name: "Check all ruby files for performance"
+        run: |
+          set -e # forces exit code to propagate
+          npm run check:performance:ruby -- --format github
+
   yaml-lint-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: YAML Lint Check
