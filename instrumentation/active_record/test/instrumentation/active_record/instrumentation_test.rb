@@ -23,8 +23,9 @@ describe OpenTelemetry::Instrumentation::ActiveRecord do
 
   describe 'compatible' do
     it 'when a version below the minimum supported gem version is installed' do
-      allow(ActiveRecord).to receive(:version).and_return(Gem::Version.new('4.2.0'))
-      _(instrumentation.compatible?).must_equal false
+      ActiveRecord.stub(:version, Gem::Version.new('4.2.0')) do
+        _(instrumentation.compatible?).must_equal false
+      end
     end
 
     it 'when supported gem version installed' do

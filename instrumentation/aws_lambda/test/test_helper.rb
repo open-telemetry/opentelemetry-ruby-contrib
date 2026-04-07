@@ -11,7 +11,7 @@ Bundler.require(:default, :development, :test)
 require 'opentelemetry-instrumentation-aws_lambda'
 
 require 'minitest/autorun'
-require 'rspec/mocks/minitest_integration'
+require 'minitest/mock'
 
 class MockLambdaContext
   attr_reader :aws_request_id, :invoked_function_arn, :function_name

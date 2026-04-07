@@ -57,14 +57,16 @@ describe OpenTelemetry::Resource::Detector::GoogleCloudPlatform do
         gcp_env_mock.expect(:knative_service_revision, '2')
         gcp_env_mock.expect(:instance_zone, 'us-central1-a')
 
-        allow(Socket).to receive(:gethostname).and_return('opentelemetry-test')
-        old_hostname = ENV.fetch('HOSTNAME', nil)
-        ENV['HOSTNAME'] = 'opentelemetry-host-name-1'
-        begin
-          allow(Google::Cloud::Env).to receive(:new).and_return(gcp_env_mock)
-          detected_resource
-        ensure
-          ENV['HOSTNAME'] = old_hostname
+        Socket.stub(:gethostname, 'opentelemetry-test') do
+          old_hostname = ENV.fetch('HOSTNAME', nil)
+          ENV['HOSTNAME'] = 'opentelemetry-host-name-1'
+          begin
+            Google::Cloud::Env.stub(:new, gcp_env_mock) do
+              detected_resource
+            end
+          ensure
+            ENV['HOSTNAME'] = old_hostname
+          end
         end
       end
 

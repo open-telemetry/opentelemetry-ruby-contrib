@@ -262,11 +262,12 @@ describe OpenTelemetry::Helpers::MySQL do
         sql = (+'SELECT 1').force_encoding('ASCII-8BIT')
         result = nil
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-          allow(OpenTelemetry::Common::Utilities).to receive(:utf8_encode) { |_| raise 'boom!' }
-          result = OpenTelemetry::Helpers::MySQL.extract_statement_type(sql)
+          OpenTelemetry::Common::Utilities.stub(:utf8_encode, ->(_) { raise 'boom!' }) do
+            result = OpenTelemetry::Helpers::MySQL.extract_statement_type(sql)
 
-          assert_nil(result)
-          assert_match(/Error extracting/, log_stream.string)
+            assert_nil(result)
+            assert_match(/Error extracting/, log_stream.string)
+          end
         end
       end
     end

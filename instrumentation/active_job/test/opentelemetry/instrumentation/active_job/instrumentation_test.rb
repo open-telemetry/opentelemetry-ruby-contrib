@@ -23,8 +23,9 @@ describe OpenTelemetry::Instrumentation::ActiveJob do
 
   describe '#compatible' do
     it 'returns false for unsupported gem versions' do
-      allow(ActiveJob).to receive(:version).and_return(Gem::Version.new('4.2.0'))
-      _(instrumentation.compatible?).must_equal false
+      ActiveJob.stub(:version, Gem::Version.new('4.2.0')) do
+        _(instrumentation.compatible?).must_equal false
+      end
     end
 
     it 'returns true for supported gem versions' do

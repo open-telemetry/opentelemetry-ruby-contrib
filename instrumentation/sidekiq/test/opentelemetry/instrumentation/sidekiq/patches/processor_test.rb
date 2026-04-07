@@ -42,9 +42,13 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Processor do
     end
 
     it 'does not run inside an untraced block' do
-      expect(processor).to receive(:fetch) # accounts for #fetch calling untraced
-      expect(OpenTelemetry::Common::Utilities).not_to receive(:untraced)
-      processor.send(:process_one)
+      fetch_called = false
+      processor.stub(:fetch, ->(*) { fetch_called = true }) do
+        OpenTelemetry::Common::Utilities.stub(:untraced, ->(*) { flunk 'untraced should not be called' }) do
+          processor.send(:process_one)
+        end
+      end
+      assert fetch_called, 'expected fetch to be called'
     end
 
     describe 'when process_one tracing is enabled' do

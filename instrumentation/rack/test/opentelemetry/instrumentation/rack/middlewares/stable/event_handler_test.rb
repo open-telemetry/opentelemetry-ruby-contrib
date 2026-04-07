@@ -421,10 +421,16 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
       let(:response_propagators) { [EventMockPropagator.new, OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new] }
 
       it 'is fault tolerant' do
-        expect(OpenTelemetry).to receive(:handle_error).with(exception: instance_of(EventMockPropagator::CustomError), message: /Unable/)
-
-        get '/ping'
-        _(last_response.headers).must_include('traceresponse')
+        error_handled = false
+        OpenTelemetry.stub(:handle_error, ->(**kwargs) {
+          assert_instance_of EventMockPropagator::CustomError, kwargs[:exception]
+          assert_match(/Unable/, kwargs[:message])
+          error_handled = true
+        }) do
+          get '/ping'
+          _(last_response.headers).must_include('traceresponse')
+        end
+        assert error_handled, 'expected handle_error to be called'
       end
     end
   end

@@ -88,26 +88,28 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
         dalli.set('foo', 'bar')
         exporter.reset
 
-        allow(dalli.instance_variable_get(:@ring).servers.first).to receive(:write) { |_bytes| raise Dalli::NetworkError }
-        dalli.get_multi('foo', 'bar')
+        server_obj = dalli.instance_variable_get(:@ring).servers.first
+        server_obj.stub(:write, ->(_bytes) { raise Dalli::NetworkError }) do
+          dalli.get_multi('foo', 'bar')
 
-        if supports_retry_on_network_errors?
-          _(exporter.finished_spans.size).must_equal 2
-        else
-          _(exporter.finished_spans.size).must_equal 1
+          if supports_retry_on_network_errors?
+            _(exporter.finished_spans.size).must_equal 2
+          else
+            _(exporter.finished_spans.size).must_equal 1
+          end
+
+          _(span.name).must_equal 'getkq'
+          _(span.attributes['db.system']).must_equal 'memcached'
+          _(span.attributes['db.statement']).must_equal 'getkq foo bar'
+          _(span.attributes['db.operation']).must_equal 'getkq'
+          _(span.attributes['net.peer.name']).must_equal host
+          _(span.attributes['net.peer.port']).must_equal port
+
+          span_event = span.events.first
+          _(span_event.name).must_equal 'exception'
+          _(span_event.attributes['exception.type']).must_equal 'Dalli::NetworkError'
+          _(span_event.attributes['exception.message']).must_equal 'Dalli::NetworkError'
         end
-
-        _(span.name).must_equal 'getkq'
-        _(span.attributes['db.system']).must_equal 'memcached'
-        _(span.attributes['db.statement']).must_equal 'getkq foo bar'
-        _(span.attributes['db.operation']).must_equal 'getkq'
-        _(span.attributes['net.peer.name']).must_equal host
-        _(span.attributes['net.peer.port']).must_equal port
-
-        span_event = span.events.first
-        _(span_event.name).must_equal 'exception'
-        _(span_event.attributes['exception.type']).must_equal 'Dalli::NetworkError'
-        _(span_event.attributes['exception.message']).must_equal 'Dalli::NetworkError'
       end
 
       it 'omits db.statement' do
@@ -147,15 +149,17 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
         exporter.reset
 
         server = dalli.instance_variable_get(:@ring).servers.first
-        allow(server).to receive(:hostname).and_return('/tmp/memcached.sock')
-        allow(server).to receive(:port).and_return(nil)
-        dalli.set('foo', 'bar')
+        server.stub(:hostname, '/tmp/memcached.sock') do
+          server.stub(:port, nil) do
+            dalli.set('foo', 'bar')
 
-        puts exporter.finished_spans
-        _(exporter.finished_spans.size).must_equal 1
-        _(span.name).must_equal 'set'
-        _(span.attributes).wont_include 'net.peer.port'
-        _(span.attributes['net.peer.name']).must_equal '/tmp/memcached.sock'
+            puts exporter.finished_spans
+            _(exporter.finished_spans.size).must_equal 1
+            _(span.name).must_equal 'set'
+            _(span.attributes).wont_include 'net.peer.port'
+            _(span.attributes['net.peer.name']).must_equal '/tmp/memcached.sock'
+          end
+        end
       end
     end
   end
