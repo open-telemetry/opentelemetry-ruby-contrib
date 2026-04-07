@@ -2,6 +2,12 @@ name: File Checks
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+      - ready_for_review
   merge_group:
 
 permissions:
@@ -127,12 +133,16 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Extract PR title
+        id: pr
+        run: |
+          echo "${{ github.event.pull_request.title }}" > pr_title.md
       - uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
         with:
-          use_cspell_files: true
           config: .cspell.yml
           suggestions: true
           treat_flagged_words_as_errors: true
+          incremental_files_only: false
 
   format-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
