@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-grape
 
+## v0.7.0 / 2026-04-07
+
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+
 ## v0.6.0 / 2026-03-17
 
 - BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)

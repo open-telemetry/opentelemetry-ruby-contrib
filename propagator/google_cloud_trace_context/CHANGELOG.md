@@ -1,5 +1,10 @@
 # Release History: opentelemetry-propagator-google_cloud_trace_context
 
+## v0.4.0 / 2026-04-07
+
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+
 ## v0.3.0 / 2025-10-22
 
 - BREAKING CHANGE: Min Ruby Version 3.2

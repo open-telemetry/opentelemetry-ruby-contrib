@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-logger
 
+## v0.4.0 / 2026-04-07
+
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+
 ## v0.3.2 / 2026-03-17
 
 - FIXED: Return the original logger value instead of broadcasts array (#1988)
