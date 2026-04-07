@@ -84,7 +84,7 @@ runs:
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1.295.0
+      uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
@@ -94,17 +94,10 @@ runs:
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1.295.0
+      uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-    # Perms workaround. See https://github.com/actions/runner-images/issues/10215
-    - name: Fix GEM_HOME permissions on GitHub Actions Runner
-      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      shell: bash
-      run: |
-        # 🛠️😭 Fix GEM_HOME permissions 😭🛠️
-        chmod -R o-w $(gem env home)
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
