@@ -136,6 +136,18 @@
     },
     {
       customType: "regex",
+      description: "Update dependencies in Appraisals",
+      managerFilePatterns: ["**/Appraisals"],
+      matchStrings: [
+        "gem\\s'(?<packageName>.+?)',\\s'(?<depVersion>.+\\s[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
+      depTypeTemplate: "testDependency",
+    },
+    {
+      customType: "regex",
       description: "Update min sdk in gemspec",
       managerFilePatterns: ["**/*.gemspec"],
       matchStrings: [
