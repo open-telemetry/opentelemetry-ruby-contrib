@@ -60,8 +60,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler' 
   end
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
-
     ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
 

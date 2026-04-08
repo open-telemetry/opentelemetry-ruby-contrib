@@ -12,11 +12,15 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
   let(:config) { {} }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
 
     # simulate a fresh install:
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.config.clear
+  end
+
+  after do
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe 'given default config options' do

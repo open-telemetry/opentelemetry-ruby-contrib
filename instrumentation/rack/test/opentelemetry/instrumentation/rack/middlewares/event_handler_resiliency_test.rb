@@ -14,8 +14,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::EventHandler::Resil
     OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler.new
   end
 
-  before { skip unless ENV['BUNDLE_GEMFILE'].include?('old') }
-
   it 'reports unexpected errors without causing request errors' do
     allow(OpenTelemetry::Instrumentation::Rack).to receive(:current_span).and_raise('Bad news!')
     expect(OpenTelemetry).to receive(:handle_error).exactly(5).times

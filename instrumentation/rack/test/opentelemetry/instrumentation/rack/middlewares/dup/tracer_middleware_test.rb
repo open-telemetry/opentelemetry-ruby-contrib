@@ -33,8 +33,6 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::TracerMiddlewar
   let(:uri) { '/' }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
-
     ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
     # clear captured spans:
     exporter.reset
@@ -55,6 +53,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::TracerMiddlewar
     # installation is 'global', so it should be reset:
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(default_config)
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe '#call' do
