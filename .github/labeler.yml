@@ -3,6 +3,15 @@ ci:
       - any-glob-to-any-file:
           - ".github/**"
 
+deprecated:
+  - changed-files:
+      - any-glob-to-any-file:
+         - "helpers/sql-obfuscation/**"
+         - "instrumentation/dalli/**",
+         - "instrumentation/mongo/**",
+         - "instrumentation/restclient/**",
+         - "instrumentation/ruby_kafka/**",
+
 helpers-mysql:
   - changed-files:
       - any-glob-to-any-file:
