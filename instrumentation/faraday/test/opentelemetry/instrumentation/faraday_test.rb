@@ -56,8 +56,12 @@ describe OpenTelemetry::Instrumentation::Faraday do
   end
 
   describe 'tracing' do
-    before do
-      stub_request(:any, 'example.com')
+    let(:client) do
+      Faraday.new('http://example.com') do |builder|
+        builder.adapter(:test) do |stub|
+          stub.get('/') { [200, {}, 'OK'] }
+        end
+      end
     end
 
     it 'before request' do
@@ -65,7 +69,7 @@ describe OpenTelemetry::Instrumentation::Faraday do
     end
 
     it 'after request' do
-      Faraday.new('http://example.com').get('/')
+      client.get('/')
 
       _(exporter.finished_spans.size).must_equal 1
     end
