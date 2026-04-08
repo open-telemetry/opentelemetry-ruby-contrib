@@ -1,0 +1,111 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'opentelemetry'
+
+module OpenTelemetry
+  module Instrumentation
+    module LMDB
+      module Patches
+        module Dup
+          # Module to prepend to LMDB::Database for instrumentation
+          module Database
+            STATEMENT_MAX_LENGTH = 500
+
+            def get(key)
+              statement = formatted_statement('GET', "GET #{key}")
+              attributes = {
+                'db.system' => 'lmdb',
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'GET'
+              }
+              if config[:db_statement] == :include
+                attributes['db.statement'] = statement
+                attributes['db.query.text'] = statement
+              end
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+              tracer.in_span("GET #{key}", attributes: attributes, kind: :client) do
+                super
+              end
+            end
+
+            def delete(key, value = nil)
+              statement = formatted_statement('DELETE', "DELETE #{key} #{value}".strip)
+              attributes = {
+                'db.system' => 'lmdb',
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'DELETE'
+              }
+              if config[:db_statement] == :include
+                attributes['db.statement'] = statement
+                attributes['db.query.text'] = statement
+              end
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+              tracer.in_span("DELETE #{key}", attributes: attributes, kind: :client) do
+                super
+              end
+            end
+
+            def put(key, value)
+              statement = formatted_statement('PUT', "PUT #{key} #{value}")
+              attributes = {
+                'db.system' => 'lmdb',
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'PUT'
+              }
+              if config[:db_statement] == :include
+                attributes['db.statement'] = statement
+                attributes['db.query.text'] = statement
+              end
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+              tracer.in_span("PUT #{key}", attributes: attributes, kind: :client) do
+                super
+              end
+            end
+
+            def clear
+              attributes = {
+                'db.system' => 'lmdb',
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'CLEAR'
+              }
+              if config[:db_statement] == :include
+                attributes['db.statement'] = 'CLEAR'
+                attributes['db.query.text'] = 'CLEAR'
+              end
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+              tracer.in_span('CLEAR', attributes: attributes, kind: :client) do
+                super
+              end
+            end
+
+            private
+
+            def formatted_statement(operation, statement)
+              statement = OpenTelemetry::Common::Utilities.truncate(statement, STATEMENT_MAX_LENGTH)
+              OpenTelemetry::Common::Utilities.utf8_encode(statement)
+            rescue StandardError => e
+              OpenTelemetry.logger.debug("non formattable LMDB statement #{statement}: #{e}")
+              "#{operation} BLOB (OMITTED)"
+            end
+
+            def config
+              LMDB::Instrumentation.instance.config
+            end
+
+            def tracer
+              LMDB::Instrumentation.instance.tracer
+            end
+          end
+        end
+      end
+    end
+  end
+end
