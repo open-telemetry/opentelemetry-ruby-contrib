@@ -6,7 +6,7 @@ ci:
 deprecated:
   - changed-files:
       - any-glob-to-any-file:
-          - "helpers/sql-obfuscation/**"
+          - "helpers/sql-obfuscation/**",
           - "instrumentation/dalli/**",
           - "instrumentation/mongo/**",
           - "instrumentation/restclient/**",
