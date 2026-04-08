@@ -14,7 +14,7 @@ gemspec
 
 group :test do
   gem 'appraisal', '~> 2.5'
-  gem 'minitest', '~> 6.0'
+  gem 'minitest', '~> 6.0.0'
   gem 'rspec-mocks', '~> 3.13.7'
   gem 'opentelemetry-sdk', '~> 1.0'
   gem 'opentelemetry-logs-sdk', '~> 0.1'
