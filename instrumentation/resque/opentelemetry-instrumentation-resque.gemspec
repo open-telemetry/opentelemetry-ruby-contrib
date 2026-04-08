@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-commit = ENV['GITHUB_SHA'] || 'main'
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'opentelemetry/instrumentation/resque/version'
@@ -30,7 +29,7 @@ Gem::Specification.new do |spec|
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
-    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/#{commit}/instrumentation/resque"
+    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/#{spec.name}/v{spec.version}/instrumentation/resque"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
     spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
