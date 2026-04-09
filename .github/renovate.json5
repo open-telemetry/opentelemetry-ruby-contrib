@@ -83,6 +83,15 @@
       matchDepNames: ["mysql"],
       minimumReleaseAge: "1765 days",
     },
+    {
+      description: "Require non-general dependencies in gemspec files to be approved",
+      dependencyDashboardCategory: "{{depType}} should be migrated to Gemfile",
+      matchCategories: ["custom"],
+      matchDepNames: ["!ruby"],
+      matchDepTypes: ["!dependency"],
+      matchFileNames: ["**/*.gemspec"],
+      dependencyDashboardApproval: true,
+    },
   ],
   customManagers: [
     {
@@ -146,6 +155,17 @@
       versioningTemplate: "ruby",
       currentValueTemplate: "{{depVersion}}",
       depTypeTemplate: "testDependency",
+    },
+    {
+      customType: "regex",
+      description: "Update dependencies in gemspecs",
+      managerFilePatterns: ["**/*.gemspec"],
+      matchStrings: [
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'(?<depVersion>.+\\s[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
     },
     {
       customType: "regex",
