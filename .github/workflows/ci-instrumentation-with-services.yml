@@ -76,7 +76,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           build: true
     services:
       memcached:
@@ -118,7 +117,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           build: true
     services:
       mysql:
@@ -156,7 +154,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           build: true
     services:
       zookeeper:
@@ -228,7 +225,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           build: true
           minimum_coverage: ${{ env.minimum_coverage }}
     services:
@@ -276,7 +272,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           build: true
     services:
       postgres:
@@ -318,7 +313,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           build: true
     services:
       rabbitmq:

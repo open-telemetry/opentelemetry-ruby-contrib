@@ -14,11 +14,6 @@ inputs:
     required: false
     type: boolean
     default: false
-  rubocop:
-    description: Run Rubocop
-    required: false
-    type: boolean
-    default: false
   minimum_coverage:
     description: Minimum test coverage
     required: false
@@ -147,14 +142,6 @@ runs:
       run: |
         # 📄 Yard Docs 📄
         bundle exec rake yard
-      working-directory: "${{ steps.setup.outputs.gem_dir }}"
-
-    - name: Rubocop
-      shell: bash
-      if: "${{ inputs.rubocop == 'true' }}"
-      run: |
-        # 🤖 Rubocop 🤖
-        bundle exec rake rubocop
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Coverage

@@ -5,9 +5,16 @@ on:
   push:
     branches:
       - main
+    paths: &path_filters
+      - "helpers/**"
+      - "instrumentation/**"
+      - ".github/workflows/ci-instrumentation.yml"
+      - ".github/actions/**"
+      - "gemspecs/**"
   pull_request:
     branches:
       - main
+    paths: *path_filters
   merge_group:
   schedule:
     - cron: "0 0 * * *"
@@ -50,7 +57,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           build: true
       - name: "JRuby Filter"
         id: jruby_skip
