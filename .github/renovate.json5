@@ -37,7 +37,7 @@
       matchDepNames: ["ruby"],
       matchFileNames: [
         ".github/workflows/ci-markdown-checks.yml",
-        ".github/workflows/ci-checks-local.yml"
+        ".github/workflows/ci-checks-local.yml",
         "**/*.gemspec",
       ],
       matchUpdateTypes: ["minor", "major"],
