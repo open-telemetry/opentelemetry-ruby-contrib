@@ -55,6 +55,51 @@ describe OpenTelemetry::Helpers::MySQL do
     end
   end
 
+  describe '.stable_database_span_name' do
+    let(:operation) { 'SELECT' }
+    let(:database_name) { 'mydb' }
+    let(:stable_span_name) { OpenTelemetry::Helpers::MySQL.stable_database_span_name(operation, database_name) }
+
+    describe 'when operation and database_name are present' do
+      it 'returns "{operation} {database_name}"' do
+        assert_equal('SELECT mydb', stable_span_name)
+      end
+    end
+
+    describe 'when only database_name is present' do
+      let(:operation) { nil }
+
+      it 'returns database_name' do
+        assert_equal('mydb', stable_span_name)
+      end
+    end
+
+    describe 'when only operation is present' do
+      let(:database_name) { nil }
+
+      it 'returns operation' do
+        assert_equal('SELECT', stable_span_name)
+      end
+    end
+
+    describe 'when both operation and database_name are nil' do
+      let(:operation) { nil }
+      let(:database_name) { nil }
+
+      it 'returns mysql as fallback' do
+        assert_equal('mysql', stable_span_name)
+      end
+    end
+
+    describe 'preserves operation case as provided' do
+      it 'does not normalize case' do
+        assert_equal('select mydb', OpenTelemetry::Helpers::MySQL.stable_database_span_name('select', 'mydb'))
+        assert_equal('SELECT mydb', OpenTelemetry::Helpers::MySQL.stable_database_span_name('SELECT', 'mydb'))
+        assert_equal('Select mydb', OpenTelemetry::Helpers::MySQL.stable_database_span_name('Select', 'mydb'))
+      end
+    end
+  end
+
   describe '.db_operation_and_name' do
     let(:operation) { 'operation' }
     let(:database_name) { 'database_name' }

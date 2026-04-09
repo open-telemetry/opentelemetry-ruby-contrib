@@ -6,10 +6,10 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/trilogy'
-require_relative '../../../../lib/opentelemetry/instrumentation/trilogy/patches/client'
+require_relative '../../../../../../lib/opentelemetry/instrumentation/trilogy'
+require_relative '../../../../../../lib/opentelemetry/instrumentation/trilogy/patches/old/client'
 
-describe OpenTelemetry::Instrumentation::Trilogy do
+describe 'OpenTelemetry::Instrumentation::Trilogy (old semconv)' do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans[1] }
@@ -35,6 +35,8 @@ describe OpenTelemetry::Instrumentation::Trilogy do
   let(:password) { ENV.fetch('TEST_MYSQL_PASSWORD', 'root') }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('old')
+
     exporter.reset
   end
 
