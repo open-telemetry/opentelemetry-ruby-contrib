@@ -262,7 +262,7 @@ jobs:
 
 #### JRuby Compatibility
 
-If your gem is incompatible with `JRuby`, you can exclude it from the matrix by adding an entry to the `/.github/workflows/ci-instrumentation.yml` file under `jobs/instrumentation/steps/[name="JRuby Filter"]`:
+If your gem is incompatible with `JRuby`, you can exclude it from the matrix by adding an entry to the `/.github/workflows/ci-instrumentation-full.yml` file under `jobs/instrumentation/steps/[name="JRuby Filter"]`:
 
 ```yaml
 - name: "JRuby Filter"
@@ -308,6 +308,8 @@ instrumentation_kafka:
       os:
         - ubuntu-latest
 ```
+
+The final step is adding the path to the docker-compose.yml snippet to the path list for your instrumentation in `.github/labeler.yml` which is necessary for the build system.
 
 #### Adding a New Service
 
