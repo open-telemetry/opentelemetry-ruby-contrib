@@ -428,7 +428,16 @@ For releases to succeed, new gems MUST include the following:
 
 This repository uses [Renovate](https://docs.renovatebot.com/) to keep dependencies up to date.
 Major updates to ruby dependencies will require a OpenTelemetry member's approval to be created via the [Dashboard](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/1803).
-All other updates will be created according to the schedule with a limit of 10 pr's open simultaneously.
+All other updates will be created according to the schedule with a limit of 12 pr's open simultaneously.
+
+To test the renovate configuration ie package rules, the below command can be run from the cli.
+
+```sh
+LOG_LEVEL=debug npx renovate --platform=local > test.log
+```
+
+This will produce a detailed log which will include a json object describing all the matched dependencies
+and of more interest what updates are available for each of the dependencies. 
 
 ## Updating Ruby version requirements
 
