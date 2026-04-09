@@ -163,6 +163,7 @@
   ignorePaths: [
     "**/example/Gemfile",
     "releases/Gemfile",
+    "helpers/sql-obfuscation/**",
     "instrumentation/dalli/**",
     "instrumentation/mongo/**",
     "instrumentation/restclient/**",
