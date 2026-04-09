@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-require_relative '../../../../../../lib/opentelemetry/instrumentation/net/http/http_helper'
+require_relative '../../../../../lib/opentelemetry/instrumentation/net/http/http_helper'
 
 describe OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper do
   let(:helper) { OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper }
@@ -69,4 +69,3 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper do
     end
   end
 end
-
