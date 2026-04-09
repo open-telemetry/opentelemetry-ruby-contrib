@@ -5,16 +5,9 @@ on:
   push:
     branches:
       - main
-    paths: &path_filters
-      - "helpers/**"
-      - "instrumentation/**"
-      - ".github/workflows/ci-instrumentation.yml"
-      - ".github/actions/**"
-      - "gemspecs/**"
   pull_request:
     branches:
       - main
-    paths: *path_filters
   merge_group:
   schedule:
     - cron: "0 0 * * *"
