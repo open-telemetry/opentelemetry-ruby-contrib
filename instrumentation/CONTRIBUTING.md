@@ -262,7 +262,7 @@ jobs:
 
 #### JRuby Compatibility
 
-If your gem is incompatible with `JRuby`, you can exclude it from the matrix by adding an entry to the `/.github/workflows/ci-instrumentation.yml` file under `jobs/instrumentation/steps/[name="JRuby Filter"]`:
+If your gem is incompatible with `JRuby`, you can exclude it from the matrix by adding an entry to the `/.github/workflows/ci-instrumentation-full.yml` file under `jobs/instrumentation/steps/[name="JRuby Filter"]`:
 
 ```yaml
 - name: "JRuby Filter"
@@ -308,6 +308,8 @@ instrumentation_kafka:
       os:
         - ubuntu-latest
 ```
+
+The final step is adding the path to the docker-compose.yml snippet to the path list for your instrumentation in `.github/labeler.yml` which is necessary for the build system.
 
 #### Adding a New Service
 
@@ -379,6 +381,22 @@ instrumentation_silver:
       image: my_service:latest
       # ...
 ```
+
+The final step in adding a new service is to define a renovate package rule to `.github/renovate.json5` which manages the min major version of the service tested against.
+
+```json
+    {
+      description: "Wait until current major postgres is EoL before updating",
+      dependencyDashboardCategory: "Min Docker service",
+      matchUpdateTypes: ["major"],
+      matchDepNames: ["postgres"],
+      minimumReleaseAge: "1460 days",
+    },
+```
+
+The `minimumReleaseAge` days value should be calculated based on the expected age of the major version when it becomes the lowest major version which is not end of life.
+In the above example, we wait until a major version has been available for 1460 days (4 years) which is calculated based on each major version of Postgres being supported for 5 years with a new major each year.
+Hence 5 years - 1 year = 4 years which works out to be the 1460 days.
 
 ## Documentation
 
