@@ -38,7 +38,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1.299.0
         with:
-          ruby-version: "3.2.10"
+          ruby-version: "3.2.11"
 
       - name: Install Tools
         run: npm ci --ignore-scripts && npx puppeteer browsers install chrome && bundle install
