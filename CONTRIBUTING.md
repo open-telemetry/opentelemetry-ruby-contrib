@@ -445,7 +445,7 @@ LOG_LEVEL=debug npx renovate --platform=local > test.log
 ```
 
 This will produce a detailed log which will include a json object describing all the matched dependencies
-and of more interest what updates are available for each of the dependencies. 
+and of more interest what updates are available for each of the dependencies.
 
 ## Updating Ruby version requirements
 
