@@ -6,15 +6,15 @@
 
 require 'test_helper'
 
-require_relative '../../../lib/opentelemetry/instrumentation/redis'
-require_relative '../../../lib/opentelemetry/instrumentation/redis/middlewares/old/redis_client'
+require_relative '../../../../../lib/opentelemetry/instrumentation/redis'
+require_relative '../../../../../lib/opentelemetry/instrumentation/redis/middlewares/dup/redis_client'
 
-# Tests for old semantic convention attributes via RedisClient middleware
-describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientInstrumentation do
+# Tests for dup semantic convention mode (both old and stable attributes) via RedisClient middleware
+describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientInstrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:password) { 'passw0rd' }
-  let(:redis_host) { ENV['TEST_REDIS_HOST'] }
+  let(:redis_host) { ENV.fetch('TEST_REDIS_HOST', nil) }
   let(:redis_port) { ENV['TEST_REDIS_PORT'].to_i }
   let(:last_span) { exporter.finished_spans.last }
 
@@ -31,9 +31,9 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
   end
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE']&.include?('old')
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('dup')
 
-    # ensure obfuscation is off if it was previously set in a different test
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database/dup'
     config = { db_statement: :include }
     instrumentation.install(config)
     exporter.reset
@@ -67,16 +67,23 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
       _(last_span.attributes['peer.service']).must_equal 'foo'
     end
 
-    it 'after authorization with Redis server' do
+    it 'after authorization with Redis server includes both old and new attributes' do
       client = redis_with_auth
 
       _(client.connected?).must_equal(true)
 
-      _(last_span.name).must_equal 'PIPELINED'
+      _(last_span.name).must_equal 'PIPELINE'
+      # Old attributes
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal 'HELLO ? ? ? ?'
       _(last_span.attributes['net.peer.name']).must_equal redis_host
       _(last_span.attributes['net.peer.port']).must_equal redis_port
+      # New attributes
+      _(last_span.attributes['db.system.name']).must_equal 'redis'
+      _(last_span.attributes['db.query.text']).must_equal 'HELLO ? ? ? ?'
+      _(last_span.attributes['server.address']).must_equal redis_host
+      # server.port only included if non-default (6379)
+      _(last_span.attributes['server.port']).must_equal redis_port if redis_port != 6379
     end
 
     it 'after calling auth lowercase' do
@@ -84,10 +91,15 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
       client.call('auth', password)
 
       _(last_span.name).must_equal 'AUTH'
+      # Old attributes
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal 'AUTH ?'
       _(last_span.attributes['net.peer.name']).must_equal redis_host
       _(last_span.attributes['net.peer.port']).must_equal redis_port
+      # New attributes
+      _(last_span.attributes['db.system.name']).must_equal 'redis'
+      _(last_span.attributes['db.query.text']).must_equal 'AUTH ?'
+      _(last_span.attributes['server.address']).must_equal redis_host
     end
 
     it 'after calling AUTH uppercase' do
@@ -95,13 +107,18 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
       client.call('AUTH', password)
 
       _(last_span.name).must_equal 'AUTH'
+      # Old attributes
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal 'AUTH ?'
       _(last_span.attributes['net.peer.name']).must_equal redis_host
       _(last_span.attributes['net.peer.port']).must_equal redis_port
+      # New attributes
+      _(last_span.attributes['db.system.name']).must_equal 'redis'
+      _(last_span.attributes['db.query.text']).must_equal 'AUTH ?'
+      _(last_span.attributes['server.address']).must_equal redis_host
     end
 
-    it 'after requests' do
+    it 'after requests includes both old and new attributes' do
       redis = redis_with_auth
       _(redis.call('set', 'K', 'x')).must_equal 'OK'
       _(redis.call('get', 'K')).must_equal 'x'
@@ -110,17 +127,26 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
 
       set_span = exporter.finished_spans[1]
       _(set_span.name).must_equal 'SET'
+      # Old attributes
       _(set_span.attributes['db.system']).must_equal 'redis'
       _(set_span.attributes['db.statement']).must_equal('SET K x')
       _(set_span.attributes['net.peer.name']).must_equal redis_host
       _(set_span.attributes['net.peer.port']).must_equal redis_port
+      # New attributes
+      _(set_span.attributes['db.system.name']).must_equal 'redis'
+      _(set_span.attributes['db.query.text']).must_equal('SET K x')
+      _(set_span.attributes['server.address']).must_equal redis_host
 
       get_span = exporter.finished_spans.last
       _(get_span.name).must_equal 'GET'
+      # Old attributes
       _(get_span.attributes['db.system']).must_equal 'redis'
       _(get_span.attributes['db.statement']).must_equal 'GET K'
       _(get_span.attributes['net.peer.name']).must_equal redis_host
-      _(get_span.attributes['net.peer.port']).must_equal redis_port
+      # New attributes
+      _(get_span.attributes['db.system.name']).must_equal 'redis'
+      _(get_span.attributes['db.query.text']).must_equal 'GET K'
+      _(get_span.attributes['server.address']).must_equal redis_host
     end
 
     it 'reflects db index' do
@@ -130,19 +156,26 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
       _(exporter.finished_spans.size).must_equal 2
 
       prelude_span = exporter.finished_spans.first
-      _(prelude_span.name).must_equal 'PIPELINED'
+      _(prelude_span.name).must_equal 'PIPELINE'
+      # Both old and new attributes
       _(prelude_span.attributes['db.system']).must_equal 'redis'
+      _(prelude_span.attributes['db.system.name']).must_equal 'redis'
       _(prelude_span.attributes['db.statement']).must_equal("HELLO ? ? ? ?\nSELECT 1")
+      _(prelude_span.attributes['db.query.text']).must_equal("HELLO ? ? ? ?\nSELECT 1")
       _(prelude_span.attributes['net.peer.name']).must_equal redis_host
-      _(prelude_span.attributes['net.peer.port']).must_equal redis_port
+      _(prelude_span.attributes['server.address']).must_equal redis_host
 
       get_span = exporter.finished_spans.last
       _(get_span.name).must_equal 'GET'
       _(get_span.attributes['db.system']).must_equal 'redis'
+      _(get_span.attributes['db.system.name']).must_equal 'redis'
       _(get_span.attributes['db.statement']).must_equal('GET K')
+      _(get_span.attributes['db.query.text']).must_equal('GET K')
+      # Both old and new namespace attributes
       _(get_span.attributes['db.redis.database_index']).must_equal 1
+      _(get_span.attributes['db.namespace']).must_equal '1'
       _(get_span.attributes['net.peer.name']).must_equal redis_host
-      _(get_span.attributes['net.peer.port']).must_equal redis_port
+      _(get_span.attributes['server.address']).must_equal redis_host
     end
 
     it 'merges context attributes' do
@@ -156,13 +189,15 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
       set_span = exporter.finished_spans[1]
       _(set_span.name).must_equal 'SET'
       _(set_span.attributes['db.system']).must_equal 'redis'
+      _(set_span.attributes['db.system.name']).must_equal 'redis'
       _(set_span.attributes['db.statement']).must_equal('SET K x')
+      _(set_span.attributes['db.query.text']).must_equal('SET K x')
       _(set_span.attributes['peer.service']).must_equal 'foo'
       _(set_span.attributes['net.peer.name']).must_equal redis_host
-      _(set_span.attributes['net.peer.port']).must_equal redis_port
+      _(set_span.attributes['server.address']).must_equal redis_host
     end
 
-    it 'records exceptions' do
+    it 'records exceptions with error.type' do
       expect do
         redis = redis_with_auth
         redis.call 'THIS_IS_NOT_A_REDIS_FUNC', 'THIS_IS_NOT_A_VALID_ARG'
@@ -170,17 +205,22 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
 
       _(exporter.finished_spans.size).must_equal 2
       _(last_span.name).must_equal 'THIS_IS_NOT_A_REDIS_FUNC'
+      # Both old and new attributes
       _(last_span.attributes['db.system']).must_equal 'redis'
+      _(last_span.attributes['db.system.name']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal(
         'THIS_IS_NOT_A_REDIS_FUNC THIS_IS_NOT_A_VALID_ARG'
       )
+      _(last_span.attributes['db.query.text']).must_equal(
+        'THIS_IS_NOT_A_REDIS_FUNC THIS_IS_NOT_A_VALID_ARG'
+      )
       _(last_span.attributes['net.peer.name']).must_equal redis_host
-      _(last_span.attributes['net.peer.port']).must_equal redis_port
+      _(last_span.attributes['server.address']).must_equal redis_host
+      # Redis error prefix is extracted for error.type and db.response.status_code
+      _(last_span.attributes['error.type']).must_equal 'ERR'
+      _(last_span.attributes['db.response.status_code']).must_equal 'ERR'
       _(last_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
-      )
-      _(last_span.status.description.tr('`', "'")).must_include(
-        'Unhandled exception of type: RedisClient::CommandError'
       )
     end
 
@@ -190,12 +230,6 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
       # Prior to that the client library would wrap the timeout in a RedisClient::CannotConnectError
       _([IO::TimeoutError, RedisClient::CannotConnectError]).must_include error.class
 
-      # NOTE: RedisClient runs `ensure_connected` before Otel's instrumentation
-      # span is created. The 'connect' operation can be separately instrumented
-      # via the connect hook in the middleware. If this expectation (last_span must be nil)
-      # fails due to this implementation, it can be removed.
-      # This test remains here for parity with the V4 instrumentation, which _does_
-      # wrap the connect failure in a span.
       _(last_span).must_be_nil
     end
 
@@ -208,11 +242,14 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
       end
 
       _(exporter.finished_spans.size).must_equal 2
-      _(last_span.name).must_equal 'PIPELINED'
+      _(last_span.name).must_equal 'PIPELINE'
+      # Both old and new attributes
       _(last_span.attributes['db.system']).must_equal 'redis'
+      _(last_span.attributes['db.system.name']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
+      _(last_span.attributes['db.query.text']).must_equal "SET v1 0\nINCR v1\nGET v1"
       _(last_span.attributes['net.peer.name']).must_equal redis_host
-      _(last_span.attributes['net.peer.port']).must_equal redis_port
+      _(last_span.attributes['server.address']).must_equal redis_host
     end
 
     it 'records floats' do
@@ -221,6 +258,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
 
       _(last_span.name).must_equal 'HMSET'
       _(last_span.attributes['db.statement']).must_equal 'HMSET hash f1 1234567890.0987654'
+      _(last_span.attributes['db.query.text']).must_equal 'HMSET hash f1 1234567890.0987654'
     end
 
     it 'records empty string' do
@@ -229,9 +267,10 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
 
       _(last_span.name).must_equal 'SET'
       _(last_span.attributes['db.statement']).must_equal 'SET K '
+      _(last_span.attributes['db.query.text']).must_equal 'SET K '
     end
 
-    it 'truncates long db.statements' do
+    it 'truncates long statements' do
       redis = redis_with_auth
       the_long_value = 'y' * 100
       redis.pipelined do |pipeline|
@@ -246,7 +285,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
         pipeline.call(:set, 'v1', the_long_value)
       end
 
-      expected_db_statement = <<~HEREDOC.chomp
+      expected_statement = <<~HEREDOC.chomp
         SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
         SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
         SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
@@ -254,12 +293,14 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
         SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
       HEREDOC
 
-      _(last_span.name).must_equal 'PIPELINED'
+      _(last_span.name).must_equal 'PIPELINE'
       _(last_span.attributes['db.statement'].size).must_equal 500
-      _(last_span.attributes['db.statement']).must_equal expected_db_statement
+      _(last_span.attributes['db.statement']).must_equal expected_statement
+      _(last_span.attributes['db.query.text'].size).must_equal 500
+      _(last_span.attributes['db.query.text']).must_equal expected_statement
     end
 
-    it 'encodes invalid byte sequences for db.statement' do
+    it 'encodes invalid byte sequences' do
       redis = redis_with_auth
 
       # \255 is off-limits https://en.wikipedia.org/wiki/UTF-8#Codepage_layout
@@ -267,6 +308,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
 
       _(last_span.name).must_equal 'SET'
       _(last_span.attributes['db.statement']).must_equal 'SET K x'
+      _(last_span.attributes['db.query.text']).must_equal 'SET K x'
     end
 
     describe 'when trace_root_spans is disabled' do
@@ -284,6 +326,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
         redis_span = exporter.finished_spans.find { |s| s.name == 'SET' }
         _(redis_span.name).must_equal 'SET'
         _(redis_span.attributes['db.statement']).must_equal 'SET ? ?'
+        _(redis_span.attributes['db.query.text']).must_equal 'SET ? ?'
       end
 
       it 'does not trace redis spans without a parent' do
@@ -300,26 +343,32 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
         instrumentation.install(db_statement: :omit)
       end
 
-      it 'omits db.statement attribute' do
+      it 'omits both db.statement and db.query.text attributes' do
         redis = redis_with_auth
         _(redis.call('set', 'K', 'xyz')).must_equal 'OK'
         _(redis.call('get', 'K')).must_equal 'xyz'
         _(exporter.finished_spans.size).must_equal 3
 
         set_span = exporter.finished_spans[0]
-        _(set_span.name).must_equal 'PIPELINED' # AUTH
+        _(set_span.name).must_equal 'PIPELINE' # AUTH
         _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes['db.system.name']).must_equal 'redis'
         _(set_span.attributes).wont_include('db.statement')
+        _(set_span.attributes).wont_include('db.query.text')
 
         set_span = exporter.finished_spans[1]
         _(set_span.name).must_equal 'SET'
         _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes['db.system.name']).must_equal 'redis'
         _(set_span.attributes).wont_include('db.statement')
+        _(set_span.attributes).wont_include('db.query.text')
 
         set_span = exporter.finished_spans[2]
         _(set_span.name).must_equal 'GET'
         _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes['db.system.name']).must_equal 'redis'
         _(set_span.attributes).wont_include('db.statement')
+        _(set_span.attributes).wont_include('db.query.text')
       end
     end
 
@@ -329,32 +378,32 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Old::RedisClientIns
         instrumentation.install(db_statement: :obfuscate)
       end
 
-      it 'obfuscates arguments in db.statement' do
+      it 'obfuscates arguments in both db.statement and db.query.text' do
         redis = redis_with_auth
         _(redis.call('set', 'K', 'xyz')).must_equal 'OK'
         _(redis.call('get', 'K')).must_equal 'xyz'
         _(exporter.finished_spans.size).must_equal 3
 
         set_span = exporter.finished_spans[0]
-        _(set_span.name).must_equal 'PIPELINED'
+        _(set_span.name).must_equal 'PIPELINE'
         _(set_span.attributes['db.system']).must_equal 'redis'
-        _(set_span.attributes['db.statement']).must_equal(
-          'HELLO ? ? ? ?'
-        )
+        _(set_span.attributes['db.system.name']).must_equal 'redis'
+        _(set_span.attributes['db.statement']).must_equal('HELLO ? ? ? ?')
+        _(set_span.attributes['db.query.text']).must_equal('HELLO ? ? ? ?')
 
         set_span = exporter.finished_spans[1]
         _(set_span.name).must_equal 'SET'
         _(set_span.attributes['db.system']).must_equal 'redis'
-        _(set_span.attributes['db.statement']).must_equal(
-          'SET ? ?'
-        )
+        _(set_span.attributes['db.system.name']).must_equal 'redis'
+        _(set_span.attributes['db.statement']).must_equal('SET ? ?')
+        _(set_span.attributes['db.query.text']).must_equal('SET ? ?')
 
         set_span = exporter.finished_spans[2]
         _(set_span.name).must_equal 'GET'
         _(set_span.attributes['db.system']).must_equal 'redis'
-        _(set_span.attributes['db.statement']).must_equal(
-          'GET ?'
-        )
+        _(set_span.attributes['db.system.name']).must_equal 'redis'
+        _(set_span.attributes['db.statement']).must_equal('GET ?')
+        _(set_span.attributes['db.query.text']).must_equal('GET ?')
       end
     end
   end
