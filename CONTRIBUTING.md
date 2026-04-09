@@ -163,10 +163,18 @@ And prior to submitting a pr run the following to perform all the checks:
 
 ```sh
 npm run check
-bundle exec rake rubocop
 ```
 
 which will help to ensure your code complies and it passes all the test required of a pull request.
+
+If you would like to perform automated fixes where possible of the issues identified by the check command, you can run:
+
+```sh
+npm run write
+```
+
+> [!NOTE]
+> This will not fix spelling or link issues which will need to be manually corrected.
 
 We also use Yard to generate class documentation automatically. Among other
 things, this means:

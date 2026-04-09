@@ -1,0 +1,47 @@
+name: Local CLI Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "Gemfile"
+      - "Gemfile.lock"
+      - ".github/workflows/ci-checks-local.yml"
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  automated-checks:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    name: All / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install Node
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
+        with:
+          ruby-version: "3.3.11"
+
+      - name: Install Tools
+        run: npm ci --ignore-scripts && npx puppeteer browsers install chrome && bundle install
+
+      - name: Run All Checks
+        run: npm run check
