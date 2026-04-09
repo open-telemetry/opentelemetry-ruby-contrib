@@ -24,6 +24,5 @@ group :test do
     gem 'base64'
     gem 'logger'
     gem 'mutex_m'
-    gem 'logger'
   end
 end
