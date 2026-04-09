@@ -6,6 +6,7 @@
     ":separateMultipleMajorReleases",
   ],
   prConcurrentLimit: 12,
+  prHourlyLimit: 12,
   packageRules: [
     {
       groupName: "all patch versions",
