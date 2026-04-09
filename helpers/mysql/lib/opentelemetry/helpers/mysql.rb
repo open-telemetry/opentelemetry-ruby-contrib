@@ -42,7 +42,7 @@ module OpenTelemetry
       # Ignore query names that might appear in comments prepended to the
       # statement.
       PREPENDED_COMMENTS_REGEX = %r{(?:\/\*.*?\*\/)}m
-      QUERY_NAME_REGEX = Regexp.new("^\s*(?:#{PREPENDED_COMMENTS_REGEX})?\s*\\b(#{QUERY_NAMES.join('|')})\\b.*", Regexp::IGNORECASE)
+      QUERY_NAME_REGEX = Regexp.new("^\s*(?:#{PREPENDED_COMMENTS_REGEX})?\s*\\b(#{QUERY_NAMES.join('|')})\\b", Regexp::IGNORECASE)
 
       # This is a span naming utility intended for use in MySQL database
       # adapter instrumentation.
@@ -68,9 +68,11 @@ module OpenTelemetry
 
       # @api private
       def extract_statement_type(sql)
-        sql = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true)
+        return unless sql
 
-        QUERY_NAME_REGEX.match(sql) { |match| match[1].downcase } unless sql.nil?
+        sql = OpenTelemetry::Common::Utilities.utf8_encode(sql, binary: true) unless sql.encoding == ::Encoding::UTF_8 && sql.valid_encoding?
+
+        QUERY_NAME_REGEX.match(sql) { |match| match[1].downcase }
       rescue StandardError => e
         OpenTelemetry.handle_error(message: 'Error extracting SQL statement type', exception: e)
         nil

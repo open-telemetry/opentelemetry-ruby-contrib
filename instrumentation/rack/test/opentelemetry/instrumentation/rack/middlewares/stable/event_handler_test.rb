@@ -62,8 +62,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
-
     exporter.reset
 
     # simulate a fresh install:

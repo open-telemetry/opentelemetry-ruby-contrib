@@ -31,7 +31,7 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
       OpenTelemetry::Processor::Baggage::ALLOW_ALL_BAGGAGE_KEYS
     )
   end
-  let(:span) { Minitest::Mock.new }
+  let(:span) { instance_double(OpenTelemetry::Trace::Span) }
   let(:context_with_baggage) do
     OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |baggage|
       baggage.set_value('a_key', 'a_value')
@@ -50,11 +50,11 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
   describe '#on_start' do
     describe 'with the ALLOW_ALL_BAGGAGE_KEYS predicate' do
       it 'adds current baggage keys/values as attributes when a span starts' do
-        span.expect(:add_attributes, span, [{ 'a_key' => 'a_value', 'b_key' => 'b_value' }])
+        expect(span).to receive(:add_attributes)
+          .with({ 'a_key' => 'a_value', 'b_key' => 'b_value' })
+          .and_return(span)
 
         processor.on_start(span, context_with_baggage)
-
-        span.verify
       end
     end
 
@@ -66,11 +66,11 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
       end
 
       it 'only adds attributes that pass the keyfilter' do
-        span.expect(:add_attributes, span, [{ 'a_key' => 'a_value' }])
+        expect(span).to receive(:add_attributes)
+          .with({ 'a_key' => 'a_value' })
+          .and_return(span)
 
         start_with_processor.on_start(span, context_with_baggage)
-
-        span.verify
       end
     end
 
@@ -82,11 +82,11 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
       end
 
       it 'only adds attributes that pass the keyfilter' do
-        span.expect(:add_attributes, span, [{ 'b_key' => 'b_value' }])
+        expect(span).to receive(:add_attributes)
+          .with({ 'b_key' => 'b_value' })
+          .and_return(span)
 
         regex_processor.on_start(span, context_with_baggage)
-
-        span.verify
       end
     end
 
