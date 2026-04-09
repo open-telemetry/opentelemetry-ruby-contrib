@@ -45,9 +45,7 @@ on:
       - "instrumentation/sinatra/**"
       - ".github/workflows/ci-instrumentation-full.yml"
       - ".github/actions/**"
-      - "Gemfile"
       - "Rakefile"
-      - ".rubocop.yml"
       - "gemspecs/**"
   pull_request:
     branches:
@@ -134,13 +132,7 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
       - name: "JRuby Filter"

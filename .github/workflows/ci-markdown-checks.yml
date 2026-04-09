@@ -2,6 +2,12 @@ name: File Checks
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+      - ready_for_review
   merge_group:
 
 permissions:
@@ -18,7 +24,7 @@ jobs:
 
       # equivalent cli: markdownlint-cli2  "**/*.md" "!**/CHANGELOG.md"  --config .markdownlint-cli2.yaml
       - name: "Markdown Lint Check"
-        uses: DavidAnson/markdownlint-cli2-action@07035fd053f7be764496c0f8d8f9f41f98305101 # v22.0.0
+        uses: DavidAnson/markdownlint-cli2-action@ce4853d43830c74c1753b39f3cf40f71c2031eb9 # v23.0.0
         with:
           config: .markdownlint-cli2.yaml
           fix: false
@@ -34,7 +40,7 @@ jobs:
 
       # equivalent cli: linkspector check
       - name: Run linkspector
-        uses: umbrelladocs/action-linkspector@652f85bc57bb1e7d4327260decc10aa68f7694c3 # v1.4.0
+        uses: umbrelladocs/action-linkspector@37c85bcde51b30bf929936502bac6bfb7e8f0a4d # v1.4.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-annotations
@@ -91,9 +97,9 @@ jobs:
           node-version: "24"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1.295.0
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
         with:
-          ruby-version: "3.2"
+          ruby-version: "3.3.11"
 
       - name: Install Tools
         run: npm ci --ignore-scripts && bundle install
@@ -127,12 +133,16 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: streetsidesoftware/cspell-action@9cd41bb518a24fefdafd9880cbab8f0ceba04d28 # v8.3.0
+      - name: Extract PR title
+        id: pr
+        run: |
+          echo "${{ github.event.pull_request.title }}" > pr_title.md
+      - uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
         with:
-          use_cspell_files: true
           config: .cspell.yml
           suggestions: true
           treat_flagged_words_as_errors: true
+          incremental_files_only: false
 
   format-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
@@ -147,9 +157,9 @@ jobs:
           node-version: "24"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1.295.0
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
         with:
-          ruby-version: "3.2"
+          ruby-version: "3.3.11"
 
       - name: Install Tools
         run: npm ci --ignore-scripts && bundle install
