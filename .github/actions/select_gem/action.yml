@@ -33,6 +33,7 @@ runs:
       shell: bash
       run: |
         # Select Gems
+        default="${{ inputs.default }}"
         deny='["ci", "deprecated"]'
         labels="${{ steps.label.outputs.all-labels || inputs.default }}"
         # labels is a comma-separated string, convert to JSON array
@@ -41,9 +42,9 @@ runs:
         # Remove deny-listed items
         filtered=$(echo "$json" | jq --argjson deny "$deny" '[ .[] | select(. as $l | $deny | index($l) | not) ]')
 
-        # Guarantee valid JSON
-        if [ -z "$filtered" ] || [ "$filtered" = "null" ]; then
-          filtered='[]'
+        # Guarantee valid JSON by adding default
+        if [ -z "$filtered" ] || [ "$filtered" = "null" ] || [ "$(echo "$filtered" | jq 'length')" -eq 0 ]; then
+          filtered=$(jq -n --arg d "$default" '[ $d ]')
         fi
 
         {
