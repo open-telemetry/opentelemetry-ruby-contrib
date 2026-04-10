@@ -5,20 +5,24 @@ inputs:
     description: Token used to add labels
     required: false
     type: string
+outputs:
+  gems:
+    description: The gems which have been changed
+    value: ${{steps.select.outputs.matrix}}
 
 runs:
   using: composite
   steps:
     - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
-      name: Calculate Components
+      name: Calculate Gems
       if: ${{ github.event_name == 'pull_request' }}
       id: label
       with:
         repo-token: "${{ inputs.token }}"
         sync-labels: true
 
-    - name: Build matrix JSON
-      id: build
+    - name: Select Gems
+      id: select
       shell: bash
       run: |
         deny='["ci", "deprecated"]'
@@ -35,7 +39,7 @@ runs:
         fi
 
         {
-          echo "matrix<<EOF"
+          echo "gems<<EOF"
           echo "$filtered"
           echo "EOF"
         } >> "$GITHUB_OUTPUT"
