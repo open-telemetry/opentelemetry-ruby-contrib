@@ -66,10 +66,12 @@ jobs:
         shell: bash
         working-directory: ${{ steps.setup.outputs.gem_dir }}
         run: |
-          if [[ -f Gemfile.lock ]]; then
-            echo "hash=$(sha256sum Gemfile.lock | cut -d ' ' -f1)" >> $GITHUB_OUTPUT
+          files=$(find . -name "Gemfile" | sort)
+          if [[ -n "$files" ]]; then
+            hash=$(sha256sum $files | sha256sum | cut -d ' ' -f1)
+            echo "hash=$hash" >> $GITHUB_OUTPUT
           else
-            echo "hash=none" >> $GITHUB_OUTPUT
+            echo "hash=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
           fi
       - name: Cache Bundler
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 #v5.0.4
@@ -84,7 +86,7 @@ jobs:
             bundler-${{ runner.os }}-${{ matrix.gem }}-
       - name: Install Tools
         run: |
-          bundle config set path vendor/bundle && bundle config set clean true && bundle install --jobs 4 --retry 3
+          bundle config set path vendor/bundle && bundle install --jobs 4 --retry 3
         working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
       - name: Install Gem Deps
         if: ${{ matrix.gem == 'Everything' }}

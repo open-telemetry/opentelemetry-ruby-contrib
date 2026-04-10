@@ -34,7 +34,8 @@ namespace :each do
   end
 
   task :install do
-    foreach_gem('bundle config set path vendor/bundle && bundle config set clean true && bundle install --jobs 4 --retry 3')
+    path = File.join("vendor", "bundle")
+    foreach_gem("bundle config set path #{path} && bundle install --jobs 4 --retry 3')
   end
 end
 
@@ -53,7 +54,7 @@ def foreach_gem(cmd)
     puts "**** Entering #{dir}"
     Dir.chdir(dir) do
       if defined?(Bundler)
-        Bundler.with_clean_env do
+        Bundler.with_unbundled_env do
           sh(cmd)
         end
       else
