@@ -34,9 +34,6 @@ namespace :each do
   end
 
   task :install do
-    Bundler.with_clean_env do
-      sh('bundle install')
-    end
     foreach_gem('bundle install')
   end
 end
@@ -44,7 +41,7 @@ end
 task each: 'each:default'
 
 task build: ['each:build']
-task install_everything: ['each:install']
+task install: ['each:install']
 task yard: ['each:yard']
 
 task default: [:each]

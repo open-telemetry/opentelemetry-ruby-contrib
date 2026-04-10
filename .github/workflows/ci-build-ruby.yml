@@ -6,6 +6,9 @@ on:
     branches:
       - main
     paths: &path_filters
+      - ".yardopts"
+      - "GEMFILE"
+      - "RAKEFILE"
       - "**/.yardopts"
       - "**/GEMFILE"
       - "**/LICENSE"
@@ -84,7 +87,10 @@ jobs:
         with:
           ruby-version: "3.3.11"
       - name: Install Tools
-        run: bundle exec rake install_everything
+        run: |
+          # Bundler Deps Install
+          bundle install
+          bundle exec rake install
       - name: YARD
         shell: bash
         run: |
