@@ -5,6 +5,11 @@ inputs:
     description: Token used to add labels
     required: false
     type: string
+  default:
+    description: Gem string to be used if not able use pr label
+    required: false
+    type: string
+    default: ''
 outputs:
   gems:
     description: The gems which have been changed
@@ -29,7 +34,7 @@ runs:
       run: |
         # Select Gems
         deny='["ci", "deprecated"]'
-        labels="${{ steps.label.outputs.all-labels || '' }}"
+        labels="${{ steps.label.outputs.all-labels || inputs.default }}"
         # labels is a comma-separated string, convert to JSON array
         json=$(printf '%s\n' "$labels" | jq -R 'split(",")')
 
