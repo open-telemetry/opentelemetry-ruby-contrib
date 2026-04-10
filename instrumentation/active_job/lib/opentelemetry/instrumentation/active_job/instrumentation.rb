@@ -52,9 +52,13 @@ module OpenTelemetry
         # spans will always be children of the enqueueing spans. This is due to the way
         # ActiveJob immediately executes jobs during the process of "enqueueing" jobs when
         # using the `:inline` adapter.
+        #
+        # enable_performance_metrics: when `true`, process spans will include
+        #   allocations, CPU time, CPU utilization, and GC time attributes.
         option :propagation_style, default: :link, validate: %i[link child none]
         option :force_flush, default: false, validate: :boolean
         option :span_naming, default: :queue, validate: %i[job_class queue]
+        option :enable_performance_metrics, default: false, validate: :boolean
 
         private
 

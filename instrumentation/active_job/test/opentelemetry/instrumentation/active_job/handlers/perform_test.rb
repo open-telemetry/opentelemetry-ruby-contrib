@@ -101,6 +101,55 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
   end
 
   describe 'attributes' do
+    describe 'performance metrics' do
+      let(:performance_metric_names) { ['rails.cpu.time', 'rails.cpu.utilization', 'rails.gc.time', 'rails.memory.allocations'] }
+
+      it 'does not record performance metrics on the process span by default' do
+        TestJob.perform_now
+
+        performance_metric_names.each do |metric|
+          _(process_span.attributes[metric]).must_be_nil
+        end
+      end
+
+      describe 'when enable_performance_metrics is true' do
+        let(:config) { { propagation_style: :link, span_naming: :queue, enable_performance_metrics: true } }
+
+        it 'records allocations on the process span' do
+          TestJob.perform_now
+
+          _(process_span.attributes['rails.memory.allocations']).must_be :>=, 0
+        end
+
+        it 'records cpu_time on the process span' do
+          TestJob.perform_now
+
+          _(process_span.attributes['rails.cpu.time']).must_be :>=, 0.0
+        end
+
+        it 'records cpu_utilization on the process span' do
+          TestJob.perform_now
+
+          _(process_span.attributes['rails.cpu.utilization']).must_be :>=, 0.0
+          _(process_span.attributes['rails.cpu.utilization']).must_be :<=, 1.0
+        end
+
+        it 'records gc_time on the process span' do
+          TestJob.perform_now
+
+          _(process_span.attributes['rails.gc.time']).must_be :>=, 0.0
+        end
+
+        it 'does not record performance metrics on the publish span' do
+          TestJob.perform_later
+
+          performance_metric_names.each do |metric|
+            _(publish_span.attributes[metric]).must_be_nil
+          end
+        end
+      end
+    end
+
     describe 'active_job.priority' do
       it 'is unset for unprioritized jobs' do
         TestJob.perform_later
