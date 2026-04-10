@@ -50,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Setup
-        if: ${{ matrix.gem != "Everything" }}
+        if: ${{ matrix.gem != 'Everything' }}
         id: setup
         shell: bash
         run: |
@@ -65,7 +65,7 @@ jobs:
         run: bundle install
         working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
       - name: Install Gem Deps
-        if: ${{ matrix.gem == "Everything" }}
+        if: ${{ matrix.gem == 'Everything' }}
         run: bundle exec rake install
       - name: YARD
         shell: bash
