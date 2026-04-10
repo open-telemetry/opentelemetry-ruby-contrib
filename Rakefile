@@ -29,12 +29,23 @@ namespace :each do
     foreach_gem('bundle exec rake')
   end
 
-  task :build_all do
-    foreach_gem('bundle exec build')
+  task :build do
+    foreach_gem('bundle exec rake build')
+  end
+
+  task :install do
+    Bundler.with_clean_env do
+      sh('bundle install')
+    end
+    foreach_gem('bundle install')
   end
 end
 
 task each: 'each:default'
+
+task build: ['each:build']
+task install_everything: ['each:install']
+task yard: ['each:yard']
 
 task default: [:each]
 

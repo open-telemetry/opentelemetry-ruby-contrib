@@ -27,6 +27,7 @@ jobs:
         gems: ${{steps.build.outputs.matrix}}
     steps:
       - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
+        if: ${{ github.event_name == 'pull_request' }}
         id: label
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -36,7 +37,7 @@ jobs:
         id: build
         run: |
           deny='["ci", "deprecated"]'
-          labels="${{ steps.label.outputs.all-labels }}"
+          labels="${{ steps.label.outputs.all-labels || '' }}"
           # labels is a comma-separated string, convert to JSON array
           json=$(printf '%s\n' "$labels" | jq -R 'split(",")')
 
@@ -53,7 +54,6 @@ jobs:
             echo "$filtered"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
-      - run: echo "${{steps.build.outputs.matrix}}"
   build_gem:
     runs-on: ubuntu-24.04
     needs: analyze
@@ -104,7 +104,7 @@ jobs:
         with:
           ruby-version: "3.3.11"
       - name: Install Tools
-        run: bundle install
+        run: bundle exec rake install_everything
       - name: YARD
         shell: bash
         run: |
@@ -114,4 +114,4 @@ jobs:
         shell: bash
         run: |
           # 📦 Build Gem 📦
-          bundle exec rake build-all
+          bundle exec rake build
