@@ -27,6 +27,7 @@ runs:
       id: select
       shell: bash
       run: |
+        # Select Gems
         deny='["ci", "deprecated"]'
         labels="${{ steps.label.outputs.all-labels || '' }}"
         # labels is a comma-separated string, convert to JSON array
@@ -47,4 +48,6 @@ runs:
         } >> "$GITHUB_OUTPUT"
 
     - shell: bash
-      run: echo "Gems selected = ${{ steps.select.outputs.gems }}"
+      run: |
+        # Log Gems Selected
+        echo "Gems selected = ${{ steps.select.outputs.gems }}"
