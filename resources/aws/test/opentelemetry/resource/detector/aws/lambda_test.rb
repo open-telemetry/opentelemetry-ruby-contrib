@@ -61,6 +61,40 @@ describe OpenTelemetry::Resource::Detector::AWS::Lambda do
 
         _(attributes).wont_include(OpenTelemetry::SemanticConventions::Resource::FAAS_MAX_MEMORY)
       end
+
+      describe 'cloud.account.id from symlink' do
+        it 'reads cloud.account.id from the symlink' do
+          File.stub :readlink, '123456789012' do
+            resource = detector.detect
+            attributes = resource.attribute_enumerator.to_h
+            _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID]).must_equal('123456789012')
+          end
+        end
+
+        it 'preserves leading zeros in account id' do
+          File.stub :readlink, '000123456789' do
+            resource = detector.detect
+            attributes = resource.attribute_enumerator.to_h
+            _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID]).must_equal('000123456789')
+          end
+        end
+
+        it 'silently skips when symlink does not exist' do
+          File.stub :readlink, ->(_path) { raise Errno::ENOENT } do
+            resource = detector.detect
+            attributes = resource.attribute_enumerator.to_h
+            _(attributes).wont_include(OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID)
+          end
+        end
+
+        it 'silently skips when path is not a symlink' do
+          File.stub :readlink, ->(_path) { raise Errno::EINVAL } do
+            resource = detector.detect
+            attributes = resource.attribute_enumerator.to_h
+            _(attributes).wont_include(OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID)
+          end
+        end
+      end
     end
 
     describe 'when partial Lambda environment is detected' do
