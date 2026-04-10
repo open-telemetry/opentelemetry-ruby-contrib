@@ -34,8 +34,8 @@ namespace :each do
   end
 
   task :install do
-    path = File.join("vendor", "bundle")
-    foreach_gem("bundle config set path #{path} && bundle install --jobs 4 --retry 3')
+    path = File.join(Dir.pwd, "vendor", "bundle")
+    foreach_gem("bundle config set path #{path} && bundle config set clean false && bundle install --jobs 4 --retry 3')
   end
 end
 
@@ -47,8 +47,19 @@ task yard: ['each:yard']
 
 task default: [:each]
 
+EXCLUDED_DIRS = %w[vendor]
+
 def foreach_gem(cmd)
-  Dir.glob("**/opentelemetry-*.gemspec") do |gemspec|
+  gemspecs =
+    Dir.glob("**/opentelemetry-*.gemspec")
+       .reject do |path|
+         EXCLUDED_DIRS.any? do |d|
+           path.include?("/#{d}/") || path.start_with?("#{d}/")
+         end
+       end
+       .sort
+
+  gemspecs.each do |gemspec|
     name = File.basename(gemspec, ".gemspec")
     dir = File.dirname(gemspec)
     puts "**** Entering #{dir}"

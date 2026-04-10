@@ -84,9 +84,17 @@ jobs:
           key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ steps.lockhash.outputs.hash }}
           restore-keys: |
             bundler-${{ runner.os }}-${{ matrix.gem }}-
-      - name: Install Tools
+      - name: Install Tools & Gem Deps
         run: |
-          bundle config set path vendor/bundle && bundle install --jobs 4 --retry 3
+          # Always install tools
+          bundle config set path vendor/bundle
+          bundle config set clean false
+          bundle install --jobs 4 --retry 3
+
+          # Conditionally install gem deps
+          if [ "${{ matrix.gem }}" = "Everything" ]; then
+            bundle exec rake install
+          fi
         working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
       - name: Install Gem Deps
         if: ${{ matrix.gem == 'Everything' }}
