@@ -24,7 +24,7 @@ jobs:
   analyze:
     runs-on: ubuntu-24.04
     outputs:
-        gems: ${{steps.build.outputs.matrix}}
+      gems: ${{steps.build.outputs.matrix}}
     steps:
       - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
         name: Calculate Components
