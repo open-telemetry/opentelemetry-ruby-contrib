@@ -61,6 +61,16 @@ jobs:
         uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
         with:
           ruby-version: "3.3.11"
+      - name: Compute Gemfile.lock hash
+        id: lockhash
+        shell: bash
+        working-directory: ${{ steps.setup.outputs.gem_dir }}
+        run: |
+          if [[ -f Gemfile.lock ]]; then
+            echo "hash=$(sha256sum Gemfile.lock | cut -d ' ' -f1)" >> $GITHUB_OUTPUT
+          else
+            echo "hash=none" >> $GITHUB_OUTPUT
+          fi
       - name: Cache Bundler
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 #v5.0.4
         with:
@@ -69,12 +79,12 @@ jobs:
             .bundle
             ${{ steps.setup.outputs.gem_dir }}/vendor/bundle
             ${{ steps.setup.outputs.gem_dir }}/.bundle
-          key: bundler-${{ runner.os }}-${{ hashFiles(format('{0}/Gemfile.lock', steps.setup.outputs.gem_dir)) }}
+          key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ steps.lockhash.outputs.hash }}
           restore-keys: |
-            bundler-${{ runner.os }}-${{ hashFiles(format('{0}/Gemfile.lock', steps.setup.outputs.gem_dir)) }}
+            bundler-${{ runner.os }}-${{ matrix.gem }}-
       - name: Install Tools
         run: |
-          bundle install --jobs 4 --retry 3 --path vendor/bundle
+          bundle config set path vendor/bundle && bundle config set clean true && bundle install --jobs 4 --retry 3
         working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
       - name: Install Gem Deps
         if: ${{ matrix.gem == 'Everything' }}
