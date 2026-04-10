@@ -27,6 +27,7 @@ jobs:
     outputs:
       gems: ${{steps.select_gem.outputs.gems}}
     steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/select_gem
         name: Select Gems
         id: select_gem
