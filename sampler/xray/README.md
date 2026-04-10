@@ -2,6 +2,8 @@
 
 The `opentelemetry-sampler-xray` gem contains the AWS X-Ray Remote Sampler for OpenTelemetry.
 
+Test
+
 ## What is OpenTelemetry?
 
 [OpenTelemetry][opentelemetry-home] is an open source observability framework, providing a general-purpose API, SDK, and related tools required for the instrumentation of cloud-native software, frameworks, and libraries.

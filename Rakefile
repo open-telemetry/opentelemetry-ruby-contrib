@@ -28,6 +28,10 @@ namespace :each do
   task :default do
     foreach_gem('bundle exec rake')
   end
+
+  task :build_all do
+    foreach_gem('bundle exec build')
+  end
 end
 
 task each: 'each:default'

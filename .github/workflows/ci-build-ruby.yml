@@ -1,0 +1,117 @@
+name: Build / Ruby
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths: &path_filters
+      - "**/.yardopts"
+      - "**/GEMFILE"
+      - "**/LICENSE"
+      - "**/RAKEFILE"
+      - "**/*.gemspec"
+      - "**/*.md"
+      - "**/lib/**"
+      - ".github/workflows/ci-buid-ruby.yml"
+  pull_request:
+    branches:
+      - main
+    paths: *path_filters
+  merge_group:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-24.04
+    outputs:
+        gems: ${{steps.build.outputs.matrix}}
+    steps:
+      - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
+        id: label
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          sync-labels: true
+
+      - name: Build matrix JSON
+        id: build
+        run: |
+          deny='["ci", "deprecated"]'
+          labels="${{ steps.label.outputs.all-labels }}"
+          # labels is a comma-separated string, convert to JSON array
+          json=$(printf '%s\n' "$labels" | jq -R 'split(",")')
+
+          # Remove deny-listed items
+          filtered=$(echo "$json" | jq --argjson deny "$deny" '[ .[] | select(. as $l | $deny | index($l) | not) ]')
+
+          # Guarantee valid JSON
+          if [ -z "$filtered" ] || [ "$filtered" = "null" ]; then
+            filtered='[]'
+          fi
+
+          {
+            echo "matrix<<EOF"
+            echo "$filtered"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+      - run: echo "${{steps.build.outputs.matrix}}"
+  build_gem:
+    runs-on: ubuntu-24.04
+    needs: analyze
+    if: ${{ needs.analyze.outputs.gems != '[]' }}
+    strategy:
+      matrix:
+        gem: ${{ fromJson(needs.analyze.outputs.gems) }}
+      fail-fast: false
+    name: ${{ matrix.gem }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Setup
+        id: setup
+        shell: bash
+        run: |
+          # 🛠️ Setup 🛠️
+          dir=$(find . -iname 'opentelemetry-${{ matrix.gem }}.gemspec' -exec dirname {} \;)
+          echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
+      - name: Install Ruby
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
+        with:
+          ruby-version: "3.3.11"
+      - name: Install Tools
+        run: bundle install
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
+      - name: YARD
+        shell: bash
+        run: |
+          # 📄 Yard Docs 📄
+          bundle exec rake yard
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
+      - name: Build Gem
+        shell: bash
+        run: |
+          # 📦 Build Gem 📦
+          gem build opentelemetry-${{ matrix.gem }}.gemspec
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
+  build_everything:
+    runs-on: ubuntu-24.04
+    needs: analyze
+    if: ${{ needs.analyze.outputs.gems == '[]' }}
+    name: Everything
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install Ruby
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
+        with:
+          ruby-version: "3.3.11"
+      - name: Install Tools
+        run: bundle install
+      - name: YARD
+        shell: bash
+        run: |
+          # 📄 Yard Docs 📄
+          bundle exec rake yard
+      - name: Build Gem
+        shell: bash
+        run: |
+          # 📦 Build Gem 📦
+          bundle exec rake build-all
