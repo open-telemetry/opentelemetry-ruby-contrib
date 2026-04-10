@@ -36,8 +36,9 @@ jobs:
         id: select_gem
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
+          default: "Everything"
 
-  build_gem:
+  build:
     runs-on: ubuntu-24.04
     needs: analyze
     if: ${{ needs.analyze.outputs.gems != '[]' }}
@@ -49,6 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Setup
+        if: ${{ matrix.gem != "Everything" }}
         id: setup
         shell: bash
         run: |
@@ -61,43 +63,19 @@ jobs:
           ruby-version: "3.3.11"
       - name: Install Tools
         run: bundle install
-        working-directory: "${{ steps.setup.outputs.gem_dir }}"
+        working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
+      - name: Install Gem Deps
+        if: ${{ matrix.gem == "Everything" }}
+        run: bundle exec rake install
       - name: YARD
         shell: bash
         run: |
           # 📄 Yard Docs 📄
           bundle exec rake yard
-        working-directory: "${{ steps.setup.outputs.gem_dir }}"
-      - name: Build Gem
-        shell: bash
-        run: |
-          # 📦 Build Gem 📦
-          gem build opentelemetry-${{ matrix.gem }}.gemspec
-        working-directory: "${{ steps.setup.outputs.gem_dir }}"
-
-  build_everything:
-    runs-on: ubuntu-24.04
-    needs: analyze
-    if: ${{ needs.analyze.outputs.gems == '[]' }}
-    name: Everything
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Install Ruby
-        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
-        with:
-          ruby-version: "3.3.11"
-      - name: Install Tools
-        run: |
-          # Bundler Deps Install
-          bundle install
-          bundle exec rake install
-      - name: YARD
-        shell: bash
-        run: |
-          # 📄 Yard Docs 📄
-          bundle exec rake yard
+        working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
       - name: Build Gem
         shell: bash
         run: |
           # 📦 Build Gem 📦
           bundle exec rake build
+        working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
