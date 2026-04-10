@@ -9,7 +9,7 @@ inputs:
     description: Gem string to be used if not able use pr label
     required: false
     type: string
-    default: ''
+    default: ""
 outputs:
   gems:
     description: The gems which have been changed
