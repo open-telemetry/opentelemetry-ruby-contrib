@@ -27,6 +27,7 @@ jobs:
         gems: ${{steps.build.outputs.matrix}}
     steps:
       - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
+        name: Calculate Components
         if: ${{ github.event_name == 'pull_request' }}
         id: label
         with:
