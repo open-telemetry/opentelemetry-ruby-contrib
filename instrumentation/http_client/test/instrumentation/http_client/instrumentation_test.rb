@@ -19,4 +19,24 @@ describe OpenTelemetry::Instrumentation::HttpClient do
     _(instrumentation.version).wont_be_nil
     _(instrumentation.version).wont_be_empty
   end
+
+  describe 'determine_semconv' do
+    it 'returns "dup" when OTEL_SEMCONV_STABILITY_OPT_IN includes http/dup' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http/dup') do
+        _(instrumentation.send(:determine_semconv)).must_equal('dup')
+      end
+    end
+
+    it 'returns "old" when OTEL_SEMCONV_STABILITY_OPT_IN is old' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'old') do
+        _(instrumentation.send(:determine_semconv)).must_equal('old')
+      end
+    end
+
+    it 'returns "stable" when OTEL_SEMCONV_STABILITY_OPT_IN is empty' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => '') do
+        _(instrumentation.send(:determine_semconv)).must_equal('stable')
+      end
+    end
+  end
 end
