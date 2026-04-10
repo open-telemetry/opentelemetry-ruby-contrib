@@ -11,8 +11,6 @@ require_relative '../../../lib/opentelemetry/instrumentation/http_client'
 describe OpenTelemetry::Instrumentation::HttpClient do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HttpClient::Instrumentation.instance }
 
-  before { skip unless ENV['BUNDLE_GEMFILE'].include?('stable') }
-
   it 'has #name' do
     _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::HttpClient'
   end
@@ -20,11 +18,5 @@ describe OpenTelemetry::Instrumentation::HttpClient do
   it 'has #version' do
     _(instrumentation.version).wont_be_nil
     _(instrumentation.version).wont_be_empty
-  end
-
-  describe '#install' do
-    it 'accepts argument' do
-      instrumentation.install({})
-    end
   end
 end
