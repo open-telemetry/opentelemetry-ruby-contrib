@@ -62,9 +62,9 @@ jobs:
         with:
           ruby-version: "3.3.11"
       - name: Cache Bundler
-        uses: actions/cache@v4
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 #v5.0.4
         with:
-          path:
+          path: |
             vendor/bundle
             .bundle
             ${{ steps.setup.outputs.gem_dir }}/vendor/bundle
@@ -74,8 +74,7 @@ jobs:
             bundler-${{ runner.os }}-${{ hashFiles(format('{0}/Gemfile.lock', steps.setup.outputs.gem_dir)) }}
       - name: Install Tools
         run: |
-          bundle config set path vendor/bundle
-          bundle install --jobs 4 --retry 3
+          bundle install --jobs 4 --retry 3 --path vendor/bundle
         working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
       - name: Install Gem Deps
         if: ${{ matrix.gem == 'Everything' }}
