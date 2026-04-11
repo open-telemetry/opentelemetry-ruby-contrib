@@ -35,7 +35,11 @@ namespace :each do
 
   task :install do
     path = File.join(Dir.pwd, "vendor", "bundle")
-    foreach_gem("bundle config set path #{path} && bundle config set clean false && bundle install --jobs 4 --retry 3")
+    foreach_gem([
+      "bundle config set path #{path}",
+      "bundle config set clean false",
+      "bundle install --jobs 4 --retry 3"
+    ])
   end
 end
 
@@ -49,7 +53,8 @@ task default: [:each]
 
 EXCLUDED_DIRS = %w[vendor]
 
-def foreach_gem(cmd)
+def foreach_gem(cmds)
+  cmds = Array(cmds)  # string → ["string"], array stays array
   gemspecs =
     Dir.glob("**/opentelemetry-*.gemspec")
        .reject do |path|
@@ -66,10 +71,10 @@ def foreach_gem(cmd)
     Dir.chdir(dir) do
       if defined?(Bundler)
         Bundler.with_unbundled_env do
-          sh(cmd)
+          cmds.each { |cmd| sh(cmd) }
         end
       else
-        sh(cmd)
+        cmds.each { |cmd| sh(cmd) }
       end
     end
   end
