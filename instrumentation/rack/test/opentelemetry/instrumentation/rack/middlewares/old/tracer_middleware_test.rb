@@ -33,8 +33,6 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddlewar
   let(:uri) { '/' }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
-
     ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     # clear captured spans:
     exporter.reset

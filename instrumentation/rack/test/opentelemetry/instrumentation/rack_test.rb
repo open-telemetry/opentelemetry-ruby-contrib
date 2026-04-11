@@ -10,8 +10,6 @@ describe OpenTelemetry::Instrumentation::Rack do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Rack::Instrumentation.instance }
   let(:new_span) { OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new) }
 
-  before { skip unless ENV['BUNDLE_GEMFILE'].include?('old') }
-
   it 'has #name' do
     _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
   end

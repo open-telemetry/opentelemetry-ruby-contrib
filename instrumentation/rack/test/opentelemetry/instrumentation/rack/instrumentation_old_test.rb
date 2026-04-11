@@ -12,8 +12,6 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
   let(:config) { {} }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
-
     ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     # simulate a fresh install:
     instrumentation.instance_variable_set(:@installed, false)
