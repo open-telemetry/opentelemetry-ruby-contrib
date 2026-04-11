@@ -35,7 +35,7 @@ namespace :each do
 
   task :install do
     path = File.join(Dir.pwd, "vendor", "bundle")
-    foreach_gem("bundle config set path #{path} && bundle config set clean false && bundle install --jobs 4 --retry 3')
+    foreach_gem("bundle config set path #{path} && bundle config set clean false && bundle install --jobs 4 --retry 3")
   end
 end
 
