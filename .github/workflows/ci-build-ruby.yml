@@ -96,9 +96,6 @@ jobs:
             bundle exec rake install
           fi
         working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
-      - name: Install Gem Deps
-        if: ${{ matrix.gem == 'Everything' }}
-        run: bundle exec rake install
       - name: YARD
         shell: bash
         run: |
