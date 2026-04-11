@@ -37,6 +37,7 @@
       dependencyDashboardCategory: "Min Ruby Runtime",
       matchDepNames: ["ruby"],
       matchFileNames: [
+        ".github/workflows/ci-build-ruby.yml",
         ".github/workflows/ci-markdown-checks.yml",
         "**/*.gemspec",
       ],
