@@ -38,6 +38,7 @@
       matchDepNames: ["ruby"],
       matchFileNames: [
         ".github/workflows/ci-markdown-checks.yml",
+        ".github/workflows/ci-checks-local.yml",
         "**/*.gemspec",
       ],
       matchUpdateTypes: ["minor", "major"],
@@ -192,8 +193,6 @@
     "bigdecimal",
     "drb",
     "logger",
-    "memcached",
-    "mongo",
     "mutex_m",
     "observer",
     "ostruct",
@@ -201,6 +200,8 @@
   ignorePaths: [
     "**/example/Gemfile",
     "releases/Gemfile",
+    ".docker/infra/memcached/**",
+    ".docker/infra/mongo/**",
     "helpers/sql-obfuscation/**",
     "instrumentation/dalli/**",
     "instrumentation/mongo/**",
