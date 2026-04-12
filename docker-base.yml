@@ -1,0 +1,15 @@
+services:
+  base:
+    command: /bin/bash
+    image: opentelemetry/opentelemetry-ruby-contrib
+    stdin_open: true
+    tmpfs:
+      - /tmp
+    tty: true
+    user: "1000:1000"
+    volumes:
+      - .:/app:cached
+      - bundle:/bundle
+
+volumes:
+  bundle:
