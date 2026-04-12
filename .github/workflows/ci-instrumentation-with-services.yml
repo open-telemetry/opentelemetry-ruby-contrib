@@ -60,8 +60,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set environment variables
+        id: inputs
+        shell: bash
+        run: |
+          dir=$(find . -iname 'opentelemetry-instrumentation-${{ matrix.gem }}.gemspec' -exec dirname {} \;)
+          echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
       - name: Build Docker Service
         run: docker compose -f test/compose.yml up -d
+        working-directory: "${{ steps.inputs.outputs.gem_dir }}"
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
