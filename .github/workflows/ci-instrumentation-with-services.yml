@@ -43,6 +43,7 @@ concurrency:
 
 jobs:
   instrumentation_with_services:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
