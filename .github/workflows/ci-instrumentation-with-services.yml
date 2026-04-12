@@ -63,34 +63,7 @@ jobs:
           - ruby_kafka
         os:
           - ubuntu-latest
-        include:
-          - gem: dalli
-            service: other
-          - gem: mongo
-            service: other
-          - gem: bunny
-            service: rabbitmq
-          - gem: pg
-            service: postgresql
-          - gem: que
-            service: postgresql
-          - gem: redis
-            service: redis
-          - gem: resque
-            service: redis
-          - gem: sidekiq
-            service: redis
-          - gem: mysql2
-            service: mysql
-          - gem: trilogy
-            service: mysql
-          - gem: racecar
-            service: kafka
-          - gem: rdkafka
-            service: kafka
-          - gem: ruby_kafka
-            service: kafka
-    name: ${{ matrix.service }} / ${{ matrix.gem }} / ${{ matrix.os }}
+    name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
