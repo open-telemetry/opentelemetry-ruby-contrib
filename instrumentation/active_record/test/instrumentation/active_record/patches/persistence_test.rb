@@ -30,14 +30,42 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
       _(save_span).wont_be_nil
     end
 
-    it 'adds an exception event if it raises' do
-      _(-> { User.new(name: 'not otel').save! }).must_raise(ActiveRecord::RecordInvalid)
+    it 'adds an exception event if it raises an unhandled error' do
+      user = User.new
+      user.define_singleton_method(:create_or_update) { |*_, **_| raise RuntimeError, 'boom' }
+
+      _(-> { user.save! }).must_raise(RuntimeError)
 
       save_span = spans.find { |s| s.name == 'User#save!' }
       _(save_span).wont_be_nil
       save_span_event = save_span.events.first
-      _(save_span_event.attributes['exception.type']).must_equal('ActiveRecord::RecordInvalid')
-      _(save_span_event.attributes['exception.message']).must_equal('Validation failed: must be otel')
+      _(save_span_event.attributes['exception.type']).must_equal('RuntimeError')
+      _(save_span_event.attributes['exception.message']).must_equal('boom')
+    end
+
+    it 'does not add an exception event for configured handled exceptions' do
+      allow(OpenTelemetry::Instrumentation::ActiveRecord::Instrumentation.instance)
+        .to receive(:config)
+        .and_return(handled_exceptions: ['ActiveRecord::RecordNotFound'])
+
+      user = User.new
+      user.define_singleton_method(:create_or_update) { |*_, **_| raise ActiveRecord::RecordNotFound, 'not found' }
+
+      _(-> { user.save! }).must_raise(ActiveRecord::RecordNotFound)
+
+      save_span = spans.find { |s| s.name == 'User#save!' }
+      _(save_span).wont_be_nil
+      _(save_span.events).must_be_nil
+      _(save_span.status.code).must_equal(OpenTelemetry::Trace::Status::UNSET)
+    end
+
+    it 'does not add an exception event if it raises a handled validation error' do
+      _(-> { User.new(name: 'not otel').save! }).must_raise(ActiveRecord::RecordInvalid)
+
+      save_span = spans.find { |s| s.name == 'User#save!' }
+      _(save_span).wont_be_nil
+      _(save_span.events).must_be_nil
+      _(save_span.status.code).must_equal(OpenTelemetry::Trace::Status::UNSET)
     end
   end
 
@@ -105,6 +133,29 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
       User.new.update!(updated_at: Time.current)
       update_span = spans.find { |s| s.name == 'User#update!' }
       _(update_span).wont_be_nil
+    end
+
+    it 'adds an exception event if it raises an unhandled error' do
+      user = User.create!(name: 'otel')
+
+      _(-> { user.update!(attreeboot: 1) }).must_raise(ActiveModel::UnknownAttributeError)
+
+      update_span = spans.find { |s| s.name == 'User#update!' }
+      _(update_span).wont_be_nil
+      update_span_event = update_span.events.first
+      _(update_span_event.attributes['exception.type']).must_equal('ActiveModel::UnknownAttributeError')
+      _(update_span_event.attributes['exception.message']).must_include("unknown attribute 'attreeboot' for User.")
+    end
+
+    it 'does not add an exception event if it raises a handled validation error' do
+      user = User.create!(name: 'otel')
+
+      _(-> { user.update!(name: 'not otel') }).must_raise(ActiveRecord::RecordInvalid)
+
+      update_span = spans.find { |s| s.name == 'User#update!' }
+      _(update_span).wont_be_nil
+      _(update_span.events).must_be_nil
+      _(update_span.status.code).must_equal(OpenTelemetry::Trace::Status::UNSET)
     end
   end
 
