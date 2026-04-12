@@ -5,9 +5,7 @@ services:
       REDIS_PASSWORD: passw0rd
     ports:
       - "6379:6379"
-    entrypoint: ["sh", "-c"]
-    command: >
-      exec redis-server --requirepass "${REDIS_PASSWORD}"
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     healthcheck:
       test: ["CMD-SHELL", "redis-cli -a \"${REDIS_PASSWORD}\" ping"]
       interval: 10s

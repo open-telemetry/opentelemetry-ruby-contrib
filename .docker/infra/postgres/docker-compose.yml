@@ -11,7 +11,4 @@ services:
       timeout: 2s
       retries: 3
     volumes:
-      - postgres_socket:/var/run/postgresql
-
-volumes:
-  postgres_socket:
+      - /var/run/postgresql:/var/run/postgresql
