@@ -21,6 +21,7 @@ on:
       - "instrumentation/ruby_kafka/**"
       - "instrumentation/sidekiq/**"
       - "instrumentation/trilogy/**"
+      - ".docker/infra/**"
       - ".github/workflows/ci-instrumentation-with-services.yml"
       - ".github/actions/**"
       - "Rakefile"
@@ -47,7 +48,6 @@ jobs:
     steps:
       - run: echo "Repository check passed"
   instrumentation_with_services:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
@@ -60,6 +60,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Build Docker Service
+        run: docker compose -f test/compose.yml up -d
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -78,15 +80,6 @@ jobs:
           yard: true
           coverage: true
           build: true
-    services:
-      memcached:
-        image: memcached:1.6.40-alpine@sha256:8a82a3927694e42bc52679dc81532244de51e5faed5f9541a1283e3ad7271db1
-        ports:
-          - 11211:11211
-      mongodb:
-        image: mongo:6.0.27@sha256:03cda579c8caad6573cb98c2b3d5ff5ead452a6450561129b89595b4b9c18de2
-        ports:
-          - 27017:27017
 
   instrumentation_mysql:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
