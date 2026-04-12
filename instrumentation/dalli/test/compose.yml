@@ -1,2 +1,2 @@
 include:
-  - ./.docker/infra/memcached/docker-compose.yml
+  - ../../../.docker/infra/memcached/docker-compose.yml

@@ -1,2 +1,2 @@
 include:
-  - ./.docker/infra/mongo/docker-compose.yml
+  - ../../../.docker/infra/mongo/docker-compose.yml
