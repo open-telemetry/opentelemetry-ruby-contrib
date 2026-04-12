@@ -197,5 +197,3 @@ services:
 
 volumes:
   bundle:
-  redis_data:
-  postgres_socket:
