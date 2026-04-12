@@ -54,9 +54,23 @@ jobs:
         gem:
           - dalli
           - mongo
+          - bunny
+          - pg
+          - que
         os:
           - ubuntu-latest
-    name: other / ${{ matrix.gem }} / ${{ matrix.os }}
+        include:
+          - gem: dalli
+            service: other
+          - gem: mongo
+            service: other
+          - gem: bunny
+            service: rabbitmq
+          - gem: pg
+            service: postgresql
+          - gem: que
+            service: postgresql
+    name: ${{ matrix.service }} / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -226,83 +240,3 @@ jobs:
           --entrypoint sh redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93 -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
         env:
           REDIS_PASSWORD: "passw0rd"
-
-  instrumentation_postgresql:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - pg
-          - que
-        os:
-          - ubuntu-latest
-    name: postgresql / ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          coverage: true
-          build: true
-    services:
-      postgres:
-        image: postgres:14.22@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=5s --health-timeout=2s --health-retries=3
-        volumes:
-          - "/var/run/postgresql:/var/run/postgresql"
-
-  instrumentation_rabbitmq:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - bunny
-        os:
-          - ubuntu-latest
-    name: rabbitmq / ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          coverage: true
-          build: true
-    services:
-      rabbitmq:
-        image: rabbitmq:4.2.5-alpine@sha256:53e51f8469ef13d0a1a2b03c0d36dcf4efbf13089f552440ec5620ca07f2c64e
-        ports:
-          - "5672:5672"
