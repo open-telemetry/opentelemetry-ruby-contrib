@@ -1,4 +1,5 @@
 include:
+  - ./docker-base.yml
   - ./.docker/infra/kafka/docker-compose.yml
   - ./.docker/infra/memcached/docker-compose.yml
   - ./.docker/infra/mongo/docker-compose.yml
@@ -7,22 +8,11 @@ include:
   - ./.docker/infra/rabbitmq/docker-compose.yml
   - ./.docker/infra/redis/docker-compose.yml
 
-x-shared-config:
-  base: &base
-    command: /bin/bash
-    image: opentelemetry/opentelemetry-ruby-contrib
-    stdin_open: true
-    tmpfs:
-      - /tmp
-    tty: true
-    user: "1000:1000"
-    volumes:
-      - .:/app:cached
-      - bundle:/bundle
-
 services:
   app:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     build:
       context: .
     working_dir: /app
@@ -50,7 +40,9 @@ services:
       - redis
 
   ex-instrumentation-bunny:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     depends_on:
       - rabbitmq
     environment:
@@ -58,27 +50,39 @@ services:
     working_dir: /app/instrumentation/bunny/example
 
   ex-instrumentation-concurrent-ruby:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/concurrent_ruby/example
 
   ex-instrumentation-delayed_job:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/delayed_job/example
 
   ex-instrumentation-ethon:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/ethon/example
 
   ex-instrumentation-excon:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/excon/example
 
   ex-instrumentation-faraday:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/faraday/example
 
   ex-instrumentation-mysql2:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - TEST_MYSQL_USER=root
       - TEST_MYSQL_ROOT_PASSWORD=root
@@ -90,7 +94,9 @@ services:
     working_dir: /app/instrumentation/mysql2/example
 
   ex-instrumentation-mysql2-test:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - TEST_MYSQL_USER=root
       - TEST_MYSQL_ROOT_PASSWORD=root
@@ -102,7 +108,9 @@ services:
     working_dir: /app/instrumentation/mysql2/
 
   ex-instrumentation-pg:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - TEST_POSTGRES_PASSWORD=postgres
       - TEST_POSTGRES_USER=postgres
@@ -115,7 +123,9 @@ services:
     working_dir: /app/instrumentation/pg/example
 
   ex-instrumentation-pg-test:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - TEST_POSTGRES_PASSWORD=postgres
       - TEST_POSTGRES_USER=postgres
@@ -129,19 +139,24 @@ services:
     volumes:
       - .:/app:cached
       - bundle:/bundle
-      - postgres_socket:/tmp
       - postgres_socket:/var/run/postgresql
 
   ex-instrumentation-net-http:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/net_http/example
 
   ex-instrumentation-net-ldap:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/net_ldap/example
 
   ex-instrumentation-que:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - TEST_POSTGRES_PASSWORD=postgres
       - TEST_POSTGRES_USER=postgres
@@ -153,11 +168,15 @@ services:
     working_dir: /app/instrumentation/que
 
   ex-instrumentation-rack:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/rack/example
 
   ex-instrumentation-dalli:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - MEMCACHED_URL=memcached:11211
     depends_on:
@@ -165,16 +184,22 @@ services:
     working_dir: /app/instrumentation/dalli/example
 
   ex-instrumentation-restclient:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/restclient/example
 
   ex-instrumentation-sinatra:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     command: ./start_server.sh
     working_dir: /app/instrumentation/sinatra/example
 
   processor-baggage-test:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/processor/baggage
     command: |
       bash -c "bundle install && rake"
