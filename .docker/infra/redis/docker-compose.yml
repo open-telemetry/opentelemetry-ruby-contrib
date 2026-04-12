@@ -5,9 +5,9 @@ services:
       REDIS_PASSWORD: passw0rd
     ports:
       - "6379:6379"
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    command: ["redis-server", "--requirepass", "passw0rd"]
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli -a \"${REDIS_PASSWORD}\" ping"]
+      test: ["CMD-SHELL", "redis-cli -a \"passw0rd\" ping"]
       interval: 10s
       timeout: 5s
       retries: 5
