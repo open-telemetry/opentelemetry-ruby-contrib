@@ -57,6 +57,9 @@ jobs:
           - bunny
           - pg
           - que
+          - redis
+          - resque
+          - sidekiq
         os:
           - ubuntu-latest
         include:
@@ -70,6 +73,12 @@ jobs:
             service: postgresql
           - gem: que
             service: postgresql
+          - gem: redis
+            service: redis
+          - gem: resque
+            service: redis
+          - gem: sidekiq
+            service: redis
     name: ${{ matrix.service }} / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -192,51 +201,3 @@ jobs:
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
           KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
-  instrumentation_redis:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - redis
-          - resque
-          - sidekiq
-        os:
-          - ubuntu-latest
-    name: redis / ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          coverage: true
-          build: true
-    services:
-      redis:
-        image: redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli -a \"$REDIS_PASSWORD\" ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-          -e REDIS_PASSWORD=passw0rd
-          --entrypoint sh redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93 -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
-        env:
-          REDIS_PASSWORD: "passw0rd"
