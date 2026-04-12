@@ -62,6 +62,9 @@ jobs:
           - sidekiq
           - mysql2
           - trilogy
+          - racecar
+          - rdkafka
+          - ruby_kafka
         os:
           - ubuntu-latest
         include:
@@ -85,6 +88,12 @@ jobs:
             service: mysql
           - gem: trilogy
             service: mysql
+          - gem: racecar
+            service: kafka
+          - gem: rdkafka
+            service: kafka
+          - gem: ruby_kafka
+            service: kafka
     name: ${{ matrix.service }} / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -116,57 +125,3 @@ jobs:
           yard: true
           coverage: true
           build: true
-
-  instrumentation_kafka:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - racecar
-          - rdkafka
-          - ruby_kafka
-        os:
-          - ubuntu-latest
-    name: kafka / ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          coverage: true
-          build: true
-    services:
-      zookeeper:
-        image: confluentinc/cp-zookeeper:7.9.6@sha256:d3294ad2b353ac5a155ad9abe37884f75c482f387af553679210303b7118a0d3
-        ports:
-          - 2181:2181
-        env:
-          ZOOKEEPER_CLIENT_PORT: 2181
-          ZOOKEEPER_TICK_TIME: 2000
-      kafka:
-        image: confluentinc/cp-kafka:7.9.6@sha256:9e178783dba8cf44cd8b1d260f548a587a21235921957edd4ed7aa7d060b0852
-        ports:
-          - 9092:9092
-          - 29092:29092
-        env:
-          KAFKA_BROKER_ID: 1
-          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092
-          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-          KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
