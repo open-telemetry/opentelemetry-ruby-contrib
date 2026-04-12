@@ -125,9 +125,6 @@ services:
     depends_on:
       - postgres
     working_dir: /app/instrumentation/pg/
-    volumes:
-      - .:/app:cached
-      - bundle:/bundle
 
   ex-instrumentation-net-http:
     <<: *base
