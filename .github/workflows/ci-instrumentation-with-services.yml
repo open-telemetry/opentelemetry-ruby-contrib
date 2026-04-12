@@ -42,11 +42,6 @@ concurrency:
   cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
-  check:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    runs-on: ubuntu-24.04
-    steps:
-      - run: echo "Repository check passed"
   instrumentation_with_services:
     strategy:
       fail-fast: false
