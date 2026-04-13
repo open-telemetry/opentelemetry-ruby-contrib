@@ -10,15 +10,12 @@ AllCops:
     - "bin/instrumentation_generator"
     - "**/**/vendor/bundle/**/*"
     - "**/proto/**"
+    - "helpers/sql-obfuscation/**"
     - "instrumentation/dalli/**"
     - "instrumentation/mongo/**"
     - "instrumentation/restclient/**"
     - "instrumentation/ruby_kafka/**"
 Bundler/OrderedGems:
-  Enabled: false
-Gemspec/DevelopmentDependencies:
-  Enabled: true
-Gemspec/RequiredRubyVersion:
   Enabled: false
 Lint/ConstantDefinitionInBlock:
   Exclude:
