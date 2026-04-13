@@ -29,3 +29,12 @@ def with_sampler(sampler)
 ensure
   OpenTelemetry.tracer_provider.sampler = previous_sampler
 end
+
+# Excon 1.4.0+ requires resolver_factory parameter
+# TODO: Remove when minimum supported Excon version is >= 1.4.0
+def excon_socket_options(hostname:, port:)
+  options = { hostname: hostname, port: port }
+  options[:resolver_factory] = Excon::ResolverFactory if defined?(Excon::ResolverFactory)
+
+  options
+end

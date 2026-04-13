@@ -28,7 +28,6 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Stable::TracerMid
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
     exporter.reset
 
     # this is currently a noop but this will future proof the test

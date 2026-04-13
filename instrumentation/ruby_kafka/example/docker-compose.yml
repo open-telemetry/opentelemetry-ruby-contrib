@@ -2,13 +2,13 @@ version: "3.5"
 
 services:
   app:
-    image: ruby:3.4.8-slim@sha256:dcc535e858eeeac1f70eaf8c39ef7ee257b183a9e495cc5a9ef3e340eadf2d3d
+    image: ruby:3.4.8-slim@sha256:ff7780d9fc05a54690c722ee0621bae2aa818331be88ebbeb0f5e7bd7cdb7f37
     volumes:
       - ../.:/app
     working_dir: /app/example
     command: ["bash", "-c", "sleep infinity"]
   kafka:
-    image: confluentinc/cp-kafka:8.1.1@sha256:d20bd62f01826c454e88530efc6d73654cb4697182f37206742b96c7b947236e
+    image: confluentinc/cp-kafka:7.9.6@sha256:9e178783dba8cf44cd8b1d260f548a587a21235921957edd4ed7aa7d060b0852
     ports:
       - "9093:9093"
       - "29092:29092"
@@ -24,7 +24,7 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   jaeger:
-    image: jaegertracing/jaeger:2.15.1@sha256:a7dd965687d45507072676db81e6903706ba334dfc92f0c248125cfd9a70c483
+    image: jaegertracing/jaeger:2.16.0@sha256:bf7f805da4c2bc8d58a6c81ee650fdb6b8e4287698f95fbe231c09c865bc397f
     ports:
       - "16686:16686"
       - "4318:4318"

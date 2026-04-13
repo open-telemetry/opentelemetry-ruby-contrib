@@ -23,14 +23,13 @@ on:
       - "instrumentation/trilogy/**"
       - ".github/workflows/ci-instrumentation-with-services.yml"
       - ".github/actions/**"
-      - "Gemfile"
       - "Rakefile"
-      - ".rubocop.yml"
       - "gemspecs/**"
   pull_request:
     branches:
       - main
     paths: *path_filters
+  merge_group:
   schedule:
     - cron: "0 0 * * *"
 
@@ -38,7 +37,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }} # Ensure that only one instance of this workflow is running per Pull Request and event type
   cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
@@ -76,22 +75,16 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       memcached:
-        image: memcached:1.6.40-alpine@sha256:8a82a3927694e42bc52679dc81532244de51e5faed5f9541a1283e3ad7271db1
+        image: memcached:1.6.41-alpine@sha256:1c6a2d48c5f561226f1dc54ed37132f83b4cde94b5e3f3e2d88386d028b86a27
         ports:
           - 11211:11211
       mongodb:
-        image: mongo:5.0.32@sha256:5e3e87afd24d75e722884d777c5713d254f7e88ba65381b5d6484f75a21b73e3
+        image: mongo:6.0.27@sha256:03cda579c8caad6573cb98c2b3d5ff5ead452a6450561129b89595b4b9c18de2
         ports:
           - 27017:27017
 
@@ -124,13 +117,7 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -168,13 +155,7 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -233,18 +214,12 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       redis:
-        image: redis:8.2.5@sha256:d15219c8d079378028a0e6a4c37cdd1edb4526acecf24f3c12e5b6122e786f60
+        image: redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93
         ports:
           - 6379:6379
         options: >-
@@ -253,7 +228,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
           -e REDIS_PASSWORD=passw0rd
-          --entrypoint sh redis:8.2.5@sha256:d15219c8d079378028a0e6a4c37cdd1edb4526acecf24f3c12e5b6122e786f60 -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
+          --entrypoint sh redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93 -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
         env:
           REDIS_PASSWORD: "passw0rd"
 
@@ -286,18 +261,12 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       postgres:
-        image: postgres:13.23@sha256:4689940c683801b4ab839ab3b0a0a3555a5fe425371422310944e89eca7d8068
+        image: postgres:14.22@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d
         env:
           POSTGRES_PASSWORD: postgres
         ports:
@@ -334,17 +303,11 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       rabbitmq:
-        image: rabbitmq:3.13.7-alpine@sha256:d7af1c87c5f1eda13fcfca06db452bf3aeab6619fc3358b68535c0c02c4e52bc
+        image: rabbitmq:4.2.5-alpine@sha256:53e51f8469ef13d0a1a2b03c0d36dcf4efbf13089f552440ec5620ca07f2c64e
         ports:
           - "5672:5672"

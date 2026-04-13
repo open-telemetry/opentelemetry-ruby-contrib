@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - main
+  merge_group:
   schedule:
     - cron: "0 0 * * *"
 
@@ -15,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }} # Ensure that only one instance of this workflow is running per Pull Request
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }} # Ensure that only one instance of this workflow is running per event/PR/ref
   cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
@@ -48,24 +49,11 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
-      - name: "JRuby Filter"
-        id: jruby_skip
-        shell: bash
-        run: |
-          echo "skip=false" >> $GITHUB_OUTPUT
-          # The 'all' instrumentation should work with JRuby
-          true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
