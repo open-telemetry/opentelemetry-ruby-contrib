@@ -455,7 +455,7 @@ LOG_LEVEL=debug renovate --platform=github --token="{{token}}" --package-rules='
 
 > [!TIP]
 >
-> The token can also be set as an environment variable to passing it via the cli arguments.
+> The token can also be set as an environment variable to avoid passing it via the cli arguments.
 
 ## Updating Ruby version requirements
 
