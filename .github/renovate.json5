@@ -5,8 +5,8 @@
     "helpers:pinGitHubActionDigestsToSemver",
     ":separateMultipleMajorReleases",
   ],
-  prConcurrentLimit: 12,
-  prHourlyLimit: 12,
+  prConcurrentLimit: 15,
+  prHourlyLimit: 15,
   packageRules: [
     {
       groupName: "all patch versions",
