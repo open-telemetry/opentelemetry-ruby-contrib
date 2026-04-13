@@ -26,6 +26,7 @@ class MyApp < Rails::Application
 end
 
 # ApplicationController
+# rubocop disable:Style/OneClassPerFile
 class ApplicationController < ActionController::API
   def index
     render json: { message: 'Hello World!', time: Time.current }
@@ -43,6 +44,6 @@ class ApplicationController < ActionController::API
     }
   end
 end
-# rubocop:enable Style/OneClassPerFile
+# rubocop enable:Style/OneClassPerFile
 
 MyApp.initialize!
