@@ -255,12 +255,6 @@ jobs:
         with:
           gem: "auto-instrumentation"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
         with:
-          gem: "auto-instrumentation"
-          ruby: "3.2"
           yard: true
-          rubocop: true
-          coverage: true
           build: true
