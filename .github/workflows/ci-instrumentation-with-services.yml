@@ -84,7 +84,7 @@ jobs:
         ports:
           - 11211:11211
       mongodb:
-        image: mongo:6.0.27@sha256:03cda579c8caad6573cb98c2b3d5ff5ead452a6450561129b89595b4b9c18de2
+        image: mongo:8.2.6@sha256:f071cbf97a6e52fb7f07ce9ca5d862ad79876bf0eba9ba97758337d740449638
         ports:
           - 27017:27017
 
