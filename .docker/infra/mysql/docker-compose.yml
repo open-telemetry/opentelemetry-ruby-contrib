@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:8.0.31@sha256:3d7ae561cf6095f6aca8eb7830e1d14734227b1fb4748092f2be2cfbccf7d614
+    image: mysql:9.6.0@sha256:24e450bbd24f621c71b10404c946cc9ea1cbb0e6e7464b2be2de5193dcf1d05b
     command: mysqld --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_DATABASE=mysql
