@@ -74,7 +74,7 @@ jobs:
           dir=$(find . -iname 'opentelemetry-instrumentation-${{ matrix.gem }}.gemspec' -exec dirname {} \;)
           echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
       - name: Start Docker Service/s
-        run: docker compose -f test/compose.yml up -d
+        run: docker compose -f test/compose.yml up -d --wait
         working-directory: "${{ steps.inputs.outputs.gem_dir }}"
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
