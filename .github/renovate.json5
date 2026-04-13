@@ -103,14 +103,12 @@
         "/(^|/)Dockerfile\\.[^/]*$/",
       ],
       matchStrings: [
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})",
       ],
       datasourceTemplate: "docker",
       versioningTemplate: "docker",
       currentValueTemplate: "{{depVersion}}",
       extractVersionTemplate: "^(?<version>[0-9.]+)-alpine{{alpineVersion}}$",
-      autoReplaceStringTemplate: "FROM {{packageName}}:{{newVersion}}-alpine{{alpineVersion}}@{{newDigest}} ",
     },
     {
       customType: "regex",
@@ -120,15 +118,13 @@
         "/(^|/)Dockerfile\\.[^/]*$/",
       ],
       matchStrings: [
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})",
       ],
       datasourceTemplate: "docker",
       versioningTemplate: "docker",
       currentValueTemplate: "{{alpineVersion}}",
       extractVersionTemplate: "^{{depVersion}}-alpine(?<version>[0-9.]+)$",
       depNameTemplate: "{{packageName}}-alpine",
-      autoReplaceStringTemplate: "FROM {{packageName}}:{{depVersion}}-alpine{{newVersion}}@{{newDigest}} ",
     },
     {
       customType: "regex",
