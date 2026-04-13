@@ -55,7 +55,7 @@ def run_in_subprocess(env_vars = {}, opts = {})
         end
         $VERBOSE = old_verbose
 
-        OTelBundlerPatch::OTelInitializer.check_for_bundled_otel_gems
+        OTelBundlerPatch::OTelInitializer._otel_check_for_bundled_otel_gems
       else
         Bundler.require
 

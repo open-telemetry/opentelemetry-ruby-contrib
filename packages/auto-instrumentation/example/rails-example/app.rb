@@ -10,7 +10,6 @@ require 'action_controller/railtie'
 require 'bundler'
 Bundler.require
 
-# rubocop:disable Style/OneClassPerFile
 # MyApp
 class MyApp < Rails::Application
   config.secret_key_base = 'your_secret_key_here'

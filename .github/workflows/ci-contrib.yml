@@ -255,6 +255,5 @@ jobs:
         with:
           gem: "auto-instrumentation"
           ruby: "3.3"
-        with:
           yard: true
           build: true

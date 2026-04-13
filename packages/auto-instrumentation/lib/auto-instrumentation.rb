@@ -8,7 +8,7 @@
 module OTelBundlerPatch
   # Nested module to handle OpenTelemetry initialization logic
   module OTelInitializer
-    @initialized = false
+    @_otel_initialized = false
 
     OTEL_INSTRUMENTATION_MAP = {
       'gruf' => 'OpenTelemetry::Instrumentation::Gruf',
@@ -52,8 +52,9 @@ module OTelBundlerPatch
       'sidekiq' => 'OpenTelemetry::Instrumentation::Sidekiq',
       'sinatra' => 'OpenTelemetry::Instrumentation::Sinatra'
     }.freeze
+    private_constant :OTEL_INSTRUMENTATION_MAP
 
-    def self.detect_resource_from_env
+    def self._otel_detect_resource_from_env
       env = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s
       additional_resource = ::OpenTelemetry::SDK::Resources::Resource.create({})
 
@@ -70,13 +71,13 @@ module OTelBundlerPatch
       additional_resource
     end
 
-    def self.determine_enabled_instrumentation
+    def self._otel_determine_enabled_instrumentation
       env = ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'].to_s
 
       env.split(',').map { |instrumentation| OTEL_INSTRUMENTATION_MAP[instrumentation] }
     end
 
-    def self.check_for_bundled_otel_gems
+    def self._otel_check_for_bundled_otel_gems
       bundled_otel_gems = Bundler.definition.dependencies.select do |dep|
         dep.name.start_with?('opentelemetry-')
       end
@@ -94,18 +95,18 @@ module OTelBundlerPatch
       warn "[OpenTelemetry] WARNING: Unable to check Gemfile for OpenTelemetry gems: #{e.message}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
     end
 
-    def self.require_otel
-      return if @initialized
+    def self._otel_require_otel
+      return if @_otel_initialized
 
-      @initialized = true
+      @_otel_initialized = true
 
       begin
-        check_for_bundled_otel_gems
+        _otel_check_for_bundled_otel_gems
 
-        required_instrumentation = determine_enabled_instrumentation
+        required_instrumentation = _otel_determine_enabled_instrumentation
 
         OpenTelemetry::SDK.configure do |c|
-          c.resource = detect_resource_from_env
+          c.resource = _otel_detect_resource_from_env
           if required_instrumentation.empty?
             c.use_all
           else
@@ -123,7 +124,7 @@ module OTelBundlerPatch
 
   def require(...)
     super
-    OTelInitializer.require_otel
+    OTelInitializer._otel_require_otel
   end
 end
 
