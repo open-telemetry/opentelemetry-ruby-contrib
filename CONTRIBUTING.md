@@ -453,7 +453,7 @@ If you are wanting to test the creation of PR's to ensure that the custom manage
 LOG_LEVEL=debug renovate --platform=github --token="{{token}}" --package-rules='[]' --pr-hourly-limit 0 {{githubUsername}}/opentelemetry-ruby-contrib  > test.log
 ```
 
->! [TIP]
+> [!TIP]
 >
 > The token can also be set as an environment variable to passing it via the cli arguments.
 
