@@ -85,8 +85,8 @@ TBC
 
 ### Adding new Services
 
-Assuming that the required external service is not already supported, you will need to define it as a infra service in the `/.docker/infra/{{service_name}}` directory. 
-This directory will contain a single file `compose.yml` which acts as the service definition. 
+Assuming that the required external service is not already supported, you will need to define it as a infra service in the `/.docker/infra/{{service_name}}` directory.
+This directory will contain a single file `compose.yml` which acts as the service definition.
 
 An example of this service is:
 
