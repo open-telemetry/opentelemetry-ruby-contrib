@@ -1,7 +1,10 @@
 inherit_from: ../../.rubocop.yml
 
 Lint/SuppressedException:
-  Enabled: false
+  Enabled: true
+  Exclude:
+    - test/opentelemetry/instrumentation/rdkafka/patches/consumer_test.rb
+    - test/opentelemetry/instrumentation/rdkafka/patches/producer_test.rb
 Metrics/ParameterLists:
   Enabled: true
   Exclude:

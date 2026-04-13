@@ -63,7 +63,7 @@ module OpenTelemetry
           private
 
           def span_name(endpoint)
-            "HTTP #{request_method(endpoint)} #{path(endpoint)}"
+            "#{request_method(endpoint)} #{path(endpoint)}"
           end
 
           def attributes_from_grape_endpoint(endpoint)

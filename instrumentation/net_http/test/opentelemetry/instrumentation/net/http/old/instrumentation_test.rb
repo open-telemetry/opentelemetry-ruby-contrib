@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
@@ -34,6 +35,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     instrumentation.instance_variable_set(:@installed, false)
 
     OpenTelemetry.propagation = @orig_propagation
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe '#request' do
@@ -201,9 +203,8 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         def fake_socket.close; end
 
         # Replace the TCP socket creation with our fake socket
-        TCPSocket.stub(:open, fake_socket) do
-          http.send(:connect)
-        end
+        allow(TCPSocket).to receive(:open).and_return(fake_socket)
+        http.send(:connect)
 
         http.send(:do_finish)
         _(exporter.finished_spans.size).must_equal 1

@@ -2,6 +2,13 @@ name: File Checks
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+      - ready_for_review
+  merge_group:
 
 permissions:
   contents: read
@@ -17,7 +24,7 @@ jobs:
 
       # equivalent cli: markdownlint-cli2  "**/*.md" "!**/CHANGELOG.md"  --config .markdownlint-cli2.yaml
       - name: "Markdown Lint Check"
-        uses: DavidAnson/markdownlint-cli2-action@07035fd053f7be764496c0f8d8f9f41f98305101 # v22.0.0
+        uses: DavidAnson/markdownlint-cli2-action@ce4853d43830c74c1753b39f3cf40f71c2031eb9 # v23.0.0
         with:
           config: .markdownlint-cli2.yaml
           fix: false
@@ -33,10 +40,10 @@ jobs:
 
       # equivalent cli: linkspector check
       - name: Run linkspector
-        uses: umbrelladocs/action-linkspector@652f85bc57bb1e7d4327260decc10aa68f7694c3 # v1.4.0
+        uses: umbrelladocs/action-linkspector@37c85bcde51b30bf929936502bac6bfb7e8f0a4d # v1.4.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
+          reporter: github-annotations
           fail_on_error: true
 
   json-lint-check:
@@ -46,7 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           cache: "npm"
           node-version: "24"
@@ -65,7 +72,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           cache: "npm"
           node-version: "24"
@@ -84,15 +91,15 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           cache: "npm"
           node-version: "24"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
+        uses: ruby/setup-ruby@4c56a21280b36d862b5fc31348f463d60bdc55d5 # v1.301.0
         with:
-          ruby-version: "3.2"
+          ruby-version: "3.3.11"
 
       - name: Install Tools
         run: npm ci --ignore-scripts && bundle install
@@ -126,12 +133,16 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: streetsidesoftware/cspell-action@9cd41bb518a24fefdafd9880cbab8f0ceba04d28 # v8.3.0
+      - name: Extract PR title
+        id: pr
+        run: |
+          echo "${{ github.event.pull_request.title }}" > pr_title.md
+      - uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
         with:
-          use_cspell_files: true
           config: .cspell.yml
           suggestions: true
           treat_flagged_words_as_errors: true
+          incremental_files_only: false
 
   format-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
@@ -140,15 +151,15 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           cache: "npm"
           node-version: "24"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
+        uses: ruby/setup-ruby@4c56a21280b36d862b5fc31348f463d60bdc55d5 # v1.301.0
         with:
-          ruby-version: "3.2"
+          ruby-version: "3.3.11"
 
       - name: Install Tools
         run: npm ci --ignore-scripts && bundle install

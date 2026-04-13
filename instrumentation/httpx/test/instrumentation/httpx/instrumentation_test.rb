@@ -9,7 +9,7 @@ require 'test_helper'
 require_relative '../../../lib/opentelemetry/instrumentation/httpx'
 
 describe OpenTelemetry::Instrumentation::HTTPX do
-  before { skip unless ENV['BUNDLE_GEMFILE'].include?('old') }
+  before { skip unless ENV['BUNDLE_GEMFILE'].include?('stable') }
 
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTPX::Instrumentation.instance }
 

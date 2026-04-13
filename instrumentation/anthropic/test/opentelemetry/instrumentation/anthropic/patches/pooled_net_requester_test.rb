@@ -38,7 +38,7 @@ describe OpenTelemetry::Instrumentation::Anthropic::Patches::PooledNetRequester 
       end
 
       test_span = spans.find { |span| span.name == 'test' }
-      http_span = spans.find { |span| span.name == 'HTTP POST' }
+      http_span = spans.find { |span| span.name == 'POST' }
 
       _(test_span.span_id).must_equal(http_span.parent_span_id)
     end

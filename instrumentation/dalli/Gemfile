@@ -11,9 +11,10 @@ gemspec
 group :test do
   gem 'appraisal', '~> 2.5'
   gem 'minitest', '~> 5.0'
-  gem 'opentelemetry-sdk', '~> 1.1'
-  gem 'opentelemetry-test-helpers', '~> 0.3'
-  gem 'rubocop', '~> 1.84.0'
+  gem 'rspec-mocks', '~> 3.13.7'
+  gem 'opentelemetry-sdk', '~> 1.11.0'
+  gem 'opentelemetry-test-helpers', '~> 0.8.0'
+  gem 'rubocop', '~> 1.85.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'yard', '~> 0.9'

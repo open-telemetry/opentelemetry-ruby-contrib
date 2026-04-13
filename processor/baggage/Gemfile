@@ -6,10 +6,11 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'minitest', '~> 5.0'
-  gem 'opentelemetry-sdk', '~> 1.1'
+  gem 'minitest', '~> 6.0'
+  gem 'opentelemetry-sdk', '~> 1.11.0'
   gem 'rake', '>= 13'
-  gem 'rubocop', '~> 1.84.0'
+  gem 'rspec-mocks', '~> 3.13.7'
+  gem 'rubocop', '~> 1.86.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'yard', '~> 0.9'

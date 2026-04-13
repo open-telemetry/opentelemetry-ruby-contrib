@@ -14,11 +14,6 @@ inputs:
     required: false
     type: boolean
     default: false
-  rubocop:
-    description: Run Rubocop
-    required: false
-    type: boolean
-    default: false
   coverage:
     description: Enforce test coverage
     required: false
@@ -72,19 +67,23 @@ runs:
           fi
         fi
 
-    # Install ImageMagick for active_storage testing.
-    # Unfortunately, as of ubuntu-24.04, ImageMagick is no longer pre-installed in Github Actions.
-    # See https://github.com/actions/runner-images/issues/10772
-    - name: Install ImageMagick for active_storage testing
-      if: "${{ inputs.gem == 'opentelemetry-instrumentation-active_storage' }}"
+        if [[ -f "${dir}/test/apt-packages.txt" ]]; then
+          echo "apt=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Install Ubuntu packages (if apt-packages.txt exists)
+      if: "${{ steps.setup.outputs.apt == 'true' }}"
       shell: bash
-      run: sudo apt update && sudo apt install -y imagemagick
+      run: |
+        sudo apt-get update
+        xargs -a test/apt-packages.txt sudo apt-get install -y
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     # Install ruby and bundle dependencies and cache!
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
+      uses: ruby/setup-ruby@4c56a21280b36d862b5fc31348f463d60bdc55d5 # v1.301.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
@@ -94,17 +93,10 @@ runs:
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
+      uses: ruby/setup-ruby@4c56a21280b36d862b5fc31348f463d60bdc55d5 # v1.301.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-    # Perms workaround. See https://github.com/actions/runner-images/issues/10215
-    - name: Fix GEM_HOME permissions on GitHub Actions Runner
-      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      shell: bash
-      run: |
-        # 🛠️😭 Fix GEM_HOME permissions 😭🛠️
-        chmod -R o-w $(gem env home)
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
@@ -159,14 +151,6 @@ runs:
       run: |
         # 📄 Yard Docs 📄
         bundle exec rake yard
-      working-directory: "${{ steps.setup.outputs.gem_dir }}"
-
-    - name: Rubocop
-      shell: bash
-      if: "${{ inputs.rubocop == 'true' }}"
-      run: |
-        # 🤖 Rubocop 🤖
-        bundle exec rake rubocop
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Coverage
