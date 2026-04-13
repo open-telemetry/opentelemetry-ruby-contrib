@@ -191,7 +191,7 @@ bundle exec rake yard
 
 ## Instrumentation author's guide
 
-Please make sure that you review the [Instrumentation author's guide](instrumentation/CONTRIBUTING.md) before submitting a new instrumentation.
+Please make sure that you review the [Instrumentation author's guide](instrumentation/CONTRIBUTING.md) & [Developer's guide](DEVELOPER.md) before submitting a new instrumentation.
 
 ## Create a pull request
 
