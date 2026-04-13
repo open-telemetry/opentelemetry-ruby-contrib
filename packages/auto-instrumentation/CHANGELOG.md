@@ -1,1 +1,1 @@
-# Release History: opentelemetry-auto-instrumentation
+# Release History: auto-instrumentation

@@ -1,5 +1,5 @@
 inherit_from: ../../.rubocop.yml
 Naming/FileName:
-  Enabled: false
-Gemspec/DevelopmentDependencies:
-  Enabled: false
+  Exclude:
+    - 'lib/auto-instrumentation.rb'
+    - 'test/auto-instrumentation_test.rb'

@@ -17,61 +17,6 @@ describe 'AutoInstrumentation' do
     ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] = nil
   end
 
-  after do
-    ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'] = nil
-    ENV['OTEL_RUBY_INSTRUMENTATION_NET_HTTP_ENABLED'] = nil
-    ENV['OTEL_RUBY_RESOURCE_DETECTORS'] = nil
-    ENV['OTEL_RUBY_REQUIRE_BUNDLER'] = nil
-    ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] = nil
-  end
-
-  def run_in_subprocess(env_vars = {})
-    # Run the test in a subprocess to avoid contaminating the test environment
-    read_pipe, write_pipe = IO.pipe
-
-    pid = fork do
-      read_pipe.close
-      env_vars.each { |key, value| ENV[key] = value }
-
-      ENV['OTEL_RUBY_REQUIRE_BUNDLER'] = 'false'
-      begin
-        # Load the auto-instrumentation library
-        load auto_instrumentation_path
-        Bundler.require
-
-        # Get tracer provider information
-        tracer_provider = OpenTelemetry.tracer_provider
-        resource = tracer_provider.instance_variable_get(:@resource)
-        resource_attributes = resource.instance_variable_get(:@attributes)
-        registry = tracer_provider.instance_variable_get(:@registry)
-        instrumentation_names = registry.map { |entry| entry.first.name }
-
-        # Serialize and send results back to parent
-        result = Marshal.dump({
-                                tracer_provider_class: tracer_provider.class.name,
-                                resource_attributes: resource_attributes,
-                                instrumentation_names: instrumentation_names
-                              })
-        write_pipe.write(result)
-      rescue StandardError => e
-        error_result = Marshal.dump({ error: e.message, backtrace: e.backtrace })
-        write_pipe.write(error_result)
-      ensure
-        write_pipe.close
-        exit!(0)
-      end
-    end
-
-    write_pipe.close
-    result_data = read_pipe.read
-    read_pipe.close
-    Process.wait(pid)
-
-    # rubocop:disable Security/MarshalLoad
-    Marshal.load(result_data)
-    # rubocop:enable Security/MarshalLoad
-  end
-
   it 'simple_load_test' do
     result = run_in_subprocess
 
@@ -99,5 +44,40 @@ describe 'AutoInstrumentation' do
     _(result[:error]).must_be_nil
     _(result[:instrumentation_names]).must_include 'OpenTelemetry::Instrumentation::Net::HTTP'
     _(result[:instrumentation_names]).wont_include 'OpenTelemetry::Instrumentation::Rake'
+  end
+
+  describe 'check_for_bundled_otel_gems' do
+    it 'emits no warning when there are no opentelemetry gems in the bundle' do
+      result = run_in_subprocess({}, dep_names: %w[rack faraday])
+
+      _(result[:error]).must_be_nil
+      _(result[:warning_output]).must_be_empty
+    end
+
+    it 'emits a warning listing detected opentelemetry gems' do
+      otel_gems = %w[opentelemetry-sdk opentelemetry-instrumentation-net_http rack]
+      result = run_in_subprocess({}, dep_names: otel_gems)
+
+      _(result[:error]).must_be_nil
+      _(result[:warning_output]).must_include '[OpenTelemetry] WARNING'
+      _(result[:warning_output]).must_include 'opentelemetry-instrumentation-net_http'
+      _(result[:warning_output]).must_include 'opentelemetry-sdk'
+      _(result[:warning_output]).wont_include 'rack'
+    end
+
+    it 'emits no warning when Bundler.definition raises and debug mode is off' do
+      result = run_in_subprocess({}, raise_error: true)
+
+      _(result[:error]).must_be_nil
+      _(result[:warning_output]).must_be_empty
+    end
+
+    it 'emits a warning when Bundler.definition raises and debug mode is on' do
+      result = run_in_subprocess({ 'OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG' => 'true' }, raise_error: true)
+
+      _(result[:error]).must_be_nil
+      _(result[:warning_output]).must_include '[OpenTelemetry] WARNING: Unable to check Gemfile'
+      _(result[:warning_output]).must_include 'simulated bundler error'
+    end
   end
 end
