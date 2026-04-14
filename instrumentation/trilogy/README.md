@@ -53,22 +53,20 @@ end
 
 ## Semantic Conventions
 
-This instrumentation generally uses [Database semantic conventions](https://opentelemetry.io/docs/specs/semconv/database/database-spans/).
+This instrumentation generally uses [Database semantic conventions](https://opentelemetry.io/docs/specs/semconv/database/database-spans/). See the [Database semantic convention stability](#database-semantic-convention-stability) section for how to switch between stable and old conventions.
 
-| Attribute Name | Type | Notes |
-| - | - | - |
-| `db.instance.id` | String | The name of the DB host executing the query e.g. `SELECT @@hostname` |
-| `db.name` | String | The name of the database from connection_options |
-| `db.statement` | String | SQL statement being executed |
-| `db.user` | String | The username from connection_options |
-| `db.system` | String | `mysql` |
-| `net.peer.name` | String | The name of the remote host from connection_options |
-
-## How can I get involved?
-
-The `opentelemetry-instrumentation-trilogy` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
-
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+| Stable Attribute Name | Old Attribute Name | Type | Notes |
+| - | - | - | - |
+| `db.namespace` | `db.name` | String | Database name from connection_options |
+| `db.query.text` | `db.statement` | String | The database query being executed; set according to the `db_statement` config option |
+| `db.response.status_code` | — | String | The Trilogy error code, if available |
+| `db.system.name` | `db.system` | String | DBMS product identifier; always `mysql` |
+| `error.type` | — | String | The exception class name when the operation fails |
+| `server.address` | `net.peer.name` | String | Database host from connection_options |
+| `server.port` | — | Integer | Database port from connection_options |
+| — | `db.instance.id` | String | Connected host, e.g. result of `SELECT @@hostname` |
+| — | `db.user` | String | Database username from connection_options |
+| — | `peer.service` | String | Configured via the `peer_service` config option |
 
 ## Database semantic convention stability
 
@@ -85,6 +83,12 @@ When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify whic
 During the transition from old to stable conventions, Trilogy instrumentation code comes in three patch versions: `dup`, `old`, and `stable`. These versions are identical except for the attributes they send. Any changes to Trilogy instrumentation should consider all three patches.
 
 For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/).
+
+## How can I get involved?
+
+The `opentelemetry-instrumentation-trilogy` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
+
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
