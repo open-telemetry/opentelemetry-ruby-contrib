@@ -51,6 +51,17 @@ OpenTelemetry::Instrumentation::Trilogy.with_attributes('pizzatoppings' => 'mush
 end
 ```
 
+## Configuration Options
+
+| Option | Default | Description |
+| ------ | ------- | ----------- |
+| `db_statement` | `:obfuscate` | Controls how SQL queries appear in spans. `:obfuscate` replaces literal values with `?`, `:include` records the raw SQL, `:omit` excludes the attribute entirely. |
+| `obfuscation_limit` | `2000` | Maximum length of the obfuscated SQL statement. Statements exceeding this limit are truncated. |
+| `peer_service` | `nil` | Sets the `peer.service` attribute on spans (old semantic conventions only). |
+| `propagator` | `'none'` | Propagator for injecting trace context into SQL comments. `'none'` disables propagation, `'tracecontext'` uses W3C Trace Context, `'vitess'` uses Vitess-style propagation (requires `opentelemetry-propagator-vitess` gem). |
+| `record_exception` | `true` | Records exceptions as span events when an error occurs. |
+| `span_name` | `:statement_type` | Controls span naming (old semantic conventions only). `:statement_type` uses the SQL operation (e.g., `SELECT`), `:db_name` uses the database name, `:db_operation_and_name` combines both. |
+
 ## Semantic Conventions
 
 This instrumentation generally uses [Database semantic conventions](https://opentelemetry.io/docs/specs/semconv/database/database-spans/). See the [Database semantic convention stability](#database-semantic-convention-stability) section for how to switch between stable and old conventions.

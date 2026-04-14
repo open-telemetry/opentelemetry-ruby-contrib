@@ -7,7 +7,70 @@
 module OpenTelemetry
   module Instrumentation
     module Trilogy
-      # The Instrumentation class contains logic to detect and install the Trilogy instrumentation
+      # The {OpenTelemetry::Instrumentation::Trilogy::Instrumentation} class contains logic to detect and install the Trilogy instrumentation
+      #
+      # Installation and configuration of this instrumentation is done within the
+      # {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry/SDK#configure-instance_method OpenTelemetry::SDK#configure}
+      # block, calling {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry%2FSDK%2FConfigurator:use use()}
+      # or {https://www.rubydoc.info/gems/opentelemetry-sdk/OpenTelemetry%2FSDK%2FConfigurator:use_all use_all()}.
+      #
+      # ## Configuration keys and options
+      #
+      # ### `:db_statement`
+      #
+      # Controls how SQL queries appear in spans.
+      #
+      # - `:obfuscate` **(default)** - Replaces literal values with `?` to prevent
+      #   sensitive data from being recorded.
+      # - `:include` - Records the raw SQL query as-is.
+      # - `:omit` - Excludes the SQL query attribute entirely.
+      #
+      # ### `:obfuscation_limit`
+      #
+      # Maximum length of the obfuscated SQL statement. Statements exceeding this limit
+      # are truncated. Default is `2000`.
+      #
+      # ### `:peer_service`
+      #
+      # Sets the `peer.service` attribute on spans. Only applies when using old semantic
+      # conventions. Default is `nil`.
+      #
+      # ### `:propagator`
+      #
+      # Propagator for injecting trace context into SQL comments.
+      #
+      # - `'none'` **(default)** - Disables trace context propagation.
+      # - `'tracecontext'` - Uses W3C Trace Context format via SQL comments.
+      # - `'vitess'` - Uses Vitess-style propagation. Requires the
+      #   `opentelemetry-propagator-vitess` gem.
+      #
+      # ### `:record_exception`
+      #
+      # Records exceptions as span events when an error occurs. Default is `true`.
+      #
+      # ### `:span_name`
+      #
+      # Controls how span names are generated. Only applies when using old semantic
+      # conventions; ignored for stable semantic conventions.
+      #
+      # - `:statement_type` **(default)** - Uses the SQL operation (e.g., `SELECT`).
+      # - `:db_name` - Uses the database name.
+      # - `:db_operation_and_name` - Combines the operation and database name.
+      #
+      # @example An explicit default configuration
+      #   OpenTelemetry::SDK.configure do |c|
+      #     c.use_all({
+      #       'OpenTelemetry::Instrumentation::Trilogy' => {
+      #         db_statement: :obfuscate,
+      #         obfuscation_limit: 2000,
+      #         peer_service: nil,
+      #         propagator: 'none',
+      #         record_exception: true,
+      #         span_name: :statement_type,
+      #       },
+      #     })
+      #   end
+      #
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |config|
           require_dependencies
