@@ -77,13 +77,7 @@ Layout/LineLength:
 Layout/EndOfLine:
   EnforcedStyle: lf
 
-# we want to remove the below
-Minitest/AssertPredicate:
-  Enabled: false
-Minitest/AssertTruthy:
-  Enabled: false
-Minitest/RefuteFalse:
-  Enabled: false
+# we need to reviee the below
 Minitest/LiteralAsActualArgument:
   Enabled: false
 Minitest/EmptyLineBeforeAssertionMethods:

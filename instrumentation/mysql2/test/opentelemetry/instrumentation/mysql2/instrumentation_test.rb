@@ -163,8 +163,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       )
       _(span.events.first.name).must_equal 'exception'
       _(span.events.first.attributes['exception.type']).must_equal 'Mysql2::Error'
-      assert(!span.events.first.attributes['exception.message'].nil?)
-      assert(!span.events.first.attributes['exception.stacktrace'].nil?)
+      refute(span.events.first.attributes['exception.message'].nil?)
+      refute(span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
     it 'extracts statement type that begins the query' do
@@ -198,8 +198,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       )
       _(span.events.first.name).must_equal 'exception'
       _(span.events.first.attributes['exception.type']).must_equal 'Mysql2::Error'
-      assert(!span.events.first.attributes['exception.message'].nil?)
-      assert(!span.events.first.attributes['exception.stacktrace'].nil?)
+      refute(span.events.first.attributes['exception.message'].nil?)
+      refute(span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
     describe 'when db_statement set as obfuscate' do

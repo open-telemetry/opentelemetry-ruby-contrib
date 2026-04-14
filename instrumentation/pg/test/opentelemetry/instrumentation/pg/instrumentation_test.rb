@@ -318,8 +318,8 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       )
       _(last_span.events.first.name).must_equal 'exception'
       _(last_span.events.first.attributes['exception.type']).must_equal 'PG::UndefinedColumn'
-      assert(!last_span.events.first.attributes['exception.message'].nil?)
-      assert(!last_span.events.first.attributes['exception.stacktrace'].nil?)
+      refute(last_span.events.first.attributes['exception.message'].nil?)
+      refute(last_span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
     it 'extracts statement type that begins the query' do
@@ -355,8 +355,8 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       )
       _(last_span.events.first.name).must_equal 'exception'
       _(last_span.events.first.attributes['exception.type']).must_equal 'PG::SyntaxError'
-      assert(!last_span.events.first.attributes['exception.message'].nil?)
-      assert(!last_span.events.first.attributes['exception.stacktrace'].nil?)
+      refute(last_span.events.first.attributes['exception.message'].nil?)
+      refute(last_span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
     it 'extracts table name' do

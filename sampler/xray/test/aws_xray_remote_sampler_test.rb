@@ -20,10 +20,10 @@ describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
 
     sampler = OpenTelemetry::Sampler::XRay::InternalAWSXRayRemoteSampler.new(resource: OpenTelemetry::SDK::Resources::Resource.create)
 
-    assert !sampler.instance_variable_get(:@rule_poller).nil?
+    refute sampler.instance_variable_get(:@rule_poller).nil?
     assert_equal(sampler.instance_variable_get(:@rule_polling_interval_millis), 300 * 1000)
-    assert !sampler.instance_variable_get(:@sampling_client).nil?
-    assert !sampler.instance_variable_get(:@rule_cache).nil?
+    refute sampler.instance_variable_get(:@sampling_client).nil?
+    refute sampler.instance_variable_get(:@rule_cache).nil?
     assert_match(/[a-f0-9]{24}/, sampler.instance_variable_get(:@client_id))
   end
 
@@ -39,10 +39,10 @@ describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
     )
     sampler = OpenTelemetry::Sampler::XRay::InternalAWSXRayRemoteSampler.new(resource: resource)
 
-    assert !sampler.instance_variable_get(:@rule_poller).nil?
+    refute sampler.instance_variable_get(:@rule_poller).nil?
     assert_equal(sampler.instance_variable_get(:@rule_polling_interval_millis), 300 * 1000)
-    assert !sampler.instance_variable_get(:@sampling_client).nil?
-    assert !sampler.instance_variable_get(:@rule_cache).nil?
+    refute sampler.instance_variable_get(:@sampling_client).nil?
+    refute sampler.instance_variable_get(:@rule_cache).nil?
     assert_equal(sampler.instance_variable_get(:@rule_cache).instance_variable_get(:@sampler_resource), resource)
     assert_match(/[a-f0-9]{24}/, sampler.instance_variable_get(:@client_id))
   end
@@ -63,10 +63,10 @@ describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
       polling_interval: 120
     )
 
-    assert !sampler.instance_variable_get(:@rule_poller).nil?
+    refute sampler.instance_variable_get(:@rule_poller).nil?
     assert_equal(sampler.instance_variable_get(:@rule_polling_interval_millis), 120 * 1000)
-    assert !sampler.instance_variable_get(:@sampling_client).nil?
-    assert !sampler.instance_variable_get(:@rule_cache).nil?
+    refute sampler.instance_variable_get(:@sampling_client).nil?
+    refute sampler.instance_variable_get(:@rule_cache).nil?
     assert_equal(sampler.instance_variable_get(:@rule_cache).instance_variable_get(:@sampler_resource), resource)
     assert_equal(sampler.instance_variable_get(:@aws_proxy_endpoint), 'abc.com')
     assert_match(/[a-f0-9]{24}/, sampler.instance_variable_get(:@client_id))
