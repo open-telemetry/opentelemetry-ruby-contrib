@@ -384,7 +384,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         arg_cache = {} # maintain handles to args
         allow(client).to receive(:query).and_wrap_original do |m, *args|
           arg_cache[:query_input] = args[0]
-          refute_predicate(args[0], :frozen?)
+          assert(args[0].frozen?)
           m.call(args[0])
         end
 
