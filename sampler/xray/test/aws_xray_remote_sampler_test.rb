@@ -65,7 +65,7 @@ describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
 
     refute_nil sampler.instance_variable_get(:@rule_poller)
     assert_equal(sampler.instance_variable_get(:@rule_polling_interval_millis), 120 * 1000)
-    refute sampler.instance_variable_get(:@sampling_client)
+    refute_nil sampler.instance_variable_get(:@sampling_client)
     refute_nil sampler.instance_variable_get(:@rule_cache)
     assert_equal(sampler.instance_variable_get(:@rule_cache).instance_variable_get(:@sampler_resource), resource)
     assert_equal(sampler.instance_variable_get(:@aws_proxy_endpoint), 'abc.com')
