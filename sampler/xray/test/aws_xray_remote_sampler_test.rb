@@ -39,7 +39,7 @@ describe OpenTelemetry::Sampler::XRay::AWSXRayRemoteSampler do
     )
     sampler = OpenTelemetry::Sampler::XRay::InternalAWSXRayRemoteSampler.new(resource: resource)
 
-    refute sampler.instance_variable_get(:@rule_poller).nil?
+    refute_nil sampler.instance_variable_get(:@rule_poller)
     assert_equal(sampler.instance_variable_get(:@rule_polling_interval_millis), 300 * 1000)
     refute_nil sampler.instance_variable_get(:@sampling_client)
     refute_nil sampler.instance_variable_get(:@rule_cache)
