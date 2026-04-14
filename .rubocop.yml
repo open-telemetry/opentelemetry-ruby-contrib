@@ -78,7 +78,15 @@ Layout/EndOfLine:
   EnforcedStyle: lf
 
 # we want to remove the below
+Minitest/AssertPredicate:
+  Enabled: false
+Minitest/AssertTruthy:
+  Enabled: false
+Minitest/RefuteFalse:
+  Enabled: false
 Minitest/LiteralAsActualArgument:
   Enabled: false
 Minitest/EmptyLineBeforeAssertionMethods:
+  Enabled: false
+Rake/DuplicateTask:
   Enabled: false
