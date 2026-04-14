@@ -11,8 +11,8 @@ gemspec
 group :test do
   gem 'opentelemetry-instrumentation-base', path: '../base'
 
-  gem 'appraisal', '~> 2.5'
-  gem 'minitest', '~> 6.0'
+  gem 'appraisal', '~> 2.5.0'
+  gem 'minitest', '~> 6.0.0'
   gem 'opentelemetry-sdk', '~> 1.11.0'
   gem 'opentelemetry-test-helpers', '~> 0.8.0'
   gem 'rake', '>= 13'
@@ -21,7 +21,7 @@ group :test do
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.24'
-  gem 'yard', '~> 0.9'
+  gem 'yard', '~> 0.9.0'
 
   if RUBY_VERSION >= '3.4'
     gem 'base64'
