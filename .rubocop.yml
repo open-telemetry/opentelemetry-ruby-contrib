@@ -76,3 +76,9 @@ Layout/LineLength:
   Max: 250
 Layout/EndOfLine:
   EnforcedStyle: lf
+
+# we want to remove the below
+Minitest/LiteralAsActualArgument:
+  Enabled: false
+Minitest/EmptyLineBeforeAssertionMethods:
+  Enabled: false
