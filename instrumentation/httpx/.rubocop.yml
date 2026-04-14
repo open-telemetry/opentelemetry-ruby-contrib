@@ -1,4 +1,1 @@
 inherit_from: ../../.rubocop.yml
-
-Minitest/AssertKindOf:
-  Enabled: false
