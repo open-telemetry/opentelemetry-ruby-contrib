@@ -318,7 +318,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       )
       _(last_span.events.first.name).must_equal 'exception'
       _(last_span.events.first.attributes['exception.type']).must_equal 'PG::UndefinedColumn'
-      refute(last_span.events.first.attributes['exception.message'].nil?)
+      refute_nil(last_span.events.first.attributes['exception.message'])
       refute(last_span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
@@ -355,7 +355,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       )
       _(last_span.events.first.name).must_equal 'exception'
       _(last_span.events.first.attributes['exception.type']).must_equal 'PG::SyntaxError'
-      refute(last_span.events.first.attributes['exception.message'].nil?)
+      refute_nil(last_span.events.first.attributes['exception.message'])
       refute(last_span.events.first.attributes['exception.stacktrace'].nil?)
     end
 

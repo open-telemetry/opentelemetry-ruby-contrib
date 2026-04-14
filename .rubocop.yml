@@ -77,7 +77,7 @@ Layout/LineLength:
 Layout/EndOfLine:
   EnforcedStyle: lf
 
-# we need to reviee the below
+# we need to review the below
 Minitest/LiteralAsActualArgument:
   Enabled: false
 Minitest/EmptyLineBeforeAssertionMethods:

@@ -163,7 +163,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       )
       _(span.events.first.name).must_equal 'exception'
       _(span.events.first.attributes['exception.type']).must_equal 'Mysql2::Error'
-      refute(span.events.first.attributes['exception.message'].nil?)
+      refute_nil(span.events.first.attributes['exception.message'])
       refute(span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
@@ -198,7 +198,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       )
       _(span.events.first.name).must_equal 'exception'
       _(span.events.first.attributes['exception.type']).must_equal 'Mysql2::Error'
-      refute(span.events.first.attributes['exception.message'].nil?)
+      refute_nil(span.events.first.attributes['exception.message'])
       refute(span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
