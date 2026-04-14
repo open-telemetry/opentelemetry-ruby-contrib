@@ -12,7 +12,7 @@
     "check:lint:renovate": "renovate-config-validator",
     "check:lint:ruby": "rubocop --only Lint,Naming,Style",
     "check:source": "npm run check:source:ruby",
-    "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Migration,MiniTest,Performance,Rake,RSpec,Security",
+    "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Migration,Minitest,Performance,Rake,RSpec,Security",
     "check:spelling": "cspell -c .cspell.yml .",
     "write": "npm run write:lint && npm run write:format && npm run write:source:ruby",
     "write:format": "npm run write:format:ruby && prettier . --write",
