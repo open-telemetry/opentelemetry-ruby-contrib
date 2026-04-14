@@ -3,6 +3,11 @@ dirs:
   - .
 excludedFiles:
 excludedDirs:
+  - helpers/sql-obfuscation/
+  - instrumentation/dalli/
+  - instrumentation/mongo/
+  - instrumentation/restclient/
+  - instrumentation/ruby_kafka/
 ignorePatterns:
 useGitIgnore: true
 followRedirects: true
