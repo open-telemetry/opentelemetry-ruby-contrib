@@ -108,7 +108,7 @@ module OpenTelemetry
 
             def set_error_attributes(span, error)
               span.set_attribute('error.type', error.class.name)
-              span.set_attribute('db.response.status_code', error.error_code.to_s) if error.error_code
+              span.set_attribute('db.response.status_code', error.error_code.to_s) if error.respond_to?(:error_code) && error.error_code
             end
 
             def tracer
