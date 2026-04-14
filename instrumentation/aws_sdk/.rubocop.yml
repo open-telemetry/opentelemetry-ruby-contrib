@@ -1,1 +1,6 @@
 inherit_from: ../../.rubocop.yml
+
+Minitest/GlobalExpectations:
+  Enabled: true
+  Exclude:
+    - instrumentation/aws_sdk/test/test_helper.rb
