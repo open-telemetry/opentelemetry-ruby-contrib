@@ -54,7 +54,7 @@ module OpenTelemetry
 
             def initialize(app)
               @app = app
-              @untraced_endpoints = config[:untraced_endpoints]
+              @untraced_endpoints = Array(config[:untraced_endpoints])
             end
 
             def call(env)
@@ -83,7 +83,7 @@ module OpenTelemetry
                   OpenTelemetry::Instrumentation::Rack.with_span(request_span) do
                     @app.call(env).tap do |status, headers, response|
                       set_attributes_after_request(request_span, status, headers, response)
-                      config[:response_propagators].each { |propagator| propagator.inject(headers) }
+                      Array(config[:response_propagators]).each { |propagator| propagator.inject(headers) }
                     end
                   end
                 end
