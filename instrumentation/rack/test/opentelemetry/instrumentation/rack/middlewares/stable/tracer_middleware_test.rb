@@ -386,4 +386,21 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddle
       _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
     end
   end
+
+  # When OTEL_SDK_DISABLED=true, the SDK skips installation and config remains empty.
+  describe 'when config is empty' do
+    let(:empty_config_rack_builder) { Rack::Builder.new }
+
+    before do
+      instrumentation.instance_variable_set(:@config, {})
+      described_class.send(:clear_cached_config)
+      empty_config_rack_builder.run app
+      empty_config_rack_builder.use described_class
+    end
+
+    it 'handles requests without raising an error' do
+      response = Rack::MockRequest.new(empty_config_rack_builder).get('/ping', env)
+      _(response.status).must_equal 200
+    end
+  end
 end
