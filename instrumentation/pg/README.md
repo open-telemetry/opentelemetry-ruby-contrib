@@ -77,6 +77,22 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special int
 
 The `opentelemetry-instrumentation-pg` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
+## Database semantic convention stability
+
+In the OpenTelemetry ecosystem, database semantic conventions have now reached a stable state. However, the initial PG instrumentation was introduced before this stability was achieved, which resulted in database attributes being based on an older version of the semantic conventions.
+
+To facilitate the migration to stable semantic conventions, you can use the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable. This variable allows you to opt-in to the new stable conventions, ensuring compatibility and future-proofing your instrumentation.
+
+When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
+
+- `database` - Emits the stable database and networking conventions and ceases emitting the old conventions previously emitted by the instrumentation.
+- `database/dup` - Emits both the old and stable database and networking conventions, enabling a phased rollout of the stable semantic conventions.
+- Default behavior (in the absence of either value) is to continue emitting the old database and networking conventions the instrumentation previously emitted.
+
+During the transition from old to stable conventions, PG instrumentation code comes in three patch versions: `dup`, `old`, and `stable`. These versions are identical except for the attributes they send. Any changes to PG instrumentation should consider all three patches.
+
+For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/).
+
 [pg-home]: https://github.com/ged/ruby-pg
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
