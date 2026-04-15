@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+## v0.30.0 / 2026-04-14
+
+- ADDED: Add release tag into source code url of gem metadata (#1984)
+
 ## v0.29.2 / 2026-02-27
 
 - FIXED: Replace return with implicit block value in compatible block (#2029)
