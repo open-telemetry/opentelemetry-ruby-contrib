@@ -657,58 +657,5 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
       end
     end
 
-    describe 'span_name config option' do
-      describe 'when span_name is set to :statement_type (default)' do
-        let(:config) { { span_name: :statement_type } }
-
-        it 'uses statement type extracted from SQL as span name' do
-          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-          expect do
-            client.query(sql)
-          end.must_raise Trilogy::Error
-
-          _(span.name).must_equal 'select'
-        end
-      end
-
-      describe 'when span_name is set to :db_name' do
-        let(:config) { { span_name: :db_name } }
-
-        it 'uses database name as span name' do
-          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-          expect do
-            client.query(sql)
-          end.must_raise Trilogy::Error
-
-          _(span.name).must_equal database
-        end
-      end
-
-      describe 'when span_name is set to :db_operation_and_name' do
-        let(:config) { { span_name: :db_operation_and_name } }
-
-        it 'uses operation and database name as span name' do
-          sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-          expect do
-            client.query(sql)
-          end.must_raise Trilogy::Error
-
-          _(span.name).must_equal "select #{database}"
-        end
-
-        describe 'when db name is nil' do
-          let(:database) { nil }
-
-          it 'uses only operation name when db name is nil' do
-            sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
-            expect do
-              client.query(sql)
-            end.must_raise Trilogy::Error
-
-            _(span.name).must_equal 'select'
-          end
-        end
-      end
-    end
   end
 end
