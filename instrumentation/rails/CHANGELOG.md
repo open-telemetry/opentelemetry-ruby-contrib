@@ -5,6 +5,7 @@
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
 - ADDED: Min Ruby Version 3.3 (#2125)
 - ADDED: Add release tag into source code url of gem metadata (#1984)
+- CHANGED: Update transitive dependencies for Rails instrumentation sub-gems to new versions
 
 ## v0.40.0 / 2026-03-17
 
