@@ -179,6 +179,20 @@
       depNameTemplate: "ruby",
       depTypeTemplate: "gemspec.required_ruby_version",
     },
+    {
+      customType: "regex",
+      description: "Update os matrix",
+      managerFilePatterns: [".github/**/*.yml"],
+      matchStrings: [
+        "matrix:[\s\S]*os:[\s\S]*:",
+        "os:[\s\S]*:",
+        "- (?<packageName>.+?)-(?<depVersion>[0-9.]+)"
+      ],
+      matchStringsStrategy: "recursive",
+      datasourceTemplate: "github-runners",
+      currentValueTemplate: "{{depVersion}}",
+      depTypeTemplate: "os",
+    },
   ],
   lockFileMaintenance: {
     enabled: true,
