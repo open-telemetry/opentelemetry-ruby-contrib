@@ -136,7 +136,8 @@ jobs:
       - name: Extract PR title
         id: pr
         run: |
-          echo "${{ github.event.pull_request.title }}" > pr_title.md
+          TITLE=${{ toJSON(github.event.pull_request.title) }}
+          echo "Title: $TITLE" > pr_title.md
       - uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
         with:
           config: .cspell.yml
