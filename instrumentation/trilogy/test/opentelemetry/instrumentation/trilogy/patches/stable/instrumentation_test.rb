@@ -544,6 +544,5 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
         end
       end
     end
-
   end
 end

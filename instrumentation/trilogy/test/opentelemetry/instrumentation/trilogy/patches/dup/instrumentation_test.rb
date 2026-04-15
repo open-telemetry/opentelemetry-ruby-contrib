@@ -656,6 +656,5 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         end
       end
     end
-
   end
 end
