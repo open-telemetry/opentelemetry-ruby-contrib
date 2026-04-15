@@ -14,7 +14,7 @@ group :test do
   gem 'google-protobuf', '~> 4.29'
   gem 'grpc-tools', '~> 1.64'
   gem 'minitest', '~> 6.0'
-  gem 'opentelemetry-sdk', '~> 1.1'
+  gem 'opentelemetry-sdk', '~> 1.11.0'
   gem 'opentelemetry-test-helpers', '~> 0.4'
   gem 'rake', '>= 13'
   gem 'rubocop', '~> 1.86.0'
