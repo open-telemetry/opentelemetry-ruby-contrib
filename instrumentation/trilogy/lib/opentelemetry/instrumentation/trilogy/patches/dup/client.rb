@@ -50,9 +50,11 @@ module OpenTelemetry
               context_attributes = OpenTelemetry::Instrumentation::Trilogy.attributes
 
               tracer.in_span(
-                OpenTelemetry::Helpers::MySQL.stable_database_span_name(
-                  context_attributes[OpenTelemetry::SemanticConventions::Trace::DB_OPERATION] || context_attributes['db.operation.name'],
-                  @_otel_database_name
+                OpenTelemetry::Helpers::MySQL.database_span_name(
+                  sql,
+                  context_attributes[OpenTelemetry::SemanticConventions::Trace::DB_OPERATION],
+                  @_otel_database_name,
+                  config
                 ),
                 attributes: client_attributes(sql).merge!(context_attributes),
                 kind: :client,

@@ -67,31 +67,6 @@ module OpenTelemetry
         end || 'mysql'
       end
 
-      # Span naming following stable database semantic conventions.
-      # Per spec: {db.query.summary} -> {db.operation.name} {target} -> {target} -> {db.system.name}
-      # We don't have db.query.summary, so we use:
-      # {db.operation.name} {db.namespace} -> {db.namespace} -> mysql
-      #
-      # Note: Per spec, db.operation.name SHOULD NOT be extracted from db.query.text.
-      # The operation should only be used if explicitly provided by the application
-      # (e.g., via with_attributes).
-      #
-      # @param operation [String] The database operation (db.operation.name), if provided by the application.
-      # @param database_name [String] The name of the database (db.namespace).
-      # @return [String] The span name.
-      # @api private
-      def stable_database_span_name(operation, database_name)
-        if operation && database_name
-          "#{operation} #{database_name}"
-        elsif database_name
-          database_name
-        elsif operation
-          operation
-        else
-          'mysql'
-        end
-      end
-
       # @api private
       def extract_statement_type(sql)
         return unless sql
