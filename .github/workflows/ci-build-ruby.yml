@@ -1,4 +1,4 @@
-name: Build / Ruby
+name: Build / Source
 
 on:
   workflow_dispatch:
