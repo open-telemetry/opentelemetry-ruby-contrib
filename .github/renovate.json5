@@ -186,7 +186,7 @@
       matchStrings: [
         "matrix:[\\s\\S]*os:[\\s\\S]*:",
         "os:\\s*\\n(?:\\s+-\\s+[\\w.-]+\\n)+",
-        "- (?<packageName>.+?)-(?<depVersion>[0-9.]+)\\n"
+        "- (?<packageName>.+?)-(?<depVersion>[0-9.]+)\\n",
       ],
       matchStringsStrategy: "recursive",
       datasourceTemplate: "github-runners",

@@ -49,7 +49,7 @@ jobs:
           echo "PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome" >> $GITHUB_ENV
 
       - name: Install Chrome for Testing (macOS/Windows only)
-        if: !startsWith(matrix.os, 'ubuntu')
+        if: "${{!startsWith(matrix.os, 'ubuntu')}}"
         run: npx puppeteer browsers install chrome
 
       - name: Install Tools
