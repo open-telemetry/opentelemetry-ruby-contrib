@@ -190,7 +190,24 @@ The following environment variables are specific to this gem (not standard OpenT
 | `OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG` | Set to `true` for debug output during initialization. | `true` |
 | `OTEL_RUBY_UNLOAD_LIBRARY` | Prevent specific gems from being preloaded (e.g., `google-protobuf`). | `google-protobuf` |
 
-For standard OpenTelemetry environment variables (exporters, endpoints, resource attributes, etc.), refer to the SDK READMEs:
+### Standard OpenTelemetry Environment Variables
+
+This gem fully supports all standard OpenTelemetry environment variables for configuring exporters, endpoints, resource attributes, sampling, and other SDK behavior. These variables work alongside the gem-specific variables listed above.
+
+Examples of standard variables you can use:
+
+- `OTEL_EXPORTER_OTLP_ENDPOINT` — OTLP receiver endpoint (default: `http://localhost:4318`)
+- `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` — traces-specific endpoint
+- `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT` — metrics-specific endpoint
+- `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` — logs-specific endpoint
+- `OTEL_SERVICE_NAME` — service name resource attribute
+- `OTEL_RESOURCE_ATTRIBUTES` — comma-separated key=value pairs for resource attributes
+- `OTEL_TRACES_EXPORTER` — trace exporter (default: `otlp`; use `console` or `none`)
+- `OTEL_METRICS_EXPORTER` — metrics exporter (default: `otlp`; use `console` or `none`)
+- `OTEL_LOGS_EXPORTER` — logs exporter (default: `otlp`; use `console` or `none`)
+- `OTEL_TRACES_SAMPLER` — sampling strategy (e.g., `always_on`, `always_off`, `traceidratio`)
+
+For a complete list of standard variables, refer to the SDK READMEs:
 
 - [opentelemetry-sdk (traces)][otel-sdk-readme]
 - [opentelemetry-metrics-sdk (metrics)][otel-metrics-sdk-readme]
