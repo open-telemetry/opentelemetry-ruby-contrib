@@ -182,16 +182,16 @@
     {
       customType: "regex",
       description: "Update os matrix",
-      managerFilePatterns: [".github/**/*.yml"],
+      managerFilePatterns: [".github/**/**"],
       matchStrings: [
-        "matrix:[\s\S]*os:[\s\S]*:",
-        "os:[\s\S]*:",
-        "- (?<packageName>.+?)-(?<depVersion>[0-9.]+)"
+        "matrix:[\\s\\S]*os:[\\s\\S]*:",
+        "os:\\s*\\n(?:\\s+-\\s+[\\w.-]+\\n)+",
+        "- (?<packageName>.+?)-(?<depVersion>[0-9.]+)\\n"
       ],
       matchStringsStrategy: "recursive",
       datasourceTemplate: "github-runners",
       currentValueTemplate: "{{depVersion}}",
-      depTypeTemplate: "os",
+      depTypeTemplate: "github-runner",
     },
   ],
   lockFileMaintenance: {
