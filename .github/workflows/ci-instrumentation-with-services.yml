@@ -55,7 +55,7 @@ jobs:
           - dalli
           - mongo
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: other / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -97,7 +97,7 @@ jobs:
           - mysql2
           - trilogy
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: mysql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -135,7 +135,7 @@ jobs:
           - rdkafka
           - ruby_kafka
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: kafka / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -189,7 +189,7 @@ jobs:
           - resque
           - sidekiq
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: redis / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -236,7 +236,7 @@ jobs:
           - pg
           - que
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: postgresql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -278,7 +278,7 @@ jobs:
         gem:
           - bunny
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: rabbitmq / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
