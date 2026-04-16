@@ -7,10 +7,6 @@
 require 'rake'
 require 'minitest'
 require 'minitest/autorun'
-require 'opentelemetry-sdk'
-require 'opentelemetry-instrumentation-all'
-require 'opentelemetry-test-helpers'
-require 'opentelemetry/resource/detector'
 require 'net/http'
 
 # Runs the auto-instrumentation loading logic inside a forked subprocess so that
