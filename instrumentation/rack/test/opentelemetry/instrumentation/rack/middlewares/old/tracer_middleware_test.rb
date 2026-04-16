@@ -388,19 +388,18 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddlewar
     end
   end
 
-  # When OTEL_SDK_DISABLED=true, the SDK skips installation and config remains empty.
-  describe 'when config is empty' do
-    let(:empty_config_rack_builder) { Rack::Builder.new }
+  describe 'when SDK is disabled' do
+    let(:disabled_rack_builder) { Rack::Builder.new }
 
     before do
-      instrumentation.instance_variable_set(:@config, {})
+      instrumentation.instance_variable_set(:@installed, false)
       described_class.send(:clear_cached_config)
-      empty_config_rack_builder.run app
-      empty_config_rack_builder.use described_class
+      disabled_rack_builder.run app
+      disabled_rack_builder.use described_class
     end
 
     it 'handles requests without raising an error' do
-      response = Rack::MockRequest.new(empty_config_rack_builder).get('/ping', env)
+      response = Rack::MockRequest.new(disabled_rack_builder).get('/ping', env)
       _(response.status).must_equal 200
     end
   end

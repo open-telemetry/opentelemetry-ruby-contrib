@@ -345,6 +345,15 @@ describe OpenTelemetry::Instrumentation::Base do
     end
   end
 
+  describe '#config' do
+    describe 'before install' do
+      it 'returns default values for defined options' do
+        instance = instrumentation_with_callbacks.instance
+        _(instance.config[:max_count]).must_equal(5)
+      end
+    end
+  end
+
   describe '#enabled?' do
     describe 'with env var' do
       it 'is disabled when false' do
