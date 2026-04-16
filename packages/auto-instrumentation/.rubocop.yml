@@ -1,5 +1,8 @@
 inherit_from: ../../.rubocop.yml
 Naming/FileName:
   Exclude:
-    - "lib/auto-instrumentation.rb"
-    - "test/auto-instrumentation_test.rb"
+    - "lib/opentelemetry-auto-instrumentation.rb"
+    - "test/opentelemetry-auto-instrumentation_test.rb"
+Metrics/ModuleLength:
+  Exclude:
+    - "lib/opentelemetry-auto-instrumentation.rb"

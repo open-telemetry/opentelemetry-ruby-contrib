@@ -11,21 +11,18 @@ module OTelBundlerPatch
     @_otel_initialized = false
 
     OTEL_INSTRUMENTATION_MAP = {
-      'gruf' => 'OpenTelemetry::Instrumentation::Gruf',
-      'trilogy' => 'OpenTelemetry::Instrumentation::Trilogy',
-      'active_support' => 'OpenTelemetry::Instrumentation::ActiveSupport',
-      'action_pack' => 'OpenTelemetry::Instrumentation::ActionPack',
-      'active_job' => 'OpenTelemetry::Instrumentation::ActiveJob',
-      'active_record' => 'OpenTelemetry::Instrumentation::ActiveRecord',
-      'action_view' => 'OpenTelemetry::Instrumentation::ActionView',
       'action_mailer' => 'OpenTelemetry::Instrumentation::ActionMailer',
-      'aws_sdk' => 'OpenTelemetry::Instrumentation::AwsSdk',
-      'aws_lambda' => 'OpenTelemetry::Instrumentation::AwsLambda',
-      'bunny' => 'OpenTelemetry::Instrumentation::Bunny',
-      'lmdb' => 'OpenTelemetry::Instrumentation::LMDB',
-      'http' => 'OpenTelemetry::Instrumentation::HTTP',
-      'koala' => 'OpenTelemetry::Instrumentation::Koala',
+      'action_pack' => 'OpenTelemetry::Instrumentation::ActionPack',
+      'action_view' => 'OpenTelemetry::Instrumentation::ActionView',
+      'active_job' => 'OpenTelemetry::Instrumentation::ActiveJob',
       'active_model_serializers' => 'OpenTelemetry::Instrumentation::ActiveModelSerializers',
+      'active_record' => 'OpenTelemetry::Instrumentation::ActiveRecord',
+      'active_storage' => 'OpenTelemetry::Instrumentation::ActiveStorage',
+      'active_support' => 'OpenTelemetry::Instrumentation::ActiveSupport',
+      'anthropic' => 'OpenTelemetry::Instrumentation::Anthropic',
+      'aws_lambda' => 'OpenTelemetry::Instrumentation::AwsLambda',
+      'aws_sdk' => 'OpenTelemetry::Instrumentation::AwsSdk',
+      'bunny' => 'OpenTelemetry::Instrumentation::Bunny',
       'concurrent_ruby' => 'OpenTelemetry::Instrumentation::ConcurrentRuby',
       'dalli' => 'OpenTelemetry::Instrumentation::Dalli',
       'delayed_job' => 'OpenTelemetry::Instrumentation::DelayedJob',
@@ -34,7 +31,13 @@ module OTelBundlerPatch
       'faraday' => 'OpenTelemetry::Instrumentation::Faraday',
       'grape' => 'OpenTelemetry::Instrumentation::Grape',
       'graphql' => 'OpenTelemetry::Instrumentation::GraphQL',
+      'grpc' => 'OpenTelemetry::Instrumentation::Grpc',
+      'gruf' => 'OpenTelemetry::Instrumentation::Gruf',
+      'http' => 'OpenTelemetry::Instrumentation::HTTP',
       'http_client' => 'OpenTelemetry::Instrumentation::HttpClient',
+      'httpx' => 'OpenTelemetry::Instrumentation::HTTPX',
+      'koala' => 'OpenTelemetry::Instrumentation::Koala',
+      'lmdb' => 'OpenTelemetry::Instrumentation::LMDB',
       'mongo' => 'OpenTelemetry::Instrumentation::Mongo',
       'mysql2' => 'OpenTelemetry::Instrumentation::Mysql2',
       'net_http' => 'OpenTelemetry::Instrumentation::Net::HTTP',
@@ -46,11 +49,12 @@ module OTelBundlerPatch
       'rake' => 'OpenTelemetry::Instrumentation::Rake',
       'rdkafka' => 'OpenTelemetry::Instrumentation::Rdkafka',
       'redis' => 'OpenTelemetry::Instrumentation::Redis',
-      'restclient' => 'OpenTelemetry::Instrumentation::RestClient',
       'resque' => 'OpenTelemetry::Instrumentation::Resque',
+      'restclient' => 'OpenTelemetry::Instrumentation::RestClient',
       'ruby_kafka' => 'OpenTelemetry::Instrumentation::RubyKafka',
       'sidekiq' => 'OpenTelemetry::Instrumentation::Sidekiq',
-      'sinatra' => 'OpenTelemetry::Instrumentation::Sinatra'
+      'sinatra' => 'OpenTelemetry::Instrumentation::Sinatra',
+      'trilogy' => 'OpenTelemetry::Instrumentation::Trilogy'
     }.freeze
     private_constant :OTEL_INSTRUMENTATION_MAP
 
@@ -86,11 +90,11 @@ module OTelBundlerPatch
 
       gem_names = bundled_otel_gems.map(&:name).sort.join(', ')
       warn '[OpenTelemetry] WARNING: Detected OpenTelemetry gems in your Gemfile: ' \
-           "#{gem_names}. When using auto-instrumentation, OpenTelemetry gems are loaded " \
-           'from the auto-instrumentation gem path, NOT from your bundle. The gem versions ' \
+           "#{gem_names}. When using opentelemetry-auto-instrumentation, OpenTelemetry gems are loaded " \
+           'from the opentelemetry-auto-instrumentation gem path, NOT from your bundle. The gem versions ' \
            'in your Gemfile/Gemfile.lock are not used and may cause version conflicts or ' \
            'unexpected behavior. Please remove these gems from your Gemfile when using ' \
-           'auto-instrumentation.'
+           'opentelemetry-auto-instrumentation.'
     rescue StandardError => e
       warn "[OpenTelemetry] WARNING: Unable to check Gemfile for OpenTelemetry gems: #{e.message}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
     end
@@ -105,8 +109,10 @@ module OTelBundlerPatch
 
         required_instrumentation = _otel_determine_enabled_instrumentation
 
+        resource = _otel_detect_resource_from_env
+
         OpenTelemetry::SDK.configure do |c|
-          c.resource = _otel_detect_resource_from_env
+          c.resource = resource
           if required_instrumentation.empty?
             c.use_all
           else
@@ -115,6 +121,7 @@ module OTelBundlerPatch
             end
           end
         end
+
         OpenTelemetry.logger.info { 'Auto-instrumentation initialized' }
       rescue StandardError => e
         warn "Auto-instrumentation failed to initialize. Error: #{e.message}"
@@ -149,8 +156,12 @@ $stdout.puts "$LOAD_PATH after unshift: #{$LOAD_PATH.join(',')}" if ENV['OTEL_RU
 
 # These are required for the prepend OTelBundlerPatch to fetch OpenTelemetry::SDK.configure
 require 'opentelemetry-sdk'
-require 'opentelemetry-instrumentation-all'
+require 'opentelemetry-metrics-sdk'
+require 'opentelemetry-logs-sdk'
 require 'opentelemetry-exporter-otlp'
+require 'opentelemetry-exporter-otlp-metrics'
+require 'opentelemetry-exporter-otlp-logs'
+require 'opentelemetry-instrumentation-all'
 
 resource_detectors = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s
 require 'opentelemetry-resource-detector-container' if resource_detectors.include?('container')

@@ -1,204 +1,238 @@
 # OpenTelemetry Auto Instrumentation
 
-The `auto-instrumentation` gem provides automatic loading and initialization of OpenTelemetry Ruby SDK for zero-code instrumentation of your applications.
+The `opentelemetry-auto-instrumentation` gem provides automatic loading and initialization of the OpenTelemetry Ruby SDK for zero-code instrumentation of your applications.
+
+## Table of Contents
+
+- [What is OpenTelemetry?](#what-is-opentelemetry)
+- [How does this gem fit in?](#how-does-this-gem-fit-in)
+- [Getting Started](#getting-started)
+- [Telemetry Signals](#telemetry-signals)
+  - [Traces](#traces)
+  - [Metrics](#metrics)
+  - [Logs](#logs)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Troubleshooting](#troubleshooting)
+- [Example](#example)
+- [How can I get involved?](#how-can-i-get-involved)
+- [License](#license)
 
 ## What is OpenTelemetry?
 
-OpenTelemetry is an open source observability framework that provides a unified API, SDK, and tooling for instrumenting cloud-native applications. It captures distributed traces and metrics from your application, which can be analyzed using observability backends like Prometheus, Jaeger, and others.
+OpenTelemetry is an open source observability framework that provides a unified API, SDK, and tooling for instrumenting cloud-native applications. It captures distributed traces, metrics, and logs from your application, which can be analyzed using observability backends like Prometheus, Jaeger, and others.
 
 ## How does this gem fit in?
 
 This gem enables OpenTelemetry instrumentation without modifying your application code. It automatically:
 
-- Loads the OpenTelemetry SDK
+- Loads the OpenTelemetry SDK (traces, metrics, and logs)
 - Initializes instrumentations for detected libraries
-- Configures exporters and resource detectors
+- Configures OTLP exporters for all three signals
+- Optionally configures resource detectors
 
 This gem is particularly useful with the [OpenTelemetry Operator][opentelemetry-operator] for Kubernetes environments.
 
-## How do I get started?
+## Getting Started
 
 Install the gem:
 
 ```console
-gem install auto-instrumentation
+gem install opentelemetry-auto-instrumentation
 ```
 
 **Note:** Install via `gem install` rather than adding to your Gemfile, as this gem needs to load before your application starts.
 
+Then instrument any Ruby application:
+
+```console
+RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+```
+
+For Rails (which calls `Bundler.require` automatically):
+
+```console
+RUBYOPT="-r opentelemetry-auto-instrumentation" rails server
+```
+
+For other frameworks (Sinatra, Rackup, etc.) that don't call `Bundler.require` automatically:
+
+```console
+OTEL_RUBY_REQUIRE_BUNDLER=true RUBYOPT="-r opentelemetry-auto-instrumentation" rackup config.ru
+```
+
 ### What gets installed?
 
-Installing `auto-instrumentation` automatically includes:
+Installing `opentelemetry-auto-instrumentation` automatically includes:
 
 ```console
 opentelemetry-sdk
 opentelemetry-api
 opentelemetry-instrumentation-all
 opentelemetry-exporter-otlp
+opentelemetry-exporter-otlp-metrics
+opentelemetry-exporter-otlp-logs
 opentelemetry-helpers-mysql
-opentelemetry-helpers-sql-obfuscation
+opentelemetry-helpers-sql-processor
 opentelemetry-resource-detector-azure
 opentelemetry-resource-detector-container
 opentelemetry-resource-detector-aws
 ```
 
-## Usage Examples
+## Telemetry Signals
 
-### Basic Usage
+By default, this gem sets up **traces, metrics, and logs** and exports all three to an OTLP endpoint (`http://localhost:4318`). Each signal can be configured or disabled independently via standard OpenTelemetry environment variables.
 
-Instrument any Ruby application:
+### Traces
 
-```console
-RUBYOPT="-r auto-instrumentation" ruby application.rb
-```
+Traces are enabled by default using the OTLP exporter. See the [opentelemetry-sdk README][otel-sdk-readme] for full configuration options.
 
-### With Configuration
-
-Set environment variables to configure exporters, resource detectors, and service name:
+**Disable traces:**
 
 ```console
-export OTEL_TRACES_EXPORTER="otlp"
-export OTEL_EXPORTER_OTLP_ENDPOINT="your-endpoint"
-export OTEL_RUBY_RESOURCE_DETECTORS="container,azure"
-export OTEL_SERVICE_NAME="your-service-name"
-
-RUBYOPT="-r auto-instrumentation" ruby application.rb
+OTEL_TRACES_EXPORTER=none RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
 ```
 
-### Rails Applications
-
-Rails automatically calls `Bundler.require`, so instrumentation works out of the box:
+**Custom endpoint:**
 
 ```console
-RUBYOPT="-r auto-instrumentation" rails server
+OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://my-collector:4318/v1/traces \
+  RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
 ```
 
-### Selective Instrumentation
+### Metrics
+
+Metrics are enabled by default using the OTLP metrics exporter. See the [opentelemetry-metrics-sdk README][otel-metrics-sdk-readme] for full configuration options.
+
+**Disable metrics:**
+
+```console
+OTEL_METRICS_EXPORTER=none RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+```
+
+**Custom endpoint:**
+
+```console
+OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://my-collector:4318/v1/metrics \
+  RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+```
+
+### Logs
+
+Logs are enabled by default using the OTLP logs exporter. See the [opentelemetry-logs-sdk README][otel-logs-sdk-readme] for full configuration options.
+
+**Disable logs:**
+
+```console
+OTEL_LOGS_EXPORTER=none RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+```
+
+**Custom endpoint:**
+
+```console
+OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://my-collector:4318/v1/logs \
+  RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+```
+
+### Disable all signals except traces
+
+```console
+OTEL_METRICS_EXPORTER=none OTEL_LOGS_EXPORTER=none \
+  RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+```
+
+## Usage
+
+**Send all signals to a collector with a service name:**
+
+```console
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://my-collector:4318"
+export OTEL_SERVICE_NAME="my-service"
+RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
+```
 
 **Enable only specific instrumentations:**
 
 ```console
-export OTEL_RUBY_ENABLED_INSTRUMENTATIONS="mysql2,redis,faraday"
-RUBYOPT="-r auto-instrumentation" ruby application.rb
+OTEL_RUBY_ENABLED_INSTRUMENTATIONS="mysql2,redis" \
+  RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
 ```
 
-**Disable specific instrumentations:**
+**Disable a specific instrumentation:**
 
 ```console
-export OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED="false"
-RUBYOPT="-r auto-instrumentation" ruby application.rb
+OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED=false \
+  RUBYOPT="-r opentelemetry-auto-instrumentation" ruby application.rb
 ```
 
-**Configure instrumentation options:**
+**Preload gems that need to be instrumented but aren't in your Gemfile:**
 
 ```console
-export OTEL_RUBY_ENABLED_INSTRUMENTATIONS="redis"
-export OTEL_RUBY_INSTRUMENTATION_REDIS_CONFIG_OPTS="peer_service=new_service;db_statement=omit"
-RUBYOPT="-r auto-instrumentation" ruby application.rb
+RUBYOPT="-r faraday -r opentelemetry-auto-instrumentation" ruby application.rb
 ```
 
-### Non-Rails Frameworks (Sinatra, Rackup, etc.)
-
-For frameworks that don't automatically call `Bundler.require`, enable it explicitly:
+**Using with `bundle exec`** (when the gem is installed outside the bundle):
 
 ```console
-export OTEL_RUBY_REQUIRE_BUNDLER="true"
-RUBYOPT="-r auto-instrumentation" rackup config.ru
+RUBYOPT="-r $(gem which opentelemetry-auto-instrumentation)" bundle exec rails server
 ```
-
-### Advanced: Loading External Gems
-
-If you need to load gems outside your Gemfile (and have them instrumented), preload them before the auto-instrumentation:
-
-```console
-RUBYOPT="-r mysql2 -r faraday -r auto-instrumentation" ruby application.rb
-```
-
-## Troubleshooting
-
-### How Auto-Instrumentation Works
-
-The gem works by patching `Bundler::Runtime#require` to inject OpenTelemetry initialization when gems are loaded. Rails applications call `Bundler.require` automatically during boot, so they work seamlessly. Other frameworks (like Sinatra) may require manual configuration.
-
-**Solution:** For non-Rails frameworks, either:
-
-- Call `Bundler.require` explicitly in your code, OR
-- Set `OTEL_RUBY_REQUIRE_BUNDLER=true` environment variable
-
-### Instrumentation Timing Issues
-
-Instrumentation is only applied when gems are loaded through `Bundler.require`. If you require a library **after** `Bundler.require` has been called, it won't be instrumented.
-
-**Example of what doesn't work:**
-
-```ruby
-# app.rb
-Bundler.require
-require 'faraday'  # Loaded too late - won't be instrumented
-```
-
-**Solution:** Preload the gem via `RUBYOPT`:
-
-```console
-RUBYOPT="-r faraday -r auto-instrumentation" ruby application.rb
-```
-
-This ensures gems are loaded early enough for instrumentation to be applied.
-
-### Dependency Version Conflicts
-
-The auto-instrumentation gem loads OpenTelemetry components into Ruby's `$LOAD_PATH`. It also includes two non-OpenTelemetry dependencies required for OTLP exporters:
-
-- `google-protobuf`
-- `googleapis-common-protos-types`
-
-**Problem:** If your Gemfile includes different versions of these gems, you may encounter version conflicts.
-
-**Solution:** If you experience protobuf-related errors:
-
-1. Remove `google-protobuf` and `googleapis-common-protos-types` from your Gemfile
-2. Let `auto-instrumentation` manage these dependencies
-3. In most cases, version mismatches won't cause issues, but this is the safest approach
-
-### Using with bundle exec
-
-Since the gem is installed via `gem install` (not in your Gemfile), you may need to specify the full path when using `bundle exec`:
-
-```console
-RUBYOPT="-r /path/to/gems/auto-instrumentation-X.X.X/lib/auto-instrumentation" bundle exec rails server
-```
-
-Find the path using: `gem which auto-instrumentation`
-
-## Example
-
-See [example/README.md](example/README.md)
 
 ## Configuration
 
 The following environment variables are specific to this gem (not standard OpenTelemetry variables):
 
 | Environment Variable | Description | Example |
-| ---------------------- | ----------- | ------- |
+| -------------------- | ----------- | ------- |
 | `OTEL_RUBY_REQUIRE_BUNDLER` | Set to `true` to automatically call `Bundler.require` during initialization. Required for frameworks that don't call it automatically (e.g., Sinatra). | `true` |
-| `OTEL_RUBY_RESOURCE_DETECTORS` | Comma-separated list of resource detectors. Supported: `container`, `azure`, `aws`. **Note:** GCP detector not supported due to additional dependencies. | `container,azure,aws` |
+| `OTEL_RUBY_RESOURCE_DETECTORS` | Comma-separated list of resource detectors. Supported: `container`, `azure`, `aws`. **Note:** The GCP detector is not included — its `google-cloud-env` dependency makes blocking HTTP requests to the GCP metadata server, causing timeouts in non-GCP environments. | `container,azure,aws` |
 | `OTEL_RUBY_ENABLED_INSTRUMENTATIONS` | Only load specific instrumentations (comma-separated). Omit to load all available. | `redis,mysql2,faraday` |
 | `OTEL_RUBY_ADDITIONAL_GEM_PATH` | Custom gem installation path for OpenTelemetry Operator environments. | `/custom/gem/path` |
 | `OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG` | Set to `true` for debug output during initialization. | `true` |
 | `OTEL_RUBY_UNLOAD_LIBRARY` | Prevent specific gems from being preloaded (e.g., `google-protobuf`). | `google-protobuf` |
 
+For standard OpenTelemetry environment variables (exporters, endpoints, resource attributes, etc.), refer to the SDK READMEs:
+
+- [opentelemetry-sdk (traces)][otel-sdk-readme]
+- [opentelemetry-metrics-sdk (metrics)][otel-metrics-sdk-readme]
+- [opentelemetry-logs-sdk (logs)][otel-logs-sdk-readme]
+
+## Troubleshooting
+
+### How Auto-Instrumentation Works
+
+The gem patches `Bundler::Runtime#require` to inject OpenTelemetry initialization when gems are loaded. Rails calls `Bundler.require` automatically during boot; other frameworks need `OTEL_RUBY_REQUIRE_BUNDLER=true`.
+
+### Instrumentation Timing Issues
+
+Instrumentation is only applied to libraries loaded through `Bundler.require`. If you require a library after `Bundler.require` has already been called, it won't be instrumented. Preload it via `RUBYOPT` instead:
+
+```console
+RUBYOPT="-r faraday -r opentelemetry-auto-instrumentation" ruby application.rb
+```
+
+### Dependency Version Conflicts
+
+This gem loads OpenTelemetry components (including `google-protobuf` and `googleapis-common-protos-types`) directly into `$LOAD_PATH`. If your Gemfile pins different versions of these gems, you may encounter conflicts. Remove them from your Gemfile and let this gem manage them.
+
+## Example
+
+See [example/README.md](example/README.md)
+
 ## How can I get involved?
 
-The `auto-instrumentation` gem source is on GitHub, along with related gems.
+The `opentelemetry-auto-instrumentation` gem source is on GitHub, along with related gems.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
-The `auto-instrumentation` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
+The `opentelemetry-auto-instrumentation` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
 
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [opentelemetry-operator]: https://github.com/open-telemetry/opentelemetry-operator
+[otel-sdk-readme]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/sdk
+[otel-metrics-sdk-readme]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/metrics_sdk
+[otel-logs-sdk-readme]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/logs_sdk
