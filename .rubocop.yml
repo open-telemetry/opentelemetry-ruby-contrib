@@ -10,15 +10,12 @@ AllCops:
     - "bin/instrumentation_generator"
     - "**/**/vendor/bundle/**/*"
     - "**/proto/**"
+    - "helpers/sql-obfuscation/**"
     - "instrumentation/dalli/**"
     - "instrumentation/mongo/**"
     - "instrumentation/restclient/**"
     - "instrumentation/ruby_kafka/**"
 Bundler/OrderedGems:
-  Enabled: false
-Gemspec/DevelopmentDependencies:
-  Enabled: true
-Gemspec/RequiredRubyVersion:
   Enabled: false
 Lint/ConstantDefinitionInBlock:
   Exclude:
@@ -73,3 +70,5 @@ Gemspec/RequireMFA:
 Layout/LineLength:
   Enabled: true
   Max: 250
+Layout/EndOfLine:
+  EnforcedStyle: lf

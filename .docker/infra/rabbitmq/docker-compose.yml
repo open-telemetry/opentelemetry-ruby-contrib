@@ -1,0 +1,5 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4.2.5-alpine@sha256:04e883cc733f9c9ce87dbf5343eb4a3f54a8c474a5cd418e79210602824dcb07
+    ports:
+      - "5672:5672"

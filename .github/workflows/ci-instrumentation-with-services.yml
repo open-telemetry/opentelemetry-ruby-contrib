@@ -76,12 +76,11 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       memcached:
-        image: memcached:1.6.40-alpine@sha256:8a82a3927694e42bc52679dc81532244de51e5faed5f9541a1283e3ad7271db1
+        image: memcached:1.6.41-alpine@sha256:1c6a2d48c5f561226f1dc54ed37132f83b4cde94b5e3f3e2d88386d028b86a27
         ports:
           - 11211:11211
       mongodb:
@@ -119,7 +118,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -158,7 +156,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -213,12 +210,11 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       redis:
-        image: redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93
+        image: redis:8.6.2@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa
         ports:
           - 6379:6379
         options: >-
@@ -227,7 +223,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
           -e REDIS_PASSWORD=passw0rd
-          --entrypoint sh redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93 -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
+          --entrypoint sh redis:8.6.2@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
         env:
           REDIS_PASSWORD: "passw0rd"
 
@@ -261,12 +257,11 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       postgres:
-        image: postgres:14.22@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d
+        image: postgres:14.22@sha256:ae46a8452f2c137766c9d4a62f4fe60166355ff8b00512e6c48692dbf1eed3d5
         env:
           POSTGRES_PASSWORD: postgres
         ports:
@@ -304,11 +299,10 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       rabbitmq:
-        image: rabbitmq:4.2.5-alpine@sha256:53e51f8469ef13d0a1a2b03c0d36dcf4efbf13089f552440ec5620ca07f2c64e
+        image: rabbitmq:4.2.5-alpine@sha256:04e883cc733f9c9ce87dbf5343eb4a3f54a8c474a5cd418e79210602824dcb07
         ports:
           - "5672:5672"
