@@ -80,7 +80,7 @@ jobs:
           build: true
     services:
       memcached:
-        image: memcached:1.6.41-alpine@sha256:1c6a2d48c5f561226f1dc54ed37132f83b4cde94b5e3f3e2d88386d028b86a27
+        image: memcached:1.6.41-alpine@sha256:65c80b311a9601ef5ca8af3814e5cd06a9c4277ea139d80bd53da6b4d39eb46e
         ports:
           - 11211:11211
       mongodb:
@@ -303,6 +303,6 @@ jobs:
           build: true
     services:
       rabbitmq:
-        image: rabbitmq:4.2.5-alpine@sha256:04e883cc733f9c9ce87dbf5343eb4a3f54a8c474a5cd418e79210602824dcb07
+        image: rabbitmq:4.2.5-alpine@sha256:f654a30164ddb33f4b43e5469910e7aa7838ddb144e9d63f039c34544a6823a5
         ports:
           - "5672:5672"
