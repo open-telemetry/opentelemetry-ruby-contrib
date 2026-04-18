@@ -1,5 +1,4 @@
 include:
-  - ./docker-base.yml
   - ./.docker/infra/kafka/docker-compose.yml
   - ./.docker/infra/memcached/docker-compose.yml
   - ./.docker/infra/mongo/docker-compose.yml
@@ -221,5 +220,6 @@ services:
       - jaeger
 
 volumes:
+  bundle:
   redis_data:
   postgres_socket:
