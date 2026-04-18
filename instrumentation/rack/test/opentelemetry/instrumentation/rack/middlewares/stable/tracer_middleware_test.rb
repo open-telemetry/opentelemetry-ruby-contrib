@@ -33,8 +33,6 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddle
   let(:uri) { '/' }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
-
     # clear captured spans:
     exporter.reset
 
