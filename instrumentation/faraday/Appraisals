@@ -9,11 +9,14 @@
 # gem versions. For more information on the semantic convention modes, see:
 # https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
-versions = %w[1.0 2.0]
 semconv_stability = %w[old stable dup]
 
+gem_versions = %w[2.14.0]
+
+gem_versions << '1.10.0' if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
+
 semconv_stability.each do |mode|
-  versions.each do |version|
+  gem_versions.each do |version|
     appraise "faraday-#{version}-#{mode}" do
       gem 'faraday', "~> #{version}"
     end

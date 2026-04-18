@@ -11,6 +11,7 @@ Bundler.require(:default, :development, :test)
 require 'active_job'
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
 # global opentelemetry-sdk setup:

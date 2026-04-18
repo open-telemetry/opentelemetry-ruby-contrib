@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Notify us of an error or incorrect behavior
-title: ''
-labels: 'bug'
-assignees: ''
-
+title: ""
+labels: "bug"
+assignees: ""
 ---
 
 <!--
@@ -13,7 +12,7 @@ NOTE: Please use this form to submit bugs or demonstrations of non spec complian
 
 -->
 
-**Description of the bug**
+## Description of the bug
 
 <!--
 
@@ -22,14 +21,14 @@ what happened and what you expected with a link to the relevant portion of the s
 
 -->
 
-**Share details about your runtime**
+## Share details about your runtime
 
 Operating system details: Linux, Ubuntu 20.04 LTS
 RUBY_ENGINE: "ruby"
 RUBY_VERSION: "3.4"
 RUBY_DESCRIPTION: "ruby 3.4.1 (2024-12-25 revision 48d4efcb85) arm64-darwin21]"
 
-**Share a simplified reproduction if possible**
+## Share a simplified reproduction if possible
 
 ```rb
 require 'bundler/inline'

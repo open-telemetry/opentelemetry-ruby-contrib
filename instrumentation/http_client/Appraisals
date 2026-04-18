@@ -15,8 +15,4 @@ semconv_stability.each do |mode|
   appraise "httpclient-latest-#{mode}" do
     gem 'httpclient'
   end
-
-  appraise "httpclient-2.8-#{mode}" do
-    gem 'httpclient', '~> 2.8.0'
-  end
 end

@@ -6,51 +6,52 @@ on:
     branches:
       - main
     paths: &path_filters
-      - 'helpers/**'
-      - 'instrumentation/action_mailer/**'
-      - 'instrumentation/action_pack/**'
-      - 'instrumentation/action_view/**'
-      - 'instrumentation/active_job/**'
-      - 'instrumentation/active_model_serializers/**'
-      - 'instrumentation/active_record/**'
-      - 'instrumentation/active_storage/**'
-      - 'instrumentation/active_support/**'
-      - 'instrumentation/anthropic/**'
-      - 'instrumentation/aws_sdk/**'
-      - 'instrumentation/aws_lambda/**'
-      - 'instrumentation/base/**'
-      - 'instrumentation/concurrent_ruby/**'
-      - 'instrumentation/delayed_job/**'
-      - 'instrumentation/ethon/**'
-      - 'instrumentation/excon/**'
-      - 'instrumentation/factory_bot/**'
-      - 'instrumentation/faraday/**'
-      - 'instrumentation/grape/**'
-      - 'instrumentation/graphql/**'
-      - 'instrumentation/grpc/**'
-      - 'instrumentation/gruf/**'
-      - 'instrumentation/http/**'
-      - 'instrumentation/http_client/**'
-      - 'instrumentation/httpx/**'
-      - 'instrumentation/koala/**'
-      - 'instrumentation/lmdb/**'
-      - 'instrumentation/logger/**'
-      - 'instrumentation/net_http/**'
-      - 'instrumentation/rack/**'
-      - 'instrumentation/rails/**'
-      - 'instrumentation/restclient/**'
-      - 'instrumentation/rspec/**'
-      - 'instrumentation/sinatra/**'
-      - '.github/workflows/ci-instrumentation-full.yml'
-      - '.github/actions/**'
-      - 'Gemfile'
-      - 'Rakefile'
-      - '.rubocop.yml'
-      - 'gemspecs/**'
+      - "helpers/**"
+      - "instrumentation/action_mailer/**"
+      - "instrumentation/action_pack/**"
+      - "instrumentation/action_view/**"
+      - "instrumentation/active_job/**"
+      - "instrumentation/active_model_serializers/**"
+      - "instrumentation/active_record/**"
+      - "instrumentation/active_storage/**"
+      - "instrumentation/active_support/**"
+      - "instrumentation/anthropic/**"
+      - "instrumentation/aws_sdk/**"
+      - "instrumentation/aws_lambda/**"
+      - "instrumentation/base/**"
+      - "instrumentation/concurrent_ruby/**"
+      - "instrumentation/delayed_job/**"
+      - "instrumentation/ethon/**"
+      - "instrumentation/excon/**"
+      - "instrumentation/factory_bot/**"
+      - "instrumentation/faraday/**"
+      - "instrumentation/grape/**"
+      - "instrumentation/graphql/**"
+      - "instrumentation/grpc/**"
+      - "instrumentation/gruf/**"
+      - "instrumentation/http/**"
+      - "instrumentation/http_client/**"
+      - "instrumentation/httpx/**"
+      - "instrumentation/koala/**"
+      - "instrumentation/lmdb/**"
+      - "instrumentation/logger/**"
+      - "instrumentation/net_http/**"
+      - "instrumentation/net_ldap/**"
+      - "instrumentation/rack/**"
+      - "instrumentation/rails/**"
+      - "instrumentation/rake/**"
+      - "instrumentation/restclient/**"
+      - "instrumentation/rspec/**"
+      - "instrumentation/sinatra/**"
+      - ".github/workflows/ci-instrumentation-full.yml"
+      - ".github/actions/**"
+      - "Rakefile"
+      - "gemspecs/**"
   pull_request:
     branches:
       - main
     paths: *path_filters
+  merge_group:
   schedule:
     - cron: "0 0 * * *"
 
@@ -58,13 +59,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
-  cancel-in-progress: true  # Cancel any previous runs of this workflow
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }} # Ensure that only one instance of this workflow is running per Pull Request/branch/ref
+  cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
   check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - run: echo "Repository check passed"
   instrumentation:
@@ -102,18 +103,25 @@ jobs:
           - lmdb
           - logger
           - net_http
+          - net_ldap
           - rack
           - rails
+          - rake
           - restclient
           - rspec
           - sinatra
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
 
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: "Test Ruby 4.0"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -124,13 +132,7 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
           coverage: true
           build: true
       - name: "JRuby Filter"
@@ -156,10 +158,12 @@ jobs:
           [[ "${{ matrix.gem }}" == "rails"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "grpc"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "gruf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "anthropic"                 ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "net_ldap"                 ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
+        if: "${{ startsWith(matrix.os, 'ubuntu') && steps.jruby_skip.outputs.skip == 'false' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"

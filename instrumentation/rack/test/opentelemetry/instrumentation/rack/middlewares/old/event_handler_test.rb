@@ -62,11 +62,16 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler' 
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
 
     # simulate a fresh install:
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(config)
+  end
+
+  after do
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   # Simulating buggy instrumentation that starts a span, sets the ctx
@@ -409,7 +414,9 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler' 
 
     describe 'response propagators that raise errors' do
       class EventMockPropagator < OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator
-        CustomError = Class.new(StandardError)
+        class CustomError < StandardError
+        end
+
         def inject(carrier)
           raise CustomError, 'Injection failed'
         end
@@ -427,7 +434,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Old::EventHandler' 
   end
 
   describe '#call with error' do
-    EventHandlerError = Class.new(StandardError)
+    class EventHandlerError < StandardError
+    end
 
     let(:service) do
       ->(_env) { raise EventHandlerError }

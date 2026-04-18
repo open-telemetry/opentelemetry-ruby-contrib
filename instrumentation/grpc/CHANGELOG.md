@@ -1,46 +1,51 @@
 # Release History: opentelemetry-instrumentation-grpc
 
-### v0.4.1 / 2025-10-22
+## v0.5.0 / 2026-04-14
 
-* FIXED: Update opentelemetry-instrumentation-base dependency
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.4.0 / 2025-10-21
+## v0.4.1 / 2025-10-22
 
-* BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+- FIXED: Update opentelemetry-instrumentation-base dependency
 
-* ADDED: Min Ruby Version 3.2 and Rails 7.1
+## v0.4.0 / 2025-10-21
 
-### v0.3.1 / 2025-09-30
+- BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+- ADDED: Min Ruby Version 3.2 and Rails 7.1
 
-* FIXED: Min OTel Ruby API 1.7
+## v0.3.1 / 2025-09-30
 
-### v0.3.0 / 2025-09-30
+- FIXED: Min OTel Ruby API 1.7
 
-* ADDED: Bump minimum API Version to 1.7
+## v0.3.0 / 2025-09-30
 
-### v0.2.1 / 2025-04-17
+- ADDED: Bump minimum API Version to 1.7
 
-* CHANGED: Fix ClientTracer: uninitialized constant GRPC (NameError) https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1471
+## v0.2.1 / 2025-04-17
 
-### v0.2.0 / 2025-04-02
+- CHANGED: Fix ClientTracer: uninitialized constant GRPC (NameError) https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1471
 
-* ADDED: Add gRPC trace demonstration
-* ADDED: Migrate gRPC instrumentation to OpenTelemetry tooling
-* ADDED: Transferred ownership of the gem from @hibachrach to OpenTelemetry
+## v0.2.0 / 2025-04-02
 
-### v0.1.3 / 2024-09-11
+- ADDED: Add gRPC trace demonstration
+- ADDED: Migrate gRPC instrumentation to OpenTelemetry tooling
+- ADDED: Transferred ownership of the gem from @hibachrach to OpenTelemetry
 
-* FIXED: Fix error in handling of non-gRPC errors
-* FIXED: Fix error in method signature for OpenTelemetry::Instrumentation::Grpc.client_interceptor [#1](https://github.com/hibachrach/opentelemetry-instrumentation-grpc/pull/1)
+## v0.1.3 / 2024-09-11
 
-### v0.1.2 / 2024-06-26
+- FIXED: Fix error in handling of non-gRPC errors
+- FIXED: Fix error in method signature for OpenTelemetry::Instrumentation::Grpc.client_interceptor [#1](https://github.com/hibachrach/opentelemetry-instrumentation-grpc/pull/1)
 
-* FIXED: Align span naming with spec
+## v0.1.2 / 2024-06-26
 
-### v0.1.1 / 2024-06-26
+- FIXED: Align span naming with spec
 
-* FIXED: Fix `uninitialized constant Interceptors` error
+## v0.1.1 / 2024-06-26
 
-### v0.1.0 / 2024-06-18
+- FIXED: Fix `uninitialized constant Interceptors` error
 
-* Initial release
+## v0.1.0 / 2024-06-18
+
+- Initial release

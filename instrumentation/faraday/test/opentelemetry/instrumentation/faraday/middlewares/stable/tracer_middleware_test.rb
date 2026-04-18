@@ -28,7 +28,6 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Stable::TracerMid
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
     exporter.reset
 
     # this is currently a noop but this will future proof the test
@@ -248,6 +247,30 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Stable::TracerMid
       it 'only adds the middleware once' do
         tracers = client.builder.handlers.count(OpenTelemetry::Instrumentation::Faraday::Middlewares::Stable::TracerMiddleware)
         _(tracers).must_equal 1
+      end
+    end
+
+    describe 'url.template in span name' do
+      let(:client) do
+        Faraday.new('http://example.com') do |builder|
+          builder.adapter(:test) do |stub|
+            stub.get('/users/123') { |_| [200, {}, 'OK'] }
+          end
+        end
+      end
+
+      it 'uses url.template in span name when present in client context' do
+        client_context_attrs = { 'url.template' => '/users/{id}' }
+        response = OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+          client.get('/users/123')
+        end
+
+        _(span.name).must_equal 'GET /users/{id}'
+        _(span.attributes['http.request.method']).must_equal 'GET'
+        _(span.attributes['url.template']).must_equal '/users/{id}'
+        _(response.env.request_headers['Traceparent']).must_equal(
+          "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
+        )
       end
     end
   end

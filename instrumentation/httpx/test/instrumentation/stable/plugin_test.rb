@@ -17,7 +17,6 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
     exporter.reset
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:get, 'http://example.com/failure').to_return(status: 500)
@@ -91,8 +90,8 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
 
     it 'after request timeout' do
       response = HTTPX.get('http://example.com/timeout')
-      assert response.is_a?(HTTPX::ErrorResponse)
-      assert response.error.is_a?(HTTPX::TimeoutError)
+      assert_kind_of(HTTPX::ErrorResponse, response)
+      assert_kind_of(HTTPX::TimeoutError, response.error)
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'

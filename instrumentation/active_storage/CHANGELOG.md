@@ -1,23 +1,28 @@
 # Release History: opentelemetry-instrumentation-active_storage
 
-### v0.3.1 / 2025-10-22
+## v0.4.0 / 2026-04-14
 
-* FIXED: Update opentelemetry-instrumentation-base dependency
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.3.0 / 2025-10-21
+## v0.3.1 / 2025-10-22
 
-* BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+- FIXED: Update opentelemetry-instrumentation-base dependency
 
-* ADDED: Min Ruby Version 3.2 and Rails 7.1
+## v0.3.0 / 2025-10-21
 
-### v0.2.0 / 2025-09-30
+- BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+- ADDED: Min Ruby Version 3.2 and Rails 7.1
 
-* ADDED: Bump minimum API Version to 1.7
+## v0.2.0 / 2025-09-30
 
-### v0.1.1 / 2025-03-05
+- ADDED: Bump minimum API Version to 1.7
 
-* FIXED: ActiveStorage OTel API Constraints
+## v0.1.1 / 2025-03-05
 
-### v0.1.0 / 2025-01-29
+- FIXED: ActiveStorage OTel API Constraints
 
-Initial release!
+## v0.1.0 / 2025-01-29
+
+- Initial release!

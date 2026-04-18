@@ -22,7 +22,10 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
     instrumentation.install(config)
   end
 
-  after { instrumentation.instance_variable_set(:@installed, false) }
+  after do
+    instrumentation.instance_variable_set(:@installed, false)
+    Thread.current[:in_otel_emit] = nil
+  end
 
   describe '#format_message' do
     it 'logs the formatted message to the correct source' do
@@ -40,14 +43,13 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
       timestamp = Time.now
       nano_timestamp = OpenTelemetry::SDK::Logs::LogRecord.new.send(:to_integer_nanoseconds, timestamp)
 
-      Time.stub(:now, timestamp) do
-        ruby_logger.debug(msg)
-        assert_includes(log_record.body, msg)
-        assert_includes(log_record.body, 'DEBUG')
-        assert_equal('DEBUG', log_record.severity_text)
-        assert_equal(5, log_record.severity_number)
-        assert_equal(nano_timestamp, log_record.timestamp)
-      end
+      allow(Time).to receive(:now).and_return(timestamp)
+      ruby_logger.debug(msg)
+      assert_includes(log_record.body, msg)
+      assert_includes(log_record.body, 'DEBUG')
+      assert_equal('DEBUG', log_record.severity_text)
+      assert_equal(5, log_record.severity_number)
+      assert_equal(nano_timestamp, log_record.timestamp)
     end
 
     it 'does not emit when @skip_otel_emit is true' do
@@ -64,6 +66,17 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
     it 'safely handles unknown severity number translations' do
       ruby_logger.send(:format_message, 'CUSTOM_SEVERITY', Time.now, nil, msg)
       assert_equal(0, log_record.severity_number)
+    end
+
+    it 'does not emit when already emitting to prevent recursion' do
+      Thread.current[:in_otel_emit] = true
+      ruby_logger.debug(msg)
+      assert_nil(log_record)
+    end
+
+    it 'clears the recursion flag after emitting' do
+      ruby_logger.debug(msg)
+      refute(Thread.current[:in_otel_emit])
     end
   end
 end

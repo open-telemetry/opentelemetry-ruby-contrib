@@ -17,14 +17,12 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Connection do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
     exporter.reset
     instrumentation.install({})
   end
 
   # Force re-install of instrumentation
   after do
-    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
     instrumentation.instance_variable_set(:@installed, false)
   end
 

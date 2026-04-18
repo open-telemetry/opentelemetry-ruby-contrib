@@ -1,0 +1,51 @@
+name: Conventional Commits Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }} # Ensure that only one instance of this workflow is running per Pull Request or ref
+  cancel-in-progress: true # Cancel any previous runs of this workflow
+
+jobs:
+  validate-commits:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: Conventional Commits Validation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      # restrict checks to pull requests to avoid issues blocking the merge queue
+      - name: Validate PR Title
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: dev-build-deploy/commit-me@27d14296ec218488c543616d9128d7e75ab7463a # v1.5.3
+        env:
+          FORCE_COLOR: 3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          include-commits: false
+          update-labels: false
+          config: ".commit-me.json"
+      - name: Extract PR Title
+        id: pr
+        run: |
+          TITLE=${{ toJSON(github.event.pull_request.title) }}
+          echo "Title: $TITLE" > pr_title.md
+      - name: Check PR Title spelling
+        uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
+        with:
+          config: .cspell.yml
+          suggestions: true
+          treat_flagged_words_as_errors: true
+          incremental_files_only: false
+          files: |
+            pr_title.md
