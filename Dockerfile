@@ -35,6 +35,7 @@ ARG PACKAGES="\
     tzdata \
     util-linux \
     imagemagick \
+    yaml-dev \
     "
 # Install packages
 RUN apk update && \
