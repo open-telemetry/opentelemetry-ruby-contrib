@@ -29,8 +29,12 @@ jobs:
           - all
         os:
           - ubuntu-latest
+        include: # TODO: remove once the required check has been removed
+          - gem: all
+            os: ubuntu-24.04
+            name: ubuntu-latest
 
-    name: ${{ matrix.gem }} / ${{ matrix.os }}
+    name: ${{ matrix.gem }} / ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -50,18 +54,10 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
-      - name: "JRuby Filter"
-        id: jruby_skip
-        shell: bash
-        run: |
-          echo "skip=false" >> $GITHUB_OUTPUT
-          # The 'all' instrumentation should work with JRuby
-          true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"

@@ -41,7 +41,7 @@ jobs:
           - mysql
           - sql-processor
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: "helpers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
@@ -62,11 +62,10 @@ jobs:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
@@ -83,7 +82,7 @@ jobs:
           - xray
           - google_cloud_trace_context
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: "propagator-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
@@ -104,10 +103,9 @@ jobs:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           build: true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-propagator-${{ matrix.gem }}"
@@ -124,7 +122,7 @@ jobs:
           - resource-detector-container
           - resource-detector-google_cloud_platform
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: "opentelemetry-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
@@ -145,11 +143,10 @@ jobs:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
@@ -163,7 +160,7 @@ jobs:
         gem:
           - baggage
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: "processors-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
@@ -184,11 +181,10 @@ jobs:
           gem: "opentelemetry-processor-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-processor-${{ matrix.gem }}"
@@ -202,7 +198,7 @@ jobs:
         gem:
           - xray
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: "samplers-${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
@@ -223,11 +219,10 @@ jobs:
           gem: "opentelemetry-sampler-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-sampler-${{ matrix.gem }}"

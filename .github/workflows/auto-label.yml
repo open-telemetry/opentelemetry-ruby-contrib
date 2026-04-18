@@ -5,11 +5,13 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
 
+permissions:
+  contents: read
+
 jobs:
   label:
     runs-on: ubuntu-24.04
     permissions:
-      contents: read
       issues: write # required for creating labels
       pull-requests: write # required for adding labels to pr
     steps:
