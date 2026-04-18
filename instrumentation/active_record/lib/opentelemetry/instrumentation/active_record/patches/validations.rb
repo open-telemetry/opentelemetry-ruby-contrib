@@ -14,6 +14,8 @@ module OpenTelemetry
         # https://github.com/rails/rails/blob/v5.2.4.5/activerecord/lib/active_record/validations.rb#L42-L53
         # Contains the ActiveRecord::Validations methods to be patched
         module Validations
+          include HandledExceptions
+
           def save(...)
             tracer.in_span("#{self.class}#save") do
               super
@@ -21,9 +23,17 @@ module OpenTelemetry
           end
 
           def save!(...)
-            tracer.in_span("#{self.class}#save!") do
+            handled_exception = nil
+            result = tracer.in_span("#{self.class}#save!") do
               super
+            rescue StandardError => e
+              raise e unless handled_exception?(e)
+
+              handled_exception = e
             end
+            raise handled_exception if handled_exception
+
+            result
           end
 
           private

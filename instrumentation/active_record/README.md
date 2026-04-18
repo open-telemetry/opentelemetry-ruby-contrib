@@ -22,6 +22,19 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+To configure which exceptions should be re-raised after span closure without
+recording exception events for bang persistence methods (`save!`, `create!`, and
+`update!`), set `handled_exceptions`:
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::ActiveRecord',
+        handled_exceptions: ['ActiveRecord::RecordInvalid', 'ActiveRecord::RecordNotFound']
+end
+```
+
+`handled_exceptions` defaults to `['ActiveRecord::RecordInvalid']`.
+
 Alternatively, you can also call `use_all` to install all the available instrumentation.
 
 ```ruby
