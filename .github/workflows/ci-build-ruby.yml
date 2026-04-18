@@ -118,7 +118,7 @@ jobs:
     needs:
       - analyze
       - build
-    if: ${{ always() }} # Always run so we can detect failures/skips
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && always() }} # Always run so we can detect failures/skips
     steps:
       - name: Count builds
         run: |
