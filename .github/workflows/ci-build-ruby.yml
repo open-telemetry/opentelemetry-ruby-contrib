@@ -29,6 +29,7 @@ concurrency:
   cancel-in-progress: true # Cancel any previous runs of this workflow for the same event type and ref
 jobs:
   analyze:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     runs-on: ubuntu-24.04
     outputs:
       gems: ${{steps.select_gem.outputs.gems}}
@@ -44,7 +45,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     needs: analyze
-    if: ${{ needs.analyze.outputs.gems != '[]' }}
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && needs.analyze.outputs.gems != '[]' }}
     strategy:
       matrix:
         gem: ${{ fromJson(needs.analyze.outputs.gems) }}
