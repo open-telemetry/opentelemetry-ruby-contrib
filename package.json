@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "check": "npm run check:lint && npm run check:format && npm run check:links && npm run check:performance:ruby npm run check:spelling && npm run check:source",
+    "check": "npm run check:lint && npm run check:format && npm run check:links && npm run check:performance:ruby && npm run check:spelling && npm run check:source",
     "check:format": "npm run check:format:ruby && prettier . --check",
     "check:format:json": "prettier **/*.json --check",
     "check:format:markdown": "prettier **/*.md --check",
