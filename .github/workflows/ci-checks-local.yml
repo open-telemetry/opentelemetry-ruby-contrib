@@ -36,9 +36,21 @@ jobs:
           node-version: "24"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1.299.0
+        uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
         with:
-          ruby-version: "3.2.11"
+          ruby-version: "3.3.11"
+
+      - name: Install Chrome (Ubuntu only)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          echo "PUPPETEER_SKIP_DOWNLOAD=true" >> $GITHUB_ENV
+          echo "PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome" >> $GITHUB_ENV
+
+      - name: Install Chrome for Testing (macOS/Windows only)
+        if: matrix.os != 'ubuntu-latest'
+        run: npx puppeteer browsers install chrome
 
       - name: Install Tools
         run: npm ci --ignore-scripts && npx puppeteer browsers install chrome && bundle install

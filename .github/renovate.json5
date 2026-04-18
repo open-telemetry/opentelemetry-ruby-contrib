@@ -6,6 +6,7 @@
     ":separateMultipleMajorReleases",
   ],
   prConcurrentLimit: 12,
+  prHourlyLimit: 12,
   packageRules: [
     {
       groupName: "all patch versions",
@@ -37,6 +38,7 @@
       matchDepNames: ["ruby"],
       matchFileNames: [
         ".github/workflows/ci-markdown-checks.yml",
+        ".github/workflows/ci-checks-local.yml",
         "**/*.gemspec",
       ],
       matchUpdateTypes: ["minor", "major"],
@@ -82,6 +84,15 @@
       matchDepNames: ["mysql"],
       minimumReleaseAge: "1765 days",
     },
+    {
+      description: "Require non-general dependencies in gemspec files to be approved",
+      dependencyDashboardCategory: "{{depType}} should be migrated to Gemfile",
+      matchCategories: ["custom"],
+      matchDepNames: ["!ruby"],
+      matchDepTypes: ["!dependency"],
+      matchFileNames: ["**/*.gemspec"],
+      dependencyDashboardApproval: true,
+    },
   ],
   customManagers: [
     {
@@ -99,7 +110,6 @@
       versioningTemplate: "docker",
       currentValueTemplate: "{{depVersion}}",
       extractVersionTemplate: "^(?<version>[0-9.]+)-alpine{{alpineVersion}}$",
-      autoReplaceStringTemplate: "FROM {{packageName}}:{{newVersion}}-alpine{{alpineVersion}}@{{newDigest}} ",
     },
     {
       customType: "regex",
@@ -117,7 +127,6 @@
       currentValueTemplate: "{{alpineVersion}}",
       extractVersionTemplate: "^{{depVersion}}-alpine(?<version>[0-9.]+)$",
       depNameTemplate: "{{packageName}}-alpine",
-      autoReplaceStringTemplate: "FROM {{packageName}}:{{depVersion}}-alpine{{newVersion}}@{{newDigest}} ",
     },
     {
       customType: "regex",
@@ -132,7 +141,6 @@
       datasourceTemplate: "docker",
       versioningTemplate: "docker",
       currentValueTemplate: "{{depVersion}}",
-      autoReplaceStringTemplate: "entrypoint sh {{packageName}}:{{newVersion}}@{{newDigest}} -c",
     },
     {
       customType: "regex",
@@ -145,6 +153,17 @@
       versioningTemplate: "ruby",
       currentValueTemplate: "{{depVersion}}",
       depTypeTemplate: "testDependency",
+    },
+    {
+      customType: "regex",
+      description: "Update dependencies in gemspecs",
+      managerFilePatterns: ["**/*.gemspec"],
+      matchStrings: [
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'(?<depVersion>.+\\s[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
     },
     {
       customType: "regex",
@@ -171,8 +190,6 @@
     "bigdecimal",
     "drb",
     "logger",
-    "memcached",
-    "mongo",
     "mutex_m",
     "observer",
     "ostruct",
@@ -180,6 +197,8 @@
   ignorePaths: [
     "**/example/Gemfile",
     "releases/Gemfile",
+    ".docker/infra/memcached/**",
+    ".docker/infra/mongo/**",
     "helpers/sql-obfuscation/**",
     "instrumentation/dalli/**",
     "instrumentation/mongo/**",
