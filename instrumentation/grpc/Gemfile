@@ -11,11 +11,11 @@ gemspec
 
 group :test do
   gem 'appraisal', '~> 2.5.0'
-  gem 'google-protobuf', '~> 4.29'
-  gem 'grpc-tools', '~> 1.64'
+  gem 'google-protobuf', '~> 4.29.0'
+  gem 'grpc-tools', '~> 1.64.0'
   gem 'minitest', '~> 6.0.0'
   gem 'opentelemetry-sdk', '~> 1.11.0'
-  gem 'opentelemetry-test-helpers', '~> 0.4'
+  gem 'opentelemetry-test-helpers', '~> 0.8.0'
   gem 'rake', '>= 13'
   gem 'rubocop', '~> 1.86.0'
   gem 'rubocop-performance', '~> 1.26.0'
