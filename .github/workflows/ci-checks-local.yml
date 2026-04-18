@@ -21,9 +21,9 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+          - ubuntu-24.04
+          - macos-15
+          - windows-2025
     name: All / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -41,7 +41,7 @@ jobs:
           ruby-version: "3.3.11"
 
       - name: Install Chrome (Ubuntu only)
-        if: matrix.os == 'ubuntu-latest'
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
@@ -49,7 +49,7 @@ jobs:
           echo "PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome" >> $GITHUB_ENV
 
       - name: Install Chrome for Testing (macOS/Windows only)
-        if: matrix.os != 'ubuntu-latest'
+        if: "${{!startsWith(matrix.os, 'ubuntu')}}"
         run: npx puppeteer browsers install chrome
 
       - name: Install Tools
