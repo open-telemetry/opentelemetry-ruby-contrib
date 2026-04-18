@@ -1,0 +1,59 @@
+name: Select Gems
+description: Selects the Gems
+inputs:
+  token:
+    description: Token used to add labels
+    required: false
+    type: string
+  default:
+    description: Gem string to be used if not able use pr label
+    required: false
+    type: string
+    default: ""
+outputs:
+  gems:
+    description: The gems which have been changed
+    value: ${{steps.select.outputs.gems}}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+    - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
+      name: Calculate Gems
+      if: ${{ github.event_name == 'pull_request' }}
+      id: label
+      with:
+        repo-token: "${{ inputs.token }}"
+        sync-labels: true
+
+    - name: Select Gems
+      id: select
+      shell: bash
+      run: |
+        # Select Gems
+        default="${{ inputs.default }}"
+        deny='["ci", "deprecated"]'
+        labels="${{ steps.label.outputs.all-labels || inputs.default }}"
+        # labels is a comma-separated string, convert to JSON array
+        json=$(printf '%s\n' "$labels" | jq -R 'split(",")')
+
+        # Remove deny-listed items
+        filtered=$(echo "$json" | jq --argjson deny "$deny" '[ .[] | select(. as $l | $deny | index($l) | not) ]')
+
+        # Guarantee valid JSON by adding default
+        if [ -z "$filtered" ] || [ "$filtered" = "null" ] || [ "$(echo "$filtered" | jq 'length')" -eq 0 ]; then
+          filtered=$(jq -n --arg d "$default" '[ $d ]')
+        fi
+
+        {
+          echo "gems<<EOF"
+          echo "$filtered"
+          echo "EOF"
+        } >> "$GITHUB_OUTPUT"
+
+    - shell: bash
+      run: |
+        # Log Gems Selected
+        echo "Gems selected = ${{ steps.select.outputs.gems }}"
