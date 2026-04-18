@@ -1,4 +1,4 @@
-FROM ruby:3.3.6-alpine3.19@sha256:df76cf1f1dec4dad400437ce680f50f9420562f5d5ee6f8dfa7d7b967e76a36d as ruby
+FROM ruby:3.3.6-alpine3.21@sha256:f73a08ebc40dc2bb3ef7ae3ac700b315b2288b498d323644522bd643b59be709 as ruby
 
 # Metadata
 LABEL maintainer="open-telemetry/opentelemetry-ruby-contrib"
