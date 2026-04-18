@@ -1,136 +1,142 @@
 # Release History: opentelemetry-instrumentation-active_job
 
-### v0.10.1 / 2025-10-22
+## v0.11.0 / 2026-04-14
 
-* FIXED: Update opentelemetry-instrumentation-base dependency
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.10.0 / 2025-10-21
+## v0.10.1 / 2025-10-22
 
-* BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
-* ADDED: Min Ruby Version 3.2 and Rails 7.1
+- FIXED: Update opentelemetry-instrumentation-base dependency
 
-### v0.9.2 / 2025-10-07
+## v0.10.0 / 2025-10-21
 
-* DOCS: Enhance README
+- BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+- ADDED: Min Ruby Version 3.2 and Rails 7.1
 
-### v0.9.1 / 2025-09-30
+## v0.9.2 / 2025-10-07
 
-* FIXED: Min OTel Ruby API 1.7
+- DOCS: Enhance README
 
-### v0.9.0 / 2025-09-30
+## v0.9.1 / 2025-09-30
 
-* ADDED: Bump minimum API Version to 1.7
+- FIXED: Min OTel Ruby API 1.7
 
-### v0.8.0 / 2025-01-16
+## v0.9.0 / 2025-09-30
 
-* BREAKING CHANGE: Drop Support for EoL Rails 6.1
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-* ADDED: Drop Support for EoL Rails 6.1
-* ADDED: Set minimum supported version to Ruby 3.1
+- ADDED: Bump minimum API Version to 1.7
 
-### v0.7.8 / 2024-10-24
+## v0.8.0 / 2025-01-16
 
-* FIXED: ActiveJob Propagate baggage information properly when performing
+- BREAKING CHANGE: Drop Support for EoL Rails 6.1
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Drop Support for EoL Rails 6.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-### v0.7.7 / 2024-08-21
+## v0.7.8 / 2024-10-24
 
-* FIXED: Propagate context between enqueue and perform
+- FIXED: ActiveJob Propagate baggage information properly when performing
 
-### v0.7.6 / 2024-08-15
+## v0.7.7 / 2024-08-21
 
-* FIXED: Prefix ::ActiveSupport when installing the instrumentation
+- FIXED: Propagate context between enqueue and perform
 
-### v0.7.5 / 2024-08-15
+## v0.7.6 / 2024-08-15
 
-* FIXED: Use Active Support Lazy Load Hooks to avoid prematurely initializing ActiveRecord::Base and ActiveJob::Base
+- FIXED: Prefix ::ActiveSupport when installing the instrumentation
 
-### v0.7.4 / 2024-07-30
+## v0.7.5 / 2024-08-15
 
-* FIXED: Honour dynamic changes in configuration
+- FIXED: Use Active Support Lazy Load Hooks to avoid prematurely initializing ActiveRecord::Base and ActiveJob::Base
 
-### v0.7.3 / 2024-07-22
+## v0.7.4 / 2024-07-30
 
-* FIXED: ActiveJob::Handlers.unsubscribe
+- FIXED: Honour dynamic changes in configuration
 
-### v0.7.2 / 2024-07-02
+## v0.7.3 / 2024-07-22
 
-* DOCS: Fix CHANGELOGs to reflect a past breaking change
+- FIXED: ActiveJob::Handlers.unsubscribe
 
-### v0.7.1 / 2023-11-23
+## v0.7.2 / 2024-07-02
 
-* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+- DOCS: Fix CHANGELOGs to reflect a past breaking change
 
-### v0.7.0 / 2023-11-22
+## v0.7.1 / 2023-11-23
 
-* BREAKING CHANGE: Drop Rails 6.0 EOL
-* ADDED: Drop Rails 6.0 EOL
-* BREAKING CHANGE: Use ActiveSupport Instrumentation instead of Monkey Patches
-* CHANGED: Use ActiveSupport Instrumentation instead of Money Patches [#677](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/677)
+- CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
 
-### v0.6.1 / 2023-10-16
+## v0.7.0 / 2023-11-22
 
-* FIXED: Add Rails 7.1 compatibility
+- BREAKING CHANGE: Drop Rails 6.0 EOL
+- ADDED: Drop Rails 6.0 EOL
+- BREAKING CHANGE: Use ActiveSupport Instrumentation instead of Monkey Patches
+- CHANGED: Use ActiveSupport Instrumentation instead of Monkey Patches [#677](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/677)
 
-### v0.6.0 / 2023-09-07
+## v0.6.1 / 2023-10-16
 
-* BREAKING CHANGE: Align messaging instrumentation operation names [#648](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/648)
+- FIXED: Add Rails 7.1 compatibility
 
-### v0.5.2 / 2023-08-03
+## v0.6.0 / 2023-09-07
 
-* FIXED: Add code semconv attributes
-* FIXED: Remove inline linter rules
+- BREAKING CHANGE: Align messaging instrumentation operation names [#648](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/648)
 
-### v0.5.1 / 2023-06-05
+## v0.5.2 / 2023-08-03
 
-* FIXED: Base config options
+- FIXED: Add code semconv attributes
+- FIXED: Remove inline linter rules
 
-### v0.5.0 / 2023-04-17
+## v0.5.1 / 2023-06-05
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7
-* ADDED: Drop support for EoL Ruby 2.7
+- FIXED: Base config options
 
-### v0.4.0 / 2023-02-01
+## v0.5.0 / 2023-04-17
 
-* BREAKING CHANGE: Drop Rails 5 Support
-* ADDED: Drop Rails 5 Support
+- BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- ADDED: Drop support for EoL Ruby 2.7
 
-### v0.3.1 / 2023-01-14
+## v0.4.0 / 2023-02-01
 
-* DOCS: Fix gem homepage
-* DOCS: More gem documentation fixes
+- BREAKING CHANGE: Drop Rails 5 Support
+- ADDED: Drop Rails 5 Support
 
-### v0.3.0 / 2022-06-09
+## v0.3.1 / 2023-01-14
 
-* Upgrading Base dependency version
-* FIXED: Broken test file requirements
+- DOCS: Fix gem homepage
+- DOCS: More gem documentation fixes
 
-### v0.2.0 / 2022-05-02
+## v0.3.0 / 2022-06-09
 
-* ADDED: Validate Using Enums
-* ADDED: Make the context available in ActiveJob notifications
-* FIXED: Fix deserialization of jobs that are missing metadata
-* FIXED: RubyGems Fallback
+- Upgrading Base dependency version
+- FIXED: Broken test file requirements
 
-### v0.1.5 / 2021-12-02
+## v0.2.0 / 2022-05-02
 
-* (No significant changes)
+- ADDED: Validate Using Enums
+- ADDED: Make the context available in ActiveJob notifications
+- FIXED: Fix deserialization of jobs that are missing metadata
+- FIXED: RubyGems Fallback
 
-### v0.1.4 / 2021-09-29
+## v0.1.5 / 2021-12-02
 
-* (No significant changes)
+- (No significant changes)
 
-### v0.1.3 / 2021-08-12
+## v0.1.4 / 2021-09-29
 
-* (No significant changes)
+- (No significant changes)
 
-### v0.1.2 / 2021-07-01
+## v0.1.3 / 2021-08-12
 
-* FIXED: Support Active Jobs with keyword args across ruby versions  
+- (No significant changes)
 
-### v0.1.1 / 2021-06-29
+## v0.1.2 / 2021-07-01
 
-* FIXED: Compatibility with RC2 span status api changes [845](https://github.com/open-telemetry/opentelemetry-ruby/pull/845)
+- FIXED: Support Active Jobs with keyword args across ruby versions
 
-### v0.1.0 / 2021-06-23
+## v0.1.1 / 2021-06-29
 
-* Initial release.
+- FIXED: Compatibility with RC2 span status api changes [845](https://github.com/open-telemetry/opentelemetry-ruby/pull/845)
+
+## v0.1.0 / 2021-06-23
+
+- Initial release.

@@ -1,87 +1,93 @@
 # Release History: opentelemetry-instrumentation-base
 
-### v0.25.0 / 2025-10-22
+## v0.26.0 / 2026-04-14
 
-* BREAKING CHANGE: Min Ruby Version 3.2
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-* ADDED: Min Ruby Version 3.2
+## v0.25.0 / 2025-10-22
 
-### v0.24.0 / 2025-09-30
+- BREAKING CHANGE: Min Ruby Version 3.2
 
-* ADDED: Bump minimum API Version to 1.7
+- ADDED: Min Ruby Version 3.2
 
-### v0.23.0 / 2025-01-16
+## v0.24.0 / 2025-09-30
 
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Bump minimum API Version to 1.7
 
-* ADDED: Set minimum supported version to Ruby 3.1
+## v0.23.0 / 2025-01-16
 
-### v0.22.6 / 2024-08-15
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
 
-* FIXED: Fix the issue of wrong log msg
+- ADDED: Set minimum supported version to Ruby 3.1
 
-### v0.22.5 / 2024-07-23
+## v0.22.6 / 2024-08-15
 
-* DOCS: Add cspell to CI
+- FIXED: Fix the issue of wrong log msg
 
-### v0.22.4 / 2024-06-18
+## v0.22.5 / 2024-07-23
 
-* FIXED: Relax otel common gem constraints
-* DOCS: Add function doc for config_overrides_from_env
+- DOCS: Add cspell to CI
 
-### v0.22.3 / 2023-11-23
+## v0.22.4 / 2024-06-18
 
-* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+- FIXED: Relax otel common gem constraints
+- DOCS: Add function doc for config_overrides_from_env
 
-### v0.22.2 / 2023-08-03
+## v0.22.3 / 2023-11-23
 
-* FIXED: Remove inline linter rules
+- CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
 
-### v0.22.1 / 2023-06-02
+## v0.22.2 / 2023-08-03
 
-* feat: make config available to compatible blocks #453
+- FIXED: Remove inline linter rules
 
-### v0.22.0 / 2023-04-16
+## v0.22.1 / 2023-06-02
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- feat: make config available to compatible blocks #453
 
-* ADDED: Drop support for EoL Ruby 2.7
+## v0.22.0 / 2023-04-16
 
-### v0.21.1 / 2023-01-14
+- BREAKING CHANGE: Drop support for EoL Ruby 2.7
 
-* DOCS: Fix gem homepage
-* DOCS: More gem documentation fixes
+- ADDED: Drop support for EoL Ruby 2.7
 
-### v0.21.0 / 2022-05-26
+## v0.21.1 / 2023-01-14
 
-* BREAKING CHANGE: This requires upgrading both the SDK and Instrumentation gem in tandem
+- DOCS: Fix gem homepage
+- DOCS: More gem documentation fixes
 
-### v0.20.0 / 2022-05-02
+## v0.21.0 / 2022-05-26
 
-* ADDED: Validate Using Enums
-* FIXED: RubyGems Fallback
+- BREAKING CHANGE: This requires upgrading both the SDK and Instrumentation gem in tandem
 
-### v0.19.0 / 2021-12-01
+## v0.20.0 / 2022-05-02
 
-* ADDED: Add default options config helper + env var config option support
+- ADDED: Validate Using Enums
+- FIXED: RubyGems Fallback
 
-### v0.18.3 / 2021-09-29
+## v0.19.0 / 2021-12-01
 
-* (No significant changes)
+- ADDED: Add default options config helper + env var config option support
 
-### v0.18.2 / 2021-08-12
+## v0.18.3 / 2021-09-29
 
-* (No significant changes)
+- (No significant changes)
 
-### v0.18.1 / 2021-06-23
+## v0.18.2 / 2021-08-12
 
-* (No significant changes)
+- (No significant changes)
 
-### v0.18.0 / 2021-05-21
+## v0.18.1 / 2021-06-23
 
-* ADDED: Updated API dependency for 1.0.0.rc1
-* FIXED: Missing instrumentation classes during configuration
+- (No significant changes)
 
-### v0.17.0 / 2021-04-22
+## v0.18.0 / 2021-05-21
 
-* Initial release.
+- ADDED: Updated API dependency for 1.0.0.rc1
+- FIXED: Missing instrumentation classes during configuration
+
+## v0.17.0 / 2021-04-22
+
+- Initial release.

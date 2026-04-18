@@ -378,19 +378,19 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
       it 'does inject context on frozen strings' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
-        assert(sql.frozen?)
+        assert_predicate(sql, :frozen?)
         propagator = OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
 
         arg_cache = {} # maintain handles to args
         allow(client).to receive(:query).and_wrap_original do |m, *args|
           arg_cache[:query_input] = args[0]
-          assert(args[0].frozen?)
+          assert_predicate(args[0], :frozen?)
           m.call(args[0])
         end
 
         allow(propagator).to receive(:inject).and_wrap_original do |m, *args|
           arg_cache[:inject_input] = args[0]
-          refute(args[0].frozen?)
+          refute_predicate(args[0], :frozen?)
           assert_match(sql, args[0])
           m.call(args[0], context: args[1][:context])
         end
@@ -404,13 +404,13 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         assert_equal(arg_cache[:inject_input], "/*VT_SPAN_CONTEXT=#{encoded}*/#{sql}")
 
         # arg_cache[:inject_input] is now frozen
-        assert(arg_cache[:inject_input].frozen?)
+        assert_predicate(arg_cache[:inject_input], :frozen?)
       end
 
       it 'does inject context on unfrozen strings' do
         # inbound SQL is not frozen (string prefixed with +)
         sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
-        refute(sql.frozen?)
+        refute_predicate(sql, :frozen?)
 
         # dup sql for comparison purposes, since propagator  mutates it
         cached_sql = sql.dup
@@ -421,7 +421,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
         encoded = Base64.strict_encode64("{\"uber-trace-id\":\"#{span.hex_trace_id}:#{span.hex_span_id}:0:1\"}")
         assert_equal(sql, "/*VT_SPAN_CONTEXT=#{encoded}*/#{cached_sql}")
-        refute(sql.frozen?)
+        refute_predicate(sql, :frozen?)
       end
     end
 

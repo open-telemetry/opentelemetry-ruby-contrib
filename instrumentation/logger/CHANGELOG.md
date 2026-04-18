@@ -1,18 +1,29 @@
 # Release History: opentelemetry-instrumentation-logger
 
-### v0.3.1 / 2026-02-11
+## v0.4.0 / 2026-04-14
 
-* FIXED: Prevent deadlock from recursive logging (#1944)
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.3.0 / 2025-10-28
+## v0.3.2 / 2026-03-17
 
-* ADDED: Use formatted_message in Ruby logger instrumentation
+- FIXED: Return the original logger value instead of broadcasts array (#1988)
+- FIXED: Return the original value instead of broadcasts array
 
-### v0.2.0 / 2025-10-22
+## v0.3.1 / 2026-02-11
 
-* BREAKING CHANGE: Min Ruby Version 3.2
-* ADDED: Min Ruby Version 3.2
+- FIXED: Prevent deadlock from recursive logging (#1944)
 
-### v0.1.0 / 2025-10-09
+## v0.3.0 / 2025-10-28
 
-Initial release.
+- ADDED: Use formatted_message in Ruby logger instrumentation
+
+## v0.2.0 / 2025-10-22
+
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
+
+## v0.1.0 / 2025-10-09
+
+- Initial release.

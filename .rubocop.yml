@@ -1,7 +1,11 @@
-plugins: rubocop-performance
+plugins:
+  - rubocop-minitest
+  - rubocop-rspec
+  - rubocop-rake
+  - rubocop-performance
 
 AllCops:
-  TargetRubyVersion: 3.2
+  TargetRubyVersion: 3.3
   NewCops: enable
   Exclude:
     - Rakefile
@@ -10,11 +14,12 @@ AllCops:
     - "bin/instrumentation_generator"
     - "**/**/vendor/bundle/**/*"
     - "**/proto/**"
+    - "helpers/sql-obfuscation/**"
+    - "instrumentation/dalli/**"
+    - "instrumentation/mongo/**"
+    - "instrumentation/restclient/**"
+    - "instrumentation/ruby_kafka/**"
 Bundler/OrderedGems:
-  Enabled: false
-Gemspec/DevelopmentDependencies:
-  Enabled: true
-Gemspec/RequiredRubyVersion:
   Enabled: false
 Lint/ConstantDefinitionInBlock:
   Exclude:
@@ -69,3 +74,13 @@ Gemspec/RequireMFA:
 Layout/LineLength:
   Enabled: true
   Max: 250
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+# we need to review the below
+Minitest/LiteralAsActualArgument:
+  Enabled: false
+Minitest/EmptyLineBeforeAssertionMethods:
+  Enabled: false
+Rake/DuplicateTask:
+  Enabled: false
