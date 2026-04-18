@@ -221,6 +221,5 @@ services:
       - jaeger
 
 volumes:
-  bundle:
   redis_data:
   postgres_socket:
