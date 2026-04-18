@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+## v0.68.0 / 2026-04-14
+
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
+
 ## v0.67.0 / 2026-03-17
 
 - ADDED: Cache static span attributes in Trilogy instrumentation (#2089)
