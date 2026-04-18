@@ -93,7 +93,8 @@ module OpenTelemetry
             return '' unless endpoint.routes
 
             namespace = endpoint.routes.first.namespace
-            version = endpoint.routes.first.options[:version]&.to_s
+            version = endpoint.routes.first.options[:version]
+            version = config[:version_format].call(version)
             prefix = endpoint.routes.first.options[:prefix]&.to_s
             parts = [prefix, version] + namespace.split('/') + endpoint.options[:path]
             parts.reject { |p| p.nil? || p.empty? || p.eql?('/') }.join('/').prepend('/')
@@ -109,6 +110,10 @@ module OpenTelemetry
 
           def built_in_grape_formatter?(formatter)
             formatter.respond_to?(:name) && formatter.name.include?('Grape::Formatter')
+          end
+
+          def config
+            Grape::Instrumentation.instance.config
           end
         end
       end
