@@ -20,7 +20,7 @@ group :test do
   gem 'webmock', '~> 3.26.0'
   gem 'yard', '~> 0.9.0'
   gem 'opentelemetry-sdk', '~> 1.11.0'
-  gem 'rspec', '~> 3.0.0'
+  gem 'rspec', '~> 3.13.0'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
