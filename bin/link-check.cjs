@@ -1,6 +1,6 @@
 // This script is necessary as we can't pass environment variables to
 // npm scripts in a cross platform manner.
-import { spawnSync } from "node:child_process";
+const { spawnSync } = require("node:child_process");
 
 const cfg = process.env.lsconfig || "";
 
