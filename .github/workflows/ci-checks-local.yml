@@ -56,4 +56,7 @@ jobs:
         run: npm ci --ignore-scripts && npx puppeteer browsers install chrome && bundle install
 
       - name: Run All Checks
-        run: npm run check
+        run: |
+          npm run check
+        env:
+          lsconfig: "-c .github/.linkspector-local_check.yml"
