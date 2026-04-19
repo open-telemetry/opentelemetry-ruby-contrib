@@ -33,7 +33,7 @@ jobs:
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           cache: "npm"
-          node-version: "22.13.2"
+          node-version: "20.19"
 
       - name: Install Ruby
         uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
