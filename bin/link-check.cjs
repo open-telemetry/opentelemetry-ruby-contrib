@@ -19,6 +19,4 @@ const result = spawnSync("linkspector", ["check", ...cfg.split(" ")], {
   shell: true,
 });
 
-// Workaround for https://github.com/nodejs/node/issues/56645
-
-  process.exit(result.status ?? 1);
+process.exit(result.status ?? 1);
