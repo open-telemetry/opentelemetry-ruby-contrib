@@ -5,7 +5,7 @@
     "check:format:json": "prettier **/*.json --check",
     "check:format:markdown": "prettier **/*.md --check",
     "check:format:ruby": "rubocop --only Layout",
-    "check:links": "linkspector check",
+    "check:links": "linkspector check $npm_config_lsConfig",
     "check:lint": "npm run check:lint:json && npm run check:lint:markdown && npm run check:lint:ruby",
     "check:lint:json": "uname >/dev/null 2>&1 && jsonlint --config .jsonlintrc.yml || true",
     "check:lint:markdown": "markdownlint-cli2 '**/*.md'",
