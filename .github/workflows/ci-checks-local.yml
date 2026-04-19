@@ -57,3 +57,5 @@ jobs:
 
       - name: Run All Checks
         run: npm run check
+        env:
+          CHANGES_ONLY: true
