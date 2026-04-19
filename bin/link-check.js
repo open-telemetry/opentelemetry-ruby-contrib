@@ -6,7 +6,7 @@ const cfg = process.env.lsconfig || "";
 
 const result = spawnSync("linkspector", ["check", ...cfg.split(" ")], {
   stdio: "inherit",
-  shell: true
+  shell: true,
 });
 
 process.exit(result.status ?? 1);
