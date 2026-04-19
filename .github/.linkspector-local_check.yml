@@ -3,4 +3,3 @@ files:
   - CODE_OF_CONDUCT.md
 useGitIgnore: true
 followRedirects: true
-modifiedFilesOnly: true
