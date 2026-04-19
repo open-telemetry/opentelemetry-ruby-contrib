@@ -9,4 +9,4 @@ excludedDirs:
   - instrumentation/ruby_kafka/
 useGitIgnore: true
 followRedirects: true
-modifiedFilesOnly: ${CHANGES_ONLY || false}
+modifiedFilesOnly: ${CHANGES_ONLY}
