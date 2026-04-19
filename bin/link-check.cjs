@@ -9,4 +9,7 @@ const result = spawnSync("linkspector", ["check", ...cfg.split(" ")], {
   shell: true,
 });
 
-process.exit(result.status ?? 1);
+// Workaround for https://github.com/nodejs/node/issues/56645
+setTimeout(() => {
+  process.exit(result.status ?? 1);
+}, 50);
