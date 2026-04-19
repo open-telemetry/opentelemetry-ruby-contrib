@@ -9,3 +9,5 @@ Metrics/ParameterLists:
   Enabled: true
   Exclude:
     - lib/opentelemetry/instrumentation/rdkafka/patches/producer.rb
+Minitest/SkipEnsure:
+  Enabled: false

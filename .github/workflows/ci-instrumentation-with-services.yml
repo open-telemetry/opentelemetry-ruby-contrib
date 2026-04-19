@@ -62,7 +62,7 @@ jobs:
           - rdkafka
           - ruby_kafka
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
