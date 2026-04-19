@@ -26,6 +26,8 @@ jobs:
           - windows-2025
     name: All / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    env:
+      lsConfig: '-c .github/linkspector-local_check.yml'lsConfig='-c .github/linkspector-local_check.yml'
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -57,3 +59,5 @@ jobs:
 
       - name: Run All Checks
         run: npm run check -- --lsConfig='-c .github/linkspector-local_check.yml'
+        env:
+          lsconfig: '-c .github/linkspector-local_check.yml'
