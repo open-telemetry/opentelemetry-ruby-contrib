@@ -24,6 +24,7 @@ namespace :test do
     t.test_files = FileList['test/railtie/**/*_test.rb']
   end
 
+  desc 'Start simplecov coverage'
   task :start_coverage do
     require 'simplecov'
   end
