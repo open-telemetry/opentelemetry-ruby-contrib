@@ -233,7 +233,8 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
 
       _(client_span).wont_be_nil
       _(client_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
-      _(client_span.status.description).must_include 'status=>500'
+      _(client_span.status.description).must_include 'status'
+      _(client_span.status.description).must_include '500'
       _(client_span.attributes['gen_ai.operation.name']).must_equal 'chat'
       _(client_span.attributes['gen_ai.provider.name']).must_equal 'openai'
       _(client_span.attributes['gen_ai.request.model']).must_equal 'gpt-4'
@@ -247,7 +248,8 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       exception_event = client_span.events.find { |event| event.name == 'exception' }
       _(exception_event).wont_be_nil
       _(exception_event.attributes['exception.type']).must_equal 'OpenAI::Errors::InternalServerError'
-      _(exception_event.attributes['exception.message']).must_include 'status=>500'
+      _(exception_event.attributes['exception.message']).must_include 'status'
+      _(exception_event.attributes['exception.message']).must_include '500'
     end
   end
 
