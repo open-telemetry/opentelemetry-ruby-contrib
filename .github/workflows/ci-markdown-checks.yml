@@ -34,7 +34,7 @@ jobs:
 
       # equivalent cli: linkspector check
       - name: Run linkspector
-        uses: umbrelladocs/action-linkspector@37c85bcde51b30bf929936502bac6bfb7e8f0a4d # v1.4.1
+        uses: umbrelladocs/action-linkspector@2fdcdb6fced1f49e9e58e785bae9ada4be2b6138 # v1.4.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-annotations
