@@ -27,7 +27,7 @@
     "write:source:ruby": "npm run check:source:ruby -- --autocorrect-all"
   },
   "devDependencies": {
-    "@umbrelladocs/linkspector": "0.4.8",
+    "@umbrelladocs/linkspector": "0.5.2",
     "cspell": "10.0.0",
     "@prantlf/jsonlint": "17.0.1",
     "markdownlint-cli2": "0.22.0",
