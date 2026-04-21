@@ -16,9 +16,9 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@dffb23f65a78bba8db45d387d5ea1bbd6be3ef18 # v1.293.0
+        uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
         with:
-          ruby-version: 4.0.1
+          ruby-version: 4.0.2
       - name: Generate Gemfile.lock
         run: |
           echo "Finding all Gemfiles in the project..."
@@ -42,7 +42,7 @@ jobs:
               cd "$ORIGINAL_DIR" || exit 1
           done
 
-      - uses: fossas/fossa-action@c414b9ad82eaad041e47a7cf62a4f02411f427a0 # v1.8.0
+      - uses: fossas/fossa-action@ff70fe9fe17cbd2040648f1c45e8ec4e4884dcf3 # v1.9.0
         with:
           api-key: ${{secrets.FOSSA_API_KEY}}
           team: OpenTelemetry

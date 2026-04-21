@@ -23,9 +23,7 @@ on:
       - "instrumentation/trilogy/**"
       - ".github/workflows/ci-instrumentation-with-services.yml"
       - ".github/actions/**"
-      - "Gemfile"
       - "Rakefile"
-      - ".rubocop.yml"
       - "gemspecs/**"
   pull_request:
     branches:
@@ -57,7 +55,7 @@ jobs:
           - dalli
           - mongo
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: other / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -77,18 +75,11 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
-          coverage: true
           build: true
     services:
       memcached:
-        image: memcached:1.6.40-alpine@sha256:8a82a3927694e42bc52679dc81532244de51e5faed5f9541a1283e3ad7271db1
+        image: memcached:1.6.41-alpine@sha256:65c80b311a9601ef5ca8af3814e5cd06a9c4277ea139d80bd53da6b4d39eb46e
         ports:
           - 11211:11211
       mongodb:
@@ -105,7 +96,7 @@ jobs:
           - mysql2
           - trilogy
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: mysql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -125,14 +116,7 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
-          coverage: true
           build: true
     services:
       mysql:
@@ -149,7 +133,7 @@ jobs:
           - rdkafka
           - ruby_kafka
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: kafka / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -169,25 +153,18 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
-          coverage: true
           build: true
     services:
       zookeeper:
-        image: confluentinc/cp-zookeeper:7.7.7@sha256:fa29eaf783d80053fcf4a8f7cb8dff11fca7594ee30656609c6f96652bc01229
+        image: confluentinc/cp-zookeeper:7.9.6@sha256:d3294ad2b353ac5a155ad9abe37884f75c482f387af553679210303b7118a0d3
         ports:
           - 2181:2181
         env:
           ZOOKEEPER_CLIENT_PORT: 2181
           ZOOKEEPER_TICK_TIME: 2000
       kafka:
-        image: confluentinc/cp-kafka:7.9.5@sha256:c4c6b755551da17fff056b9c8b39700f99020083bd2d69a171ece4784f33e640
+        image: confluentinc/cp-kafka:7.9.6@sha256:9e178783dba8cf44cd8b1d260f548a587a21235921957edd4ed7aa7d060b0852
         ports:
           - 9092:9092
           - 29092:29092
@@ -209,38 +186,50 @@ jobs:
           - resque
           - sidekiq
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: redis / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set environment variables
+        id: inputs
+        shell: bash
+        run: |
+          dir=$(find . -iname 'opentelemetry-instrumentation-${{ matrix.gem }}.gemspec' -exec dirname {} \;)
+          echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
+
+          FILE="${dir}/.github-ci.yml"
+
+          if [[ -f "$FILE" ]]; then
+            echo "Loading env from $FILE"
+            # Convert YAML to key=value and export to GITHUB_ENV
+            yq '.env // {} | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
+          else
+            echo "No github ci file found in ($dir). Skipping."
+          fi
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "4.0"
+          minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
+          minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
-          coverage: true
           build: true
+          minimum_coverage: ${{ env.minimum_coverage }}
     services:
       redis:
-        image: redis:8.6.1@sha256:1c054d54ecd1597bba52f4304bca5afbc5565ebe614c5b3d7dc5b7f8a0cd768d
+        image: redis:8.6.2@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa
         ports:
           - 6379:6379
         options: >-
@@ -249,7 +238,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
           -e REDIS_PASSWORD=passw0rd
-          --entrypoint sh redis:8.6.1@sha256:1c054d54ecd1597bba52f4304bca5afbc5565ebe614c5b3d7dc5b7f8a0cd768d -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
+          --entrypoint sh redis:8.6.2@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
         env:
           REDIS_PASSWORD: "passw0rd"
 
@@ -262,7 +251,7 @@ jobs:
           - pg
           - que
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: postgresql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -282,18 +271,11 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
-          coverage: true
           build: true
     services:
       postgres:
-        image: postgres:13.23@sha256:4689940c683801b4ab839ab3b0a0a3555a5fe425371422310944e89eca7d8068
+        image: postgres:14.22@sha256:ae46a8452f2c137766c9d4a62f4fe60166355ff8b00512e6c48692dbf1eed3d5
         env:
           POSTGRES_PASSWORD: postgres
         ports:
@@ -310,7 +292,7 @@ jobs:
         gem:
           - bunny
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: rabbitmq / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -330,17 +312,10 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.2"
           yard: true
-          rubocop: true
-          coverage: true
           build: true
     services:
       rabbitmq:
-        image: rabbitmq:3.13.7-alpine@sha256:d7af1c87c5f1eda13fcfca06db452bf3aeab6619fc3358b68535c0c02c4e52bc
+        image: rabbitmq:4.2.5-alpine@sha256:f654a30164ddb33f4b43e5469910e7aa7838ddb144e9d63f039c34544a6823a5
         ports:
           - "5672:5672"

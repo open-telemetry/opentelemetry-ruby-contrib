@@ -32,12 +32,11 @@ jobs:
           - 4.0
           - 3.4
           - 3.3
-          - 3.2
     name: ${{ matrix.ruby-version }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: ruby/setup-ruby@dffb23f65a78bba8db45d387d5ea1bbd6be3ef18 # v1.293.0
+      - uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
       - name: "Install Latest Gem Versions on ${{ matrix.ruby-version }}"
@@ -51,9 +50,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: ruby/setup-ruby@dffb23f65a78bba8db45d387d5ea1bbd6be3ef18 # v1.293.0
+      - uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
         with:
-          ruby-version: 4.0.1
+          ruby-version: "4.0.2"
       - name: "Install Latest Gem Versions on Latest Ruby"
         working-directory: releases
         run: ./run.sh
