@@ -67,10 +67,9 @@ describe OpenTelemetry::Instrumentation::HTTPX do
 
   describe '#emit_old_semconv_deprecation_warning' do
     it 'emits a deprecation warning' do
-      OpenTelemetry.stub(:logger, Logger.new(StringIO.new)) do
-        expect(OpenTelemetry.logger).to receive(:warn).with(/deprecated/)
-        instrumentation.emit_old_semconv_deprecation_warning('old')
-      end
+      allow(OpenTelemetry).to receive(:logger).and_return(Logger.new(StringIO.new))
+      expect(OpenTelemetry.logger).to receive(:warn).with(/deprecated/)
+      instrumentation.emit_old_semconv_deprecation_warning('old')
     end
   end
 end
