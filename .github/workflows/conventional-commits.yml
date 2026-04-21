@@ -27,14 +27,24 @@ jobs:
       # restrict checks to pull requests to avoid issues blocking the merge queue
       - name: Validate PR Title
         if: ${{ github.event_name == 'pull_request' }}
-        uses: dev-build-deploy/commit-me@27d14296ec218488c543616d9128d7e75ab7463a # v1.5.3
+        uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        id: lint_pr_title
         env:
-          FORCE_COLOR: 3
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          include-commits: false
-          update-labels: false
-          config: ".commit-me.json"
+          types: |
+            chore
+            ci
+            docs
+            feat
+            fix
+            perf
+            refactor
+            release
+            revert
+            squash
+            style
+            test
       - name: Extract PR Title
         id: pr
         env:
