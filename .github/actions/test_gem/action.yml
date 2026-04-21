@@ -158,6 +158,7 @@ runs:
     - name: Cleanup coverage artifacts
       shell: bash
       run: rm -rf coverage
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem
       shell: bash
