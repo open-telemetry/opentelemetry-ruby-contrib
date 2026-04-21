@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::HTTPX do
 
   describe 'present' do
     it 'returns truthy when HTTPX is defined' do
-      assert instrumentation.present?
+      assert_predicate instrumentation, :present?
     end
   end
 
