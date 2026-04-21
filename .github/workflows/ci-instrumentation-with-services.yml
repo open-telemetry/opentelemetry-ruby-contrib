@@ -55,7 +55,7 @@ jobs:
           - dalli
           - mongo
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: other / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -76,12 +76,11 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       memcached:
-        image: memcached:1.6.40-alpine@sha256:8a82a3927694e42bc52679dc81532244de51e5faed5f9541a1283e3ad7271db1
+        image: memcached:1.6.41-alpine@sha256:65c80b311a9601ef5ca8af3814e5cd06a9c4277ea139d80bd53da6b4d39eb46e
         ports:
           - 11211:11211
       mongodb:
@@ -98,7 +97,7 @@ jobs:
           - mysql2
           - trilogy
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: mysql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -119,7 +118,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -137,7 +135,7 @@ jobs:
           - rdkafka
           - ruby_kafka
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: kafka / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -158,7 +156,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
@@ -192,7 +189,7 @@ jobs:
           - resque
           - sidekiq
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: redis / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -213,12 +210,11 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       redis:
-        image: redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93
+        image: redis:8.6.2@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa
         ports:
           - 6379:6379
         options: >-
@@ -227,7 +223,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
           -e REDIS_PASSWORD=passw0rd
-          --entrypoint sh redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93 -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
+          --entrypoint sh redis:8.6.2@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
         env:
           REDIS_PASSWORD: "passw0rd"
 
@@ -240,7 +236,7 @@ jobs:
           - pg
           - que
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: postgresql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -261,12 +257,11 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       postgres:
-        image: postgres:14.22@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d
+        image: postgres:14.22@sha256:ae46a8452f2c137766c9d4a62f4fe60166355ff8b00512e6c48692dbf1eed3d5
         env:
           POSTGRES_PASSWORD: postgres
         ports:
@@ -283,7 +278,7 @@ jobs:
         gem:
           - bunny
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: rabbitmq / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -304,11 +299,10 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          rubocop: true
           coverage: true
           build: true
     services:
       rabbitmq:
-        image: rabbitmq:4.2.5-alpine@sha256:53e51f8469ef13d0a1a2b03c0d36dcf4efbf13089f552440ec5620ca07f2c64e
+        image: rabbitmq:4.2.5-alpine@sha256:f654a30164ddb33f4b43e5469910e7aa7838ddb144e9d63f039c34544a6823a5
         ports:
           - "5672:5672"
