@@ -109,6 +109,8 @@ runs:
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
             echo "::group::🔎 Appraising ${i}"
+            export SIMPLECOV_COMMAND_NAME="appraisal_${i}"
+
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
             BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test || exit
