@@ -103,7 +103,7 @@ module OpenTelemetry
               # db.user (old only - removed in stable)
               attributes[::OpenTelemetry::SemanticConventions::Trace::DB_USER] = database_user if database_user
 
-              # peer.service (same in both)
+              # peer.service (old only - not stable and not a db attribute)
               attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
               attributes
             end
@@ -134,7 +134,7 @@ module OpenTelemetry
 
             def set_error_attributes(span, error)
               span.set_attribute('error.type', error.class.name)
-              span.set_attribute('db.response.status_code', error.error_code.to_s) if error.error_code
+              span.set_attribute('db.response.status_code', error.error_code.to_s) if error.respond_to?(:error_code) && error.error_code
             end
 
             def tracer
