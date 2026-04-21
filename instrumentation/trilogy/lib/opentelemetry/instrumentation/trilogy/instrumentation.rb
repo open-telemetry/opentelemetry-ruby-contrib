@@ -33,7 +33,7 @@ module OpenTelemetry
       # ### `:peer_service`
       #
       # Sets the `peer.service` attribute on spans. Default is `nil`.
-      # Only applies when using old semantic conventions. Deprecated with no replacement. 
+      # Only applies when using old semantic conventions. Deprecated with no replacement.
       #
       # ### `:propagator`
       #
