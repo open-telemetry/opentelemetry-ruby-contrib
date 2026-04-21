@@ -37,8 +37,9 @@ jobs:
           config: ".commit-me.json"
       - name: Extract PR Title
         id: pr
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
         run: |
-          TITLE=${{ toJSON(github.event.pull_request.title) }}
           echo "Title: $TITLE" > pr_title.md
       - name: Check PR Title spelling
         uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0

@@ -76,7 +76,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
     services:
       memcached:
@@ -118,7 +117,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
     services:
       mysql:
@@ -156,7 +154,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
     services:
       zookeeper:
@@ -194,24 +191,42 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set environment variables
+        id: inputs
+        shell: bash
+        run: |
+          dir=$(find . -iname 'opentelemetry-instrumentation-${{ matrix.gem }}.gemspec' -exec dirname {} \;)
+          echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
+
+          FILE="${dir}/.github-ci.yml"
+
+          if [[ -f "$FILE" ]]; then
+            echo "Loading env from $FILE"
+            # Convert YAML to key=value and export to GITHUB_ENV
+            yq '.env // {} | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
+          else
+            echo "No github ci file found in ($dir). Skipping."
+          fi
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "4.0"
+          minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
+          minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
+          minimum_coverage: ${{ env.minimum_coverage }}
     services:
       redis:
         image: redis:8.6.2@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa
@@ -257,7 +272,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
     services:
       postgres:
@@ -299,7 +313,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
     services:
       rabbitmq:
