@@ -155,6 +155,10 @@ runs:
       run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage || 85 }}); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
+    - name: Cleanup coverage artifacts
+      shell: bash
+      run: rm -rf coverage
+
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
