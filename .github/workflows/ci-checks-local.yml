@@ -21,16 +21,16 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+          - ubuntu-24.04
+          - macos-15
+          - windows-2025
     name: All / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           cache: "npm"
           node-version: "24"
@@ -41,7 +41,7 @@ jobs:
           ruby-version: "3.3.11"
 
       - name: Install Chrome (Ubuntu only)
-        if: matrix.os == 'ubuntu-latest'
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
@@ -49,11 +49,14 @@ jobs:
           echo "PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome" >> $GITHUB_ENV
 
       - name: Install Chrome for Testing (macOS/Windows only)
-        if: matrix.os != 'ubuntu-latest'
+        if: "${{!startsWith(matrix.os, 'ubuntu')}}"
         run: npx puppeteer browsers install chrome
 
       - name: Install Tools
         run: npm ci --ignore-scripts && npx puppeteer browsers install chrome && bundle install
 
       - name: Run All Checks
-        run: npm run check
+        run: |
+          npm run check
+        env:
+          lsconfig: "-c .github/.linkspector-local_check.yml"
