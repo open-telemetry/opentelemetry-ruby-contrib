@@ -40,6 +40,7 @@
         ".github/workflows/ci-markdown-checks.yml",
         ".github/workflows/ci-checks-local.yml",
         "**/*.gemspec",
+        "Dockerfile",
       ],
       matchUpdateTypes: ["minor", "major"],
       dependencyDashboardApproval: true,
@@ -178,6 +179,20 @@
       extractVersionTemplate: "(?<version>[0-9]+.[0-9]+).0",
       depNameTemplate: "ruby",
       depTypeTemplate: "gemspec.required_ruby_version",
+    },
+    {
+      customType: "regex",
+      description: "Update os matrix",
+      managerFilePatterns: [".github/**/**"],
+      matchStrings: [
+        "matrix:[\\s\\S]*os:[\\s\\S]*:",
+        "os:\\s*\\n(?:\\s+-\\s+[\\w.-]+\\n)+",
+        "- (?<packageName>.+?)-(?<depVersion>[0-9.]+)\\n",
+      ],
+      matchStringsStrategy: "recursive",
+      datasourceTemplate: "github-runners",
+      currentValueTemplate: "{{depVersion}}",
+      depTypeTemplate: "github-runner",
     },
   ],
   lockFileMaintenance: {

@@ -91,31 +91,25 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
     end
 
     it 'does not blow up when given nil context' do
-      processor.on_start(span, nil)
-      assert true # nothing above raised an exception
+      assert_silent { processor.on_start(span, nil) }
     end
     it 'does not blow up when given nil span' do
-      processor.on_start(nil, context_with_baggage)
-      assert true # nothing above raised an exception
+      assert_silent { processor.on_start(nil, context_with_baggage) }
     end
     it 'does not blow up when given nil span and context' do
-      processor.on_start(nil, nil)
-      assert true # nothing above raised an exception
+      assert_silent { processor.on_start(nil, nil) }
     end
     it 'does not blow up when given a context that is not a Context' do
-      processor.on_start(span, :not_a_context)
-      assert true # nothing above raised an exception
+      assert_silent { processor.on_start(span, :not_a_context) }
     end
     it 'does not blow up when given a span that is not a Span' do
-      processor.on_start(:not_a_span, context_with_baggage)
-      assert true # nothing above raised an exception
+      assert_silent { processor.on_start(:not_a_span, context_with_baggage) }
     end
   end
 
   describe 'satisfies the SpanProcessor duck type with no-op methods' do
     it 'implements #on_finish' do
-      processor.on_finish(span)
-      assert true # nothing above raised an exception
+      assert_silent { processor.on_finish(span) }
     end
 
     it 'implements #force_flush' do

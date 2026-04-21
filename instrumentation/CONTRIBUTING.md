@@ -257,7 +257,7 @@ jobs:
           # ...
           - werewolf
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
 ```
 
 #### JRuby Compatibility
@@ -306,7 +306,7 @@ instrumentation_kafka:
         - ruby_kafka
         - werewolf
       os:
-        - ubuntu-latest
+        - ubuntu-24.04
 ```
 
 The final step is adding the path to the docker-compose.yml snippet to the path list for your instrumentation in `.github/labeler.yml` which is necessary for the build system.
@@ -327,7 +327,7 @@ instrumentation_with_services:
         - mongo
         - werewolf
       os:
-        - ubuntu-latest
+        - ubuntu-24.04
   services:
     # ...
     my_service:
@@ -347,7 +347,7 @@ instrumentation_silver:
       gem:
         - werewolf
       os:
-        - ubuntu-latest
+        - ubuntu-24.04
   name: other / ${{ matrix.gem }} / ${{ matrix.os }}
   runs-on: ${{ matrix.os }}
   steps:

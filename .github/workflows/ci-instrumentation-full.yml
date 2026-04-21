@@ -111,7 +111,7 @@ jobs:
           - rspec
           - sinatra
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
 
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -181,7 +181,7 @@ jobs:
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
+        if: "${{ startsWith(matrix.os, 'ubuntu') && steps.jruby_skip.outputs.skip == 'false' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
