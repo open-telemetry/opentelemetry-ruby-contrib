@@ -12,6 +12,11 @@ deprecated:
           - "instrumentation/restclient/**"
           - "instrumentation/ruby_kafka/**"
 
+auto-instrumentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "packages/auto-instrumentation/**"
+
 helpers-mysql:
   - changed-files:
       - any-glob-to-any-file:
