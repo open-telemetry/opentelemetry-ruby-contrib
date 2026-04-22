@@ -36,9 +36,13 @@ runs:
     - name: Setup
       id: setup
       shell: bash
+      env:
+        GEM_INPUT: ${{ inputs.gem }}
+        RUBY_INPUT: ${{ inputs.ruby }}
+        LATEST_INPUT: ${{ inputs.latest }}
       run: |
         # 🛠️ Setup 🛠️
-        dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
+        dir=$(find . -iname "${GEM_INPUT}.gemspec" -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
         # We install multiple ruby versions here, and that makes for some
@@ -48,15 +52,15 @@ runs:
         rm -f "${dir}/Gemfile.lock"
 
         echo "cache_key=mri" >> $GITHUB_OUTPUT
-        if [[ "${{ inputs.ruby }}" == "jruby" ]]; then
+        if [[ "$RUBY_INPUT" == "jruby" ]]; then
           echo "cache_key=jruby" >> $GITHUB_OUTPUT
-        elif [[ "${{ inputs.ruby }}" == "truffleruby" ]]; then
+        elif [[ "$RUBY_INPUT" == "truffleruby" ]]; then
           echo "cache_key=truffleruby" >> $GITHUB_OUTPUT
         fi
 
         echo "appraisals=false" >> $GITHUB_OUTPUT
 
-        if [[ "${{ inputs.latest }}" != "true" ]]; then
+        if [[ "$LATEST_INPUT" != "true" ]]; then
           if [[ -f "${dir}/Appraisals" ]]; then
             echo "appraisals=true" >> $GITHUB_OUTPUT
           fi
@@ -152,7 +156,9 @@ runs:
       shell: bash
       # This starts a new simplecov run which tracks nothing of its own,
       # but merges with the existing coverage reports generated during testing.
-      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage || 85 }}); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
+      env:
+        MINIMUM_COVERAGE: ${{ inputs.minimum_coverage || 85 }}
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Cleanup coverage artifacts
@@ -163,7 +169,9 @@ runs:
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
+      env:
+        GEM_INPUT: ${{ inputs.gem }}
       run: |
         # 📦 Build Gem 📦
-        gem build ${{ inputs.gem }}.gemspec
+        gem build "${GEM_INPUT}.gemspec"
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
