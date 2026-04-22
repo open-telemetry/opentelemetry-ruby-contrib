@@ -188,7 +188,6 @@ The following environment variables are specific to this gem (not standard OpenT
 | `OTEL_RUBY_ENABLED_INSTRUMENTATIONS` | Only load specific instrumentations (comma-separated). Omit to load all available. | `redis,mysql2,faraday` |
 | `OTEL_RUBY_ADDITIONAL_GEM_PATH` | Custom gem installation path for OpenTelemetry Operator environments. | `/custom/gem/path` |
 | `OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG` | Set to `true` for debug output during initialization. | `true` |
-| `OTEL_RUBY_UNLOAD_LIBRARY` | Prevent specific gems from being preloaded (e.g., `google-protobuf`). | `google-protobuf` |
 
 ### Standard OpenTelemetry Environment Variables
 

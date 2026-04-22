@@ -78,7 +78,14 @@ module OTelBundlerPatch
     def self._otel_determine_enabled_instrumentation
       env = ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'].to_s
 
-      env.split(',').map { |instrumentation| OTEL_INSTRUMENTATION_MAP[instrumentation] }
+      return [] if env.strip.empty?
+
+      env.split(',').filter_map do |instrumentation|
+        normalized = instrumentation.strip.downcase
+        value = OTEL_INSTRUMENTATION_MAP[normalized]
+        warn "[OpenTelemetry] WARNING: Unknown instrumentation '#{instrumentation.strip}'" if value.nil? && ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
+        value
+      end
     end
 
     def self._otel_check_for_bundled_otel_gems
@@ -139,7 +146,8 @@ require 'bundler'
 
 # /otel-auto-instrumentation-ruby is default path for otel operator (ruby.go)
 # If requires different gem path to load gem, set env OTEL_RUBY_ADDITIONAL_GEM_PATH
-gem_path = ENV['OTEL_RUBY_ADDITIONAL_GEM_PATH'] || '/otel-auto-instrumentation-ruby' || Gem.dir
+gem_path = ENV['OTEL_RUBY_ADDITIONAL_GEM_PATH'] || '/otel-auto-instrumentation-ruby'
+gem_path = Gem.dir unless Dir.exist?(gem_path)
 $stdout.puts "Loading the gem path from #{gem_path}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
 
 # Load OpenTelemetry components and their dependencies
