@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'simplecov'
-SimpleCov.command_name(ENV.fetch('BUNDLE_GEMFILE', 'default').split('/').last.sub('.gemfile', ''))
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
