@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'simplecov'
 require 'rake'
 require 'minitest'
 require 'minitest/autorun'
@@ -142,7 +143,7 @@ def run_in_subprocess(env_vars = {}, opts = {})
     ensure
       $stderr = old_stderr if defined?(old_stderr)
       write_pipe.close
-      exit!(0)
+      exit(0)
     end
   end
 
