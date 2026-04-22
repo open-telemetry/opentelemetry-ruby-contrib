@@ -1,4 +1,4 @@
-name: Local CLI Checks
+name: Renovate
 
 on:
   pull_request:
