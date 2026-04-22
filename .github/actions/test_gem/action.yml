@@ -14,16 +14,6 @@ inputs:
     required: false
     type: boolean
     default: false
-  rubocop:
-    description: Run Rubocop
-    required: false
-    type: boolean
-    default: false
-  coverage:
-    description: Enforce test coverage
-    required: false
-    type: boolean
-    default: false
   minimum_coverage:
     description: Minimum test coverage
     required: false
@@ -72,41 +62,36 @@ runs:
           fi
         fi
 
-    # Install ImageMagick for active_storage testing.
-    # Unfortunately, as of ubuntu-24.04, ImageMagick is no longer pre-installed in Github Actions.
-    # See https://github.com/actions/runner-images/issues/10772
-    - name: Install ImageMagick for active_storage testing
-      if: "${{ inputs.gem == 'opentelemetry-instrumentation-active_storage' }}"
+        if [[ -f "${dir}/test/apt-packages.txt" ]]; then
+          echo "apt=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Install Ubuntu packages (if apt-packages.txt exists)
+      if: "${{ steps.setup.outputs.apt == 'true' }}"
       shell: bash
-      run: sudo apt update && sudo apt install -y imagemagick
+      run: |
+        sudo apt-get update
+        xargs -a test/apt-packages.txt sudo apt-get install -y
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     # Install ruby and bundle dependencies and cache!
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@v1.258.0
+      uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-        bundler:  "latest"
         bundler-cache: true
         cache-version: "${{ inputs.ruby }}-${{ steps.setup.outputs.cache_key }}"
 
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@v1.258.0
+      uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
       with:
         ruby-version: "${{ inputs.ruby }}"
-        bundler:  "latest"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-    # Perms workaround. See https://github.com/actions/runner-images/issues/10215
-    - name: Fix GEM_HOME permissions on GitHub Actions Runner
-      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      shell: bash
-      run: |
-        # 🛠️😭 Fix GEM_HOME permissions 😭🛠️
-        chmod -R o-w $(gem env home)
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
@@ -163,20 +148,11 @@ runs:
         bundle exec rake yard
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
-    - name: Rubocop
-      shell: bash
-      if: "${{ inputs.rubocop == 'true' }}"
-      run: |
-        # 🤖 Rubocop 🤖
-        bundle exec rake rubocop
-      working-directory: "${{ steps.setup.outputs.gem_dir }}"
-
     - name: Coverage
       shell: bash
-      if: "${{ inputs.coverage == 'true' }}"
       # This starts a new simplecov run which tracks nothing of its own,
       # but merges with the existing coverage reports generated during testing.
-      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage }})'''
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(${{ inputs.minimum_coverage || 85 }}); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem

@@ -63,12 +63,12 @@ module OpenTelemetry
           private
 
           def span_name(endpoint)
-            "HTTP #{request_method(endpoint)} #{path(endpoint)}"
+            "#{request_method(endpoint)} #{path(endpoint)}"
           end
 
           def attributes_from_grape_endpoint(endpoint)
             {
-              OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => endpoint.options[:for]&.base.to_s,
+              OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => endpoint.options[:for]&.instance_variable_get(:@base)&.to_s,
               OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE => path(endpoint)
             }
           end

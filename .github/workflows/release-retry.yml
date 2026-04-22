@@ -18,30 +18,30 @@ jobs:
   release-retry:
     permissions:
       contents: write # required for creating releases
-      pull-requests: write # required for creating release PRs
+      pull-requests: write # required for updating label on PR, posting comments
+      issues: write # required for creating new issues on failed releases
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    runs-on: ubuntu-24.04
     env:
-      ruby_version: "3.1"
-    runs-on: ubuntu-latest
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.263.0
-        with:
-          ruby-version: ${{ env.ruby_version }}
-
       - name: Checkout repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+      - name: Install Ruby
+        uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
+        with:
+          ruby-version: "4.0.2"
+          bundler-cache: true
 
       - name: Retry release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+          RELEASE_FLAGS: ${{ github.event.inputs.flags }}
+          RELEASE_PR: ${{ github.event.inputs.release_pr }}
         run: |
-          toys release retry --yes --verbose \
-            "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
-            "--rubygems-api-key=${{ secrets.RUBYGEMS_API_KEY }}" \
-            ${{ github.event.inputs.flags }} \
-            "${{ github.event.inputs.release_pr }}" \
+          bundle exec toys release retry --yes --verbose \
+            $RELEASE_FLAGS \
+            "$RELEASE_PR" \
             < /dev/null

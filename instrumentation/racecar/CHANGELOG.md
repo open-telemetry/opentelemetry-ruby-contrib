@@ -1,57 +1,70 @@
 # Release History: opentelemetry-instrumentation-racecar
 
-### v0.5.1 / 2025-09-30
+## v0.7.0 / 2026-04-14
 
-* FIXED: Min OTel Ruby API 1.7
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.5.0 / 2025-09-30
+## v0.6.1 / 2025-12-23
 
-* ADDED: Bump minimum API Version to 1.7
+- FIXED: Use a unique consumer group in tests to fix racecar tests
 
-### v0.4.0 / 2025-01-16
+## v0.6.0 / 2025-10-22
 
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
 
-* ADDED: Set minimum supported version to Ruby 3.1
+## v0.5.1 / 2025-09-30
 
-### v0.3.4 / 2024-07-09
+- FIXED: Min OTel Ruby API 1.7
 
-* FIXED: Suppress header access with symbol key deprecation warning in Racecar Instrumentation
+## v0.5.0 / 2025-09-30
 
-### v0.3.3 / 2024-07-02
+- ADDED: Bump minimum API Version to 1.7
 
-* DOCS: Fix CHANGELOGs to reflect a past breaking change
+## v0.4.0 / 2025-01-16
 
-### v0.3.2 / 2024-04-30
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-* FIXED: Bundler conflict warnings
+## v0.3.4 / 2024-07-09
 
-### v0.3.1 / 2024-04-05
+- FIXED: Suppress header access with symbol key deprecation warning in Racecar Instrumentation
 
-* FIXED: Fix markdown header
+## v0.3.3 / 2024-07-02
 
-### v0.3.0 / 2023-09-07
+- DOCS: Fix CHANGELOGs to reflect a past breaking change
 
-* BREAKING CHANGE: Align messaging instrumentation operation names [#648](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/648)
+## v0.3.2 / 2024-04-30
 
-### v0.2.1 / 2023-06-05
+- FIXED: Bundler conflict warnings
 
-* FIXED: Base config options 
+## v0.3.1 / 2024-04-05
 
-### v0.2.0 / 2023-04-17
+- FIXED: Fix markdown header
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+## v0.3.0 / 2023-09-07
 
-* ADDED: Drop support for EoL Ruby 2.7 
+- BREAKING CHANGE: Align messaging instrumentation operation names [#648](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/648)
 
-### v0.1.2 / 2023-03-24
+## v0.2.1 / 2023-06-05
 
-* FIXED: Skip recording non-utf8 kafka keys in racecar and rdkafka
+- FIXED: Base config options
 
-### v0.1.1 / 2023-01-14
+## v0.2.0 / 2023-04-17
 
-* DOCS: More gem documentation fixes 
+- BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- ADDED: Drop support for EoL Ruby 2.7
 
-### v0.1.0 / 2022-11-08
+## v0.1.2 / 2023-03-24
 
-* Initial release.
+- FIXED: Skip recording non-utf8 kafka keys in racecar and rdkafka
+
+## v0.1.1 / 2023-01-14
+
+- DOCS: More gem documentation fixes
+
+## v0.1.0 / 2022-11-08
+
+- Initial release.

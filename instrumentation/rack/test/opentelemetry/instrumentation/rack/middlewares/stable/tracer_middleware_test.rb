@@ -35,8 +35,6 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddle
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
-
     # clear captured spans:
     exporter.reset
 
@@ -374,7 +372,8 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddle
   end
 
   describe '#call with error' do
-    SimulatedError = Class.new(StandardError)
+    class SimulatedError < StandardError
+    end
 
     let(:app) do
       ->(_env) { raise SimulatedError }

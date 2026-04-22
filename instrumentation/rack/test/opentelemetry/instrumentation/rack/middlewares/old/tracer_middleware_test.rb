@@ -35,6 +35,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddlewar
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     # clear captured spans:
     exporter.reset
 
@@ -54,6 +55,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddlewar
     # installation is 'global', so it should be reset:
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(default_config)
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe '#call' do
@@ -371,7 +373,8 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Old::TracerMiddlewar
   end
 
   describe '#call with error' do
-    SimulatedError = Class.new(StandardError)
+    class SimulatedError < StandardError
+    end
 
     let(:app) do
       ->(_env) { raise SimulatedError }

@@ -6,10 +6,10 @@
 
 source 'https://rubygems.org'
 
-gem 'activerecord', '~> 6.0'
+gem 'activerecord', '~> 6.0.0'
 gem 'opentelemetry-api'
 gem 'opentelemetry-common'
 gem 'opentelemetry-instrumentation-que'
 gem 'opentelemetry-sdk'
-gem 'pg', '~> 1.1'
-gem 'que', '~> 1.2.0'
+gem 'pg', '~> 1.1.0'
+gem 'que', '~> 2.4.0'

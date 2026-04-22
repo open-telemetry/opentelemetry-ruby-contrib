@@ -31,7 +31,8 @@ require 'opentelemetry/propagator/xray'
 ENV['OTEL_PROPAGATORS'] ||= 'xray' # Or you can set this as an environment variable outside of the application
 ```
 
-## To generate AWS XRay compliant IDs use the 'OpenTelemetry::AWSXRayTrace' module:
+> [!NOTE]
+> To generate AWS XRay compliant IDs use the 'OpenTelemetry::AWSXRayTrace' module
 
 ```ruby
 require 'opentelemetry/propagator/xray'

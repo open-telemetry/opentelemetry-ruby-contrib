@@ -41,44 +41,42 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
   describe 'validate_wrapper' do
     it 'result should be span' do
       otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
-      otel_wrapper.stub(:call_original_handler, {}) do
-        otel_wrapper.call_wrapped(event: event_v1, context: context)
-        _(last_span).must_be_kind_of(OpenTelemetry::SDK::Trace::SpanData)
-      end
+      allow(otel_wrapper).to receive(:call_original_handler).and_return({})
+      otel_wrapper.call_wrapped(event: event_v1, context: context)
+      _(last_span).must_be_kind_of(OpenTelemetry::SDK::Trace::SpanData)
     end
 
     it 'validate_spans' do
       otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
-      otel_wrapper.stub(:call_original_handler, {}) do
-        otel_wrapper.call_wrapped(event: event_v1, context: context)
+      allow(otel_wrapper).to receive(:call_original_handler).and_return({})
+      otel_wrapper.call_wrapped(event: event_v1, context: context)
 
-        _(last_span.name).must_equal 'sample.test'
-        _(last_span.kind).must_equal :server
-        _(last_span.status.code).must_equal 1
-        _(last_span.hex_parent_span_id).must_equal '0000000000000000'
+      _(last_span.name).must_equal 'sample.test'
+      _(last_span.kind).must_equal :server
+      _(last_span.status.code).must_equal 1
+      _(last_span.hex_parent_span_id).must_equal '0000000000000000'
 
-        _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
-        _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
-        _(last_span.attributes['faas.trigger']).must_equal 'http'
-        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
-        _(last_span.attributes['cloud.account.id']).must_equal 'id'
-        _(last_span.attributes['http.method']).must_equal 'GET'
-        _(last_span.attributes['http.route']).must_equal '/'
-        _(last_span.attributes['http.target']).must_equal '/'
-        _(last_span.attributes['http.user_agent']).must_equal 'curl/8.1.2'
-        _(last_span.attributes['http.scheme']).must_equal 'http'
-        _(last_span.attributes['net.host.name']).must_equal '127.0.0.1:3000'
+      _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
+      _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
+      _(last_span.attributes['faas.trigger']).must_equal 'http'
+      _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
+      _(last_span.attributes['cloud.account.id']).must_equal 'id'
+      _(last_span.attributes['http.method']).must_equal 'GET'
+      _(last_span.attributes['http.route']).must_equal '/'
+      _(last_span.attributes['http.target']).must_equal '/'
+      _(last_span.attributes['http.user_agent']).must_equal 'curl/8.1.2'
+      _(last_span.attributes['http.scheme']).must_equal 'http'
+      _(last_span.attributes['net.host.name']).must_equal '127.0.0.1:3000'
 
-        _(last_span.instrumentation_scope).must_be_kind_of OpenTelemetry::SDK::InstrumentationScope
-        _(last_span.instrumentation_scope.name).must_equal 'OpenTelemetry::Instrumentation::AwsLambda'
-        _(last_span.instrumentation_scope.version).must_equal OpenTelemetry::Instrumentation::AwsLambda::VERSION
+      _(last_span.instrumentation_scope).must_be_kind_of OpenTelemetry::SDK::InstrumentationScope
+      _(last_span.instrumentation_scope.name).must_equal 'OpenTelemetry::Instrumentation::AwsLambda'
+      _(last_span.instrumentation_scope.version).must_equal OpenTelemetry::Instrumentation::AwsLambda::VERSION
 
-        _(last_span.hex_span_id.size).must_equal 16
-        _(last_span.hex_trace_id.size).must_equal 32
-        _(last_span.trace_flags.sampled?).must_equal true
+      _(last_span.hex_span_id.size).must_equal 16
+      _(last_span.hex_trace_id.size).must_equal 32
+      _(last_span.trace_flags.sampled?).must_equal true
 
-        assert_equal last_span.tracestate, {}
-      end
+      assert_equal last_span.tracestate, {}
     end
 
     it 'validate_spans_with_parent_context' do
@@ -86,100 +84,97 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
       event_v1['headers']['Tracestate']  = 'otel=ff40ea9699e62af2-01'
 
       otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
-      otel_wrapper.stub(:call_original_handler, {}) do
-        otel_wrapper.call_wrapped(event: event_v1, context: context)
+      allow(otel_wrapper).to receive(:call_original_handler).and_return({})
+      otel_wrapper.call_wrapped(event: event_v1, context: context)
 
-        _(last_span.name).must_equal 'sample.test'
-        _(last_span.kind).must_equal :server
+      _(last_span.name).must_equal 'sample.test'
+      _(last_span.kind).must_equal :server
 
-        _(last_span.hex_parent_span_id).must_equal 'ff40ea9699e62af2'
-        _(last_span.hex_span_id.size).must_equal 16
-        _(last_span.hex_trace_id.size).must_equal 32
-        _(last_span.trace_flags.sampled?).must_equal true
-        _(last_span.tracestate.to_h).must_equal({ 'otel' => 'ff40ea9699e62af2-01' })
-      end
+      _(last_span.hex_parent_span_id).must_equal 'ff40ea9699e62af2'
+      _(last_span.hex_span_id.size).must_equal 16
+      _(last_span.hex_trace_id.size).must_equal 32
+      _(last_span.trace_flags.sampled?).must_equal true
+      _(last_span.tracestate.to_h).must_equal({ 'otel' => 'ff40ea9699e62af2-01' })
       event_v1['headers'].delete('traceparent')
       event_v1['headers'].delete('tracestate')
     end
 
     it 'validate_spans_with_v2_events' do
       otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
-      otel_wrapper.stub(:call_original_handler, {}) do
-        otel_wrapper.call_wrapped(event: event_v2, context: context)
+      allow(otel_wrapper).to receive(:call_original_handler).and_return({})
+      otel_wrapper.call_wrapped(event: event_v2, context: context)
 
-        _(last_span.name).must_equal 'sample.test'
-        _(last_span.kind).must_equal :server
-        _(last_span.status.code).must_equal 1
-        _(last_span.hex_parent_span_id).must_equal '0000000000000000'
+      _(last_span.name).must_equal 'sample.test'
+      _(last_span.kind).must_equal :server
+      _(last_span.status.code).must_equal 1
+      _(last_span.hex_parent_span_id).must_equal '0000000000000000'
 
-        _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
-        _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
-        _(last_span.attributes['faas.trigger']).must_equal 'http'
-        _(last_span.attributes['cloud.account.id']).must_equal 'id'
-        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
-        _(last_span.attributes['net.host.name']).must_equal 'id.execute-api.us-east-1.amazonaws.com'
-        _(last_span.attributes['http.method']).must_equal 'POST'
-        _(last_span.attributes['http.user_agent']).must_equal 'agent'
-        _(last_span.attributes['http.route']).must_equal '/path/to/resource'
-        _(last_span.attributes['http.target']).must_equal '/path/to/resource?parameter1=value1&parameter1=value2&parameter2=value'
-      end
+      _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
+      _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
+      _(last_span.attributes['faas.trigger']).must_equal 'http'
+      _(last_span.attributes['cloud.account.id']).must_equal 'id'
+      _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
+      _(last_span.attributes['net.host.name']).must_equal 'id.execute-api.us-east-1.amazonaws.com'
+      _(last_span.attributes['http.method']).must_equal 'POST'
+      _(last_span.attributes['http.user_agent']).must_equal 'agent'
+      _(last_span.attributes['http.route']).must_equal '/path/to/resource'
+      _(last_span.attributes['http.target']).must_equal '/path/to/resource?parameter1=value1&parameter1=value2&parameter2=value'
     end
 
     it 'validate_spans_with_records_from_non_gateway_request' do
       otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
-      otel_wrapper.stub(:call_original_handler, {}) do
-        otel_wrapper.call_wrapped(event: event_record, context: context)
+      allow(otel_wrapper).to receive(:call_original_handler).and_return({})
+      otel_wrapper.call_wrapped(event: event_record, context: context)
 
-        _(last_span.name).must_equal 'sample.test'
-        _(last_span.kind).must_equal :consumer
-        _(last_span.status.code).must_equal 1
-        _(last_span.hex_parent_span_id).must_equal '0000000000000000'
+      _(last_span.name).must_equal 'sample.test'
+      _(last_span.kind).must_equal :consumer
+      _(last_span.status.code).must_equal 1
+      _(last_span.hex_parent_span_id).must_equal '0000000000000000'
 
-        _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
-        _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
-        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
-        _(last_span.attributes['cloud.account.id']).must_equal 'id'
+      _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
+      _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
+      _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
+      _(last_span.attributes['cloud.account.id']).must_equal 'id'
 
-        assert_nil(last_span.attributes['faas.trigger'])
-        assert_nil(last_span.attributes['http.method'])
-        assert_nil(last_span.attributes['http.user_agent'])
-        assert_nil(last_span.attributes['http.route'])
-        assert_nil(last_span.attributes['http.target'])
-        assert_nil(last_span.attributes['net.host.name'])
-      end
+      assert_nil(last_span.attributes['faas.trigger'])
+      assert_nil(last_span.attributes['http.method'])
+      assert_nil(last_span.attributes['http.user_agent'])
+      assert_nil(last_span.attributes['http.route'])
+      assert_nil(last_span.attributes['http.target'])
+      assert_nil(last_span.attributes['net.host.name'])
     end
 
     it 'validate_spans_with_records_from_sqs' do
       otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
-      otel_wrapper.stub(:call_original_handler, {}) do
-        otel_wrapper.call_wrapped(event: sqs_record, context: context)
+      allow(otel_wrapper).to receive(:call_original_handler).and_return({})
+      otel_wrapper.call_wrapped(event: sqs_record, context: context)
 
-        _(last_span.name).must_equal 'sample.test'
-        _(last_span.kind).must_equal :consumer
-        _(last_span.status.code).must_equal 1
-        _(last_span.hex_parent_span_id).must_equal '0000000000000000'
+      _(last_span.name).must_equal 'sample.test'
+      _(last_span.kind).must_equal :consumer
+      _(last_span.status.code).must_equal 1
+      _(last_span.hex_parent_span_id).must_equal '0000000000000000'
 
-        _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
-        _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
-        _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
-        _(last_span.attributes['cloud.account.id']).must_equal 'id'
-        _(last_span.attributes['faas.trigger']).must_equal 'pubsub'
-        _(last_span.attributes['messaging.operation']).must_equal 'process'
-        _(last_span.attributes['messaging.system']).must_equal 'AmazonSQS'
+      _(last_span.attributes['aws.lambda.invoked_arn']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
+      _(last_span.attributes['faas.invocation_id']).must_equal '41784178-4178-4178-4178-4178417855e'
+      _(last_span.attributes['cloud.resource_id']).must_equal 'arn:aws:lambda:location:id:function_name:function_name'
+      _(last_span.attributes['cloud.account.id']).must_equal 'id'
+      _(last_span.attributes['faas.trigger']).must_equal 'pubsub'
+      _(last_span.attributes['messaging.operation']).must_equal 'process'
+      _(last_span.attributes['messaging.system']).must_equal 'AmazonSQS'
 
-        assert_nil(last_span.attributes['http.method'])
-        assert_nil(last_span.attributes['http.user_agent'])
-        assert_nil(last_span.attributes['http.route'])
-        assert_nil(last_span.attributes['http.target'])
-        assert_nil(last_span.attributes['net.host.name'])
-      end
+      assert_nil(last_span.attributes['http.method'])
+      assert_nil(last_span.attributes['http.user_agent'])
+      assert_nil(last_span.attributes['http.route'])
+      assert_nil(last_span.attributes['http.target'])
+      assert_nil(last_span.attributes['net.host.name'])
     end
   end
 
   describe 'validate_error_handling' do
     it 'handle error if original handler cause issue' do
       otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
-      otel_wrapper.stub(:call_original_handler, ->(**_args) { raise StandardError, 'Simulated Error' }) do
+      allow(otel_wrapper).to receive(:call_original_handler) { |**_args| raise StandardError, 'Simulated Error' }
+      begin
         otel_wrapper.call_wrapped(event: event_v1, context: context)
       rescue StandardError
         _(last_span.name).must_equal 'sample.test'
@@ -203,17 +198,14 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
 
     it 'if wrapped handler cause otel-related issue, wont break the entire lambda call' do
       otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
-      otel_wrapper.stub(:call_wrapped, { 'test' => 'ok' }) do
-        otel_wrapper.stub(:call_original_handler, {}) do
-          OpenTelemetry::Context.stub(:with_current, lambda { |_context|
-            tracer.start_span('test_span', attributes: {}, kind: :server)
-            raise StandardError, 'OTEL Error'
-          }) do
-            response = otel_wrapper.call_wrapped(event: event_v1, context: context)
-            _(response['test']).must_equal 'ok'
-          end
-        end
-      end
+      allow(otel_wrapper).to receive(:call_wrapped).and_return({ 'test' => 'ok' })
+      allow(otel_wrapper).to receive(:call_original_handler).and_return({})
+      allow(OpenTelemetry::Context).to receive(:with_current) { |_context|
+        tracer.start_span('test_span', attributes: {}, kind: :server)
+        raise StandardError, 'OTEL Error'
+      }
+      response = otel_wrapper.call_wrapped(event: event_v1, context: context)
+      _(response['test']).must_equal 'ok'
     end
 
     describe 'no raise error when the span is not recording' do
@@ -221,17 +213,14 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
         otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
         tracer = OpenTelemetry.tracer_provider.tracer
 
-        OpenTelemetry::Trace.stub(:with_span, lambda { |_span, &block|
+        allow(OpenTelemetry::Trace).to receive(:with_span) { |_span, &block|
           block.call(OpenTelemetry::Trace::Span::INVALID, OpenTelemetry::Context.current)
-        }) do
-          tracer.stub(:in_span, lambda { |_name, **_kwargs, &block|
-            block.call(OpenTelemetry::Trace::Span::INVALID, OpenTelemetry::Context.current)
-          }) do
-            otel_wrapper.stub(:call_original_handler, {}) do
-              assert otel_wrapper.call_wrapped(event: sqs_record, context: context)
-            end
-          end
-        end
+        }
+        allow(tracer).to receive(:in_span) { |_name, **_kwargs, &block|
+          block.call(OpenTelemetry::Trace::Span::INVALID, OpenTelemetry::Context.current)
+        }
+        allow(otel_wrapper).to receive(:call_original_handler).and_return({})
+        assert otel_wrapper.call_wrapped(event: sqs_record, context: context)
       end
     end
   end
@@ -244,16 +233,15 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
       end
 
       otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new
-      otel_wrapper.stub(:call_original_handler, stub) do
-        otel_wrapper.call_wrapped(event: sqs_record, context: context)
+      allow(otel_wrapper).to receive(:call_original_handler, &stub)
+      otel_wrapper.call_wrapped(event: sqs_record, context: context)
 
-        _(last_span.name).must_equal 'sample.test'
-        _(last_span.kind).must_equal :consumer
-        _(last_span.status.code).must_equal 1
-        _(last_span.hex_parent_span_id).must_equal '0000000000000000'
+      _(last_span.name).must_equal 'sample.test'
+      _(last_span.kind).must_equal :consumer
+      _(last_span.status.code).must_equal 1
+      _(last_span.hex_parent_span_id).must_equal '0000000000000000'
 
-        _(last_span.attributes['test.attribute']).must_equal 320
-      end
+      _(last_span.attributes['test.attribute']).must_equal 320
     end
   end
 
@@ -290,9 +278,8 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
             _(flush_timeout).must_equal expected_flush_timeout
           end
 
-          Handler.stub(:wrap_lambda, args_checker) do
-            Handler.process(event: event_v1, context: context)
-          end
+          allow(Handler).to receive(:wrap_lambda, &args_checker)
+          Handler.process(event: event_v1, context: context)
         end
 
         it 'calls the original method with correct arguments' do
@@ -301,9 +288,8 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
             _(context).must_equal context
           end
 
-          Handler.stub(:process_without_instrumentation, args_checker) do
-            Handler.process(event: event_v1, context: context)
-          end
+          allow(Handler).to receive(:process_without_instrumentation, &args_checker)
+          Handler.process(event: event_v1, context: context)
         end
       end
 
@@ -322,9 +308,8 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
             _(flush_timeout).must_equal expected_flush_timeout
           end
 
-          Handler.stub(:wrap_lambda, args_checker) do
-            Handler.process(event: event_v1, context: context)
-          end
+          allow(Handler).to receive(:wrap_lambda, &args_checker)
+          Handler.process(event: event_v1, context: context)
         end
 
         it 'calls the original method with correct arguments' do
@@ -333,9 +318,8 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
             _(context).must_equal context
           end
 
-          Handler.stub(:process_without_instrumentation, args_checker) do
-            Handler.process(event: event_v1, context: context)
-          end
+          allow(Handler).to receive(:process_without_instrumentation, &args_checker)
+          Handler.process(event: event_v1, context: context)
         end
       end
     end

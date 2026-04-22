@@ -1,127 +1,142 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
-### v0.14.1 / 2025-10-07
+## v0.17.0 / 2026-04-14
 
-* FIXED: Unify rack middleware_args
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.14.0 / 2025-09-30
+## v0.16.0 / 2026-03-17
 
-* ADDED: Bump minimum API Version to 1.7
+- BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)
+- ADDED: Default to stable HTTP semantic conventions (#2051)
 
-### v0.13.0 / 2025-08-19
+## v0.15.1 / 2025-10-22
 
-* ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility for Rack integration [#1594](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1594)
+- FIXED: Update opentelemetry-instrumentation-base dependency
 
-### v0.12.3 / 2025-06-16
+## v0.15.0 / 2025-10-21
 
-* FIXED: Action_pack always assuming sdk spans
+- BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+- ADDED: Min Ruby Version 3.2 and Rails 7.1
 
-### v0.12.2 / 2025-06-04
+## v0.14.1 / 2025-10-07
 
-* FIXED: Rack span class naming
+- FIXED: Unify rack middleware_args
 
-### v0.12.1 / 2025-05-07
+## v0.14.0 / 2025-09-30
 
-* FIXED: Account for `nil` routes
+- ADDED: Bump minimum API Version to 1.7
 
-### v0.12.0 / 2025-02-04
+## v0.13.0 / 2025-08-19
 
-* ADDED: Strip Rails `(.:format)` suffix from `http.route`
+- ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable compatibility for Rack integration [#1594](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1594)
 
-### v0.11.0 / 2025-01-16
+## v0.12.3 / 2025-06-16
 
-* BREAKING CHANGE: Drop Support for EoL Rails 6.1
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- FIXED: Action_pack always assuming sdk spans
 
-* ADDED: Drop Support for EoL Rails 6.1
-* ADDED: Set minimum supported version to Ruby 3.1
+## v0.12.2 / 2025-06-04
 
-### v0.10.0 / 2024-11-19
+- FIXED: Rack span class naming
 
-* ADDED: Use Semconv Naming For ActionPack
+## v0.12.1 / 2025-05-07
 
-### v0.9.0 / 2024-01-09
+- FIXED: Account for `nil` routes
 
-* BREAKING CHANGE: Use ActiveSupport instead of patches #703
+## v0.12.0 / 2025-02-04
 
-### v0.8.0 / 2023-11-22
+- ADDED: Strip Rails `(.:format)` suffix from `http.route`
 
-* BREAKING CHANGE: Drop Rails 6.0 EOL
+## v0.11.0 / 2025-01-16
 
-* ADDED: Drop Rails 6.0 EOL
+- BREAKING CHANGE: Drop Support for EoL Rails 6.1
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Drop Support for EoL Rails 6.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-### v0.7.1 / 2023-10-16
+## v0.10.0 / 2024-11-19
 
-* FIXED: Add Rails 7.1 compatibility
+- ADDED: Use Semconv Naming For ActionPack
 
-### v0.7.0 / 2023-06-05
+## v0.9.0 / 2024-01-09
 
-* ADDED: Use Rack Middleware Helper
-* FIXED: Base config options
+- BREAKING CHANGE: Use ActiveSupport instead of patches #703
 
-### v0.6.0 / 2023-04-17
+## v0.8.0 / 2023-11-22
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- BREAKING CHANGE: Drop Rails 6.0 EOL
+- ADDED: Drop Rails 6.0 EOL
 
-* ADDED: Drop support for EoL Ruby 2.7
+## v0.7.1 / 2023-10-16
 
-### v0.5.0 / 2023-02-01
+- FIXED: Add Rails 7.1 compatibility
 
-* BREAKING CHANGE: Drop Rails 5 Support
+## v0.7.0 / 2023-06-05
 
-* ADDED: Drop Rails 5 Support
-* FIXED: Drop Rails dependency for ActiveSupport Instrumentation
+- ADDED: Use Rack Middleware Helper
+- FIXED: Base config options
 
-### v0.4.1 / 2023-01-14
+## v0.6.0 / 2023-04-17
 
-* FIXED: String-ify code.function Span attribute
-* DOCS: Fix gem homepage
-* DOCS: More gem documentation fixes
+- BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- ADDED: Drop support for EoL Ruby 2.7
 
-### v0.4.0 / 2022-12-06
+## v0.5.0 / 2023-02-01
 
-* BREAKING CHANGE: Remove enable_recognize_route and span_naming options
+- BREAKING CHANGE: Drop Rails 5 Support
+- ADDED: Drop Rails 5 Support
+- FIXED: Drop Rails dependency for ActiveSupport Instrumentation
 
-* FIXED: Remove enable_recognize_route and span_naming options
+## v0.4.1 / 2023-01-14
 
-### v0.3.2 / 2022-11-16
+- FIXED: String-ify code.function Span attribute
+- DOCS: Fix gem homepage
+- DOCS: More gem documentation fixes
 
-* FIXED: Loosen dependency on Rack
+## v0.4.0 / 2022-12-06
 
-### v0.3.1 / 2022-10-27
+- BREAKING CHANGE: Remove enable_recognize_route and span_naming options
+- FIXED: Remove enable_recognize_route and span_naming options
 
-* FIXED: Declare span_naming option in action_pack instrumentation
+## v0.3.2 / 2022-11-16
 
-### v0.3.0 / 2022-10-14
+- FIXED: Loosen dependency on Rack
 
-* ADDED: Name ActionPack spans with the HTTP method and route
+## v0.3.1 / 2022-10-27
 
-### v0.2.1 / 2022-10-04
+- FIXED: Declare span_naming option in action_pack instrumentation
 
-* FIXED: Ensures the correct route is add to http.route span attribute
+## v0.3.0 / 2022-10-14
 
-### v0.2.0 / 2022-06-09
+- ADDED: Name ActionPack spans with the HTTP method and route
 
-* Upgrading Base dependency version
-* FIXED: Broken test file requirements
+## v0.2.1 / 2022-10-04
 
-### v0.1.4 / 2022-05-02
+- FIXED: Ensures the correct route is add to http.route span attribute
 
-* FIXED: Use rails request's filtered path as http.target attribute
-* FIXED: RubyGems Fallback
+## v0.2.0 / 2022-06-09
 
-### v0.1.3 / 2021-12-01
+- Upgrading Base dependency version
+- FIXED: Broken test file requirements
 
-* FIXED: Instrumentation of Rails 7
+## v0.1.4 / 2022-05-02
 
-### v0.1.2 / 2021-10-06
+- FIXED: Use rails request's filtered path as http.target attribute
+- FIXED: RubyGems Fallback
 
-* FIXED: Prevent high cardinality rack span name as a default
+## v0.1.3 / 2021-12-01
 
-### v0.1.1 / 2021-09-29
+- FIXED: Instrumentation of Rails 7
 
-* (No significant changes)
+## v0.1.2 / 2021-10-06
 
-### v0.1.0 / 2021-08-12
+- FIXED: Prevent high cardinality rack span name as a default
 
-* Initial release.
+## v0.1.1 / 2021-09-29
+
+- (No significant changes)
+
+## v0.1.0 / 2021-08-12
+
+- Initial release.

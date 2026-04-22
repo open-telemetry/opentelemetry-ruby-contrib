@@ -1,3 +1,12 @@
+include:
+  - ./.docker/infra/kafka/docker-compose.yml
+  - ./.docker/infra/memcached/docker-compose.yml
+  - ./.docker/infra/mongo/docker-compose.yml
+  - ./.docker/infra/mysql/docker-compose.yml
+  - ./.docker/infra/postgres/docker-compose.yml
+  - ./.docker/infra/rabbitmq/docker-compose.yml
+  - ./.docker/infra/redis/docker-compose.yml
+
 x-shared-config:
   base: &base
     command: /bin/bash
@@ -127,6 +136,10 @@ services:
     <<: *base
     working_dir: /app/instrumentation/net_http/example
 
+  ex-instrumentation-net-ldap:
+    <<: *base
+    working_dir: /app/instrumentation/net_ldap/example
+
   ex-instrumentation-que:
     <<: *base
     environment:
@@ -166,87 +179,13 @@ services:
     command: |
       bash -c "bundle install && rake"
 
-  mongo:
-    image: mongo:4.4
-    expose:
-      - "27017"
-    ports:
-      - "27017:27017"
-
-  mysql:
-    image: mysql:8.0.31
-    command: mysqld --default-authentication-plugin=mysql_native_password
-    environment:
-      - MYSQL_DATABASE=mysql
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_PASSWORD=mysql
-      - MYSQL_USER=mysql
-    expose:
-      - "3306"
-    ports:
-      - "3306:3306"
-
-  postgres:
-    image: postgres:13
-    environment:
-      - POSTGRES_PASSWORD=postgres
-    expose:
-      - "5432"
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_socket:/var/run/postgresql
-
-  redis:
-    image: bitnamilegacy/redis:6.2
-    environment:
-      - REDIS_PASSWORD=passw0rd
-    volumes:
-      - redis_data:/data
-    ports:
-      - "16379:6379"
-
-  rabbitmq:
-    image: rabbitmq:3.8-alpine
-    ports:
-      - "5672:5672"
-
-  memcached:
-    image: memcached:alpine
-    command: memcached -m 64
-    ports:
-      - "11211:11211"
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    ports:
-      - 2181:2181
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-
-  kafka:
-    image: confluentinc/cp-kafka:7.9.1
-    ports:
-      - "9092:9092"
-      - "29092:29092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://kafka:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    depends_on:
-      - zookeeper
-
   jaeger:
-    image: jaegertracing/all-in-one
+    image: jaegertracing/jaeger:2.17.0@sha256:6266573208d665ce5c17483bce0a75d0806480d92c84766d288d0aee885ce708
     ports:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.109.0
+    image: otel/opentelemetry-collector:0.150.1@sha256:618f7867e49fdb173d9b46d535b01f82254b0b14beac6ab1f6f2eb8cf62c5d42
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml

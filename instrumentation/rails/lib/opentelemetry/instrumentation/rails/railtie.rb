@@ -6,7 +6,7 @@
 module OpenTelemetry
   module Instrumentation
     module Rails
-      # Railtie automatically configure the OpentTelemetry SDK
+      # Railtie automatically configure the OpenTelemetry SDK
       #
       # This railtie will set defaults for the following environment variables:
       # `OTEL_SERVICE_NAME` - if unset, will default to the Rails application name

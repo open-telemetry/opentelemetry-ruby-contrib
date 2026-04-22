@@ -28,6 +28,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
 
     # this is currently a noop but this will future proof the test
@@ -40,6 +41,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
 
   after do
     OpenTelemetry.propagation = @orig_propagation
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe 'first span' do
@@ -77,6 +79,31 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
         _(span.attributes['http.method']).must_equal 'GET'
         _(span.attributes['http.status_code']).must_equal 500
         _(span.attributes['http.url']).must_equal 'http://example.com/failure'
+        _(span.attributes['net.peer.name']).must_equal 'example.com'
+        _(response.env.request_headers['Traceparent']).must_equal(
+          "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
+        )
+      end
+
+      it 'handles unknown http method' do
+        # Stub Faraday::Connection::METHODS to include :purge
+        stub_const('Faraday::Connection::METHODS', Faraday::Connection::METHODS + [:purge])
+
+        # Create a new client - Faraday test adapter will accept any stubbed method through method_missing
+        purge_client = Faraday.new('http://example.com') do |builder|
+          builder.adapter(:test) do |stub|
+            # Use send to define the purge stub since the method doesn't exist yet
+            stub.send(:new_stub, :purge, '/purge') { |_| [200, {}, 'OK'] }
+          end
+        end
+
+        response = purge_client.run_request(:purge, '/purge', nil, nil)
+
+        _(span.name).must_equal 'HTTP'
+        _(span.attributes['http.method']).must_equal '_OTHER'
+        _(span.attributes['http.method.original']).must_be_nil
+        _(span.attributes['http.status_code']).must_equal 200
+        _(span.attributes['http.url']).must_equal 'http://example.com/purge'
         _(span.attributes['net.peer.name']).must_equal 'example.com'
         _(response.env.request_headers['Traceparent']).must_equal(
           "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"

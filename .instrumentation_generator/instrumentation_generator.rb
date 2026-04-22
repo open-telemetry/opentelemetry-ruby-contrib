@@ -55,13 +55,23 @@ class InstrumentationGenerator < Thor::Group
     insert_into_file('.toys/.data/releases.yml', release_details, after: "gems:\n")
   end
 
+  def add_to_component_owners
+    release_details = <<-HEREDOC
+  instrumentation/#{instrumentation_gem_name}:
+    # TODO: Add your GitHub username
+    # - (your github username)
+    HEREDOC
+
+    insert_into_file('.github/component_owners.yml', release_details, after: "components:\n")
+  end
+
   def add_to_instrumentation_all
     instrumentation_all_path = 'instrumentation/all'
     gemfile_text = "\ngem '#{instrumentation_gem_name}', path: '../#{instrumentation_name}'"
     insert_into_file("#{instrumentation_all_path}/Gemfile", gemfile_text, after: "gemspec\n")
 
     gemspec_text = "\n  spec.add_dependency '#{instrumentation_gem_name}', '~> 0.0.0'"
-    insert_into_file("#{instrumentation_all_path}/opentelemetry-instrumentation-all.gemspec", gemspec_text, after: "spec.required_ruby_version = '>= 3.1'\n")
+    insert_into_file("#{instrumentation_all_path}/opentelemetry-instrumentation-all.gemspec", gemspec_text, after: "spec.required_ruby_version = '>= 3.3'\n")
 
     all_rb_text = "\nrequire '#{instrumentation_gem_name}'"
     insert_into_file("#{instrumentation_all_path}/lib/opentelemetry/instrumentation/all.rb", all_rb_text, after: "# SPDX-License-Identifier: Apache-2.0\n")

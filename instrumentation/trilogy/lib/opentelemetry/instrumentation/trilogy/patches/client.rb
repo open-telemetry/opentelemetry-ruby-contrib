@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry-helpers-mysql'
-require 'opentelemetry-helpers-sql-obfuscation'
+require 'opentelemetry-helpers-sql-processor'
 
 module OpenTelemetry
   module Instrumentation
@@ -15,6 +15,8 @@ module OpenTelemetry
         module Client
           def initialize(options = {})
             @connection_options = options # This is normally done by Trilogy#initialize
+            @_otel_database_name = connection_options&.dig(:database)
+            @_otel_base_attributes = _build_otel_base_attributes.freeze
 
             tracer.in_span(
               'connect',
@@ -38,18 +40,16 @@ module OpenTelemetry
           end
 
           def query(sql)
+            context_attributes = OpenTelemetry::Instrumentation::Trilogy.attributes
+
             tracer.in_span(
               OpenTelemetry::Helpers::MySQL.database_span_name(
                 sql,
-                OpenTelemetry::Instrumentation::Trilogy.attributes[
-                  OpenTelemetry::SemanticConventions::Trace::DB_OPERATION
-                ],
-                database_name,
+                context_attributes[OpenTelemetry::SemanticConventions::Trace::DB_OPERATION],
+                @_otel_database_name,
                 config
               ),
-              attributes: client_attributes(sql).merge!(
-                OpenTelemetry::Instrumentation::Trilogy.attributes
-              ),
+              attributes: client_attributes(sql).merge!(context_attributes),
               kind: :client,
               record_exception: config[:record_exception]
             ) do |_span, context|
@@ -67,36 +67,36 @@ module OpenTelemetry
 
           private
 
-          def client_attributes(sql = nil)
+          def _build_otel_base_attributes
+            database_user = connection_options&.dig(:username)
+
             attributes = {
               ::OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM => 'mysql',
               ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => connection_options&.fetch(:host, 'unknown sock') || 'unknown sock'
             }
 
-            attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = database_name if database_name
+            attributes[::OpenTelemetry::SemanticConventions::Trace::DB_NAME] = @_otel_database_name if @_otel_database_name
             attributes[::OpenTelemetry::SemanticConventions::Trace::DB_USER] = database_user if database_user
             attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
+            attributes
+          end
+
+          def client_attributes(sql = nil)
+            attributes = @_otel_base_attributes.dup
+
             attributes['db.instance.id'] = @connected_host unless @connected_host.nil?
 
             if sql
               case config[:db_statement]
               when :obfuscate
                 attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] =
-                  OpenTelemetry::Helpers::SqlObfuscation.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql)
+                  OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql)
               when :include
                 attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] = sql
               end
             end
 
             attributes
-          end
-
-          def database_name
-            connection_options[:database]
-          end
-
-          def database_user
-            connection_options[:username]
           end
 
           def tracer

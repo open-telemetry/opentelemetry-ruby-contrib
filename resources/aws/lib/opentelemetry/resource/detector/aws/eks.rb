@@ -101,7 +101,7 @@ module OpenTelemetry
           # @param cred_value [String] K8s credentials
           # @return [Boolean] true if running on EKS
           def eks?(cred_value)
-            # Just try to to access the aws-auth configmap
+            # Just try to access the aws-auth configmap
             # If it exists and we can access it, we're on EKS
             aws_http_request(AWS_AUTH_PATH, cred_value)
             true

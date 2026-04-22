@@ -28,7 +28,6 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Stable::TracerMid
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
     exporter.reset
 
     # this is currently a noop but this will future proof the test
@@ -78,6 +77,31 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Stable::TracerMid
         _(span.attributes['http.request.method']).must_equal 'GET'
         _(span.attributes['http.response.status_code']).must_equal 500
         _(span.attributes['url.full']).must_equal 'http://example.com/failure'
+        _(span.attributes['server.address']).must_equal 'example.com'
+        _(response.env.request_headers['Traceparent']).must_equal(
+          "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
+        )
+      end
+
+      it 'handles unknown http method' do
+        # Stub Faraday::Connection::METHODS to include :purge
+        stub_const('Faraday::Connection::METHODS', Faraday::Connection::METHODS + [:purge])
+
+        # Create a new client - Faraday test adapter will accept any stubbed method through method_missing
+        purge_client = Faraday.new('http://example.com') do |builder|
+          builder.adapter(:test) do |stub|
+            # Use send to define the purge stub since the method doesn't exist yet
+            stub.send(:new_stub, :purge, '/purge') { |_| [200, {}, 'OK'] }
+          end
+        end
+
+        response = purge_client.run_request(:purge, '/purge', nil, nil)
+
+        _(span.name).must_equal 'HTTP'
+        _(span.attributes['http.request.method']).must_equal '_OTHER'
+        _(span.attributes['http.request.method_original']).must_equal 'purge'
+        _(span.attributes['http.response.status_code']).must_equal 200
+        _(span.attributes['url.full']).must_equal 'http://example.com/purge'
         _(span.attributes['server.address']).must_equal 'example.com'
         _(response.env.request_headers['Traceparent']).must_equal(
           "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
@@ -223,6 +247,30 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Stable::TracerMid
       it 'only adds the middleware once' do
         tracers = client.builder.handlers.count(OpenTelemetry::Instrumentation::Faraday::Middlewares::Stable::TracerMiddleware)
         _(tracers).must_equal 1
+      end
+    end
+
+    describe 'url.template in span name' do
+      let(:client) do
+        Faraday.new('http://example.com') do |builder|
+          builder.adapter(:test) do |stub|
+            stub.get('/users/123') { |_| [200, {}, 'OK'] }
+          end
+        end
+      end
+
+      it 'uses url.template in span name when present in client context' do
+        client_context_attrs = { 'url.template' => '/users/{id}' }
+        response = OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+          client.get('/users/123')
+        end
+
+        _(span.name).must_equal 'GET /users/{id}'
+        _(span.attributes['http.request.method']).must_equal 'GET'
+        _(span.attributes['url.template']).must_equal '/users/{id}'
+        _(response.env.request_headers['Traceparent']).must_equal(
+          "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
+        )
       end
     end
   end

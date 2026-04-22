@@ -1,18 +1,30 @@
 # Release History: opentelemetry-resource-detector-aws
 
-### v0.4.0 / 2025-06-03
+## v0.6.0 / 2026-04-14
 
-* ADDED: Contribute aws eks resource detector
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.3.0 / 2025-05-07
+## v0.5.0 / 2025-10-22
 
-* ADDED: Contribute aws lambda resource detector
-* FIXED: Add missing semantic conventions require in AWS resource detectors
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
+- ADDED: Update opentelemetry-sdk dependency to ~> 1.10
 
-### v0.2.0 / 2025-04-29
+## v0.4.0 / 2025-06-03
 
-* ADDED: Contribute aws ecs resource detector
+- ADDED: Contribute aws eks resource detector
 
-### v0.1.0 / 2025-04-09
+## v0.3.0 / 2025-05-07
 
-Initial release.
+- ADDED: Contribute aws lambda resource detector
+- FIXED: Add missing semantic conventions require in AWS resource detectors
+
+## v0.2.0 / 2025-04-29
+
+- ADDED: Contribute aws ecs resource detector
+
+## v0.1.0 / 2025-04-09
+
+- Initial release.

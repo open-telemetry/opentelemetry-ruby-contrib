@@ -17,7 +17,6 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
     exporter.reset
 
     # this is currently a noop but this will future proof the test
@@ -65,23 +64,26 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
         let(:span) { easy.instance_eval { @otel_span } }
 
         it 'creates a span' do
-          Ethon::Curl.stub(:easy_perform, 0) do
-            # NOTE: suppress call to #complete to isolate #perform functionality
-            easy.stub(:complete, nil) do
-              easy.perform
+          allow(Ethon::Curl).to receive(:easy_perform).and_return(0)
+          # NOTE: suppress call to #complete to isolate #perform functionality
+          allow(easy).to receive(:complete).and_return(nil)
 
-              _(span.name).must_equal 'HTTP'
-              _(span.attributes['http.request.method']).must_equal '_OTHER'
-              _(span.attributes['http.response.status_code']).must_be_nil
-              _(span.attributes['url.full']).must_equal 'http://example.com/test'
-              _(span.attributes['server.address']).must_equal 'example.com'
-            end
-          end
+          easy.perform
+
+          _(span.name).must_equal 'HTTP'
+          _(span.attributes['http.request.method']).must_equal '_OTHER'
+          _(span.attributes['http.response.status_code']).must_be_nil
+          _(span.attributes['url.full']).must_equal 'http://example.com/test'
+          _(span.attributes['server.address']).must_equal 'example.com'
         end
 
-        it 'when the perform fails before complete with an exception' do
-          Ethon::Curl.stub(:easy_perform, ->(_handle) { raise StandardError, 'Connection failed' }) do
-            easy.perform
+        describe 'when the perform fails before complete with an exception' do
+          it 'raises the original error and closes the span with error status' do
+            allow(Ethon::Curl).to receive(:easy_perform) { |_handle| raise StandardError, 'Connection failed' }
+
+            assert_raises StandardError, 'Connection failed' do
+              easy.perform
+            end
 
             # NOTE: check the finished spans since we expect to have closed it
             span = exporter.finished_spans.first
@@ -99,13 +101,13 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
       describe '#complete' do
         def stub_response(options)
-          easy.stub(:mirror, Ethon::Easy::Mirror.new(options)) do
-            easy.otel_before_request
-            # NOTE: perform calls complete
-            easy.complete
+          allow(easy).to receive(:mirror).and_return(Ethon::Easy::Mirror.new(options))
 
-            yield
-          end
+          easy.otel_before_request
+          # NOTE: perform calls complete
+          easy.complete
+
+          yield
         end
 
         it 'when response is successful' do
@@ -211,7 +213,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           end
 
           it 'cleans up @otel_method' do
-            _(easy.instance_eval { @otel_method }).must_equal 'PUT'
+            _(easy.instance_eval { @otel_method }).must_equal :put
 
             easy.reset
 
@@ -232,6 +234,30 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             easy.reset
 
             _(easy.instance_eval { @otel_span }).must_be_nil
+          end
+        end
+      end
+
+      describe 'with unknown HTTP method' do
+        def stub_response(options)
+          allow(easy).to receive(:mirror).and_return(Ethon::Easy::Mirror.new(options))
+
+          easy.otel_before_request
+          # NOTE: perform calls complete
+          easy.complete
+
+          yield
+        end
+
+        it 'normalizes unknown HTTP methods' do
+          easy.http_request('http://example.com/purge', :purge)
+
+          stub_response(response_code: 200) do
+            _(exporter.finished_spans.size).must_equal 1
+            _(span.name).must_equal 'HTTP'
+            _(span.attributes['http.request.method']).must_equal '_OTHER'
+            _(span.attributes['http.request.method_original']).must_equal 'purge'
+            _(span.attributes['url.full']).must_equal 'http://example.com/purge'
           end
         end
       end

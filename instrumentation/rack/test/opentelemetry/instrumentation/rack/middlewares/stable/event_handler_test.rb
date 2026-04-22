@@ -62,8 +62,6 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
-
     exporter.reset
 
     # simulate a fresh install:
@@ -412,7 +410,9 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
 
     describe 'response propagators that raise errors' do
       class EventMockPropagator < OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator
-        CustomError = Class.new(StandardError)
+        class CustomError < StandardError
+        end
+
         def inject(carrier)
           raise CustomError, 'Injection failed'
         end
@@ -430,7 +430,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
   end
 
   describe '#call with error' do
-    EventHandlerError = Class.new(StandardError)
+    class EventHandlerError < StandardError
+    end
 
     let(:service) do
       ->(_env) { raise EventHandlerError }

@@ -1,34 +1,43 @@
 # Release History: opentelemetry-instrumentation-aws_lambda
 
-### v0.5.1 / 2025-09-30
+## v0.7.0 / 2026-04-14
 
-* FIXED: Min OTel Ruby API 1.7
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.5.0 / 2025-09-30
+## v0.6.0 / 2025-10-22
 
-* ADDED: Bump minimum API Version to 1.7
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
 
-### v0.4.0 / 2025-09-18
+## v0.5.1 / 2025-09-30
 
-* BREAKING CHANGE: Check if span has the attributes method to avoid internal error
+- FIXED: Min OTel Ruby API 1.7
 
-* FIXED: Check if span has the attributes method to avoid internal error
+## v0.5.0 / 2025-09-30
 
-### v0.3.0 / 2025-02-04
+- ADDED: Bump minimum API Version to 1.7
 
-* ADDED: AWS Lambda programmatic wrap
-* FIXED: AWS Lambda test fix
+## v0.4.0 / 2025-09-18
 
-### v0.2.0 / 2025-01-16
+- BREAKING CHANGE: Check if span has the attributes method to avoid internal error
+- FIXED: Check if span has the attributes method to avoid internal error
 
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+## v0.3.0 / 2025-02-04
 
-* ADDED: Set minimum supported version to Ruby 3.1
+- ADDED: AWS Lambda programmatic wrap
+- FIXED: AWS Lambda test fix
 
-### v0.1.1 / 2024-07-30
+## v0.2.0 / 2025-01-16
 
-* FIXED: Register lambda span
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-### v0.1.0 / 2024-05-11
+## v0.1.1 / 2024-07-30
 
-Initial release.
+- FIXED: Register lambda span
+
+## v0.1.0 / 2024-05-11
+
+- Initial release.

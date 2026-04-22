@@ -1,115 +1,123 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
-### v0.23.0 / 2025-09-30
+## v0.25.0 / 2026-04-14
 
-* ADDED: Bump minimum API Version to 1.7
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.22.0 / 2025-01-16
+## v0.24.0 / 2025-10-22
 
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
 
-* ADDED: Set minimum supported version to Ruby 3.1
+## v0.23.0 / 2025-09-30
 
-### v0.21.1 / 2025-01-07
+- ADDED: Bump minimum API Version to 1.7
 
-* DOCS: Update action for link check and fix one broken link
+## v0.22.0 / 2025-01-16
 
-### v0.21.0 / 2024-12-19
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-* ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
+## v0.21.1 / 2025-01-07
 
-### v0.20.3 / 2024-12-04
+- DOCS: Update action for link check and fix one broken link
 
-* FIXED: Use ActiveSupport::Notifications subscriber to serialize events.
+## v0.21.0 / 2024-12-19
 
-### v0.20.2 / 2024-07-23
+- ADDED: Upgrade ActiveSupport Instrumentation 0.7.0
 
-* DOCS: Add cspell to CI
+## v0.20.3 / 2024-12-04
 
-### v0.20.1 / 2023-06-05
+- FIXED: Use ActiveSupport::Notifications subscriber to serialize events.
 
-* FIXED: Base config options
+## v0.20.2 / 2024-07-23
 
-### v0.20.0 / 2023-04-17
+- DOCS: Add cspell to CI
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+## v0.20.1 / 2023-06-05
 
-* ADDED: Drop support for EoL Ruby 2.7
+- FIXED: Base config options
 
-### v0.19.1 / 2023-01-14
+## v0.20.0 / 2023-04-17
 
-* DOCS: Fix gem homepage
-* DOCS: More gem documentation fixes
+- BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- ADDED: Drop support for EoL Ruby 2.7
 
-### v0.19.0 / 2022-06-09
+## v0.19.1 / 2023-01-14
 
-* Upgrading Base dependency version
-* FIXED: Broken test file requirements
+- DOCS: Fix gem homepage
+- DOCS: More gem documentation fixes
 
-### v0.18.5 / 2022-05-02
+## v0.19.0 / 2022-06-09
 
-* FIXED: `ActiveSupport` constant conflict in Active Model Serializers instrumentation
-* FIXED: RubyGems Fallback
+- Upgrading Base dependency version
+- FIXED: Broken test file requirements
 
-### v0.18.4 / 2021-12-02
+## v0.18.5 / 2022-05-02
 
-* (No significant changes)
+- FIXED: `ActiveSupport` constant conflict in Active Model Serializers instrumentation
+- FIXED: RubyGems Fallback
 
-### v0.18.3 / 2021-09-29
+## v0.18.4 / 2021-12-02
 
-* (No significant changes)
+- (No significant changes)
 
-### v0.18.2 / 2021-08-12
+## v0.18.3 / 2021-09-29
 
-* (No significant changes)
+- (No significant changes)
 
-### v0.18.1 / 2021-06-23
+## v0.18.2 / 2021-08-12
 
-* (No significant changes)
+- (No significant changes)
 
-### v0.18.0 / 2021-05-21
+## v0.18.1 / 2021-06-23
 
-* ADDED: Updated API dependency for 1.0.0.rc1
+- (No significant changes)
 
-### v0.17.0 / 2021-04-22
+## v0.18.0 / 2021-05-21
 
-* FIXED: Refactor propagators to add #fields
+- ADDED: Updated API dependency for 1.0.0.rc1
 
-### v0.16.0 / 2021-03-17
+## v0.17.0 / 2021-04-22
 
-* FIXED: Example scripts now reference local common lib
-* DOCS: Replace Gitter with GitHub Discussions
+- FIXED: Refactor propagators to add #fields
 
-### v0.15.0 / 2021-02-18
+## v0.16.0 / 2021-03-17
 
-* (No significant changes)
+- FIXED: Example scripts now reference local common lib
+- DOCS: Replace Gitter with GitHub Discussions
 
-### v0.14.0 / 2021-02-03
+## v0.15.0 / 2021-02-18
 
-* BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
+- (No significant changes)
 
-* ADDED: Replace getter and setter callables and remove rack specific propagators
+## v0.14.0 / 2021-02-03
 
-### v0.13.0 / 2021-01-29
+- BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
+- ADDED: Replace getter and setter callables and remove rack specific propagators
 
-* (No significant changes)
+## v0.13.0 / 2021-01-29
 
-### v0.12.0 / 2020-12-24
+- (No significant changes)
 
-* (No significant changes)
+## v0.12.0 / 2020-12-24
 
-### v0.11.0 / 2020-12-11
+- (No significant changes)
 
-* FIXED: Copyright comments to not reference year
+## v0.11.0 / 2020-12-11
 
-### v0.10.1 / 2020-12-09
+- FIXED: Copyright comments to not reference year
 
-* FIXED: Active_model_serializers installer
+## v0.10.1 / 2020-12-09
 
-### v0.10.0 / 2020-12-03
+- FIXED: Active_model_serializers installer
 
-* (No significant changes)
+## v0.10.0 / 2020-12-03
 
-### v0.9.0 / 2020-11-03
+- (No significant changes)
 
-* Initial release of Active Model Serializers instrumenter (ported from Datadog)
+## v0.9.0 / 2020-11-03
+
+- Initial release of Active Model Serializers Instrumentation (ported from Datadog)
