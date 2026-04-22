@@ -1,4 +1,4 @@
-name: Renovate
+name: Test / Renovate
 
 on:
   pull_request:
@@ -36,4 +36,4 @@ jobs:
           RENOVATE_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           RENOVATE_GITHUB_COM_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: |
-          npm run execute:renovate:dryrun
+          npm run test:renovate:dryrun
