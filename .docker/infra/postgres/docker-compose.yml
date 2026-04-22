@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:14.22@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d
+    image: postgres:14.22@sha256:e493b5ef86b5871b26d58203806738f4b3bed1e4ca5eb83a987d917e6b8f7bb7
     environment:
       - POSTGRES_PASSWORD=postgres
     expose:

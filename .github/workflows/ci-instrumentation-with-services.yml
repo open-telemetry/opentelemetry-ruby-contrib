@@ -55,7 +55,7 @@ jobs:
           - dalli
           - mongo
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: other / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -76,11 +76,10 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
     services:
       memcached:
-        image: memcached:1.6.41-alpine@sha256:1c6a2d48c5f561226f1dc54ed37132f83b4cde94b5e3f3e2d88386d028b86a27
+        image: memcached:1.6.41-alpine@sha256:65c80b311a9601ef5ca8af3814e5cd06a9c4277ea139d80bd53da6b4d39eb46e
         ports:
           - 11211:11211
       mongodb:
@@ -97,7 +96,7 @@ jobs:
           - mysql2
           - trilogy
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: mysql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -118,7 +117,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
     services:
       mysql:
@@ -135,7 +133,7 @@ jobs:
           - rdkafka
           - ruby_kafka
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: kafka / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -156,7 +154,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
     services:
       kafka:
@@ -194,32 +191,50 @@ jobs:
           - resque
           - sidekiq
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: redis / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set environment variables
+        id: inputs
+        shell: bash
+        run: |
+          dir=$(find . -iname 'opentelemetry-instrumentation-${{ matrix.gem }}.gemspec' -exec dirname {} \;)
+          echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
+
+          FILE="${dir}/.github-ci.yml"
+
+          if [[ -f "$FILE" ]]; then
+            echo "Loading env from $FILE"
+            # Convert YAML to key=value and export to GITHUB_ENV
+            yq '.env // {} | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
+          else
+            echo "No github ci file found in ($dir). Skipping."
+          fi
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "4.0"
+          minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
+          minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
+          minimum_coverage: ${{ env.minimum_coverage }}
     services:
       redis:
-        image: redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93
+        image: redis:8.6.2@sha256:d372cf7cd5ab47fb6ad1a73c45ea1104d6f3fa11cc833ff0b3ac997890b4ccec
         ports:
           - 6379:6379
         options: >-
@@ -228,7 +243,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
           -e REDIS_PASSWORD=passw0rd
-          --entrypoint sh redis:8.6.2@sha256:009cc37796fbdbe1b631b4cc0582bed167e5e403ed8bcd06f77eb6cb5aeb6f93 -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
+          --entrypoint sh redis:8.6.2@sha256:d372cf7cd5ab47fb6ad1a73c45ea1104d6f3fa11cc833ff0b3ac997890b4ccec -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
         env:
           REDIS_PASSWORD: "passw0rd"
 
@@ -241,7 +256,7 @@ jobs:
           - pg
           - que
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: postgresql / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -262,11 +277,10 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
     services:
       postgres:
-        image: postgres:14.22@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d
+        image: postgres:14.22@sha256:e493b5ef86b5871b26d58203806738f4b3bed1e4ca5eb83a987d917e6b8f7bb7
         env:
           POSTGRES_PASSWORD: postgres
         ports:
@@ -283,7 +297,7 @@ jobs:
         gem:
           - bunny
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
     name: rabbitmq / ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -304,10 +318,9 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
     services:
       rabbitmq:
-        image: rabbitmq:4.2.5-alpine@sha256:53e51f8469ef13d0a1a2b03c0d36dcf4efbf13089f552440ec5620ca07f2c64e
+        image: rabbitmq:4.2.5-alpine@sha256:d4a3806070111cc69130a6542aa4049b612789852ef11fc3862abc94631b2572
         ports:
           - "5672:5672"
