@@ -229,7 +229,7 @@ jobs:
           minimum_coverage: ${{ env.minimum_coverage }}
     services:
       redis:
-        image: redis:8.6.2@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa
+        image: redis:8.6.2@sha256:d372cf7cd5ab47fb6ad1a73c45ea1104d6f3fa11cc833ff0b3ac997890b4ccec
         ports:
           - 6379:6379
         options: >-
@@ -238,7 +238,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
           -e REDIS_PASSWORD=passw0rd
-          --entrypoint sh redis:8.6.2@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
+          --entrypoint sh redis:8.6.2@sha256:d372cf7cd5ab47fb6ad1a73c45ea1104d6f3fa11cc833ff0b3ac997890b4ccec -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
         env:
           REDIS_PASSWORD: "passw0rd"
 
@@ -275,7 +275,7 @@ jobs:
           build: true
     services:
       postgres:
-        image: postgres:14.22@sha256:ae46a8452f2c137766c9d4a62f4fe60166355ff8b00512e6c48692dbf1eed3d5
+        image: postgres:14.22@sha256:e493b5ef86b5871b26d58203806738f4b3bed1e4ca5eb83a987d917e6b8f7bb7
         env:
           POSTGRES_PASSWORD: postgres
         ports:
@@ -316,6 +316,6 @@ jobs:
           build: true
     services:
       rabbitmq:
-        image: rabbitmq:4.2.5-alpine@sha256:f654a30164ddb33f4b43e5469910e7aa7838ddb144e9d63f039c34544a6823a5
+        image: rabbitmq:4.2.5-alpine@sha256:d4a3806070111cc69130a6542aa4049b612789852ef11fc3862abc94631b2572
         ports:
           - "5672:5672"
