@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/renovate.yml"
+      - ".github/workflows/test-renovate.yml"
       - ".github/renovate.json5"
   workflow_dispatch:
 
