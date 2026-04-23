@@ -263,7 +263,7 @@ jobs:
 #### JRuby Compatibility
 
 If your gem is incompatible with `JRuby`, you can exclude it from the matrix by ensuring the gem folder contains a `.github-ci.yml` file which specifies the gem specific environment variables.
-The key for unsupported interupters is `unsupportedInterpreters` and tge value containing jruby,
+The key for unsupported interpreters is `unsupportedInterpreters` and tge value containing jruby,
 a complete example of the file is below.
 
 ```yaml
