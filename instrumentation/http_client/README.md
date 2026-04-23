@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/http_client/example/trace_demonstration.rb)
+Example usage can be seen in the [`./example/trace_demonstration.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/http_client/example/trace_demonstration.rb)
 
 ## How can I get involved?
 
@@ -52,3 +52,15 @@ The `opentelemetry-instrumentation-http_client` gem is distributed under the Apa
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+
+## HTTP semantic convention stability
+
+This instrumentation by default emits the stable HTTP semantic conventions. The `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable can be used to opt-in to the old or duplicate (both old and stable) semantic conventions.
+
+When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
+
+- `http` - Emits the stable HTTP and networking conventions.
+- `http/dup` - **DEPRECATED: Will be removed on April 15, 2026.** Emits both the old and stable HTTP and networking conventions.
+- `old` - **DEPRECATED: Will be removed on April 15, 2026.** Emits the old HTTP and networking conventions.
+
+For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/).

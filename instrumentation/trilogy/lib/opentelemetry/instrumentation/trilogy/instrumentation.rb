@@ -27,7 +27,8 @@ module OpenTelemetry
         option :db_statement, default: :obfuscate, validate: %I[omit include obfuscate]
         option :span_name, default: :statement_type, validate: %I[statement_type db_name db_operation_and_name]
         option :obfuscation_limit, default: 2000, validate: :integer
-        option :propagator, default: nil, validate: :string
+        option :propagator, default: 'none', validate: %w[none tracecontext vitess]
+        option :record_exception, default: true, validate: :boolean
 
         attr_reader :propagator
 
@@ -44,6 +45,7 @@ module OpenTelemetry
         def configure_propagator(config)
           propagator = config[:propagator]
           @propagator = case propagator
+                        when 'tracecontext' then OpenTelemetry::Helpers::SqlProcessor::SqlCommenter.sql_query_propagator
                         when 'vitess' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Vitess')
                         when 'none', nil then nil
                         else

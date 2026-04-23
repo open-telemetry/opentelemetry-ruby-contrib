@@ -30,6 +30,27 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+## Configuration Options
+
+The instrumentation supports the following configuration options:
+
+- **span_naming:** Determines how span names are generated.
+  - `:job_class` – Span names are set to `<job class name> <operation>`.
+  - `:queue` – Span names are set to `<queue name> <operation>`.
+  - Default: `:queue`
+- **force_flush:** If enabled, all completed spans are synchronously flushed at
+  the end of each job execution. This is recommended for job systems that fork
+  worker processes, such as Resque.
+  - Default: `false`
+- **propagation_style:** Controls how job execution traces are related to the
+  trace where the job was enqueued.
+  - `:link` – The job runs in a separate trace, with its initial span linked to
+    the enqueuing span via a Span Link.
+  - `:child` – The job runs in the same trace, as a direct child of the
+    enqueuing span.
+  - `:none` – No explicit link between the job execution and the enqueuing span.
+  - Default: `:link`
+
 ## Active Support Instrumentation
 
 Earlier versions of this instrumentation relied on registering custom `around_perform` hooks in order to deal with limitations
@@ -90,7 +111,7 @@ In order to preserve this behavior you will have to update the span yourself, e.
 
 ## Examples
 
-Example usage can be seen in the `./example/active_job.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/active_job/example/active_job.rb)
+Example usage can be seen in the [`./example/active_job.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/active_job/example/active_job.rb)
 
 ## How can I get involved?
 

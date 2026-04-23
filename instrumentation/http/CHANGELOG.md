@@ -1,98 +1,135 @@
 # Release History: opentelemetry-instrumentation-http
 
-### v0.24.0 / 2025-01-16
+## v0.30.0 / 2026-04-14
 
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-* ADDED: Set minimum supported version to Ruby 3.1
+## v0.29.0 / 2026-03-17
 
-### v0.23.5 / 2024-11-26
+- BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)
+- ADDED: Default to stable HTTP semantic conventions (#2051)
 
-* CHANGED: Performance Freeze all range objects #1222
+## v0.28.0 / 2026-01-13
 
-### v0.23.4 / 2024-07-23
+- ADDED: HTTP Client Semconv v1.17 Span Naming
 
-* DOCS: Add cspell to CI
+## v0.27.1 / 2025-11-25
 
-### v0.23.3 / 2024-04-30
+- FIXED: Update support for unknown HTTP methods to match semantic conventions
 
-* FIXED: Bundler conflict warnings
+## v0.27.0 / 2025-10-22
 
-### v0.23.2 / 2023-11-23
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
 
-* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+## v0.26.1 / 2025-09-30
 
-### v0.23.1 / 2023-06-05
+- FIXED: Min OTel Ruby API 1.7
 
-* FIXED: Base config options 
+## v0.26.0 / 2025-09-30
 
-### v0.23.0 / 2023-05-15
+- ADDED: Bump minimum API Version to 1.7
 
-* ADDED: Add span_preprocessor hook 
+## v0.25.1 / 2025-07-01
 
-### v0.22.0 / 2023-04-17
+- FIXED: Update span name when semconv stability is enabled
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+## v0.25.0 / 2025-06-17
 
-* ADDED: Drop support for EoL Ruby 2.7 
+- ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1547](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1547)
 
-### v0.21.0 / 2023-01-14
+## v0.24.0 / 2025-01-16
 
-* ADDED: Add request/response hooks to more http clients 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-### v0.20.0 / 2022-06-09
+## v0.23.5 / 2024-11-26
 
-* Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+- CHANGED: Performance Freeze all range objects #1222
 
-### v0.19.6 / 2022-05-05
+## v0.23.4 / 2024-07-23
 
-* (No significant changes)
+- DOCS: Add cspell to CI
 
-### v0.19.5 / 2022-05-02
+## v0.23.3 / 2024-04-30
 
-* FIXED: RubyGems Fallback 
+- FIXED: Bundler conflict warnings
 
-### v0.19.4 / 2022-02-02
+## v0.23.2 / 2023-11-23
 
-* FIXED: Excessive hash creation on context attr merging 
+- CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
 
-### v0.19.3 / 2021-12-01
+## v0.23.1 / 2023-06-05
 
-* FIXED: Change net attribute names to match the semantic conventions spec for http 
+- FIXED: Base config options
 
-### v0.19.2 / 2021-09-29
+## v0.23.0 / 2023-05-15
 
-* (No significant changes)
+- ADDED: Add span_preprocessor hook
 
-### v0.19.1 / 2021-08-12
+## v0.22.0 / 2023-04-17
 
-* (No significant changes)
+- BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- ADDED: Drop support for EoL Ruby 2.7
 
-### v0.19.0 / 2021-06-23
+## v0.21.0 / 2023-01-14
 
-* BREAKING CHANGE: Total order constraint on span.status= 
+- ADDED: Add request/response hooks to more http clients
+- DOCS: Fix gem homepage
+- DOCS: More gem documentation fixes
 
-* FIXED: Total order constraint on span.status= 
+## v0.20.0 / 2022-06-09
 
-### v0.18.0 / 2021-05-21
+- Upgrading Base dependency version
+- FIXED: Broken test file requirements
 
-* ADDED: Updated API dependency for 1.0.0.rc1
+## v0.19.6 / 2022-05-05
 
-### v0.17.0 / 2021-04-22
+- (No significant changes)
 
-* FIXED: Refactor propagators to add #fields
+## v0.19.5 / 2022-05-02
 
-### v0.16.2 / 2021-03-29
+- FIXED: RubyGems Fallback
 
-* FIXED: HTTP instrumenter should check for gem presence
+## v0.19.4 / 2022-02-02
 
-### v0.16.1 / 2021-03-25
+- FIXED: Excessive hash creation on context attr merging
 
-* FIXED: HTTP instrumentation missing require
+## v0.19.3 / 2021-12-01
 
-### v0.16.0 / 2021-03-17
+- FIXED: Change net attribute names to match the semantic conventions spec for http
 
-* Initial release.
+## v0.19.2 / 2021-09-29
+
+- (No significant changes)
+
+## v0.19.1 / 2021-08-12
+
+- (No significant changes)
+
+## v0.19.0 / 2021-06-23
+
+- BREAKING CHANGE: Total order constraint on span.status=
+- FIXED: Total order constraint on span.status=
+
+## v0.18.0 / 2021-05-21
+
+- ADDED: Updated API dependency for 1.0.0.rc1
+
+## v0.17.0 / 2021-04-22
+
+- FIXED: Refactor propagators to add #fields
+
+## v0.16.2 / 2021-03-29
+
+- FIXED: HTTP Instrumentation should check for gem presence
+
+## v0.16.1 / 2021-03-25
+
+- FIXED: HTTP instrumentation missing require
+
+## v0.16.0 / 2021-03-17
+
+- Initial release.

@@ -5,8 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
-require 'pry'
-
 require_relative '../../../../net_http/lib/opentelemetry/instrumentation/net/http'
 
 describe OpenTelemetry::Instrumentation::Koala do

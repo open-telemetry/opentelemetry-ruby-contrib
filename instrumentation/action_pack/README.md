@@ -38,8 +38,8 @@ This instrumentation now relies on `ActiveSupport::Notifications` and registers 
 
 See the table below for details of what [Rails Framework Hook Events](https://guides.rubyonrails.org/active_support_instrumentation.html#action-controller) are recorded by this instrumentation:
 
-| Event Name | Subscribe? | Creates Span? |  Notes |
-| - | - | - | - |
+| Event Name | Subscribe? | Creates Span? | Notes |
+| ---- | --- | --- | --- |
 | `process_action.action_controller` | :white_check_mark: | :x: | It modifies the existing Rack span |
 
 ## Semantic Conventions
@@ -47,8 +47,6 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 This instrumentation generally uses [HTTP server semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/http-spans/) to update the existing Rack span.
 
 For Rails 7.1+, the span name is updated to match the HTTP method and route that was matched for the request using [`ActionDispatch::Request#route_uri_pattern`](https://api.rubyonrails.org/classes/ActionDispatch/Request.html#method-i-route_uri_pattern), e.g.: `GET /users/:id`
-
-For older versions of Rails the span name is updated to match the HTTP method, controller, and action name that was the target of the request, e.g.: `GET /example/index`
 
 > ![NOTE]: Users may override the `span_naming` option to default to Legacy Span Naming Behavior that uses the controller's class name and action in Ruby documentation syntax, e.g. `ExampleController#index`.
 
@@ -58,7 +56,7 @@ This instrumentation does not emit any custom attributes.
 | - | - | - |
 | `code.namespace` | String | `ActionController` class name |
 | `code.function` | String | `ActionController` action name e.g. `index`, `show`, `edit`, etc... |
-| `http.route` | String | (Rails 7.1+) the route that was matched for the request |
+| `http.route` | String | The route that was matched for the request |
 | `http.target` | String | The `request.filtered_path` |
 
 ### Error Handling for Action Controller
@@ -69,7 +67,7 @@ The error object will be retained within `payload[:exception_object]`. Additiona
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_pack/example/trace_demonstration.ru)
+Example usage can be seen in the [`./example/trace_demonstration.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/action_pack/example/trace_demonstration.ru)
 
 ## How can I get involved?
 
@@ -89,3 +87,15 @@ The `opentelemetry-instrumentation-action_pack` gem is distributed under the Apa
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [rails-home]: https://rubyonrails.org/
+
+## HTTP semantic convention stability
+
+This instrumentation relies on Rack instrumentation which by default emits the stable HTTP semantic conventions. The `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable can be used to opt-in to the old or duplicate (both old and stable) semantic conventions.
+
+When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
+
+- `http` - Emits the stable HTTP and networking conventions.
+- `http/dup` - **DEPRECATED: Will be removed on April 15, 2026.** Emits both the old and stable HTTP and networking conventions.
+- `old` - **DEPRECATED: Will be removed on April 15, 2026.** Emits the old HTTP and networking conventions.
+
+For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/).

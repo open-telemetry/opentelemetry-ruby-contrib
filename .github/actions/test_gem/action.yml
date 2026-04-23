@@ -14,11 +14,11 @@ inputs:
     required: false
     type: boolean
     default: false
-  rubocop:
-    description: Run Rubocop
+  minimum_coverage:
+    description: Minimum test coverage
     required: false
-    type: boolean
-    default: false
+    type: string
+    default: 85
   build:
     description: Build gem
     required: false
@@ -36,9 +36,13 @@ runs:
     - name: Setup
       id: setup
       shell: bash
+      env:
+        GEM_INPUT: ${{ inputs.gem }}
+        RUBY_INPUT: ${{ inputs.ruby }}
+        LATEST_INPUT: ${{ inputs.latest }}
       run: |
         # 🛠️ Setup 🛠️
-        dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
+        dir=$(find . -iname "${GEM_INPUT}.gemspec" -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
         # We install multiple ruby versions here, and that makes for some
@@ -48,47 +52,50 @@ runs:
         rm -f "${dir}/Gemfile.lock"
 
         echo "cache_key=mri" >> $GITHUB_OUTPUT
-        if [[ "${{ inputs.ruby }}" == "jruby" ]]; then
+        if [[ "$RUBY_INPUT" == "jruby" ]]; then
           echo "cache_key=jruby" >> $GITHUB_OUTPUT
-        elif [[ "${{ inputs.ruby }}" == "truffleruby" ]]; then
+        elif [[ "$RUBY_INPUT" == "truffleruby" ]]; then
           echo "cache_key=truffleruby" >> $GITHUB_OUTPUT
         fi
 
         echo "appraisals=false" >> $GITHUB_OUTPUT
 
-        if [[ "${{ inputs.latest }}" != "true" ]]; then
+        if [[ "$LATEST_INPUT" != "true" ]]; then
           if [[ -f "${dir}/Appraisals" ]]; then
             echo "appraisals=true" >> $GITHUB_OUTPUT
           fi
         fi
 
+        if [[ -f "${dir}/test/apt-packages.txt" ]]; then
+          echo "apt=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Install Ubuntu packages (if apt-packages.txt exists)
+      if: "${{ steps.setup.outputs.apt == 'true' }}"
+      shell: bash
+      run: |
+        sudo apt-get update
+        xargs -a test/apt-packages.txt sudo apt-get install -y
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
     # Install ruby and bundle dependencies and cache!
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@v1.207.0
+      uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-        bundler:  "latest"
         bundler-cache: true
         cache-version: "${{ inputs.ruby }}-${{ steps.setup.outputs.cache_key }}"
 
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@v1.207.0
+      uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
       with:
         ruby-version: "${{ inputs.ruby }}"
-        bundler:  "latest"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-    # Perms workaround. See https://github.com/actions/runner-images/issues/10215
-    - name: Fix GEM_HOME permissions on GitHub Actions Runner
-      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      shell: bash
-      run: |
-        # 🛠️😭 Fix GEM_HOME permissions 😭🛠️
-        chmod -R o-w $(gem env home)
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
@@ -106,9 +113,9 @@ runs:
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
             echo "::group::🔎 Appraising ${i}"
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test || exit
+            SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
+            SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
+            SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test || exit
             echo "::endgroup::"
           done
         else
@@ -145,18 +152,26 @@ runs:
         bundle exec rake yard
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
-    - name: Rubocop
+    - name: Coverage
       shell: bash
-      if: "${{ inputs.rubocop == 'true' }}"
-      run: |
-        # 🤖 Rubocop 🤖
-        bundle exec rake rubocop
+      # This starts a new simplecov run which tracks nothing of its own,
+      # but merges with the existing coverage reports generated during testing.
+      env:
+        MINIMUM_COVERAGE: ${{ inputs.minimum_coverage || 85 }}
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
+    - name: Cleanup coverage artifacts
+      shell: bash
+      run: rm -rf coverage
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
+      env:
+        GEM_INPUT: ${{ inputs.gem }}
       run: |
         # 📦 Build Gem 📦
-        gem build ${{ inputs.gem }}.gemspec
+        gem build "${GEM_INPUT}.gemspec"
       working-directory: "${{ steps.setup.outputs.gem_dir }}"

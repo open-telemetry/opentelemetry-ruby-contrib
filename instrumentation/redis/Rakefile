@@ -11,6 +11,7 @@ require 'rubocop/rake_task'
 
 RuboCop::RakeTask.new
 
+desc 'Start Redis'
 task :start_redis do
   redis_exists = `which redis-server`.lines.any?
   @redis_pid = Process.spawn('redis-server test/redis.conf') if redis_exists

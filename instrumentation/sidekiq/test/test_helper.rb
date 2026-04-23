@@ -4,13 +4,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
-require 'active_job'
-
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
+require 'rails'
+require 'active_job'
+require 'sidekiq/rails'
 require 'sidekiq/testing'
 
 if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.0.0')
@@ -49,7 +51,7 @@ Sidekiq.configure_client do |config|
   config.redis = { password: 'passw0rd', url: redis_url }
 end
 
-# Silence Actibe Job logging noise
+# Silence Active Job logging noise
 ActiveJob::Base.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
 
 class SimpleJobWithActiveJob < ActiveJob::Base

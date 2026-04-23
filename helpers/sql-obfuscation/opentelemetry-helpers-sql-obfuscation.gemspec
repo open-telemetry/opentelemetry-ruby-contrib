@@ -14,8 +14,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'SQL Obfuscation Instrumentation Helpers for the OpenTelemetry framework'
-  spec.description = 'SQL Obfuscation Instrumentation Helpers for the OpenTelemetry framework'
+  spec.summary     = 'This gem is deprecated and no longer maintained. It has been replaced by opentelemetry-helpers-sql-processor.'
+  spec.description = 'This gem is deprecated and no longer maintained. It has been replaced by opentelemetry-helpers-sql-processor.'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
 
@@ -23,25 +23,16 @@ Gem::Specification.new do |spec|
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = '>= 3.2'
 
   spec.add_dependency 'opentelemetry-common', '~> 0.21'
 
-  spec.add_development_dependency 'bundler', '~> 2.4'
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3'
-  spec.add_development_dependency 'rake', '~> 13.0'
-  spec.add_development_dependency 'rubocop', '~> 1.69.1'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.23.0'
-  spec.add_development_dependency 'yard', '~> 0.9'
-  spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
-
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/helpers/sql-obfuscation'
+    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/#{spec.name}/v#{spec.version}/helpers/sql-obfuscation"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
     spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
 
-  spec.post_install_message = File.read(File.expand_path('../../POST_INSTALL_MESSAGE', __dir__))
+  spec.post_install_message = File.read(File.expand_path('../../gemspecs/POST_INSTALL_MESSAGE', __dir__))
 end

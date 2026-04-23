@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'mutex_m' if Gem::Requirement.new('>= 3.4').satisfied_by?(Gem::Version.new(RUBY_VERSION))
 
+gem 'anthropic'
 gem 'aws_sdk'
 gem 'bunny'
 gem 'concurrent-ruby'
@@ -11,6 +12,7 @@ gem 'dalli'
 gem 'delayed_job'
 gem 'ethon'
 gem 'excon'
+gem 'factory_bot'
 gem 'faraday'
 gem 'grape'
 gem 'graphql'
@@ -47,10 +49,8 @@ Dir['../propagator/**/version.rb'].each do |f|
   gem "opentelemetry-propagator-#{name}", version
 end
 
-excluded_instrumentations = %w[grpc]
 Dir['../instrumentation/**/version.rb'].each do |f|
   name = f.match(%r{instrumentation/(\w+)/lib})[1]
-  next if excluded_instrumentations.include?(name)
 
   version = File.read(f).match(/VERSION = '([\d\.]+)'/)[1]
   gem "opentelemetry-instrumentation-#{name}", version

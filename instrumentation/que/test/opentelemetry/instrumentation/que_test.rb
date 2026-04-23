@@ -243,7 +243,7 @@ describe OpenTelemetry::Instrumentation::Que do
         _(root_span.parent_span_id).must_equal(OpenTelemetry::Trace::INVALID_SPAN_ID)
 
         other_spans = spans - [root_span]
-        _(other_spans.count.positive?).must_equal(true)
+        _(other_spans.any?).must_equal(true)
 
         other_spans.each do |other_span|
           _(other_span.parent_span_id).must_equal(root_span.span_id)

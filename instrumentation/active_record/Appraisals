@@ -4,26 +4,27 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[7.0.0 7.1.0].each do |version|
+%w[7.1.0 7.2.0 8.0.0].each do |version|
   appraise "activerecord-#{version}" do
     gem 'sqlite3', '~> 1.4'
     gem 'activerecord', "~> #{version}"
+
+    # ActiveRecord async query instrumentation should work with or without this present
+    remove_gem 'opentelemetry-instrumentation-concurrent_ruby'
   end
 end
 
-if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.1.0')
-  %w[7.2.0].each do |version|
-    appraise "activerecord-#{version}" do
-      gem 'sqlite3', '~> 1.4'
-      gem 'activerecord', "~> #{version}"
-
-      # ActiveRecord async query instrumentation should work with or without this present
-      remove_gem 'opentelemetry-instrumentation-concurrent_ruby'
-    end
-  end
-
-  appraise 'activerecord-latest' do
+%w[8.0.0 8.1.0].each do |version|
+  appraise "activerecord-#{version}" do
     gem 'sqlite3', '>= 2.1'
-    gem 'activerecord'
+    gem 'activerecord', "~> #{version}"
+
+    # ActiveRecord async query instrumentation should work with or without this present
+    remove_gem 'opentelemetry-instrumentation-concurrent_ruby'
   end
+end
+
+appraise 'activerecord-latest' do
+  gem 'sqlite3', '>= 2.1'
+  gem 'activerecord'
 end

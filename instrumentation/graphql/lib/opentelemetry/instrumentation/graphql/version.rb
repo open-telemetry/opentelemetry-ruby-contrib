@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module GraphQL
-      VERSION = '0.29.0'
+      VERSION = '0.32.0'
     end
   end
 end

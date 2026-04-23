@@ -29,91 +29,91 @@ module OpenTelemetry
             end
           end
 
-          def becomes(klass)
+          def becomes(...)
             tracer.in_span("#{self.class}#becomes") do
               super
             end
           end
 
-          def becomes!(klass)
+          def becomes!(...)
             tracer.in_span("#{self.class}#becomes!") do
               super
             end
           end
 
-          def update_attribute(name, value)
+          def update_attribute(...)
             tracer.in_span("#{self.class}#update_attribute") do
               super
             end
           end
 
-          def update(attributes)
+          def update(...)
             tracer.in_span("#{self.class}#update") do
               super
             end
           end
 
-          def update!(attributes)
+          def update!(...)
             tracer.in_span("#{self.class}#update!") do
               super
             end
           end
 
-          def update_column(name, value)
+          def update_column(...)
             tracer.in_span("#{self.class}#update_column") do
               super
             end
           end
 
-          def update_columns(attributes)
+          def update_columns(...)
             tracer.in_span("#{self.class}#update_columns") do
               super
             end
           end
 
-          def increment(attribute, by = 1)
+          def increment(...)
             tracer.in_span("#{self.class}#increment") do
               super
             end
           end
 
-          def increment!(attribute, by = 1, touch: nil)
+          def increment!(...)
             tracer.in_span("#{self.class}#increment!") do
               super
             end
           end
 
-          def decrement(attribute, by = 1)
+          def decrement(...)
             tracer.in_span("#{self.class}#decrement") do
               super
             end
           end
 
-          def decrement!(attribute, by = 1, touch: nil)
+          def decrement!(...)
             tracer.in_span("#{self.class}#decrement!") do
               super
             end
           end
 
-          def toggle(attribute)
+          def toggle(...)
             tracer.in_span("#{self.class}#toggle") do
               super
             end
           end
 
-          def toggle!(attribute)
+          def toggle!(...)
             tracer.in_span("#{self.class}#toggle!") do
               super
             end
           end
 
-          def reload(options = nil)
+          def reload(...)
             tracer.in_span("#{self.class}#reload") do
               super
             end
           end
 
-          def touch(*names, time: nil)
+          def touch(...)
             tracer.in_span("#{self.class}#touch") do
               super
             end

@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/opentelemetry-instrumentation-rake/v0.2.2/instrumentation/rake/example/trace_demonstration.rb)
+Example usage can be seen in the [`./example/trace_demonstration.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/opentelemetry-instrumentation-rake/v0.2.2/instrumentation/rake/example/trace_demonstration.rb)
 
 ## How can I get involved?
 

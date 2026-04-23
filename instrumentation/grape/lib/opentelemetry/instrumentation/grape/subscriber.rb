@@ -22,8 +22,6 @@ module OpenTelemetry
             end
           end
 
-          private
-
           # ActiveSupport::Notifications that can be subscribed to using the documented `.subscribe` interface.
           # Reference: https://api.rubyonrails.org/classes/ActiveSupport/Notifications.html#method-c-subscribe
           SUBSCRIPTIONS = {
@@ -32,6 +30,10 @@ module OpenTelemetry
             endpoint_run_filters: 'endpoint_run_filters.grape',
             format_response: 'format_response.grape'
           }.freeze
+
+          private_constant :SUBSCRIPTIONS
+
+          private
 
           def filter_ignored_events(subscriptions)
             # Do not ignore 'endpoint_run' event

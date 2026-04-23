@@ -60,7 +60,7 @@ module OpenTelemetry
             span = otel&.fetch(:span)
             token = otel&.fetch(:ctx_token)
 
-            on_exception((payload[:error] || payload[:exception_object]), span)
+            on_exception(payload[:error] || payload[:exception_object], span)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
           ensure

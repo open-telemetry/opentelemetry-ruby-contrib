@@ -1,9 +1,18 @@
 # frozen_string_literal: true
 
-appraise 'ethon-0.16' do
-  gem 'ethon', '~> 0.16.0'
-end
+# To facilitate HTTP semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
-appraise 'ethon-latest' do
-  gem 'ethon'
+semconv_stability = %w[dup stable old]
+
+semconv_stability.each do |mode|
+  appraise "ethon-0.18.0-#{mode}" do
+    gem 'ethon', '~> 0.18.0'
+  end
+
+  appraise "ethon-#{mode}" do
+    gem 'ethon'
+  end
 end

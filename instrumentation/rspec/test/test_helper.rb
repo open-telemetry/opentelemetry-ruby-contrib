@@ -4,7 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# This gem does not use Bundler to require gems because it is testing confilicting features between rspec and minitest.
+# This gem does not use Bundler to require gems because it is testing conflicting features between rspec and minitest.
+require 'simplecov'
 require 'opentelemetry/sdk'
 require 'opentelemetry-test-helpers'
 
@@ -12,6 +13,7 @@ require_relative 'rspec_patches'
 require 'rspec/core'
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
 # global opentelemetry-sdk setup:

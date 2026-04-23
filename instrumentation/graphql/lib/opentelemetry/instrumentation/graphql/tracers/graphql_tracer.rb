@@ -126,7 +126,7 @@ module OpenTelemetry
             when 'execute_query'
               attrs = {}
               attrs['graphql.document'] = data[:query].query_string if data[:query].query_string
-              # rubocop:disable Style/SafeNavigation - using safe navigation creates more objects, we want to avoid this
+              # rubocop:disable Style/SafeNavigation -- using safe navigation creates more objects, we want to avoid this
               attrs['graphql.operation.type'] = data[:query].selected_operation.operation_type if data[:query].selected_operation && data[:query].selected_operation.operation_type
               # rubocop:enable Style/SafeNavigation
               attrs['graphql.operation.name'] = data[:query].selected_operation_name || 'anonymous'

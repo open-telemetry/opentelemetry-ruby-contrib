@@ -1,71 +1,88 @@
 # Release History: opentelemetry-instrumentation-bunny
 
-### v0.22.0 / 2025-01-16
+## v0.25.0 / 2026-04-14
 
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-* ADDED: Set minimum supported version to Ruby 3.1
+## v0.24.0 / 2025-10-22
 
-### v0.21.4 / 2024-07-02
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
 
-* DOCS: Fix CHANGELOGs to reflect a past breaking change
+## v0.23.1 / 2025-09-30
 
-### v0.21.3 / 2024-04-30
+- FIXED: Min OTel Ruby API 1.7
 
-* FIXED: Bundler conflict warnings
+## v0.23.0 / 2025-09-30
 
-### v0.21.2 / 2024-02-08
+- ADDED: Bump minimum API Version to 1.7
 
-* FIXED: Remove disable directives leftover from older version of Rubocop
+## v0.22.0 / 2025-01-16
 
-### v0.21.1 / 2023-09-27
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-* FIXED: Headers property needs to exist
+## v0.21.4 / 2024-07-02
 
-### v0.21.0 / 2023-09-07
+- DOCS: Fix CHANGELOGs to reflect a past breaking change
 
-* BREAKING CHANGE: Align messaging instrumentation operation names [#648](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/648)
+## v0.21.3 / 2024-04-30
 
-### v0.20.1 / 2023-06-05
+- FIXED: Bundler conflict warnings
 
-* FIXED: Base config options 
+## v0.21.2 / 2024-02-08
 
-### v0.20.0 / 2023-04-17
+- FIXED: Remove disable directives leftover from older version of Rubocop
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+## v0.21.1 / 2023-09-27
 
-* ADDED: Drop support for EoL Ruby 2.7 
+- FIXED: Headers property needs to exist
 
-### v0.19.1 / 2023-01-14
+## v0.21.0 / 2023-09-07
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+- BREAKING CHANGE: Align messaging instrumentation operation names [#648](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/648)
 
-### v0.19.0 / 2022-06-09
+## v0.20.1 / 2023-06-05
 
-* Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+- FIXED: Base config options
 
-### v0.18.5 / 2022-05-05
+## v0.20.0 / 2023-04-17
 
-* (No significant changes)
+- BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- ADDED: Drop support for EoL Ruby 2.7
 
-### v0.18.4 / 2021-12-02
+## v0.19.1 / 2023-01-14
 
-* (No significant changes)
+- DOCS: Fix gem homepage
+- DOCS: More gem documentation fixes
 
-### v0.18.3 / 2021-09-29
+## v0.19.0 / 2022-06-09
 
-* (No significant changes)
+- Upgrading Base dependency version
+- FIXED: Broken test file requirements
 
-### v0.18.2 / 2021-08-12
+## v0.18.5 / 2022-05-05
 
-* DOCS: Update docs to rely more on environment variable configuration 
+- (No significant changes)
 
-### v0.18.1 / 2021-06-23
+## v0.18.4 / 2021-12-02
 
-* FIXED: Add missing require to bunny instrumentation 
+- (No significant changes)
 
-### v0.18.0 / 2021-05-21
+## v0.18.3 / 2021-09-29
 
-* Initial release.
+- (No significant changes)
+
+## v0.18.2 / 2021-08-12
+
+- DOCS: Update docs to rely more on environment variable configuration
+
+## v0.18.1 / 2021-06-23
+
+- FIXED: Add missing require to bunny instrumentation
+
+## v0.18.0 / 2021-05-21
+
+- Initial release.

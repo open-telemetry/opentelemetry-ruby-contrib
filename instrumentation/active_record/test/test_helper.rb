@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
@@ -11,6 +12,7 @@ require 'active_record'
 require 'opentelemetry-instrumentation-active_record'
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
 # Global opentelemetry-sdk setup:

@@ -9,8 +9,6 @@ require 'rake/testtask'
 require 'yard'
 require 'rubocop/rake_task'
 
-ENV['ENABLE_COVERAGE'] ||= '1'
-
 RuboCop::RakeTask.new
 
 Rake::TestTask.new :test do |t|

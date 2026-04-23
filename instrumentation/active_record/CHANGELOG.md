@@ -1,100 +1,119 @@
 # Release History: opentelemetry-instrumentation-active_record
 
-### v0.9.0 / 2025-01-16
+## v0.12.0 / 2026-04-14
 
-* BREAKING CHANGE: Drop Support for EoL Rails 6.1
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-* ADDED: Drop Support for EoL Rails 6.1
-* ADDED: Set minimum supported version to Ruby 3.1
+## v0.11.1 / 2025-10-22
 
-### v0.8.1 / 2024-11-21
+- FIXED: Update opentelemetry-instrumentation-base dependency
 
-* FIXED: Pass block argument in ActiveRecord `find_by_sql` patch.
+## v0.11.0 / 2025-10-21
 
-### v0.8.0 / 2024-10-22
+- BREAKING CHANGE: Min Ruby Version 3.2 and Rails 7.1
+- ADDED: Min Ruby Version 3.2 and Rails 7.1
 
-* BREAKING CHANGE: Rename Active Record find_by_sql spans to query
-* FIXED: Emit Active Record query spans for Rails 7.0+
+## v0.10.1 / 2025-09-30
 
-### v0.7.4 / 2024-08-19
+- FIXED: Min OTel Ruby API 1.7
 
-* FIXED: Use ActiveSupport from top-level namespace (NoMethodError on_load)
+## v0.10.0 / 2025-09-30
 
-### v0.7.3 / 2024-08-15
+- ADDED: Bump minimum API Version to 1.7
 
-* FIXED: Use Active Support Lazy Load Hooks to avoid prematurely initializing ActiveRecord::Base and ActiveJob::Base
+## v0.9.0 / 2025-01-16
 
-### v0.7.2 / 2024-04-30
+- BREAKING CHANGE: Drop Support for EoL Rails 6.1
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Drop Support for EoL Rails 6.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-* FIXED: Resolve active_record testing issue
+## v0.8.1 / 2024-11-21
 
-### v0.7.1 / 2024-04-05
+- FIXED: Pass block argument in ActiveRecord `find_by_sql` patch.
 
-* FIXED: Instrumentation/active_record: add `:allow_retry` option to `find_by_sql` patch
+## v0.8.0 / 2024-10-22
 
-### v0.7.0 / 2023-11-22
+- BREAKING CHANGE: Rename Active Record find_by_sql spans to query
+- FIXED: Emit Active Record query spans for Rails 7.0+
 
-* BREAKING CHANGE: Drop Rails 6.0 EOL
+## v0.7.4 / 2024-08-19
 
-* ADDED: Drop Rails 6.0 EOL
+- FIXED: Use ActiveSupport from top-level namespace (NoMethodError on_load)
 
-### v0.6.3 / 2023-10-16
+## v0.7.3 / 2024-08-15
 
-* FIXED: Add Rails 7.1 compatibility
+- FIXED: Use Active Support Lazy Load Hooks to avoid prematurely initializing ActiveRecord::Base and ActiveJob::Base
 
-### v0.6.2 / 2023-08-14
+## v0.7.2 / 2024-04-30
 
-* FIXED: Ensure that transaction name property is used, rather than self
+- FIXED: Resolve active_record testing issue
 
-### v0.6.1 / 2023-06-05
+## v0.7.1 / 2024-04-05
 
-* FIXED: Base config options
+- FIXED: Instrumentation/active_record: add `:allow_retry` option to `find_by_sql` patch
 
-### v0.6.0 / 2023-04-17
+## v0.7.0 / 2023-11-22
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- BREAKING CHANGE: Drop Rails 6.0 EOL
+- ADDED: Drop Rails 6.0 EOL
 
-* ADDED: Drop support for EoL Ruby 2.7
+## v0.6.3 / 2023-10-16
 
-### v0.5.0 / 2023-02-01
+- FIXED: Add Rails 7.1 compatibility
 
-* BREAKING CHANGE: Drop Rails 5 Support
+## v0.6.2 / 2023-08-14
 
-* ADDED: Drop Rails 5 Support
+- FIXED: Ensure that transaction name property is used, rather than self
 
-### v0.4.1 / 2023-01-14
+## v0.6.1 / 2023-06-05
 
-* DOCS: Fix gem homepage
-* DOCS: More gem documentation fixes
+- FIXED: Base config options
 
-### v0.4.0 / 2022-06-09
+## v0.6.0 / 2023-04-17
 
-* Upgrading Base dependency version
-* FIXED: Broken test file requirements
+- BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- ADDED: Drop support for EoL Ruby 2.7
 
-### v0.3.0 / 2022-05-02
+## v0.5.0 / 2023-02-01
 
-* ADDED: Make ActiveRecord 7 compatible
-* FIXED: RubyGems Fallback
+- BREAKING CHANGE: Drop Rails 5 Support
+- ADDED: Drop Rails 5 Support
 
-### v0.2.2 / 2021-12-01
+## v0.4.1 / 2023-01-14
 
-* FIXED: Add max supported version for active record
+- DOCS: Fix gem homepage
+- DOCS: More gem documentation fixes
 
-### v0.2.1 / 2021-09-29
+## v0.4.0 / 2022-06-09
 
-* (No significant changes)
+- Upgrading Base dependency version
+- FIXED: Broken test file requirements
 
-### v0.2.0 / 2021-09-29
+## v0.3.0 / 2022-05-02
 
-* ADDED: Trace update_all and delete_all calls in ActiveRecord
-* FIXED: Remove Active Record instantiation patch
+- ADDED: Make ActiveRecord 7 compatible
+- FIXED: RubyGems Fallback
 
-### v0.1.1 / 2021-08-12
+## v0.2.2 / 2021-12-01
 
-* (No significant changes)
+- FIXED: Add max supported version for active record
 
-### v0.1.0 / 2021-07-08
+## v0.2.1 / 2021-09-29
 
-* Initial release, adds instrumentation patches to querying and persistence methods.
+- (No significant changes)
+
+## v0.2.0 / 2021-09-29
+
+- ADDED: Trace update_all and delete_all calls in ActiveRecord
+- FIXED: Remove Active Record instantiation patch
+
+## v0.1.1 / 2021-08-12
+
+- (No significant changes)
+
+## v0.1.0 / 2021-07-08
+
+- Initial release, adds instrumentation patches to querying and persistence methods.

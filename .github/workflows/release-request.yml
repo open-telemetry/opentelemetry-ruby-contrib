@@ -3,31 +3,47 @@ name: Open release request
 on:
   workflow_dispatch:
     inputs:
-      gems:
-        description: Gems to release (leave blank to release all gems)
+      names:
+        description: Components to release (leave blank to release all components)
         required: false
         default: ""
 
+permissions:
+  contents: read
+
 jobs:
   release-request:
+    permissions:
+      contents: write # required for creating releases
+      pull-requests: write # required for creating release PRs
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    runs-on: ubuntu-24.04
     env:
-      ruby_version: "3.1"
-    runs-on: ubuntu-latest
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.207.0
-        with:
-          ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
+        with:
+          ruby-version: "4.0.2"
+          bundler-cache: true
+
+      - name: Create otelbot app token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        id: app-token
+        with:
+          app-id: ${{ vars.OTELBOT_RUBY_CONTRIB_APP_ID }}
+          private-key: ${{ secrets.OTELBOT_RUBY_CONTRIB_PRIVATE_KEY }}
+
       - name: Open release pull request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          TARGET_BRANCH: ${{ github.ref }}
+          RELEASE_NAMES: ${{ github.event.inputs.names }}
         run: |
-          toys release request --yes --verbose \
-            "--gems=${{ github.event.inputs.gems }}" \
-            "--release-ref=${{ github.ref }}" \
+          bundle exec toys release request --yes --verbose \
+            "--target-branch=$TARGET_BRANCH" \
+            $RELEASE_NAMES \
             < /dev/null

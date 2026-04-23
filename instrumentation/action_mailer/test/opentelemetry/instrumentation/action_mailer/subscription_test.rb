@@ -116,7 +116,7 @@ describe OpenTelemetry::Instrumentation::ActionMailer do
     end
   end
 
-  def with_configuration(values, &block)
+  def with_configuration(values, &)
     original_config = instrumentation.instance_variable_get(:@config)
     modified_config = original_config.merge(values)
     instrumentation.instance_variable_set(:@config, modified_config)
@@ -126,14 +126,14 @@ describe OpenTelemetry::Instrumentation::ActionMailer do
     instrumentation.instance_variable_set(:@config, original_config)
   end
 
-  def subscribing_to_deliver(&block)
+  def subscribing_to_deliver(&)
     subscription = OpenTelemetry::Instrumentation::ActionMailer::Railtie.subscribe_to_deliver
     yield
   ensure
     ActiveSupport::Notifications.unsubscribe(subscription)
   end
 
-  def subscribing_to_process(&block)
+  def subscribing_to_process(&)
     subscription = OpenTelemetry::Instrumentation::ActionMailer::Railtie.subscribe_to_process
     yield
   ensure

@@ -8,8 +8,19 @@ source 'https://rubygems.org'
 
 gemspec
 
-group :test, :development do
-  gem 'pry-byebug'
+group :test do
+  gem 'appraisal', '~> 2.5.0'
+  gem 'minitest', '~> 6.0.0'
+  gem 'opentelemetry-sdk', '~> 1.11.0'
+  gem 'opentelemetry-test-helpers', '~> 0.8.0'
+  gem 'rack-test', '~> 2.2.0'
+  gem 'rake', '>= 13'
+  gem 'rubocop', '~> 1.86.0'
+  gem 'rubocop-performance', '~> 1.26.0'
+  gem 'simplecov', '~> 0.22.0'
+  gem 'webmock', '~> 3.26.0'
+  gem 'yard', '~> 0.9.0'
+
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-instrumentation-concurrent_ruby', path: '../concurrent_ruby'
   gem 'opentelemetry-instrumentation-active_job', path: '../active_job'
@@ -17,6 +28,13 @@ group :test, :development do
   gem 'opentelemetry-instrumentation-action_pack', path: '../action_pack'
   gem 'opentelemetry-instrumentation-active_record', path: '../active_record'
   gem 'opentelemetry-instrumentation-active_support', path: '../active_support'
+  gem 'opentelemetry-instrumentation-active_storage', path: '../active_storage'
   gem 'opentelemetry-instrumentation-action_view', path: '../action_view'
   gem 'opentelemetry-instrumentation-rack', path: '../rack'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'drb'
+    gem 'mutex_m'
+    gem 'logger'
+  end
 end
