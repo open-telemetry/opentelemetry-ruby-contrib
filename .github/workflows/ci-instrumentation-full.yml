@@ -153,7 +153,7 @@ jobs:
           build: true
           minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test JRuby"
-        if: "${{ startsWith(matrix.os, 'ubuntu') && !contains(env.unsupportedInterpreters, split(matrix.ruby, '-')[0]) }}"
+        if: "${{ startsWith(matrix.os, 'ubuntu') &&  !contains(env.unsupportedInterpreters, 'jruby') }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
