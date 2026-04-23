@@ -40,6 +40,7 @@ def run_in_subprocess(env_vars = {}, opts = {})
   read_pipe, write_pipe = IO.pipe
 
   pid = fork do
+    SimpleCov.command_name "subprocess-#{Process.pid}"
     read_pipe.close
     env_vars.each { |key, value| ENV[key] = value }
     ENV['OTEL_RUBY_REQUIRE_BUNDLER'] = 'false'
@@ -143,7 +144,10 @@ def run_in_subprocess(env_vars = {}, opts = {})
     ensure
       $stderr = old_stderr if defined?(old_stderr)
       write_pipe.close
-      exit(0)
+
+      # Store the simplecov result for this process
+      SimpleCov::ResultMerger.store_result(SimpleCov::Result.new(Coverage.result)) if SimpleCov.running
+      exit!(0)
     end
   end
 
