@@ -69,6 +69,7 @@ jobs:
     steps:
       - run: echo "Repository check passed"
   instrumentation:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
@@ -153,7 +154,7 @@ jobs:
           build: true
           minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test JRuby"
-        if: "${{ startsWith(matrix.os, 'ubuntu') &&  !contains(env.unsupportedInterpreters, 'jruby') }}"
+        if: "${{ startsWith(matrix.os, 'ubuntu') && !contains(env.unsupportedInterpreters, 'jruby') }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
