@@ -8,6 +8,9 @@
   appraise "activerecord-#{version}" do
     gem 'sqlite3', '~> 1.4'
     gem 'activerecord', "~> #{version}"
+
+    # ActiveRecord async query instrumentation should work with or without this present
+    remove_gem 'opentelemetry-instrumentation-concurrent_ruby'
   end
 end
 
@@ -15,6 +18,9 @@ end
   appraise "activerecord-#{version}" do
     gem 'sqlite3', '>= 2.1'
     gem 'activerecord', "~> #{version}"
+
+    # ActiveRecord async query instrumentation should work with or without this present
+    remove_gem 'opentelemetry-instrumentation-concurrent_ruby'
   end
 end
 
