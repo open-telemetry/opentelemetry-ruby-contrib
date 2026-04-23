@@ -33,12 +33,12 @@ describe OpenTelemetry::Instrumentation::Faraday do
 
   describe 'present' do
     it 'when faraday gem is installed' do
-      assert instrumentation.present?
+      assert_predicate instrumentation, :present?
     end
 
     it 'when Faraday is not defined' do
       hide_const('Faraday')
-      refute instrumentation.present?
+      refute_predicate instrumentation, :present?
     end
   end
 
