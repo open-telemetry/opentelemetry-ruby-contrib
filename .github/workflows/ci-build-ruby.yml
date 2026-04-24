@@ -96,22 +96,22 @@ jobs:
           bundle install --jobs 4 --retry 3
 
           # Conditionally install gem deps
-          if [ "${{ matrix.gem }}" = "Everything" ]; then
+          if [ "${{ matrix.gem }}" == "Everything" ]; then
             bundle exec rake install
           fi
-        working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
       - name: YARD
         shell: bash
         run: |
           # 📄 Yard Docs 📄
           bundle exec rake yard
-        working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
       - name: Build Gem
         shell: bash
         run: |
           # 📦 Build Gem 📦
           bundle exec rake build
-        working-directory: "${{ steps.setup.outputs.gem_dir || '' }}"
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
   verify:
     runs-on: ubuntu-24.04
@@ -123,7 +123,7 @@ jobs:
       - name: Count builds
         run: |
           if [ "${{ needs.analyze.outputs.gems }}" = "[]" ]; then
-            echo "❌ No gems selected — build matrix was empty."
+            echo "::error:: ❌ No gems selected — build matrix was empty."
             exit 1
           fi
           gems='${{ needs.analyze.outputs.gems }}'
@@ -133,11 +133,11 @@ jobs:
       - name: Check build results
         run: |
           if [ "${{ needs.build.result }}" = "skipped" ]; then
-            echo "❌ Build job was skipped — no builds executed."
+            echo "::error:: Build job was skipped — no builds executed."
             exit 1
           fi
           if [ "${{ needs.build.result }}" != "success" ]; then
-            echo "❌ One or more builds failed."
+            echo "::error:: ❌ One or more builds failed."
             exit 1
           fi
-          echo "✅ All builds ran and passed."
+          echo "::notice:: ✅ All builds ran and passed."
