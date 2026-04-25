@@ -101,6 +101,40 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Handlers::Perform do
   end
 
   describe 'attributes' do
+    describe 'performance metrics' do
+      it 'records allocations on the process span' do
+        TestJob.perform_now
+
+        _(process_span.attributes['messaging.active_job.job.allocations']).must_be :>, 0
+      end
+
+      it 'records cpu_time on the process span' do
+        TestJob.perform_now
+
+        _(process_span.attributes['messaging.active_job.job.cpu_time']).must_be :>=, 0.0
+      end
+
+      it 'records idle_time on the process span' do
+        TestJob.perform_now
+
+        _(process_span.attributes['messaging.active_job.job.idle_time']).must_be :>=, 0.0
+      end
+
+      it 'records gc_time on the process span' do
+        TestJob.perform_now
+
+        _(process_span.attributes['messaging.active_job.job.gc_time']).must_be :>=, 0.0
+      end
+
+      it 'does not record performance metrics on the publish span' do
+        TestJob.perform_later
+
+        %w[allocations cpu_time idle_time gc_time].each do |metric|
+          _(publish_span.attributes["messaging.active_job.job.#{metric}"]).must_be_nil
+        end
+      end
+    end
+
     describe 'active_job.priority' do
       it 'is unset for unprioritized jobs' do
         TestJob.perform_later
