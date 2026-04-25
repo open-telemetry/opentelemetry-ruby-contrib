@@ -39,6 +39,15 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::PersistenceClass
       _(create_span_event.attributes['exception.type']).must_equal('ActiveModel::UnknownAttributeError')
       _(create_span_event.attributes['exception.message']).must_include('unknown attribute \'attreeboot\' for User.')
     end
+
+    it 'does not add an exception event if it raises a handled validation error' do
+      _(-> { User.create!(name: 'not otel') }).must_raise(ActiveRecord::RecordInvalid)
+
+      create_span = spans.find { |s| s.name == 'User.create!' }
+      _(create_span).wont_be_nil
+      _(create_span.events).must_be_nil
+      _(create_span.status.code).must_equal(OpenTelemetry::Trace::Status::UNSET)
+    end
   end
 
   describe '.update' do
