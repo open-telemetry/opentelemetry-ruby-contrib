@@ -51,18 +51,49 @@ OpenTelemetry::Instrumentation::Trilogy.with_attributes('pizzatoppings' => 'mush
 end
 ```
 
+## Configuration Options
+
+| Option | Default | Description |
+| ------ | ------- | ----------- |
+| `db_statement` | `:obfuscate` | Controls how SQL queries appear in spans. `:obfuscate` replaces literal values with `?`, `:include` records the raw SQL, `:omit` excludes the attribute entirely. |
+| `obfuscation_limit` | `2000` | Maximum length of the obfuscated SQL statement. Statements exceeding this limit are truncated. |
+| `peer_service` | `nil` | Deprecated with no replacement. Sets the `peer.service` attribute on spans (old semantic conventions only). |
+| `propagator` | `'none'` | Propagator for injecting trace context into SQL comments. `'none'` disables propagation, `'tracecontext'` uses W3C Trace Context, `'vitess'` uses Vitess-style propagation (requires `opentelemetry-propagator-vitess` gem). |
+| `record_exception` | `true` | Records exceptions as span events when an error occurs. |
+| `span_name` | `:statement_type` | Controls span naming (old semantic conventions only). `:statement_type` uses the SQL operation (e.g., `SELECT`), `:db_name` uses the database name, `:db_operation_and_name` combines both. |
+
 ## Semantic Conventions
 
-This instrumentation generally uses [Database semantic conventions](https://opentelemetry.io/docs/specs/semconv/database/database-spans/).
+This instrumentation generally uses [Database semantic conventions](https://opentelemetry.io/docs/specs/semconv/database/database-spans/). See the [Database semantic convention stability](#database-semantic-convention-stability) section for how to switch between stable and old conventions.
 
-| Attribute Name | Type | Notes |
-| - | - | - |
-| `db.instance.id` | String | The name of the DB host executing the query e.g. `SELECT @@hostname` |
-| `db.name` | String | The name of the database from connection_options |
-| `db.statement` | String | SQL statement being executed |
-| `db.user` | String | The username from connection_options |
-| `db.system` | String | `mysql` |
-| `net.peer.name` | String | The name of the remote host from connection_options |
+| Stable Attribute Name | Old Attribute Name | Type | Notes |
+| - | - | - | - |
+| `db.namespace` | `db.name` | String | Database name from connection_options |
+| `db.query.text` | `db.statement` | String | The database query being executed; set according to the `db_statement` config option |
+| `db.response.status_code` | — | String | The Trilogy error code, if available |
+| `db.system.name` | `db.system` | String | DBMS product identifier; always `mysql` |
+| `error.type` | — | String | The exception class name when the operation fails |
+| `server.address` | `net.peer.name` | String | Database host from connection_options |
+| `server.port` | — | Integer | Database port from connection_options |
+| — | `db.instance.id` | String | Connected host, e.g. result of `SELECT @@hostname` |
+| — | `db.user` | String | Database username from connection_options |
+| — | `peer.service` | String | Configured via the `peer_service` config option |
+
+## Database semantic convention stability
+
+In the OpenTelemetry ecosystem, database semantic conventions have now reached a stable state. However, the initial Trilogy instrumentation was introduced before this stability was achieved, which resulted in database attributes being based on an older version of the semantic conventions.
+
+To facilitate the migration to stable semantic conventions, you can use the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable. This variable allows you to opt-in to the new stable conventions, ensuring compatibility and future-proofing your instrumentation.
+
+When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
+
+- `database` - Emits the stable database and networking conventions and ceases emitting the old conventions previously emitted by the instrumentation.
+- `database/dup` - Emits both the old and stable database and networking conventions, enabling a phased rollout of the stable semantic conventions.
+- Default behavior (in the absence of either value) is to continue emitting the old database and networking conventions the instrumentation previously emitted.
+
+During the transition from old to stable conventions, Trilogy instrumentation code comes in three patch versions: `dup`, `old`, and `stable`. These versions are identical except for the attributes they send. Any changes to Trilogy instrumentation should consider all three patches.
+
+For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/).
 
 ## How can I get involved?
 
