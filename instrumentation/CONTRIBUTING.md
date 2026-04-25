@@ -262,19 +262,13 @@ jobs:
 
 #### JRuby Compatibility
 
-If your gem is incompatible with `JRuby`, you can exclude it from the matrix by adding an entry to the `/.github/workflows/ci-instrumentation-full.yml` file under `jobs/instrumentation/steps/[name="JRuby Filter"]`:
+If your gem is incompatible with `JRuby`, you can exclude it from the matrix by ensuring the gem folder contains a `.github-ci.yml` file which specifies the gem specific environment variables.
+The key for unsupported interpreters is `unsupported_interpreters` and the value is to contain jruby,
+a complete example of the file is below.
 
 ```yaml
-- name: "JRuby Filter"
-  id: jruby_skip
-  shell: bash
-  run: |
-    echo "skip=false" >> $GITHUB_OUTPUT
-    [[ "${{ matrix.gem }}" == "action_pack"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-    # ...
-    [[ "${{ matrix.gem }}" == "werewolf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-    # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
-    true
+env:
+  unsupported_interpreters: jruby
 ```
 
 ### External service instrumentations
