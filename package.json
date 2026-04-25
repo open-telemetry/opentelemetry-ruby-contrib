@@ -14,6 +14,7 @@
     "check:source": "npm run check:source:ruby",
     "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Migration,Minitest,Performance,Rake,RSpec,Security",
     "check:spelling": "cspell -c .cspell.yml .",
+    "test:renovate:dryrun": "renovate --platform=local",
     "write": "npm run write:lint && npm run write:format && npm run write:source:ruby",
     "write:format": "npm run write:format:ruby && prettier . --write",
     "write:format:json": "prettier **/*.json --write",
