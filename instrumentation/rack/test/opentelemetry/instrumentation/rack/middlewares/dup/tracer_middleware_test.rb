@@ -415,4 +415,20 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::TracerMiddlewar
       _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
     end
   end
+
+  describe 'when SDK is disabled' do
+    let(:disabled_rack_builder) { Rack::Builder.new }
+
+    before do
+      instrumentation.instance_variable_set(:@installed, false)
+      described_class.send(:clear_cached_config)
+      disabled_rack_builder.run app
+      disabled_rack_builder.use described_class
+    end
+
+    it 'handles requests without raising an error' do
+      response = Rack::MockRequest.new(disabled_rack_builder).get('/ping', env)
+      _(response.status).must_equal 200
+    end
+  end
 end

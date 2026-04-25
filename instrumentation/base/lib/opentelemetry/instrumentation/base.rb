@@ -201,9 +201,9 @@ module OpenTelemetry
         @install_blk = install_blk
         @present_blk = present_blk
         @compatible_blk = compatible_blk
-        @config = {}
-        @installed = false
         @options = options
+        @config = config_options({})
+        @installed = false
         @tracer = OpenTelemetry::Trace::Tracer.new
       end
       # rubocop:enable Metrics/ParameterLists

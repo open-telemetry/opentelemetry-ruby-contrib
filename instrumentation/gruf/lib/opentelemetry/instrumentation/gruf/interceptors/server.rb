@@ -10,7 +10,7 @@ module OpenTelemetry
       module Interceptors
         class Server < ::Gruf::Interceptors::ServerInterceptor
           def call
-            return yield if instrumentation_config.empty?
+            return yield unless Gruf::Instrumentation.instance.installed?
 
             method = request.method_name
 
