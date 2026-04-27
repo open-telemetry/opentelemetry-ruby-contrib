@@ -25,9 +25,9 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
+        uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
         with:
-          ruby-version: "4.0.2"
+          ruby-version: "4.0.3"
           bundler-cache: true
 
       - name: Create otelbot app token
@@ -40,8 +40,10 @@ jobs:
       - name: Open release pull request
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          TARGET_BRANCH: ${{ github.ref }}
+          RELEASE_NAMES: ${{ github.event.inputs.names }}
         run: |
           bundle exec toys release request --yes --verbose \
-            "--target-branch=${{ github.ref }}" \
-            ${{ github.event.inputs.names }} \
+            "--target-branch=$TARGET_BRANCH" \
+            $RELEASE_NAMES \
             < /dev/null

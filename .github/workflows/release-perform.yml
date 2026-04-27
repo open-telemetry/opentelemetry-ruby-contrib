@@ -31,17 +31,21 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install Ruby
-        uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
+        uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # v1.305.0
         with:
-          ruby-version: "4.0.2"
+          ruby-version: "4.0.3"
           bundler-cache: true
       - name: Perform release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+          RELEASE_REF: ${{ github.sha }}
+          RELEASE_FLAGS: ${{ github.event.inputs.flags }}
+          RELEASE_NAME: ${{ github.event.inputs.name }}
+          RELEASE_VERSION: ${{ github.event.inputs.version }}
         run: |
           bundle exec toys release perform --yes --verbose \
-            "--release-ref=${{ github.sha }}" \
-            ${{ github.event.inputs.flags }} \
-            "${{ github.event.inputs.name }}" "${{ github.event.inputs.version }}" \
+            "--release-ref=$RELEASE_REF" \
+            $RELEASE_FLAGS \
+            "$RELEASE_NAME" "$RELEASE_VERSION" \
             < /dev/null
