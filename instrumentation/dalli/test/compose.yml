@@ -1,0 +1,2 @@
+include:
+  - ../../../.docker/infra/memcached/docker-compose.yml

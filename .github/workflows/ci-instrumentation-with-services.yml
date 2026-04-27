@@ -21,6 +21,7 @@ on:
       - "instrumentation/ruby_kafka/**"
       - "instrumentation/sidekiq/**"
       - "instrumentation/trilogy/**"
+      - ".docker/infra/**"
       - ".github/workflows/ci-instrumentation-with-services.yml"
       - ".github/actions/**"
       - "Rakefile"
@@ -41,11 +42,6 @@ concurrency:
   cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
-  check:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    runs-on: ubuntu-24.04
-    steps:
-      - run: echo "Repository check passed"
   instrumentation_with_services:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
@@ -54,145 +50,20 @@ jobs:
         gem:
           - dalli
           - mongo
-        os:
-          - ubuntu-24.04
-    name: other / ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          build: true
-    services:
-      memcached:
-        image: memcached:1.6.41-alpine@sha256:65c80b311a9601ef5ca8af3814e5cd06a9c4277ea139d80bd53da6b4d39eb46e
-        ports:
-          - 11211:11211
-      mongodb:
-        image: mongo:6.0.27@sha256:03cda579c8caad6573cb98c2b3d5ff5ead452a6450561129b89595b4b9c18de2
-        ports:
-          - 27017:27017
-
-  instrumentation_mysql:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
+          - bunny
+          - pg
+          - que
+          - redis
+          - resque
+          - sidekiq
           - mysql2
           - trilogy
-        os:
-          - ubuntu-24.04
-    name: mysql / ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          build: true
-    services:
-      mysql:
-        image: mysql:8.0.31@sha256:3d7ae561cf6095f6aca8eb7830e1d14734227b1fb4748092f2be2cfbccf7d614
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3 -e MYSQL_DATABASE=mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_PASSWORD=mysql -e MYSQL_USER=mysql -p 3306:3306 --entrypoint sh mysql:8.0.31@sha256:3d7ae561cf6095f6aca8eb7830e1d14734227b1fb4748092f2be2cfbccf7d614 -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
-
-  instrumentation_kafka:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
           - racecar
           - rdkafka
           - ruby_kafka
         os:
           - ubuntu-24.04
-    name: kafka / ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          build: true
-    services:
-      kafka:
-        image: confluentinc/cp-kafka:8.1.1@sha256:d20bd62f01826c454e88530efc6d73654cb4697182f37206742b96c7b947236e
-        ports:
-          - 9093:9093
-          - 29092:29092
-        env:
-          KAFKA_BROKER_ID: 1
-          KAFKA_NODE_ID: 1
-          KAFKA_PROCESS_ROLES: broker,controller
-          KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
-          KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
-          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092
-          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
-          KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-          KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-          KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
-          KAFKA_CLUSTER_ID: "otelabcdefghijklmnruby"
-        options: >-
-          --health-cmd="kafka-broker-api-versions --bootstrap-server=localhost:29092"
-          --health-interval=10s
-          --health-timeout=10s
-          --health-retries=10
-          --health-start-period=30s
-
-  instrumentation_redis:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - redis
-          - resque
-          - sidekiq
-        os:
-          - ubuntu-24.04
-    name: redis / ${{ matrix.gem }} / ${{ matrix.os }}
+    name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -212,6 +83,9 @@ jobs:
           else
             echo "No github ci file found in ($dir). Skipping."
           fi
+      - name: Start Docker Service/s
+        run: docker compose -f test/compose.yml up -d --wait
+        working-directory: "${{ steps.inputs.outputs.gem_dir }}"
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -232,95 +106,3 @@ jobs:
           yard: true
           build: true
           minimum_coverage: ${{ env.minimum_coverage }}
-    services:
-      redis:
-        image: redis:8.6.2@sha256:d372cf7cd5ab47fb6ad1a73c45ea1104d6f3fa11cc833ff0b3ac997890b4ccec
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli -a \"$REDIS_PASSWORD\" ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-          -e REDIS_PASSWORD=passw0rd
-          --entrypoint sh redis:8.6.2@sha256:d372cf7cd5ab47fb6ad1a73c45ea1104d6f3fa11cc833ff0b3ac997890b4ccec -c "exec redis-server --requirepass \"$REDIS_PASSWORD\""
-        env:
-          REDIS_PASSWORD: "passw0rd"
-
-  instrumentation_postgresql:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - pg
-          - que
-        os:
-          - ubuntu-24.04
-    name: postgresql / ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          build: true
-    services:
-      postgres:
-        image: postgres:14.22@sha256:e493b5ef86b5871b26d58203806738f4b3bed1e4ca5eb83a987d917e6b8f7bb7
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=5s --health-timeout=2s --health-retries=3
-        volumes:
-          - "/var/run/postgresql:/var/run/postgresql"
-
-  instrumentation_rabbitmq:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - bunny
-        os:
-          - ubuntu-24.04
-    name: rabbitmq / ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          build: true
-    services:
-      rabbitmq:
-        image: rabbitmq:4.2.5-alpine@sha256:d4a3806070111cc69130a6542aa4049b612789852ef11fc3862abc94631b2572
-        ports:
-          - "5672:5672"

@@ -4,6 +4,9 @@ services:
     ports:
       - "9093:9093"
       - "29092:29092"
+    depends_on:
+      zookeeper:
+        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_NODE_ID: 1
