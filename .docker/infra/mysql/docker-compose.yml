@@ -11,3 +11,9 @@ services:
       - init:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
+    command: ["mysqld", "--default-authentication-plugin=mysql_native_password"]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -uroot -proot"]
+      interval: 5s
+      timeout: 2s
+      retries: 3

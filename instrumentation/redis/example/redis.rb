@@ -12,7 +12,7 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Redis'
 end
 
-port = ENV['TEST_REDIS_PORT'] || '16379'
+port = ENV['TEST_REDIS_PORT'] || '6379'
 password = ENV['REDIS_PASSWORD'] || 'passw0rd'
 redis = Redis.new(port: port, password: password)
 redis.set('mykey', 'hello world')
