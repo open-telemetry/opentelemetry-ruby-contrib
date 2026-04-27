@@ -85,7 +85,6 @@ words:
   - traceparent
   - traceresponse
   - tracestate
-
   - linkspector
   - sarif
   - bigdecimal
