@@ -229,13 +229,71 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
     describe 'DynamoDB' do
       let(:client) { Aws::DynamoDB::Client.new(telemetry_provider: otel_provider, stub_responses: true) }
       let(:client_span) { spans.find { |s| s.name == 'DynamoDB.ListTables' } }
+      let(:describe_table_span) { spans.find { |s| s.name == 'DynamoDB.DescribeTable' } }
 
-      it 'creates a span with dynamodb-specific attribute' do
-        skip unless TestHelper.telemetry_plugin?('DynamoDB')
+      describe 'old semconv' do
+        before do
+          skip unless TestHelper.telemetry_plugin?('DynamoDB')
+          skip unless TestHelper.semconv_old?
+        end
 
-        client.list_tables
+        it 'creates a span with old dynamodb-specific attributes' do
+          client.list_tables
 
-        _(client_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
+          _(client_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
+          _(client_span.attributes).wont_include('db.system.name')
+          _(client_span.attributes).wont_include('db.operation.name')
+          _(client_span.attributes).wont_include('db.collection.name')
+        end
+      end
+
+      describe 'stable semconv' do
+        before do
+          skip unless TestHelper.telemetry_plugin?('DynamoDB')
+          skip unless TestHelper.semconv_stable?
+        end
+
+        it 'creates a span with stable dynamodb-specific attributes' do
+          client.list_tables
+
+          _(client_span.attributes['db.system.name']).must_equal('dynamodb')
+          _(client_span.attributes['db.operation.name']).must_equal('ListTables')
+          _(client_span.attributes).wont_include(otel_semantic::DB_SYSTEM)
+          _(client_span.attributes).wont_include('db.collection.name')
+        end
+
+        it 'includes db.collection.name when table_name is present' do
+          client.describe_table(table_name: 'TestTable')
+
+          _(describe_table_span.attributes['db.system.name']).must_equal('dynamodb')
+          _(describe_table_span.attributes['db.operation.name']).must_equal('DescribeTable')
+          _(describe_table_span.attributes['db.collection.name']).must_equal('TestTable')
+        end
+      end
+
+      describe 'dup semconv' do
+        before do
+          skip unless TestHelper.telemetry_plugin?('DynamoDB')
+          skip unless TestHelper.semconv_dup?
+        end
+
+        it 'creates a span with both old and stable dynamodb-specific attributes' do
+          client.list_tables
+
+          _(client_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
+          _(client_span.attributes['db.system.name']).must_equal('dynamodb')
+          _(client_span.attributes['db.operation.name']).must_equal('ListTables')
+          _(client_span.attributes).wont_include('db.collection.name')
+        end
+
+        it 'includes db.collection.name when table_name is present' do
+          client.describe_table(table_name: 'TestTable')
+
+          _(describe_table_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
+          _(describe_table_span.attributes['db.system.name']).must_equal('dynamodb')
+          _(describe_table_span.attributes['db.operation.name']).must_equal('DescribeTable')
+          _(describe_table_span.attributes['db.collection.name']).must_equal('TestTable')
+        end
       end
     end
   end
