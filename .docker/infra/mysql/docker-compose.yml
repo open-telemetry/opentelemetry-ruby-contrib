@@ -1,17 +1,16 @@
 services:
   mysql:
     image: mysql:8.4.0@sha256:dab7049abafe3a0e12cbe5e49050cf149881c0cd9665c289e5808b9dad39c9e0
-    command: mysqld --mysql-native-password=ON
     environment:
       - MYSQL_DATABASE=mysql
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_PASSWORD=mysql
       - MYSQL_USER=mysql
     volumes:
-      - init:/docker-entrypoint-initdb.d
+      - ./certs:/etc/mysql/certs:ro
+      - ./conf.d:/etc/mysql/conf.d:ro
     ports:
       - "3306:3306"
-    command: ["mysqld", "--default-authentication-plugin=mysql_native_password"]
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -uroot -proot"]
       interval: 5s

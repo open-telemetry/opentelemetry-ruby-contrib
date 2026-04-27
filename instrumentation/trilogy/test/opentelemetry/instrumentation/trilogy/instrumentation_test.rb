@@ -21,7 +21,8 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       username: username,
       password: password,
       database: database,
-      ssl: false
+      ssl_mode: "VERIFY_CA",
+      sslca: "./certs/ca.pem"
     }
   end
   let(:client) do
