@@ -1,2 +1,2 @@
 include:
-  - ../../../.docker/infra/kafka/docker-compose.yml
+  - ../.docker/kafka/docker-compose.yml
