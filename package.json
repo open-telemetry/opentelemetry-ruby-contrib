@@ -5,14 +5,14 @@
     "check:format:json": "prettier **/*.json --check",
     "check:format:markdown": "prettier **/*.md --check",
     "check:format:ruby": "rubocop --only Layout",
-    "check:links": "linkspector check",
+    "check:links": "node bin/link-check.cjs",
     "check:lint": "npm run check:lint:json && npm run check:lint:markdown && npm run check:lint:ruby",
     "check:lint:json": "uname >/dev/null 2>&1 && jsonlint --config .jsonlintrc.yml || true",
     "check:lint:markdown": "markdownlint-cli2 '**/*.md'",
     "check:lint:renovate": "renovate-config-validator",
     "check:lint:ruby": "rubocop --only Lint,Naming,Style",
     "check:source": "npm run check:source:ruby",
-    "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Migration,Security",
+    "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Migration,Minitest,Performance,Rake,RSpec,Security",
     "check:spelling": "cspell -c .cspell.yml .",
     "write": "npm run write:lint && npm run write:format && npm run write:source:ruby",
     "write:format": "npm run write:format:ruby && prettier . --write",
@@ -27,11 +27,11 @@
     "write:source:ruby": "npm run check:source:ruby -- --autocorrect-all"
   },
   "devDependencies": {
-    "@umbrelladocs/linkspector": "0.4.8",
-    "cspell": "9.7.0",
+    "@umbrelladocs/linkspector": "0.5.2",
+    "cspell": "10.0.0",
     "@prantlf/jsonlint": "17.0.1",
-    "markdownlint-cli2": "0.22.0",
-    "prettier": "3.8.1",
-    "renovate": "43.104.6"
+    "markdownlint-cli2": "0.22.1",
+    "prettier": "3.8.3",
+    "renovate": "43.140.0"
   }
 }

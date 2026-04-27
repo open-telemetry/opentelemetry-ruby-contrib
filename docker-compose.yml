@@ -135,11 +135,6 @@ services:
       - postgres
     tmpfs: !reset []
     working_dir: /app/instrumentation/pg/
-    volumes:
-      - .:/app:cached
-      - bundle:/bundle
-      - postgres_socket:/tmp
-      - postgres_socket:/var/run/postgresql
 
   ex-instrumentation-net-http:
     extends:
@@ -210,7 +205,7 @@ services:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.149.0@sha256:dd56aed607fd02f8ac01dddb27a859c0c2cc750539abce927803778fafc736ae
+    image: otel/opentelemetry-collector:0.150.1@sha256:618f7867e49fdb173d9b46d535b01f82254b0b14beac6ab1f6f2eb8cf62c5d42
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml
@@ -222,5 +217,3 @@ services:
 
 volumes:
   bundle:
-  redis_data:
-  postgres_socket:
