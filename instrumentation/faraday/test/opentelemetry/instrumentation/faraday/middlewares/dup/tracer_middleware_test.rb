@@ -280,6 +280,27 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Dup::TracerMiddle
       end
     end
 
+    describe 'when enable_internal_instrumentation is true' do
+      let(:client) do
+        Faraday.new('http://example.com') do |builder|
+          builder.adapter(:test) do |stub|
+            stub.get('/success') { |_| [200, {}, 'OK'] }
+          end
+        end
+      end
+
+      it 'traces the request without untraced wrapper' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(enable_internal_instrumentation: true)
+
+        client.get('/success')
+
+        _(span.name).must_equal 'GET'
+        _(span.attributes['http.request.method']).must_equal 'GET'
+        _(span.attributes['http.response.status_code']).must_equal 200
+      end
+    end
+
     describe 'url.template in span name' do
       let(:client) do
         Faraday.new('http://example.com') do |builder|
