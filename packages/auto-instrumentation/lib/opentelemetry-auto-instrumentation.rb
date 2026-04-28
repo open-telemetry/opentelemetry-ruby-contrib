@@ -8,71 +8,64 @@
 module OTelBundlerPatch
   # Nested module to handle OpenTelemetry initialization logic
   module OTelInitializer
+    @_otel_mutex = Mutex.new
     @_otel_initialized = false
 
-    OTEL_INSTRUMENTATION_MAP = {
-      'action_mailer' => 'OpenTelemetry::Instrumentation::ActionMailer',
-      'action_pack' => 'OpenTelemetry::Instrumentation::ActionPack',
-      'action_view' => 'OpenTelemetry::Instrumentation::ActionView',
-      'active_job' => 'OpenTelemetry::Instrumentation::ActiveJob',
-      'active_model_serializers' => 'OpenTelemetry::Instrumentation::ActiveModelSerializers',
-      'active_record' => 'OpenTelemetry::Instrumentation::ActiveRecord',
-      'active_storage' => 'OpenTelemetry::Instrumentation::ActiveStorage',
-      'active_support' => 'OpenTelemetry::Instrumentation::ActiveSupport',
-      'anthropic' => 'OpenTelemetry::Instrumentation::Anthropic',
-      'aws_lambda' => 'OpenTelemetry::Instrumentation::AwsLambda',
-      'aws_sdk' => 'OpenTelemetry::Instrumentation::AwsSdk',
-      'bunny' => 'OpenTelemetry::Instrumentation::Bunny',
-      'concurrent_ruby' => 'OpenTelemetry::Instrumentation::ConcurrentRuby',
-      'dalli' => 'OpenTelemetry::Instrumentation::Dalli',
-      'delayed_job' => 'OpenTelemetry::Instrumentation::DelayedJob',
-      'ethon' => 'OpenTelemetry::Instrumentation::Ethon',
-      'excon' => 'OpenTelemetry::Instrumentation::Excon',
-      'faraday' => 'OpenTelemetry::Instrumentation::Faraday',
-      'grape' => 'OpenTelemetry::Instrumentation::Grape',
-      'graphql' => 'OpenTelemetry::Instrumentation::GraphQL',
-      'grpc' => 'OpenTelemetry::Instrumentation::Grpc',
-      'gruf' => 'OpenTelemetry::Instrumentation::Gruf',
-      'http' => 'OpenTelemetry::Instrumentation::HTTP',
-      'http_client' => 'OpenTelemetry::Instrumentation::HttpClient',
-      'httpx' => 'OpenTelemetry::Instrumentation::HTTPX',
-      'koala' => 'OpenTelemetry::Instrumentation::Koala',
-      'lmdb' => 'OpenTelemetry::Instrumentation::LMDB',
-      'mongo' => 'OpenTelemetry::Instrumentation::Mongo',
-      'mysql2' => 'OpenTelemetry::Instrumentation::Mysql2',
-      'net_http' => 'OpenTelemetry::Instrumentation::Net::HTTP',
-      'pg' => 'OpenTelemetry::Instrumentation::PG',
-      'que' => 'OpenTelemetry::Instrumentation::Que',
-      'racecar' => 'OpenTelemetry::Instrumentation::Racecar',
-      'rack' => 'OpenTelemetry::Instrumentation::Rack',
-      'rails' => 'OpenTelemetry::Instrumentation::Rails',
-      'rake' => 'OpenTelemetry::Instrumentation::Rake',
-      'rdkafka' => 'OpenTelemetry::Instrumentation::Rdkafka',
-      'redis' => 'OpenTelemetry::Instrumentation::Redis',
-      'resque' => 'OpenTelemetry::Instrumentation::Resque',
-      'restclient' => 'OpenTelemetry::Instrumentation::RestClient',
-      'ruby_kafka' => 'OpenTelemetry::Instrumentation::RubyKafka',
-      'sidekiq' => 'OpenTelemetry::Instrumentation::Sidekiq',
-      'sinatra' => 'OpenTelemetry::Instrumentation::Sinatra',
-      'trilogy' => 'OpenTelemetry::Instrumentation::Trilogy'
-    }.freeze
-    private_constant :OTEL_INSTRUMENTATION_MAP
+    def self._otel_registry_instrumentation_classes
+      registry = ::OpenTelemetry::Instrumentation.registry
+
+      # The registry only exposes lookup/install methods publicly, so enumerate
+      # the internal collection to derive supported instrumentation names.
+      registry.instance_variable_get(:@instrumentation) || []
+    rescue StandardError
+      []
+    end
+
+    def self._otel_snake_case(value)
+      value
+        .gsub(/([A-Z]+)([A-Z][a-z])/, '\\1_\\2')
+        .gsub(/([a-z\\d])([A-Z])/, '\\1_\\2')
+        .tr('-', '_')
+        .downcase
+    end
+
+    def self._otel_registry_aliases_for(instrumentation_name)
+      suffix = instrumentation_name.delete_prefix('OpenTelemetry::Instrumentation::')
+      segment_variants = suffix.split('::').map do |segment|
+        snake = _otel_snake_case(segment)
+        compact = segment.downcase
+        [snake, compact].uniq
+      end
+
+      segment_variants.reduce(['']) do |aliases, variants|
+        aliases.flat_map do |alias_prefix|
+          variants.map { |variant| alias_prefix.empty? ? variant : "#{alias_prefix}_#{variant}" }
+        end
+      end
+    end
+
+    def self._otel_registry_lookup
+      @_otel_registry_lookup ||= _otel_registry_instrumentation_classes.each_with_object({}) do |instrumentation_class, lookup|
+        instrumentation_name = instrumentation_class.instance.name
+        _otel_registry_aliases_for(instrumentation_name).each do |alias_name|
+          lookup[alias_name] ||= instrumentation_name
+        end
+      rescue StandardError
+        next
+      end
+    end
 
     def self._otel_detect_resource_from_env
-      env = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s
-      additional_resource = ::OpenTelemetry::SDK::Resources::Resource.create({})
-
       resource_map = {
         'container' => (defined?(::OpenTelemetry::Resource::Detector::Container) ? ::OpenTelemetry::Resource::Detector::Container : nil),
         'azure' => (defined?(::OpenTelemetry::Resource::Detector::Azure) ? ::OpenTelemetry::Resource::Detector::Azure : nil),
         'aws' => (defined?(::OpenTelemetry::Resource::Detector::AWS) ? ::OpenTelemetry::Resource::Detector::AWS : nil)
       }
 
-      env.split(',').each do |detector|
-        additional_resource = additional_resource.merge(resource_map[detector].detect) if resource_map[detector]
+      ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.split(',').reduce(::OpenTelemetry::SDK::Resources::Resource.create({})) do |resource, detector|
+        detector_class = resource_map[detector]
+        detector_class ? resource.merge(detector_class.detect) : resource
       end
-
-      additional_resource
     end
 
     def self._otel_distro_resource
@@ -89,9 +82,11 @@ module OTelBundlerPatch
 
       return [] if env.strip.empty?
 
+      instrumentation_lookup = _otel_registry_lookup
+
       env.split(',').filter_map do |instrumentation|
         normalized = instrumentation.strip.downcase
-        value = OTEL_INSTRUMENTATION_MAP[normalized]
+        value = instrumentation_lookup[normalized]
         warn "[OpenTelemetry] WARNING: Unknown instrumentation '#{instrumentation.strip}'" if value.nil? && ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
         value
       end
@@ -116,32 +111,35 @@ module OTelBundlerPatch
     end
 
     def self._otel_require_otel
-      return if @_otel_initialized
+      @_otel_mutex.synchronize do
+        return if @_otel_initialized
 
-      @_otel_initialized = true
+        @_otel_initialized = true
 
-      begin
-        _otel_check_for_bundled_otel_gems
+        begin
+          _otel_check_for_bundled_otel_gems
 
-        required_instrumentation = _otel_determine_enabled_instrumentation
+          required_instrumentation = _otel_determine_enabled_instrumentation
 
-        resource = _otel_detect_resource_from_env
-        resource = resource.merge(_otel_distro_resource)
+          resource = _otel_detect_resource_from_env
+          resource = resource.merge(_otel_distro_resource)
 
-        OpenTelemetry::SDK.configure do |c|
-          c.resource = resource
-          if required_instrumentation.empty?
-            c.use_all
-          else
-            required_instrumentation.each do |instrumentation|
-              c.use instrumentation
+          OpenTelemetry::SDK.configure do |c|
+            c.resource = resource
+            if required_instrumentation.empty?
+              c.use_all
+            else
+              required_instrumentation.each do |instrumentation|
+                c.use instrumentation
+              end
             end
           end
-        end
 
-        OpenTelemetry.logger.info { 'Auto-instrumentation initialized' }
-      rescue StandardError => e
-        warn "Auto-instrumentation failed to initialize. Error: #{e.message}"
+          OpenTelemetry.logger.info { 'Auto-instrumentation initialized' }
+        rescue StandardError => e
+          @_otel_initialized = false
+          warn "Auto-instrumentation failed to initialize. Error: #{e.message}"
+        end
       end
     end
   end
@@ -158,7 +156,7 @@ require 'bundler'
 # If requires different gem path to load gem, set env OTEL_RUBY_ADDITIONAL_GEM_PATH
 gem_path = ENV['OTEL_RUBY_ADDITIONAL_GEM_PATH'] || '/otel-auto-instrumentation-ruby'
 gem_path = Gem.dir unless Dir.exist?(gem_path)
-$stdout.puts "Loading the gem path from #{gem_path}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
+warn "Loading the gem path from #{gem_path}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
 
 # Load OpenTelemetry components and their dependencies
 # googleapis-common-protos-types and google-protobuf are dependencies for otlp exporters
@@ -170,7 +168,7 @@ end
 
 # unshift file_path add opentelemetry component at the top of $LOAD_PATH
 loaded_library_file_path.each { |file_path| $LOAD_PATH.unshift("#{file_path}/lib") }
-$stdout.puts "$LOAD_PATH after unshift: #{$LOAD_PATH.join(',')}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
+warn "$LOAD_PATH after unshift: #{$LOAD_PATH.join(',')}" if ENV['OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG'] == 'true'
 
 # These are required for the prepend OTelBundlerPatch to fetch OpenTelemetry::SDK.configure
 require 'opentelemetry-sdk'
@@ -181,7 +179,7 @@ require 'opentelemetry-exporter-otlp-metrics'
 require 'opentelemetry-exporter-otlp-logs'
 require 'opentelemetry-instrumentation-all'
 
-resource_detectors = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s
+resource_detectors = ENV['OTEL_RUBY_RESOURCE_DETECTORS'].to_s.split(',').map(&:strip)
 require 'opentelemetry-resource-detector-container' if resource_detectors.include?('container')
 require 'opentelemetry-resource-detector-azure' if resource_detectors.include?('azure')
 require 'opentelemetry-resource-detector-aws' if resource_detectors.include?('aws')
