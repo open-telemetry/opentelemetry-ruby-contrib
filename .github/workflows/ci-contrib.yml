@@ -63,7 +63,6 @@ jobs:
           gem: "opentelemetry-helpers-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
       - name: "Test JRuby"
         if: startsWith(matrix.os, 'ubuntu')
@@ -144,7 +143,6 @@ jobs:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
       - name: "Test JRuby"
         if: startsWith(matrix.os, 'ubuntu')
@@ -182,7 +180,6 @@ jobs:
           gem: "opentelemetry-processor-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
       - name: "Test JRuby"
         if: startsWith(matrix.os, 'ubuntu')
@@ -220,7 +217,6 @@ jobs:
           gem: "opentelemetry-sampler-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
       - name: "Test JRuby"
         if: startsWith(matrix.os, 'ubuntu')

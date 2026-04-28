@@ -1,0 +1,2 @@
+include:
+  - ../../../.docker/infra/mysql/docker-compose.yml
