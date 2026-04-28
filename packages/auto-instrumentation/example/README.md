@@ -62,6 +62,7 @@ bundle install
 OTEL_RUBY_REQUIRE_BUNDLER=false \
   OTEL_TRACES_EXPORTER=console \
   OTEL_METRICS_EXPORTER=console \
+  OTEL_METRIC_EXPORT_INTERVAL=5000 \
   OTEL_LOGS_EXPORTER=console \
   RUBYOPT="-r opentelemetry-auto-instrumentation" bundle exec rackup config.ru
 ```

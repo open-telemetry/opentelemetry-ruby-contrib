@@ -184,10 +184,20 @@ The following environment variables are specific to this gem (not standard OpenT
 | Environment Variable | Description | Example |
 | -------------------- | ----------- | ------- |
 | `OTEL_RUBY_REQUIRE_BUNDLER` | Set to `true` to automatically call `Bundler.require` during initialization. Required for frameworks that don't call it automatically (e.g., Sinatra). | `true` |
-| `OTEL_RUBY_RESOURCE_DETECTORS` | Comma-separated list of resource detectors. Supported: `container`, `azure`, `aws`. **Note:** The GCP detector is not included — its `google-cloud-env` dependency makes blocking HTTP requests to the GCP metadata server, causing timeouts in non-GCP environments. | `container,azure,aws` |
+| `OTEL_RUBY_RESOURCE_DETECTORS` | Comma-separated list of resource detectors. Supported: `container`, `azure`, `aws`. | `container,azure,aws` |
 | `OTEL_RUBY_ENABLED_INSTRUMENTATIONS` | Only load specific instrumentations (comma-separated). Omit to load all available. | `redis,mysql2,faraday` |
 | `OTEL_RUBY_ADDITIONAL_GEM_PATH` | Custom gem installation path for OpenTelemetry Operator environments. | `/custom/gem/path` |
+| `DISALLOWED_LIB_PATH` | Comma-separated list of non-OpenTelemetry helper gems to exclude from additional load-path injection. This filters the internal `ADDITIONAL_LIB_GEM_ALLOWLIST`. Supported values: `googleapis-common-protos-types`, `google-protobuf`. | `google-protobuf` |
 | `OTEL_RUBY_AUTO_INSTRUMENTATION_DEBUG` | Set to `true` for debug output during initialization. | `true` |
+
+### Additional Gem Allowlist
+
+The loader always injects OpenTelemetry gems from `OTEL_RUBY_ADDITIONAL_GEM_PATH` into `$LOAD_PATH`. For non-OpenTelemetry helper dependencies, it uses an internal allowlist:
+
+- `googleapis-common-protos-types`
+- `google-protobuf`
+
+This internal list is implemented as `ADDITIONAL_LIB_GEM_ALLOWLIST` in [lib/opentelemetry-auto-instrumentation.rb](lib/opentelemetry-auto-instrumentation.rb). Use `DISALLOWED_LIB_PATH` if you need to exclude one or more entries for compatibility reasons.
 
 ### Standard OpenTelemetry Environment Variables
 
@@ -228,7 +238,7 @@ RUBYOPT="-r faraday -r opentelemetry-auto-instrumentation" ruby application.rb
 
 ### Dependency Version Conflicts
 
-This gem loads OpenTelemetry components (including `google-protobuf` and `googleapis-common-protos-types`) directly into `$LOAD_PATH`. If your Gemfile pins different versions of these gems, you may encounter conflicts. Remove them from your Gemfile and let this gem manage them.
+This gem loads OpenTelemetry components and allowlisted helper dependencies (for example `google-protobuf` and `googleapis-common-protos-types`) directly into `$LOAD_PATH`. If your Gemfile pins different versions of these gems, you may encounter conflicts. Remove them from your Gemfile and let this gem manage them, or use `DISALLOWED_LIB_PATH` to exclude specific helper dependencies.
 
 ## Example
 

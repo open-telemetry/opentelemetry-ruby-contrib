@@ -10,6 +10,20 @@ require 'action_controller/railtie'
 require 'bundler'
 Bundler.require
 
+# NoOp meter for when OpenTelemetry is not available
+class NoOpCounter
+  def add(value, attributes: {})
+    # No-op implementation
+  end
+end
+
+# NoOp logger for when OpenTelemetry is not available
+class NoOpLogger
+  def on_emit(severity_text: nil, body: nil)
+    # No-op implementation
+  end
+end
+
 # MyApp
 class MyApp < Rails::Application
   config.secret_key_base = 'your_secret_key_here'
@@ -19,12 +33,17 @@ class MyApp < Rails::Application
   config.active_support.to_time_preserves_timezone = :zone
 
   # Share OpenTelemetry objects across the app through Rails config.
-  config.x.otel_meter = OpenTelemetry.meter_provider.meter('rails-example')
-  config.x.otel_request_counter = config.x.otel_meter.create_counter(
-    'http.request.count',
-    description: 'Counts the number of HTTP requests'
-  )
-  config.x.otel_logger = OpenTelemetry.logger_provider.logger(name: 'rails-example')
+  if defined?(OpenTelemetry)
+    config.x.otel_meter = OpenTelemetry.meter_provider.meter('rails-example')
+    config.x.otel_request_counter = config.x.otel_meter.create_counter(
+      'http.request.count',
+      description: 'Counts the number of HTTP requests'
+    )
+    config.x.otel_logger = OpenTelemetry.logger_provider.logger(name: 'rails-example')
+  else
+    config.x.otel_request_counter = NoOpCounter.new
+    config.x.otel_logger = NoOpLogger.new
+  end
 end
 
 # ApplicationController
