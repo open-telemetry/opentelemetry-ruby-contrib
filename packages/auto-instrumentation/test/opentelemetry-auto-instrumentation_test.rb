@@ -28,6 +28,8 @@ describe 'OpenTelemetry::AutoInstrumentation' do
     _(result[:resource_attributes]['service.name']).must_equal 'unknown_service'
     _(result[:resource_attributes]['telemetry.sdk.name']).must_equal 'opentelemetry'
     _(result[:resource_attributes]['telemetry.sdk.language']).must_equal 'ruby'
+    _(result[:resource_attributes]['telemetry.distro.name']).must_equal 'opentelemetry-ruby-instrumentation'
+    _(result[:resource_attributes]['telemetry.distro.version']).must_match(/^\d+\.\d+\.\d+/)
     _(result[:resource_attributes].key?('container.id')).must_equal false
     _(result[:instrumentation_names]).must_include 'OpenTelemetry::Instrumentation::Net::HTTP'
     _(result[:instrumentation_names]).must_include 'OpenTelemetry::Instrumentation::Rake'

@@ -75,6 +75,15 @@ module OTelBundlerPatch
       additional_resource
     end
 
+    def self._otel_distro_resource
+      ::OpenTelemetry::SDK::Resources::Resource.create(
+        {
+          'telemetry.distro.name' => 'opentelemetry-ruby-instrumentation',
+          'telemetry.distro.version' => '0.0.0'
+        }
+      )
+    end
+
     def self._otel_determine_enabled_instrumentation
       env = ENV['OTEL_RUBY_ENABLED_INSTRUMENTATIONS'].to_s
 
@@ -117,6 +126,7 @@ module OTelBundlerPatch
         required_instrumentation = _otel_determine_enabled_instrumentation
 
         resource = _otel_detect_resource_from_env
+        resource = resource.merge(_otel_distro_resource)
 
         OpenTelemetry::SDK.configure do |c|
           c.resource = resource
