@@ -62,6 +62,10 @@ instrumentation-active_support:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/active_support/**"
+instrumentation-all:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/all/**"
 instrumentation-anthropic:
   - changed-files:
       - any-glob-to-any-file:
