@@ -32,6 +32,11 @@
       separateMinorPatch: true,
     },
     {
+      description: "Seperate multiple minor updates so we gain visibility to what is in the queue",
+      matchDepNames: ["confluentinc/cp-kafka"],
+      separateMultipleMinor: true,
+    },
+    {
       description: "Group min ruby updates into a single update which needs to be approved via the dashboard.",
       groupName: "Min-Ruby-sdk",
       dependencyDashboardCategory: "Min Ruby Runtime",
@@ -77,7 +82,6 @@
       matchUpdateTypes: ["major", "minor"],
       matchDepNames: ["confluentinc/cp-kafka"],
       minimumReleaseAge: "240 days",
-      separateMultipleMinor: true,
     },
     {
       description: "Wait until current major mysql is EoL before updating",
