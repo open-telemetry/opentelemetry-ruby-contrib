@@ -182,5 +182,22 @@ describe OpenTelemetry::Instrumentation::HTTPX::Dup::Plugin do
 
       _(span.attributes['peer.service']).must_equal 'example:custom'
     end
+
+    it 'sets url.query attribute when query params present' do
+      stub_request(:get, 'http://example.com/search?q=foo').to_return(status: 200)
+      HTTPX.get('http://example.com/search?q=foo')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.attributes['url.query']).must_equal 'q=foo'
+      _(span.attributes['url.path']).must_equal '/search'
+    end
+
+    it 'sets server.port and net.peer.port attributes' do
+      HTTPX.get('http://example.com/success')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT]).must_equal 80
+    end
   end
 end

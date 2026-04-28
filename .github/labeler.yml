@@ -2,6 +2,7 @@ ci:
   - changed-files:
       - any-glob-to-any-file:
           - ".github/**"
+          - "**/.github-ci.yml"
 
 deprecated:
   - changed-files:
@@ -225,7 +226,6 @@ instrumentation-ruby_kafka:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/ruby_kafka/**"
-          - ".docker/infra/kafka/**"
 instrumentation-sidekiq:
   - changed-files:
       - any-glob-to-any-file:

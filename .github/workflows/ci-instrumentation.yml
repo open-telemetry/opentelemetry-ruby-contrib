@@ -54,7 +54,6 @@ jobs:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
       - name: "Test JRuby"
         if: startsWith(matrix.os, 'ubuntu')
