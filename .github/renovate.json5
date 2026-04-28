@@ -76,7 +76,8 @@
       dependencyDashboardCategory: "Min Docker service",
       matchUpdateTypes: ["major", "minor"],
       matchDepNames: ["confluentinc/cp-kafka"],
-      minimumReleaseAge: "730 days",
+      minimumReleaseAge: "240 days",
+      separateMultipleMinor: true,
     },
     {
       description: "Wait until current major mysql is EoL before updating",
