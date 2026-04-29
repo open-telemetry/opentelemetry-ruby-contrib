@@ -29,7 +29,7 @@ ActiveJob::Base.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 
 redis_options = {}
 redis_options[:password] = ENV['TEST_REDIS_PASSWORD'] || 'passw0rd'
 redis_options[:host] = ENV['TEST_REDIS_HOST'] || '127.0.0.1'
-redis_options[:port] = ENV['TEST_REDIS_PORT'] || '16379'
+redis_options[:port] = ENV['TEST_REDIS_PORT'] || '6379'
 Resque.redis = redis_options
 
 class DummyJob

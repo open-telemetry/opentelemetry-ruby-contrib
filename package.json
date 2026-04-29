@@ -32,6 +32,6 @@
     "@prantlf/jsonlint": "17.0.1",
     "markdownlint-cli2": "0.22.1",
     "prettier": "3.8.3",
-    "renovate": "43.127.3"
+    "renovate": "43.140.0"
   }
 }
