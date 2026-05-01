@@ -1,5 +1,5 @@
 include:
-  - ./docker/volume/compose.yml
+  - ./.docker/volume/compose.yml
 
 services:
   base:
