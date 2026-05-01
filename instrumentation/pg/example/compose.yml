@@ -1,5 +1,5 @@
 include:
-   - ./../../../.docker/infra/postgres/docker-compose.yml
+  - ./../../../.docker/infra/postgres/docker-compose.yml
 
 services:
   ex-instrumentation-pg:
