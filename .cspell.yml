@@ -68,6 +68,7 @@ ignoreWords:
   - millis
   - jsonlintrc
   - Dockerfiles
+  - autodiscover
 words:
   - AWSXRayTrace
   - AWSXRaySamplingClient
