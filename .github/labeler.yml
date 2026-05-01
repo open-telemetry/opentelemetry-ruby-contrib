@@ -16,8 +16,8 @@ everything:
       - any-glob-to-any-file:
           - ".rubocop.yml"
           - ".simplecov"
-          - "GEMFILE"
-          - "RAKEFILE"
+          - "Gemfile"
+          - "Rakefile"
 
 helpers-mysql:
   - changed-files:
