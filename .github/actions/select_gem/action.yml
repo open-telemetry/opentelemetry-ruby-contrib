@@ -43,8 +43,8 @@ runs:
         # Remove deny-listed items
         filtered=$(echo "$json" | jq --argjson deny "$deny" '[ .[] | select(. as $l | $deny | index($l) | not) ]')
 
-        # If "everything" is present, collapse to ["everything"]
-        if echo "$filtered" | jq -e 'index("everything")' >/dev/null; then
+        # If "everything" is present but not "instrumentation-base", collapse to ["everything"]
+        if echo "$filtered" | jq -e 'index("Everything") and (index("instrumentation-base") | not)' >/dev/null; then
           filtered='["everything"]'
         fi
 
