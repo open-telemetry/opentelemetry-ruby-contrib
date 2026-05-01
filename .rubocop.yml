@@ -48,6 +48,12 @@ Style/Documentation:
   Exclude:
     - "**/test/**/*"
     - "**/*test*"
+Style/DocumentationMethod:
+  Enabled: true
+  Severity: info
+  Exclude:
+    - "**/test/**/*"
+    - "**/*test*"
 Style/FrozenStringLiteralComment:
   Exclude:
     - "**/gemfiles/*"

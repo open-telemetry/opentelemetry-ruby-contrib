@@ -15,6 +15,7 @@ ignorePaths:
   - "CODEOWNERS"
   - "*.tt"
   - "**/my.cnf"
+  - "**/.yardopts"
 patterns:
   - name: CodeBlock
     pattern: |

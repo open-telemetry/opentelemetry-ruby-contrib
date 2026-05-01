@@ -70,6 +70,12 @@ runs:
           echo "apt=true" >> $GITHUB_OUTPUT
         fi
 
+        FILE="${dir}/.github-ci.yml"
+        if [[ -f "$FILE" ]]; then
+          # Convert YAML to key=value and export to GITHUB_ENV
+          yq '.env // {} | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
+        fi
+
     - name: Install Ubuntu packages (if apt-packages.txt exists)
       if: "${{ steps.setup.outputs.apt == 'true' }}"
       shell: bash
@@ -122,27 +128,6 @@ runs:
           bundle exec rake test
         fi
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
-      env:
-        TEST_KAFKA_HOST: "127.0.0.1"
-        TEST_KAFKA_PORT: 29092
-        TEST_MYSQL_HOST: "127.0.0.1"
-        TEST_MYSQL_PORT: 3306
-        TEST_MYSQL_USER: mysql
-        TEST_MYSQL_PASSWORD: mysql
-        TEST_POSTGRES_PASSWORD: postgres
-        TEST_POSTGRES_USER: postgres
-        TEST_POSTGRES_HOST: localhost
-        TEST_POSTGRES_PORT: 5432
-        TEST_POSTGRES_DB: postgres
-        TEST_MEMCACHED_HOST: localhost
-        TEST_MEMCACHED_PORT: 11211
-        TEST_MONGODB_HOST: localhost
-        TEST_MONGODB_PORT: 27017
-        TEST_RABBITMQ_HOST: localhost
-        TEST_RABBITMQ_PORT: 5672
-        TEST_RABBITMQ_URL: amqp://guest:guest@localhost:5672
-        TEST_REDIS_HOST: localhost
-        TEST_REDIS_PORT: 6379
 
     - name: YARD
       shell: bash
