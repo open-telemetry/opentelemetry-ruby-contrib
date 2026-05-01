@@ -1,0 +1,6 @@
+services:
+  ex-instrumentation-concurrent-ruby:
+    extends:
+      service: base
+      file: ./../../../docker-base.yml
+    working_dir: /app/instrumentation/concurrent_ruby/example
