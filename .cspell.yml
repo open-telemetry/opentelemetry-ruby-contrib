@@ -14,7 +14,6 @@ ignorePaths:
   - "*.proto"
   - "CODEOWNERS"
   - "*.tt"
-  - "**/my.cnf"
 
 patterns:
   - name: CodeBlock

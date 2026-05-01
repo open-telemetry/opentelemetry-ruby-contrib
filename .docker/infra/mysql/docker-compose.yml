@@ -6,16 +6,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_PASSWORD=mysql
       - MYSQL_USER=mysql
-    command: >
-      bash -c "
-        mkdir -p /etc/mysql/certs &&
-        cp /host-certs/* /etc/mysql/certs/ &&
-        chown mysql:mysql /etc/mysql/certs/* &&
-        chmod 600 /etc/mysql/certs/*key.pem &&
-        exec docker-entrypoint.sh mysqld
-      "
     volumes:
-      - ./certs:/host-certs:ro
       - ./config/my.cnf:/etc/mysql/my.cnf:ro
     ports:
       - "3306:3306"

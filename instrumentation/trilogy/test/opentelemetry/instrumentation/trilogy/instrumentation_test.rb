@@ -21,8 +21,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       username: username,
       password: password,
       database: database,
-      ssl_mode: Trilogy::SSL_VERIFY_CA,
-      ssl_ca: File.expand_path('../../../../../../.docker/infra/mysql/certs/ca.pem', __dir__)
+      ssl_mode: Trilogy::SSL_DISABLED
     }
   end
   let(:client) do
