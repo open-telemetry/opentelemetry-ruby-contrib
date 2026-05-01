@@ -17,7 +17,6 @@ services:
       context: .
     working_dir: /app
     environment:
-      - MEMCACHED_URL=memcached:11211
       - TEST_MYSQL_USER=root
       - TEST_MYSQL_ROOT_PASSWORD=root
       - TEST_MYSQL_HOST=mysql
