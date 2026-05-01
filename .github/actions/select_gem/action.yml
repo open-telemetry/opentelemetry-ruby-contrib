@@ -42,9 +42,9 @@ runs:
         # Remove deny-listed items
         filtered=$(echo "$json" | jq --argjson deny "$deny" '[ .[] | select(. as $l | $deny | index($l) | not) ]')
 
-        # If "Everything" is present, collapse to ["Everything"]
-        if echo "$filtered" | jq -e 'index("Everything")' >/dev/null; then
-          filtered='["Everything"]'
+        # If "everything" is present, collapse to ["everything"]
+        if echo "$filtered" | jq -e 'index("everything")' >/dev/null; then
+          filtered='["everything"]'
         fi
 
         # Guarantee valid JSON by adding default
