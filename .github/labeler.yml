@@ -11,6 +11,13 @@ deprecated:
           - "instrumentation/mongo/**"
           - "instrumentation/restclient/**"
           - "instrumentation/ruby_kafka/**"
+everything:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".rubocop.yml"
+          - ".simplecov"
+          - "GEMFILE"
+          - "RAKEFILE"
 
 helpers-mysql:
   - changed-files:
