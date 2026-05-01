@@ -103,22 +103,6 @@
   customManagers: [
     {
       customType: "regex",
-      description: "Update Package version in Dockerfiles",
-      managerFilePatterns: [
-        "/(^|/|\\.)Dockerfile$/",
-        "/(^|/)Dockerfile\\.[^/]*$/",
-      ],
-      matchStrings: [
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
-      ],
-      datasourceTemplate: "docker",
-      versioningTemplate: "docker",
-      currentValueTemplate: "{{depVersion}}",
-      extractVersionTemplate: "^(?<version>[0-9.]+)-alpine{{alpineVersion}}$",
-    },
-    {
-      customType: "regex",
       description: "Update os version in Dockerfiles",
       managerFilePatterns: [
         "/(^|/|\\.)Dockerfile$/",
@@ -133,20 +117,6 @@
       currentValueTemplate: "{{alpineVersion}}",
       extractVersionTemplate: "^{{depVersion}}-alpine(?<version>[0-9.]+)$",
       depNameTemplate: "{{packageName}}-alpine",
-    },
-    {
-      customType: "regex",
-      description: "Update entrypoint docker versions in services",
-      managerFilePatterns: [
-        ".github/workflows/ci-instrumentation-with-services.yml",
-      ],
-      matchStrings: [
-        "entrypoint sh (?<packageName>.+?):(?<depVersion>[0-9.]+?)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s-c",
-        "entrypoint sh (?<packageName>.+?):(?<depVersion>[0-9.]+?)\\s-c",
-      ],
-      datasourceTemplate: "docker",
-      versioningTemplate: "docker",
-      currentValueTemplate: "{{depVersion}}",
     },
     {
       customType: "regex",

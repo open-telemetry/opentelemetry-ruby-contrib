@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-excon
 
+## v0.29.1 / 2026-04-28
+
+- FIXED: Enable SimpleCov coverage merging across appraisal runs (#2193)
+
 ## v0.29.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)

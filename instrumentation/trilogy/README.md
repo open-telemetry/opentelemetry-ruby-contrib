@@ -51,6 +51,10 @@ OpenTelemetry::Instrumentation::Trilogy.with_attributes('pizzatoppings' => 'mush
 end
 ```
 
+## Compatibility
+
+This gem requires Trilogy 2.11 or higher and will not work with a future Trilogy 3.x release.
+
 ## Semantic Conventions
 
 This instrumentation generally uses [Database semantic conventions](https://opentelemetry.io/docs/specs/semconv/database/database-spans/).
