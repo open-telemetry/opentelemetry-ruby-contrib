@@ -1,5 +1,5 @@
 services:
-  ex-instrumentation-net-http:
+  ex-instrumentation-net-ldap:
     extends:
       service: base
       file: ./../../../docker-base.yml
