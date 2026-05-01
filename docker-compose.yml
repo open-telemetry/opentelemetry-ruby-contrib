@@ -192,14 +192,6 @@ services:
     command: ./start_server.sh
     working_dir: /app/instrumentation/sinatra/example
 
-  processor-baggage-test:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/processor/baggage
-    command: |
-      bash -c "bundle install && rake"
-
   jaeger:
     image: jaegertracing/jaeger:2.17.0@sha256:6266573208d665ce5c17483bce0a75d0806480d92c84766d288d0aee885ce708
     ports:
