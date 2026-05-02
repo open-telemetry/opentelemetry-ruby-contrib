@@ -37,14 +37,14 @@ jobs:
       fail-fast: false
       matrix:
         gem:
-          - helpers-sql
           - helpers-mysql
+          - helpers-sql
           - helpers-sql-processor
           - processor-baggage
+          - propagator-google_cloud_trace_context
           - propagator-ottrace
           - propagator-vitess
-          - propagatoraxray
-          - propagator-google_cloud_trace_context
+          - propagator-xray
           - resource-detector-aws
           - resource-detector-azure
           - resource-detector-container
