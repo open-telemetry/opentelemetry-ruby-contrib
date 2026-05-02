@@ -1,0 +1,6 @@
+{
+  "extends": "../../.devcontainer/base.json",
+  "workspaceFolder": "/app/instrumentation/pg",
+  "runServices": ["postgres"],
+  "runArgs": []
+}

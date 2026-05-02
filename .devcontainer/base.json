@@ -1,0 +1,16 @@
+{
+  "name": "otel-ruby-contrib",
+  "image": "opentelemetry/opentelemetry-ruby-contrib",
+
+  "remoteUser": "1000",
+  "overrideCommand": false,
+
+  "runArgs": ["--tmpfs", "/tmp"],
+
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/app,type=bind,consistency=cached",
+    "source=bundle,target=/bundle,type=volume"
+  ],
+
+  "dockerComposeFile": ["../docker-compose.yml"]
+}
