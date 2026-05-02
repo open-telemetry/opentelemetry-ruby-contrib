@@ -121,6 +121,18 @@ jobs:
         with:
           config_file: .yamllint
 
+  dotenv-linter:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: env / dotenv-linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Lint
+        uses: dotenv-linter/action-dotenv-linter@afde61cfda2ecffe7bea35837b6f20b956c88689 # v3.0.0
+        with:
+          github_token: ${{ secrets.github_token }}
+          dotenv_linter_flags: --recursive
+
   spelling-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Spelling Check
