@@ -1,0 +1,5 @@
+{
+  "extends": "../../.devcontainer/base.json",
+  "workspaceFolder": "/app/instrumentation/mysql2",
+  "runServices": ["mysql"]
+}
