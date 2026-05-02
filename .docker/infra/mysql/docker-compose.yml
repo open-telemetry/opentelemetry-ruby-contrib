@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:8.4.0@sha256:dab7049abafe3a0e12cbe5e49050cf149881c0cd9665c289e5808b9dad39c9e0
+    image: mysql:8.4.9@sha256:43bd9764df60666fb2ba2cf8217dd17b3d2414c150005d2fdd07a0cd73d3b7f5
     environment:
       - MYSQL_DATABASE=mysql
       - MYSQL_ROOT_PASSWORD=root
