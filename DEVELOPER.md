@@ -255,6 +255,25 @@ This processes ensures that if the service is updated the frozen gem remains usi
 To help with PR review, the gem path should be added to the deprecated label block in `.github/labeler.yml` which ensures that if changes to deprecated gems occur,
 they are labelled accordingly.
 
+### Disabling Rubocop
+
+To disable rubocop replace
+
+```
+inherit_from: ../../.rubocop.yml
+```
+
+with
+
+```
+AllCops:
+  DisabledByDefault: true
+  Exclude:
+    - "**/*"
+```
+
+This tells rubocop for this gem, disable all cops enabled by default, exclude all files within this folder and don't inherit any config.
+
 ## Removing Gems
 
 ### Removal Checklist
