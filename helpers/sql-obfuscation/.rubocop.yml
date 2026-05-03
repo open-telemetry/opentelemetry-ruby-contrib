@@ -1,8 +1,7 @@
 AllCops:
   DisabledByDefault: true
-
-Lint/Syntax:
-  Enabled: false
+  Exclude:
+    - "**/*"
 
 Gemspec/DevelopmentDependencies:
   Enabled: false

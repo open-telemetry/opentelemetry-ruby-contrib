@@ -1,10 +1,10 @@
 AllCops:
   DisabledByDefault: true
-
-Lint/Syntax:
-  Enabled: false
+  Exclude:
+    - "**/*"
 
 Metrics/ParameterLists:
+  Enabled: true
   Exclude:
     - lib/opentelemetry/instrumentation/ruby_kafka/patches/client.rb
     - lib/opentelemetry/instrumentation/ruby_kafka/patches/producer.rb
