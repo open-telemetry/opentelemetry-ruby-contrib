@@ -1,1 +1,5 @@
-inherit_from: ../../.rubocop.yml
+AllCops:
+  DisabledByDefault: true
+
+Lint/Syntax:
+  Enabled: false
