@@ -38,6 +38,13 @@ services:
       - postgres
       - rabbitmq
       - redis
+  devcontainer:
+    extends:
+      service: base
+      file: ./docker-base.yml
+    build:
+      context: .
+    working_dir: /app
 
   ex-instrumentation-bunny:
     extends:
