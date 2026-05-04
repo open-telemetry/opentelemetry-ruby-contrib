@@ -1,5 +1,8 @@
 {
-  "extends": "../../.devcontainer/base.json",
-  "workspaceFolder": "/app/instrumentation/mysql2",
+  "name": "otel-ruby-trilogy-devcontainer",
+  "dockerComposeFile": ["../../docker-compose.yml"],
+  "service": "devcontainer",
+
+  "workspaceFolder": "/app/instrumentation/trilogy",
   "runServices": ["mysql"]
 }
