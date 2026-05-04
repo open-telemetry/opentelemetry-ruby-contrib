@@ -7,21 +7,6 @@ include:
   - ./.docker/infra/postgres/docker-compose.yml
   - ./.docker/infra/rabbitmq/docker-compose.yml
   - ./.docker/infra/redis/docker-compose.yml
-  - ./instrumentation/bunny/example/compose.yml
-  - ./instrumentation/concurrent_ruby/example/compose.yml
-  - ./instrumentation/dalli/example/compose.yml
-  - ./instrumentation/delayed_job/example/compose.yml
-  - ./instrumentation/ethon/example/compose.yml
-  - ./instrumentation/excon/example/compose.yml
-  - ./instrumentation/faraday/example/compose.yml
-  - ./instrumentation/mysql2/example/compose.yml
-  - ./instrumentation/net_http/example/compose.yml
-  - ./instrumentation/net_ldap/example/compose.yml
-  - ./instrumentation/pg/example/compose.yml
-  - ./instrumentation/que/example/compose.yml
-  - ./instrumentation/rack/example/compose.yml
-  - ./instrumentation/restclient/example/compose.yml
-  - ./instrumentation/sinatra/example/compose.yml
 
 services:
   app:
