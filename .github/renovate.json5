@@ -99,6 +99,14 @@
       matchFileNames: ["**/*.gemspec"],
       dependencyDashboardApproval: true,
     },
+    {
+      description: "Disable digest for ruby base image",
+      matchDepNames: ["Ruby"],
+      matchFileNames: ["Dockerfile"],
+      matchManagers: ["dockerfile"],
+      matchUpdateTypes: ["digest"],
+      enabled: false,
+    }
   ],
   customManagers: [
     {
@@ -172,7 +180,7 @@
   ],
   lockFileMaintenance: {
     enabled: true,
-    schedule: ["before 8am on Monday"],
+    schedule: ["before 4am on Tuesday"],
   },
   labels: ["dependencies"],
   ignoreDeps: [
