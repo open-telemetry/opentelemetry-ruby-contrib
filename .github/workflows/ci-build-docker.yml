@@ -9,6 +9,7 @@ on:
       - ".docker/**"
       - "docker-compose.yml"
       - "docker-base.yml"
+      - "docker-example.yml"
       - "**/example/compose.yml"
       - ".github/workflows/ci-build-docker.yml"
   pull_request:
