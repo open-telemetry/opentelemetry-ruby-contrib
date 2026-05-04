@@ -1,6 +1,7 @@
 {
-  "name": "otel-ruby-root",
-  "extends": "./base.json",
+  "name": "otel-ruby-contrib-devcontainer",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "devcontainer",
 
   "workspaceFolder": "/app",
 
