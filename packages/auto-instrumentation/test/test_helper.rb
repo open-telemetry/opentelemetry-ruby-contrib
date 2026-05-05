@@ -34,6 +34,8 @@ require 'net/http'
 #   and the list of installed instrumentation so tests can assert the SDK wired
 #   up the correct implementation classes.
 def run_in_subprocess(env_vars = {}, opts = {})
+  skip 'fork is not available on this platform' unless Process.respond_to?(:fork)
+
   dep_names = opts[:dep_names]
   raise_error = opts.fetch(:raise_error, false)
 
