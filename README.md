@@ -1,6 +1,7 @@
 # OpenTelemetry Ruby Contrib
 
 [![Slack channel][slack-image]][slack-url]
+[![GitHub Discussions][discussions-image]][discussions-url]
 [![CI][ci-image]][ci-image]
 [![Apache License][license-image]][license-image]
 [![OpenSSF Scorecard for opentelemetry-ruby-contrib][openssf-scorecard-image]][openssf-scorecard-url]
@@ -114,6 +115,8 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [otel-ruby-releases]: https://github.com/open-telemetry/opentelemetry-ruby/releases
 [otel-ruby-contrib-releases]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/releases
 [ci-image]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/actions/workflows/ci-contrib.yml/badge.svg?event=push
+[discussions-image]: https://img.shields.io/github/discussions/open-telemetry/opentelemetry-ruby-contrib?logo=github
+[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/discussions
 [fossa-license-image]: https://app.fossa.com/api/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-ruby-contrib.svg?type=shield&issueType=license
 [fossa-license-url]: https://app.fossa.com/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-ruby-contrib?ref=badge_shield&issueType=license
 [fossa-security-image]: https://app.fossa.com/api/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-ruby-contrib.svg?type=shield&issueType=security
