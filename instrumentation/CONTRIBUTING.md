@@ -185,7 +185,7 @@ Monkey patching is discouraged in OpenTelemetry Ruby because it is the most comm
 
 Use the [OpenTelemetry Semantic Conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/) to ensure the instrumentation is compatible with other OpenTelemetry libraries and that the data is useful in a distributed context.
 
-> [!INFO]
+> [!Important]
 >
 > Privacy and security are important considerations when adding attributes to spans. Please ensure that you are not adding sensitive information to spans. If you are unsure, please ask for a review.
 
