@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative 'opentelemetry/auto_instrumentation/version'
+
 # OTelBundlerPatch
 module OTelBundlerPatch
   # Nested module to handle OpenTelemetry initialization logic
@@ -72,7 +74,7 @@ module OTelBundlerPatch
       ::OpenTelemetry::SDK::Resources::Resource.create(
         {
           'telemetry.distro.name' => 'opentelemetry-ruby-instrumentation',
-          'telemetry.distro.version' => '0.0.0'
+          'telemetry.distro.version' => ::OpenTelemetry::AutoInstrumentation::VERSION
         }
       )
     end
