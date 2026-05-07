@@ -346,10 +346,21 @@ describe OpenTelemetry::Instrumentation::Base do
   end
 
   describe '#config' do
-    describe 'before install' do
+    describe 'before install is called' do
       it 'returns default values for defined options' do
         instance = instrumentation_with_callbacks.instance
         _(instance.config[:max_count]).must_equal(5)
+      end
+
+      it 'is empty' do
+        instance = instrumentation_with_callbacks.instance
+        _(instance.config.empty?).must_equal(true)
+      end
+
+      it 'stays empty after reading a default' do
+        instance = instrumentation_with_callbacks.instance
+        instance.config[:max_count]
+        _(instance.config.empty?).must_equal(true)
       end
     end
   end

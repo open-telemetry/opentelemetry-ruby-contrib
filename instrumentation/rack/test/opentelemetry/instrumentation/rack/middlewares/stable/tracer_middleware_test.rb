@@ -387,19 +387,22 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddle
     end
   end
 
-  describe 'when SDK is disabled' do
+  describe 'when OTEL_SDK_DISABLED is set' do
     let(:disabled_rack_builder) { Rack::Builder.new }
 
-    before do
-      instrumentation.instance_variable_set(:@installed, false)
-      described_class.send(:clear_cached_config)
-      disabled_rack_builder.run app
-      disabled_rack_builder.use described_class
-    end
-
     it 'handles requests without raising an error' do
-      response = Rack::MockRequest.new(disabled_rack_builder).get('/ping', env)
-      _(response.status).must_equal 200
+      OpenTelemetry::TestHelpers.with_env('OTEL_SDK_DISABLED' => 'true') do
+        instrumentation_class.instance_variable_set(:@instance, nil)
+        OpenTelemetry::SDK.configure { |c| c.use 'OpenTelemetry::Instrumentation::Rack' }
+
+        _(instrumentation_class.instance.installed?).must_equal(false)
+
+        disabled_rack_builder.run app
+        disabled_rack_builder.use described_class
+
+        response = Rack::MockRequest.new(disabled_rack_builder).get('/ping', env)
+        _(response.status).must_equal 200
+      end
     end
   end
 end
