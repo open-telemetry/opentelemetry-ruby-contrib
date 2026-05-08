@@ -202,7 +202,7 @@ module OpenTelemetry
         @present_blk = present_blk
         @compatible_blk = compatible_blk
         @options = options
-        defaults = (@options || []).each_with_object({}) { |opt, h| h[opt[:name]] = opt[:default] }
+        defaults = (@options || []).to_h { |opt| [opt[:name], opt[:default]] }
         @config = Hash.new { |_, k| defaults[k] }
         @installed = false
         @tracer = OpenTelemetry::Trace::Tracer.new
