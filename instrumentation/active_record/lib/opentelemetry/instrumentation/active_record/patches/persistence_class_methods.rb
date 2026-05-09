@@ -18,8 +18,6 @@ module OpenTelemetry
 
           # Contains ActiveRecord::Persistence::ClassMethods to be patched
           module ClassMethods
-            include HandledExceptions
-
             def create(...)
               tracer.in_span("#{self}.create") do
                 super
@@ -27,15 +25,13 @@ module OpenTelemetry
             end
 
             def create!(...)
-              handled_exception = nil
+              record_invalid = nil
               result = tracer.in_span("#{self}.create!") do
                 super
-              rescue StandardError => e
-                raise e unless handled_exception?(e)
-
-                handled_exception = e
+              rescue ::ActiveRecord::RecordInvalid => e
+                record_invalid = e
               end
-              raise handled_exception if handled_exception
+              raise record_invalid if record_invalid
 
               result
             end

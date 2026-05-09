@@ -43,22 +43,6 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
       _(save_span_event.attributes['exception.message']).must_equal('boom')
     end
 
-    it 'does not add an exception event for configured handled exceptions' do
-      allow(OpenTelemetry::Instrumentation::ActiveRecord::Instrumentation.instance)
-        .to receive(:config)
-        .and_return(handled_exceptions: ['ActiveRecord::RecordNotFound'])
-
-      user = User.new
-      user.define_singleton_method(:create_or_update) { |*_, **_| raise ActiveRecord::RecordNotFound, 'not found' }
-
-      _(-> { user.save! }).must_raise(ActiveRecord::RecordNotFound)
-
-      save_span = spans.find { |s| s.name == 'User#save!' }
-      _(save_span).wont_be_nil
-      _(save_span.events).must_be_nil
-      _(save_span.status.code).must_equal(OpenTelemetry::Trace::Status::UNSET)
-    end
-
     it 'does not add an exception event if it raises a handled validation error' do
       _(-> { User.new(name: 'not otel').save! }).must_raise(ActiveRecord::RecordInvalid)
 

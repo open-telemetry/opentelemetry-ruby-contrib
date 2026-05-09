@@ -11,8 +11,6 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('7')
 
-        option :handled_exceptions, default: ['ActiveRecord::RecordInvalid'], validate: :array
-
         install do |_config|
           require_dependencies
           patch_activerecord
@@ -34,7 +32,6 @@ module OpenTelemetry
 
         def require_dependencies
           require 'active_support/lazy_load_hooks'
-          require_relative 'patches/handled_exceptions'
           require_relative 'patches/querying'
           require_relative 'patches/persistence'
           require_relative 'patches/persistence_class_methods'

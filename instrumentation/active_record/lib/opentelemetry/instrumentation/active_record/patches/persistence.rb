@@ -11,8 +11,6 @@ module OpenTelemetry
         # Module to prepend to ActiveRecord::Base for instrumentation
         # contains the ActiveRecord::Persistence methods to be patched
         module Persistence
-          include HandledExceptions
-
           def delete
             tracer.in_span("#{self.class}#delete") do
               super
@@ -56,15 +54,13 @@ module OpenTelemetry
           end
 
           def update!(...)
-            handled_exception = nil
+            record_invalid = nil
             result = tracer.in_span("#{self.class}#update!") do
               super
-            rescue StandardError => e
-              raise e unless handled_exception?(e)
-
-              handled_exception = e
+            rescue ::ActiveRecord::RecordInvalid => e
+              record_invalid = e
             end
-            raise handled_exception if handled_exception
+            raise record_invalid if record_invalid
 
             result
           end
