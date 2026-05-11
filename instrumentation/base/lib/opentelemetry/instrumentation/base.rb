@@ -202,6 +202,7 @@ module OpenTelemetry
         @present_blk = present_blk
         @compatible_blk = compatible_blk
         @options = options
+        # Empty hash that falls back to option defaults for missing keys
         defaults = (@options || []).to_h { |opt| [opt[:name], opt[:default]] }
         @config = Hash.new { |_, k| defaults[k] }
         @installed = false
