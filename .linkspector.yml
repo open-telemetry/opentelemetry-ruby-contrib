@@ -1,0 +1,11 @@
+# linkspector config file is described at https://github.com/UmbrellaDocs/linkspector/blob/main/README.md#configuration
+dirs:
+  - .
+excludedDirs:
+  - helpers/sql-obfuscation/
+  - instrumentation/dalli/
+  - instrumentation/mongo/
+  - instrumentation/restclient/
+  - instrumentation/ruby_kafka/
+useGitIgnore: true
+followRedirects: true

@@ -1,5 +1,16 @@
 # Release History: opentelemetry-instrumentation-all
 
+## v0.93.0 / 2026-04-28
+
+- ADDED: Upgrade opentelemetry-instrumentation-rails to 0.42.0
+
+## v0.92.0 / 2026-04-14
+
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
+- CHANGED: Update transitive dependencies for all instrumentation gems to new versions
+
 ## v0.91.0 / 2026-03-17
 
 - ADDED: Upgrade opentelemetry-instrumentation-anthropic to 0.4.0

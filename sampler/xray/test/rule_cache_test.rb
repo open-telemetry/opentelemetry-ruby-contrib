@@ -67,7 +67,7 @@ describe OpenTelemetry::Sampler::XRay::RuleCache do
       cache.update_rules([default_rule])
 
       Timecop.freeze(current_time + (2 * 60 * 60)) # Travel 2 hours into the future
-      assert cache.expired?
+      assert_predicate(cache, :expired?)
     end
   end
 

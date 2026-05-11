@@ -59,11 +59,6 @@ describe OpenTelemetry::Resource::Detector::Azure do
       end
 
       before do
-        metadata = Minitest::Mock.new
-        metadata.expect(:code, 200)
-        metadata.expect(:body, azure_metadata)
-        metadata.expect(:nil?, false)
-
         WebMock.disable_net_connect!
         stub_request(:get, 'http://169.254.169.254/metadata/instance/compute?api-version=2019-08-15')
           .with(

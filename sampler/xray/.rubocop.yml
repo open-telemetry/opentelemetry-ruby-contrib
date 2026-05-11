@@ -1,4 +1,5 @@
 inherit_from: ../../.rubocop.yml
 
 Metrics/ParameterLists:
-  Enabled: false
+  Enabled: true
+  Max: 6
