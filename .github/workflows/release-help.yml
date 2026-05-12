@@ -13,9 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  release-retry:
-    permissions:
-      issues: write # required for creating labels
+  toys_release:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     runs-on: ubuntu-24.04
     name: Toys-Release
