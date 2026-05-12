@@ -31,9 +31,6 @@ jobs:
           ruby-version: "4.0.3"
           bundler-cache: true
 
-      - name: Create Labels
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+      - name: Show help
         run: |
-          bundle exec toys release create-labels --yes --verbose < /dev/null
+          bundle exec toys release --help < /dev/null
