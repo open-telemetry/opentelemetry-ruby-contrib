@@ -21,7 +21,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
       username: username,
       password: password,
       database: database,
-      ssl: false
+      ssl_mode: Trilogy::SSL_DISABLED
     }
   end
   let(:client) do
@@ -73,10 +73,10 @@ describe OpenTelemetry::Instrumentation::Trilogy do
   describe '#compatible?' do
     describe 'when an unsupported version is installed' do
       it 'is incompatible' do
-        stub_const('Trilogy::VERSION', '2.2.0')
+        stub_const('Trilogy::VERSION', '2.10.0')
         _(instrumentation.compatible?).must_equal false
 
-        stub_const('Trilogy::VERSION', '2.3.0.beta')
+        stub_const('Trilogy::VERSION', '2.11.0.beta')
         _(instrumentation.compatible?).must_equal false
 
         stub_const('Trilogy::VERSION', '3.0.0')
@@ -86,7 +86,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
 
     describe 'when supported version is installed' do
       it 'is compatible' do
-        stub_const('Trilogy::VERSION', '2.3.0')
+        stub_const('Trilogy::VERSION', '2.11.0')
         _(instrumentation.compatible?).must_equal true
 
         stub_const('Trilogy::VERSION', '3.0.0.rc1')

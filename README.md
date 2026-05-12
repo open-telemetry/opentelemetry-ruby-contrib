@@ -90,6 +90,8 @@ We will regularly review the instrumentations to drop compatibility for any vers
 Should you need instrumentation for _older_ versions of a library then you must pin to a specific version of the instrumentation that supports it,
 however, you will no longer receive any updates for the instrumentation from this repository.
 
+> [!important]
+>
 > When a release series is no longer supported, it's your own responsibility to deal with bugs and security issues. We may provide backports of the fixes and publish them to git, however there will be no new versions released. If you are not comfortable maintaining your own versions, you should upgrade to a supported version. <https://guides.rubyonrails.org/maintenance_policy.html#security-issues>
 
 Consult instrumentation gem's README file and gemspec for details about library compatibility.

@@ -8,6 +8,7 @@ on:
     paths: &path_filters
       - ".docker/**"
       - "docker-compose.yml"
+      - "docker-base.yml"
       - ".github/workflows/ci-build-docker.yml"
   pull_request:
     branches:
