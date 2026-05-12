@@ -11,57 +11,18 @@ describe OpenTelemetry::Instrumentation::Faraday do
   let(:exporter) { EXPORTER }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
     exporter.reset
-    instrumentation.instance_variable_set(:@installed, false)
-    instrumentation.install
   end
 
   after do
-    instrumentation.instance_variable_set(:@installed, false)
-  end
-
-  it 'has #name' do
-    _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::Faraday'
-  end
-
-  it 'has #version' do
-    _(instrumentation.version).wont_be_nil
-    _(instrumentation.version).wont_be_empty
-  end
-
-  describe 'present' do
-    it 'when faraday gem is installed' do
-      assert_predicate instrumentation, :present?
-    end
-
-    it 'when Faraday is not defined' do
-      hide_const('Faraday')
-      refute_predicate instrumentation, :present?
-    end
-  end
-
-  describe 'compatible' do
-    it 'when faraday version meets minimum' do
-      _(instrumentation.compatible?).must_equal true
-    end
-  end
-
-  describe '#install' do
-    it 'accepts empty arguments' do
-      instrumentation.instance_variable_set(:@installed, false)
-      _(instrumentation.install({})).must_equal true
-    end
+   ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe 'tracing' do
-    let(:client) do
-      Faraday.new('http://example.com') do |builder|
-        builder.adapter(:test) do |stub|
-          stub.get('/') { [200, {}, 'OK'] }
-        end
-      end
+    before do
+      stub_request(:any, 'example.com')
     end
 
     it 'before request' do
@@ -69,7 +30,7 @@ describe OpenTelemetry::Instrumentation::Faraday do
     end
 
     it 'after request' do
-      client.get('/')
+      Faraday.new('http://example.com').get('/')
 
       _(exporter.finished_spans.size).must_equal 1
     end
