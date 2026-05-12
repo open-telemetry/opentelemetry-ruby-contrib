@@ -1,5 +1,5 @@
 include:
-  - ./.docker/volume/compose.yml
+  - ./.docker/volume/bundler.yml
   - ./instrumentation/bunny/example/compose.yml
   - ./instrumentation/concurrent_ruby/example/compose.yml
   - ./instrumentation/dalli/example/compose.yml
