@@ -1,0 +1,39 @@
+name: Test / CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/release-labels.yml"
+      - ".toys/release/Gemfile"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-retry:
+    permissions:
+      issues: write # required for creating labels
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    runs-on: ubuntu-24.04
+    name: Toys-Release
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@c4e5b1316158f92e3d49443a9d58b31d25ac0f8f # v1.306.0
+        with:
+          ruby-version: "4.0.3"
+          bundler-cache: true
+
+      - name: Create Labels
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        run: |
+          bundle exec toys release create-labels --yes --verbose < /dev/null
