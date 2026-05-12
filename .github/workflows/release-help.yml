@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/release-labels.yml"
+      - ".github/workflows/release-help.yml"
       - ".toys/release/Gemfile"
   workflow_dispatch:
 
