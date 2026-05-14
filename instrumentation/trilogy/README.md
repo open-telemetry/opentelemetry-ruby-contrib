@@ -50,6 +50,9 @@ OpenTelemetry::Instrumentation::Trilogy.with_attributes('pizzatoppings' => 'mush
   client.query('SELECT 1')
 end
 ```
+## Compatibility
+
+This gem requires Trilogy 2.11 or higher and will not work with a future Trilogy 3.x release.
 
 ## Configuration Options
 

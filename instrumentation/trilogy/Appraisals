@@ -12,8 +12,8 @@
 semconv_stability = %w[old stable dup]
 
 semconv_stability.each do |mode|
-  appraise "trilogy-2-#{mode}" do
-    gem 'trilogy', '~> 2.9'
+  appraise "trilogy-2.11-#{mode}" do
+    gem 'trilogy', '~> 2.11.0'
   end
 
   appraise "trilogy-latest-#{mode}" do
