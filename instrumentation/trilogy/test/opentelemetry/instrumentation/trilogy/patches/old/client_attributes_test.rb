@@ -36,7 +36,7 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Old::Client do
   let(:client) { build_test_client(connection_options) }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('old')
 
     exporter.reset
     instrumentation.instance_variable_set(:@installed, false)
