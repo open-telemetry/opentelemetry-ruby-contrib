@@ -38,6 +38,13 @@ services:
       - postgres
       - rabbitmq
       - redis
+  devcontainer:
+    extends:
+      service: base
+      file: ./docker-base.yml
+    build:
+      context: .
+    working_dir: /app
 
   ex-instrumentation-bunny:
     extends:
@@ -93,20 +100,6 @@ services:
       - mysql
     working_dir: /app/instrumentation/mysql2/example
 
-  ex-instrumentation-mysql2-test:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    environment:
-      - TEST_MYSQL_USER=root
-      - TEST_MYSQL_ROOT_PASSWORD=root
-      - TEST_MYSQL_HOST=mysql
-      - TEST_MYSQL_PORT=3306
-      - TEST_MYSQ_DB=mysql
-    depends_on:
-      - mysql
-    working_dir: /app/instrumentation/mysql2/
-
   ex-instrumentation-pg:
     extends:
       service: base
@@ -122,21 +115,6 @@ services:
       - postgres
     working_dir: /app/instrumentation/pg/example
 
-  ex-instrumentation-pg-test:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    environment:
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
-      - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
-    depends_on:
-      - postgres
-    tmpfs: !reset []
-    working_dir: /app/instrumentation/pg/
-
   ex-instrumentation-net-http:
     extends:
       service: base
@@ -148,20 +126,6 @@ services:
       service: base
       file: ./docker-base.yml
     working_dir: /app/instrumentation/net_ldap/example
-
-  ex-instrumentation-que:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    environment:
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
-      - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
-    depends_on:
-      - postgres
-    working_dir: /app/instrumentation/que
 
   ex-instrumentation-rack:
     extends:

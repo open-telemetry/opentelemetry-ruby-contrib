@@ -1,0 +1,20 @@
+{
+  "name": "otel-ruby-contrib-devcontainer",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "devcontainer",
+
+  "workspaceFolder": "/app",
+
+  // Root devcontainer usually wants all services available
+  "runServices": [
+    "kafka",
+    "jaeger",
+    "mysql",
+    "mongo",
+    "memcached",
+    "otelcol",
+    "postgres",
+    "rabbitmq",
+    "redis"
+  ]
+}
