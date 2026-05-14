@@ -60,6 +60,8 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
   end
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
+
     exporter.reset
 
     # simulate a fresh install:

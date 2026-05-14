@@ -33,6 +33,8 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::TracerMiddlewar
   let(:uri) { '/' }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
+
     ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
     # clear captured spans:
     exporter.reset
@@ -53,7 +55,6 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::TracerMiddlewar
     # installation is 'global', so it should be reset:
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(default_config)
-    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe '#call' do
@@ -412,6 +413,25 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::TracerMiddlewar
         Rack::MockRequest.new(rack_builder).get('/', env)
       end
       _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+    end
+  end
+
+  describe 'when OTEL_SDK_DISABLED is set' do
+    let(:disabled_rack_builder) { Rack::Builder.new }
+
+    it 'handles requests without raising an error' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SDK_DISABLED' => 'true') do
+        instrumentation_class.instance_variable_set(:@instance, nil)
+        OpenTelemetry::SDK.configure { |c| c.use 'OpenTelemetry::Instrumentation::Rack' }
+
+        _(instrumentation_class.instance.installed?).must_equal(false)
+
+        disabled_rack_builder.run app
+        disabled_rack_builder.use described_class
+
+        response = Rack::MockRequest.new(disabled_rack_builder).get('/ping', env)
+        _(response.status).must_equal 200
+      end
     end
   end
 end
