@@ -276,6 +276,21 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
         _(span.attributes['db.response.status_code']).must_equal '1054'
       end
 
+      it 'sets error.type when connect fails' do
+        expect do
+          Trilogy.new(driver_options.merge(host: '192.0.2.1', connect_timeout: 1))
+        end.must_raise Trilogy::Error
+
+        _(exporter.finished_spans.last.attributes['error.type']).must_match(/Trilogy.*Error/)
+      end
+
+      it 'sets error.type when ping fails' do
+        client.close
+        expect { client.ping }.must_raise Trilogy::Error
+
+        _(exporter.finished_spans.last.attributes['error.type']).must_match(/Trilogy.*Error/)
+      end
+
       describe 'when record_exception is false' do
         let(:config) { { record_exception: false } }
 
