@@ -38,6 +38,12 @@ module TestHelper
 
   def teardown_mongo
     client.database.drop
+    reset_client
+  end
+
+  def reset_client
+    @client&.close
+    @client = nil
   end
 
   def client
