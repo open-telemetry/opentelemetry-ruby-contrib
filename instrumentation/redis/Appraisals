@@ -1,16 +1,26 @@
 # frozen_string_literal: true
 
-if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
-  appraise 'redis-4.x' do
-    gem 'redis-client', '~> 0.22'
-    gem 'redis', '~> 4.8'
+# To facilitate database semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/
+
+semconv_stability = %w[old stable dup]
+
+semconv_stability.each do |stability|
+  # redis-4.x requires redis-client which has Ruby version constraints
+  if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
+    appraise "redis-4.x-#{stability}" do
+      gem 'redis-client', '~> 0.22'
+      gem 'redis', '~> 4.8'
+    end
   end
-end
 
-appraise 'redis-5.x' do
-  gem 'redis', '~> 5.0'
-end
+  appraise "redis-5.x-#{stability}" do
+    gem 'redis', '~> 5.0'
+  end
 
-appraise 'redis-latest' do
-  gem 'redis'
+  appraise "redis-latest-#{stability}" do
+    gem 'redis'
+  end
 end
