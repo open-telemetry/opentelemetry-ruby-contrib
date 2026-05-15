@@ -389,7 +389,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         client.close
         expect { client.ping }.must_raise Trilogy::Error
 
-        _(exporter.finished_spans.last.attributes['error.type']).must_match(/Trilogy.*Error/)
+        _(exporter.finished_spans.last.attributes['error.type']).must_equal 'Trilogy::ConnectionClosed'
       end
 
       describe 'when record_exception is false' do
