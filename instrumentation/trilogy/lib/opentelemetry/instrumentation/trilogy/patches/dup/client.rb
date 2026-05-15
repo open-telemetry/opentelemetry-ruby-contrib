@@ -111,6 +111,7 @@ module OpenTelemetry
             def client_attributes(sql = nil)
               attributes = @_otel_base_attributes.dup
 
+              # Old convention
               attributes['db.instance.id'] = @connected_host unless @connected_host.nil?
 
               if sql
