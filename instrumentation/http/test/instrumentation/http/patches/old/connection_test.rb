@@ -17,12 +17,16 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Connection do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
     instrumentation.install({})
   end
 
   # Force re-install of instrumentation
-  after { instrumentation.instance_variable_set(:@installed, false) }
+  after do
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
+    instrumentation.instance_variable_set(:@installed, false)
+  end
 
   describe '#connect' do
     it 'emits span on connect' do
