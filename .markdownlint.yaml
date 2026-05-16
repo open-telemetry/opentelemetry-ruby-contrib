@@ -11,3 +11,4 @@ line-length:
 no-inline-html: false
 custom-rules-below-this-point: false
 no-bare-urls: false
+MD001: false

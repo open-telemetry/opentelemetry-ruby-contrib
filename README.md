@@ -7,10 +7,10 @@
 Contrib Packages for the [OpenTelemetry Ruby][otel-ruby] API and SDK implementation.
 
 - [Getting Started][getting-started]
-- [Contributing](#contributing)
++ [Contributing](#contributing)
 - [Instrumentation Libraries](#instrumentation-libraries)
 - [Versioning](#versioning)
-- [Useful links](#useful-links)
+* [Useful links](#useful-links)
 - [License](#license)
 
 ### Contributing
