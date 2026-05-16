@@ -1,5 +1,4 @@
 config:
-  extends: .markdownlint.yaml
   default: true
-showConfig: true
+  extends: .markdownlint.yaml
 gitignore: "**/.{git,markdownlint}ignore"
