@@ -377,6 +377,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
           arg_cache[:inject_input] = args[0]
           _(args[0]).wont_be :frozen?
           _(args[0]).must_match(sql)
+          args[0].prepend("/*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'*/")
           m.call(args[0], context: args[1][:context])
         end
 
