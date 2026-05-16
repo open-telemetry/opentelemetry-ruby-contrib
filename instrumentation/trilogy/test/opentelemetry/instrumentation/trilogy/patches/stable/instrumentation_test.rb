@@ -507,7 +507,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
 
       describe 'when db_statement set as obfuscate' do
         it 'obfuscates SQL parameters in db.query.text' do
-          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'include_dbquerytext;') do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'include_dbquerytext=true;') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
 
