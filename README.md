@@ -13,7 +13,7 @@ Contrib Packages for the [OpenTelemetry Ruby][otel-ruby] API and SDK implementat
 - [Useful links](#useful-links)
 - [License](#license)
 
-## Contributing
+### Contributing
 
 We'd love your help! Use tags [good first issue][issues-good-first-issue] and
 [help wanted][issues-help-wanted] to get started with the project.
