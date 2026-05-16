@@ -466,6 +466,8 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
     end
 
     describe 'when propagator is set to tracecontext' do
+      let(:span) { OpenTelemetry::Trace::Span.new }
+
       it 'injects context on frozen strings' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         _(sql).must_be :frozen?
@@ -502,6 +504,12 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         # inbound SQL is not frozen (string prefixed with +)
         sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         _(sql).wont_be :frozen?
+        propagator = OpenTelemetry.propagation
+        
+        allow(propagator).to receive(:inject).and_wrap_original do |m, *args|
+          args[0].prepend("/*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'*/")
+          m.call(*args)
+        end
 
         expect do
           client.query(sql)
