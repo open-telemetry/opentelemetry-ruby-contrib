@@ -1,0 +1,17 @@
+include:
+  - ./../../../.docker/infra/mysql/docker-compose.yml
+
+services:
+  ex-instrumentation-mysql2:
+    extends:
+      service: base
+      file: ./../../../docker-base.yml
+    environment:
+      - TEST_MYSQL_USER=root
+      - TEST_MYSQL_ROOT_PASSWORD=root
+      - TEST_MYSQL_HOST=mysql
+      - TEST_MYSQL_PORT=3306
+      - TEST_MYSQL_DB=mysql
+    depends_on:
+      - mysql
+    working_dir: /app/instrumentation/mysql2/example
