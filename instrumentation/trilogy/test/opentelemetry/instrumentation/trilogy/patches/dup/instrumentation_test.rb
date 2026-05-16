@@ -466,8 +466,6 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
     end
 
     describe 'when propagator is set to tracecontext' do
-      let(:span) { OpenTelemetry::Trace::Span.new }
-
       it 'injects context on frozen strings' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         _(sql).must_be :frozen?
@@ -484,7 +482,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
           arg_cache[:inject_input] = args[0]
           _(args[0]).wont_be :frozen?
           _(args[0]).must_match(sql)
-          args[0].prepend("/*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'*/")
+          args[0].prepend("/*traceparent='unknown'*/")
           m.call(args[0], context: args[1][:context])
         end
 
@@ -494,7 +492,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
 
         # arg_cache[:inject_input] _was_ a mutable string, so it has the context injected
         # The tracecontext propagator injects traceparent and tracestate headers as SQL comments
-        _(arg_cache[:inject_input]).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
+        _(arg_cache[:inject_input]).must_match(%r{/\*traceparent='unknown'\*/})
 
         # arg_cache[:inject_input] is now frozen
         _(arg_cache[:inject_input]).must_be :frozen?
@@ -507,7 +505,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         propagator = OpenTelemetry.propagation
         
         allow(propagator).to receive(:inject).and_wrap_original do |m, *args|
-          args[0].prepend("/*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'*/")
+          args[0].prepend("/*traceparent='unknown'*/")
           m.call(*args)
         end
 
@@ -516,7 +514,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         end.must_raise Trilogy::Error
 
         # The tracecontext propagator injects traceparent header as SQL comment
-        _(sql).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
+        _(sql).must_match(%r{/\*traceparent='unknown'\*/})
         _(sql).wont_be :frozen?
       end
     end
