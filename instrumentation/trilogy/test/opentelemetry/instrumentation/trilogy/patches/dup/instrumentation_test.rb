@@ -467,7 +467,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
 
     describe 'when propagator is set to tracecontext' do
       OpenTelemetry.propagation.set_global_text_map(
-        opentelemetry::Helpers::SqlProcessor::SqlCommenter.sql_query_propagator
+        OpenTelemetry::Helpers::SqlProcessor::SqlCommenter.sql_query_propagator
       )
 
       it 'injects context on frozen strings' do
