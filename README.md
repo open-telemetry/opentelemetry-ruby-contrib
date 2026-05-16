@@ -8,7 +8,7 @@ Contrib Packages for the [OpenTelemetry Ruby][otel-ruby] API and SDK implementat
 
 - [Getting Started][getting-started]
 - [Contributing](#contributing)
-- [Instrumentation Libraries](#instrumentation-libraries)
++ [Instrumentation Libraries](#instrumentation-libraries)
 - [Versioning](#versioning)
 - [Useful links](#useful-links)
 - [License](#license)
@@ -60,8 +60,8 @@ using OpenTelemetry with minimal changes to your application. See the
 This repository also contains libraries that hold code shared among
 multiple instrumentation libraries.
 
-- [MySQL](helpers/mysql/)
-- [SQL Processor](helpers/sql-processor/)
+* [MySQL](helpers/mysql/)
+* [SQL Processor](helpers/sql-processor/)
 
 ## Additional Libraries
 
