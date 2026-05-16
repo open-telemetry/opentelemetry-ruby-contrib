@@ -1,4 +1,4 @@
-# OpenTelemetry Ruby Contrib
+## OpenTelemetry Ruby Contrib
 
 [![Slack channel][slack-image]][slack-url]
 [![CI][ci-image]][ci-image]
@@ -7,13 +7,13 @@
 Contrib Packages for the [OpenTelemetry Ruby][otel-ruby] API and SDK implementation.
 
 - [Getting Started][getting-started]
-+ [Contributing](#contributing)
+- [Contributing](#contributing)
 - [Instrumentation Libraries](#instrumentation-libraries)
 - [Versioning](#versioning)
-* [Useful links](#useful-links)
+- [Useful links](#useful-links)
 - [License](#license)
 
-### Contributing
+#### Contributing
 
 We'd love your help! Use tags [good first issue][issues-good-first-issue] and
 [help wanted][issues-help-wanted] to get started with the project.
