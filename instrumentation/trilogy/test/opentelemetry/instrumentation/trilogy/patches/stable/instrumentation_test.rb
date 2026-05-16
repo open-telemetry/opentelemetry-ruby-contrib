@@ -360,21 +360,10 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
       end
     end
 
-    describe 'when propagator is set to none' do
-      let(:config) { { propagator: :none } }
-
-      it 'does not inject context' do
-        sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
-        original_sql = sql.dup
-        expect do
-          client.query(sql)
-        end.must_raise Trilogy::Error
-        _(sql).must_equal original_sql
+    describe 'when propagator is set to noop' do
+      before do
+        OpenTelemetry.propagation.set_global_text_map(OpenTelemetry::Context::Propagation::NoopTextMapPropagator.new)
       end
-    end
-
-    describe 'when propagator is set to nil' do
-      let(:config) { { propagator: nil } }
 
       it 'does not inject context' do
         sql = +'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
@@ -387,12 +376,14 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
     end
 
     describe 'when propagator is set to vitess' do
-      let(:config) { { propagator: 'vitess' } }
+      OpenTelemetry.propagation.set_global_text_map(
+        OpenTelemetry::Propagator::Vitess.new
+      )
 
       it 'does inject context on frozen strings' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         assert_predicate(sql, :frozen?)
-        propagator = OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
+        propagator = OpenTelemetry.propagation
 
         arg_cache = {} # maintain handles to args
         allow(client).to receive(:query).and_wrap_original do |m, *args|
@@ -439,12 +430,14 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
     end
 
     describe 'when propagator is set to tracecontext' do
-      let(:config) { { propagator: 'tracecontext' } }
+      OpenTelemetry.propagation.set_global_text_map(
+        OpenTelemetry::Propagator::TraceContext.new
+      )
 
       it 'injects context on frozen strings' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         _(sql).must_be :frozen?
-        propagator = OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
+        propagator = OpenTelemetry.propagation
 
         arg_cache = {} # maintain handles to args
         allow(client).to receive(:query).and_wrap_original do |m, *args|

@@ -60,12 +60,12 @@ module OpenTelemetry
                 kind: :client,
                 record_exception: config[:record_exception]
               ) do |span, context|
-                if propagator && sql.frozen?
+                if sql.frozen?
                   sql = +sql
-                  propagator.inject(sql, context: context)
+                  OpenTelemetry.propagation.inject(sql, context: context)
                   sql.freeze
-                elsif propagator
-                  propagator.inject(sql, context: context)
+                else
+                  OpenTelemetry.propagation.inject(sql, context: context)
                 end
 
                 super
@@ -144,10 +144,6 @@ module OpenTelemetry
 
             def config
               Trilogy::Instrumentation.instance.config
-            end
-
-            def propagator
-              Trilogy::Instrumentation.instance.propagator
             end
           end
         end
