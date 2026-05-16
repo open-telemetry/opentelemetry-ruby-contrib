@@ -269,7 +269,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
         _(last_span.attributes['db.instance.id']).must_equal client.connected_host
 
