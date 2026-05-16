@@ -466,10 +466,6 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
     end
 
     describe 'when propagator is set to tracecontext' do
-      OpenTelemetry::Context::Propagation.set_global_text_map(
-        OpenTelemetry::Helpers::SqlProcessor::SqlCommenter.sql_query_propagator
-      )
-
       it 'injects context on frozen strings' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         _(sql).must_be :frozen?
