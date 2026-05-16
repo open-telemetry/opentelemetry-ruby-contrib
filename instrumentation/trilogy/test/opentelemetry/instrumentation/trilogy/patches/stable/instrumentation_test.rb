@@ -361,7 +361,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
     end
 
     describe 'when propagator is set to tracecontext' do
-      OpenTelemetry.propagation.set_global_text_map(
+      OpenTelemetry::Context::Propagation.set_global_text_map(
         OpenTelemetry::Helpers::SqlProcessor::SqlCommenter.sql_query_propagator
       )
 
