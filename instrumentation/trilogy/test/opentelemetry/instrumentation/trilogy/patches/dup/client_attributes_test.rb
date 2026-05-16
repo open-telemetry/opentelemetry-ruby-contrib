@@ -42,7 +42,7 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
     exporter.reset
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install({
-                              db_statement: :omit,
+                              include_dbquerytext: false,
                               span_name: :statement_type,
                               propagator: 'none',
                               record_exception: true,
@@ -152,14 +152,14 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
       refute b.key?('extra')
     end
 
-    describe 'with sql and db_statement config' do
+    describe 'with sql and include_dbquerytext config' do
       before do
         instrumentation.instance_variable_set(:@installed, false)
       end
 
-      it 'includes SQL in db.statement (old) when db_statement is :include' do
+      it 'includes SQL in db.statement (old) when include_dbquerytext is true' do
         instrumentation.install({
-                                  db_statement: :include,
+                                  include_dbquerytext: true,
                                   span_name: :statement_type,
                                   propagator: 'none',
                                   record_exception: true,
@@ -170,9 +170,9 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
         assert_equal 'SELECT * FROM users', attrs[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]
       end
 
-      it 'includes SQL in db.query.text (stable) when db_statement is :include' do
+      it 'includes SQL in db.query.text (stable) when include_dbquerytext is true' do
         instrumentation.install({
-                                  db_statement: :include,
+                                  include_dbquerytext: true,
                                   span_name: :statement_type,
                                   propagator: 'none',
                                   record_exception: true,
@@ -183,9 +183,9 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
         assert_equal 'SELECT * FROM users', attrs['db.query.text']
       end
 
-      it 'omits both db.statement and db.query.text when db_statement is :omit' do
+      it 'omits both db.statement and db.query.text when include_dbquerytext is false' do
         instrumentation.install({
-                                  db_statement: :omit,
+                                  include_dbquerytext: false,
                                   span_name: :statement_type,
                                   propagator: 'none',
                                   record_exception: true,
@@ -195,27 +195,6 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
         attrs = client.send(:client_attributes, 'SELECT * FROM users')
         refute attrs.key?(OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT)
         refute attrs.key?('db.query.text')
-      end
-
-      it 'obfuscates SQL in both attributes when db_statement is :obfuscate' do
-        instrumentation.install({
-                                  db_statement: :obfuscate,
-                                  span_name: :statement_type,
-                                  propagator: 'none',
-                                  record_exception: true,
-                                  obfuscation_limit: 2000,
-                                  peer_service: nil
-                                })
-        attrs = client.send(:client_attributes, 'SELECT * FROM users WHERE id = 1')
-
-        old_stmt = attrs[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]
-        new_stmt = attrs['db.query.text']
-
-        assert old_stmt, 'expected db.statement to be present'
-        assert new_stmt, 'expected db.query.text to be present'
-        refute_includes old_stmt, '1'
-        refute_includes new_stmt, '1'
-        assert_equal old_stmt, new_stmt
       end
     end
   end

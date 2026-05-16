@@ -92,6 +92,7 @@ module OpenTelemetry
         option :obfuscation_limit, default: 2000, validate: :integer
         option :propagator, default: 'none', validate: %w[none tracecontext vitess]
         option :record_exception, default: true, validate: :boolean
+        option :include_dbquerytext, default: false, validate: :boolean
 
         attr_reader :propagator, :semconv
 
