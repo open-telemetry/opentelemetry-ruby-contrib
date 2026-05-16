@@ -125,12 +125,12 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
     end
 
     describe 'with default options' do
-      it 'obfuscates sql in both old and stable attributes' do
+      it 'removes sql in both old and stable attributes' do
         client.query('SELECT 1')
 
         _(span.name).must_equal 'select'
         # Old attribute
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
         # Stable attribute
         _(span.attributes['db.query.text']).must_be_nil
       end
@@ -145,7 +145,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
         _(span.attributes['db.instance.id']).must_be_nil
 
         # Stable attributes
@@ -166,7 +166,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'EXPLAIN SELECT ?'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
 
         # Stable attributes
         _(span.attributes['db.namespace']).must_equal(database)
@@ -185,7 +185,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'DESELECT ?'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
 
         # Stable attributes
         _(span.attributes['db.namespace']).must_equal(database)
@@ -249,7 +249,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'select @@hostname'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
         _(span.attributes['db.instance.id']).must_be_nil
 
@@ -344,7 +344,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT INVALID'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
 
         # Stable attributes
         _(span.attributes['db.namespace']).must_equal(database)
