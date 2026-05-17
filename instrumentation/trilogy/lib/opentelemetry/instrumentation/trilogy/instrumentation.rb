@@ -57,6 +57,10 @@ module OpenTelemetry
       # - `:db_name` - Uses the database name.
       # - `:db_operation_and_name` - Combines the operation and database name.
       #
+      # ### `:use_sqlcommenter`
+      #
+      # Defines if the global propagator should be overridden with sql commenter
+      #
       # @example An explicit default configuration
       #   OpenTelemetry::SDK.configure do |c|
       #     c.use_all({
