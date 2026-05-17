@@ -130,7 +130,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
 
         _(span.name).must_equal 'select'
         # Old attribute
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
         # Stable attribute
         _(span.attributes['db.query.text']).must_equal 'SELECT ?'
       end
@@ -145,7 +145,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
         _(span.attributes['db.instance.id']).must_be_nil
 
         # Stable attributes
@@ -166,7 +166,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'EXPLAIN SELECT ?'
 
         # Stable attributes
         _(span.attributes['db.namespace']).must_equal(database)
@@ -185,7 +185,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'DESELECT ?'
 
         # Stable attributes
         _(span.attributes['db.namespace']).must_equal(database)
@@ -249,14 +249,14 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'select @@hostname'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
         _(span.attributes['db.instance.id']).must_be_nil
 
         # Stable attributes
         _(span.attributes['db.namespace']).must_equal(database)
         _(span.attributes['db.system.name']).must_equal 'mysql'
-        _(span.attributes['db.query.text']).must_equal 'SELECT @@hostname'
+        _(span.attributes['db.query.text']).must_equal 'select @@hostname'
         _(span.attributes['server.address']).must_equal(host)
 
         client.query('SELECT 1')
@@ -269,7 +269,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
         _(last_span.attributes['db.instance.id']).must_equal client.connected_host
 
@@ -306,7 +306,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         # Stable attributes
         _(span.attributes['db.namespace']).must_equal(database)
         _(span.attributes['db.system.name']).must_equal 'mysql'
-        _(span.attributes['db.query.text']).must_equal 'SELECT @@hostname'
+        _(span.attributes['db.query.text']).must_equal 'select @@hostname'
         _(span.attributes['server.address']).must_match(/sock/)
 
         client.query('SELECT 1')
@@ -344,7 +344,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_equal(database)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_USER]).must_equal(username)
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_be_nil
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT INVALID'
 
         # Stable attributes
         _(span.attributes['db.namespace']).must_equal(database)

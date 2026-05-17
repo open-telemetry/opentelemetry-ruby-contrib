@@ -192,7 +192,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
         _(span.name).must_equal 'select'
         _(span.attributes['db.namespace']).must_equal(database)
         _(span.attributes['db.system.name']).must_equal 'mysql'
-        _(span.attributes['db.query.text']).must_equal 'SELECT @@hostname'
+        _(span.attributes['db.query.text']).must_equal 'select @@hostname'
         _(span.attributes['server.address']).must_equal(host)
 
         client.query('SELECT 1')
@@ -223,7 +223,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
         _(span.name).must_equal 'select'
         _(span.attributes['db.namespace']).must_equal(database)
         _(span.attributes['db.system.name']).must_equal 'mysql'
-        _(span.attributes['db.query.text']).must_equal 'SELECT @@hostname'
+        _(span.attributes['db.query.text']).must_equal 'select @@hostname'
         _(span.attributes['server.address']).must_match(/sock/)
 
         client.query('SELECT 1')
