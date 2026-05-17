@@ -92,6 +92,7 @@ module OpenTelemetry
         option :obfuscation_limit, default: 2000, validate: :integer
         option :propagator, default: 'none', validate: %w[none tracecontext vitess]
         option :record_exception, default: true, validate: :boolean
+        option :use_sqlcommenter, default: false, validate: :boolean
 
         attr_reader :propagator, :semconv
 
@@ -137,11 +138,17 @@ module OpenTelemetry
         end
 
         def configure_propagator(config)
-          propagator = config[:propagator]
+          if config[:use_sqlcommenter]
+            propagator = 'tracecontext'
+          elsif @semconv = :old
+            propagator = config[:propagator]
+          else
+            propagator = 'none'
+          end
           @propagator = case propagator
                         when 'tracecontext' then OpenTelemetry::Helpers::SqlProcessor::SqlCommenter.sql_query_propagator
                         when 'vitess' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Vitess')
-                        when 'none', nil then nil
+                        when 'none', nil then OpenTelemetry.propagation
                         else
                           OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
                         end

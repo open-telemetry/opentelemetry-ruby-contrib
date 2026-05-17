@@ -466,10 +466,12 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
     end
 
     describe 'when propagator is set to tracecontext' do
+      let(:config) { { use_sqlcommenter: true }}
+
       it 'injects context on frozen strings' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         _(sql).must_be :frozen?
-        propagator = OpenTelemetry.propagation
+        propagator = opentelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
 
         arg_cache = {} # maintain handles to args
         allow(client).to receive(:query).and_wrap_original do |m, *args|
@@ -491,7 +493,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
 
         # arg_cache[:inject_input] _was_ a mutable string, so it has the context injected
         # The tracecontext propagator injects traceparent and tracestate headers as SQL comments
-        _(arg_cache[:inject_input]).must_match(%r{/\*traceparent=.*\*/})
+        _(arg_cache[:inject_input]).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
 
         # arg_cache[:inject_input] is now frozen
         _(arg_cache[:inject_input]).must_be :frozen?
@@ -507,7 +509,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         end.must_raise Trilogy::Error
 
         # The tracecontext propagator injects traceparent header as SQL comment
-        _(sql).must_match(%r{/\*traceparent=.*\*/})
+        _(sql).must_match(%r{/\*traceparent='00-#{span.hex_trace_id}-#{span.hex_span_id}-01'\*/})
         _(sql).wont_be :frozen?
       end
     end
