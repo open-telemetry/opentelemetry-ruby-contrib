@@ -99,6 +99,9 @@ module OpenTelemetry
 
         def require_dependencies
           @semconv = determine_semconv
+          
+          return unless @config[:record_exception].nil?
+          @config[:record_exception] = (@semconv == :old)
 
           case @semconv
           when :old
@@ -118,12 +121,6 @@ module OpenTelemetry
             ::Trilogy.prepend(Patches::Stable::Client)
           when :dup
             ::Trilogy.prepend(Patches::Dup::Client)
-          end
-        end
-
-        def after_initialize
-          if @config[:record_exception].nil?
-            @config[:record_exception] = (@semconv == :old)
           end
         end
 
