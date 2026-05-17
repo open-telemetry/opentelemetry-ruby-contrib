@@ -333,6 +333,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
     end
 
     describe 'when queries fail' do
+      let(:config) { { record_exception: true }}
       it 'sets span status to error' do
         expect do
           client.query('SELECT INVALID')
@@ -390,6 +391,18 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
         expect { client.ping }.must_raise Trilogy::Error
 
         _(exporter.finished_spans.last.attributes['error.type']).must_equal 'Trilogy::ConnectionClosed'
+      end
+
+      describe 'when record_exception is default' do
+        let(:config) { { } }
+
+        it 'does not record exception when record_exception is default' do
+          expect do
+            client.query('SELECT INVALID')
+          end.must_raise Trilogy::Error
+
+          _(span.events).must_be_nil
+        end
       end
 
       describe 'when record_exception is false' do
