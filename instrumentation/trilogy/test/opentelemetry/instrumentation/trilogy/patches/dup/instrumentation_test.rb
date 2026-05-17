@@ -466,12 +466,12 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (dup semconv)' do
     end
 
     describe 'when propagator is set to tracecontext' do
-      let(:config) { { use_sqlcommenter: true }}
+      let(:config) { { use_sqlcommenter: true } }
 
       it 'injects context on frozen strings' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
         _(sql).must_be :frozen?
-        propagator = opentelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
+        propagator = OpenTelemetry::Instrumentation::Trilogy::Instrumentation.instance.propagator
 
         arg_cache = {} # maintain handles to args
         allow(client).to receive(:query).and_wrap_original do |m, *args|
