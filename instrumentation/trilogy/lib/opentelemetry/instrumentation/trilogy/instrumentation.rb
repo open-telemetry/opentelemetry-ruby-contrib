@@ -138,17 +138,20 @@ module OpenTelemetry
         end
 
         def configure_propagator(config)
-          if config[:use_sqlcommenter]
-            propagator = 'tracecontext'
-          elsif @semconv = :old
-            propagator = config[:propagator]
-          else
-            propagator = 'none'
-          end
+          propagator =
+            if config[:use_sqlcommenter]
+              'tracecontext'
+            elsif @semconv == :old
+              config[:propagator]
+            else
+              'global'
+            end
+
           @propagator = case propagator
+                        when 'global' then OpenTelemetry.propagation
                         when 'tracecontext' then OpenTelemetry::Helpers::SqlProcessor::SqlCommenter.sql_query_propagator
                         when 'vitess' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Vitess')
-                        when 'none', nil then OpenTelemetry.propagation
+                        when 'none', nil then nil
                         else
                           OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
                         end
