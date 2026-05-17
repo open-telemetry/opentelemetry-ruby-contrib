@@ -114,7 +114,7 @@ module OpenTelemetry
               # Old convention
               attributes['db.instance.id'] = @connected_host unless @connected_host.nil?
 
-              if sql && config[:include_dbquerytext]
+              if sql && !config[:exclude_dbquerytext]
                 obfuscated = OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql)
                 # Old convention
                 attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] = obfuscated

@@ -95,7 +95,7 @@ module OpenTelemetry
             def client_attributes(sql = nil)
               attributes = @_otel_base_attributes.dup
 
-              if sql && config[:include_dbquerytext]
+              if sql && !config[:exclude_dbquerytext]
                 attributes['db.query.text'] =
                   OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :mysql)
               end

@@ -42,7 +42,7 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
     exporter.reset
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install({
-                              include_dbquerytext: false,
+                              exclude_dbquerytext: true,
                               span_name: :statement_type,
                               propagator: 'none',
                               record_exception: true,
@@ -152,14 +152,14 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
       refute b.key?('extra')
     end
 
-    describe 'with sql and include_dbquerytext config' do
+    describe 'with sql and exclude_dbquerytext config' do
       before do
         instrumentation.instance_variable_set(:@installed, false)
       end
 
-      it 'includes SQL in db.statement (old) when include_dbquerytext is true' do
+      it 'includes SQL in db.statement (old) when exclude_dbquerytext is false' do
         instrumentation.install({
-                                  include_dbquerytext: true,
+                                  exclude_dbquerytext: false,
                                   span_name: :statement_type,
                                   propagator: 'none',
                                   record_exception: true,
@@ -170,9 +170,9 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
         assert_equal 'SELECT * FROM users', attrs[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]
       end
 
-      it 'includes SQL in db.query.text (stable) when include_dbquerytext is true' do
+      it 'includes SQL in db.query.text (stable) when exclude_dbquerytext is false' do
         instrumentation.install({
-                                  include_dbquerytext: true,
+                                  exclude_dbquerytext: false,
                                   span_name: :statement_type,
                                   propagator: 'none',
                                   record_exception: true,
@@ -183,9 +183,9 @@ describe OpenTelemetry::Instrumentation::Trilogy::Patches::Dup::Client do
         assert_equal 'SELECT * FROM users', attrs['db.query.text']
       end
 
-      it 'omits both db.statement and db.query.text when include_dbquerytext is false' do
+      it 'omits both db.statement and db.query.text when exclude_dbquerytext is true' do
         instrumentation.install({
-                                  include_dbquerytext: false,
+                                  exclude_dbquerytext: true,
                                   span_name: :statement_type,
                                   propagator: 'none',
                                   record_exception: true,
