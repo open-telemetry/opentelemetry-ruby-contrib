@@ -99,9 +99,8 @@ module OpenTelemetry
 
         def require_dependencies
           @semconv = determine_semconv
-          
-          return unless @config[:record_exception].nil?
-          @config[:record_exception] = (@semconv == :old)
+ 
+          @config[:record_exception] = (@semconv == :old) if @config[:record_exception].nil?
 
           case @semconv
           when :old
