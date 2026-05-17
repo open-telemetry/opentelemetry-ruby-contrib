@@ -294,7 +294,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
       end
 
       describe 'when record_exception is default' do
-        let(:config) { { } }
+        let(:config) { {} }
         it 'does not record exception when record_exception is default' do
           expect do
             client.query('SELECT INVALID')
