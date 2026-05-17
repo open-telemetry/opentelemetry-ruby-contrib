@@ -91,7 +91,7 @@ module OpenTelemetry
         option :span_name, default: :statement_type, validate: %I[statement_type db_name db_operation_and_name]
         option :obfuscation_limit, default: 2000, validate: :integer
         option :propagator, default: 'none', validate: %w[none tracecontext vitess]
-        option :record_exception, default: -> { @semconv == :old }, validate: :boolean
+        option :record_exception, default: nil, validate: :boolean
 
         attr_reader :propagator, :semconv
 
@@ -118,6 +118,12 @@ module OpenTelemetry
             ::Trilogy.prepend(Patches::Stable::Client)
           when :dup
             ::Trilogy.prepend(Patches::Dup::Client)
+          end
+        end
+
+        def after_initialize
+          if @config[:record_exception].nil?
+            @config[:record_exception] = (@semconv == :old)
           end
         end
 
