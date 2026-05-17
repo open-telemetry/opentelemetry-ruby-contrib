@@ -63,7 +63,7 @@ This gem requires Trilogy 2.11 or higher and will not work with a future Trilogy
 | `obfuscation_limit` | `2000` | Maximum length of the obfuscated SQL statement. Statements exceeding this limit are truncated. |
 | `peer_service` | `nil` | Deprecated with no replacement. Sets the `peer.service` attribute on spans (old semantic conventions only). |
 | `propagator` | `'none'` | Propagator for injecting trace context into SQL comments. `'none'` disables propagation, `'tracecontext'` uses W3C Trace Context, `'vitess'` uses Vitess-style propagation (requires `opentelemetry-propagator-vitess` gem). |
-| `record_exception` | `true` when old semconv, otherwise `false` | Records exceptions as span events when an error occurs. |
+| `record_exception` | `true` when usinb old semconv, otherwise `false` | Records exceptions as span events when an error occurs. |
 | `span_name` | `:statement_type` | Controls span naming (old semantic conventions only). `:statement_type` uses the SQL operation (e.g., `SELECT`), `:db_name` uses the database name, `:db_operation_and_name` combines both. |
 
 ## Semantic Conventions
