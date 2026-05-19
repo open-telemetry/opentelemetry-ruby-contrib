@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-base
 
+## v0.26.1 / 2026-05-19
+
+- FIXED: Handle missing config in middleware when OTEL_SDK_DISABLED=true (#2231)
+
 ## v0.26.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
