@@ -16,8 +16,8 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportLogger do
   before do
     skip unless defined?(ActiveSupport::Logger) && !defined?(ActiveSupport::BroadcastLogger)
     EXPORTER.reset
-    Rails.logger = main_logger.extend(ActiveSupport::Logger.broadcast(broadcasted_logger))
     instrumentation.install
+    Rails.logger = main_logger.extend(ActiveSupport::Logger.broadcast(broadcasted_logger))
   end
 
   after { instrumentation.instance_variable_set(:@installed, false) }
@@ -52,6 +52,19 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportLogger do
       log_records = EXPORTER.emitted_log_records
       assert_equal 1, log_records.size
       assert_match(/#{msg}/, log_records.first.body)
+    end
+
+    it 'does not suppress direct log records after a broadcast' do
+      broadcast_msg = "larch #{rand(6)}"
+      direct_msg = "maple #{rand(6)}"
+
+      Rails.logger.debug(broadcast_msg)
+      broadcasted_logger.debug(direct_msg)
+
+      log_record_bodies = EXPORTER.emitted_log_records.map(&:body)
+      assert_equal 2, log_record_bodies.size
+      assert(log_record_bodies.any? { |body| body.include?(broadcast_msg) })
+      assert(log_record_bodies.any? { |body| body.include?(direct_msg) })
     end
   end
 end

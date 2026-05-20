@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative 'broadcast_logger_context'
+
 module OpenTelemetry
   module Instrumentation
     module Logger
@@ -11,8 +13,6 @@ module OpenTelemetry
         # Instrumentation for methods from Ruby's Logger class
         module Logger
           IN_OTEL_EMIT_KEY = :in_otel_emit
-
-          attr_writer :skip_otel_emit
 
           def format_message(severity, datetime, progname, msg)
             formatted_message = super
@@ -25,7 +25,7 @@ module OpenTelemetry
           private
 
           def emit_to_otel(severity, datetime, body)
-            return if skip_otel_emit? || Thread.current[IN_OTEL_EMIT_KEY]
+            return if broadcast_logger_context_skipped? || Thread.current[IN_OTEL_EMIT_KEY]
 
             Thread.current[IN_OTEL_EMIT_KEY] = true
             begin
@@ -44,8 +44,8 @@ module OpenTelemetry
             end
           end
 
-          def skip_otel_emit?
-            @skip_otel_emit || false
+          def broadcast_logger_context_skipped?
+            BroadcastLoggerContext.skipped_logger?(self)
           end
 
           def severity_number(severity)

@@ -51,11 +51,12 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
       assert_equal(5, log_record.severity_number)
       assert_equal(nano_timestamp, log_record.timestamp)
     end
-
-    it 'does not emit when @skip_otel_emit is true' do
-      ruby_logger.instance_variable_set(:@skip_otel_emit, true)
+    it 'does not emit when skipped by the broadcast logger context' do
+      OpenTelemetry::Instrumentation::Logger::Patches::BroadcastLoggerContext.skip_logger(ruby_logger)
       ruby_logger.debug(msg)
       assert_nil(log_record)
+    ensure
+      OpenTelemetry::Instrumentation::Logger::Patches::BroadcastLoggerContext.unskip_logger(ruby_logger)
     end
 
     it 'turns the severity into a number' do

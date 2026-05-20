@@ -4,50 +4,58 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative 'broadcast_logger_context'
+
 module OpenTelemetry
   module Instrumentation
     module Logger
       module Patches
         # Patches for the ActiveSupport::BroadcastLogger class included in Rails 7.1+
         module ActiveSupportBroadcastLogger
-          def add(*args)
-            emit_one_broadcast(*args) { super }
+          def add(...)
+            emit_one_broadcast { super }
           end
 
-          def debug(*args)
-            emit_one_broadcast(*args) { super }
+          def debug(...)
+            emit_one_broadcast { super }
           end
 
-          def info(*args)
-            emit_one_broadcast(*args) { super }
+          def info(...)
+            emit_one_broadcast { super }
           end
 
-          def warn(*args)
-            emit_one_broadcast(*args) { super }
+          def warn(...)
+            emit_one_broadcast { super }
           end
 
-          def error(*args)
-            emit_one_broadcast(*args) { super }
+          def error(...)
+            emit_one_broadcast { super }
           end
 
-          def fatal(*args)
-            emit_one_broadcast(*args) { super }
+          def fatal(...)
+            emit_one_broadcast { super }
           end
 
-          def unknown(*args)
-            emit_one_broadcast(*args) { super }
+          def unknown(...)
+            emit_one_broadcast { super }
           end
 
           private
 
           # Emit logs from only one of the loggers in the broadcast.
-          # Set @skip_otel_emit to `true` to the rest of the loggers before emitting the logs.
-          # Set @skip_otel_emit to `false` after the log is emitted.
-          def emit_one_broadcast(*args)
-            broadcasts[1..-1].each { |broadcasted_logger| broadcasted_logger.instance_variable_set(:@skip_otel_emit, true) }
-            ret = yield
-            broadcasts.each { |broadcasted_logger| broadcasted_logger.instance_variable_set(:@skip_otel_emit, false) }
-            ret
+          def emit_one_broadcast
+            secondary_broadcasts = broadcasts.drop(1)
+            return yield if secondary_broadcasts.empty?
+
+            secondary_broadcasts.each do |logger|
+              BroadcastLoggerContext.skip_logger(logger)
+            end
+
+            yield
+          ensure
+            secondary_broadcasts&.each do |logger|
+              BroadcastLoggerContext.unskip_logger(logger)
+            end
           end
         end
       end
