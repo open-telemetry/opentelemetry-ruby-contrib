@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+## v0.94.0 / 2026-05-21
+
+- ADDED: Upgrade opentelemetry-instrumentation-trilogy to 0.69.0
+
 ## v0.93.0 / 2026-04-28
 
 - ADDED: Upgrade opentelemetry-instrumentation-rails to 0.42.0
