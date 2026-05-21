@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+## v0.69.0 / 2026-05-21
+
+- ADDED: Trilogy attribute semantic convention stability (#2095)
+
 ## v0.68.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
