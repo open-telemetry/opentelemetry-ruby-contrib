@@ -2,7 +2,7 @@
 
 ## v0.69.0 / 2026-05-21
 
-- ADDED: Trilogy attribute semantic convention stability (#2095)
+- ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable support for span attributes (#2095)
 
 ## v0.68.0 / 2026-04-14
 
