@@ -55,6 +55,7 @@ module OpenTelemetry
         option :propagation_style, default: :link, validate: %i[link child none]
         option :force_flush, default: false, validate: :boolean
         option :span_naming, default: :queue, validate: %i[job_class queue]
+        option :use_semcomv, default: false, validate: :boolean
 
         private
 

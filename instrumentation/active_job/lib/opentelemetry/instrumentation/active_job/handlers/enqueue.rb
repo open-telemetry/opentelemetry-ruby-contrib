@@ -10,7 +10,7 @@ module OpenTelemetry
       module Handlers
         # Handles `enqueue.active_job` and `enqueue_at.active_job` to generate egress spans
         class Enqueue < Default
-          EVENT_NAME = 'publish'
+          EVENT_NAME = 'enqueue'
 
           # Overrides the `Default#start_span` method to create an egress span
           # and registers it with the current context
@@ -22,8 +22,9 @@ module OpenTelemetry
           def start_span(name, _id, payload)
             job = payload.fetch(:job)
             span_name = span_name(job, EVENT_NAME)
-            span = tracer.start_span(span_name, kind: :producer, attributes: @mapper.call(payload))
+            span = tracer.start_span(span_name, kind: :producer, attributes: @mapper.call(payload, @config[:use_semcomv]))
             token = OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))
+            OpenTelemetry::Baggage.set_value('job_span_id', span.context.span_id)
             OpenTelemetry.propagation.inject(job.__otel_headers) # This must be transmitted over the wire
             { span: span, ctx_token: token }
           end

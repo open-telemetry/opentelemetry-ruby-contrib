@@ -43,7 +43,7 @@ module OpenTelemetry
             job = payload.fetch(:job)
             event_name = name.delete_suffix(".#{EVENT_NAMESPACE}")
             span_name = span_name(job, event_name)
-            span = tracer.start_span(span_name, attributes: @mapper.call(payload))
+            span = tracer.start_span(span_name, attributes: @mapper.call(payload, @config[:use_semcomv]))
             token = OpenTelemetry::Context.attach(OpenTelemetry::Trace.context_with_span(span))
 
             { span: span, ctx_token: token }
@@ -119,7 +119,11 @@ module OpenTelemetry
                        job.queue_name
                      end
 
-            "#{prefix} #{event_name}"
+            if @config[:use_semcomv]
+              "#{event_name} #{job.class.name}"
+            else
+              "#{prefix} #{event_name}"
+            end
           end
         end
       end
