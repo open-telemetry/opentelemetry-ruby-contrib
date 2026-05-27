@@ -47,11 +47,7 @@ For more information about the approver role, see the [community repository](htt
 - [Andrew Hayworth](https://github.com/ahayworth), Maintainer
 - [Eric Mustin](https://github.com/ericmustin), Maintainer
 - [Francis Bogsanyi](https://github.com/fbogsany), Maintainer
-- [Indrek Juhkam](https://github.com/indrekj), Triager
-- [Jonathan Lee](https://github.com/jj22ee), Triager
 - [Matthew Wear](https://github.com/mwear), Maintainer
-- [Muriel](https://github.com/muripic), Triager
-- [Nathaniel Ruiz Nowell](https://github.com/NathanielRN), Triager
 - [Robert Laurin](https://github.com/robertlaurin), Maintainer
 - [Sam Handler](https://github.com/plantfansam), Maintainer
 
