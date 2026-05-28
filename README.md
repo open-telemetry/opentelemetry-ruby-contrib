@@ -27,16 +27,10 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 ### Maintainers
 
-- [Andrew Hayworth](https://github.com/ahayworth)
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Daniel Azuma](https://github.com/dazuma), Google
-- [Eric Mustin](https://github.com/ericmustin)
-- [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
-- [Matthew Wear](https://github.com/mwear), Lightstep
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
-- [Robert Laurin](https://github.com/robertlaurin), Shopify
-- [Sam Handler](https://github.com/plantfansam), Shopify
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
@@ -48,6 +42,18 @@ For more information about the maintainer role, see the [community repository](h
 - [James Thompson](https://github.com/thompson-tomo)
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
+
+### Emeritus
+
+- [Andrew Hayworth](https://github.com/ahayworth), Maintainer
+- [Eric Mustin](https://github.com/ericmustin), Maintainer
+- [Francis Bogsanyi](https://github.com/fbogsany), Maintainer
+- [Matthew Wear](https://github.com/mwear), Maintainer
+- [Robert Laurin](https://github.com/robertlaurin), Maintainer
+- [Sam Handler](https://github.com/plantfansam), Maintainer
+
+For more information about the emeritus role, see the
+[community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
 
 ## Instrumentation Libraries
 
