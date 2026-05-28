@@ -99,24 +99,16 @@
       matchFileNames: ["**/*.gemspec"],
       dependencyDashboardApproval: true,
     },
+    {
+      description: "Disable digest for ruby base image",
+      matchDepNames: ["Ruby"],
+      matchFileNames: ["Dockerfile"],
+      matchManagers: ["dockerfile"],
+      matchUpdateTypes: ["digest"],
+      enabled: false,
+    },
   ],
   customManagers: [
-    {
-      customType: "regex",
-      description: "Update Package version in Dockerfiles",
-      managerFilePatterns: [
-        "/(^|/|\\.)Dockerfile$/",
-        "/(^|/)Dockerfile\\.[^/]*$/",
-      ],
-      matchStrings: [
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
-      ],
-      datasourceTemplate: "docker",
-      versioningTemplate: "docker",
-      currentValueTemplate: "{{depVersion}}",
-      extractVersionTemplate: "^(?<version>[0-9.]+)-alpine{{alpineVersion}}$",
-    },
     {
       customType: "regex",
       description: "Update os version in Dockerfiles",
@@ -133,20 +125,6 @@
       currentValueTemplate: "{{alpineVersion}}",
       extractVersionTemplate: "^{{depVersion}}-alpine(?<version>[0-9.]+)$",
       depNameTemplate: "{{packageName}}-alpine",
-    },
-    {
-      customType: "regex",
-      description: "Update entrypoint docker versions in services",
-      managerFilePatterns: [
-        ".github/workflows/ci-instrumentation-with-services.yml",
-      ],
-      matchStrings: [
-        "entrypoint sh (?<packageName>.+?):(?<depVersion>[0-9.]+?)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s-c",
-        "entrypoint sh (?<packageName>.+?):(?<depVersion>[0-9.]+?)\\s-c",
-      ],
-      datasourceTemplate: "docker",
-      versioningTemplate: "docker",
-      currentValueTemplate: "{{depVersion}}",
     },
     {
       customType: "regex",
@@ -181,7 +159,7 @@
       datasourceTemplate: "ruby-version",
       versioningTemplate: "ruby",
       currentValueTemplate: "{{depVersion}}",
-      extractVersionTemplate: "(?<version>[0-9]+.[0-9]+).0",
+      extractVersionTemplate: "^(?<version>[0-9]+.[0-9]+).0$",
       depNameTemplate: "ruby",
       depTypeTemplate: "gemspec.required_ruby_version",
     },
@@ -202,7 +180,7 @@
   ],
   lockFileMaintenance: {
     enabled: true,
-    schedule: ["before 8am on Monday"],
+    schedule: ["before 4am on Tuesday"],
   },
   labels: ["dependencies"],
   ignoreDeps: [
