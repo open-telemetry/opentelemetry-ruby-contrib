@@ -205,7 +205,7 @@ module OpenTelemetry
         @installed = false
         @options = options
         @tracer = OpenTelemetry::Trace::Tracer.new
-        # check to see if the API is defined here because the config isn't available yet
+        # check to see if the API is defined here, because the config isn't available yet
         @meter = OpenTelemetry::Metrics::Meter.new if defined?(OpenTelemetry::Metrics)
       end
       # rubocop:enable Metrics/ParameterLists
