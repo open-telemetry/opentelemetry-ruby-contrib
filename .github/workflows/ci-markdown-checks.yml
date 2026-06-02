@@ -32,6 +32,14 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
+      # workaround for https://github.com/UmbrellaDocs/action-linkspector/issues/62
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          echo "PUPPETEER_SKIP_DOWNLOAD=true" >> $GITHUB_ENV
+          echo "PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome" >> $GITHUB_ENV
+
       # equivalent cli: linkspector check
       - name: Run linkspector
         uses: umbrelladocs/action-linkspector@036f295d12b67b0c4b445bc83db0538afb78db69 # v1.5.2
