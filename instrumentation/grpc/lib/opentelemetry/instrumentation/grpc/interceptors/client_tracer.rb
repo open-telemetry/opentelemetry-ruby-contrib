@@ -29,7 +29,7 @@ module OpenTelemetry
           private
 
           def call(type:, requests: nil, call: nil, method: nil, metadata: nil)
-            return yield if instrumentation_config.empty?
+            return yield unless Grpc::Instrumentation.instance.installed?
 
             method_parts = method.to_s.split('/')
             service = method_parts[1]

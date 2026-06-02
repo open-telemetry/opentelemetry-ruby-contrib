@@ -26,7 +26,9 @@ When you become a component owner, you will be added to the `opentelemetry/ruby-
 
 If you do not have the capacity to maintain the instrumentation library, please consider contributing to the OpenTelemetry Ruby project in other ways or consider creating a separate project for the instrumentation library.
 
-> :warning: Libraries that do not meet these requirements may be removed from the project at any time at the discretion of OpenTelemetry Ruby Contrib Maintainers.
+> [!WARNING]
+>
+> Libraries that do not meet these requirements may be removed from the project at any time at the discretion of OpenTelemetry Ruby Contrib Maintainers.
 
 ## Contributing a new instrumentation library
 
@@ -169,7 +171,9 @@ For example, the `Werewolf` module generated in the example above is available v
 
 ```
 
-> :warning: This tracer is not _upgradable_ before the SDK is initialized, therefore it is important that your instrumentation _always_ use stack local references of the tracer.
+> [!WARNING]
+>
+> This tracer is not _upgradable_ before the SDK is initialized, therefore it is important that your instrumentation _always_ use stack local references of the tracer.
 
 ### Use first-party extension points
 
@@ -181,7 +185,9 @@ Monkey patching is discouraged in OpenTelemetry Ruby because it is the most comm
 
 Use the [OpenTelemetry Semantic Conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/) to ensure the instrumentation is compatible with other OpenTelemetry libraries and that the data is useful in a distributed context.
 
-> :information_source: Privacy and security are important considerations when adding attributes to spans. Please ensure that you are not adding sensitive information to spans. If you are unsure, please ask for a review.
+> [!Important]
+>
+> Privacy and security are important considerations when adding attributes to spans. Please ensure that you are not adding sensitive information to spans. If you are unsure, please ask for a review.
 
 When semantic conventions do not exist, use the [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html) and submit an Issue/PR with your attributes to the [Semantic Conventions repo](https://github.com/open-telemetry/semantic-conventions) to propose a new set of standard attributes.
 

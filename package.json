@@ -14,6 +14,7 @@
     "check:source": "npm run check:source:ruby",
     "check:source:ruby": "rubocop --only Bundler,Gemspec,Metrics,Migration,Minitest,Performance,Rake,RSpec,Security",
     "check:spelling": "cspell -c .cspell.yml .",
+    "test:renovate:dryrun": "renovate --dry-run=full --autodiscover --autodiscover-filter open-telemetry/opentelemetry-ruby-contrib",
     "write": "npm run write:lint && npm run write:format && npm run write:source:ruby",
     "write:format": "npm run write:format:ruby && prettier . --write",
     "write:format:json": "prettier **/*.json --write",
@@ -32,6 +33,6 @@
     "@prantlf/jsonlint": "17.0.1",
     "markdownlint-cli2": "0.22.1",
     "prettier": "3.8.3",
-    "renovate": "43.140.0"
+    "renovate": "43.204.0"
   }
 }

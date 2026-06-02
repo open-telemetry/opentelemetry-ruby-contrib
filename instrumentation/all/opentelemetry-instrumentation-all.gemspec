@@ -62,7 +62,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-ruby_kafka', '~> 0.25.0'
   spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.29.0'
   spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.30.0'
-  spec.add_dependency 'opentelemetry-instrumentation-trilogy', '~> 0.68.0'
+  spec.add_dependency 'opentelemetry-instrumentation-trilogy', '~> 0.69.0'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
