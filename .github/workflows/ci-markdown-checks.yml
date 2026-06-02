@@ -34,7 +34,6 @@ jobs:
 
       # workaround for https://github.com/UmbrellaDocs/action-linkspector/issues/62
       - name: Install Chrome
-        if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
