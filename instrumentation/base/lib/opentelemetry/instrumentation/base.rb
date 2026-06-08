@@ -74,6 +74,7 @@ module OpenTelemetry
 
         private :new
 
+        # Registers the subclass in the instrumentation registry upon inheritance.
         def inherited(subclass) # rubocop:disable Lint/MissingSuper
           OpenTelemetry::Instrumentation.registry.register(subclass)
         end
@@ -162,6 +163,7 @@ module OpenTelemetry
           @options << { name: name, default: default, validator: validator, validation_type: validation_type }
         end
 
+        # Returns the singleton instance of this instrumentation class.
         def instance
           @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
                             present_blk, compatible_blk, options)
