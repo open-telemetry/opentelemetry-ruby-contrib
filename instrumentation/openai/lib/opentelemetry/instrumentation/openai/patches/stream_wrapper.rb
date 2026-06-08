@@ -31,6 +31,7 @@ module OpenTelemetry
             @span_started = true
           end
 
+          # Iterates over streaming events, processing each chunk and yielding it to the caller.
           def each(&)
             @stream.each do |event|
               process_event(event)
@@ -132,10 +133,12 @@ module OpenTelemetry
               @finish_reason = nil
             end
 
+            # Appends a content chunk to the text buffer.
             def append_content(content)
               @text_content << content if content
             end
 
+            # Appends streaming tool call deltas to their respective buffers.
             def append_tool_calls(tool_calls)
               tool_calls.each do |tool_call|
                 # Find or create tool call buffer
@@ -151,6 +154,7 @@ module OpenTelemetry
               end
             end
 
+            # Converts the accumulated choice buffer into a structured log event hash.
             def to_log_event
               body = {
                 index: @index,
@@ -188,6 +192,7 @@ module OpenTelemetry
               @arguments = []
             end
 
+            # Accumulates tool call delta data into the buffer.
             def append(tool_call)
               @tool_call_id ||= tool_call.id if tool_call.respond_to?(:id)
 
@@ -198,6 +203,7 @@ module OpenTelemetry
               @arguments << function.arguments if function.respond_to?(:arguments) && function.arguments
             end
 
+            # Serializes the accumulated tool call buffer to a hash.
             def to_hash
               {
                 id: @tool_call_id,

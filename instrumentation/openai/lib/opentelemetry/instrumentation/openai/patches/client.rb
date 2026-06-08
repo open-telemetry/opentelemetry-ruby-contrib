@@ -13,11 +13,12 @@ module OpenTelemetry
     module OpenAI
       module Patches
         # OpenAIClient Patch
-        # rubocop:disable  Metrics/ModuleLength
+        # rubocop:disable Metrics/ModuleLength
         module Client
           include OperationName
           include Utils
 
+          # Intercepts outgoing OpenAI requests to create and manage OpenTelemetry spans.
           def request(req)
             operation_name = determine_operation_name(req)
 
@@ -254,7 +255,7 @@ module OpenTelemetry
             span.finish
           end
         end
-        # rubocop:enable  Metrics/ModuleLength
+        # rubocop:enable Metrics/ModuleLength
       end
     end
   end

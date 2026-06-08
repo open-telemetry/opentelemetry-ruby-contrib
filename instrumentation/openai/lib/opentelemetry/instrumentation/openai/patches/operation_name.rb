@@ -10,6 +10,7 @@ module OpenTelemetry
       module Patches
         # Determine the operation name from the request path
         module OperationName
+          # Maps the request path to a canonical OpenAI operation name.
           def determine_operation_name(req)
             path = req[:path].to_s
 

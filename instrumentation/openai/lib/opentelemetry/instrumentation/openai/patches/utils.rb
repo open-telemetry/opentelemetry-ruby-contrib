@@ -13,6 +13,7 @@ module OpenTelemetry
       module Patches
         # Utils
         module Utils
+          # Retrieves a property value from a Hash or object by name.
           def get_property_value(obj, property_name)
             if obj.is_a?(Hash)
               obj[property_name] || obj[property_name.to_sym]
@@ -21,6 +22,7 @@ module OpenTelemetry
             end
           end
 
+          # Extracts and normalizes tool call data from a message or choice object.
           def extract_tool_calls(item, capture_content)
             tool_calls = get_property_value(item, :tool_calls)
             return nil unless tool_calls
@@ -54,6 +56,7 @@ module OpenTelemetry
             calls
           end
 
+          # Converts a request message into a structured gen_ai log event hash.
           def message_to_log_event(message, capture_content: true)
             role = get_property_value(message, :role)&.to_s
             content = get_property_value(message, :content)
@@ -78,6 +81,7 @@ module OpenTelemetry
             }
           end
 
+          # Converts a response choice into a structured gen_ai log event hash.
           def choice_to_log_event(choice, capture_content: true)
             index = get_property_value(choice, :index) || 0
             finish_reason = get_property_value(choice, :finish_reason)&.to_s || 'error'
@@ -111,6 +115,7 @@ module OpenTelemetry
             }
           end
 
+          # Emits a structured log event as a JSON-encoded info log entry.
           def log_structured_event(event)
             log_message = {
               event: event[:event_name],
