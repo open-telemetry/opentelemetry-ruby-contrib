@@ -1,0 +1,2 @@
+include:
+  - ../../../.docker/infra/rabbitmq/docker-compose.yml

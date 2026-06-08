@@ -37,93 +37,22 @@ jobs:
       fail-fast: false
       matrix:
         gem:
-          - sql
-          - mysql
-          - sql-processor
-        os:
-          - ubuntu-24.04
-    name: "helpers-${{ matrix.gem }} / ${{ matrix.os }}"
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          coverage: true
-          build: true
-      - name: "Test JRuby"
-        if: startsWith(matrix.os, 'ubuntu')
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-helpers-${{ matrix.gem }}"
-          ruby: "jruby-10.0.2.0"
-
-  propagators:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - ottrace
-          - vitess
-          - xray
-          - google_cloud_trace_context
-        os:
-          - ubuntu-24.04
-    name: "propagator-${{ matrix.gem }} / ${{ matrix.os }}"
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          build: true
-      - name: "Test JRuby"
-        if: startsWith(matrix.os, 'ubuntu')
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-propagator-${{ matrix.gem }}"
-          ruby: "jruby-10.0.2.0"
-
-  resource-detectors:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
+          - helpers-mysql
+          - helpers-sql
+          - helpers-sql-processor
+          - processor-baggage
+          - propagator-google_cloud_trace_context
+          - propagator-ottrace
+          - propagator-vitess
+          - propagator-xray
           - resource-detector-aws
           - resource-detector-azure
           - resource-detector-container
           - resource-detector-google_cloud_platform
+          - sampler-xray
         os:
           - ubuntu-24.04
-    name: "opentelemetry-${{ matrix.gem }} / ${{ matrix.os }}"
+    name: "${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -143,87 +72,10 @@ jobs:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
-          coverage: true
           build: true
       - name: "Test JRuby"
         if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "jruby-10.0.2.0"
-
-  processors:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - baggage
-        os:
-          - ubuntu-24.04
-    name: "processors-${{ matrix.gem }} / ${{ matrix.os }}"
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          coverage: true
-          build: true
-      - name: "Test JRuby"
-        if: startsWith(matrix.os, 'ubuntu')
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-processor-${{ matrix.gem }}"
-          ruby: "jruby-10.0.2.0"
-
-  samplers:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - xray
-        os:
-          - ubuntu-24.04
-    name: "samplers-${{ matrix.gem }} / ${{ matrix.os }}"
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-sampler-${{ matrix.gem }}"
-          ruby: "4.0"
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-sampler-${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-sampler-${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          coverage: true
-          build: true
-      - name: "Test JRuby"
-        if: startsWith(matrix.os, 'ubuntu')
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "opentelemetry-sampler-${{ matrix.gem }}"
           ruby: "jruby-10.0.2.0"

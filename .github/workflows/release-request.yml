@@ -25,23 +25,25 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
-          ruby-version: "4.0.2"
+          ruby-version: "4.0.5"
           bundler-cache: true
 
       - name: Create otelbot app token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
-          app-id: ${{ vars.OTELBOT_RUBY_CONTRIB_APP_ID }}
+          client-id: ${{ vars.OTELBOT_RUBY_CONTRIB_APP_ID }}
           private-key: ${{ secrets.OTELBOT_RUBY_CONTRIB_PRIVATE_KEY }}
 
       - name: Open release pull request
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          TARGET_BRANCH: ${{ github.ref }}
+          RELEASE_NAMES: ${{ github.event.inputs.names }}
         run: |
           bundle exec toys release request --yes --verbose \
-            "--target-branch=${{ github.ref }}" \
-            ${{ github.event.inputs.names }} \
+            "--target-branch=$TARGET_BRANCH" \
+            $RELEASE_NAMES \
             < /dev/null
