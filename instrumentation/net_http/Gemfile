@@ -30,4 +30,5 @@ group :test do
     gem 'logger'
     gem 'mutex_m'
   end
+  gem 'ostruct' if RUBY_VERSION >= '4.0'
 end

@@ -118,10 +118,9 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     let(:meter) { meter_provider.meter('test-meter') }
 
     it 'initializes client_request_duration histogram' do
-      instrumentation.stub(:meter, meter) do
-        instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.install
-      end
+      allow(instrumentation).to receive(:meter).and_return(meter)
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install
 
       histogram = instrumentation.config[:client_request_duration]
       _(histogram).wont_be_nil
@@ -129,10 +128,9 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     end
 
     it 'does not create metrics when meter is nil' do
-      instrumentation.stub(:meter, nil) do
-        instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.install
-      end
+      allow(instrumentation).to receive(:meter).and_return(nil)
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install
 
       _(instrumentation.config[:client_request_duration]).must_be_nil
     end

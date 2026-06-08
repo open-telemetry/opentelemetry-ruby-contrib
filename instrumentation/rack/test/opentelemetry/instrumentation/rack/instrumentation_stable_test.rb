@@ -86,20 +86,18 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
     let(:meter) { meter_provider.meter('test-meter') }
 
     it 'initializes server_request_duration histogram when meter is available' do
-      instrumentation.stub(:meter, meter) do
-        instrumentation.install(config)
-        histogram = instrumentation.config[:server_request_duration]
-        _(histogram).wont_be_nil
-        _(histogram).must_respond_to :record
-      end
+      allow(instrumentation).to receive(:meter).and_return(meter)
+      instrumentation.install(config)
+      histogram = instrumentation.config[:server_request_duration]
+      _(histogram).wont_be_nil
+      _(histogram).must_respond_to :record
     end
 
     it 'does not create metrics when meter is nil' do
-      instrumentation.stub(:meter, nil) do
-        instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.install(config)
-        _(instrumentation.config[:server_request_duration]).must_be_nil
-      end
+      allow(instrumentation).to receive(:meter).and_return(nil)
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(config)
+      _(instrumentation.config[:server_request_duration]).must_be_nil
     end
   end
 end
