@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:get, 'http://example.com/failure').to_return(status: 500)
@@ -24,7 +25,10 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
   end
 
   # Force re-install of instrumentation
-  after { instrumentation.instance_variable_set(:@installed, false) }
+  after do
+    instrumentation.instance_variable_set(:@installed, false)
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
+  end
 
   describe 'tracing' do
     before do
@@ -33,6 +37,24 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
 
     it 'before request' do
       _(exporter.finished_spans.size).must_equal 0
+    end
+
+    it 'after request with non-standard HTTP method' do
+      stub_request(:purge, 'http://example.com/cache').to_return(status: 200)
+      HTTPX.request('PURGE', 'http://example.com/cache')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP'
+      _(span.attributes['http.method']).must_equal '_OTHER'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
+      _(span.attributes['http.target']).must_equal '/cache'
+      assert_requested(
+        :purge,
+        'http://example.com/cache',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
     end
 
     it 'after request with success code' do
@@ -71,8 +93,8 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
 
     it 'after request timeout' do
       response = HTTPX.get('http://example.com/timeout')
-      assert response.is_a?(HTTPX::ErrorResponse)
-      assert response.error.is_a?(HTTPX::TimeoutError)
+      assert_kind_of(HTTPX::ErrorResponse, response)
+      assert_kind_of(HTTPX::TimeoutError, response.error)
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'

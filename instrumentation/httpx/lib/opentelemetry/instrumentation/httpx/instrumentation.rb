@@ -16,7 +16,7 @@ module OpenTelemetry
         end
 
         compatible do
-          Gem::Version.new(::HTTPX::VERSION) >= Gem::Version.new('0.24.7')
+          Gem::Version.new(::HTTPX::VERSION) >= Gem::Version.new('1.6.0')
         end
 
         present do
@@ -30,12 +30,18 @@ module OpenTelemetry
           values = stability_opt_in.split(',').map(&:strip)
 
           if values.include?('http/dup')
+            emit_old_semconv_deprecation_warning('http/dup')
             'dup'
-          elsif values.include?('http')
-            'stable'
-          else
+          elsif values.include?('old')
+            emit_old_semconv_deprecation_warning('old')
             'old'
+          else
+            'stable'
           end
+        end
+
+        def emit_old_semconv_deprecation_warning(option)
+          OpenTelemetry.logger.warn("The `#{option}` option for OTEL_SEMCONV_STABILITY_OPT_IN is deprecated and will be removed on April 15, 2026. Please migrate to the stable HTTP semantic conventions.")
         end
 
         def patch_old

@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'factory_bot-4' do
+  gem 'factory_bot', '~> 4.0'
+  gem 'activesupport', '~> 6.0' # factory_bot 4 requires activesupport < 7 on Ruby 3.4+
+end
+
+appraise 'factory_bot-5' do
+  gem 'factory_bot', '~> 5.0'
+  gem 'activesupport', '~> 6.0' # factory_bot 5 requires activesupport < 7 on Ruby 3.4+
+end
+
+appraise 'factory_bot-6' do
+  gem 'factory_bot', '~> 6.0'
+end
+
+appraise 'factory_bot-latest' do
+  gem 'factory_bot'
+end

@@ -72,34 +72,32 @@ describe OpenTelemetry::Resource::Detector::AWS::ECS do
 
       it 'detects ECS resources' do
         # Stub the fetch_container_id method directly rather than trying to stub File
-        detector.stub :fetch_container_id, '0123456789abcdef' * 4 do
-          Socket.stub :gethostname, hostname do
-            resource = detector.detect
+        allow(detector).to receive(:fetch_container_id).and_return('0123456789abcdef' * 4)
+        allow(Socket).to receive(:gethostname).and_return(hostname)
+        resource = detector.detect
 
-            _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-            attributes = resource.attribute_enumerator.to_h
+        _(resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+        attributes = resource.attribute_enumerator.to_h
 
-            # Check basic attributes
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PROVIDER]).must_equal('aws')
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM]).must_equal('aws_ecs')
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_NAME]).must_equal(hostname)
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_ID]).must_equal('0123456789abcdef' * 4)
+        # Check basic attributes
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PROVIDER]).must_equal('aws')
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PLATFORM]).must_equal('aws_ecs')
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_NAME]).must_equal(hostname)
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_ID]).must_equal('0123456789abcdef' * 4)
 
-            # Check ECS-specific attributes
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_CONTAINER_ARN]).must_equal(container_metadata['ContainerARN'])
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_CLUSTER_ARN]).must_equal('arn:aws:ecs:us-west-2:123456789012:cluster/my-cluster')
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_LAUNCHTYPE]).must_equal('fargate')
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_TASK_ARN]).must_equal(task_metadata['TaskARN'])
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_TASK_FAMILY]).must_equal(task_metadata['Family'])
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_TASK_REVISION]).must_equal(task_metadata['Revision'])
+        # Check ECS-specific attributes
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_CONTAINER_ARN]).must_equal(container_metadata['ContainerARN'])
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_CLUSTER_ARN]).must_equal('arn:aws:ecs:us-west-2:123456789012:cluster/my-cluster')
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_LAUNCHTYPE]).must_equal('fargate')
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_TASK_ARN]).must_equal(task_metadata['TaskARN'])
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_TASK_FAMILY]).must_equal(task_metadata['Family'])
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_ECS_TASK_REVISION]).must_equal(task_metadata['Revision'])
 
-            # Check log attributes
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_LOG_GROUP_NAMES]).must_equal(['my-log-group'])
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_LOG_GROUP_ARNS]).must_equal(['arn:aws:logs:us-west-2:123456789012:log-group:my-log-group'])
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_LOG_STREAM_NAMES]).must_equal(['my-log-stream'])
-            _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_LOG_STREAM_ARNS]).must_equal(['arn:aws:logs:us-west-2:123456789012:log-group:my-log-group:log-stream:my-log-stream'])
-          end
-        end
+        # Check log attributes
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_LOG_GROUP_NAMES]).must_equal(['my-log-group'])
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_LOG_GROUP_ARNS]).must_equal(['arn:aws:logs:us-west-2:123456789012:log-group:my-log-group'])
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_LOG_STREAM_NAMES]).must_equal(['my-log-stream'])
+        _(attributes[OpenTelemetry::SemanticConventions::Resource::AWS_LOG_STREAM_ARNS]).must_equal(['arn:aws:logs:us-west-2:123456789012:log-group:my-log-group:log-stream:my-log-stream'])
       end
     end
 

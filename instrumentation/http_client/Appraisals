@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# To faclitate HTTP semantic convention stability migration, we are using
+# To facilitate HTTP semantic convention stability migration, we are using
 # appraisal to test the different semantic convention modes along with different
 # HTTP gem versions. For more information on the semantic convention modes, see:
 # https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
@@ -14,9 +14,5 @@ semconv_stability = %w[dup stable old]
 semconv_stability.each do |mode|
   appraise "httpclient-latest-#{mode}" do
     gem 'httpclient'
-  end
-
-  appraise "httpclient-2.8-#{mode}" do
-    gem 'httpclient', '~> 2.8.0'
   end
 end

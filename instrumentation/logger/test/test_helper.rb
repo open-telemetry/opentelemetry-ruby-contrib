@@ -9,6 +9,7 @@ require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'test_helpers/app_config'
 
 EXPORTER = OpenTelemetry::SDK::Logs::Export::InMemoryLogRecordExporter.new
@@ -23,6 +24,6 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 # Create a globally available Rails app, this should be used in test unless
-# specifically testing behaviour with different initialization configs.
+# specifically testing behavior with different initialization configs.
 DEFAULT_RAILS_APP = AppConfig.initialize_app
 Rails.application = DEFAULT_RAILS_APP

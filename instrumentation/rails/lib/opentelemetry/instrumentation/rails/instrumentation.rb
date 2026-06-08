@@ -12,9 +12,9 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Rails
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('7')
+        MINIMUM_VERSION = Gem::Version.new('7.1')
 
-        # This gem requires the instrumentantion gems for the different
+        # This gem requires the instrumentation gems for the different
         # components of Rails, as a result it does not have any explicit
         # work to do in the install step.
         install { true }

@@ -34,7 +34,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(BasicAPI) }
       let(:request_path) { '/hello' }
-      let(:expected_span_name) { 'HTTP GET /hello' }
+      let(:expected_span_name) { 'GET /hello' }
 
       before { app.get request_path }
 
@@ -88,7 +88,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(RouteParamAPI) }
       let(:request_path) { '/users/1' }
-      let(:expected_span_name) { 'HTTP GET /users/:id' }
+      let(:expected_span_name) { 'GET /users/:id' }
 
       before { app.get request_path }
 
@@ -109,7 +109,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(VersionedWithPrefixAPI) }
       let(:request_path) { '/api/v1/hello' }
-      let(:expected_span_name) { 'HTTP GET /api/v1/hello' }
+      let(:expected_span_name) { 'GET /api/v1/hello' }
 
       before { app.get request_path }
 
@@ -133,7 +133,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(NestedAPI) }
       let(:request_path) { '/internal/users' }
-      let(:expected_span_name) { 'HTTP GET /internal/users' }
+      let(:expected_span_name) { 'GET /internal/users' }
 
       before { app.get request_path }
 
@@ -154,7 +154,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(FilteredAPI) }
       let(:request_path) { '/filtered' }
-      let(:expected_span_name) { 'HTTP GET /filtered' }
+      let(:expected_span_name) { 'GET /filtered' }
 
       before { app.get request_path }
 
@@ -196,7 +196,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(CustomFormatterAPI) }
       let(:request_path) { '/hello' }
-      let(:expected_span_name) { 'HTTP GET /hello' }
+      let(:expected_span_name) { 'GET /hello' }
 
       before { app.get request_path }
 
@@ -225,7 +225,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(ValidationErrorAPI) }
       let(:request_path) { '/new' }
-      let(:expected_span_name) { 'HTTP POST /new' }
+      let(:expected_span_name) { 'POST /new' }
       let(:headers) { { 'Content-Type' => 'application/json' } }
       let(:expected_error_type) { 'Grape::Exceptions::ValidationErrors' }
 
@@ -262,7 +262,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(RaisedErrorAPI) }
       let(:request_path) { '/failure' }
-      let(:expected_span_name) { 'HTTP GET /failure' }
+      let(:expected_span_name) { 'GET /failure' }
       let(:expected_error_type) { 'StandardError' }
 
       before do
@@ -300,7 +300,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(ErrorInFilterAPI) }
       let(:request_path) { '/filtered' }
-      let(:expected_span_name) { 'HTTP GET /filtered' }
+      let(:expected_span_name) { 'GET /filtered' }
       let(:expected_error_type) { 'StandardError' }
 
       before do
@@ -338,7 +338,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(ErrorInFormatterAPI) }
       let(:request_path) { '/bad_format' }
-      let(:expected_span_name) { 'HTTP GET /bad_format' }
+      let(:expected_span_name) { 'GET /bad_format' }
       let(:expected_error_type) { 'Grape::Exceptions::InvalidFormatter' }
 
       before { app.get request_path }
@@ -366,7 +366,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(ErrorResponseAPI) }
       let(:request_path) { '/error_response' }
-      let(:expected_span_name) { 'HTTP GET /error_response' }
+      let(:expected_span_name) { 'GET /error_response' }
 
       before { app.get request_path }
 
@@ -385,7 +385,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
       let(:app) { build_rack_app(ErrorResponseAPI) }
       let(:request_path) { '/error_response' }
-      let(:expected_span_name) { 'HTTP GET /error_response' }
+      let(:expected_span_name) { 'GET /error_response' }
 
       before { app.get request_path }
 
@@ -405,7 +405,7 @@ describe OpenTelemetry::Instrumentation::Grape do
       let(:config) { { ignored_events: [:endpoint_render] } }
       let(:app) { build_rack_app(IgnoredEventAPI) }
       let(:request_path) { '/success' }
-      let(:expected_span_name) { 'HTTP GET /success' }
+      let(:expected_span_name) { 'GET /success' }
 
       before { app.get request_path }
 
@@ -437,7 +437,7 @@ describe OpenTelemetry::Instrumentation::Grape do
       end
 
       let(:request_path) { '/hello' }
-      let(:expected_span_name) { 'HTTP GET /hello' }
+      let(:expected_span_name) { 'GET /hello' }
 
       describe 'missing rack installation' do
         it 'disables tracing' do
@@ -458,13 +458,13 @@ describe OpenTelemetry::Instrumentation::Grape do
         it 'creates a span' do
           app.get request_path
           _(exporter.finished_spans.first.attributes).must_equal(
+            'http.request.method' => 'GET',
+            'server.address' => 'unknown',
+            'url.scheme' => 'http',
+            'url.path' => '/hello',
             'code.namespace' => 'BasicAPI',
-            'http.method' => 'GET',
-            'http.host' => 'unknown',
-            'http.scheme' => 'http',
-            'http.target' => '/hello',
             'http.route' => '/hello',
-            'http.status_code' => 200
+            'http.response.status_code' => 200
           )
         end
       end

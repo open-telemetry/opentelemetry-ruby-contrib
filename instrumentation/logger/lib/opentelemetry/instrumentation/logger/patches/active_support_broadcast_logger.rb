@@ -45,8 +45,9 @@ module OpenTelemetry
           # Set @skip_otel_emit to `false` after the log is emitted.
           def emit_one_broadcast(*args)
             broadcasts[1..-1].each { |broadcasted_logger| broadcasted_logger.instance_variable_set(:@skip_otel_emit, true) }
-            yield
+            ret = yield
             broadcasts.each { |broadcasted_logger| broadcasted_logger.instance_variable_set(:@skip_otel_emit, false) }
+            ret
           end
         end
       end

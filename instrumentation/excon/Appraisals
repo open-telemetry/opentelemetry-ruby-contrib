@@ -2,12 +2,12 @@
 
 # add more tests for excon
 
-# To faclitate HTTP semantic convention stability migration, we are using
+# To facilitate HTTP semantic convention stability migration, we are using
 # appraisal to test the different semantic convention modes along with different
 # gem versions. For more information on the semantic convention modes, see:
 # https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
-versions = %w[0.71 0.109]
+versions = %w[1.3.1]
 semconv_stability = %w[dup stable old]
 
 semconv_stability.each do |mode|

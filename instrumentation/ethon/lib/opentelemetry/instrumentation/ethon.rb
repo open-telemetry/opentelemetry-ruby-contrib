@@ -15,5 +15,6 @@ module OpenTelemetry
   end
 end
 
+require_relative 'ethon/http_helper'
 require_relative 'ethon/instrumentation'
 require_relative 'ethon/version'

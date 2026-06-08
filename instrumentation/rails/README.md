@@ -52,9 +52,9 @@ gem "opentelemetry-instrumentation-rails", require: "opentelemetry/instrumentati
 
 ### Configuration options
 
-The Rails instrumentation attempts to mirror the structure of the Ruby on Rails.  It is a collection of instrumentation gems for components of Rails such as Action View, Active Record, Action Pack, etc...
+The Rails instrumentation attempts to mirror the structure of the Ruby on Rails. It is a collection of instrumentation gems for components of Rails such as Action View, Active Record, Action Pack, etc...
 
-You may want to include all of the Rails instrumentation but disable a single instrumentation gem that it includes.  Here is an example of how you can disable Active Record when using this instrumentation gem.
+You may want to include all of the Rails instrumentation but disable a single instrumentation gem that it includes. Here is an example of how you can disable Active Record when using this instrumentation gem.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
@@ -71,6 +71,18 @@ Example usage can be seen in the [`./example/trace_demonstration.rb` file](https
 The `opentelemetry-instrumentation-rails` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+
+## HTTP semantic convention stability
+
+Rails instrumentation installs Rack middleware which by default emits the stable HTTP semantic conventions. The `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable can be used to opt-in to the old or duplicate (both old and stable) semantic conventions.
+
+When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
+
+- `http` - Emits the stable HTTP and networking conventions.
+- `http/dup` - **DEPRECATED: Will be removed on April 15, 2026.** Emits both the old and stable HTTP and networking conventions.
+- `old` - **DEPRECATED: Will be removed on April 15, 2026.** Emits the old HTTP and networking conventions.
+
+For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/).
 
 ## License
 

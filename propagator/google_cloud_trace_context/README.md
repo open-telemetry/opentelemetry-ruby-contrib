@@ -7,7 +7,7 @@ The `opentelemetry-propagator-google_cloud_trace_context` gem contains injectors
 
 The `X-Cloud-Trace-Context` header that is used by Google Cloud predates the W3C specification. For backwards compatibility, some Google Cloud services continue to accept, generate, and propagate the `X-Cloud-Trace-Context` header. However, it is likely that these systems also support the traceparent header.
 
-For example Google's Cloud Load Balancers (which do not support the traceparent header)[https://issuetracker.google.com/issues/253419736], instead will only propagate `X-Cloud-Trace-Context` which this gem helps resolve.
+For example Google's Cloud Load Balancers [which do not support the traceparent header](https://issuetracker.google.com/issues/253419736), instead will only propagate `X-Cloud-Trace-Context` which this gem helps resolve.
 
 The `X-Cloud-Trace-Context` header has the following format:
 
@@ -66,6 +66,4 @@ The `opentelemetry-propagator-google_cloud_trace_context` gem is distributed und
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [gcp-spec]: https://cloud.google.com/appengine/docs/standard/writing-application-logs
-[rfc7230-url]: https://tools.ietf.org/html/rfc7230#section-3.2
-[fields-spec-url]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/context/api-propagators.md#fields
 [envars]: https://github.com/open-telemetry/opentelemetry-specification/blob/v1.20.0/specification/sdk-environment-variables.md#general-sdk-configuration

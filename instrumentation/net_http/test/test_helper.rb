@@ -9,6 +9,17 @@ require 'net/http'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
+# Define custom HTTP method for testing unknown method handling
+module Net
+  class HTTP
+    class Purge < HTTPRequest
+      METHOD = 'PURGE'
+      REQUEST_HAS_BODY = false
+      RESPONSE_HAS_BODY = true
+    end
+  end
+end
+
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'

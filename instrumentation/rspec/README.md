@@ -47,7 +47,7 @@ RSpec.configure do |config|
 end
 ```
 
-If you need to test trace behaviour in your specs then you should be able to use a custom tracer provider and the instrumentation's output should not interfere with your specs.
+If you need to test trace behavior in your specs then you should be able to use a custom tracer provider and the instrumentation's output should not interfere with your specs.
 
 ### Sampling
 

@@ -41,30 +41,31 @@ describe OpenTelemetry::Resource::Detector::GoogleCloudPlatform do
       let(:project_id) { 'opentelemetry' }
 
       before do
-        gcp_env_mock = Minitest::Mock.new
-        gcp_env_mock.expect(:compute_engine?, true)
-        gcp_env_mock.expect(:project_id, project_id)
-        gcp_env_mock.expect(:instance_attribute, 'us-central1', %w[cluster-location])
-        gcp_env_mock.expect(:instance_zone, 'us-central1-a')
-        gcp_env_mock.expect(:lookup_metadata, 'opentelemetry-test', %w[instance id])
-        gcp_env_mock.expect(:lookup_metadata, 'opentelemetry-node-1', %w[instance hostname])
-        gcp_env_mock.expect(:instance_attribute, 'opentelemetry-cluster', %w[cluster-name])
-        gcp_env_mock.expect(:kubernetes_engine?, true)
-        gcp_env_mock.expect(:kubernetes_engine_namespace_id, 'default')
-        gcp_env_mock.expect(:knative?, true)
-        gcp_env_mock.expect(:project_id, project_id)
-        gcp_env_mock.expect(:knative_service_id, 'test-google-cloud-function')
-        gcp_env_mock.expect(:knative_service_revision, '2')
-        gcp_env_mock.expect(:instance_zone, 'us-central1-a')
+        gcp_env_mock = instance_double(Google::Cloud::Env)
 
-        Socket.stub(:gethostname, 'opentelemetry-test') do
-          old_hostname = ENV.fetch('HOSTNAME', nil)
-          ENV['HOSTNAME'] = 'opentelemetry-host-name-1'
-          begin
-            Google::Cloud::Env.stub(:new, gcp_env_mock) { detected_resource }
-          ensure
-            ENV['HOSTNAME'] = old_hostname
-          end
+        allow(gcp_env_mock).to receive(:compute_engine?).and_return(true)
+        allow(gcp_env_mock).to receive(:project_id).and_return(project_id)
+        allow(gcp_env_mock).to receive(:instance_attribute).with('cluster-location').and_return('us-central1')
+        allow(gcp_env_mock).to receive(:instance_zone).and_return('us-central1-a')
+        allow(gcp_env_mock).to receive(:lookup_metadata).with('instance', 'id').and_return('opentelemetry-test')
+        allow(gcp_env_mock).to receive(:lookup_metadata).with('instance', 'hostname').and_return('opentelemetry-node-1')
+        allow(gcp_env_mock).to receive(:instance_attribute).with('cluster-name').and_return('opentelemetry-cluster')
+        allow(gcp_env_mock).to receive(:kubernetes_engine?).and_return(true)
+        allow(gcp_env_mock).to receive(:kubernetes_engine_namespace_id).and_return('default')
+        allow(gcp_env_mock).to receive(:knative?).and_return(true)
+        allow(gcp_env_mock).to receive(:project_id).and_return(project_id)
+        allow(gcp_env_mock).to receive(:knative_service_id).and_return('test-google-cloud-function')
+        allow(gcp_env_mock).to receive(:knative_service_revision).and_return('2')
+        allow(gcp_env_mock).to receive(:instance_zone).and_return('us-central1-a')
+
+        allow(Socket).to receive(:gethostname).and_return('opentelemetry-test')
+        old_hostname = ENV.fetch('HOSTNAME', nil)
+        ENV['HOSTNAME'] = 'opentelemetry-host-name-1'
+        begin
+          allow(Google::Cloud::Env).to receive(:new).and_return(gcp_env_mock)
+          detected_resource
+        ensure
+          ENV['HOSTNAME'] = old_hostname
         end
       end
 

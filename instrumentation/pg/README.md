@@ -54,6 +54,11 @@ OpenTelemetry::SDK.configure do |c|
     # semantic attribute. Optionally, you may disable the inclusion of this attribute entirely by
     # setting this option to :omit or disable sanitization of the attribute by setting it to :include
     db_statement: :include,
+
+    # When `db_statement` is enabled, this instrumentation obfuscates SQL queries. By default, it
+    # obfuscates queries up to 2000 characters. You can override the default with a different
+    # `obfuscation_limit`, but higher values may impact performance.
+    obfuscation_limit: 2000
   }
 end
 ```
@@ -80,4 +85,3 @@ The `opentelemetry-instrumentation-pg` gem is distributed under the Apache 2.0 l
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
-

@@ -127,7 +127,7 @@ module OpenTelemetry
           attributes
         end
 
-        # fass.trigger set to http: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/faas/aws-lambda.md#api-gateway
+        # faas.trigger set to http: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/faas/aws-lambda.md#api-gateway
         # TODO: need to update Semantic Conventions for invocation_id, trigger and resource_id
         def otel_attributes(event, context)
           span_attributes = {}

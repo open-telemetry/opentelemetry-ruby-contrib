@@ -7,7 +7,7 @@ module OpenTelemetry
   module Instrumentation
     module ActiveRecord
       module Patches
-        # Module to prepend to ActiveRecord::Base for instrumentating
+        # Module to prepend to ActiveRecord::Base for instrumenting
         # insert/upsert class methods added in Rails 6.0
         module PersistenceInsertClassMethods
           def self.prepended(base)

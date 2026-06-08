@@ -12,32 +12,20 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Faraday requests
           # by way of its middleware system
           class TracerMiddleware < ::Faraday::Middleware
-            HTTP_METHODS_SYMBOL_TO_STRING = {
-              connect: 'CONNECT',
-              delete: 'DELETE',
-              get: 'GET',
-              head: 'HEAD',
-              options: 'OPTIONS',
-              patch: 'PATCH',
-              post: 'POST',
-              put: 'PUT',
-              trace: 'TRACE'
-            }.freeze
-
             # Constant for the HTTP status range
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def call(env)
-              http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
+              span_data = HttpHelper.span_attrs_for_stable(env.method)
+
               config = Faraday::Instrumentation.instance.config
 
-              attributes = span_creation_attributes(
-                http_method: http_method, url: env.url, config: config
-              )
+              attributes = span_creation_attributes(url: env.url, config: config)
+              attributes.merge!(span_data.attributes)
 
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes(attributes) do |attrs, _|
                 tracer.in_span(
-                  http_method, attributes: attrs, kind: config.fetch(:span_kind)
+                  span_data.span_name, attributes: attrs, kind: config.fetch(:span_kind)
                 ) do |span|
                   OpenTelemetry.propagation.inject(env.request_headers)
 
@@ -58,18 +46,15 @@ module OpenTelemetry
 
             private
 
-            def span_creation_attributes(http_method:, url:, config:)
+            def span_creation_attributes(url:, config:)
               attrs = {
-                'http.request.method' => http_method,
                 'url.full' => OpenTelemetry::Common::Utilities.cleanse_url(url.to_s),
                 'faraday.adapter.name' => app.class.name
               }
               attrs['server.address'] = url.host if url.host
               attrs['peer.service'] = config[:peer_service] if config[:peer_service]
 
-              attrs.merge!(
-                OpenTelemetry::Common::HTTP::ClientContext.attributes
-              )
+              attrs
             end
 
             # Versions prior to 1.0 do not define an accessor for app

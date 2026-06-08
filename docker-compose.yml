@@ -1,19 +1,18 @@
-x-shared-config:
-  base: &base
-    command: /bin/bash
-    image: opentelemetry/opentelemetry-ruby-contrib
-    stdin_open: true
-    tmpfs:
-      - /tmp
-    tty: true
-    user: "1000:1000"
-    volumes:
-      - .:/app:cached
-      - bundle:/bundle
+include:
+  - ./.docker/volume/compose.yml
+  - ./.docker/infra/kafka/docker-compose.yml
+  - ./.docker/infra/memcached/docker-compose.yml
+  - ./.docker/infra/mongo/docker-compose.yml
+  - ./.docker/infra/mysql/docker-compose.yml
+  - ./.docker/infra/postgres/docker-compose.yml
+  - ./.docker/infra/rabbitmq/docker-compose.yml
+  - ./.docker/infra/redis/docker-compose.yml
 
 services:
   app:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     build:
       context: .
     working_dir: /app
@@ -41,7 +40,9 @@ services:
       - redis
 
   ex-instrumentation-bunny:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     depends_on:
       - rabbitmq
     environment:
@@ -49,27 +50,39 @@ services:
     working_dir: /app/instrumentation/bunny/example
 
   ex-instrumentation-concurrent-ruby:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/concurrent_ruby/example
 
   ex-instrumentation-delayed_job:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/delayed_job/example
 
   ex-instrumentation-ethon:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/ethon/example
 
   ex-instrumentation-excon:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/excon/example
 
   ex-instrumentation-faraday:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/faraday/example
 
   ex-instrumentation-mysql2:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - TEST_MYSQL_USER=root
       - TEST_MYSQL_ROOT_PASSWORD=root
@@ -81,7 +94,9 @@ services:
     working_dir: /app/instrumentation/mysql2/example
 
   ex-instrumentation-mysql2-test:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - TEST_MYSQL_USER=root
       - TEST_MYSQL_ROOT_PASSWORD=root
@@ -93,7 +108,9 @@ services:
     working_dir: /app/instrumentation/mysql2/
 
   ex-instrumentation-pg:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - TEST_POSTGRES_PASSWORD=postgres
       - TEST_POSTGRES_USER=postgres
@@ -106,7 +123,9 @@ services:
     working_dir: /app/instrumentation/pg/example
 
   ex-instrumentation-pg-test:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - TEST_POSTGRES_PASSWORD=postgres
       - TEST_POSTGRES_USER=postgres
@@ -115,20 +134,25 @@ services:
       - TEST_POSTGRES_DB=postgres
     depends_on:
       - postgres
-    tmpfs: []
+    tmpfs: !reset []
     working_dir: /app/instrumentation/pg/
-    volumes:
-      - .:/app:cached
-      - bundle:/bundle
-      - postgres_socket:/tmp
-      - postgres_socket:/var/run/postgresql
 
   ex-instrumentation-net-http:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/net_http/example
 
+  ex-instrumentation-net-ldap:
+    extends:
+      service: base
+      file: ./docker-base.yml
+    working_dir: /app/instrumentation/net_ldap/example
+
   ex-instrumentation-que:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - TEST_POSTGRES_PASSWORD=postgres
       - TEST_POSTGRES_USER=postgres
@@ -140,11 +164,15 @@ services:
     working_dir: /app/instrumentation/que
 
   ex-instrumentation-rack:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/rack/example
 
   ex-instrumentation-dalli:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
       - MEMCACHED_URL=memcached:11211
     depends_on:
@@ -152,101 +180,25 @@ services:
     working_dir: /app/instrumentation/dalli/example
 
   ex-instrumentation-restclient:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     working_dir: /app/instrumentation/restclient/example
 
   ex-instrumentation-sinatra:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     command: ./start_server.sh
     working_dir: /app/instrumentation/sinatra/example
 
-  processor-baggage-test:
-    <<: *base
-    working_dir: /app/processor/baggage
-    command: |
-      bash -c "bundle install && rake"
-
-  mongo:
-    image: mongo:4.4
-    expose:
-      - "27017"
-    ports:
-      - "27017:27017"
-
-  mysql:
-    image: mysql:8.0.31
-    command: mysqld --default-authentication-plugin=mysql_native_password
-    environment:
-      - MYSQL_DATABASE=mysql
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_PASSWORD=mysql
-      - MYSQL_USER=mysql
-    expose:
-      - "3306"
-    ports:
-      - "3306:3306"
-
-  postgres:
-    image: postgres:13
-    environment:
-      - POSTGRES_PASSWORD=postgres
-    expose:
-      - "5432"
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_socket:/var/run/postgresql
-
-  redis:
-    image: bitnamilegacy/redis:6.2
-    environment:
-      - REDIS_PASSWORD=passw0rd
-    volumes:
-      - redis_data:/data
-    ports:
-      - "16379:6379"
-
-  rabbitmq:
-    image: rabbitmq:3.8-alpine
-    ports:
-      - "5672:5672"
-
-  memcached:
-    image: memcached:alpine
-    command: memcached -m 64
-    ports:
-      - "11211:11211"
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    ports:
-      - 2181:2181
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-
-  kafka:
-    image: confluentinc/cp-kafka:7.9.1
-    ports:
-      - "9092:9092"
-      - "29092:29092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://kafka:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    depends_on:
-      - zookeeper
-
   jaeger:
-    image: jaegertracing/all-in-one
+    image: jaegertracing/jaeger:2.18.0@sha256:d2cbd047e44b50c11454820f84fd5f34c24a435e5301cf94fe026bf055db80b3
     ports:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.109.0
+    image: otel/opentelemetry-collector:0.153.0@sha256:6ed874ea083d67a3085acfc75343f2ad11d9abe6006d7ea4a16e2dba9af14e49
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml
@@ -255,8 +207,3 @@ services:
       - "4318:4318"
     depends_on:
       - jaeger
-
-volumes:
-  bundle:
-  redis_data:
-  postgres_socket:

@@ -1,0 +1,10 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4.3.1-alpine@sha256:330154ff7e5cb2e0642df79c0000884b59031c786eea3111fc6c4b48a160f204
+    ports:
+      - "5672:5672"
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10

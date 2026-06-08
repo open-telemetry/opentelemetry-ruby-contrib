@@ -16,20 +16,19 @@ module OpenTelemetry
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def perform(req, options)
+              span_data = HttpHelper.span_attrs_for_dup(req.verb)
+
               uri = req.uri
-              request_method = req.verb.to_s.upcase
-              span_name = create_request_span_name(request_method, uri.path)
+              span_name = create_span_name(span_data, uri.path)
 
               attributes = {
                 # old semconv
-                'http.method' => request_method,
                 'http.scheme' => uri.scheme,
                 'http.target' => uri.path,
                 'http.url' => "#{uri.scheme}://#{uri.host}",
                 'net.peer.name' => uri.host,
                 'net.peer.port' => uri.port,
                 # stable semconv
-                'http.request.method' => request_method,
                 'url.scheme' => uri.scheme,
                 'url.path' => uri.path,
                 'url.full' => "#{uri.scheme}://#{uri.host}",
@@ -37,7 +36,7 @@ module OpenTelemetry
                 'server.port' => uri.port
               }
               attributes['url.query'] = uri.query unless uri.query.nil?
-              attributes.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+              attributes.merge!(span_data.attributes)
 
               tracer.in_span(span_name, attributes: attributes, kind: :client) do |span|
                 OpenTelemetry.propagation.inject(req.headers)
@@ -62,15 +61,19 @@ module OpenTelemetry
               span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
             end
 
-            def create_request_span_name(request_method, request_path)
+            def create_span_name(span_data, request_path)
+              default_span_name = span_data.span_name
+
               if (implementation = config[:span_name_formatter])
-                updated_span_name = implementation.call(request_method, request_path)
-                updated_span_name.is_a?(String) ? updated_span_name : request_method.to_s
+                # Extract the HTTP method from attributes (old semconv key)
+                http_method = span_data.attributes['http.method'] || span_data.attributes['http.request.method']
+                updated_span_name = implementation.call(http_method, request_path)
+                updated_span_name.is_a?(String) ? updated_span_name : default_span_name
               else
-                request_method.to_s
+                default_span_name
               end
             rescue StandardError
-              request_method.to_s
+              default_span_name
             end
 
             def tracer

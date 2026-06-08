@@ -2,7 +2,7 @@
 
 module OpenTelemetry
   module Instrumentation
-    # This class contains the ASN subsciber that instruments message processing
+    # This class contains the ASN subscriber that instruments message processing
     class ProcessMessageSubscriber
       GETTER = if Gem::Version.new(::Rdkafka::VERSION) >= Gem::Version.new('0.13.0')
                  Context::Propagation.text_map_getter

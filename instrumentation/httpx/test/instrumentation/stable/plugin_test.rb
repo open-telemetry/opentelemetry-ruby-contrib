@@ -17,7 +17,6 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
     exporter.reset
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:get, 'http://example.com/failure').to_return(status: 500)
@@ -34,6 +33,25 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
 
     it 'before request' do
       _(exporter.finished_spans.size).must_equal 0
+    end
+
+    it 'after request with non-standard HTTP method' do
+      stub_request(:purge, 'http://example.com/cache').to_return(status: 200)
+      HTTPX.request('PURGE', 'http://example.com/cache')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP'
+      _(span.attributes['http.request.method']).must_equal '_OTHER'
+      _(span.attributes['http.request.method_original']).must_equal 'PURGE'
+      _(span.attributes['http.response.status_code']).must_equal 200
+      _(span.attributes['url.scheme']).must_equal 'http'
+      _(span.attributes['server.address']).must_equal 'example.com'
+      _(span.attributes['url.path']).must_equal '/cache'
+      assert_requested(
+        :purge,
+        'http://example.com/cache',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
     end
 
     it 'after request with success code' do
@@ -72,8 +90,8 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
 
     it 'after request timeout' do
       response = HTTPX.get('http://example.com/timeout')
-      assert response.is_a?(HTTPX::ErrorResponse)
-      assert response.error.is_a?(HTTPX::TimeoutError)
+      assert_kind_of(HTTPX::ErrorResponse, response)
+      assert_kind_of(HTTPX::TimeoutError, response.error)
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'
@@ -137,6 +155,22 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
       end
 
       _(span.attributes['peer.service']).must_equal 'example:custom'
+    end
+
+    it 'sets url.query attribute when query params present' do
+      stub_request(:get, 'http://example.com/search?q=foo').to_return(status: 200)
+      HTTPX.get('http://example.com/search?q=foo')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.attributes['url.query']).must_equal 'q=foo'
+      _(span.attributes['url.path']).must_equal '/search'
+    end
+
+    it 'sets server.port attribute' do
+      HTTPX.get('http://example.com/success')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.attributes['server.port']).must_equal 80
     end
   end
 end

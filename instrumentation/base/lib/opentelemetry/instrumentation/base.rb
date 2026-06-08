@@ -42,7 +42,7 @@ module OpenTelemetry
     # The instrumentation name and version will be inferred from the namespace of the
     # class. In this example, they'd be 'OpenTelemetry::Instrumentation::Sinatra' and
     # OpenTelemetry::Instrumentation::Sinatra::VERSION, but can be explicitly set using
-    # the +instrumentation_name+ and +instrumetation_version+ methods if necessary.
+    # the +instrumentation_name+ and +instrumentation_version+ methods if necessary.
     #
     # All subclasses of OpenTelemetry::Instrumentation::Base are automatically
     # registered with OpenTelemetry.instrumentation_registry which is used by
@@ -201,9 +201,11 @@ module OpenTelemetry
         @install_blk = install_blk
         @present_blk = present_blk
         @compatible_blk = compatible_blk
-        @config = {}
-        @installed = false
         @options = options
+        # Empty hash that falls back to option defaults for missing keys
+        defaults = (@options || []).to_h { |opt| [opt[:name], opt[:default]] }
+        @config = Hash.new { |_, k| defaults[k] }
+        @installed = false
         @tracer = OpenTelemetry::Trace::Tracer.new
         @meter = nil
       end
@@ -369,7 +371,7 @@ module OpenTelemetry
 
       # Checks to see if the user has passed any environment variables that set options
       # for instrumentation. By convention, the environment variable will be the name
-      # of the instrumentation, uppercased, with '::' replaced by underscores,
+      # of the instrumentation, upper-cased, with '::' replaced by underscores,
       # OPENTELEMETRY shortened to OTEL_{LANG}, and _CONFIG_OPTS appended.
       # For example, the environment variable name for OpenTelemetry::Instrumentation::Faraday
       # will be OTEL_RUBY_INSTRUMENTATION_FARADAY_CONFIG_OPTS. A value of 'peer_service=new_service;'

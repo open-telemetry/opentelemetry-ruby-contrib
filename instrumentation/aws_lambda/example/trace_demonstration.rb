@@ -28,7 +28,7 @@ class MockLambdaContext
   end
 end
 
-# To accommendate the test case, handler class doesn't need to require the sample file if it's required here
+# To accommodate the test case, handler class doesn't need to require the sample file if it's required here
 # In lambda environment, the env will find the handler file.
 module OpenTelemetry
   module Instrumentation

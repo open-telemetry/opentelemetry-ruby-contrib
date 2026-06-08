@@ -88,9 +88,8 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
         dalli.set('foo', 'bar')
         exporter.reset
 
-        dalli.instance_variable_get(:@ring).servers.first.stub(:write, ->(_bytes) { raise Dalli::NetworkError }) do
-          dalli.get_multi('foo', 'bar')
-        end
+        allow(dalli.instance_variable_get(:@ring).servers.first).to receive(:write) { |_bytes| raise Dalli::NetworkError }
+        dalli.get_multi('foo', 'bar')
 
         if supports_retry_on_network_errors?
           _(exporter.finished_spans.size).must_equal 2
@@ -148,17 +147,15 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
         exporter.reset
 
         server = dalli.instance_variable_get(:@ring).servers.first
-        server.stub(:hostname, '/tmp/memcached.sock') do
-          server.stub(:port, nil) do
-            dalli.set('foo', 'bar')
+        allow(server).to receive(:hostname).and_return('/tmp/memcached.sock')
+        allow(server).to receive(:port).and_return(nil)
+        dalli.set('foo', 'bar')
 
-            puts exporter.finished_spans
-            _(exporter.finished_spans.size).must_equal 1
-            _(span.name).must_equal 'set'
-            _(span.attributes).wont_include 'net.peer.port'
-            _(span.attributes['net.peer.name']).must_equal '/tmp/memcached.sock'
-          end
-        end
+        puts exporter.finished_spans
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'set'
+        _(span.attributes).wont_include 'net.peer.port'
+        _(span.attributes['net.peer.name']).must_equal '/tmp/memcached.sock'
       end
     end
   end

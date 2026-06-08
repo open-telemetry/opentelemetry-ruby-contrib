@@ -13,7 +13,7 @@ module OpenTelemetry
         # Sinatra extension that installs TracerMiddleware and provides
         # tracing for template rendering
         module TracerExtension
-          # Contants patches for `render` method
+          # Constants patches for `render` method
           module RenderPatches
             def render(_engine, data, *)
               template_name = data.is_a?(Symbol) ? data : :literal

@@ -2,6 +2,17 @@
 
 The OpenTelemetry Mongo Ruby gem is a community maintained instrumentation for [Mongo][mongo-home].
 
+> [!NOTE]
+>
+> **Development Frozen:**
+>
+> Mongo Ruby Driver 2.23.0+ includes native OpenTelemetry instrumentation. For the best experience and continued support, we recommend:
+>
+> - **Mongo Ruby Driver < 2.23.0**: Use `opentelemetry-instrumentation-mongo` gem
+> - **Mongo Ruby Driver ≥ 2.23.0**: Use Mongo Ruby Driver's built-in OpenTelemetry support (remove `opentelemetry-instrumentation-mongo` gem)
+>
+> Community instrumentation is compatible with Mongo Ruby Driver versions up to 2.23.x. Development of this gem is frozen for newer Mongo Ruby Driver versions in favor of the native integration.
+
 ## How do I get started?
 
 Install the gem using:
@@ -49,12 +60,12 @@ end
 To run the example:
 
 1. Start MongoDB using docker-compose
-	* `docker-compose up mongo`
+   - `docker-compose up mongo`
 2. In a separate terminal window, `cd` to the examples directory and install gems
-	* `cd example`
-	* `bundle install`
+   - `cd example`
+   - `bundle install`
 3. Run the sample client script
-	* `ruby mongo.rb`
+   - `ruby mongo.rb`
 
 This will run a few MongoDB commands, printing OpenTelemetry traces to the console as it goes.
 

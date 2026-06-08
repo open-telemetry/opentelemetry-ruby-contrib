@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[7.1.0 7.2.0 8.0.0].each do |version|
+%w[7.1.0 7.2.0 8.0.0 8.1.0].each do |version|
   appraise "action_pack-#{version}" do
     gem 'rails', "~> #{version}"
   end

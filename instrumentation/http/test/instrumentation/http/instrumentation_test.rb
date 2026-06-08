@@ -9,7 +9,7 @@ require 'test_helper'
 require_relative '../../../lib/opentelemetry/instrumentation/http'
 
 describe OpenTelemetry::Instrumentation::HTTP do
-  before { skip unless ENV['BUNDLE_GEMFILE'].include?('old') }
+  before { skip unless ENV['BUNDLE_GEMFILE'].include?('stable') }
 
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
 
@@ -52,15 +52,21 @@ describe OpenTelemetry::Instrumentation::HTTP do
       end
     end
 
+    it 'returns "old" when OTEL_SEMCONV_STABILITY_OPT_IN is old' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'old') do
+        _(instrumentation.determine_semconv).must_equal('old')
+      end
+    end
+
     it 'returns "stable" when OTEL_SEMCONV_STABILITY_OPT_IN is http' do
       OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http') do
         _(instrumentation.determine_semconv).must_equal('stable')
       end
     end
 
-    it 'returns "old" when OTEL_SEMCONV_STABILITY_OPT_IN is empty' do
+    it 'returns "stable" when OTEL_SEMCONV_STABILITY_OPT_IN is empty' do
       OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => '') do
-        _(instrumentation.determine_semconv).must_equal('old')
+        _(instrumentation.determine_semconv).must_equal('stable')
       end
     end
   end

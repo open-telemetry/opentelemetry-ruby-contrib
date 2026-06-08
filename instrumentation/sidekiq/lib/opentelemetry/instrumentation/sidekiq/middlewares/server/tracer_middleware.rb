@@ -31,13 +31,10 @@ module OpenTelemetry
                           end
 
               extracted_context = OpenTelemetry.propagation.extract(msg)
-              created_at = time_from_timestamp(msg['created_at'])
-              enqueued_at = time_from_timestamp(msg['created_at'])
               OpenTelemetry::Context.with_current(extracted_context) do
                 if instrumentation_config[:propagation_style] == :child
                   tracer.in_span(span_name, attributes: attributes, kind: :consumer) do |span|
-                    span.add_event('created_at', timestamp: created_at)
-                    span.add_event('enqueued_at', timestamp: enqueued_at)
+                    add_span_timestamps(span, msg)
                     yield
                   end
                 else
@@ -46,8 +43,7 @@ module OpenTelemetry
                   links << OpenTelemetry::Trace::Link.new(span_context) if instrumentation_config[:propagation_style] == :link && span_context.valid?
                   span = tracer.start_root_span(span_name, attributes: attributes, links: links, kind: :consumer)
                   OpenTelemetry::Trace.with_span(span) do
-                    span.add_event('created_at', timestamp: created_at)
-                    span.add_event('enqueued_at', timestamp: enqueued_at)
+                    add_span_timestamps(span, msg)
                     yield
                   rescue Exception => e # rubocop:disable Lint/RescueException
                     span.record_exception(e)
@@ -68,6 +64,13 @@ module OpenTelemetry
 
             def tracer
               Sidekiq::Instrumentation.instance.tracer
+            end
+
+            def add_span_timestamps(span, msg)
+              created_at = msg['created_at']
+              enqueued_at = msg['enqueued_at']
+              span.add_event('created_at', timestamp: time_from_timestamp(created_at)) if created_at
+              span.add_event('enqueued_at', timestamp: time_from_timestamp(enqueued_at)) if enqueued_at
             end
 
             def time_from_timestamp(timestamp)

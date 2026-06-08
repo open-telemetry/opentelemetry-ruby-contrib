@@ -90,7 +90,7 @@ module OpenTelemetry
             # @note does nothing if the span is a non-recording span
             # @param [Rack::Request] The current HTTP request
             # @param [Rack::Response] The current HTTP response
-            # @param [Exception] An unxpected error raised by the application
+            # @param [Exception] An unexpected error raised by the application
             def on_error(request, _, error)
               span = OpenTelemetry::Instrumentation::Rack.current_span
               return unless span.recording?

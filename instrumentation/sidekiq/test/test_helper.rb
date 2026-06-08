@@ -34,7 +34,7 @@ end
 
 # Sidekiq redis configuration
 ENV['TEST_REDIS_HOST'] ||= '127.0.0.1'
-ENV['TEST_REDIS_PORT'] ||= '16379'
+ENV['TEST_REDIS_PORT'] ||= '6379'
 
 redis_url = "redis://#{ENV['TEST_REDIS_HOST']}:#{ENV['TEST_REDIS_PORT']}/0"
 
@@ -51,7 +51,7 @@ Sidekiq.configure_client do |config|
   config.redis = { password: 'passw0rd', url: redis_url }
 end
 
-# Silence Actibe Job logging noise
+# Silence Active Job logging noise
 ActiveJob::Base.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
 
 class SimpleJobWithActiveJob < ActiveJob::Base
