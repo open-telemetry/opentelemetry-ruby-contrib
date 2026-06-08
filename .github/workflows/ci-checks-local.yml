@@ -22,7 +22,7 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - macos-15
+          - macos-26
           - windows-2025
     name: All / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -36,7 +36,7 @@ jobs:
           node-version: "24"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@7372622e62b60b3cb750dcd2b9e32c247ffec26a # v1.302.0
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
           ruby-version: "3.3.11"
 

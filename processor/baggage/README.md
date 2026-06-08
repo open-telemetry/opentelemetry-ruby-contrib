@@ -5,9 +5,10 @@ This is an OpenTelemetry [span processor](https://opentelemetry.io/docs/specs/ot
 Keys and values added to Baggage will appear on all subsequent child spans, not the current active span, for a trace within this service _and_ will be propagated to external services via propagation headers.
 If the external services also have a Baggage span processor, the keys and values will appear in those child spans as well.
 
-⚠️ Warning ⚠️
-To repeat: a consequence of adding data to Baggage is that the keys and values will appear in all outgoing HTTP headers from the application.
-Do not put sensitive information in Baggage.
+> [!WARNING]
+>
+> To repeat: a consequence of adding data to Baggage is that the keys and values will appear in all outgoing HTTP headers from the application.
+> Do not put sensitive information in Baggage.
 
 ## How do I get started?
 
