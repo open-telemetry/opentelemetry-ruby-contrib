@@ -505,12 +505,12 @@ describe OpenTelemetry::Instrumentation::Grape do
           app.get request_path
           _(exporter.finished_spans.first.attributes).must_equal(
             'code.namespace' => 'BasicAPI',
-            'http.method' => 'GET',
-            'http.host' => 'unknown',
-            'http.scheme' => 'http',
-            'http.target' => '/v5/hello',
+            'http.request.method' => 'GET',
+            'server.address' => 'unknown',
+            'url.scheme' => 'http',
+            'url.path' => '/v5/hello',
             'http.route' => '/["v5", "v6", "v7"]/hello',
-            'http.status_code' => 200
+            'http.response.status_code' => 200
           )
         end
       end
@@ -530,12 +530,12 @@ describe OpenTelemetry::Instrumentation::Grape do
           app.get request_path
           _(exporter.finished_spans.first.attributes).must_equal(
             'code.namespace' => 'BasicAPI',
-            'http.method' => 'GET',
-            'http.host' => 'unknown',
-            'http.scheme' => 'http',
-            'http.target' => '/v5/hello',
+            'http.request.method' => 'GET',
+            'server.address' => 'unknown',
+            'url.scheme' => 'http',
+            'url.path' => '/v5/hello',
             'http.route' => '/{v5|v6|v7}/hello',
-            'http.status_code' => 200
+            'http.response.status_code' => 200
           )
         end
       end
