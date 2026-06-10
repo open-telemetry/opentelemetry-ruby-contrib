@@ -1,4 +1,6 @@
 build-essential
 cmake
+libprotobuf-dev
 pkg-config
+protobuf-compiler
 zlib1g-dev
