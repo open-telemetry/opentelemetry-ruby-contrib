@@ -1,0 +1,4 @@
+build-essential
+cmake
+pkg-config
+zlib1g-dev
