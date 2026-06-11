@@ -1,0 +1,34 @@
+name: Test / CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/release-help.yml"
+      - ".toys/release/Gemfile"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  toys_release:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    runs-on: ubuntu-24.04
+    name: Toys-Release
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@89f90524b88a01fe6e0b732220432cc6142926af # v1.313.0
+        with:
+          ruby-version: "4.0.5"
+          bundler-cache: true
+
+      - name: Show help
+        run: |
+          bundle exec toys release --help < /dev/null

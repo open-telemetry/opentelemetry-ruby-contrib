@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+## v0.12.0 / 2026-04-28
+
+- BREAKING CHANGE: Min Rails 7.1 (enforced this time) (#2283)
+- ADDED: Min Rails 7.1 (enforced this time) (#2283)
+
 ## v0.11.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)

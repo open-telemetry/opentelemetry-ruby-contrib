@@ -1,0 +1,6 @@
+env:
+  TEST_POSTGRES_PASSWORD: postgres
+  TEST_POSTGRES_USER: postgres
+  TEST_POSTGRES_HOST: localhost
+  TEST_POSTGRES_PORT: 5432
+  TEST_POSTGRES_DB: postgres

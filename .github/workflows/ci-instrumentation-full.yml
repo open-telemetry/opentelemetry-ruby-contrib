@@ -116,7 +116,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - name: Set environment variables
         id: inputs
         shell: bash
@@ -153,35 +153,8 @@ jobs:
           yard: true
           build: true
           minimum_coverage: ${{ env.minimum_coverage }}
-      - name: "JRuby Filter"
-        id: jruby_skip
-        shell: bash
-        run: |
-          echo "skip=false" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "action_pack"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "action_view"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "active_model_serializers" ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "active_record"            ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "active_storage"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "active_support"           ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "aws_sdk"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "aws_lambda"               ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "delayed_job"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "graphql"                  ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "http"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "http_client"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "koala"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "lmdb"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "rack"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "rails"                    ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "grpc"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "gruf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "anthropic"                 ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "net_ldap"                 ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
-          true
       - name: "Test JRuby"
-        if: "${{ startsWith(matrix.os, 'ubuntu') && steps.jruby_skip.outputs.skip == 'false' }}"
+        if: "${{ startsWith(matrix.os, 'ubuntu') && !contains(env.unsupported_interpreters, 'jruby') }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
