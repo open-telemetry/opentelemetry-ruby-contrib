@@ -12,7 +12,7 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
   let(:config) { {} }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('http')
+    skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
 
     # simulate a fresh install:
     instrumentation.instance_variable_set(:@installed, false)
