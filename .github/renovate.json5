@@ -65,7 +65,7 @@
     },
     {
       matchDepNames: ["actions/setup-node", "ruby/setup-ruby"],
-      schedule: ["before 6am every Monday"],
+      schedule: ["before 6am on Monday"],
       prConcurrentLimit: 0,
       automerge: true,
     },
