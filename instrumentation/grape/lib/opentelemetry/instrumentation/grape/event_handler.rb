@@ -67,10 +67,12 @@ module OpenTelemetry
           end
 
           def attributes_from_grape_endpoint(endpoint)
-            {
-              OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => endpoint.options[:for]&.instance_variable_get(:@base)&.to_s,
+            attributes = {
               OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE => path(endpoint)
             }
+            code_namespace = code_namespace(endpoint)
+            attributes[OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE] = code_namespace if code_namespace
+            attributes
           end
 
           # ActiveSupport::Notifications will attach a `:exception_object` to the payload if there was
@@ -87,6 +89,14 @@ module OpenTelemetry
 
           def request_method(endpoint)
             endpoint.options[:method]&.first
+          end
+
+          def code_namespace(endpoint)
+            owner = endpoint.options[:for]
+            return unless owner
+
+            base = owner.instance_variable_get(:@base)
+            [owner.name, base&.to_s, owner.to_s].find { |value| value && !value.empty? }
           end
 
           def path(endpoint)
