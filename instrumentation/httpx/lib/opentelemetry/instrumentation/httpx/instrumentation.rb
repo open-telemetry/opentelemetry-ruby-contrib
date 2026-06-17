@@ -16,7 +16,7 @@ module OpenTelemetry
         end
 
         compatible do
-          Gem::Version.new(::HTTPX::VERSION) >= Gem::Version.new('1.6.0')
+          Gem::Version.new(::HTTPX::VERSION) >= Gem::Version.new('1.7.4')
         end
 
         present do
@@ -25,6 +25,7 @@ module OpenTelemetry
 
         option :peer_service, default: nil, validate: :string
 
+        # :nodoc:
         def determine_semconv
           stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
           values = stability_opt_in.split(',').map(&:strip)
@@ -40,10 +41,12 @@ module OpenTelemetry
           end
         end
 
+        # :nodoc:
         def emit_old_semconv_deprecation_warning(option)
           OpenTelemetry.logger.warn("The `#{option}` option for OTEL_SEMCONV_STABILITY_OPT_IN is deprecated and will be removed on April 15, 2026. Please migrate to the stable HTTP semantic conventions.")
         end
 
+        # :nodoc:
         def patch_old
           otel_session = ::HTTPX.plugin(Old::Plugin)
 
@@ -51,6 +54,7 @@ module OpenTelemetry
           ::HTTPX.send(:const_set, :Session, otel_session.class)
         end
 
+        # :nodoc:
         def patch_stable
           otel_session = ::HTTPX.plugin(Stable::Plugin)
 
@@ -58,6 +62,7 @@ module OpenTelemetry
           ::HTTPX.send(:const_set, :Session, otel_session.class)
         end
 
+        # :nodoc:
         def patch_dup
           otel_session = ::HTTPX.plugin(Dup::Plugin)
 
@@ -65,14 +70,17 @@ module OpenTelemetry
           ::HTTPX.send(:const_set, :Session, otel_session.class)
         end
 
+        # :nodoc:
         def require_dependencies_old
           require_relative 'old/plugin'
         end
 
+        # :nodoc:
         def require_dependencies_stable
           require_relative 'stable/plugin'
         end
 
+        # :nodoc:
         def require_dependencies_dup
           require_relative 'dup/plugin'
         end
