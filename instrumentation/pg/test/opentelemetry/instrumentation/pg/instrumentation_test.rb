@@ -200,7 +200,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    %i[exec query sync_exec async_exec].each do |method|
+    PG_QUERY_METHODS.each do |method|
       it "after request (with method: #{method})" do
         client.send(method, 'SELECT 1')
 
@@ -211,6 +211,57 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(last_span.attributes['db.operation']).must_equal 'SELECT'
         _(last_span.attributes['net.peer.name']).must_equal host.to_s
         _(last_span.attributes['net.peer.port']).must_equal port.to_i
+      end
+    end
+
+    it 'does not include db.response.returned_rows by default' do
+      client.exec('SELECT * FROM (VALUES (1), (2)) AS t(id)')
+
+      _(last_span.attributes['db.response.returned_rows']).must_be_nil
+    end
+
+    describe 'when db_response_returned_rows is enabled' do
+      let(:config) { { db_statement: :include, db_response_returned_rows: true } }
+
+      PG_QUERY_METHODS.each do |method|
+        it "sets db.response.returned_rows after request (with method: #{method})" do
+          client.send(method, 'SELECT * FROM (VALUES (1), (2)) AS t(id)')
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 2
+        end
+      end
+
+      %i[exec_params async_exec_params sync_exec_params].each do |method|
+        it "sets db.response.returned_rows after request (with method: #{method})" do
+          client.send(method, 'SELECT * FROM (VALUES ($1), ($2)) AS t(id)', [1, 2])
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 2
+        end
+      end
+
+      %i[prepare async_prepare sync_prepare].each do |method|
+        it "sets db.response.returned_rows after preparing a statement (with method: #{method})" do
+          client.send(method, 'foo', 'SELECT $1 AS a')
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 0
+        end
+      end
+
+      %i[exec_prepared async_exec_prepared sync_exec_prepared].each do |method|
+        it "sets db.response.returned_rows after executing prepared statement (with method: #{method})" do
+          client.prepare('foo', 'SELECT * FROM (VALUES ($1), ($2)) AS t(id)')
+          client.send(method, 'foo', [1, 2])
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 2
+        end
+      end
+
+      it 'does not overwrite db.response.returned_rows from with_attributes' do
+        OpenTelemetry::Instrumentation::PG.with_attributes('db.response.returned_rows' => 99) do
+          client.exec('SELECT * FROM (VALUES (1), (2)) AS t(id)')
+        end
+
+        _(last_span.attributes['db.response.returned_rows']).must_equal 99
       end
     end
 
@@ -259,7 +310,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    %i[exec query sync_exec async_exec].each do |method|
+    PG_QUERY_METHODS.each do |method|
       it "after request using Arel (with method: #{method})" do
         client.send(method, Arel.sql('SELECT 1'))
 
