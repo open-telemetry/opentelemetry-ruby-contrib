@@ -74,6 +74,7 @@ module OpenTelemetry
 
         private :new
 
+        # Registers the subclass in the instrumentation registry upon inheritance.
         def inherited(subclass) # rubocop:disable Lint/MissingSuper
           OpenTelemetry::Instrumentation.registry.register(subclass)
         end
@@ -162,6 +163,7 @@ module OpenTelemetry
           @options << { name: name, default: default, validator: validator, validation_type: validation_type }
         end
 
+        # Returns the singleton instance of this instrumentation class.
         def instance
           @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
                             present_blk, compatible_blk, options)
@@ -189,7 +191,7 @@ module OpenTelemetry
         end
       end
 
-      attr_reader :name, :version, :config, :installed, :tracer
+      attr_reader :name, :version, :config, :installed, :tracer, :meter
 
       alias installed? installed
 
@@ -207,6 +209,7 @@ module OpenTelemetry
         @config = Hash.new { |_, k| defaults[k] }
         @installed = false
         @tracer = OpenTelemetry::Trace::Tracer.new
+        @meter = nil
       end
       # rubocop:enable Metrics/ParameterLists
 
@@ -224,6 +227,18 @@ module OpenTelemetry
         instance_exec(@config, &@install_blk)
         @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true
+
+        if enable_metrics?(config) && defined?(OpenTelemetry.meter_provider) && OpenTelemetry.meter_provider.instance_of?(OpenTelemetry::SDK::Metrics::MeterProvider)
+          @meter = OpenTelemetry.meter_provider.meter(name, version: version)
+        end
+
+        initialize_metrics
+      end
+
+      # Each instrumentation can implement the initialize_metrics function to
+      # include the desired metrics instrument
+      def initialize_metrics
+        OpenTelemetry.logger.info 'Instrumentation should implement the function'
       end
 
       # Whether or not this instrumentation is installable in the current process. Will
@@ -261,6 +276,19 @@ module OpenTelemetry
         return config[:enabled] if config&.key?(:enabled)
 
         true
+      end
+
+      # Whether this instrumentation has metrics is enabled. It first checks to see if it's enabled
+      # by an environment variable and will proceed to check if it's enabled
+      # by local config, if given. By default, it will be disabled.
+      #
+      # @param [optional Hash] config The local config
+      def enable_metrics?(config = nil)
+        env_value = metrics_env_var_value
+        return env_value == 'true' if %w[true false].include?(env_value)
+        return config[:metrics] if config&.key?(:metrics)
+
+        false
       end
 
       private
@@ -306,7 +334,7 @@ module OpenTelemetry
           h[option_name] = option[:default]
         end
 
-        dropped_config_keys = user_config.keys - validated_config.keys - [:enabled]
+        dropped_config_keys = user_config.keys - validated_config.keys - %i[enabled metrics]
         OpenTelemetry.logger.warn("Instrumentation #{name} ignored the following unknown configuration options #{dropped_config_keys}") unless dropped_config_keys.empty?
 
         validated_config
@@ -326,6 +354,21 @@ module OpenTelemetry
           n << '_ENABLED'
         end
         ENV[var_name] != 'false'
+      end
+
+      # Returns the value of the metrics environment variable. By convention, the
+      # environment variable will be the instrumentation name upper cased, with '::'
+      # replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG} and _METRICS_ENABLED appended.
+      # For example, the environment variable name for OpenTelemetry::Instrumentation::Sinatra
+      # will be OTEL_RUBY_INSTRUMENTATION_SINATRA_METRICS_ENABLED.
+      def metrics_env_var_value
+        var_name = name.dup.tap do |n|
+          n.upcase!
+          n.gsub!('::', '_')
+          n.gsub!('OPENTELEMETRY_', 'OTEL_RUBY_')
+          n << '_METRICS_ENABLED'
+        end
+        ENV.fetch(var_name, nil)
       end
 
       # Checks to see if the user has passed any environment variables that set options
