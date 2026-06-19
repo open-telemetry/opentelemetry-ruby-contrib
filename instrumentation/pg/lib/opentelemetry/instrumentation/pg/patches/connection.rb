@@ -73,6 +73,8 @@ module OpenTelemetry
 
         # Module to prepend to PG::Connection for instrumentation
         module Connection # rubocop:disable Metrics/ModuleLength
+          AFFECTED_ROWS_COMMANDS = %w[DELETE INSERT MERGE UPDATE].freeze
+
           # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
           TABLE_NAME = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE(?:\s+IF\s+EXISTS)?)\s+"?([\w\.]+)"?/i
 
@@ -172,6 +174,7 @@ module OpenTelemetry
           def db_response_attributes(result, span_attrs)
             attrs = {}
             attrs['db.response.returned_rows'] = result.ntuples if db_response_returned_rows?(span_attrs)
+            attrs['db.response.affected_rows'] = result.cmd_tuples if db_response_affected_rows?(result, span_attrs)
             attrs
           rescue StandardError => e
             OpenTelemetry.handle_error(message: 'Error setting DB response attributes', exception: e)
@@ -181,6 +184,14 @@ module OpenTelemetry
           def db_response_returned_rows?(attrs)
             return false unless config[:db_response_returned_rows]
             return false if attrs.key?('db.response.returned_rows')
+
+            true
+          end
+
+          def db_response_affected_rows?(result, attrs)
+            return false unless config[:db_response_affected_rows]
+            return false if attrs.key?('db.response.affected_rows')
+            return false unless AFFECTED_ROWS_COMMANDS.include?(result.cmd_status.to_s.split.first)
 
             true
           end
