@@ -11,6 +11,14 @@ Bundler.require(:default, :development, :test)
 require 'minitest/autorun'
 require 'webmock/minitest'
 
+# Set OTEL_SEMCONV_STABILITY_OPT_IN based on appraisal name
+gemfile = ENV.fetch('BUNDLE_GEMFILE', '')
+if gemfile.include?('stable')
+  ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database'
+elsif gemfile.include?('dup')
+  ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database/dup'
+end
+
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
