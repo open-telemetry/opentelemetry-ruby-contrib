@@ -26,7 +26,9 @@ When you become a component owner, you will be added to the `opentelemetry/ruby-
 
 If you do not have the capacity to maintain the instrumentation library, please consider contributing to the OpenTelemetry Ruby project in other ways or consider creating a separate project for the instrumentation library.
 
-> :warning: Libraries that do not meet these requirements may be removed from the project at any time at the discretion of OpenTelemetry Ruby Contrib Maintainers.
+> [!WARNING]
+>
+> Libraries that do not meet these requirements may be removed from the project at any time at the discretion of OpenTelemetry Ruby Contrib Maintainers.
 
 ## Contributing a new instrumentation library
 
@@ -169,7 +171,9 @@ For example, the `Werewolf` module generated in the example above is available v
 
 ```
 
-> :warning: This tracer is not _upgradable_ before the SDK is initialized, therefore it is important that your instrumentation _always_ use stack local references of the tracer.
+> [!WARNING]
+>
+> This tracer is not _upgradable_ before the SDK is initialized, therefore it is important that your instrumentation _always_ use stack local references of the tracer.
 
 ### Use first-party extension points
 
@@ -181,7 +185,9 @@ Monkey patching is discouraged in OpenTelemetry Ruby because it is the most comm
 
 Use the [OpenTelemetry Semantic Conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/) to ensure the instrumentation is compatible with other OpenTelemetry libraries and that the data is useful in a distributed context.
 
-> :information_source: Privacy and security are important considerations when adding attributes to spans. Please ensure that you are not adding sensitive information to spans. If you are unsure, please ask for a review.
+> [!Important]
+>
+> Privacy and security are important considerations when adding attributes to spans. Please ensure that you are not adding sensitive information to spans. If you are unsure, please ask for a review.
 
 When semantic conventions do not exist, use the [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html) and submit an Issue/PR with your attributes to the [Semantic Conventions repo](https://github.com/open-telemetry/semantic-conventions) to propose a new set of standard attributes.
 
@@ -257,24 +263,18 @@ jobs:
           # ...
           - werewolf
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
 ```
 
 #### JRuby Compatibility
 
-If your gem is incompatible with `JRuby`, you can exclude it from the matrix by adding an entry to the `/.github/workflows/ci-instrumentation.yml` file under `jobs/instrumentation/steps/[name="JRuby Filter"]`:
+If your gem is incompatible with `JRuby`, you can exclude it from the matrix by ensuring the gem folder contains a `.github-ci.yml` file which specifies the gem specific environment variables.
+The key for unsupported interpreters is `unsupported_interpreters` and the value is to contain jruby,
+a complete example of the file is below.
 
 ```yaml
-- name: "JRuby Filter"
-  id: jruby_skip
-  shell: bash
-  run: |
-    echo "skip=false" >> $GITHUB_OUTPUT
-    [[ "${{ matrix.gem }}" == "action_pack"              ]] && echo "skip=true" >> $GITHUB_OUTPUT
-    # ...
-    [[ "${{ matrix.gem }}" == "werewolf"                     ]] && echo "skip=true" >> $GITHUB_OUTPUT
-    # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
-    true
+env:
+  unsupported_interpreters: jruby
 ```
 
 ### External service instrumentations
@@ -306,8 +306,10 @@ instrumentation_kafka:
         - ruby_kafka
         - werewolf
       os:
-        - ubuntu-latest
+        - ubuntu-24.04
 ```
+
+The final step is adding the path to the docker-compose.yml snippet to the path list for your instrumentation in `.github/labeler.yml` which is necessary for the build system.
 
 #### Adding a New Service
 
@@ -325,7 +327,7 @@ instrumentation_with_services:
         - mongo
         - werewolf
       os:
-        - ubuntu-latest
+        - ubuntu-24.04
   services:
     # ...
     my_service:
@@ -345,7 +347,7 @@ instrumentation_silver:
       gem:
         - werewolf
       os:
-        - ubuntu-latest
+        - ubuntu-24.04
   name: other / ${{ matrix.gem }} / ${{ matrix.os }}
   runs-on: ${{ matrix.os }}
   steps:
@@ -379,6 +381,22 @@ instrumentation_silver:
       image: my_service:latest
       # ...
 ```
+
+The final step in adding a new service is to define a renovate package rule to `.github/renovate.json5` which manages the min major version of the service tested against.
+
+```json
+    {
+      description: "Wait until current major postgres is EoL before updating",
+      dependencyDashboardCategory: "Min Docker service",
+      matchUpdateTypes: ["major"],
+      matchDepNames: ["postgres"],
+      minimumReleaseAge: "1460 days",
+    },
+```
+
+The `minimumReleaseAge` days value should be calculated based on the expected age of the major version when it becomes the lowest major version which is not end of life.
+In the above example, we wait until a major version has been available for 1460 days (4 years) which is calculated based on each major version of Postgres being supported for 5 years with a new major each year.
+Hence 5 years - 1 year = 4 years which works out to be the 1460 days.
 
 ## Documentation
 

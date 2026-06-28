@@ -1,59 +1,70 @@
 # Release History: opentelemetry-instrumentation-grape
 
-### v0.5.1 / 2026-02-11
+## v0.7.0 / 2026-04-14
 
-* FIXED: Support Grape 3.1.0 (#1969)
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.5.0 / 2025-10-22
+## v0.6.0 / 2026-03-17
 
-* BREAKING CHANGE: Min Ruby Version 3.2
-* ADDED: Min Ruby Version 3.2
+- BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)
+- ADDED: Default to stable HTTP semantic conventions (#2051)
 
-### v0.4.0 / 2025-09-30
+## v0.5.1 / 2026-02-11
 
-* ADDED: Bump minimum API Version to 1.7
+- FIXED: Support Grape 3.1.0 (#1969)
 
-### v0.3.0 / 2025-01-16
+## v0.5.0 / 2025-10-22
 
-* BREAKING CHANGE: Set minimum supported version to Ruby 3.1
-* ADDED: Set minimum supported version to Ruby 3.1
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
 
-### v0.2.0 / 2024-07-02
+## v0.4.0 / 2025-09-30
 
-* ADDED: Make the install of rack instrumentation by grape instrumentation optional
+- ADDED: Bump minimum API Version to 1.7
 
-### v0.1.8 / 2024-05-14
+## v0.3.0 / 2025-01-16
 
-* DOCS: Instrumentation Authors Guide
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-### v0.1.7 / 2024-04-30
+## v0.2.0 / 2024-07-02
 
-* FIXED: Bundler conflict warnings
+- ADDED: Make the install of rack instrumentation by grape instrumentation optional
 
-### v0.1.6 / 2023-11-23
+## v0.1.8 / 2024-05-14
 
-* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+- DOCS: Instrumentation Authors Guide
 
-### v0.1.5 / 2023-10-31
+## v0.1.7 / 2024-04-30
 
-* FIXED: Remove dependency on ActiveSupport core extensions from Grape instrumentation
+- FIXED: Bundler conflict warnings
 
-### v0.1.4 / 2023-08-02
+## v0.1.6 / 2023-11-23
 
-* FIXED: Fix opentelemetry-api version constraint in grape gemspec
+- CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
 
-### v0.1.3 / 2023-06-05
+## v0.1.5 / 2023-10-31
 
-* FIXED: Base config options
+- FIXED: Remove dependency on ActiveSupport core extensions from Grape instrumentation
 
-### v0.1.2 / 2023-05-02
+## v0.1.4 / 2023-08-02
 
-* FIXED: Grape Instrumentation handle status code symbol
+- FIXED: Fix opentelemetry-api version constraint in grape gemspec
 
-### v0.1.1 / 2023-04-26
+## v0.1.3 / 2023-06-05
 
-* FIXED: Set grape.formatter.type to 'custom' for non-Grape formatters
+- FIXED: Base config options
 
-### v0.1.0 / 2023-04-17
+## v0.1.2 / 2023-05-02
 
-* Initial release.
+- FIXED: Grape Instrumentation handle status code symbol
+
+## v0.1.1 / 2023-04-26
+
+- FIXED: Set grape.formatter.type to 'custom' for non-Grape formatters
+
+## v0.1.0 / 2023-04-17
+
+- Initial release.

@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:14.23@sha256:d462928b1898dd74b749ef486797968828c1e7fc9befb5e5ca03a33bfbc32d64
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+    volumes:
+      - /var/run/postgresql:/var/run/postgresql

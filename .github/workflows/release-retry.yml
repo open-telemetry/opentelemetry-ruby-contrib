@@ -26,20 +26,22 @@ jobs:
       BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
       - name: Checkout repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@dffb23f65a78bba8db45d387d5ea1bbd6be3ef18 # v1.293.0
+        uses: ruby/setup-ruby@89f90524b88a01fe6e0b732220432cc6142926af # v1.313.0
         with:
-          ruby-version: "4.0.1"
+          ruby-version: "4.0.5"
           bundler-cache: true
 
       - name: Retry release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+          RELEASE_FLAGS: ${{ github.event.inputs.flags }}
+          RELEASE_PR: ${{ github.event.inputs.release_pr }}
         run: |
           bundle exec toys release retry --yes --verbose \
-            ${{ github.event.inputs.flags }} \
-            "${{ github.event.inputs.release_pr }}" \
+            $RELEASE_FLAGS \
+            "$RELEASE_PR" \
             < /dev/null
