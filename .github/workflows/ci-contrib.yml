@@ -79,3 +79,4 @@ jobs:
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "jruby-10.0.2.0"
+          interpreter: "jruby"

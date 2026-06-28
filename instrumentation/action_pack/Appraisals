@@ -7,19 +7,9 @@
 %w[7.1.0 7.2.0 8.0.0 8.1.0].each do |version|
   appraise "action_pack-#{version}" do
     gem 'rails', "~> #{version}"
-
-    # workaround for https://github.com/ruby/rdoc/issues/1746
-    write_gemfile <<~RUBY
-      ENV['RBS_DISABLE_EXT'] = 'true' if RUBY_ENGINE == 'jruby'
-    RUBY
   end
 end
 
 appraise 'action_pack-latest' do
   gem 'rails'
-
-  # workaround for https://github.com/ruby/rdoc/issues/1746
-  write_gemfile <<~RUBY
-    ENV['RBS_DISABLE_EXT'] = 'true' if RUBY_ENGINE == 'jruby'
-  RUBY
 end

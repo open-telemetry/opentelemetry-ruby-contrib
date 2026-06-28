@@ -9,6 +9,10 @@ inputs:
     description: Ruby version to use
     required: true
     type: string
+  interpreter:
+    required: false
+    type: string
+    default: ruby
   yard:
     description: Run YARD documentation
     required: false
@@ -66,6 +70,14 @@ runs:
         if [[ -f "$FILE" ]]; then
           # Convert YAML to key=value and export to GITHUB_ENV
           yq '.env // {} | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
+        fi
+
+        # Load dotenv file only if it exists
+        FILE="${dir}/.env.${interpreter}.build"
+        if [ -f "$FILE" ]; then
+          set -a
+          source $FILE
+          set +a
         fi
 
     - name: Install Ubuntu packages (if apt-packages.txt exists)
