@@ -31,6 +31,7 @@ group :test do
   gem 'opentelemetry-instrumentation-active_storage', path: '../active_storage'
   gem 'opentelemetry-instrumentation-action_view', path: '../action_view'
   gem 'opentelemetry-instrumentation-rack', path: '../rack'
+  gem 'rbs', '4.1.0.pre.2', platforms: :jruby
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'drb'
