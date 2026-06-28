@@ -9,9 +9,7 @@
     gem 'rails', "~> #{version}"
 
     # workaround for https://github.com/ruby/rdoc/issues/1746
-    if RUBY_ENGINE == "jruby"
-      ENV["RBS_DISABLE_EXT"] = "true"
-    end
+    ENV['RBS_DISABLE_EXT'] = 'true' if RUBY_ENGINE == 'jruby'
   end
 end
 
@@ -19,7 +17,5 @@ appraise 'action_pack-latest' do
   gem 'rails'
 
   # workaround for https://github.com/ruby/rdoc/issues/1746
-  if RUBY_ENGINE == "jruby"
-    ENV["RBS_DISABLE_EXT"] = "true"
-  end
+  ENV['RBS_DISABLE_EXT'] = 'true' if RUBY_ENGINE == 'jruby'
 end
