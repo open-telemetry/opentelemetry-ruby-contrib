@@ -73,6 +73,7 @@ runs:
         fi
 
         # Load dotenv file only if it exists
+        echo "Using Interpreter: ${interpreter}"
         FILE="${dir}/.env.${interpreter}.build"
         if [ -f "$FILE" ]; then
           set -a
@@ -106,6 +107,8 @@ runs:
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
+    - name: Verify env
+      run: env | grep RBS_DISABLE_EXT || echo "Not set"
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
