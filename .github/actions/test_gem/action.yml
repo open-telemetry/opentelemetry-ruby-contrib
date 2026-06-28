@@ -77,10 +77,12 @@ runs:
         echo "Using Interpreter: ${INTERPRETER}"
         FILE="${dir}/.env.${INTERPRETER}.build"
         echo $FILE
-        if [[ -f "${FILE}" ]]; then
+        if [[ -f "$FILE" ]]; then
+          echo "file found"
           set -a
           source ${FILE}
           set +a
+          env | grep RBS_DISABLE_EXT || echo "Not set"
         fi
 
     - name: Install Ubuntu packages (if apt-packages.txt exists)
