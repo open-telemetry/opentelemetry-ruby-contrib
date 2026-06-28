@@ -9,7 +9,9 @@
     gem 'rails', "~> #{version}"
 
     # workaround for https://github.com/ruby/rdoc/issues/1746
-    ENV['RBS_DISABLE_EXT'] = 'true' if RUBY_ENGINE == 'jruby'
+    write_gemfile <<~RUBY
+      ENV['RBS_DISABLE_EXT'] = 'true' if RUBY_ENGINE == 'jruby'
+    RUBY
   end
 end
 
@@ -17,5 +19,7 @@ appraise 'action_mailer-latest' do
   gem 'rails'
 
   # workaround for https://github.com/ruby/rdoc/issues/1746
-  ENV['RBS_DISABLE_EXT'] = 'true' if RUBY_ENGINE == 'jruby'
+  write_gemfile <<~RUBY
+    ENV['RBS_DISABLE_EXT'] = 'true' if RUBY_ENGINE == 'jruby'
+  RUBY
 end
