@@ -82,7 +82,11 @@ runs:
           set -a
           source ${FILE}
           set +a
-          env | grep RBS_DISABLE_EXT || echo "Not set"
+
+          # Export all variables to the job environment
+          while IFS='=' read -r key value; do
+            echo "$key=$value" >> "$GITHUB_ENV"
+          done < .env.ci
         fi
 
     - name: Install Ubuntu packages (if apt-packages.txt exists)
