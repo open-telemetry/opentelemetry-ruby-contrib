@@ -75,9 +75,7 @@ runs:
 
         # Load dotenv file only if it exists
         FILE="${dir}/.env.${INTERPRETER}.build"
-        echo $FILE
         if [[ -f "$FILE" ]]; then
-          echo "file found"
           # Export all variables to the job environment
           while IFS= read -r raw; do
             # Skip blank lines and full-line comments
@@ -129,9 +127,6 @@ runs:
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-    - name: Verify env
-      shell: bash
-      run: env | grep RBS_DISABLE_EXT || echo "Not set"
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
