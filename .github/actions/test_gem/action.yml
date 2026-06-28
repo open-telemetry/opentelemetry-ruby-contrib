@@ -43,6 +43,7 @@ runs:
       env:
         GEM_INPUT: ${{ inputs.gem }}
         LATEST_INPUT: ${{ inputs.latest }}
+        INTERPRETER: ${{ inputs.interpreter }}
       run: |
         # 🛠️ Setup 🛠️
         dir=$(find . -iname "${GEM_INPUT}.gemspec" -exec dirname {} \;)
@@ -73,8 +74,8 @@ runs:
         fi
 
         # Load dotenv file only if it exists
-        echo "Using Interpreter: ${interpreter}"
-        FILE="${dir}/.env.${interpreter}.build"
+        echo "Using Interpreter: ${INTERPRETER}"
+        FILE="${dir}/.env.${INTERPRETER}.build"
         if [ -f "$FILE" ]; then
           set -a
           source $FILE
