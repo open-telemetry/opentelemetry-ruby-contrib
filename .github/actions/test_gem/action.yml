@@ -108,6 +108,7 @@ runs:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
     - name: Verify env
+      shell: bash
       run: env | grep RBS_DISABLE_EXT || echo "Not set"
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
