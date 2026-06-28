@@ -76,9 +76,10 @@ runs:
         # Load dotenv file only if it exists
         echo "Using Interpreter: ${INTERPRETER}"
         FILE="${dir}/.env.${INTERPRETER}.build"
-        if [ -f "$FILE" ]; then
+        echo $FILE
+        if [[ -f "${FILE}" ]]; then
           set -a
-          source $FILE
+          source ${FILE}
           set +a
         fi
 
