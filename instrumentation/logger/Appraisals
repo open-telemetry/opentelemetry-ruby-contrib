@@ -7,9 +7,19 @@
 %w[7.1.0 7.2.0 8.0.0 8.1.0].each do |version|
   appraise "rails-#{version}" do
     gem 'rails', "~> #{version}"
+
+    # workaround for https://github.com/ruby/rdoc/issues/1746
+    if RUBY_ENGINE == "jruby"
+      ENV["RBS_DISABLE_EXT"] = "true"
+    end
   end
 end
 
 appraise 'rails-latest' do
   gem 'rails'
+
+  # workaround for https://github.com/ruby/rdoc/issues/1746
+  if RUBY_ENGINE == "jruby"
+    ENV["RBS_DISABLE_EXT"] = "true"
+  end
 end
