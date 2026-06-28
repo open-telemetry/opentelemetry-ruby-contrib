@@ -24,6 +24,8 @@ group :test do
   # Add jar-dependencies gem only if the Ruby runtime is JRuby
   # https://github.com/jruby/jruby/issues/7262
   gem 'jar-dependencies', '0.5.7', platforms: :jruby
+  # workaround for https://github.com/ruby/rdoc/issues/1746
+  gem 'rbs', '4.1.0.pre.2', platforms: :jruby # TODO: remove once stable version is available
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'mutex_m'
