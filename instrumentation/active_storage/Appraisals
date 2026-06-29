@@ -4,24 +4,37 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[7.1.0 7.2.0 8.0.0].each do |version|
+%w[7.1.0 7.2.0].each do |version|
   appraise "activestorage-#{version}" do
-    gem 'sqlite3', '~> 1.4'
+    gem 'sqlite3', '~> 1.4', platform: :mri
+    gem "activerecord-jdbcsqlite3-adapter", platform: :jruby
     gem 'image_processing', '~> 1.2'
     gem 'rails', "~> #{version}"
   end
 end
 
-%w[8.0.0 8.1.0].each do |version|
-  appraise "activestorage-#{version}" do
-    gem 'sqlite3', '>= 2.1'
-    gem 'image_processing', '~> 1.2'
-    gem 'rails', "~> #{version}"
+if RUBY_ENGINE == 'ruby'
+  %w[8.0.0 8.1.0].each do |version|
+    appraise "activestorage-#{version}" do
+      gem 'sqlite3', '>= 2.1', platform: :mri
+      gem 'image_processing', '~> 1.2', platform: :mri
+      gem 'rails', "~> #{version}", platform: :mri
+    end
+  end
+
+  appraise 'activestorage-latest' do
+    gem 'sqlite3', '>= 2.1', platform: :mri
+    gem 'image_processing', '~> 1.2', platform: :mri
+    gem 'rails', platform: :mri
   end
 end
 
-appraise 'activestorage-latest' do
-  gem 'sqlite3', '>= 2.1'
-  gem 'image_processing', '~> 1.2'
-  gem 'rails'
+if RUBY_ENGINE == 'jruby'
+  %w[80.0.pre1].each do |version|
+    appraise "jruby_activestorage-#{version}" do
+      gem "activerecord-jdbcsqlite3-adapter", '80.0.pre1', platform: :jruby
+      gem 'image_processing', '~> 1.2', platform: :jruby
+      gem 'rails', "~> 8.0.0", platform: :jruby
+    end
+  end
 end
