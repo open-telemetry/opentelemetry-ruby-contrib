@@ -1,0 +1,34 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+source 'https://rubygems.org'
+
+gemspec
+
+group :test do
+  gem 'opentelemetry-instrumentation-base', path: '../base'
+  gem 'appraisal', '~> 2.5.0'
+  gem 'bundler', '~> 4.0.13'
+  gem 'minitest', '~> 6.0.6'
+  gem 'openai', '~> 0.66.1'
+  gem 'opentelemetry-sdk', '~> 1.12.0'
+  gem 'opentelemetry-test-helpers', '~> 0.9.0'
+  gem 'rake', '~> 13.4.2'
+  gem 'rubocop', '~> 1.87.0'
+  gem 'rubocop-minitest', '~> 0.39.1'
+  gem 'rubocop-rspec', '~> 3.10.2'
+  gem 'rubocop-rake', '~> 0.7.1'
+  gem 'rubocop-performance', '~> 1.26.1'
+  gem 'simplecov', '~> 0.22.0'
+  gem 'webmock', '~> 3.26.2'
+  gem 'yard', '~> 0.9.44'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64', '~> 0.3.0'
+    gem 'mutex_m', '~> 0.3.0'
+    gem 'logger', '~> 1.7.0'
+    gem 'cgi', '~> 0.5.1'
+  end
+end
