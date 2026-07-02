@@ -60,6 +60,10 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       instrumentation.install(config)
     end
 
+    def create_temp_table
+      client.exec('CREATE TEMP TABLE otel_affected_rows (id int)')
+    end
+
     it 'before request' do
       _(exporter.finished_spans.size).must_equal 0
     end
@@ -211,6 +215,118 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(last_span.attributes['db.operation']).must_equal 'SELECT'
         _(last_span.attributes['net.peer.name']).must_equal host.to_s
         _(last_span.attributes['net.peer.port']).must_equal port.to_i
+      end
+    end
+
+    it 'does not include db.response.returned_rows by default' do
+      client.exec('SELECT * FROM (VALUES (1), (2)) AS t(id)')
+
+      _(last_span.attributes['db.response.returned_rows']).must_be_nil
+    end
+
+    it 'does not include db.response.affected_rows by default' do
+      create_temp_table
+      client.exec('INSERT INTO otel_affected_rows (id) VALUES (1), (2), (3)')
+
+      _(last_span.attributes['db.response.affected_rows']).must_be_nil
+    end
+
+    describe 'when db_response_returned_rows is enabled' do
+      let(:config) { { db_statement: :include, db_response_returned_rows: true } }
+
+      %i[exec query sync_exec async_exec].each do |method|
+        it "sets db.response.returned_rows after request (with method: #{method})" do
+          client.send(method, 'SELECT * FROM (VALUES (1), (2)) AS t(id)')
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 2
+        end
+      end
+
+      %i[exec_params async_exec_params sync_exec_params].each do |method|
+        it "sets db.response.returned_rows after request (with method: #{method})" do
+          client.send(method, 'SELECT * FROM (VALUES ($1), ($2)) AS t(id)', [1, 2])
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 2
+        end
+      end
+
+      %i[prepare async_prepare sync_prepare].each do |method|
+        it "sets db.response.returned_rows after preparing a statement (with method: #{method})" do
+          client.send(method, 'foo', 'SELECT $1 AS a')
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 0
+        end
+      end
+
+      %i[exec_prepared async_exec_prepared sync_exec_prepared].each do |method|
+        it "sets db.response.returned_rows after executing prepared statement (with method: #{method})" do
+          client.prepare('foo', 'SELECT * FROM (VALUES ($1), ($2)) AS t(id)')
+          client.send(method, 'foo', [1, 2])
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 2
+        end
+      end
+
+      it 'does not overwrite db.response.returned_rows from with_attributes' do
+        OpenTelemetry::Instrumentation::PG.with_attributes('db.response.returned_rows' => 99) do
+          client.exec('SELECT * FROM (VALUES (1), (2)) AS t(id)')
+        end
+
+        _(last_span.attributes['db.response.returned_rows']).must_equal 99
+      end
+    end
+
+    describe 'when db_response_affected_rows is enabled' do
+      let(:config) { { db_statement: :include, db_response_affected_rows: true } }
+
+      it 'does not set db.response.affected_rows for SELECT statements' do
+        client.exec('SELECT * FROM (VALUES (1), (2)) AS t(id)')
+
+        _(last_span.attributes['db.response.affected_rows']).must_be_nil
+      end
+
+      %i[exec query sync_exec async_exec].each do |method|
+        it "sets db.response.affected_rows after request (with method: #{method})" do
+          create_temp_table
+          client.send(method, 'INSERT INTO otel_affected_rows (id) VALUES (1), (2), (3)')
+
+          _(last_span.attributes['db.response.affected_rows']).must_equal 3
+        end
+      end
+
+      %i[exec_params async_exec_params sync_exec_params].each do |method|
+        it "sets db.response.affected_rows after request (with method: #{method})" do
+          create_temp_table
+          client.send(method, 'INSERT INTO otel_affected_rows (id) VALUES ($1), ($2), ($3)', [1, 2, 3])
+
+          _(last_span.attributes['db.response.affected_rows']).must_equal 3
+        end
+      end
+
+      it 'sets db.response.affected_rows for mutations that affect zero rows' do
+        create_temp_table
+        client.exec('UPDATE otel_affected_rows SET id = id WHERE id < 0')
+
+        _(last_span.attributes['db.response.affected_rows']).must_equal 0
+      end
+
+      %i[exec_prepared async_exec_prepared sync_exec_prepared].each do |method|
+        it "sets db.response.affected_rows after executing prepared statement (with method: #{method})" do
+          create_temp_table
+          client.prepare('foo', 'INSERT INTO otel_affected_rows (id) VALUES ($1), ($2), ($3)')
+          client.send(method, 'foo', [1, 2, 3])
+
+          _(last_span.attributes['db.response.affected_rows']).must_equal 3
+        end
+      end
+
+      it 'does not overwrite db.response.affected_rows from with_attributes' do
+        create_temp_table
+        OpenTelemetry::Instrumentation::PG.with_attributes('db.response.affected_rows' => 99) do
+          client.exec('INSERT INTO otel_affected_rows (id) VALUES (1), (2), (3)')
+        end
+
+        _(last_span.attributes['db.response.affected_rows']).must_equal 99
       end
     end
 
