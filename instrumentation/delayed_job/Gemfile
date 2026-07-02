@@ -21,7 +21,6 @@ group :test do
   gem 'rspec-mocks', '~> 3.13.7'
   gem 'sqlite3', '~> 2.9.0', platform: :mri
   gem 'jdbc-sqlite3', platform: :jruby
-
   gem 'opentelemetry-instrumentation-base', path: '../base'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
