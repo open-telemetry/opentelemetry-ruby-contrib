@@ -38,9 +38,9 @@ Gem::Specification.new do |spec|
   # guide at: https://bundler.io/guides/creating_gem.html
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-grpc/v#{OpenTelemetry::Instrumentation::Grpc::VERSION}/file.CHANGELOG.html"
+    spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
     spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/#{spec.name}/v#{spec.version}/instrumentation/grpc"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-grpc/v#{OpenTelemetry::Instrumentation::Grpc::VERSION}"
+    spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
 end
