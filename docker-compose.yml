@@ -1,5 +1,5 @@
 include:
-  - ./.docker/volume/compose.yml
+  - ./.docker/volume/bundler.yml
   - ./.docker/infra/kafka/docker-compose.yml
   - ./.docker/infra/memcached/docker-compose.yml
   - ./.docker/infra/mongo/docker-compose.yml
@@ -39,60 +39,6 @@ services:
       - rabbitmq
       - redis
 
-  ex-instrumentation-bunny:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
-    working_dir: /app/instrumentation/bunny/example
-
-  ex-instrumentation-concurrent-ruby:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/concurrent_ruby/example
-
-  ex-instrumentation-delayed_job:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/delayed_job/example
-
-  ex-instrumentation-ethon:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/ethon/example
-
-  ex-instrumentation-excon:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/excon/example
-
-  ex-instrumentation-faraday:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/faraday/example
-
-  ex-instrumentation-mysql2:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    environment:
-      - TEST_MYSQL_USER=root
-      - TEST_MYSQL_ROOT_PASSWORD=root
-      - TEST_MYSQL_HOST=mysql
-      - TEST_MYSQL_PORT=3306
-      - TEST_MYSQ_DB=mysql
-    depends_on:
-      - mysql
-    working_dir: /app/instrumentation/mysql2/example
-
   ex-instrumentation-mysql2-test:
     extends:
       service: base
@@ -106,21 +52,6 @@ services:
     depends_on:
       - mysql
     working_dir: /app/instrumentation/mysql2/
-
-  ex-instrumentation-pg:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    environment:
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
-      - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
-      - OTEL_TRACES_EXPORTER=console
-    depends_on:
-      - postgres
-    working_dir: /app/instrumentation/pg/example
 
   ex-instrumentation-pg-test:
     extends:
@@ -137,19 +68,7 @@ services:
     tmpfs: !reset []
     working_dir: /app/instrumentation/pg/
 
-  ex-instrumentation-net-http:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/net_http/example
-
-  ex-instrumentation-net-ldap:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/net_ldap/example
-
-  ex-instrumentation-que:
+  ex-instrumentation-que-test:
     extends:
       service: base
       file: ./docker-base.yml
@@ -162,35 +81,6 @@ services:
     depends_on:
       - postgres
     working_dir: /app/instrumentation/que
-
-  ex-instrumentation-rack:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/rack/example
-
-  ex-instrumentation-dalli:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    environment:
-      - MEMCACHED_URL=memcached:11211
-    depends_on:
-      - memcached
-    working_dir: /app/instrumentation/dalli/example
-
-  ex-instrumentation-restclient:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/restclient/example
-
-  ex-instrumentation-sinatra:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    command: ./start_server.sh
-    working_dir: /app/instrumentation/sinatra/example
 
   jaeger:
     image: jaegertracing/jaeger:2.19.0@sha256:ede4864215be4cd85bd8c3129a2fea6c5713c5653c7282c429dba123014bc68b
