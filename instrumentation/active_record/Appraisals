@@ -32,4 +32,8 @@ if RUBY_ENGINE == 'jruby'
       gem 'activerecord-jdbcsqlite3-adapter', "~> #{version}"
     end
   end
+
+  appraise 'activerecord-latest' do
+    gem 'activerecord-jdbcsqlite3-adapter'
+  end
 end
