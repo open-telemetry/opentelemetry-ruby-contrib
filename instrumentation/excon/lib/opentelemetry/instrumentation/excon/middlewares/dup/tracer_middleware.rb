@@ -71,25 +71,24 @@ module OpenTelemetry
             private
 
             def handle_response(datum)
-              datum.delete(:otel_span)&.tap do |span|
-                token = datum.delete(:otel_token)
-                OpenTelemetry::Context.detach(token) if token
-                return unless span.recording?
+              span = datum.delete(:otel_span)
+              token = datum.delete(:otel_token)
+              OpenTelemetry::Context.detach(token) if token
+              return unless span&.recording?
 
-                if datum.key?(:response)
-                  response = datum[:response]
-                  span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response[:status])
-                  span.set_attribute('http.response.status_code', response[:status])
-                  span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(response[:status].to_i)
-                end
-
-                if datum.key?(:error)
-                  span.status = OpenTelemetry::Trace::Status.error('Request has failed')
-                  span.record_exception(datum[:error])
-                end
-
-                span.finish
+              if datum.key?(:response)
+                response = datum[:response]
+                span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response[:status])
+                span.set_attribute('http.response.status_code', response[:status])
+                span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(response[:status].to_i)
               end
+
+              if datum.key?(:error)
+                span.status = OpenTelemetry::Trace::Status.error('Request has failed')
+                span.record_exception(datum[:error])
+              end
+
+              span.finish
             rescue StandardError => e
               OpenTelemetry.handle_error(e)
             end
