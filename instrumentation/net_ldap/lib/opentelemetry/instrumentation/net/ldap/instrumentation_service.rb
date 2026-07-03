@@ -33,7 +33,7 @@ module OpenTelemetry
               'ldap.operation.type' => operation_type,
               'ldap.request.message' => begin
                 raw = payload.to_json
-                utf8_clean?(raw) ? raw : nil
+                raw.scrub == raw ? raw : nil
               rescue JSON::GeneratorError
                 nil
               end,
@@ -99,19 +99,6 @@ module OpenTelemetry
             return if ::Net::LDAP::ResultCodesNonError.include?(status_code)
 
             span.status = OpenTelemetry::Trace::Status.error
-          end
-
-          def utf8_clean?(value)
-            case value
-            when String
-              value.scrub == value
-            when Hash
-              value.all? { |k, v| utf8_clean?(k) && utf8_clean?(v) }
-            when Array
-              value.all? { |v| utf8_clean?(v) }
-            else
-              true
-            end
           end
         end
       end
