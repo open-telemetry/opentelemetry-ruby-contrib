@@ -6,7 +6,7 @@
 
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.4')
   appraise 'gruf-2.19' do
-    gem 'gruf', '~> 2.19.0', platform: :mri, platform: :mri
+    gem 'gruf', '~> 2.19.0', platform: :mri
   end
 
   appraise 'gruf-2.20' do
