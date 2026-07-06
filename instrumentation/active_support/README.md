@@ -30,6 +30,27 @@ tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
 
 ```
 
+The subscription accepts optional payload controls:
+
+- **`notification_payload_transform`:** Custom `proc` used to extract span
+  attributes from the notification payload. The proc receives the notification
+  payload and must return a `Hash`. Use this to rename keys, extract nested
+  values, or perform any other custom logic.
+- **`disallowed_notification_payload_keys`:** Array of notification payload keys
+  that should not be recorded as span attributes. Keys are matched before the
+  remaining payload keys are converted to strings.
+
+```ruby
+
+::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(
+  tracer,
+  'bar.foo',
+  ->(payload) { payload.merge(tenant: payload[:account_id]) },
+  [:account_id]
+)
+
+```
+
 Alternatively, you can also call `use_all` to install all the available instrumentation.
 
 ```ruby

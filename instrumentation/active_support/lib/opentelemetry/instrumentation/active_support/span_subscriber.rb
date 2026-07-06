@@ -14,6 +14,17 @@ module OpenTelemetry
       # The SpanSubscriber is a special ActiveSupport::Notification subscription
       # handler which turns notifications into generic spans, taking care to handle
       # context appropriately.
+      #
+      # @param tracer [OpenTelemetry::Trace::Tracer] tracer used to create spans
+      # @param pattern [String, Regexp] ActiveSupport notification pattern
+      # @param notification_payload_transform [#call, nil] optional callable
+      #   that receives the notification payload and returns a Hash of span
+      #   attributes
+      # @param disallowed_notification_payload_keys [Array, nil] notification
+      #   payload keys that should not be recorded as span attributes
+      # @param kind [Symbol, nil] span kind to use for generated spans
+      # @param span_name_formatter [#call, nil] optional callable that receives
+      #   the notification name and returns the span name
 
       # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber
       # gets invoked first
