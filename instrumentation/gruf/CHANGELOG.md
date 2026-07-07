@@ -3,7 +3,6 @@
 ## v0.6.2 / 2026-07-07
 
 - DOCS: Improve gruf instrumentation documentation (#2207)
-- DOCS: Improve gruf instrumentation documentation
 
 ## v0.6.1 / 2026-05-21
 
