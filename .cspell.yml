@@ -66,11 +66,12 @@ dictionaries:
   - software-tools
   - redis
 ignoreWords:
-  - sendfile
-  - millis
-  - jsonlintrc
-  - Dockerfiles
   - autodiscover
+  - davidanson
+  - Dockerfiles
+  - jsonlintrc
+  - millis
+  - sendfile
 words:
   - AWSXRayTrace
   - AWSXRaySamplingClient
