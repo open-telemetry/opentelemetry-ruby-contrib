@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-grpc
 
+## v0.5.2 / 2026-07-08
+
+- No significant updates.
+
 ## v0.5.1 / 2026-05-21
 
 - FIXED: Handle missing config in middleware when OTEL_SDK_DISABLED=true (#2231)
