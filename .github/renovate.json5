@@ -21,7 +21,7 @@
         "!ruby",
         "!markdownlint-cli2",
         "!setup-ruby",
-        "!confluentinc/cp-kafka"
+        "!confluentinc/cp-kafka",
       ],
       matchUpdateTypes: ["minor"],
       schedule: ["before 7am on Monday"],
