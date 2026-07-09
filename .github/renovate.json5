@@ -17,7 +17,12 @@
     {
       groupName: "infra [minor]",
       matchCategories: ["ci", "docker", "js"],
-      matchDepNames: ["!ruby", "!markdownlint-cli2", "!setup-ruby", "!confluentinc/cp-kafka"],
+      matchDepNames: [
+        "!ruby",
+        "!markdownlint-cli2",
+        "!setup-ruby",
+        "!confluentinc/cp-kafka"
+      ],
       matchUpdateTypes: ["minor"],
       schedule: ["before 7am on Monday"],
     },
