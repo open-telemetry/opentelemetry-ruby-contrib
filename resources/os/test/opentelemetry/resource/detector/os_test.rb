@@ -12,6 +12,11 @@ describe OpenTelemetry::Resource::Detector::OS do
   RESOURCE = OpenTelemetry::SemanticConventions::Resource
 
   describe '.detect' do
-    # TODO
+    let(:detected_resource) { detector.detect }
+    let(:detected_resource_attributes) { detected_resource.attribute_enumerator.to_h }
+
+    it 'returns a resource with os_type string' do
+      _(detected_resource_attributes['os.type']).must_be_instance_of(String)
+    end
   end
 end

@@ -8,7 +8,7 @@ require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
-require 'opentelemetry-resource-detector-aws'
+require 'opentelemetry-resource-detector-os'
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
