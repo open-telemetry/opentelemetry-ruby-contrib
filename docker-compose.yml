@@ -192,21 +192,13 @@ services:
     command: ./start_server.sh
     working_dir: /app/instrumentation/sinatra/example
 
-  processor-baggage-test:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/processor/baggage
-    command: |
-      bash -c "bundle install && rake"
-
   jaeger:
-    image: jaegertracing/jaeger:2.17.0@sha256:6266573208d665ce5c17483bce0a75d0806480d92c84766d288d0aee885ce708
+    image: jaegertracing/jaeger:2.19.0@sha256:ede4864215be4cd85bd8c3129a2fea6c5713c5653c7282c429dba123014bc68b
     ports:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.151.0@sha256:49a12827519134ed72881a64247ea43fbf4bdac50cfa41ceb495fc1c684451e2
+    image: otel/opentelemetry-collector:0.155.0@sha256:140cdb56eeea12ebc33bb4f7109fd4eef90391933f8d85b33384fcfe1cf040c4
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml

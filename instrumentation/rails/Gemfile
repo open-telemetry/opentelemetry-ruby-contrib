@@ -11,11 +11,11 @@ gemspec
 group :test do
   gem 'appraisal', '~> 2.5.0'
   gem 'minitest', '~> 6.0.0'
-  gem 'opentelemetry-sdk', '~> 1.11.0'
-  gem 'opentelemetry-test-helpers', '~> 0.8.0'
+  gem 'opentelemetry-sdk', '~> 1.12.0'
+  gem 'opentelemetry-test-helpers', '~> 0.9.0'
   gem 'rack-test', '~> 2.2.0'
   gem 'rake', '>= 13'
-  gem 'rubocop', '~> 1.86.0'
+  gem 'rubocop', '~> 1.88.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'webmock', '~> 3.26.0'
@@ -31,6 +31,8 @@ group :test do
   gem 'opentelemetry-instrumentation-active_storage', path: '../active_storage'
   gem 'opentelemetry-instrumentation-action_view', path: '../action_view'
   gem 'opentelemetry-instrumentation-rack', path: '../rack'
+  # workaround for https://github.com/ruby/rdoc/issues/1746
+  gem 'rbs', '4.1.0.pre.2', platforms: :jruby # TODO: remove once stable version is available
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'drb'
