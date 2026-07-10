@@ -7,7 +7,8 @@ module OpenTelemetry
         # Module to prepend to Rask::Task for instrumentation
         module Task
           def invoke(*args)
-            tracer.in_span('rake.invoke', attributes: { 'rake.task' => name, 'rake.execution.type' => 'invoke' }) do
+            span_name = rake_span_name('invoke', name)
+            tracer.in_span(span_name, attributes: { 'rake.task' => name, 'rake.execution.type' => 'invoke' }) do
               super
             end
           ensure
@@ -15,7 +16,8 @@ module OpenTelemetry
           end
 
           def execute(args = nil)
-            tracer.in_span('rake.execute', attributes: { 'rake.task' => name, 'rake.execution.type' => 'execute' }) do
+            span_name = rake_span_name('execute', name)
+            tracer.in_span(span_name, attributes: { 'rake.task' => name, 'rake.execution.type' => 'execute' }) do
               super
             end
           ensure
@@ -26,6 +28,18 @@ module OpenTelemetry
 
           def tracer
             Rake::Instrumentation.instance.tracer
+          end
+
+          def config
+            OpenTelemetry::Instrumentation::Rake::Instrumentation.instance.config
+          end
+
+          def rake_span_name(execution_type, task_name)
+            if config[:span_name] == :execution_type_and_task_name
+              "rake.#{execution_type} #{task_name}"
+            else
+              "rake.#{execution_type}"
+            end
           end
 
           def force_flush
