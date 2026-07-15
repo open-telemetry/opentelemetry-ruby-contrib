@@ -39,7 +39,8 @@ runs:
       env:
         GEM_INPUT: ${{ inputs.gem }}
         LATEST_INPUT: ${{ inputs.latest }}
-      run: | # zizmor: ignore[github-env] Test-only settings come from reviewed repository files; this action receives no secrets or write token.
+      run:
+        | # zizmor: ignore[github-env] Test-only settings come from reviewed repository files; this action receives no secrets or write token.
         # 🛠️ Setup 🛠️
         dir=$(find . -iname "${GEM_INPUT}.gemspec" -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
