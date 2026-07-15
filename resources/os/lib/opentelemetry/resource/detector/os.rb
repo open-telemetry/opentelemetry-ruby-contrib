@@ -36,6 +36,7 @@ module OpenTelemetry
           attrs = {
             SEMCONV::OS_TYPE => 'linux'
           }
+          build_id = nil
           os_release = get_linux_os_release
           if os_release
             # eg. "Ubuntu"
@@ -56,11 +57,11 @@ module OpenTelemetry
             # eg. "7.0.0-1008-aws",
             #     "5.15.146.1-microsoft-standard-WSL2+"
             build_id = lookup_os_release(os_release, "BUILD_ID")
-            if build_id
-              attrs[SEMCONV::OS_BUILD_ID] = build_id
-            elsif File.readable?("/proc/sys/kernel/osrelease")
-              attrs[SEMCONV::OS_BUILD_ID] = File.read("/proc/sys/kernel/osrelease")
-            end
+          end
+          if build_id
+            attrs[SEMCONV::OS_BUILD_ID] = build_id
+          elsif File.readable?("/proc/sys/kernel/osrelease")
+            attrs[SEMCONV::OS_BUILD_ID] = File.read("/proc/sys/kernel/osrelease").strip
           end
           attrs
         end
@@ -76,7 +77,7 @@ module OpenTelemetry
         end
 
         def lookup_os_release(os_release, key)
-          os_release[/^#{key}=(.*)$/, 1]
+          os_release[/^#{key}="?(.*?)"?$/, 1]
         end
 
         def get_macos_attrs
