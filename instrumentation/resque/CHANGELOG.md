@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-resque
 
+## v0.9.0 / 2026-04-14
+
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
+
 ## v0.8.0 / 2025-10-22
 
 - BREAKING CHANGE: Min Ruby Version 3.2

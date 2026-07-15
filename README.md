@@ -1,8 +1,12 @@
 # OpenTelemetry Ruby Contrib
 
 [![Slack channel][slack-image]][slack-url]
+[![GitHub Discussions][discussions-image]][discussions-url]
 [![CI][ci-image]][ci-image]
 [![Apache License][license-image]][license-image]
+[![OpenSSF Scorecard for opentelemetry-ruby-contrib][openssf-scorecard-image]][openssf-scorecard-url]
+[![FOSSA License Status][fossa-license-image]][fossa-license-url]
+[![FOSSA Security Status][fossa-security-image]][fossa-security-url]
 
 Contrib Packages for the [OpenTelemetry Ruby][otel-ruby] API and SDK implementation.
 
@@ -27,16 +31,9 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 ### Maintainers
 
-- [Andrew Hayworth](https://github.com/ahayworth)
-- [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Daniel Azuma](https://github.com/dazuma), Google
-- [Eric Mustin](https://github.com/ericmustin)
-- [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
-- [Matthew Wear](https://github.com/mwear), Lightstep
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
-- [Robert Laurin](https://github.com/robertlaurin), Shopify
-- [Sam Handler](https://github.com/plantfansam), Shopify
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
@@ -45,8 +42,22 @@ For more information about the maintainer role, see the [community repository](h
 - [Josef Šimánek](https://github.com/simi)
 - [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 - [Hannah Ramadan](https://github.com/HannahRamadan), New Relic
+- [James Thompson](https://github.com/thompson-tomo)
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
+
+### Emeritus
+
+- [Ariel Valentin](https://github.com/arielvalentin), GitHub
+- [Andrew Hayworth](https://github.com/ahayworth), Maintainer
+- [Eric Mustin](https://github.com/ericmustin), Maintainer
+- [Francis Bogsanyi](https://github.com/fbogsany), Maintainer
+- [Matthew Wear](https://github.com/mwear), Maintainer
+- [Robert Laurin](https://github.com/robertlaurin), Maintainer
+- [Sam Handler](https://github.com/plantfansam), Maintainer
+
+For more information about the emeritus role, see the
+[community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
 
 ## Instrumentation Libraries
 
@@ -90,6 +101,8 @@ We will regularly review the instrumentations to drop compatibility for any vers
 Should you need instrumentation for _older_ versions of a library then you must pin to a specific version of the instrumentation that supports it,
 however, you will no longer receive any updates for the instrumentation from this repository.
 
+> [!important]
+>
 > When a release series is no longer supported, it's your own responsibility to deal with bugs and security issues. We may provide backports of the fixes and publish them to git, however there will be no new versions released. If you are not comfortable maintaining your own versions, you should upgrade to a supported version. <https://guides.rubyonrails.org/maintenance_policy.html#security-issues>
 
 Consult instrumentation gem's README file and gemspec for details about library compatibility.
@@ -110,14 +123,21 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [otel-ruby]: https://github.com/open-telemetry/opentelemetry-ruby
 [otel-ruby-releases]: https://github.com/open-telemetry/opentelemetry-ruby/releases
 [otel-ruby-contrib-releases]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/releases
-[ci-image]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/workflows/CI%20Contrib/badge.svg?event=push
+[ci-image]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/actions/workflows/ci-contrib.yml/badge.svg?event=push
+[discussions-image]: https://img.shields.io/github/discussions/open-telemetry/opentelemetry-ruby-contrib?logo=github
+[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/discussions
+[fossa-license-image]: https://app.fossa.com/api/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-ruby-contrib.svg?type=shield&issueType=license
+[fossa-license-url]: https://app.fossa.com/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-ruby-contrib?ref=badge_shield&issueType=license
+[fossa-security-image]: https://app.fossa.com/api/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-ruby-contrib.svg?type=shield&issueType=security
+[fossa-security-url]: https://app.fossa.com/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-ruby-contrib?ref=badge_shield&issueType=security
 [getting-started]: https://opentelemetry.io/docs/languages/ruby/getting-started/
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 [issues-help-wanted]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 [license-image]: https://img.shields.io/badge/license-Apache_2.0-green.svg?style=flat
 [license-url]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
+[openssf-scorecard-image]: https://api.scorecard.dev/projects/github.com/open-telemetry/opentelemetry-ruby-contrib/badge
+[openssf-scorecard-url]: https://scorecard.dev/viewer/?uri=github.com/open-telemetry/opentelemetry-ruby-contrib
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[slack-image]: https://img.shields.io/badge/slack-@cncf/otel/ruby-brightgreen.svg?logo=slack
+[slack-image]: https://img.shields.io/badge/slack-@cncf/%23otel--ruby-purple.svg
 [slack-url]: https://cloud-native.slack.com/archives/C01NWKKMKMY
-[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [otel-versioning]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/versioning-and-stability.md

@@ -106,8 +106,8 @@ describe OpenTelemetry::Instrumentation::HTTPX::Dup::Plugin do
 
     it 'after request timeout' do
       response = HTTPX.get('http://example.com/timeout')
-      assert response.is_a?(HTTPX::ErrorResponse)
-      assert response.error.is_a?(HTTPX::TimeoutError)
+      assert_kind_of(HTTPX::ErrorResponse, response)
+      assert_kind_of(HTTPX::TimeoutError, response.error)
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'
@@ -181,6 +181,23 @@ describe OpenTelemetry::Instrumentation::HTTPX::Dup::Plugin do
       end
 
       _(span.attributes['peer.service']).must_equal 'example:custom'
+    end
+
+    it 'sets url.query attribute when query params present' do
+      stub_request(:get, 'http://example.com/search?q=foo').to_return(status: 200)
+      HTTPX.get('http://example.com/search?q=foo')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.attributes['url.query']).must_equal 'q=foo'
+      _(span.attributes['url.path']).must_equal '/search'
+    end
+
+    it 'sets server.port and net.peer.port attributes' do
+      HTTPX.get('http://example.com/success')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.attributes['server.port']).must_equal 80
+      _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT]).must_equal 80
     end
   end
 end

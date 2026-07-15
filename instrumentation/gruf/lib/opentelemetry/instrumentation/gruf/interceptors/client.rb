@@ -7,10 +7,13 @@
 module OpenTelemetry
   module Instrumentation
     module Gruf
+      # Interceptors contains the gRPC interceptors used by the Gruf instrumentation
       module Interceptors
+        # Client is a Gruf client interceptor that creates an OpenTelemetry span
+        # for each outbound gRPC call, injecting trace context into request metadata
         class Client < ::Gruf::Interceptors::ClientInterceptor
           def call(request_context:)
-            return yield if instrumentation_config.empty?
+            return yield unless Gruf::Instrumentation.instance.installed?
 
             service = request_context.method.split('/')[1]
             method = request_context.method_name

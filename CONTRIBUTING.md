@@ -80,11 +80,13 @@ For example, to test `opentelemetry-instrumentation-action_pack` you would:
 2. Install the bundle with `bundle install`
 3. Run the tests with `bundle exec rake`
 
-Note: Some test suites make use of [Appraisal](https://github.com/thoughtbot/appraisal), a library for testing against different versions of dependencies. To run tests in suites that use Appraisal:
-
-1. Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
-2. Install the bundle with `bundle exec appraisal install`
-3. Run the tests with `bundle exec appraisal rake test`
+> [!Note]
+>
+> Some test suites make use of [Appraisal](https://github.com/thoughtbot/appraisal), a library for testing against different versions of dependencies. To run tests in suites that use Appraisal:
+>
+> 1. Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
+> 2. Install the bundle with `bundle exec appraisal install`
+> 3. Run the tests with `bundle exec appraisal rake test`
 
 ### Docker setup
 
@@ -446,6 +448,16 @@ LOG_LEVEL=debug npx renovate --platform=local > test.log
 
 This will produce a detailed log which will include a json object describing all the matched dependencies
 and of more interest what updates are available for each of the dependencies.
+
+If you are wanting to test the creation of PR's to ensure that the custom managers are updating correctly. The below command can be used
+
+```sh
+LOG_LEVEL=debug renovate --platform=github --token="{{token}}" --package-rules='[]' --pr-hourly-limit 0 {{githubUsername}}/opentelemetry-ruby-contrib  > test.log
+```
+
+> [!TIP]
+>
+> The token can also be set as an environment variable to avoid passing it via the cli arguments.
 
 ## Updating Ruby version requirements
 
