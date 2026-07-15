@@ -11,13 +11,33 @@ class TestOpenTelemetry < Minitest::Test
     @exporter = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
   end
 
-  def test_installs
+  def test_use_all
     OpenTelemetry::SDK.configure do |c|
       # force a failure on error
       c.error_handler = ->(exception:, message:) { raise(exception || message) }
       c.logger = Logger.new(File::NULL, level: :fatal)
       c.add_span_processor OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(@exporter)
       c.use_all
+    end
+
+    tracer = OpenTelemetry.tracer_provider.tracer('releases', '1.0')
+    tracer.in_span('test') {}
+
+    spans = @exporter.finished_spans
+    assert_equal(['test'], spans.map(&:name))
+  end
+
+  def test_use_named
+    OpenTelemetry::SDK.configure do |c|
+      # force a failure on error
+      c.error_handler = ->(exception:, message:) { raise(exception || message) }
+      c.logger = Logger.new(File::NULL, level: :fatal)
+      c.add_span_processor OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(@exporter)
+      OpenTelemetry::SDK::Configurator::InstrumentationRegistry.names.each do |name|
+        puts "Installing #{name}"
+        c.use name
+      end
+
     end
 
     tracer = OpenTelemetry.tracer_provider.tracer('releases', '1.0')
