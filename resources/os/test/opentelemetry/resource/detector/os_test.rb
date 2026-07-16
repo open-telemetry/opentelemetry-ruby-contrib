@@ -44,19 +44,10 @@ describe OpenTelemetry::Resource::Detector::OS do
           OSRELEASE
         end
 
-        it 'reads os.name from NAME' do
+        it 'reads os.* from that file' do
           _(detected_resource_attributes['os.name']).must_equal('Ubuntu')
-        end
-
-        it 'reads os.version from VERSION_ID' do
           _(detected_resource_attributes['os.version']).must_equal('22.04')
-        end
-
-        it 'reads os.description from PRETTY_NAME' do
           _(detected_resource_attributes['os.description']).must_equal('Ubuntu 22.04.5 LTS')
-        end
-
-        it 'reads os.build_id from BUILD_ID when available' do
           _(detected_resource_attributes['os.build_id']).must_equal('build1')
         end
       end
@@ -82,19 +73,10 @@ describe OpenTelemetry::Resource::Detector::OS do
           OSRELEASE
         end
 
-        it 'reads os.name from NAME' do
+        it 'reads os.* from that file' do
           _(detected_resource_attributes['os.name']).must_equal('Ubuntu')
-        end
-
-        it 'reads os.version from VERSION_ID' do
           _(detected_resource_attributes['os.version']).must_equal('22.04')
-        end
-
-        it 'reads os.description from PRETTY_NAME' do
           _(detected_resource_attributes['os.description']).must_equal('Ubuntu 22.04.5 LTS')
-        end
-
-        it 'reads os.build_id from BUILD_ID when available' do
           _(detected_resource_attributes['os.build_id']).must_equal('build1')
         end
       end
@@ -147,15 +129,9 @@ describe OpenTelemetry::Resource::Detector::OS do
         )
       end
 
-      it 'returns a resource with os.type = windows' do
+      it 'returns an os resource' do
         _(detected_resource_attributes['os.type']).must_equal('windows')
-      end
-
-      it 'returns a resource with os.name = Windows' do
         _(detected_resource_attributes['os.name']).must_equal('Windows')
-      end
-
-      it 'returns a resource with os.description (newlines deleted)' do
         _(detected_resource_attributes['os.description']).must_equal(
           'Microsoft Windows [Version 10.0.26200.8037]'
         )
