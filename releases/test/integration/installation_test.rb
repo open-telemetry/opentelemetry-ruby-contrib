@@ -46,7 +46,6 @@ class TestOpenTelemetry < Minitest::Test
   end
 
   def test_use_multiple
-    i = 0
     OpenTelemetry::SDK.configure do |c|
       # force a failure on error
       c.error_handler = ->(exception:, message:) { raise(exception || message) }
