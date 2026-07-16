@@ -34,7 +34,7 @@ class TestOpenTelemetry < Minitest::Test
       c.logger = Logger.new(File::NULL, level: :fatal)
       c.add_span_processor OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(@exporter)
       OpenTelemetry::Instrumentation.registry.instance_variable_get(:@instrumentation).map(&:instance).each do |instrumentation|
-        c.use "#{instrumentation.name}"
+        c.use instrumentation.name.to_s
       end
     end
 
