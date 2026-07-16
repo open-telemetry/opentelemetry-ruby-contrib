@@ -30,6 +30,16 @@ tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
 
 ```
 
+Alternatively, you can also call `use_all` to install all the available instrumentation.
+
+```ruby
+
+OpenTelemetry::SDK.configure do |c|
+  c.use_all
+end
+
+```
+
 ### Subscribe options
 
 The `subscribe` method accepts optional payload-related arguments:
@@ -50,16 +60,6 @@ The `subscribe` method accepts optional payload-related arguments:
   ->(payload) { payload.merge('tenant' => payload['account_id']) }, # notification_payload_transform
   ['account_id'] # disallowed_notification_payload_keys
 )
-
-```
-
-Alternatively, you can also call `use_all` to install all the available instrumentation.
-
-```ruby
-
-OpenTelemetry::SDK.configure do |c|
-  c.use_all
-end
 
 ```
 
