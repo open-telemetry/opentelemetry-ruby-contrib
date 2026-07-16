@@ -10,6 +10,7 @@ describe OpenTelemetry::Resource::Detector::OS do
   let(:detector) { OpenTelemetry::Resource::Detector::OS }
 
   RESOURCE = OpenTelemetry::SemanticConventions::Resource
+  DATA_DIR_OS_RESOURCE = File.read(File.join(__dir__, 'data/os-resource-sample.txt'))
 
   describe '.detect' do
     let(:detected_resource) { detector.detect }
@@ -27,21 +28,7 @@ describe OpenTelemetry::Resource::Detector::OS do
       describe 'when /etc/os-release is available' do
         before do
           allow(File).to receive(:readable?).with('/etc/os-release').and_return(true)
-          allow(File).to receive(:read).with('/etc/os-release').and_return(<<~OSRELEASE)
-            PRETTY_NAME="Ubuntu 22.04.5 LTS"
-            NAME="Ubuntu"
-            VERSION_ID="22.04"
-            VERSION="22.04.5 LTS (Jammy Jellyfish)"
-            VERSION_CODENAME=jammy
-            ID=ubuntu
-            ID_LIKE=debian
-            HOME_URL="https://www.ubuntu.com/"
-            SUPPORT_URL="https://help.ubuntu.com/"
-            BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
-            PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
-            UBUNTU_CODENAME=jammy
-            BUILD_ID=build1
-          OSRELEASE
+          allow(File).to receive(:read).with('/etc/os-release').and_return(DATA_DIR_OS_RESOURCE)
         end
 
         it 'reads os.* from that file' do
@@ -56,21 +43,7 @@ describe OpenTelemetry::Resource::Detector::OS do
         before do
           allow(File).to receive(:readable?).with('/etc/os-release').and_return(false)
           allow(File).to receive(:readable?).with('/usr/lib/os-release').and_return(true)
-          allow(File).to receive(:read).with('/usr/lib/os-release').and_return(<<~OSRELEASE)
-            PRETTY_NAME="Ubuntu 22.04.5 LTS"
-            NAME="Ubuntu"
-            VERSION_ID="22.04"
-            VERSION="22.04.5 LTS (Jammy Jellyfish)"
-            VERSION_CODENAME=jammy
-            ID=ubuntu
-            ID_LIKE=debian
-            HOME_URL="https://www.ubuntu.com/"
-            SUPPORT_URL="https://help.ubuntu.com/"
-            BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
-            PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
-            UBUNTU_CODENAME=jammy
-            BUILD_ID=build1
-          OSRELEASE
+          allow(File).to receive(:read).with('/usr/lib/os-release').and_return(DATA_DIR_OS_RESOURCE)
         end
 
         it 'reads os.* from that file' do
