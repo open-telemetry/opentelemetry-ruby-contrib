@@ -11,6 +11,7 @@ describe OpenTelemetry::Resource::Detector::OS do
 
   RESOURCE = OpenTelemetry::SemanticConventions::Resource
   DATA_DIR_OS_RESOURCE = File.read(File.join(__dir__, 'data/os-resource-sample.txt'))
+  DATA_DIR_SYSVER_PLIST = File.read(File.join(__dir__, 'data/SystemVersion-sample.plist'))
 
   describe '.detect' do
     let(:detected_resource) { detector.detect }
@@ -87,7 +88,42 @@ describe OpenTelemetry::Resource::Detector::OS do
     end
 
     describe 'on macOS' do
-      # TODO
+      before do
+        allow(detector).to receive(:target_os).and_return('darwin')
+      end
+
+      it 'returns a macOS resource' do
+        _(detected_resource_attributes['os.type']).must_equal('darwin')
+      end
+
+      describe 'when SystemVersion.plist is available' do
+        before do
+          allow(File).to receive(:readable?).with('/System/Library/CoreServices/SystemVersion.plist').and_return(true)
+          allow(File).to receive(:read).with('/System/Library/CoreServices/SystemVersion.plist').and_return(DATA_DIR_SYSVER_PLIST)
+        end
+
+        it 'reads os.* from that file' do
+          _(detected_resource_attributes['os.name']).must_equal('macOS')
+          _(detected_resource_attributes['os.version']).must_equal('14.8.4')
+          _(detected_resource_attributes['os.description']).must_equal('macOS 14.8.4 (23J319)')
+          _(detected_resource_attributes['os.build_id']).must_equal('23J319')
+        end
+      end
+
+      describe 'when ServerVersion.plist is available' do
+        before do
+          allow(File).to receive(:readable?).with('/System/Library/CoreServices/SystemVersion.plist').and_return(true)
+          allow(File).to receive(:readable?).with('/System/Library/CoreServices/ServerVersion.plist').and_return(true)
+          allow(File).to receive(:read).with('/System/Library/CoreServices/ServerVersion.plist').and_return(DATA_DIR_SYSVER_PLIST)
+        end
+
+        it 'reads os.* from that file' do
+          _(detected_resource_attributes['os.name']).must_equal('macOS')
+          _(detected_resource_attributes['os.version']).must_equal('14.8.4')
+          _(detected_resource_attributes['os.description']).must_equal('macOS 14.8.4 (23J319)')
+          _(detected_resource_attributes['os.build_id']).must_equal('23J319')
+        end
+      end
     end
 
     describe 'on windows' do

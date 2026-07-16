@@ -73,10 +73,35 @@ module OpenTelemetry
         end
 
         def read_macos_attrs
-          {
-            SEMCONV::OS_TYPE => 'darwin',
-            SEMCONV::OS_NAME => 'macOS'
+          attrs = {
+            SEMCONV::OS_TYPE => 'darwin'
           }
+          plist = read_macos_ver_plist
+          if plist
+            ver = lookup_plist(plist, 'ProductVersion')
+            attrs[SEMCONV::OS_VERSION] = ver if ver
+
+            buildver = lookup_plist(plist, 'ProductBuildVersion')
+            attrs[SEMCONV::OS_BUILD_ID] = buildver if buildver
+
+            name = lookup_plist(plist, 'ProductName')
+            attrs[SEMCONV::OS_NAME] = name if name
+
+            attrs[SEMCONV::OS_DESCRIPTION] = "#{name} #{ver} (#{buildver})" if name && ver && buildver
+          end
+          attrs
+        end
+
+        def read_macos_ver_plist
+          if File.readable?('/System/Library/CoreServices/SystemVersion.plist')
+            File.read('/System/Library/CoreServices/SystemVersion.plist')
+          elsif File.readable?('/System/Library/CoreServices/ServerVersion.plist')
+            File.read('/System/Library/CoreServices/ServerVersion.plist')
+          end
+        end
+
+        def lookup_plist(plist, key)
+          plist[%r{<key>#{key}</key>\s*<string>(.*?)</string>}m, 1]
         end
 
         def read_windows_attrs
