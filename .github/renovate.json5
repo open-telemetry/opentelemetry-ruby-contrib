@@ -23,9 +23,11 @@
     {
       description: "Only perform update once both setup ruby and ruby is available. The group size needs to be kept in sync",
       groupName: "Latest-Ruby-sdk [Patches]",
-      branchName: "renovate/latest-ruby-sdk",
-      prTitle: "Latest-Ruby-sdk [Patches]",
+      branchTopic: "latest-ruby-sdk",
+      commitMessageTopic: "Latest-Ruby-sdk",
+      commitMessageExtra: "[Patches]",
       matchDepNames: ["ruby/setup-ruby", "ruby"],
+      matchUpdateTypes: ["!digest"],
       matchFileNames: [
         ".github/workflows/fossa.yml",
         ".github/workflows/installation-tests.yml",
@@ -37,9 +39,11 @@
     {
       description: "Only perform update once both setup ruby and ruby is available. The group size needs to be kept in sync",
       groupName: "Min-Ruby-sdk [Patches]",
-      branchName: "renovate/min-ruby-sdk",
-      prTitle: "Min-Ruby-sdk [Patches]",
+      branchTopic: "min-ruby-sdk",
+      commitMessageTopic: "Min-Ruby-sdk",
+      commitMessageExtra: "[Patches]",
       matchDepNames: ["ruby/setup-ruby", "ruby"],
+      matchUpdateTypes: ["!digest"],
       matchFileNames: [
         ".github/workflows/ci-checks-local.yml",
         ".github/workflows/ci-markdown-checks.yml",
