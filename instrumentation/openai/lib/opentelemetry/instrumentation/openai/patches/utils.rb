@@ -4,9 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'json'
-require 'logger'
-
 module OpenTelemetry
   module Instrumentation
     module OpenAI
@@ -115,15 +112,22 @@ module OpenTelemetry
             }
           end
 
-          # Emits a structured log event as a JSON-encoded info log entry.
+          # Emits a structured log record through the OpenTelemetry Logs API.
           def log_structured_event(event)
-            log_message = {
-              event: event[:event_name],
-              attributes: event[:attributes],
-              body: event[:body]
-            }.compact
+            logger = OpenTelemetry.logger_provider.logger(
+              name: OpenTelemetry::Instrumentation::OpenAI::NAME,
+              version: OpenTelemetry::Instrumentation::OpenAI::VERSION
+            )
 
-            OpenTelemetry.logger.info(log_message.to_json)
+            logger.on_emit(
+              timestamp: Time.now,
+              severity_text: 'INFO',
+              severity_number: OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_INFO,
+              event_name: event[:event_name],
+              body: event[:body],
+              attributes: event[:attributes],
+              context: OpenTelemetry::Context.current
+            )
           end
         end
       end

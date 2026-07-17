@@ -6,6 +6,7 @@
 
 require 'opentelemetry'
 require 'opentelemetry-instrumentation-base'
+require 'opentelemetry-logs-api'
 
 module OpenTelemetry
   module Instrumentation

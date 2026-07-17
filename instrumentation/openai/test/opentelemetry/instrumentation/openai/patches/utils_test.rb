@@ -7,6 +7,7 @@
 require 'test_helper'
 require 'json'
 
+require_relative '../../../../../lib/opentelemetry/instrumentation/openai'
 require_relative '../../../../../lib/opentelemetry/instrumentation/openai/patches/utils'
 
 describe OpenTelemetry::Instrumentation::OpenAI::Patches::Utils do
@@ -301,26 +302,26 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Utils do
   end
 
   describe '#log_structured_event' do
-    it 'logs event as JSON to OpenTelemetry logger' do
+    before do
+      LOG_EXPORTER.reset
+    end
+
+    it 'emits the event as a log record through the Logs API' do
       event = {
         event_name: 'gen_ai.user.message',
         attributes: { 'gen_ai.provider.name' => 'openai' },
         body: { content: 'Hello' }
       }
 
-      # Capture logger output
-      logger_output = StringIO.new
-      original_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = Logger.new(logger_output)
-
       utils_class.log_structured_event(event)
 
-      OpenTelemetry.logger = original_logger
+      log_records = LOG_EXPORTER.emitted_log_records
+      _(log_records.size).must_equal 1
 
-      logged_message = logger_output.string
-      _(logged_message).must_include 'gen_ai.user.message'
-      _(logged_message).must_include 'openai'
-      _(logged_message).must_include 'Hello'
+      log_record = log_records.first
+      _(log_record.event_name).must_equal 'gen_ai.user.message'
+      _(log_record.attributes['gen_ai.provider.name']).must_equal 'openai'
+      _(log_record.body[:content]).must_equal 'Hello'
     end
 
     it 'handles events with nil body' do
@@ -330,17 +331,14 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Utils do
         body: nil
       }
 
-      logger_output = StringIO.new
-      original_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = Logger.new(logger_output)
-
       utils_class.log_structured_event(event)
 
-      OpenTelemetry.logger = original_logger
+      log_records = LOG_EXPORTER.emitted_log_records
+      _(log_records.size).must_equal 1
 
-      logged_message = logger_output.string
-      _(logged_message).must_include 'gen_ai.user.message'
-      _(logged_message).wont_include 'body'
+      log_record = log_records.first
+      _(log_record.event_name).must_equal 'gen_ai.user.message'
+      _(log_record.body).must_be_nil
     end
   end
 end

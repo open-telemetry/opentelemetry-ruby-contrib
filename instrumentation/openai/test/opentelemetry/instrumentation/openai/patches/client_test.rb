@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
 
   before do
     exporter.reset
+    LOG_EXPORTER.reset
     instrumentation.install
   end
 
@@ -104,15 +105,11 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
     end
 
     it 'captures message content when enabled' do
-      # Content capture logs to logger, not span events
-      # This test verifies the span is created successfully
+      # Content capture is emitted as log records through the Logs API,
+      # not as span events.
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install
       instrumentation.config[:capture_content] = true
-
-      logger_output = StringIO.new
-      original_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = Logger.new(logger_output, level: Logger::INFO)
 
       client = OpenAI::Client.new(api_key: 'test-token')
       client.chat.completions.create(
@@ -120,18 +117,21 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
         messages: messages
       )
 
-      OpenTelemetry.logger = original_logger
-
       _(client_span).wont_be_nil
-      logged_message = logger_output.string
 
-      _(logged_message).must_include 'gen_ai.user.message'
-      _(logged_message).must_include 'Hello!'
-      _(logged_message).must_include 'gen_ai.choice'
-      _(logged_message).must_include 'Hello! How can I assist you today?'
-      _(logged_message).must_include 'stop'
-      _(logged_message).must_include 'gen_ai.provider.name'
-      _(logged_message).must_include 'openai'
+      log_records = LOG_EXPORTER.emitted_log_records
+      event_names = log_records.map(&:event_name)
+      _(event_names).must_include 'gen_ai.user.message'
+      _(event_names).must_include 'gen_ai.choice'
+
+      user_message = log_records.find { |r| r.event_name == 'gen_ai.user.message' }
+      _(user_message.attributes['gen_ai.provider.name']).must_equal 'openai'
+      _(user_message.body[:content]).must_equal 'Hello!'
+
+      choice = log_records.find { |r| r.event_name == 'gen_ai.choice' }
+      _(choice.attributes['gen_ai.provider.name']).must_equal 'openai'
+      _(choice.body[:message][:content]).must_equal 'Hello! How can I assist you today?'
+      _(choice.body[:finish_reason]).must_equal 'stop'
     end
   end
 
@@ -191,25 +191,19 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       instrumentation.install
       instrumentation.config[:capture_content] = true
 
-      logger_output = StringIO.new
-      original_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = Logger.new(logger_output, level: Logger::INFO)
-
       client = OpenAI::Client.new(api_key: 'test-token')
       client.embeddings.create(
         model: model,
         input: input_text
       )
 
-      OpenTelemetry.logger = original_logger
-
       _(client_span).wont_be_nil
-      logged_message = logger_output.string
-      _(logged_message).must_include 'gen_ai.user.message'
-      _(logged_message).must_include 'gen_ai.provider.name'
-      _(logged_message).must_include 'openai'
-      _(logged_message).must_include 'content'
-      _(logged_message).must_include 'The quick brown fox jumps over the lazy dog.'
+
+      log_records = LOG_EXPORTER.emitted_log_records
+      user_message = log_records.find { |r| r.event_name == 'gen_ai.user.message' }
+      _(user_message).wont_be_nil
+      _(user_message.attributes['gen_ai.provider.name']).must_equal 'openai'
+      _(user_message.body[:content]).must_equal input_text
     end
   end
 
@@ -354,10 +348,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       instrumentation.install
       instrumentation.config[:capture_content] = true
 
-      logger_output = StringIO.new
-      original_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = Logger.new(logger_output, level: Logger::INFO)
-
       client = OpenAI::Client.new(api_key: 'test-token')
       test_model = model
       test_prompt = prompt
@@ -374,13 +364,12 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
         )
       end
 
-      OpenTelemetry.logger = original_logger
-
       _(client_span).wont_be_nil
-      logged_message = logger_output.string
-      _(logged_message).must_include 'gen_ai.user.message'
-      _(logged_message).must_include 'openai'
-      _(logged_message).must_include 'Once upon a time'
+
+      user_message = LOG_EXPORTER.emitted_log_records.find { |r| r.event_name == 'gen_ai.user.message' }
+      _(user_message).wont_be_nil
+      _(user_message.attributes['gen_ai.provider.name']).must_equal 'openai'
+      _(user_message.body[:content]).must_include 'Once upon a time'
     end
   end
 end

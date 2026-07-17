@@ -17,6 +17,7 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
 
   before do
     exporter.reset
+    LOG_EXPORTER.reset
     instrumentation.install(capture_content: true)
   end
 
@@ -263,20 +264,13 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
         true
       )
 
-      # Capture logger output to check logged events
-      logger_output = StringIO.new
-      original_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = Logger.new(logger_output)
-
       wrapper.each { |_chunk| }
 
-      OpenTelemetry.logger = original_logger
-
-      logged_message = logger_output.string
-      _(logged_message).must_include 'gen_ai.choice'
-      _(logged_message).must_include 'openai'
-      _(logged_message).must_include 'stop'
-      _(logged_message).must_include 'Hello world!'
+      choice = LOG_EXPORTER.emitted_log_records.find { |r| r.event_name == 'gen_ai.choice' }
+      _(choice).wont_be_nil
+      _(choice.attributes['gen_ai.provider.name']).must_equal 'openai'
+      _(choice.body[:finish_reason]).must_equal 'stop'
+      _(choice.body[:message][:content]).must_equal 'Hello world!'
     end
 
     it 'handles streaming with usage information' do
@@ -383,19 +377,15 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
         true
       )
 
-      logger_output = StringIO.new
-      original_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = Logger.new(logger_output)
-
       wrapper.each { |_chunk| }
 
-      OpenTelemetry.logger = original_logger
-
-      logged_message = logger_output.string
-      _(logged_message).must_include 'tool_calls'
-      _(logged_message).must_include 'get_weather'
-      _(logged_message).must_include 'location'
-      _(logged_message).must_include 'NYC'
+      choice = LOG_EXPORTER.emitted_log_records.find { |r| r.event_name == 'gen_ai.choice' }
+      _(choice).wont_be_nil
+      tool_calls = choice.body[:message][:tool_calls]
+      _(tool_calls).wont_be_nil
+      _(tool_calls.first[:function][:name]).must_equal 'get_weather'
+      _(tool_calls.first[:function][:arguments]).must_include 'location'
+      _(tool_calls.first[:function][:arguments]).must_include 'NYC'
     end
 
     it 'handles multiple choices in streaming' do
@@ -443,18 +433,15 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
         true
       )
 
-      logger_output = StringIO.new
-      original_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = Logger.new(logger_output)
-
       wrapper.each { |_chunk| }
 
-      OpenTelemetry.logger = original_logger
-
       _(span.attributes['gen_ai.response.finish_reasons']).must_equal %w[stop stop]
-      logged_message = logger_output.string
-      _(logged_message).must_include 'Choice 1'
-      _(logged_message).must_include 'Choice 2'
+
+      choice_contents = LOG_EXPORTER.emitted_log_records
+                                    .select { |r| r.event_name == 'gen_ai.choice' }
+                                    .map { |r| r.body[:message][:content] }
+      _(choice_contents).must_include 'Choice 1'
+      _(choice_contents).must_include 'Choice 2'
     end
 
     it 'handles errors during streaming' do
@@ -538,16 +525,9 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
         false # capture_content disabled
       )
 
-      logger_output = StringIO.new
-      original_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = Logger.new(logger_output)
-
       wrapper.each { |_chunk| }
 
-      OpenTelemetry.logger = original_logger
-
-      logged_message = logger_output.string
-      _(logged_message).must_be_empty
+      _(LOG_EXPORTER.emitted_log_records).must_be_empty
     end
   end
 end
