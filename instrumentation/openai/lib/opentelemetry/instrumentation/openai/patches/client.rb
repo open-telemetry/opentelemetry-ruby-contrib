@@ -35,8 +35,9 @@ module OpenTelemetry
               span = tracer.start_span(span_name, attributes: attributes, kind: :client)
               log_request_content(span, req) if config[:capture_content]
 
+              start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
               response = super
-              return StreamWrapper.new(response, span, config[:capture_content])
+              return StreamWrapper.new(response, span, config[:capture_content], start_time)
             end
 
             # Non-streaming path
@@ -82,9 +83,10 @@ module OpenTelemetry
               'gen_ai.request.model' => model,
               'server.address' => uri&.host || 'api.openai.com',
               'server.port' => uri&.port || 443,
-              'http.request.method' => req[:method].to_s.upcase,
               'url.path' => req[:path],
-              'gen_ai.output.type' => get_output_type(operation_name)
+              'gen_ai.output.type' => get_output_type(operation_name),
+              'gen_ai.request.stream' => req[:stream] ? true : nil,
+              'openai.api.type' => get_api_type(operation_name)
             }.compact
 
             # Extract attributes from request body based on operation name
@@ -104,6 +106,16 @@ module OpenTelemetry
               'speech'
             else
               'json'
+            end
+          end
+
+          # Maps the operation name to the underlying OpenAI API family
+          def get_api_type(operation_name)
+            case operation_name
+            when 'chat', 'completions'
+              'chat_completions'
+            when 'responses', 'responses.input_tokens'
+              'responses'
             end
           end
 
@@ -138,6 +150,7 @@ module OpenTelemetry
               'gen_ai.request.seed' => body[:seed],
               'gen_ai.request.stop_sequences' => stop_sequences,
               'gen_ai.request.choice.count' => n_count && n_count != 1 ? n_count : nil,
+              'gen_ai.request.reasoning.level' => body[:reasoning_effort]&.to_s,
               'openai.request.service_tier' => service_tier && service_tier != 'auto' ? service_tier : nil
             }.compact
 
@@ -238,10 +251,15 @@ module OpenTelemetry
 
           # Set token usage attributes
           def set_usage_attributes(span, usage)
+            prompt_tokens_details = usage.respond_to?(:prompt_tokens_details) ? usage.prompt_tokens_details : nil
+            completion_tokens_details = usage.respond_to?(:completion_tokens_details) ? usage.completion_tokens_details : nil
+
             usage_attributes = {
               'gen_ai.usage.input_tokens' => usage.respond_to?(:prompt_tokens) ? usage.prompt_tokens : nil,
               'gen_ai.usage.output_tokens' => usage.respond_to?(:completion_tokens) ? usage.completion_tokens : nil,
-              'gen_ai.usage.total_tokens' => usage.respond_to?(:total_tokens) ? usage.total_tokens : nil
+              'gen_ai.usage.total_tokens' => usage.respond_to?(:total_tokens) ? usage.total_tokens : nil,
+              'gen_ai.usage.cache_read.input_tokens' => prompt_tokens_details.respond_to?(:cached_tokens) ? prompt_tokens_details.cached_tokens : nil,
+              'gen_ai.usage.reasoning.output_tokens' => completion_tokens_details.respond_to?(:reasoning_tokens) ? completion_tokens_details.reasoning_tokens : nil
             }.compact
 
             span.add_attributes(usage_attributes)

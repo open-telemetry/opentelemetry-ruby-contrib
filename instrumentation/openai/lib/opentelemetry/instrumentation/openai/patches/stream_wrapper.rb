@@ -17,16 +17,20 @@ module OpenTelemetry
 
           attr_reader :stream, :span, :capture_content
 
-          def initialize(stream, span, capture_content)
+          def initialize(stream, span, capture_content, start_time = nil)
             @stream = stream
             @span = span
             @capture_content = capture_content
+            @start_time = start_time
+            @time_to_first_chunk = nil
             @response_id = nil
             @response_model = nil
             @service_tier = nil
             @finish_reasons = []
             @prompt_tokens = 0
             @completion_tokens = 0
+            @cached_tokens = nil
+            @reasoning_tokens = nil
             @choice_buffers = []
             @span_started = true
           end
@@ -48,9 +52,17 @@ module OpenTelemetry
 
           # @param chunk [OpenAI::Models::Chat::ChatCompletionChunk]
           def process_event(chunk)
+            record_time_to_first_chunk
             response_metadata(chunk)
             build_streaming_response(chunk)
             usage(chunk)
+          end
+
+          def record_time_to_first_chunk
+            return unless @start_time
+            return if @time_to_first_chunk
+
+            @time_to_first_chunk = Process.clock_gettime(Process::CLOCK_MONOTONIC) - @start_time
           end
 
           def response_metadata(chunk)
@@ -84,6 +96,12 @@ module OpenTelemetry
             usage = chunk.usage
             @completion_tokens = usage.completion_tokens if usage.respond_to?(:completion_tokens)
             @prompt_tokens = usage.prompt_tokens if usage.respond_to?(:prompt_tokens)
+
+            @cached_tokens = usage.prompt_tokens_details.cached_tokens if usage.respond_to?(:prompt_tokens_details) && usage.prompt_tokens_details.respond_to?(:cached_tokens)
+
+            return unless usage.respond_to?(:completion_tokens_details) && usage.completion_tokens_details.respond_to?(:reasoning_tokens)
+
+            @reasoning_tokens = usage.completion_tokens_details.reasoning_tokens
           end
 
           def cleanup
@@ -97,7 +115,10 @@ module OpenTelemetry
                 'gen_ai.response.id' => @response_id,
                 'gen_ai.usage.input_tokens' => @prompt_tokens.positive? ? @prompt_tokens : nil,
                 'gen_ai.usage.output_tokens' => @completion_tokens.positive? ? @completion_tokens : nil,
+                'gen_ai.usage.cache_read.input_tokens' => @cached_tokens,
+                'gen_ai.usage.reasoning.output_tokens' => @reasoning_tokens,
                 'gen_ai.response.finish_reasons' => finish_reasons.any? ? finish_reasons : nil,
+                'gen_ai.response.time_to_first_chunk' => @time_to_first_chunk,
                 'openai.response.service_tier' => @service_tier.to_s
               }.compact
               @span.add_attributes(attributes)

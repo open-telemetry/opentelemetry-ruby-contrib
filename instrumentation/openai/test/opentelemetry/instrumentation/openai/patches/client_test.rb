@@ -47,7 +47,9 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
         usage: {
           prompt_tokens: 10,
           completion_tokens: 20,
-          total_tokens: 30
+          total_tokens: 30,
+          prompt_tokens_details: { cached_tokens: 5 },
+          completion_tokens_details: { reasoning_tokens: 8 }
         }
       }
     end
@@ -73,14 +75,16 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.request.model']).must_equal model
       _(client_span.attributes['server.address']).must_equal 'api.openai.com'
       _(client_span.attributes['server.port']).must_equal 443
-      _(client_span.attributes['http.request.method']).must_equal 'POST'
       _(client_span.attributes['url.path']).must_equal 'chat/completions'
+      _(client_span.attributes['openai.api.type']).must_equal 'chat_completions'
       _(client_span.attributes['gen_ai.response.model']).must_equal 'gpt-4-0613'
       _(client_span.attributes['gen_ai.response.id']).must_equal 'chatcmpl-123'
       _(client_span.attributes['gen_ai.response.finish_reasons']).must_equal ['stop']
       _(client_span.attributes['gen_ai.usage.input_tokens']).must_equal 10
       _(client_span.attributes['gen_ai.usage.output_tokens']).must_equal 20
       _(client_span.attributes['gen_ai.usage.total_tokens']).must_equal 30
+      _(client_span.attributes['gen_ai.usage.cache_read.input_tokens']).must_equal 5
+      _(client_span.attributes['gen_ai.usage.reasoning.output_tokens']).must_equal 8
     end
 
     it 'sets optional chat completion parameters' do
@@ -102,6 +106,17 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.request.frequency_penalty']).must_equal 0.5
       _(client_span.attributes['gen_ai.request.presence_penalty']).must_equal 0.3
       _(client_span.attributes['gen_ai.request.seed']).must_equal 42
+    end
+
+    it 'sets reasoning level from reasoning_effort' do
+      client = OpenAI::Client.new(api_key: 'test-token')
+      client.chat.completions.create(
+        model: model,
+        messages: messages,
+        reasoning_effort: :high
+      )
+
+      _(client_span.attributes['gen_ai.request.reasoning.level']).must_equal 'high'
     end
 
     it 'captures message content when enabled' do
@@ -132,6 +147,42 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(choice.attributes['gen_ai.provider.name']).must_equal 'openai'
       _(choice.body[:message][:content]).must_equal 'Hello! How can I assist you today?'
       _(choice.body[:finish_reason]).must_equal 'stop'
+    end
+  end
+
+  describe 'streaming chat completions via client.request' do
+    let(:model) { 'gpt-4' }
+    let(:messages) { [{ role: 'user', content: 'Hello!' }] }
+    let(:sse_body) do
+      <<~SSE
+        data: {"id":"chatcmpl-stream-1","object":"chat.completion.chunk","created":1677652288,"model":"gpt-4-0613","choices":[{"index":0,"delta":{"role":"assistant","content":"Hi"},"finish_reason":null}]}
+
+        data: {"id":"chatcmpl-stream-1","object":"chat.completion.chunk","created":1677652288,"model":"gpt-4-0613","choices":[{"index":0,"delta":{"content":"!"},"finish_reason":"stop"}]}
+
+        data: [DONE]
+
+      SSE
+    end
+
+    before do
+      stub_request(:post, 'https://api.openai.com/v1/chat/completions')
+        .to_return(status: 200, body: sse_body, headers: { 'Content-Type' => 'text/event-stream' })
+    end
+
+    it 'sets gen_ai.request.stream and time_to_first_chunk for streaming requests' do
+      client = OpenAI::Client.new(api_key: 'test-token')
+      stream = client.chat.completions.stream_raw(
+        model: model,
+        messages: messages
+      )
+      stream.each { |_chunk| }
+
+      _(client_span).wont_be_nil
+      _(client_span.attributes['gen_ai.operation.name']).must_equal 'chat'
+      _(client_span.attributes['gen_ai.request.stream']).must_equal true
+      _(client_span.attributes['gen_ai.response.finish_reasons']).must_equal ['stop']
+      _(client_span.attributes).must_include 'gen_ai.response.time_to_first_chunk'
+      _(client_span.attributes['gen_ai.response.time_to_first_chunk']).must_be :>=, 0
     end
   end
 
@@ -177,7 +228,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.request.model']).must_equal model
       _(client_span.attributes['server.address']).must_equal 'api.openai.com'
       _(client_span.attributes['server.port']).must_equal 443
-      _(client_span.attributes['http.request.method']).must_equal 'POST'
       _(client_span.attributes['url.path']).must_equal 'embeddings'
       _(client_span.attributes['gen_ai.output.type']).must_equal 'json'
       _(client_span.attributes['gen_ai.response.model']).must_equal 'text-embedding-ada-002-v2'
@@ -234,7 +284,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.request.model']).must_equal 'gpt-4'
       _(client_span.attributes['server.address']).must_equal 'api.openai.com'
       _(client_span.attributes['server.port']).must_equal 443
-      _(client_span.attributes['http.request.method']).must_equal 'POST'
       _(client_span.attributes['url.path']).must_equal 'chat/completions'
       _(client_span.attributes['gen_ai.output.type']).must_equal 'text'
       _(client_span.attributes['error.type']).must_equal 'OpenAI::Errors::InternalServerError'
@@ -338,8 +387,8 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.request.model']).must_equal model
       _(client_span.attributes['server.address']).must_equal 'api.openai.com'
       _(client_span.attributes['server.port']).must_equal 443
-      _(client_span.attributes['http.request.method']).must_equal 'POST'
       _(client_span.attributes['url.path']).must_equal 'completions'
+      _(client_span.attributes['openai.api.type']).must_equal 'chat_completions'
       _(client_span.attributes['gen_ai.output.type']).must_equal 'json'
     end
 

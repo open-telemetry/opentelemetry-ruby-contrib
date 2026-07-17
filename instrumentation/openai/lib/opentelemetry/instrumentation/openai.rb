@@ -12,6 +12,7 @@ module OpenTelemetry
   module Instrumentation
     # Contains the OpenTelemetry instrumentation for the openai gem
     module OpenAI
+      NAME = 'opentelemetry-instrumentation-openai'
     end
   end
 end

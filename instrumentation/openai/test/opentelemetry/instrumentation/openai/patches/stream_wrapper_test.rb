@@ -273,7 +273,7 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
       _(choice.body[:message][:content]).must_equal 'Hello world!'
     end
 
-    it 'handles streaming with usage information' do
+    it 'handles streaming with usage information including token details' do
       span = tracer.start_root_span('test_span', kind: :client)
 
       chunks = [
@@ -298,7 +298,12 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
               :stop
             )
           ],
-          Struct.new(:prompt_tokens, :completion_tokens).new(10, 5)
+          Struct.new(:prompt_tokens, :completion_tokens, :prompt_tokens_details, :completion_tokens_details).new(
+            100,
+            80,
+            Struct.new(:cached_tokens).new(50),
+            Struct.new(:reasoning_tokens).new(25)
+          )
         )
       ]
 
@@ -311,8 +316,49 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
 
       wrapper.each { |_chunk| }
 
-      _(span.attributes['gen_ai.usage.input_tokens']).must_equal 10
-      _(span.attributes['gen_ai.usage.output_tokens']).must_equal 5
+      _(span.attributes['gen_ai.usage.input_tokens']).must_equal 100
+      _(span.attributes['gen_ai.usage.output_tokens']).must_equal 80
+      _(span.attributes['gen_ai.usage.cache_read.input_tokens']).must_equal 50
+      _(span.attributes['gen_ai.usage.reasoning.output_tokens']).must_equal 25
+    end
+
+    it 'records time_to_first_chunk only when a start time is provided' do
+      chunks = [
+        Struct.new(:id, :model, :choices).new(
+          'chatcmpl-123',
+          'gpt-4',
+          [
+            Struct.new(:index, :delta, :finish_reason).new(
+              0,
+              Struct.new(:content, :role).new('Hello', :assistant),
+              :stop
+            )
+          ]
+        )
+      ]
+
+      # With a start time, the attribute is recorded.
+      span_with_start = tracer.start_root_span('with_start', kind: :client)
+      start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
+        chunks.each,
+        span_with_start,
+        false,
+        start_time
+      ).each { |_chunk| }
+
+      _(span_with_start.attributes).must_include 'gen_ai.response.time_to_first_chunk'
+      _(span_with_start.attributes['gen_ai.response.time_to_first_chunk']).must_be :>=, 0
+
+      # Without a start time, the attribute is omitted.
+      span_without_start = tracer.start_root_span('without_start', kind: :client)
+      OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
+        chunks.each,
+        span_without_start,
+        false
+      ).each { |_chunk| }
+
+      _(span_without_start.attributes).wont_include 'gen_ai.response.time_to_first_chunk'
     end
 
     it 'handles streaming with tool calls' do
