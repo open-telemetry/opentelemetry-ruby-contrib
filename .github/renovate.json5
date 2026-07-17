@@ -20,7 +20,7 @@
     },
     {
       matchDepNames: ["ruby"],
-      matchUpdateTypes: ["patch"],
+      matchUpdateTypes: ["digest", "patch"],
       schedule: ["before 6am every weekday"],
     },
     {
