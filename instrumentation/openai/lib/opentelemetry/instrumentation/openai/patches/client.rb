@@ -83,7 +83,6 @@ module OpenTelemetry
               'gen_ai.request.model' => model,
               'server.address' => uri&.host || 'api.openai.com',
               'server.port' => uri&.port || 443,
-              'url.path' => req[:path],
               'gen_ai.output.type' => get_output_type(operation_name),
               'gen_ai.request.stream' => req[:stream] ? true : nil,
               'openai.api.type' => get_api_type(operation_name)

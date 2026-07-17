@@ -75,7 +75,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.request.model']).must_equal model
       _(client_span.attributes['server.address']).must_equal 'api.openai.com'
       _(client_span.attributes['server.port']).must_equal 443
-      _(client_span.attributes['url.path']).must_equal 'chat/completions'
       _(client_span.attributes['openai.api.type']).must_equal 'chat_completions'
       _(client_span.attributes['gen_ai.response.model']).must_equal 'gpt-4-0613'
       _(client_span.attributes['gen_ai.response.id']).must_equal 'chatcmpl-123'
@@ -228,7 +227,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.request.model']).must_equal model
       _(client_span.attributes['server.address']).must_equal 'api.openai.com'
       _(client_span.attributes['server.port']).must_equal 443
-      _(client_span.attributes['url.path']).must_equal 'embeddings'
       _(client_span.attributes['gen_ai.output.type']).must_equal 'json'
       _(client_span.attributes['gen_ai.response.model']).must_equal 'text-embedding-ada-002-v2'
       _(client_span.attributes['gen_ai.embeddings.dimension.count']).must_equal 1536
@@ -284,7 +282,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.request.model']).must_equal 'gpt-4'
       _(client_span.attributes['server.address']).must_equal 'api.openai.com'
       _(client_span.attributes['server.port']).must_equal 443
-      _(client_span.attributes['url.path']).must_equal 'chat/completions'
       _(client_span.attributes['gen_ai.output.type']).must_equal 'text'
       _(client_span.attributes['error.type']).must_equal 'OpenAI::Errors::InternalServerError'
 
@@ -387,7 +384,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.request.model']).must_equal model
       _(client_span.attributes['server.address']).must_equal 'api.openai.com'
       _(client_span.attributes['server.port']).must_equal 443
-      _(client_span.attributes['url.path']).must_equal 'completions'
       _(client_span.attributes['openai.api.type']).must_equal 'chat_completions'
       _(client_span.attributes['gen_ai.output.type']).must_equal 'json'
     end
