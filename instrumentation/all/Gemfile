@@ -11,9 +11,9 @@ gemspec
 group :test do
   gem 'minitest', '~> 6.0.0'
   gem 'rake', '>= 13'
-  gem 'rubocop', '~> 1.87.0'
+  gem 'rubocop', '~> 1.88.0'
   gem 'rubocop-performance', '~> 1.26.0'
-  gem 'simplecov', '~> 0.22.0'
+  gem 'simplecov', '~> 1.0.0'
   gem 'yard', '~> 0.9.0'
   gem 'active_model_serializers'
   gem 'activesupport'
