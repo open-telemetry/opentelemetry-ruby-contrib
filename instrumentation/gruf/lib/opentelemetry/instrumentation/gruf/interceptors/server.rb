@@ -7,7 +7,10 @@
 module OpenTelemetry
   module Instrumentation
     module Gruf
+      # Interceptors contains the gRPC interceptors used by the Gruf instrumentation
       module Interceptors
+        # Server is a Gruf server interceptor that creates an OpenTelemetry span
+        # for each inbound gRPC call, extracting trace context from request metadata
         class Server < ::Gruf::Interceptors::ServerInterceptor
           def call
             return yield unless Gruf::Instrumentation.instance.installed?
