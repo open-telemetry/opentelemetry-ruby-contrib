@@ -16,7 +16,7 @@ ignorePaths:
   - "*.tt"
   - "**/my.cnf"
   - "**/.yardopts"
-  - "**/.env.test"
+  - "**/.env"
 patterns:
   - name: CodeBlock
     pattern: |
