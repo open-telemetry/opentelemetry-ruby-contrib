@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'dotenv'
+Dotenv.load(File.expand_path('../.env', __dir__))
+
 require 'rubygems'
 require 'bundler/setup'
 
