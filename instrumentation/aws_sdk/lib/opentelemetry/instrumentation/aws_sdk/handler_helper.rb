@@ -32,7 +32,7 @@ module OpenTelemetry
               OpenTelemetry::SemanticConventions::Trace::RPC_SYSTEM => 'aws-api'
             }.tap do |attrs|
               attrs[OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE] = 'Aws::Plugins::AwsSdk' if legacy
-              attrs[SemanticConventions::Trace::DB_SYSTEM] = 'dynamodb' if service_id == 'DynamoDB'
+              apply_dynamodb_attributes(attrs, context) if service_id == 'DynamoDB'
 
               MessagingHelper.apply_span_attributes(context, attrs, client_method, service_id) if MessagingHelper::SUPPORTED_SERVICES.include?(service_id)
             end
@@ -71,6 +71,25 @@ module OpenTelemetry
           end
 
           private
+
+          def apply_dynamodb_attributes(attrs, context)
+            semconv_mode = OpenTelemetry::Instrumentation::AwsSdk::Instrumentation.instance.semconv_mode
+            table_name = context.params[:table_name]
+
+            case semconv_mode
+            when :stable
+              attrs['db.system.name'] = 'dynamodb'
+              attrs['db.operation.name'] = context.operation.name
+              attrs['db.collection.name'] = table_name if table_name
+            when :dup
+              attrs[SemanticConventions::Trace::DB_SYSTEM] = 'dynamodb'
+              attrs['db.system.name'] = 'dynamodb'
+              attrs['db.operation.name'] = context.operation.name
+              attrs['db.collection.name'] = table_name if table_name
+            else # :old (default)
+              attrs[SemanticConventions::Trace::DB_SYSTEM] = 'dynamodb'
+            end
+          end
 
           def legacy_service_id(context)
             # Support aws-sdk v2.0.x, which 'metadata' has a setter method only
