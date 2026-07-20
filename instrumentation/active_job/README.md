@@ -42,6 +42,10 @@ The instrumentation supports the following configuration options:
   the end of each job execution. This is recommended for job systems that fork
   worker processes, such as Resque.
   - Default: `false`
+- **enable_performance_metrics:** If enabled, process spans include job
+  execution performance attributes for allocations, CPU time, CPU utilization,
+  and GC time.
+  - Default: `false`
 - **propagation_style:** Controls how job execution traces are related to the
   trace where the job was enqueued.
   - `:link` – The job runs in a separate trace, with its initial span linked to
@@ -95,6 +99,15 @@ For jobs including the `ActiveJob::Continuable` module, the following attributes
 | `messaging.active_job.step.state` | String | Either `started` or `resumed` |
 | `messaging.active_job.step.result` | String | Static value set to `interrupted` if the job was interrupted |
 | `messaging.active_job.step.cursor` | String | The persisted value after calling `step.set!` or `step.advance!` |
+
+When `enable_performance_metrics` is enabled, process spans also include:
+
+| Attribute Name | Type | Notes |
+| - | - | - |
+| `rails.memory.allocations` | Number | Object allocations during job execution |
+| `rails.cpu.time` | Number | CPU time during job execution, in milliseconds |
+| `rails.cpu.utilization` | Number | CPU time divided by wall-clock time during job execution |
+| `rails.gc.time` | Number | GC time during job execution, in milliseconds |
 
 ## Differences between ActiveJob versions
 
