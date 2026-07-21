@@ -112,7 +112,7 @@ describe OpenTelemetry::Resource::Detector::OS do
 
       describe 'when ServerVersion.plist is available' do
         before do
-          allow(File).to receive(:readable?).with('/System/Library/CoreServices/SystemVersion.plist').and_return(true)
+          allow(File).to receive(:readable?).with('/System/Library/CoreServices/SystemVersion.plist').and_return(false)
           allow(File).to receive(:readable?).with('/System/Library/CoreServices/ServerVersion.plist').and_return(true)
           allow(File).to receive(:read).with('/System/Library/CoreServices/ServerVersion.plist').and_return(DATA_DIR_SYSVER_PLIST)
         end
