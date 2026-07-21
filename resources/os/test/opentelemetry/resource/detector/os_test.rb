@@ -17,6 +17,19 @@ describe OpenTelemetry::Resource::Detector::OS do
     let(:detected_resource) { detector.detect }
     let(:detected_resource_attributes) { detected_resource.attribute_enumerator.to_h }
 
+    it 'returns an os resource (e2e test; no mocking)' do
+      case RUBY_PLATFORM
+      when /linux/
+        _(detected_resource_attributes['os.type']).must_equal('linux')
+      when /mswin|msys|mingw|cygwin/
+        _(detected_resource_attributes['os.type']).must_equal('windows')
+      when /darwin/
+        _(detected_resource_attributes['os.type']).must_equal('darwin')
+      else
+        _(detected_resource_attributes).must_equal([])
+      end
+    end
+
     describe 'on linux' do
       before do
         allow(detector).to receive(:target_os).and_return('linux')
