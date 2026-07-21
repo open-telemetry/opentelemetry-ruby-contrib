@@ -129,21 +129,34 @@ describe OpenTelemetry::Resource::Detector::OS do
     describe 'on windows' do
       before do
         allow(detector).to receive(:target_os).and_return('mingw32')
-        allow(Open3).to receive(:capture3).with('ver').and_return(
-          [
-            "\nMicrosoft Windows [Version 10.0.26200.8037]\n",
-            nil,
-            nil
-          ]
-        )
       end
 
       it 'returns an os resource' do
+        allow(detector).to receive(:read_windows_registry).and_return(
+          [
+            '26200',
+            '10.0.26200.8037'
+          ]
+        )
+
         _(detected_resource_attributes['os.type']).must_equal('windows')
         _(detected_resource_attributes['os.name']).must_equal('Windows')
+        _(detected_resource_attributes['os.version']).must_equal('10.0.26200.8037')
         _(detected_resource_attributes['os.description']).must_equal(
           'Microsoft Windows [Version 10.0.26200.8037]'
         )
+        _(detected_resource_attributes['os.build_id']).must_equal('26200')
+      end
+
+      describe 'when failed to read registry' do
+        before do
+          allow(detector).to receive(:read_windows_registry).and_return(nil)
+        end
+
+        it 'returns an os resource with type and name' do
+          _(detected_resource_attributes['os.type']).must_equal('windows')
+          _(detected_resource_attributes['os.name']).must_equal('Windows')
+        end
       end
     end
   end

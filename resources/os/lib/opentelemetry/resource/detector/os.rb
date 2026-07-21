@@ -5,6 +5,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'open3'
+begin
+  # (Windows only)
+  require 'win32/registry'
+rescue LoadError
+end
 
 module OpenTelemetry
   module Resource
@@ -105,19 +110,31 @@ module OpenTelemetry
         end
 
         def read_windows_attrs
-          {
+          attrs = {
             SEMCONV::OS_TYPE => 'windows',
-            SEMCONV::OS_NAME => 'Windows',
-            # eg. "10.0.26200"
-            SEMCONV::OS_VERSION => Etc.uname[:release],
-            # eg. "Microsoft Windows [Version 10.0.26200.8037]"
-            SEMCONV::OS_DESCRIPTION => read_windows_ver.strip
+            SEMCONV::OS_NAME => 'Windows'
           }
+          build, version = read_windows_registry
+          if build
+            # eg. "10.0.26200.8037"
+            attrs[SEMCONV::OS_VERSION] = version
+            # eg. "Microsoft Windows [Version 10.0.26200.8037]"
+            attrs[SEMCONV::OS_DESCRIPTION] = "Microsoft Windows [Version #{version}]"
+            # eg. "26200"
+            attrs[SEMCONV::OS_BUILD_ID] = build
+          end
+          attrs
         end
 
-        def read_windows_ver
-          stdout, _stderr, _status = Open3.capture3('ver')
-          stdout
+        def read_windows_registry
+          reg = Win32::Registry::HKEY_LOCAL_MACHINE.open('SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion')
+          major = reg['CurrentMajorVersionNumber']
+          minor = reg['CurrentMinorVersionNumber']
+          build = reg['CurrentBuildNumber']
+          ubr = reg['UBR']
+          [build, "#{major}.#{minor}.#{build}.#{ubr}"]
+        rescue StandardError
+          nil
         end
       end
     end
