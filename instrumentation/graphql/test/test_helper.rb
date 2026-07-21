@@ -7,6 +7,7 @@
 require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
+require 'graphql'
 
 require 'minitest/autorun'
 require 'webmock/minitest'
