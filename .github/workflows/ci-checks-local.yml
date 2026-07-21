@@ -38,7 +38,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@003a5c4d8d6321bd302e38f6f0ec593f77f06600 # v1.319.0
         with:
-          ruby-version: "3.3.11"
+          ruby-version: "3.3.12"
 
       - name: Install Chrome (Ubuntu only)
         if: startsWith(matrix.os, 'ubuntu')
