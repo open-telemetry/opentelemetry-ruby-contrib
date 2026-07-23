@@ -9,6 +9,8 @@ on:
       - ".docker/**"
       - "docker-compose.yml"
       - "docker-base.yml"
+      - "docker-example.yml"
+      - "**/example/compose.yml"
       - ".github/workflows/ci-build-docker.yml"
   pull_request:
     branches:
@@ -22,8 +24,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    name: Combined Docker Compose
+    name: Docker Compose
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - name: Build Docker image
+      - name: Build Docker services
         run: docker compose -f docker-compose.yml up -d
+      - name: Build Docker example services
+        run: docker compose -f docker-example.yml up -d
