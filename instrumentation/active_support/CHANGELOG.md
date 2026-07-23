@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_support
 
+## v0.12.1 / 2026-07-21
+
+- DOCS: Document active support payload options (#2437)
+
 ## v0.12.0 / 2026-04-28
 
 - BREAKING CHANGE: Min Rails 7.1 (enforced this time) (#2283)
