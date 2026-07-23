@@ -17,7 +17,7 @@ group :test do
   gem 'rubocop-rake', '~> 0.7.1'
   gem 'rubocop-rspec', '~> 3.10.2'
   gem 'rubocop-minitest', '~> 0.39.1'
-  gem 'simplecov', '~> 0.22.0'
+  gem 'simplecov', '~> 1.0.0'
   gem 'webmock', '~> 3.26.0'
   gem 'yard', '~> 0.9.0'
 
