@@ -21,10 +21,23 @@ describe OpenTelemetry::Resource::Detector::OS do
       case RbConfig::CONFIG['target_os']
       when /linux/
         _(detected_resource_attributes['os.type']).must_equal('linux')
-      when /mswin|msys|mingw|cygwin/
-        _(detected_resource_attributes['os.type']).must_equal('windows')
+        %i[name version description build_id].each do |key|
+          value = detected_resource_attributes["os.#{key}"]
+          value && _(value).must_be_instance_of(String)
+        end
       when /darwin/
         _(detected_resource_attributes['os.type']).must_equal('darwin')
+        %i[name version description build_id].each do |key|
+          value = detected_resource_attributes["os.#{key}"]
+          value && _(value).must_be_instance_of(String)
+        end
+      when /mswin|msys|mingw|cygwin/
+        _(detected_resource_attributes['os.type']).must_equal('windows')
+        _(detected_resource_attributes['os.name']).must_equal('Windows')
+        %i[version description build_id].each do |key|
+          value = detected_resource_attributes["os.#{key}"]
+          value && _(value).must_be_instance_of(String)
+        end
       else
         _(detected_resource_attributes).must_equal([])
       end
