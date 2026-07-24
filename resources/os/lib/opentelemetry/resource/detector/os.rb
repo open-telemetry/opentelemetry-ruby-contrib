@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'open3'
-require 'win32/registry' if RUBY_PLATFORM.match?(/mswin|msys|mingw|cygwin/)
+require 'win32/registry' if RbConfig::CONFIG['target_os'].match?(/mswin|msys|mingw|cygwin/)
 
 module OpenTelemetry
   module Resource
