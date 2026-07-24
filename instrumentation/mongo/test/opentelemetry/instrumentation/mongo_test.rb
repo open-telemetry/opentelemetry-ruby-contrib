@@ -10,7 +10,10 @@ describe OpenTelemetry::Instrumentation::Mongo do
   let(:exporter) { EXPORTER }
 
   before do
-    # Clear previous instrumentation subscribers between test runs
+    # Ensure default semconv mode (old - no env var)
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
+    # Clear previous instrumentation state and subscribers between test runs
+    instrumentation.instance_variable_set(:@installed, false)
     Mongo::Monitoring::Global.subscribers['Command'] = [] if defined?(Mongo::Monitoring::Global)
     instrumentation.install
     exporter.reset
@@ -18,6 +21,7 @@ describe OpenTelemetry::Instrumentation::Mongo do
 
   after do
     instrumentation.instance_variable_set(:@installed, false)
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe 'present' do
@@ -44,7 +48,17 @@ describe OpenTelemetry::Instrumentation::Mongo do
 
   describe 'install' do
     it 'installs the subscriber' do
-      klass = OpenTelemetry::Instrumentation::Mongo::Subscriber
+      # Subscriber class depends on OTEL_SEMCONV_STABILITY_OPT_IN environment variable
+      stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+      values = stability_opt_in.split(',').map(&:strip)
+
+      klass = if values.include?('database/dup')
+                OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber
+              elsif values.include?('database')
+                OpenTelemetry::Instrumentation::Mongo::Subscribers::Stable::Subscriber
+              else
+                OpenTelemetry::Instrumentation::Mongo::Subscribers::Old::Subscriber
+              end
       subscribers = Mongo::Monitoring::Global.subscribers['Command']
 
       _(subscribers.size).must_equal 1
