@@ -508,4 +508,38 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler' 
       _(proxy_event).must_be_nil
     end
   end
+
+  # This might happen if one Sinatra app is called by another
+  # See: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/2425
+  describe 'when nested inside another instance of this EventHandler on the same env' do
+    let(:inner_handler) { OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler.new }
+    let(:inner_app) do
+      Rack::Builder.new.tap do |builder|
+        builder.use Rack::Events, [inner_handler]
+        builder.run service
+      end
+    end
+    let(:app) do
+      inner = inner_app
+      Rack::Builder.new.tap do |builder|
+        builder.use Rack::Events, [handler]
+        builder.run inner
+      end
+    end
+
+    it 'does not raise attach/detach errors and produces two correctly nested spans' do
+      expect(OpenTelemetry).not_to receive(:handle_error)
+
+      get uri, {}, headers
+
+      _(finished_spans.size).must_equal 2
+
+      outer_span = finished_spans.find { |s| s.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID }
+      inner_span = finished_spans.find { |s| s.parent_span_id != OpenTelemetry::Trace::INVALID_SPAN_ID }
+
+      _(outer_span).wont_be_nil
+      _(inner_span).wont_be_nil
+      _(inner_span.parent_span_id).must_equal outer_span.span_id
+    end
+  end
 end
