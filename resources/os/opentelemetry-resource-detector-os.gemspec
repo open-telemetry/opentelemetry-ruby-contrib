@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.3'
 
+  spec.add_dependency 'fiddle', '~> 1.1.8'
   spec.add_dependency 'opentelemetry-sdk', '~> 1.10'
 
   if spec.respond_to?(:metadata)
