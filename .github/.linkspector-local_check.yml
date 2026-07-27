@@ -1,0 +1,5 @@
+# linkspector config file is described at https://github.com/UmbrellaDocs/linkspector/blob/main/README.md#configuration
+files:
+  - CODE_OF_CONDUCT.md
+useGitIgnore: true
+followRedirects: true

@@ -1,0 +1,18 @@
+services:
+  redis:
+    image: redis:8.8.0@sha256:2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32
+    environment:
+      REDIS_PASSWORD: passw0rd
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--requirepass", "passw0rd"]
+    healthcheck:
+      test: ["CMD-SHELL", 'redis-cli -a "passw0rd" ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:

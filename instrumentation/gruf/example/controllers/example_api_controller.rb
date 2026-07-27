@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../base'
-
+# Sample Gruf service used to demonstrate the OpenTelemetry instrumentation.
 class ExampleApiController < Gruf::Controllers::Base
   bind Proto::Example::ExampleAPI::Service
 

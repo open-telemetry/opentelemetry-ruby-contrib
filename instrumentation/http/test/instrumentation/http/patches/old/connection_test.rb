@@ -7,17 +7,17 @@
 require 'test_helper'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/http'
-require_relative '../../../../../lib/opentelemetry/instrumentation/http/patches/stable/connection'
+require_relative '../../../../../lib/opentelemetry/instrumentation/http/patches/old/connection'
 
-describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Connection do
+describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Connection do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http'
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
     instrumentation.install({})
   end
@@ -41,9 +41,9 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Connection do
       end
 
       _(exporter.finished_spans.size).must_equal(2)
-      _(span.name).must_equal 'CONNECT'
-      _(span.attributes['server.address']).must_equal('localhost')
-      _(span.attributes['server.port']).wont_be_nil
+      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).wont_be_nil
     ensure
       WebMock.disable_net_connect!
     end

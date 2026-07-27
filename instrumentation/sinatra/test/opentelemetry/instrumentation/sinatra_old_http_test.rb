@@ -71,6 +71,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     Sinatra::Base.reset!
 
     OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.instance_variable_set(:@installed, false)
@@ -80,6 +81,10 @@ describe OpenTelemetry::Instrumentation::Sinatra do
     instrumentation.config.clear
     instrumentation.install(config)
     exporter.reset
+  end
+
+  after do
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe 'tracing' do

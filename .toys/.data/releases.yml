@@ -14,6 +14,11 @@ update_existing_requests: true
 git_user_name: otelbot
 git_user_email: 197425009+otelbot@users.noreply.github.com
 
+# Sets the list symbol used for bullet points in the generated changelog to be "-" which complies with markdownlint and prettier. Note The default is "*".
+changelog_bullet: "-"
+
+changelog_release_header_format: "## v%v / %Y-%m-%d"
+
 # List of all releasable gems. Each gem should include:
 #  *  name: The name of the gem. (Required.)
 #  *  directory: Gem directory relative to the repo root.
@@ -158,7 +163,6 @@ gems:
   - name: opentelemetry-instrumentation-net_ldap
     directory: instrumentation/net_ldap
     version_rb_path: lib/opentelemetry/instrumentation/net/ldap/version.rb
-    version_constant: [OpenTelemetry, Instrumentation, Net, LDAP, VERSION]
 
   - name: opentelemetry-instrumentation-pg
     directory: instrumentation/pg

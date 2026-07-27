@@ -9,8 +9,8 @@ require 'test_helper'
 require_relative '../../../../lib/opentelemetry/instrumentation/factory_bot'
 
 # Define simple test classes for factories
-User = Struct.new(:id, :name, :email, keyword_init: true)
-Admin = Struct.new(:id, :name, :email, :admin, keyword_init: true)
+User = Struct.new(:id, :name, :email)
+Admin = Struct.new(:id, :name, :email, :admin)
 
 describe OpenTelemetry::Instrumentation::FactoryBot do
   let(:instrumentation) { OpenTelemetry::Instrumentation::FactoryBot::Instrumentation.instance }

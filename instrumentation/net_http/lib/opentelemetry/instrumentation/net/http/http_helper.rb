@@ -12,7 +12,7 @@ module OpenTelemetry
         # @api private
         module HttpHelper
           # Lightweight struct to hold span creation attributes
-          SpanCreationAttributes = Struct.new(:span_name, :attributes, keyword_init: true)
+          SpanCreationAttributes = Struct.new(:span_name, :attributes)
 
           # Pre-computed mapping to avoid string allocations during normalization
           METHOD_CACHE = {
@@ -47,8 +47,8 @@ module OpenTelemetry
 
           private_constant :METHOD_CACHE
 
-          OLD_SPAN_NAMES_BY_METHOD = METHOD_CACHE.values.uniq.each_with_object({}) do |method, hash|
-            hash[method] = "HTTP #{method}"
+          OLD_SPAN_NAMES_BY_METHOD = METHOD_CACHE.values.uniq.to_h do |method|
+            [method, "HTTP #{method}"]
           end.freeze
 
           private_constant :OLD_SPAN_NAMES_BY_METHOD

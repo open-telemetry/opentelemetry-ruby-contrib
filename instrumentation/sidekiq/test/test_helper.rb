@@ -34,7 +34,7 @@ end
 
 # Sidekiq redis configuration
 ENV['TEST_REDIS_HOST'] ||= '127.0.0.1'
-ENV['TEST_REDIS_PORT'] ||= '16379'
+ENV['TEST_REDIS_PORT'] ||= '6379'
 
 redis_url = "redis://#{ENV['TEST_REDIS_HOST']}:#{ENV['TEST_REDIS_PORT']}/0"
 

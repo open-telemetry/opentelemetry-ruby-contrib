@@ -28,6 +28,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
   before do
     skip unless ENV['BUNDLE_GEMFILE'].include?('old')
 
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
 
     # this is currently a noop but this will future proof the test
@@ -40,6 +41,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
 
   after do
     OpenTelemetry.propagation = @orig_propagation
+    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
   end
 
   describe 'first span' do
@@ -247,6 +249,27 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddle
       it 'only adds the middleware once' do
         tracers = client.builder.handlers.count(OpenTelemetry::Instrumentation::Faraday::Middlewares::Old::TracerMiddleware)
         _(tracers).must_equal 1
+      end
+    end
+
+    describe 'when enable_internal_instrumentation is true' do
+      let(:client) do
+        Faraday.new('http://example.com') do |builder|
+          builder.adapter(:test) do |stub|
+            stub.get('/success') { |_| [200, {}, 'OK'] }
+          end
+        end
+      end
+
+      it 'traces the request without untraced wrapper' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(enable_internal_instrumentation: true)
+
+        client.get('/success')
+
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['http.status_code']).must_equal 200
       end
     end
   end
