@@ -52,9 +52,10 @@ module OpenTelemetry
 
             def set_error_attributes(span, error)
               span.set_attribute('error.type', error.class.name)
-              return unless error.result
+              result = error.result if error.respond_to?(:result)
+              return unless result.respond_to?(:result_error_field)
 
-              sqlstate = error.result.result_error_field(::PG::PG_DIAG_SQLSTATE)
+              sqlstate = result.result_error_field(::PG::PG_DIAG_SQLSTATE)
               span.set_attribute('db.response.status_code', sqlstate) if sqlstate
             end
           end
@@ -81,7 +82,7 @@ module OpenTelemetry
                   ConnectionHelper.set_connection_attributes(span, conn, config)
                   conn
                 end
-              rescue ::PG::Error => e
+              rescue StandardError => e
                 ConnectionHelper.set_error_attributes(span, e)
                 raise
               end
@@ -119,7 +120,7 @@ module OpenTelemetry
                   else
                     super(*args)
                   end
-                rescue ::PG::Error => e
+                rescue StandardError => e
                   set_error_attributes(span, e)
                   raise
                 end
@@ -145,7 +146,7 @@ module OpenTelemetry
                   end
 
                   super(*args)
-                rescue ::PG::Error => e
+                rescue StandardError => e
                   set_error_attributes(span, e)
                   raise
                 end
@@ -161,7 +162,7 @@ module OpenTelemetry
                   else
                     super(*args)
                   end
-                rescue ::PG::Error => e
+                rescue StandardError => e
                   set_error_attributes(span, e)
                   raise
                 end

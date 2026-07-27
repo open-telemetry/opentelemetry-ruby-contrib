@@ -63,6 +63,23 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+## Semantic Conventions
+
+This instrumentation generally uses [Database semantic conventions](https://opentelemetry.io/docs/specs/semconv/database/database-spans/). See the [Database semantic convention stability](#database-semantic-convention-stability) section for how to switch between stable and old conventions.
+
+| Stable Attribute Name | Old Attribute Name | Type | Notes |
+| - | - | - | - |
+| `db.namespace` | `db.name` | String | Database name from connection_options |
+| `db.query.text` | `db.statement` | String | The database query being executed; set according to the `db_statement` config option |
+| `db.response.status_code` | — | String | The PostgreSQL [SQLSTATE](https://www.postgresql.org/docs/current/errcodes-appendix.html) code, set when the error originates from the database and exposes a result |
+| `db.system.name` | `db.system` | String | DBMS product identifier; always `postgresql` |
+| `error.type` | — | String | Set when the operation fails, for any error. Populated with the canonical class name of the raised exception (e.g. `PG::UniqueViolation`) |
+| `server.address` | `net.peer.name` | String | Database host from connection_options |
+| `server.port` | — | Integer | Database port from connection_options |
+| — | `db.instance.id` | String | Connected host, e.g. result of `SELECT @@hostname` |
+| — | `db.user` | String | Database username from connection_options |
+| — | `peer.service` | String | Configured via the `peer_service` config option |
+
 ## Examples
 
 An example of usage can be seen in [`example/pg.rb`](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/pg/example/pg.rb).
