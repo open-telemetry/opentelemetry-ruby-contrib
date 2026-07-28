@@ -84,6 +84,7 @@ words:
   - ruboproof
   - semconv
   - spanid
+  - sqlstate
   - traceid
   - traceparent
   - traceresponse
