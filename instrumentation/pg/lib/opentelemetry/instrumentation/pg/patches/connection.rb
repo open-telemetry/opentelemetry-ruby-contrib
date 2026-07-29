@@ -73,13 +73,15 @@ module OpenTelemetry
 
         # Module to prepend to PG::Connection for instrumentation
         module Connection # rubocop:disable Metrics/ModuleLength
+          AFFECTED_ROWS_COMMANDS = %w[DELETE INSERT MERGE UPDATE].freeze
+
           # Capture the first word (including letters, digits, underscores, & '.', ) that follows common table commands
           TABLE_NAME = /\b(?:FROM|INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|DROP\s+TABLE(?:\s+IF\s+EXISTS)?|ALTER\s+TABLE(?:\s+IF\s+EXISTS)?)\s+"?([\w\.]+)"?/i
 
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args, &block|
               span_name, attrs = span_attrs(:query, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do |_span, context|
+              tracer.in_span(span_name, attributes: attrs, kind: :client) do |span, context|
                 # Inject propagator context into SQL if propagator is configured
                 if propagator && args[0].is_a?(String)
                   sql = args[0]
@@ -93,10 +95,14 @@ module OpenTelemetry
                   end
                 end
 
+                result = super(*args)
+                response_attrs = db_response_attributes(result, attrs)
+                span.add_attributes(response_attrs) unless response_attrs.empty?
+
                 if block
-                  block.call(super(*args))
+                  block.call(result)
                 else
-                  super(*args)
+                  result
                 end
               end
             end
@@ -105,7 +111,7 @@ module OpenTelemetry
           PG::Constants::PREPARE_ISH_METHODS.each do |method|
             define_method method do |*args|
               span_name, attrs = span_attrs(:prepare, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do |_span, context|
+              tracer.in_span(span_name, attributes: attrs, kind: :client) do |span, context|
                 # Inject propagator context into SQL if propagator is configured
                 # For prepare, the SQL is in args[1]
                 if propagator && args[1].is_a?(String)
@@ -120,7 +126,10 @@ module OpenTelemetry
                   end
                 end
 
-                super(*args)
+                result = super(*args)
+                response_attrs = db_response_attributes(result, attrs)
+                span.add_attributes(response_attrs) unless response_attrs.empty?
+                result
               end
             end
           end
@@ -128,11 +137,15 @@ module OpenTelemetry
           PG::Constants::EXEC_PREPARED_ISH_METHODS.each do |method|
             define_method method do |*args, &block|
               span_name, attrs = span_attrs(:execute, *args)
-              tracer.in_span(span_name, attributes: attrs, kind: :client) do
+              tracer.in_span(span_name, attributes: attrs, kind: :client) do |span|
+                result = super(*args)
+                response_attrs = db_response_attributes(result, attrs)
+                span.add_attributes(response_attrs) unless response_attrs.empty?
+
                 if block
-                  block.call(super(*args))
+                  block.call(result)
                 else
-                  super(*args)
+                  result
                 end
               end
             end
@@ -156,6 +169,31 @@ module OpenTelemetry
 
           def config
             PG::Instrumentation.instance.config
+          end
+
+          def db_response_attributes(result, span_attrs)
+            attrs = {}
+            attrs['db.response.returned_rows'] = result.ntuples if db_response_returned_rows?(span_attrs)
+            attrs['db.response.affected_rows'] = result.cmd_tuples if db_response_affected_rows?(result, span_attrs)
+            attrs
+          rescue StandardError => e
+            OpenTelemetry.handle_error(message: 'Error setting DB response attributes', exception: e)
+            {}
+          end
+
+          def db_response_returned_rows?(attrs)
+            return false unless config[:db_response_returned_rows]
+            return false if attrs.key?('db.response.returned_rows')
+
+            true
+          end
+
+          def db_response_affected_rows?(result, attrs)
+            return false unless config[:db_response_affected_rows]
+            return false if attrs.key?('db.response.affected_rows')
+            return false unless AFFECTED_ROWS_COMMANDS.include?(result.cmd_status.to_s.split.first)
+
+            true
           end
 
           def lru_cache
