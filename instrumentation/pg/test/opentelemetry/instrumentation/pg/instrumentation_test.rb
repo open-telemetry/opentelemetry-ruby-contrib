@@ -330,6 +330,34 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
+    describe 'untraced_queries option' do
+      let(:config) { { db_statement: :include, untraced_queries: [';', /\ASELECT 2\z/] } }
+
+      before do
+        client
+        exporter.reset
+      end
+
+      it 'does not create a span for a matching query' do
+        client.query(';')
+
+        _(exporter.finished_spans).must_be_empty
+      end
+
+      it 'does not create a span for a query matching a regexp' do
+        client.exec('SELECT 2')
+
+        _(exporter.finished_spans).must_be_empty
+      end
+
+      it 'creates a span for a non-matching query' do
+        client.exec('SELECT 1')
+
+        _(exporter.finished_spans.size).must_equal 1
+        _(last_span.attributes['db.statement']).must_equal 'SELECT 1'
+      end
+    end
+
     %i[exec_params async_exec_params sync_exec_params].each do |method|
       it "after request (with method: #{method}) " do
         client.send(method, 'SELECT $1 AS a', [1])

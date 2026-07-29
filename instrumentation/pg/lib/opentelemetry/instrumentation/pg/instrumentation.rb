@@ -31,6 +31,9 @@ module OpenTelemetry
         option :propagator, default: 'none', validate: %w[none tracecontext]
         option :db_response_returned_rows, default: false, validate: :boolean
         option :db_response_affected_rows, default: false, validate: :boolean
+        # If a query matches any String or Regexp in this array, the
+        # instrumentation will not record a client span or propagate context.
+        option :untraced_queries, default: [], validate: :array
 
         attr_reader :propagator
 

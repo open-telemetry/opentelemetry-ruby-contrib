@@ -80,6 +80,12 @@ module OpenTelemetry
 
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args, &block|
+              if untraced_query?(args[0])
+                return block.call(super(*args)) if block
+
+                return super(*args)
+              end
+
               span_name, attrs = span_attrs(:query, *args)
               tracer.in_span(span_name, attributes: attrs, kind: :client) do |span, context|
                 # Inject propagator context into SQL if propagator is configured
@@ -194,6 +200,16 @@ module OpenTelemetry
             return false unless AFFECTED_ROWS_COMMANDS.include?(result.cmd_status.to_s.split.first)
 
             true
+          end
+
+          def untraced_query?(query)
+            matchers = config[:untraced_queries]
+            return false if matchers.empty?
+
+            query = query.to_s
+            matchers.any? do |matcher|
+              matcher.is_a?(Regexp) ? matcher.match?(query) : matcher == query
+            end
           end
 
           def lru_cache

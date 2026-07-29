@@ -69,7 +69,11 @@ OpenTelemetry::SDK.configure do |c|
     # By default, this instrumentation does not emit the `db.response.affected_rows`
     # attribute. Set this option to true to include the number of rows affected
     # by mutation operations when available from PG::Result.
-    db_response_affected_rows: true
+    db_response_affected_rows: true,
+
+    # Queries matching any String or Regexp in this array will not create spans or have
+    # trace context propagated. This can suppress Active Record’s PostgreSQLAdapter#active? check.
+    untraced_queries: [';']
   }
 end
 ```
