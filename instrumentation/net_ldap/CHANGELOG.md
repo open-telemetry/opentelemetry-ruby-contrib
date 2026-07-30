@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_ldap
 
+## v0.2.1 / 2026-07-14
+
+- FIXED: Ensure valid json message attribute value (#2428)
+
 ## v0.2.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
