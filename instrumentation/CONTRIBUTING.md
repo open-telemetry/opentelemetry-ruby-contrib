@@ -268,13 +268,27 @@ jobs:
 
 #### JRuby Compatibility
 
-If your gem is incompatible with `JRuby`, you can exclude it from the matrix by ensuring the gem folder contains a `.github-ci.yml` file which specifies the gem specific environment variables.
-The key for unsupported interpreters is `unsupported_interpreters` and the value is to contain jruby,
-a complete example of the file is below.
+If your gem is incompatible with `JRuby`, you can exclude it from JRuby by doing the following.
 
-```yaml
-env:
-  unsupported_interpreters: jruby
+Adding the below to the gemspec
+
+```ruby
+spec.platform    = Gem::Platform::RUBY
+```
+
+Adding `platform: :mri` next to any dependency in your appraisal which is not supported on jruby ie:
+
+```ruby
+gem 'grpc', '~> 1.76.0', platform: :mri
+```
+
+Lastly so that the ci passes, at the very top of your test helper, add the below to cause the tests to be skipped.
+
+```ruby
+if RUBY_ENGINE == 'jruby'
+  warn 'Skipping tests on JRuby: MRI-only instrumentation'
+  exit 0
+end
 ```
 
 ### External service instrumentations
