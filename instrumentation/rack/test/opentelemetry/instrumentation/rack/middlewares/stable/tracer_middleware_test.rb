@@ -405,4 +405,60 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::TracerMiddle
       end
     end
   end
+
+  describe 'config[:public_request]' do
+    let(:remote_span_context) { OpenTelemetry::Trace::SpanContext.new(trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED, remote: true) }
+    let(:remote_span) { OpenTelemetry::Trace.non_recording_span(remote_span_context) }
+    let(:remote_context) { OpenTelemetry::Trace.context_with_span(remote_span, parent_context: OpenTelemetry::Context.empty) }
+
+    describe 'public_request not set' do
+      it 'attaches a remote parent' do
+        remote_headers = {}
+        OpenTelemetry.propagation.inject(remote_headers, context: remote_context)
+        req_env = {
+          'HTTP_TRACEPARENT' => remote_headers['traceparent'],
+          'HTTP_TRACESTATE' => remote_headers['tracestate']
+        }
+        Rack::MockRequest.new(rack_builder).get('/', req_env)
+
+        _(first_span.parent_span_id).must_equal remote_span_context.span_id
+        _(first_span.parent_span_is_remote).must_equal true
+      end
+    end
+
+    describe 'public_request returns false' do
+      let(:config) { { public_request: ->(_env) { false } } }
+
+      it 'attaches a remote parent' do
+        remote_headers = {}
+        OpenTelemetry.propagation.inject(remote_headers, context: remote_context)
+        req_env = {
+          'HTTP_TRACEPARENT' => remote_headers['traceparent'],
+          'HTTP_TRACESTATE' => remote_headers['tracestate']
+        }
+        Rack::MockRequest.new(rack_builder).get('/', req_env)
+
+        _(first_span.parent_span_id).must_equal remote_span_context.span_id
+        _(first_span.parent_span_is_remote).must_equal true
+      end
+    end
+
+    describe 'public_request returns true' do
+      let(:config) { { public_request: ->(_env) { true } } }
+
+      it 'creates a new root span with the incoming context as a link' do
+        remote_headers = {}
+        OpenTelemetry.propagation.inject(remote_headers, context: remote_context)
+        req_env = {
+          'HTTP_TRACEPARENT' => remote_headers['traceparent'],
+          'HTTP_TRACESTATE' => remote_headers['tracestate']
+        }
+        Rack::MockRequest.new(rack_builder).get('/', req_env)
+        _(first_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+        _(first_span.links.size).must_equal 1
+        _(first_span.links.first.span_context.span_id).must_equal remote_span_context.span_id
+        _(first_span.links.first.span_context.trace_id).must_equal remote_span_context.trace_id
+      end
+    end
+  end
 end
