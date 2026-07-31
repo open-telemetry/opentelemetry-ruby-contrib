@@ -17,6 +17,7 @@ require 'minitest/autorun'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
+PG_QUERY_METHODS = %i[exec query sync_exec async_exec].freeze
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
 
 OpenTelemetry::SDK.configure do |c|

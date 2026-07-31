@@ -89,6 +89,7 @@ words:
   - traceparent
   - traceresponse
   - tracestate
+  - zizmor
 
   - linkspector
   - sarif
