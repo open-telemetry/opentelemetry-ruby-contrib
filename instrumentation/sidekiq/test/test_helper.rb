@@ -35,7 +35,10 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor span_processor
 end
 
-redis_url = "redis://#{Env.fetch('TEST_REDIS_HOST', '127.0.0.1')}:#{Env.fetch('TEST_REDIS_PORT', '6379')}/0"
+host = Env.fetch('TEST_REDIS_HOST', '127.0.0.1')
+port = Env.fetch('TEST_REDIS_PORT', '6379')
+
+redis_url = "redis://#{host}:#{port}/0"
 
 Sidekiq.configure_server do |config|
   config.redis = { password: 'passw0rd', url: redis_url }

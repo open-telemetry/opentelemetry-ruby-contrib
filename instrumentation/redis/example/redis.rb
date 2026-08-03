@@ -2,6 +2,7 @@
 
 require 'dotenv'
 Dotenv.load(File.expand_path('../.env', __dir__))
+Dotenv.load(File.expand_path('.env', __dir__))
 
 require 'rubygems'
 require 'bundler/setup'
