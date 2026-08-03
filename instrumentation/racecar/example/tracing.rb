@@ -1,16 +1,18 @@
 # frozen_string_literal: true
+require 'dotenv'
+Dotenv.load(File.expand_path('../.env', __dir__))
+Dotenv.load(File.expand_path('.env', __dir__))
 
 require 'active_support'
 require 'opentelemetry/sdk'
 require 'opentelemetry-instrumentation-racecar'
 
-ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Racecar'
 end
 
-host = ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' }
-port = ENV.fetch('TEST_KAFKA_PORT') { 29_092 }
+host = ENV.fetch('TEST_KAFKA_HOST', '127.0.0.1')
+port = ENV.fetch('TEST_KAFKA_PORT', 29_092)
 config = { "bootstrap.servers": "#{host}:#{port}" }
 producer = Rdkafka::Config.new(config).producer
 delivery_handles = []

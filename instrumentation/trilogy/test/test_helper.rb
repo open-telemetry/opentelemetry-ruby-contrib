@@ -7,8 +7,6 @@
 require 'dotenv'
 Dotenv.load(File.expand_path('../.env', __dir__))
 
-ENV['OTEL_LOG_LEVEL'] ||= 'fatal'
-
 require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
