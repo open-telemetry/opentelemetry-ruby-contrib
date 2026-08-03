@@ -8,6 +8,7 @@
 
 require 'dotenv'
 Dotenv.load(File.expand_path('../.env', __dir__))
+Dotenv.load(File.expand_path('.env', __dir__))
 
 require 'rubygems'
 require 'bundler/setup'
@@ -33,7 +34,6 @@ class TestJob < Que::Job
   end
 end
 
-ENV['OTEL_TRACES_EXPORTER'] = 'console'
 require 'opentelemetry-instrumentation-que'
 require 'opentelemetry/sdk'
 OpenTelemetry::SDK.configure do |c|
