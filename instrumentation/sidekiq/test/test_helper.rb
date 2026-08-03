@@ -35,8 +35,8 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor span_processor
 end
 
-host = Env.fetch('TEST_REDIS_HOST', '127.0.0.1')
-port = Env.fetch('TEST_REDIS_PORT', '6379')
+host = ENV.fetch('TEST_REDIS_HOST', '127.0.0.1')
+port = ENV.fetch('TEST_REDIS_PORT', '6379')
 
 redis_url = "redis://#{host}:#{port}/0"
 
