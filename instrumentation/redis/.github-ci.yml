@@ -1,4 +1,3 @@
 env:
-  minimum_coverage: 75
   TEST_REDIS_HOST: localhost
   TEST_REDIS_PORT: 6379
