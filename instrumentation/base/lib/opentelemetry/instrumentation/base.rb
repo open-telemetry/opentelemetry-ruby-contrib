@@ -201,9 +201,11 @@ module OpenTelemetry
         @install_blk = install_blk
         @present_blk = present_blk
         @compatible_blk = compatible_blk
-        @config = {}
-        @installed = false
         @options = options
+        # Empty hash that falls back to option defaults for missing keys
+        defaults = (@options || []).to_h { |opt| [opt[:name], opt[:default]] }
+        @config = Hash.new { |_, k| defaults[k] }
+        @installed = false
         @tracer = OpenTelemetry::Trace::Tracer.new
       end
       # rubocop:enable Metrics/ParameterLists

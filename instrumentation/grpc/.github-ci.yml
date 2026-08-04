@@ -1,0 +1,2 @@
+env:
+  unsupported_interpreters: jruby

@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module ActionView
-      VERSION = '0.11.2'
+      VERSION = '0.13.0'
     end
   end
 end

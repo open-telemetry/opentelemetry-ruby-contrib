@@ -9,4 +9,5 @@ require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'opentelemetry-processor-baggage'

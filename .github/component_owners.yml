@@ -38,12 +38,10 @@ components:
   resources/aws:
     - jterapin
     - alextwoods
-    - NathanielRN
     - xuan-cao-swi
   resources/container:
     - scbjans
   sampler/xray:
     - jterapin
     - alextwoods
-    - NathanielRN
     - jj22ee

@@ -1,0 +1,6 @@
+services:
+  memcached:
+    image: memcached:1.6.40-alpine@sha256:8a82a3927694e42bc52679dc81532244de51e5faed5f9541a1283e3ad7271db1
+    command: memcached -m 64
+    ports:
+      - "11211:11211"

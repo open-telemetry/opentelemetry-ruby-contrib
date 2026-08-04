@@ -9,7 +9,7 @@ digest.update(ENV.fetch('BUNDLE_GEMFILE', 'gemfile')) if ENV['APPRAISAL_INITIALI
 ENV['ENABLE_COVERAGE'] ||= '1'
 
 if ENV['ENABLE_COVERAGE'].to_i.positive?
-  SimpleCov.command_name(digest.hexdigest)
+  SimpleCov.command_name(ENV['SIMPLECOV_COMMAND_NAME'] || digest.hexdigest)
   SimpleCov.start do
     add_filter %r{^/test/}
   end

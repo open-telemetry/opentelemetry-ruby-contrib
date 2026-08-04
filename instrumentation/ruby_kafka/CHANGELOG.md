@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ruby_kafka
 
+## v0.25.0 / 2026-04-14
+
+- ADDED: Add release tag into source code url of gem metadata (#1984)
+
 ## v0.24.0 / 2025-10-22
 
 - BREAKING CHANGE: Min Ruby Version 3.2
