@@ -146,7 +146,7 @@ jobs:
       - name: Lint
         uses: dotenv-linter/action-dotenv-linter@afde61cfda2ecffe7bea35837b6f20b956c88689 # v3.0.0
         with:
-          github_token: ${{ secrets.github_token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           dotenv_linter_flags: --recursive
 
   spelling-check:
