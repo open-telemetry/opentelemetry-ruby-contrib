@@ -16,6 +16,12 @@ services:
     build:
       context: .
     working_dir: /app
+    environment:
+      - MEMCACHED_URL=memcached:11211
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - TEST_MYSQL_HOST=mysql
+      - TEST_POSTGRES_HOST=postgres
+      - TEST_RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
     depends_on:
       - kafka
       - jaeger
@@ -31,6 +37,8 @@ services:
     extends:
       service: base
       file: ./docker-base.yml
+    environment:
+      - TEST_MYSQL_HOST=127.0.0.1
     depends_on:
       - mysql
     working_dir: /app/instrumentation/mysql2/
@@ -39,6 +47,8 @@ services:
     extends:
       service: base
       file: ./docker-base.yml
+    environment:
+      - TEST_POSTGRES_HOST=postgres
     depends_on:
       - postgres
     tmpfs: !reset []
@@ -48,6 +58,8 @@ services:
     extends:
       service: base
       file: ./docker-base.yml
+    environment:
+      - TEST_POSTGRES_HOST=postgres
     depends_on:
       - postgres
     working_dir: /app/instrumentation/que

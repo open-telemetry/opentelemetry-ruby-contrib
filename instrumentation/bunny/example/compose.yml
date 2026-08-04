@@ -8,4 +8,6 @@ services:
       file: ./../../../docker-base.yml
     depends_on:
       - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
     working_dir: /app/instrumentation/bunny/example
