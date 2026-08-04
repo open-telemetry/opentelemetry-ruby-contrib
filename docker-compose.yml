@@ -38,7 +38,7 @@ services:
       service: base
       file: ./docker-base.yml
     environment:
-      - TEST_MYSQL_HOST=127.0.0.1
+      - TEST_MYSQL_HOST=mysql
     depends_on:
       - mysql
     working_dir: /app/instrumentation/mysql2/
