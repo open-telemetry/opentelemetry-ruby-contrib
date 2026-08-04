@@ -88,6 +88,8 @@ module OpenTelemetry
 
           # Module to prepend to PG::Connection for instrumentation
           module Connection # rubocop:disable Metrics/ModuleLength
+            AFFECTED_ROWS_COMMANDS = %w[DELETE INSERT MERGE UPDATE].freeze
+
             PG::Constants::EXEC_ISH_METHODS.each do |method|
               define_method method do |*args, &block|
                 span_name, attrs = span_attrs(:query, *args)
@@ -105,10 +107,14 @@ module OpenTelemetry
                     end
                   end
 
+                  result = super(*args)
+                  response_attrs = db_response_attributes(result, attrs)
+                  span.add_attributes(response_attrs) unless response_attrs.empty?
+
                   if block
-                    block.call(super(*args))
+                    block.call(result)
                   else
-                    super(*args)
+                    result
                   end
                 rescue StandardError => e
                   set_error_attributes(span, e)
@@ -135,7 +141,10 @@ module OpenTelemetry
                     end
                   end
 
-                  super(*args)
+                  result = super(*args)
+                  response_attrs = db_response_attributes(result, attrs)
+                  span.add_attributes(response_attrs) unless response_attrs.empty?
+                  result
                 rescue StandardError => e
                   set_error_attributes(span, e)
                   raise
@@ -147,10 +156,14 @@ module OpenTelemetry
               define_method method do |*args, &block|
                 span_name, attrs = span_attrs(:execute, *args)
                 tracer.in_span(span_name, attributes: attrs, kind: :client) do |span|
+                  result = super(*args)
+                  response_attrs = db_response_attributes(result, attrs)
+                  span.add_attributes(response_attrs) unless response_attrs.empty?
+
                   if block
-                    block.call(super(*args))
+                    block.call(result)
                   else
-                    super(*args)
+                    result
                   end
                 rescue StandardError => e
                   set_error_attributes(span, e)
@@ -177,6 +190,31 @@ module OpenTelemetry
 
             def config
               PG::Instrumentation.instance.config
+            end
+
+            def db_response_attributes(result, span_attrs)
+              attrs = {}
+              attrs['db.response.returned_rows'] = result.ntuples if db_response_returned_rows?(span_attrs)
+              attrs['db.response.affected_rows'] = result.cmd_tuples if db_response_affected_rows?(result, span_attrs)
+              attrs
+            rescue StandardError => e
+              OpenTelemetry.handle_error(message: 'Error setting DB response attributes', exception: e)
+              {}
+            end
+
+            def db_response_returned_rows?(attrs)
+              return false unless config[:db_response_returned_rows]
+              return false if attrs.key?('db.response.returned_rows')
+
+              true
+            end
+
+            def db_response_affected_rows?(result, attrs)
+              return false unless config[:db_response_affected_rows]
+              return false if attrs.key?('db.response.affected_rows')
+              return false unless AFFECTED_ROWS_COMMANDS.include?(result.cmd_status.to_s.split.first)
+
+              true
             end
 
             def lru_cache
