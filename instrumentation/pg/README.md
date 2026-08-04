@@ -58,7 +58,18 @@ OpenTelemetry::SDK.configure do |c|
     # When `db_statement` is enabled, this instrumentation obfuscates SQL queries. By default, it
     # obfuscates queries up to 2000 characters. You can override the default with a different
     # `obfuscation_limit`, but higher values may impact performance.
-    obfuscation_limit: 2000
+    obfuscation_limit: 2000,
+
+    # By default, this instrumentation does not emit the opt-in
+    # `db.response.returned_rows` semantic attribute. Set this option to true
+    # to include the number of rows returned by the database operation when
+    # available from PG::Result.
+    db_response_returned_rows: true,
+
+    # By default, this instrumentation does not emit the `db.response.affected_rows`
+    # attribute. Set this option to true to include the number of rows affected
+    # by mutation operations when available from PG::Result.
+    db_response_affected_rows: true
   }
 end
 ```
