@@ -22,7 +22,7 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Queue do
   let(:topic) { "topic-#{SecureRandom.uuid}" }
   let(:channel) { bunny.create_channel }
   let(:queue_name) { "opentelemetry-ruby-#{SecureRandom.uuid}" }
-  let(:queue) { channel.queue(queue_name) }
+  let(:queue) { channel.queue(queue_name, durable: true) }
 
   before do
     bunny.start

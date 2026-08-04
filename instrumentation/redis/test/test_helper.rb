@@ -11,7 +11,7 @@ Bundler.require(:default, :development, :test)
 require 'minitest/autorun'
 
 ENV['TEST_REDIS_HOST'] ||= '127.0.0.1'
-ENV['TEST_REDIS_PORT'] ||= '16379'
+ENV['TEST_REDIS_PORT'] ||= '6379'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

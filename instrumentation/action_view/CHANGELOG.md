@@ -1,5 +1,16 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+## v0.13.0 / 2026-04-28
+
+- BREAKING CHANGE: Min Rails 7.1 (enforced this time) (#2283)
+- ADDED: Min Rails 7.1 (enforced this time) (#2283)
+
+## v0.12.0 / 2026-04-14
+
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
+
 ## v0.11.2 / 2026-01-06
 
 - DOCS: Update ActionView Documentation

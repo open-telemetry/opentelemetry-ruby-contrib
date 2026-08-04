@@ -1,5 +1,15 @@
 # Release History: opentelemetry-instrumentation-excon
 
+## v0.29.1 / 2026-04-28
+
+- FIXED: Enable SimpleCov coverage merging across appraisal runs (#2193)
+
+## v0.29.0 / 2026-04-14
+
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
+
 ## v0.28.0 / 2026-03-17
 
 - BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)
