@@ -6,6 +6,8 @@ services:
     extends:
       service: base
       file: ./../../../docker-base.yml
+    environment:
+      - TEST_POSTGRES_HOST=postgres
     depends_on:
       - postgres
     working_dir: /app/instrumentation/que/example

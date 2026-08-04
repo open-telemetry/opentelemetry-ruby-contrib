@@ -15,8 +15,7 @@ gemfile(true) do
 end
 
 require 'dotenv'
-Dotenv.load(File.expand_path('../.env'), __dir__)
-Dotenv.load(File.expand_path('.env', __dir__))
+Dotenv.load('.env', '../.env')
 
 require 'opentelemetry-api'
 require 'opentelemetry-sdk'

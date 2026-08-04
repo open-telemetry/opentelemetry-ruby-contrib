@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'dotenv'
-Dotenv.load(File.expand_path('../.env', __dir__))
+Dotenv.load('.env', '../.env')
 
 require 'rubygems'
 require 'bundler/setup'
