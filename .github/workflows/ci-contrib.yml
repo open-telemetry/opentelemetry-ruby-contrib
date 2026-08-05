@@ -49,9 +49,15 @@ jobs:
           - resource-detector-azure
           - resource-detector-container
           - resource-detector-google_cloud_platform
+          - resource-detector-os
           - sampler-xray
         os:
           - ubuntu-24.04
+        include:
+          - gem: resource-detector-os
+            os: windows-2025
+          - gem: resource-detector-os
+            os: macos-26
     name: "${{ matrix.gem }} / ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     steps:
@@ -76,7 +82,6 @@ jobs:
           yard: true
           build: true
       - name: "Test JRuby"
-        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
