@@ -1,5 +1,19 @@
 # Release History: opentelemetry-instrumentation-grpc
 
+## v0.5.2 / 2026-07-08
+
+- DOCS: Update source for gemspec links to RubyDoc (#2424)
+
+## v0.5.1 / 2026-05-21
+
+- FIXED: Handle missing config in middleware when OTEL_SDK_DISABLED=true (#2231)
+
+## v0.5.0 / 2026-04-14
+
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
+
 ## v0.4.1 / 2025-10-22
 
 - FIXED: Update opentelemetry-instrumentation-base dependency

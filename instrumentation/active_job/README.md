@@ -69,6 +69,7 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 | `perform.active_job` | :white_check_mark: | Creates an ingress span with kind `consumer` |
 | `retry_stopped.active_job` | :white_check_mark: | Creates and `internal` span with an `exception` event |
 | `discard.active_job` | :white_check_mark: | Creates and `internal` span with an `exception` event |
+| `step.active_job` | :white_check_mark: | Creates an `internal` span |
 
 ## Semantic Conventions
 
@@ -87,6 +88,13 @@ Attributes that are specific to this instrumentation are recorded under `messagi
 | `messaging.active_job.adapter.name` | String | The name of the `ActiveJob` adapter implementation |
 | `messaging.active_job.message.priority` | String | Present when set by the client from `ActiveJob#priority` |
 | `messaging.active_job.message.provider_job_id` | String | Present if the underlying adapter has backend specific message ids |
+
+For jobs including the `ActiveJob::Continuable` module, the following attributes are added to spans created for a `step`:
+
+| `messaging.active_job.step.name` | String | Step name |
+| `messaging.active_job.step.state` | String | Either `started` or `resumed` |
+| `messaging.active_job.step.result` | String | Static value set to `interrupted` if the job was interrupted |
+| `messaging.active_job.step.cursor` | String | The persisted value after calling `step.set!` or `step.advance!` |
 
 ## Differences between ActiveJob versions
 

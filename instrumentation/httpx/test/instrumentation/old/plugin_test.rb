@@ -93,8 +93,8 @@ describe OpenTelemetry::Instrumentation::HTTPX::Old::Plugin do
 
     it 'after request timeout' do
       response = HTTPX.get('http://example.com/timeout')
-      assert response.is_a?(HTTPX::ErrorResponse)
-      assert response.error.is_a?(HTTPX::TimeoutError)
+      assert_kind_of(HTTPX::ErrorResponse, response)
+      assert_kind_of(HTTPX::TimeoutError, response.error)
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'

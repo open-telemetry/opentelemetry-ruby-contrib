@@ -29,7 +29,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
 
       assert_includes(LOG_STREAM.string, body)
       assert_includes(BROADCASTED_STREAM.string, body)
-      assert_equal true, return_value
+      assert return_value
     end
 
     it 'emits only one OpenTelemetry log record' do
@@ -51,7 +51,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
 
       assert_includes(LOG_STREAM.string, body)
       assert_includes(BROADCASTED_STREAM.string, body)
-      assert_equal true, return_value
+      assert return_value
     end
 
     it 'emits only one OpenTelemetry log record' do
@@ -75,7 +75,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::ActiveSupportBroadcast
 
         assert_includes(LOG_STREAM.string, body)
         assert_includes(BROADCASTED_STREAM.string, body)
-        assert_equal true, return_value
+        assert return_value
       end
 
       it 'emits only one OpenTelemetry log record' do
