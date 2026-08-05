@@ -43,7 +43,7 @@ module OpenTelemetry
           class EventHandler
             include ::Rack::Events::Abstract
 
-            OTEL_TOKEN_AND_SPAN = 'otel.rack.token_and_span'
+            OTEL_CONTEXT_INFO = 'otel.context_info'
             EMPTY_HASH = {}.freeze
 
             # Creates a server span for this current request using the incoming parent context
@@ -62,7 +62,8 @@ module OpenTelemetry
               span = create_span(parent_context, request)
               span_ctx = OpenTelemetry::Trace.context_with_span(span, parent_context: parent_context)
               rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: span_ctx)
-              request.env[OTEL_TOKEN_AND_SPAN] = [OpenTelemetry::Context.attach(rack_ctx), span]
+              token = OpenTelemetry::Context.attach(rack_ctx)
+              request.env[OTEL_CONTEXT_INFO] = [Fiber.current, token, span]
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end
@@ -209,11 +210,17 @@ module OpenTelemetry
             end
 
             def detach_context(request)
-              return nil unless request.env[OTEL_TOKEN_AND_SPAN]
+              otel_context_info = request.env[OTEL_CONTEXT_INFO]
+              return unless otel_context_info
 
-              token, span = request.env[OTEL_TOKEN_AND_SPAN]
+              original_fiber, token, span = otel_context_info
               span.finish
-              OpenTelemetry::Context.detach(token)
+
+              if Fiber.current.equal?(original_fiber)
+                OpenTelemetry::Context.detach(token)
+              else
+                OpenTelemetry.logger.debug { '[rack] Skipping context detach: response processed in different fiber than request.' }
+              end
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end

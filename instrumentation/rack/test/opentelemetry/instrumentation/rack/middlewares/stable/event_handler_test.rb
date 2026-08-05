@@ -479,4 +479,38 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
       _(proxy_event).must_be_nil
     end
   end
+
+  describe 'cross-fiber context detachment' do
+    it 'finishes span without error when on_finish is called from different fiber' do
+      request = Rack::MockRequest.env_for('/')
+      rack_request = Rack::Request.new(request)
+      response = Rack::Response.new
+
+      fiber1 = Fiber.new do
+        handler.on_start(rack_request, nil)
+        Fiber.yield
+      end
+      fiber1.resume
+
+      fiber2 = Fiber.new do
+        handler.on_finish(rack_request, response)
+      end
+      fiber2.resume
+
+      _(finished_spans.size).must_equal 1
+      _(rack_span.name).must_equal 'GET'
+    end
+
+    it 'detaches context normally when same fiber' do
+      request = Rack::MockRequest.env_for('/')
+      rack_request = Rack::Request.new(request)
+      response = Rack::Response.new
+
+      handler.on_start(rack_request, nil)
+      handler.on_finish(rack_request, response)
+
+      _(finished_spans.size).must_equal 1
+      _(rack_span.name).must_equal 'GET'
+    end
+  end
 end
