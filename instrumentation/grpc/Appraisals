@@ -5,9 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 appraise 'grpc-1.76' do
-  gem 'grpc', '~> 1.76.0'
+  gem 'grpc', '~> 1.76.0', platform: :mri
 end
 
 appraise 'grpc-latest' do
-  gem 'grpc'
+  gem 'grpc', platform: :mri
 end

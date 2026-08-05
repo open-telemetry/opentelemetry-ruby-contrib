@@ -125,16 +125,6 @@ jobs:
         run: |
           dir=$(find . -iname 'opentelemetry-instrumentation-${{ matrix.gem }}.gemspec' -exec dirname {} \;)
           echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
-
-          FILE="${dir}/.github-ci.yml"
-
-          if [[ -f "$FILE" ]]; then
-            echo "Loading env from $FILE"
-            # Convert YAML to key=value and export to GITHUB_ENV
-            yq '.env // {} | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
-          else
-            echo "No github ci file found in ($dir). Skipping."
-          fi
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -156,7 +146,7 @@ jobs:
           build: true
           minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test JRuby"
-        if: "${{ startsWith(matrix.os, 'ubuntu') && !contains(env.unsupported_interpreters, 'jruby') }}"
+        if: "${{ startsWith(matrix.os, 'ubuntu') }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
