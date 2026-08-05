@@ -101,7 +101,7 @@ module OpenTelemetry
             def span_name(collection, command_name)
               return command_name unless collection
 
-              "#{command_name} #{collection}"
+              "#{collection}.#{command_name}"
             end
 
             def get_collection(command)

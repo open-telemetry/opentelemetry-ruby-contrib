@@ -67,7 +67,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
       include DupMongoTraceTest
 
       it 'has operation-specific properties for both old and new attributes' do
-        _(span.name).must_equal 'insert artists'
+        _(span.name).must_equal 'artists.insert'
         # Old attributes
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'artists'
@@ -86,7 +86,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
       include DupMongoTraceTest
 
       it 'has operation-specific properties for both old and new attributes' do
-        _(span.name).must_equal 'insert people'
+        _(span.name).must_equal 'people.insert'
         # Old attributes
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'people'
@@ -131,7 +131,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
       include DupMongoTraceTest
 
       it 'has operation-specific properties for both old and new attributes' do
-        _(span.name).must_equal 'insert people'
+        _(span.name).must_equal 'people.insert'
         # Old attributes
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'people'
@@ -161,7 +161,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
     include DupMongoTraceTest
 
     it 'has operation-specific properties for both old and new attributes' do
-      _(span.name).must_equal 'find people'
+      _(span.name).must_equal 'people.find'
       # Old attributes
       _(span.attributes['db.operation']).must_equal 'find'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
@@ -189,7 +189,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
     include DupMongoTraceTest
 
     it 'has operation-specific properties for both old and new attributes' do
-      _(span.name).must_equal 'find people'
+      _(span.name).must_equal 'people.find'
       # Old attributes
       _(span.attributes['db.operation']).must_equal 'find'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
@@ -216,7 +216,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
     include DupMongoTraceTest
 
     it 'has operation-specific properties for both old and new attributes' do
-      _(span.name).must_equal 'update people'
+      _(span.name).must_equal 'people.update'
       expected_statement = '{"updates":[{"q":{"name":"?"},"u":{"$set":{"phone_number":"?"}}}]}'
       # Old attributes
       _(span.attributes['db.operation']).must_equal 'update'
@@ -254,7 +254,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
     include DupMongoTraceTest
 
     it 'has operation-specific properties for both old and new attributes' do
-      _(span.name).must_equal 'update people'
+      _(span.name).must_equal 'people.update'
       expected_statement = '{"updates":[{"u":{"$set":{"phone_number":"?"}},"multi":true}]}'
       # Old attributes
       _(span.attributes['db.operation']).must_equal 'update'
@@ -288,7 +288,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
     include DupMongoTraceTest
 
     it 'has operation-specific properties for both old and new attributes' do
-      _(span.name).must_equal 'delete people'
+      _(span.name).must_equal 'people.delete'
       expected_statement = '{"deletes":[{"q":{"name":"?"}}]}'
       # Old attributes
       _(span.attributes['db.operation']).must_equal 'delete'
@@ -326,7 +326,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
     include DupMongoTraceTest
 
     it 'has operation-specific properties for both old and new attributes' do
-      _(span.name).must_equal 'delete people'
+      _(span.name).must_equal 'people.delete'
       expected_statement = '{"deletes":[{"q":{"name":"?"}}]}'
       # Old attributes
       _(span.attributes['db.operation']).must_equal 'delete'
@@ -380,7 +380,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
     end
 
     it 'omits both db.statement and db.query.text attributes' do
-      _(span.name).must_equal 'find people'
+      _(span.name).must_equal 'people.find'
       # Old attributes
       _(span.attributes['db.operation']).must_equal 'find'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
@@ -407,7 +407,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
     end
 
     it 'includes non-obfuscated db.statement and db.query.text attributes' do
-      _(span.name).must_equal 'find people'
+      _(span.name).must_equal 'people.find'
       _(span.attributes['db.statement']).must_equal '{"filter":{"name":"Steve"}}'
       _(span.attributes['db.query.text']).must_equal '{"filter":{"name":"Steve"}}'
     end
@@ -428,7 +428,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
     end
 
     it 'obfuscates both db.statement and db.query.text attributes' do
-      _(span.name).must_equal 'find people'
+      _(span.name).must_equal 'people.find'
       _(span.attributes['db.statement']).must_equal '{"filter":{"name":"?"}}'
       _(span.attributes['db.query.text']).must_equal '{"filter":{"name":"?"}}'
     end
@@ -440,7 +440,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscribers::Dup::Subscriber do
     include DupMongoTraceTest
 
     it 'has operation-specific properties with error attributes from stable semconv' do
-      _(span.name).must_equal 'drop artists'
+      _(span.name).must_equal 'artists.drop'
       # Old attributes
       _(span.attributes['db.operation']).must_equal 'drop'
       _(span.attributes['db.mongodb.collection']).must_equal 'artists'
