@@ -21,12 +21,19 @@ module OpenTelemetry
               }
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
-              tracer.in_span('TRANSACTION', attributes: attributes) do
+              tracer.in_span('TRANSACTION', attributes: attributes) do |span|
                 super
+              rescue StandardError => e
+                set_error_attributes(span, e)
+                raise
               end
             end
 
             private
+
+            def set_error_attributes(span, error)
+              span.set_attribute('error.type', error.class.name)
+            end
 
             def config
               LMDB::Instrumentation.instance.config

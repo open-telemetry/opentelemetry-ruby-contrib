@@ -53,5 +53,17 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Dup::Environment' do
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes['db.operation.name']).must_equal('TRANSACTION')
     end
+
+    it 'records error.type when the transaction fails' do
+      assert_raises(RuntimeError) do
+        lmdb.transaction do
+          raise 'boom'
+        end
+      end
+
+      _(last_span.name).must_equal('TRANSACTION')
+      _(last_span.attributes['error.type']).must_equal('RuntimeError')
+      _(last_span.status.code).must_equal(OpenTelemetry::Trace::Status::ERROR)
+    end
   end
 end

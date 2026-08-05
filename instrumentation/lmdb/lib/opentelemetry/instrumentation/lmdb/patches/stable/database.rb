@@ -23,8 +23,11 @@ module OpenTelemetry
               }
               attributes['db.query.text'] = statement if config[:db_statement] == :include
 
-              tracer.in_span("GET #{key}", attributes: attributes, kind: :client) do
+              tracer.in_span("GET #{key}", attributes: attributes, kind: :client) do |span|
                 super
+              rescue StandardError => e
+                set_error_attributes(span, e)
+                raise
               end
             end
 
@@ -36,8 +39,11 @@ module OpenTelemetry
               }
               attributes['db.query.text'] = statement if config[:db_statement] == :include
 
-              tracer.in_span("DELETE #{key}", attributes: attributes, kind: :client) do
+              tracer.in_span("DELETE #{key}", attributes: attributes, kind: :client) do |span|
                 super
+              rescue StandardError => e
+                set_error_attributes(span, e)
+                raise
               end
             end
 
@@ -49,8 +55,11 @@ module OpenTelemetry
               }
               attributes['db.query.text'] = statement if config[:db_statement] == :include
 
-              tracer.in_span("PUT #{key}", attributes: attributes, kind: :client) do
+              tracer.in_span("PUT #{key}", attributes: attributes, kind: :client) do |span|
                 super
+              rescue StandardError => e
+                set_error_attributes(span, e)
+                raise
               end
             end
 
@@ -61,8 +70,11 @@ module OpenTelemetry
               }
               attributes['db.query.text'] = 'CLEAR' if config[:db_statement] == :include
 
-              tracer.in_span('CLEAR', attributes: attributes, kind: :client) do
+              tracer.in_span('CLEAR', attributes: attributes, kind: :client) do |span|
                 super
+              rescue StandardError => e
+                set_error_attributes(span, e)
+                raise
               end
             end
 
@@ -74,6 +86,10 @@ module OpenTelemetry
             rescue StandardError => e
               OpenTelemetry.logger.debug("non formattable LMDB statement #{statement}: #{e}")
               "#{operation} BLOB (OMITTED)"
+            end
+
+            def set_error_attributes(span, error)
+              span.set_attribute('error.type', error.class.name)
             end
 
             def config

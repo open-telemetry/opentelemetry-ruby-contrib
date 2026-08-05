@@ -163,5 +163,15 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.query.text')
     end
+
+    it 'records error.type when the operation fails' do
+      assert_raises(LMDB::Error::NOTFOUND) do
+        lmdb.database.delete('missing-key')
+      end
+
+      _(last_span.name).must_equal('DELETE missing-key')
+      _(last_span.attributes['error.type']).must_equal('LMDB::Error::NOTFOUND')
+      _(last_span.status.code).must_equal(OpenTelemetry::Trace::Status::ERROR)
+    end
   end
 end
