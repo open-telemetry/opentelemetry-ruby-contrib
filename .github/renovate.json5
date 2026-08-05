@@ -21,8 +21,38 @@
       schedule: ["before 6am every weekday"],
     },
     {
-      matchDepNames: ["ruby"],
-      matchUpdateTypes: ["digest", "patch"],
+      description: "Only perform update once both setup ruby and ruby is available. The group size needs to be kept in sync",
+      groupName: "Latest-Ruby-sdk [Patches]",
+      branchTopic: "latest-ruby-sdk",
+      commitMessageTopic: "Latest-Ruby-sdk",
+      commitMessageExtra: "[Patches]",
+      matchDepNames: ["ruby/setup-ruby", "ruby"],
+      matchUpdateTypes: ["!digest"],
+      matchFileNames: [
+        ".github/workflows/fossa.yml",
+        ".github/workflows/installation-tests.yml",
+        ".github/workflows/release-*.yml",
+      ],
+      minimumGroupSize: 11,
+      schedule: ["before 6am every weekday"],
+    },
+    {
+      description: "Only perform update once both setup ruby and ruby is available. The group size needs to be kept in sync",
+      groupName: "Min-Ruby-sdk [Patches]",
+      branchTopic: "min-ruby-sdk",
+      commitMessageTopic: "Min-Ruby-sdk",
+      commitMessageExtra: "[Patches]",
+      matchDepNames: ["ruby/setup-ruby", "ruby"],
+      matchUpdateTypes: ["!digest"],
+      matchFileNames: [
+        ".github/workflows/ci-checks-local.yml",
+        ".github/workflows/ci-markdown-checks.yml",
+        "**/*.gemspec",
+        "Dockerfile",
+        "examples/**/Dockerfile",
+        "**/examples/Dockerfile",
+      ],
+      minimumGroupSize: 4,
       schedule: ["before 6am every weekday"],
     },
     {
@@ -62,12 +92,6 @@
     {
       matchUpdateTypes: ["major"],
       schedule: ["before 8am on Monday"],
-    },
-    {
-      matchDepNames: ["actions/setup-node", "ruby/setup-ruby"],
-      schedule: ["before 6am every weekday"],
-      prConcurrentLimit: 0,
-      automerge: true,
     },
     {
       description: "Wait until current major postgres is EoL before updating",
