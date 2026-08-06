@@ -1,0 +1,8 @@
+{
+  "name": "otel-ruby-que-devcontainer",
+  "dockerComposeFile": ["../../docker-compose.yml"],
+  "service": "devcontainer",
+
+  "workspaceFolder": "/app/instrumentation/que",
+  "runServices": ["postgres"]
+}

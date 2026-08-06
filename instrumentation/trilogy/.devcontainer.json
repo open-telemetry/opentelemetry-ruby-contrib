@@ -1,0 +1,8 @@
+{
+  "name": "otel-ruby-trilogy-devcontainer",
+  "dockerComposeFile": ["../../docker-compose.yml"],
+  "service": "devcontainer",
+
+  "workspaceFolder": "/app/instrumentation/trilogy",
+  "runServices": ["mysql"]
+}
