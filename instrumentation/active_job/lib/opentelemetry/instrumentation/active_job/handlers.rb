@@ -8,6 +8,7 @@ require_relative 'mappers/attribute'
 require_relative 'handlers/default'
 require_relative 'handlers/enqueue'
 require_relative 'handlers/perform'
+require_relative 'handlers/step'
 
 module OpenTelemetry
   module Instrumentation
@@ -27,6 +28,7 @@ module OpenTelemetry
         # - perform
         # - retry_stopped
         # - discard
+        # - step (Continuations, Rails 8.1+)
         #
         # Ingress and Egress spans (perform, enqueue, enqueue_at) use Messaging semantic conventions for naming the span,
         # while internal spans keep their ActiveSupport event name.
@@ -48,6 +50,7 @@ module OpenTelemetry
           default_handler = Handlers::Default.new(parent_span_provider, mapper, config)
           enqueue_handler = Handlers::Enqueue.new(parent_span_provider, mapper, config)
           perform_handler = Handlers::Perform.new(parent_span_provider, mapper, config)
+          step_handler = Handlers::Step.new(parent_span_provider, mapper, config)
 
           handlers_by_pattern = {
             'enqueue' => enqueue_handler,
@@ -55,7 +58,8 @@ module OpenTelemetry
             'enqueue_retry' => default_handler,
             'perform' => perform_handler,
             'retry_stopped' => default_handler,
-            'discard' => default_handler
+            'discard' => default_handler,
+            'step' => step_handler
           }
 
           @subscriptions = handlers_by_pattern.map do |key, handler|

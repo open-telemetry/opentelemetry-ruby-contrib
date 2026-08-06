@@ -18,20 +18,25 @@ jobs:
       BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
       - name: Checkout repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # zizmor: ignore[artipacked] Credentials are required to push version/changelog updates
+          persist-credentials: true
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@dffb23f65a78bba8db45d387d5ea1bbd6be3ef18 # v1.293.0
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
         with:
-          ruby-version: "4.0.1"
+          ruby-version: "4.0.5"
           bundler-cache: true
 
       - name: Create otelbot app token
-        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
-          app-id: ${{ vars.OTELBOT_RUBY_CONTRIB_APP_ID }}
+          client-id: ${{ vars.OTELBOT_RUBY_CONTRIB_CLIENT_ID }}
           private-key: ${{ secrets.OTELBOT_RUBY_CONTRIB_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
 
       - name: Open release pull request
         env:
@@ -39,5 +44,5 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           bundle exec toys release request --yes --verbose \
-            "--target-branch=${{ github.ref }}" \
+            "--target-branch=${GITHUB_REF}" \
             < /dev/null

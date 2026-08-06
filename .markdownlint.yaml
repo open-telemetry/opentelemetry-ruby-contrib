@@ -10,3 +10,4 @@ line-length:
   line_length: 500
 no-inline-html: false
 custom-rules-below-this-point: false
+no-bare-urls: false

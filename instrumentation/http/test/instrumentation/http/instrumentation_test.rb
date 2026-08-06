@@ -52,6 +52,12 @@ describe OpenTelemetry::Instrumentation::HTTP do
       end
     end
 
+    it 'returns "old" when OTEL_SEMCONV_STABILITY_OPT_IN is old' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'old') do
+        _(instrumentation.determine_semconv).must_equal('old')
+      end
+    end
+
     it 'returns "stable" when OTEL_SEMCONV_STABILITY_OPT_IN is http' do
       OpenTelemetry::TestHelpers.with_env('OTEL_SEMCONV_STABILITY_OPT_IN' => 'http') do
         _(instrumentation.determine_semconv).must_equal('stable')
