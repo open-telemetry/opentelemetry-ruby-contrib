@@ -57,7 +57,7 @@ module OpenTelemetry
                           else
                             attributes['db.operation.name'] = 'PIPELINE'
                             attributes['db.operation.batch.size'] = commands.length
-                            'PIPELINE'
+                            'PIPELINED'
                           end
 
               instrumentation_tracer.in_span(span_name, attributes: attributes, kind: :client) do |s|

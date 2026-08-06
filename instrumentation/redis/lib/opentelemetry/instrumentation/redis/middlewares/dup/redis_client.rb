@@ -50,7 +50,7 @@ module OpenTelemetry
                 attributes['db.query.text'] = serialized
               end
 
-              instrumentation.tracer.in_span('PIPELINE', attributes: attributes, kind: :client) do |span|
+              instrumentation.tracer.in_span('PIPELINED', attributes: attributes, kind: :client) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)

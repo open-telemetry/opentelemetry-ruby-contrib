@@ -68,6 +68,8 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       _(last_span.attributes['server.address']).must_equal redis_host
       # server.port only included if non-default (6379)
       _(last_span.attributes['server.port']).must_equal redis_port if redis_port != 6379
+      _(last_span.attributes['db.operation.name']).must_equal 'AUTH'
+      _(last_span.attributes).wont_include 'db.operation.batch.size'
     end
 
     it 'after requests includes both old and new attributes' do
@@ -88,6 +90,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       _(set_span.attributes['db.system.name']).must_equal 'redis'
       _(set_span.attributes['db.query.text']).must_equal('SET K x')
       _(set_span.attributes['server.address']).must_equal redis_host
+      _(set_span.attributes['db.operation.name']).must_equal 'SET'
 
       get_span = exporter.finished_spans.last
       _(get_span.name).must_equal 'GET'
@@ -99,6 +102,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       _(get_span.attributes['db.system.name']).must_equal 'redis'
       _(get_span.attributes['db.query.text']).must_equal 'GET K'
       _(get_span.attributes['server.address']).must_equal redis_host
+      _(get_span.attributes['db.operation.name']).must_equal 'GET'
     end
 
     it 'reflects db index' do
@@ -119,6 +123,9 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       # Both old and new namespace attributes
       _(select_span.attributes['db.redis.database_index']).must_equal 1
       _(select_span.attributes['db.namespace']).must_equal '1'
+      # Single command: operation name only, no batch size
+      _(select_span.attributes['db.operation.name']).must_equal 'SELECT'
+      _(select_span.attributes).wont_include 'db.operation.batch.size'
 
       get_span = exporter.finished_spans.last
       _(get_span.name).must_equal 'GET'
@@ -128,6 +135,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       _(get_span.attributes['db.query.text']).must_equal('GET K')
       _(get_span.attributes['db.redis.database_index']).must_equal 1
       _(get_span.attributes['db.namespace']).must_equal '1'
+      _(get_span.attributes['db.operation.name']).must_equal 'GET'
     end
 
     it 'reflects db index v5' do
@@ -139,7 +147,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       _(exporter.finished_spans.size).must_equal 2
       select_span = exporter.finished_spans.first
       get_span = exporter.finished_spans.last
-      _(select_span.name).must_equal 'PIPELINE'
+      _(select_span.name).must_equal 'PIPELINED'
       # Both attributes
       _(select_span.attributes['db.statement']).must_equal("AUTH ?\nSELECT 1")
       _(select_span.attributes['db.query.text']).must_equal("AUTH ?\nSELECT 1")
@@ -148,6 +156,9 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       # Both old and new namespace attributes
       _(select_span.attributes['db.redis.database_index']).must_equal 1
       _(select_span.attributes['db.namespace']).must_equal '1'
+      # AUTH + SELECT are pipelined together
+      _(select_span.attributes['db.operation.name']).must_equal 'PIPELINE'
+      _(select_span.attributes['db.operation.batch.size']).must_equal 2
 
       _(get_span.name).must_equal 'GET'
       _(get_span.attributes['db.system']).must_equal 'redis'
@@ -156,6 +167,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       _(get_span.attributes['db.query.text']).must_equal('GET K')
       _(get_span.attributes['db.redis.database_index']).must_equal 1
       _(get_span.attributes['db.namespace']).must_equal '1'
+      _(get_span.attributes['db.operation.name']).must_equal 'GET'
     end
 
     it 'records exceptions with error.type' do
@@ -177,6 +189,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       _(last_span.attributes['db.query.text']).must_equal(
         'THIS_IS_NOT_A_REDIS_FUNC THIS_IS_NOT_A_VALID_ARG'
       )
+      _(last_span.attributes['db.operation.name']).must_equal 'THIS_IS_NOT_A_REDIS_FUNC'
       # Redis error prefix is extracted for error.type and db.response.status_code
       _(last_span.attributes['error.type']).must_equal 'ERR'
       _(last_span.attributes['db.response.status_code']).must_equal 'ERR'
@@ -204,6 +217,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       _(last_span.attributes['db.query.text']).must_equal(
         'THIS_IS_NOT_A_REDIS_FUNC THIS_IS_NOT_A_VALID_ARG'
       )
+      _(last_span.attributes['db.operation.name']).must_equal 'THIS_IS_NOT_A_REDIS_FUNC'
       # Redis error prefix is extracted for error.type and db.response.status_code
       _(last_span.attributes['error.type']).must_equal 'ERR'
       _(last_span.attributes['db.response.status_code']).must_equal 'ERR'
@@ -221,7 +235,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       end
 
       _(exporter.finished_spans.size).must_equal 2
-      _(last_span.name).must_equal 'PIPELINE'
+      _(last_span.name).must_equal 'PIPELINED'
       # Both attributes
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.system.name']).must_equal 'redis'
@@ -229,6 +243,8 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Dup::RedisV4Client do
       _(last_span.attributes['db.query.text']).must_equal "SET v1 0\nINCR v1\nGET v1"
       _(last_span.attributes['net.peer.name']).must_equal redis_host
       _(last_span.attributes['server.address']).must_equal redis_host
+      _(last_span.attributes['db.operation.name']).must_equal 'PIPELINE'
+      _(last_span.attributes['db.operation.batch.size']).must_equal 3
     end
 
     describe 'when db_statement is :omit' do

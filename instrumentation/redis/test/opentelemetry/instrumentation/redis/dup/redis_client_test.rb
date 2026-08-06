@@ -72,7 +72,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
 
       _(client.connected?).must_equal(true)
 
-      _(last_span.name).must_equal 'PIPELINE'
+      _(last_span.name).must_equal 'PIPELINED'
       # Old attributes
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal 'HELLO ? ? ? ?'
@@ -84,6 +84,8 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(last_span.attributes['server.address']).must_equal redis_host
       # server.port only included if non-default (6379)
       _(last_span.attributes['server.port']).must_equal redis_port if redis_port != 6379
+      _(last_span.attributes['db.operation.name']).must_equal 'PIPELINE'
+      _(last_span.attributes['db.operation.batch.size']).must_equal 1
     end
 
     it 'after calling auth lowercase' do
@@ -100,6 +102,8 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(last_span.attributes['db.system.name']).must_equal 'redis'
       _(last_span.attributes['db.query.text']).must_equal 'AUTH ?'
       _(last_span.attributes['server.address']).must_equal redis_host
+      _(last_span.attributes['db.operation.name']).must_equal 'AUTH'
+      _(last_span.attributes).wont_include 'db.operation.batch.size'
     end
 
     it 'after calling AUTH uppercase' do
@@ -116,6 +120,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(last_span.attributes['db.system.name']).must_equal 'redis'
       _(last_span.attributes['db.query.text']).must_equal 'AUTH ?'
       _(last_span.attributes['server.address']).must_equal redis_host
+      _(last_span.attributes['db.operation.name']).must_equal 'AUTH'
     end
 
     it 'after requests includes both old and new attributes' do
@@ -136,6 +141,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(set_span.attributes['db.system.name']).must_equal 'redis'
       _(set_span.attributes['db.query.text']).must_equal('SET K x')
       _(set_span.attributes['server.address']).must_equal redis_host
+      _(set_span.attributes['db.operation.name']).must_equal 'SET'
 
       get_span = exporter.finished_spans.last
       _(get_span.name).must_equal 'GET'
@@ -147,6 +153,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(get_span.attributes['db.system.name']).must_equal 'redis'
       _(get_span.attributes['db.query.text']).must_equal 'GET K'
       _(get_span.attributes['server.address']).must_equal redis_host
+      _(get_span.attributes['db.operation.name']).must_equal 'GET'
     end
 
     it 'reflects db index' do
@@ -156,7 +163,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(exporter.finished_spans.size).must_equal 2
 
       prelude_span = exporter.finished_spans.first
-      _(prelude_span.name).must_equal 'PIPELINE'
+      _(prelude_span.name).must_equal 'PIPELINED'
       # Both old and new attributes
       _(prelude_span.attributes['db.system']).must_equal 'redis'
       _(prelude_span.attributes['db.system.name']).must_equal 'redis'
@@ -164,6 +171,8 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(prelude_span.attributes['db.query.text']).must_equal("HELLO ? ? ? ?\nSELECT 1")
       _(prelude_span.attributes['net.peer.name']).must_equal redis_host
       _(prelude_span.attributes['server.address']).must_equal redis_host
+      _(prelude_span.attributes['db.operation.name']).must_equal 'PIPELINE'
+      _(prelude_span.attributes['db.operation.batch.size']).must_equal 2
 
       get_span = exporter.finished_spans.last
       _(get_span.name).must_equal 'GET'
@@ -176,6 +185,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(get_span.attributes['db.namespace']).must_equal '1'
       _(get_span.attributes['net.peer.name']).must_equal redis_host
       _(get_span.attributes['server.address']).must_equal redis_host
+      _(get_span.attributes['db.operation.name']).must_equal 'GET'
     end
 
     it 'merges context attributes' do
@@ -216,6 +226,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       )
       _(last_span.attributes['net.peer.name']).must_equal redis_host
       _(last_span.attributes['server.address']).must_equal redis_host
+      _(last_span.attributes['db.operation.name']).must_equal 'THIS_IS_NOT_A_REDIS_FUNC'
       # Redis error prefix is extracted for error.type and db.response.status_code
       _(last_span.attributes['error.type']).must_equal 'ERR'
       _(last_span.attributes['db.response.status_code']).must_equal 'ERR'
@@ -242,7 +253,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       end
 
       _(exporter.finished_spans.size).must_equal 2
-      _(last_span.name).must_equal 'PIPELINE'
+      _(last_span.name).must_equal 'PIPELINED'
       # Both old and new attributes
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.system.name']).must_equal 'redis'
@@ -250,6 +261,8 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
       _(last_span.attributes['db.query.text']).must_equal "SET v1 0\nINCR v1\nGET v1"
       _(last_span.attributes['net.peer.name']).must_equal redis_host
       _(last_span.attributes['server.address']).must_equal redis_host
+      _(last_span.attributes['db.operation.name']).must_equal 'PIPELINE'
+      _(last_span.attributes['db.operation.batch.size']).must_equal 3
     end
 
     it 'records floats' do
@@ -293,11 +306,13 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
         SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
       HEREDOC
 
-      _(last_span.name).must_equal 'PIPELINE'
+      _(last_span.name).must_equal 'PIPELINED'
       _(last_span.attributes['db.statement'].size).must_equal 500
       _(last_span.attributes['db.statement']).must_equal expected_statement
       _(last_span.attributes['db.query.text'].size).must_equal 500
       _(last_span.attributes['db.query.text']).must_equal expected_statement
+      _(last_span.attributes['db.operation.name']).must_equal 'PIPELINE'
+      _(last_span.attributes['db.operation.batch.size']).must_equal 9
     end
 
     it 'encodes invalid byte sequences' do
@@ -350,7 +365,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
         _(exporter.finished_spans.size).must_equal 3
 
         set_span = exporter.finished_spans[0]
-        _(set_span.name).must_equal 'PIPELINE' # AUTH
+        _(set_span.name).must_equal 'PIPELINED' # AUTH
         _(set_span.attributes['db.system']).must_equal 'redis'
         _(set_span.attributes['db.system.name']).must_equal 'redis'
         _(set_span.attributes).wont_include('db.statement')
@@ -385,7 +400,7 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::Dup::RedisClientIns
         _(exporter.finished_spans.size).must_equal 3
 
         set_span = exporter.finished_spans[0]
-        _(set_span.name).must_equal 'PIPELINE'
+        _(set_span.name).must_equal 'PIPELINED'
         _(set_span.attributes['db.system']).must_equal 'redis'
         _(set_span.attributes['db.system.name']).must_equal 'redis'
         _(set_span.attributes['db.statement']).must_equal('HELLO ? ? ? ?')
