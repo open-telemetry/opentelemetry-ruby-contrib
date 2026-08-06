@@ -17,7 +17,8 @@ module OpenTelemetry
               attributes = {
                 'db.system' => 'lmdb',
                 'db.system.name' => 'lmdb',
-                'db.operation.name' => 'TRANSACTION'
+                'db.operation.name' => 'TRANSACTION',
+                'db.namespace' => path
               }
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 

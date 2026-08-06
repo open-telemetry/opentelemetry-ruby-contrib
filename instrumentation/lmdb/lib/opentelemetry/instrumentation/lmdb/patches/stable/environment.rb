@@ -16,7 +16,8 @@ module OpenTelemetry
             def transaction(*args)
               attributes = {
                 'db.system.name' => 'lmdb',
-                'db.operation.name' => 'TRANSACTION'
+                'db.operation.name' => 'TRANSACTION',
+                'db.namespace' => path
               }
 
               tracer.in_span('TRANSACTION', attributes: attributes) do |span|

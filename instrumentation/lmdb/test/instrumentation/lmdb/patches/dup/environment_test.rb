@@ -52,6 +52,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Dup::Environment' do
       # Stable attributes
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes['db.operation.name']).must_equal('TRANSACTION')
+      _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
     end
 
     it 'records error.type when the transaction fails' do

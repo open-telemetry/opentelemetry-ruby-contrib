@@ -20,7 +20,8 @@ module OpenTelemetry
               attributes = {
                 'db.system' => 'lmdb',
                 'db.system.name' => 'lmdb',
-                'db.operation.name' => 'GET'
+                'db.operation.name' => 'GET',
+                'db.namespace' => env.path
               }
               if config[:db_statement] == :include
                 attributes['db.statement'] = statement
@@ -41,7 +42,8 @@ module OpenTelemetry
               attributes = {
                 'db.system' => 'lmdb',
                 'db.system.name' => 'lmdb',
-                'db.operation.name' => 'DELETE'
+                'db.operation.name' => 'DELETE',
+                'db.namespace' => env.path
               }
               if config[:db_statement] == :include
                 attributes['db.statement'] = statement
@@ -62,7 +64,8 @@ module OpenTelemetry
               attributes = {
                 'db.system' => 'lmdb',
                 'db.system.name' => 'lmdb',
-                'db.operation.name' => 'PUT'
+                'db.operation.name' => 'PUT',
+                'db.namespace' => env.path
               }
               if config[:db_statement] == :include
                 attributes['db.statement'] = statement
@@ -82,7 +85,8 @@ module OpenTelemetry
               attributes = {
                 'db.system' => 'lmdb',
                 'db.system.name' => 'lmdb',
-                'db.operation.name' => 'CLEAR'
+                'db.operation.name' => 'CLEAR',
+                'db.namespace' => env.path
               }
               if config[:db_statement] == :include
                 attributes['db.statement'] = 'CLEAR'
