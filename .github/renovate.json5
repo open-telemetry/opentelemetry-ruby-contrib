@@ -21,6 +21,13 @@
       schedule: ["before 6am every weekday"],
     },
     {
+      groupName: "test dependencies [minor]",
+      matchUpdateTypes: ["minor"],
+      matchDatasources: ["rubygems"],
+      matchDepTypes: ["testDependency"],
+      schedule: ["before 7am on Monday"],
+    },
+    {
       matchDepNames: ["ruby"],
       matchUpdateTypes: ["digest", "patch"],
       schedule: ["before 6am every weekday"],
@@ -132,6 +139,7 @@
       managerFilePatterns: ["**/Appraisals"],
       matchStrings: [
         "gem\\s'(?<packageName>.+?)',\\s'(?<depVersion>.+\\s[0-9.]+)'",
+        "\\n\\s%w\\[([0-9.]+\\s)+(?<depVersion>[0-9.]+)\\].+\\n.+\\n\\s+gem\\s'(?<packageName>.+?)', \"~> #{version}\"",
       ],
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
