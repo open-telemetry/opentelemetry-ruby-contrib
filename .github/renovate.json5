@@ -9,16 +9,29 @@
   prHourlyLimit: 12,
   packageRules: [
     {
-      groupName: "all patch versions",
-      matchDepNames: ["!ruby"],
-      matchUpdateTypes: ["patch"],
+      groupName: "all [patches]",
+      matchDepNames: ["!ruby", "!renovate"],
+      matchUpdateTypes: ["patch", "digest"],
       schedule: ["before 6am every weekday"],
     },
     {
-      groupName: "all digest versions",
-      matchDepNames: ["!ruby"],
-      matchUpdateTypes: ["digest"],
-      schedule: ["before 6am every weekday"],
+      groupName: "infra [minor]",
+      matchCategories: ["ci", "docker", "js"],
+      matchDepNames: [
+        "!ruby",
+        "!markdownlint-cli2",
+        "!setup-ruby",
+        "!confluentinc/cp-kafka",
+      ],
+      matchUpdateTypes: ["minor"],
+      schedule: ["before 7am on Monday"],
+    },
+    {
+      groupName: "infra [minor]",
+      matchCategories: ["js"],
+      matchDepNames: ["renovate"],
+      matchUpdateTypes: ["patch", "digest"],
+      schedule: ["before 7am on Monday"],
     },
     {
       matchDepNames: ["ruby"],
