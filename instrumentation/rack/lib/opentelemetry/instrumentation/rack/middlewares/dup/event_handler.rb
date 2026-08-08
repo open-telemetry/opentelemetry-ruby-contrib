@@ -62,7 +62,7 @@ module OpenTelemetry
               span = create_span(parent_context, request)
               span_ctx = OpenTelemetry::Trace.context_with_span(span, parent_context: parent_context)
               rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: span_ctx)
-              request.env[OTEL_TOKEN_AND_SPAN] = [OpenTelemetry::Context.attach(rack_ctx), span]
+              (request.env[OTEL_TOKEN_AND_SPAN] ||= []) << [OpenTelemetry::Context.attach(rack_ctx), span]
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end
@@ -209,9 +209,10 @@ module OpenTelemetry
             end
 
             def detach_context(request)
-              return nil unless request.env[OTEL_TOKEN_AND_SPAN]
+              stack = request.env[OTEL_TOKEN_AND_SPAN]
+              return nil if stack.nil? || stack.empty?
 
-              token, span = request.env[OTEL_TOKEN_AND_SPAN]
+              token, span = stack.pop
               span.finish
               OpenTelemetry::Context.detach(token)
             rescue StandardError => e
