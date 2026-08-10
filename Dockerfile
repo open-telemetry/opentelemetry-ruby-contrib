@@ -1,4 +1,4 @@
-FROM ruby:3.3.12-alpine3.23@sha256:11da101dfad607c6193a921abc815c989bc9f19b43f5f686bbcc7d424298d596 as ruby
+FROM ruby:3.3.12-slim@sha256:65bce1aa8dfc8758b8fadc4629a91d4cf621784b8dfb5fed265d6ed52b0a0fb3 as ruby
 
 # Metadata
 LABEL maintainer="open-telemetry/opentelemetry-ruby-contrib"
@@ -17,29 +17,32 @@ ARG PACKAGES="\
     automake \
     bash \
     binutils \
-    build-base \
+    build-essential \
+    ca-certificates \
     coreutils  \
     execline \
     findutils \
     git \
     grep \
     less \
-    libstdc++ \
+    libstdc++6 \
     libtool \
     libxml2-dev \
-    libxslt-dev \
-    mariadb-dev \
-    sqlite-dev \
+    libxslt1-dev \
+    default-libmysqlclient-dev \
+    libsqlite3-dev \
     openssl \
-    postgresql-dev \
+    libpq-dev \
+    pkg-config \
     tzdata \
     util-linux \
     imagemagick \
     "
 # Install packages
-RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache ${PACKAGES}
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends ${PACKAGES} && \
+    rm -rf /var/lib/apt/lists/*
 
 # Configure Bundler and PATH
 ENV LANG=C.UTF-8 \
@@ -58,8 +61,8 @@ RUN gem update --system && \
     gem cleanup
 
 # Add custom app User and Group
-RUN addgroup -S -g "${APP_GID}" "${APP_GROUP}" && \
-    adduser -S -g "${APP_GROUP}" -u "${APP_UID}" "${APP_USER}"
+RUN groupadd --system --gid "${APP_GID}" "${APP_GROUP}" && \
+    useradd --system --no-create-home -d "${APP_DIR}" --uid "${APP_UID}" --gid "${APP_GROUP}" --shell /bin/bash "${APP_USER}"
 
 # Create directories for the app code
 RUN mkdir -p "${APP_DIR}" \
