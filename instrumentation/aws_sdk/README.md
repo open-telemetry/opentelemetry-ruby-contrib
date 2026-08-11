@@ -94,7 +94,6 @@ When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify whic
 - `database/dup` - Emits both the old and stable database and networking conventions, enabling a phased rollout of the stable semantic conventions.
 - Default behavior (in the absence of either value) is to continue emitting the old database and networking conventions the instrumentation previously emitted.
 
-During the transition from old to stable conventions, aws-sdk instrumentation code comes in three patch versions: `dup`, `old`, and `stable`. These versions are identical except for the attributes they send. Any changes to aws-sdk instrumentation should consider all three patches.
 
 For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/).
 
