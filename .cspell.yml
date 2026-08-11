@@ -72,6 +72,7 @@ ignoreWords:
   - Dockerfiles
   - autodiscover
 words:
+  - artipacked
   - AWSXRayTrace
   - AWSXRaySamplingClient
   - AWSXRayRemoteSampler
@@ -88,6 +89,7 @@ words:
   - traceparent
   - traceresponse
   - tracestate
+  - zizmor
 
   - linkspector
   - sarif
