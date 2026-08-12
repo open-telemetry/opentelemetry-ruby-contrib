@@ -290,7 +290,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
           client.describe_table(table_name: 'TestTable')
 
           _(describe_table_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
-          _(describe_table_span.attributes['db.system.name']).must_equal('dynamodb')
+          _(describe_table_span.attributes['db.system.name']).must_equal('aws.dynamodb')
           _(describe_table_span.attributes['db.operation.name']).must_equal('DescribeTable')
           _(describe_table_span.attributes['db.collection.name']).must_equal('TestTable')
         end
