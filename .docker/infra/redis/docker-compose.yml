@@ -1,6 +1,6 @@
 services:
   redis:
-    image: redis:8.8.0@sha256:2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32
+    image: redis:8.10.0@sha256:344e3945a0b431c8ff1eecd58c5573538126bd756f02fc7e218ddf1fc2546366
     environment:
       REDIS_PASSWORD: passw0rd
     ports:
