@@ -8,11 +8,8 @@ require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
-require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
-
-Minitest.autorun = false
 
 # Monkey-patch webmock to support HTTP.rb's 6.0+ keyword arguments
 if defined?(HTTP::Response) && defined?(WebMock::HttpLibAdapters::HttpRbAdapter)
