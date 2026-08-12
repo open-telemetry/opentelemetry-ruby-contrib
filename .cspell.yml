@@ -73,6 +73,7 @@ ignoreWords:
   - Dockerfiles
   - autodiscover
 words:
+  - artipacked
   - AWSXRayTrace
   - AWSXRaySamplingClient
   - AWSXRayRemoteSampler
