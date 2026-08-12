@@ -5,7 +5,3 @@
     gem 'concurrent-ruby', "~> #{version}"
   end
 end
-
-appraise 'concurrent-ruby-latest' do
-  gem 'concurrent-ruby'
-end

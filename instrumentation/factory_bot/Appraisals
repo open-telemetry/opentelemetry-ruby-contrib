@@ -14,10 +14,8 @@ appraise 'factory_bot-5' do
   gem 'activesupport', '~> 6.0' # factory_bot 5 requires activesupport < 7 on Ruby 3.4+
 end
 
-appraise 'factory_bot-6' do
-  gem 'factory_bot', '~> 6.0'
-end
-
-appraise 'factory_bot-latest' do
-  gem 'factory_bot'
+%w[6.0.0 6.6.0].each do |version|
+  appraise "factory_bot-#{version}" do
+    gem 'factory_bot', "~> #{version}"
+  end
 end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
-appraise 'mysql2-latest' do
-  gem 'mysql2'
+%w[0.5.0 0.5.7].each do |version|
+  appraise "mysql2-#{version}" do
+    gem 'mysql2', "~> #{version}"
+  end
 end

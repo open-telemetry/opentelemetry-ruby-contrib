@@ -9,7 +9,3 @@
     gem 'rails', "~> #{version}"
   end
 end
-
-appraise 'action_pack-latest' do
-  gem 'rails'
-end
