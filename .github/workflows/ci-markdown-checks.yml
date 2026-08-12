@@ -148,6 +148,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dotenv_linter_flags: --recursive
+          fail_level: warning
 
   spelling-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
