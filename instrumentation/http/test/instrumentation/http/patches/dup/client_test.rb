@@ -21,6 +21,8 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
   let(:span_name_formatter) { nil }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
+
     ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
     exporter.reset
     @orig_propagation = OpenTelemetry.propagation

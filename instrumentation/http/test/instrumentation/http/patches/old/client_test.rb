@@ -21,6 +21,8 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client do
   let(:span_name_formatter) { nil }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
+
     ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'old'
     exporter.reset
     @orig_propagation = OpenTelemetry.propagation
