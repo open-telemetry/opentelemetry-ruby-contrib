@@ -51,6 +51,6 @@ end
 
 %w[dup stable old].each do | stability |
   ENV['BUNDLE_GEMFILE'] = stability
-  put "Running #{ENV[BUNDLE_GEMFILE]} tests..."
+  put "Running #{ENV['BUNDLE_GEMFILE']} tests..."
   Minitest.run
 end
