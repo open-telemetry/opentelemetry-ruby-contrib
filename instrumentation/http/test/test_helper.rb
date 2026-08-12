@@ -8,8 +8,7 @@ require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
-require "minitest"
-require "minitest/spec"
+require "minitest/autorun"
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
@@ -49,10 +48,4 @@ OpenTelemetry::SDK.configure do |c|
   c.error_handler = ->(exception:, message:) { raise(exception || message) }
   c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
   c.add_span_processor span_processor
-end
-
-%w[dup stable old].each do |stability|
-  ENV['BUNDLE_GEMFILE'] = stability
-  puts "Running #{ENV.fetch('BUNDLE_GEMFILE', nil)} tests..."
-  Minitest.run
 end
