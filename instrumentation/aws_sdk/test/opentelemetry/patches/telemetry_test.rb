@@ -256,7 +256,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         it 'creates a span with stable dynamodb-specific attributes' do
           client.list_tables
 
-          _(client_span.attributes['db.system.name']).must_equal('dynamodb')
+          _(client_span.attributes['db.system.name']).must_equal('aws.dynamodb')
           _(client_span.attributes['db.operation.name']).must_equal('ListTables')
           _(client_span.attributes).wont_include(otel_semantic::DB_SYSTEM)
           _(client_span.attributes).wont_include('db.collection.name')
@@ -265,7 +265,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         it 'includes db.collection.name when table_name is present' do
           client.describe_table(table_name: 'TestTable')
 
-          _(describe_table_span.attributes['db.system.name']).must_equal('dynamodb')
+          _(describe_table_span.attributes['db.system.name']).must_equal('aws.dynamodb')
           _(describe_table_span.attributes['db.operation.name']).must_equal('DescribeTable')
           _(describe_table_span.attributes['db.collection.name']).must_equal('TestTable')
         end
@@ -281,7 +281,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
           client.list_tables
 
           _(client_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
-          _(client_span.attributes['db.system.name']).must_equal('dynamodb')
+          _(client_span.attributes['db.system.name']).must_equal('aws.dynamodb')
           _(client_span.attributes['db.operation.name']).must_equal('ListTables')
           _(client_span.attributes).wont_include('db.collection.name')
         end

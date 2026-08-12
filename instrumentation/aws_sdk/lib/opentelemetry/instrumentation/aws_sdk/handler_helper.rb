@@ -78,12 +78,12 @@ module OpenTelemetry
 
             case semconv_mode
             when :stable
-              attrs['db.system.name'] = 'dynamodb'
+              attrs['db.system.name'] = 'aws.dynamodb'
               attrs['db.operation.name'] = context.operation.name
               attrs['db.collection.name'] = table_name if table_name
             when :dup
               attrs[SemanticConventions::Trace::DB_SYSTEM] = 'dynamodb'
-              attrs['db.system.name'] = 'dynamodb'
+              attrs['db.system.name'] = 'aws.dynamodb'
               attrs['db.operation.name'] = context.operation.name
               attrs['db.collection.name'] = table_name if table_name
             else # :old (default)
