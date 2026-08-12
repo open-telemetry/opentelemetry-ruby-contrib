@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'simplecov'
-require 'active_support/inflector'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
