@@ -9,10 +9,9 @@
 # HTTP gem versions. For more information on the semantic convention modes, see:
 # https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
-semconv_stability = %w[dup stable old]
 
-semconv_stability.each do |mode|
-  appraise "http-latest-#{mode}" do
-    gem 'http'
+%w[5.0.0 6.0.4].each do |version|
+  appraise "http-#{version}" do
+    gem 'http', "~> #{version}"
   end
 end

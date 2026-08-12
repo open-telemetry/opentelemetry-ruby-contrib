@@ -12,6 +12,8 @@ require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
+Minitest.autorun = false
+
 # Monkey-patch webmock to support HTTP.rb's 6.0+ keyword arguments
 if defined?(HTTP::Response) && defined?(WebMock::HttpLibAdapters::HttpRbAdapter)
   module HTTP
@@ -48,4 +50,10 @@ OpenTelemetry::SDK.configure do |c|
   c.error_handler = ->(exception:, message:) { raise(exception || message) }
   c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
   c.add_span_processor span_processor
+end
+
+%w[dup stable old].each do | stability |
+  ENV['BUNDLE_GEMFILE'] = stability
+  put "Running #{ENV[BUNDLE_GEMFILE]} tests..."
+  Minitest.run
 end
