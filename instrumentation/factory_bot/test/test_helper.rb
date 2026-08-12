@@ -5,12 +5,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'simplecov'
+require 'active_support/inflector'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
 require 'active_support/core_ext/time'
 require 'active_support/core_ext/hash/indifferent_access'
-require "active_support/inflector"
 require 'factory_bot'
 require 'opentelemetry/sdk'
 require 'opentelemetry-test-helpers'
