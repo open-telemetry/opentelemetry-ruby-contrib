@@ -16,11 +16,8 @@ semconv_stability.each do |stability|
     end
   end
 
-  appraise "redis-5.x-#{stability}" do
-    gem 'redis', '~> 5.0'
-  end
-
-  appraise "redis-latest-#{stability}" do
-    gem 'redis'
+%w[5.0.0 5.4.1].each do |version|
+  appraise "redis-#{version}" do
+    gem 'redis', "~> #{version}"
   end
 end
