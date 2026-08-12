@@ -49,8 +49,8 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor span_processor
 end
 
-%w[dup stable old].each do | stability |
+%w[dup stable old].each do |stability|
   ENV['BUNDLE_GEMFILE'] = stability
-  put "Running #{ENV['BUNDLE_GEMFILE']} tests..."
+  puts "Running #{ENV.fetch('BUNDLE_GEMFILE', nil)} tests..."
   Minitest.run
 end
