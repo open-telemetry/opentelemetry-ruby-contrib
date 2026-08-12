@@ -8,6 +8,8 @@ require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
+require "minitest"
+require "minitest/spec"
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
