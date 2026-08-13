@@ -60,8 +60,8 @@ read it before contributing.
   (`opentelemetry-instrumentation-<name>`)
 - `resources/<name>/` — resource detector gems
 - `propagator/<name>/` — context propagator gems
-- `sampler/xray/` — `opentelemetry-sampler-xray`
-- `processor/baggage/` — span processor gem
+- `sampler/<name>/` — sampler gems
+- `processor/<name>` — span/log processor gem
 - `helpers/<name>/` — shared helper gems (`opentelemetry-helpers-<name>`)
 
 Each gem is self-contained with its own `Gemfile`, `.gemspec`, `Rakefile`,
@@ -82,7 +82,7 @@ says otherwise:
    diff focused.
 5. Update documentation (`README.md`, YARD comments, `examples/`) while the
    context is fresh.
-6. Update the affected gem's `CHANGELOG.md` for user-visible changes.
+6. Do not update the affected gem's `CHANGELOG.md`. Instead, write or suggest a conventional commit message that can be used as the title of the pull request, which will eventually become the changelog entry.
 7. Run the verification commands below before considering the work complete.
 
 For docs-only, test-only, or review-only tasks, skip the steps that do not apply
@@ -164,14 +164,13 @@ When authoring or editing instrumentation, follow the
   `README.md`.
 - Avoid `type: :callable` options that execute user code in the critical path.
 
-## Documentation and changelog
+## Documentation
 
 - Instrumentation-specific config options must be documented in both the
   `README.md` and YARD class comments.
 - Semantic conventions used by an instrumentation must be documented in its
   `README.md`.
 - Provide runnable `examples/` for new instrumentation.
-- For user-visible changes, add an entry to the affected gem's `CHANGELOG.md`.
 - Use YARD type annotations and Markdown in documentation comments.
 
 ## Commits and pull requests
