@@ -37,15 +37,10 @@ The instrumentation accepts the following configuration options:
 | Option | Default | Description |
 | --- | --- | --- |
 | `:capture_content` | `false` | Captures the content of prompts and responses (chat messages, inputs, prompts, and tool call arguments) as structured `gen_ai` log records emitted through the OpenTelemetry Logs API. Disabled by default to avoid recording potentially sensitive data. This option is overridden at install time by the `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable. |
-| `:allowed_operation` | `["chat", "completions", "embeddings"]` | The list of OpenAI operations to instrument. Only requests whose resolved operation name is included here produce spans; all other operations pass through untouched. |
+| `:allowed_operations` | `["chat", "completions", "embeddings"]` | The list of OpenAI operations to instrument. Only requests whose resolved operation name is included here produce spans; all other operations pass through untouched. |
 
 Options are passed to `use` in the SDK configuration:
 
-```ruby
-OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::OpenAI', {
-    capture_content: true,
-    allowed_operation: %w[chat completions embeddings]
   }
 end
 ```

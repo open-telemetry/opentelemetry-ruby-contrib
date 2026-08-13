@@ -22,8 +22,8 @@ module OpenTelemetry
           def request(req)
             operation_name = determine_operation_name(req)
 
-            # Only instrument implemented/tested OpenAI operation
-            return super unless config[:allowed_operation].include? operation_name
+            # Only instrument implemented/tested OpenAI operations
+            return super unless config[:allowed_operations].include? operation_name
 
             model      = (req[:body][:model] || req[:body]['model']).to_s if req[:body].is_a? Hash
             span_name  = model.empty? ? operation_name : "#{operation_name} #{model}"
@@ -167,7 +167,7 @@ module OpenTelemetry
             attributes.merge!(embeddings_attributes)
           end
 
-          # Log request content for debugging/monitoring
+          # Create event with request content if enabled
           def log_request_content(span, req)
             body = req[:body]
             return unless body.is_a?(Hash)

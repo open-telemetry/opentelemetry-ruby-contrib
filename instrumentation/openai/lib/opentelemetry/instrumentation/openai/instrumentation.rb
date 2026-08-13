@@ -10,7 +10,7 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the openai instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('0.35.2')
-        ALLOWED_OPERATION = %w[chat completions embeddings].freeze
+        ALLOWED_OPERATIONS = %w[chat completions embeddings].freeze
 
         install do |_config|
           require_dependencies
@@ -39,9 +39,9 @@ module OpenTelemetry
 
         # The list of OpenAI operations to instrument. Only requests whose resolved
         # operation name is included here produce spans; all other operations pass
-        # through untouched. Defaults to ALLOWED_OPERATION (chat, completions,
+        # through untouched. Defaults to ALLOWED_OPERATIONS (chat, completions,
         # embeddings), the operations currently implemented and tested.
-        option :allowed_operation, default: ALLOWED_OPERATION, validate: :array
+        option :allowed_operations, default: ALLOWED_OPERATIONS, validate: :array
 
         private
 
