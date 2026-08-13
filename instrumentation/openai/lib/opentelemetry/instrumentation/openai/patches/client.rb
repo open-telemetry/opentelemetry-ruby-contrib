@@ -25,7 +25,7 @@ module OpenTelemetry
             # Only instrument implemented/tested OpenAI operations
             return super unless config[:allowed_operations].include? operation_name
 
-            model      = get_property_value(req[:body], 'kkasdfds')
+            model      = get_property_value(req[:body], 'model')
             span_name  = model.to_s.empty? ? operation_name : "#{operation_name} #{model}"
             attributes = extract_request_attributes(req, operation_name, model)
 

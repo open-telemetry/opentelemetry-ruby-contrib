@@ -115,19 +115,19 @@ demo_section('Basic Chat Completion') do
   puts "Usage: #{response[:usage]}" if response
 end
 
-# demo_section('Streaming Chat Completion') do
-#   messages = [{ role: 'user', content: 'Count from 1 to 5.' }]
-#   print 'Response: '
-#   client.chat_completion_stream(messages) do |content, finish_reason|
-#     print content if content
-#     puts "\nFinish reason: #{finish_reason}" if finish_reason
-#   end
-# end
+demo_section('Streaming Chat Completion') do
+  messages = [{ role: 'user', content: 'Count from 1 to 5.' }]
+  print 'Response: '
+  client.chat_completion_stream(messages) do |content, finish_reason|
+    print content if content
+    puts "\nFinish reason: #{finish_reason}" if finish_reason
+  end
+end
 
-# demo_section('Single Text Embedding') do
-#   response = client.create_embedding('Ruby is a dynamic programming language.')
-#   if response
-#     puts "Embedding dimensions: #{response[:embedding].length}"
-#     puts "Usage: #{response[:usage]}"
-#   end
-# end
+demo_section('Single Text Embedding') do
+  response = client.create_embedding('Ruby is a dynamic programming language.')
+  if response
+    puts "Embedding dimensions: #{response[:embedding].length}"
+    puts "Usage: #{response[:usage]}"
+  end
+end
