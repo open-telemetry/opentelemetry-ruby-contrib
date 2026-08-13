@@ -293,9 +293,9 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
     end
   end
 
-  # Images generation is not in the default allowed_operation list
-  # These tests are skipped. To enable, add 'images.generate' to allowed_operation config
-  describe 'images generation via client.request (skipped - not in allowed_operation)' do
+  # Images generation is not in the default allowed_operations list
+  # These tests are skipped. To enable, add 'images.generate' to allowed_operations config
+  describe 'images generation via client.request (skipped - not in allowed_operations)' do
     let(:response_body) do
       {
         created: 1_677_652_288,
