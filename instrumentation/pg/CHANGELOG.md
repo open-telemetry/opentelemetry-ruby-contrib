@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+## v0.37.0 / 2026-08-05
+
+- ADDED: Add returned and affected rows attributes (#2410)
+
 ## v0.36.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)

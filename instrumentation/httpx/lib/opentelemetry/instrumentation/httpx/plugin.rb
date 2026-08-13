@@ -9,43 +9,38 @@ module OpenTelemetry
     module HTTPX
       # Base Plugin
       module Plugin
-        # Request patch to initiate the trace on initialization.
-        module RequestMethods
-          attr_accessor :init_time
-
-          # intercepts request initialization to inject the tracing logic.
-          def initialize(*)
-            super
-
-            @init_time = nil
-
-            RequestTracer.call(self)
-          end
-
-          def response=(*)
-            # init_time should be set when it's send to a connection.
-            # However, there are situations where connection initialization fails.
-            # Example is the :ssrf_filter plugin, which raises an error on
-            # initialize if the host is an IP which matches against the known set.
-            # in such cases, we'll just set here right here.
-            @init_time ||= ::Time.now
-
-            super
-          end
+        # loads httpx tracing plugin
+        def self.load_dependencies(klass)
+          klass.plugin(:tracing)
         end
 
-        # Connection mixin
-        module ConnectionMethods
-          def initialize(*)
-            super
+        # Request patch to initiate the trace on initialization.
+        module RequestMethods
+          attr_accessor :otel_span
+        end
 
-            @init_time = ::Time.now
+        # base request tracer
+        module RequestTracer
+          # whether tracing is enabled
+          def enabled?(request)
+            true
           end
 
-          def send(request)
-            request.init_time ||= @init_time
+          # on request started callback
+          def start(request)
+            request.otel_span = initialize_span(request)
+          end
 
-            super
+          # on request reset callback
+          def reset(request)
+            request.otel_span = nil
+          end
+
+          # on request finished callback
+          def finish(request, response)
+            request.otel_span ||= initialize_span(request, request.init_time) if request.init_time
+
+            finish_span(response, request.otel_span)
           end
         end
       end
