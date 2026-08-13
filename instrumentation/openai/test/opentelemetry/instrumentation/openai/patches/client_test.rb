@@ -81,7 +81,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.response.finish_reasons']).must_equal ['stop']
       _(client_span.attributes['gen_ai.usage.input_tokens']).must_equal 10
       _(client_span.attributes['gen_ai.usage.output_tokens']).must_equal 20
-      _(client_span.attributes['gen_ai.usage.total_tokens']).must_equal 30
       _(client_span.attributes['gen_ai.usage.cache_read.input_tokens']).must_equal 5
       _(client_span.attributes['gen_ai.usage.reasoning.output_tokens']).must_equal 8
     end
@@ -231,7 +230,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.response.model']).must_equal 'text-embedding-ada-002-v2'
       _(client_span.attributes['gen_ai.embeddings.dimension.count']).must_equal 1536
       _(client_span.attributes['gen_ai.usage.input_tokens']).must_equal 10
-      _(client_span.attributes['gen_ai.usage.total_tokens']).must_equal 10
     end
 
     it 'captures embedding input content when enabled' do

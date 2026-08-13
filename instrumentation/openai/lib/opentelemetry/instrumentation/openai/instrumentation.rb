@@ -15,6 +15,7 @@ module OpenTelemetry
         install do |_config|
           require_dependencies
           determine_the_content_mode
+          create_logger
           patch_client
         end
 
@@ -43,6 +44,8 @@ module OpenTelemetry
         # embeddings), the operations currently implemented and tested.
         option :allowed_operations, default: ALLOWED_OPERATIONS, validate: :array
 
+        attr_reader :logger
+
         private
 
         def gem_version
@@ -56,6 +59,10 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'patches/client'
+        end
+
+        def create_logger
+          @logger = OpenTelemetry.logger_provider.logger(name: NAME, version: VERSION)
         end
 
         def patch_client

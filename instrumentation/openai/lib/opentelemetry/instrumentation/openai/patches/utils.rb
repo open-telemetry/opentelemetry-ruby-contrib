@@ -114,12 +114,7 @@ module OpenTelemetry
 
           # Emits a structured log record through the OpenTelemetry Logs API.
           def log_structured_event(event)
-            logger = OpenTelemetry.logger_provider.logger(
-              name: OpenTelemetry::Instrumentation::OpenAI::NAME,
-              version: OpenTelemetry::Instrumentation::OpenAI::VERSION
-            )
-
-            logger.on_emit(
+            OpenAI::Instrumentation.instance.logger.on_emit(
               timestamp: Time.now,
               severity_text: 'INFO',
               severity_number: OpenTelemetry::Logs::SeverityNumber::SEVERITY_NUMBER_INFO,

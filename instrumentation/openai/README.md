@@ -2,6 +2,8 @@
 
 The OpenAI instrumentation is a community-maintained instrumentation for the [OpenAI][openai-home] gem.
 
+Attributes and events follow the [OpenTelemetry Semantic Conventions for Generative AI][semconv-genai], pinned to core semantic conventions version `1.44.0`.
+
 ## How do I get started?
 
 Install the gem using:
@@ -41,6 +43,11 @@ The instrumentation accepts the following configuration options:
 
 Options are passed to `use` in the SDK configuration:
 
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::OpenAI', {
+    capture_content: true,
+    allowed_operations: %w[chat completions embeddings]
   }
 end
 ```
@@ -50,6 +57,14 @@ environment variable:
 
 ```console
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
+```
+
+## Examples
+
+See [example/trace_demonstration.rb][example-github] for a runnable example that instruments chat completion, streaming, and embeddings requests and prints spans and log records to the console. Set the `OPENAI_API_KEY` environment variable before running it.
+
+```sh
+OPENAI_API_KEY=<openai_api_key> ruby trace_demonstration.rb
 ```
 
 ## How can I get involved?
@@ -70,3 +85,5 @@ The `opentelemetry-instrumentation-openai` gem is distributed under the Apache 2
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[semconv-genai]: https://github.com/open-telemetry/semantic-conventions-genai
+[example-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/openai/example/trace_demonstration.rb

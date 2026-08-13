@@ -25,15 +25,15 @@ module OpenTelemetry
             # Only instrument implemented/tested OpenAI operations
             return super unless config[:allowed_operations].include? operation_name
 
-            model      = (req[:body][:model] || req[:body]['model']).to_s if req[:body].is_a? Hash
-            span_name  = model.empty? ? operation_name : "#{operation_name} #{model}"
+            model      = get_property_value(req[:body], 'kkasdfds')
+            span_name  = model.to_s.empty? ? operation_name : "#{operation_name} #{model}"
             attributes = extract_request_attributes(req, operation_name, model)
 
             # For streaming, start span manually so it stays open during iteration
             # Stream mode return OpenAI::Internal::Stream[OpenAI::Models::Chat::ChatCompletionChunk]
             if req[:stream]
               span = tracer.start_span(span_name, attributes: attributes, kind: :client)
-              log_request_content(span, req) if config[:capture_content]
+              log_request_content(span, req)
 
               start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
               response = super
@@ -47,7 +47,7 @@ module OpenTelemetry
               kind: :client
             ) do |span|
               # Log request details if content capture is enabled and
-              log_request_content(span, req) if config[:capture_content]
+              log_request_content(span, req)
 
               response = super
               handle_response(span, response, req)
@@ -169,35 +169,17 @@ module OpenTelemetry
 
           # Create event with request content if enabled
           def log_request_content(span, req)
+            return unless config[:capture_content]
+
             body = req[:body]
             return unless body.is_a?(Hash)
 
-            if body[:messages].is_a?(Array)
-              body[:messages].each do |message|
-                event = message_to_log_event(message, capture_content: true)
-                log_structured_event(event)
-              end
-            end
+            return unless body[:messages].is_a?(Array)
 
-            if body[:input]
-              input_text = body[:input].is_a?(Array) ? body[:input].join(', ') : body[:input].to_s
-              event = {
-                event_name: 'gen_ai.user.message',
-                attributes: { 'gen_ai.provider.name' => 'openai' },
-                body: { content: input_text }
-              }
+            body[:messages].each do |message|
+              event = message_to_log_event(message, capture_content: true)
               log_structured_event(event)
             end
-
-            return unless body[:prompt]
-
-            prompt_text = body[:prompt].is_a?(Array) ? body[:prompt].join(', ') : body[:prompt].to_s
-            event = {
-              event_name: 'gen_ai.user.message',
-              attributes: { 'gen_ai.provider.name' => 'openai' },
-              body: { content: prompt_text }
-            }
-            log_structured_event(event)
           end
 
           # Handle different response types and extract telemetry data
@@ -256,7 +238,6 @@ module OpenTelemetry
             usage_attributes = {
               'gen_ai.usage.input_tokens' => usage.respond_to?(:prompt_tokens) ? usage.prompt_tokens : nil,
               'gen_ai.usage.output_tokens' => usage.respond_to?(:completion_tokens) ? usage.completion_tokens : nil,
-              'gen_ai.usage.total_tokens' => usage.respond_to?(:total_tokens) ? usage.total_tokens : nil,
               'gen_ai.usage.cache_read.input_tokens' => prompt_tokens_details.respond_to?(:cached_tokens) ? prompt_tokens_details.cached_tokens : nil,
               'gen_ai.usage.reasoning.output_tokens' => completion_tokens_details.respond_to?(:reasoning_tokens) ? completion_tokens_details.reasoning_tokens : nil
             }.compact
