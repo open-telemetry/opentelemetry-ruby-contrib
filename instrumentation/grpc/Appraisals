@@ -4,10 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'grpc-1.76' do
-  gem 'grpc', '~> 1.76.0'
-end
-
-appraise 'grpc-latest' do
-  gem 'grpc'
+%w[1.76.0 1.83.0].each do |version|
+  appraise "grpc-#{version}" do
+    gem 'grpc', "~> #{version}"
+  end
 end
