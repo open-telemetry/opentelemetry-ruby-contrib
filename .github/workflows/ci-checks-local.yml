@@ -80,9 +80,9 @@ jobs:
         with:
           env: |
             lsconfig="-c .github/.linkspector-local_check.yml"
+            BUNDLE_PATH=/app/vendor/bundle
           runCmd: |
             npm ci --ignore-scripts
             npx puppeteer browsers install chrome
-            bundle config set --local path '/app/vendor/bundle'
             bundle install
             npm run check
