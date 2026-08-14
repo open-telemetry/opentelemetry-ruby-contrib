@@ -3,7 +3,8 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-appraise 'koala-latest' do
-  gem 'koala'
-  gem 'faraday'
+%w[3.6.0 3.7.0].each do |version|
+  appraise "koala-#{version}" do
+    gem 'koala', "~> #{version}"
+  end
 end
