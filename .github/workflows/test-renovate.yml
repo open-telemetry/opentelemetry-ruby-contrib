@@ -1,0 +1,46 @@
+name: Test / Renovate
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/test-renovate.yml"
+      - ".github/renovate.json5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }} # Ensure that only one instance of this workflow is running per event type and ref
+  cancel-in-progress: true # Cancel any previous runs of this workflow for the same event type and ref
+
+jobs:
+  automated-checks:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    strategy:
+      fail-fast: false
+    name: Dry-run
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: Install Tools
+        run: npm ci --ignore-scripts
+
+      - name: Run Dry-run
+        env:
+          LOG_LEVEL: debug
+          RENOVATE_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          RENOVATE_GITHUB_COM_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          npm run test:renovate:dryrun

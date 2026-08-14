@@ -235,5 +235,3 @@ unless ENV['OMIT_SERVICES']
     end
   end
 end
-
-# rubocop:enable Lint/SuppressedException

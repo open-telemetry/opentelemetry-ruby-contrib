@@ -72,8 +72,8 @@ describe OpenTelemetry::Sampler::XRay::SamplingRule do
       'Version' => 1
     )
 
-    assert_equal true, rule.equals?(rule_unordered_attributes)
-    assert_equal false, rule.equals?(rule_updated)
-    assert_equal false, rule.equals?(rule_updated_two)
+    assert rule.equals?(rule_unordered_attributes)
+    refute rule.equals?(rule_updated)
+    refute rule.equals?(rule_updated_two)
   end
 end

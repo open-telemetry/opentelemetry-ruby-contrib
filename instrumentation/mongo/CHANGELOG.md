@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+## v0.26.0 / 2026-04-14
+
+- ADDED: Add release tag into source code url of gem metadata (#1984)
+
 ## v0.25.1 / 2026-03-24
 
 - FIXED: Constrain mongo to versions lacking native otel (#2119)

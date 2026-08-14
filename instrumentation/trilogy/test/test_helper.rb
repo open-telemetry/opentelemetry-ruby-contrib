@@ -4,7 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-ENV['OTEL_LOG_LEVEL'] ||= 'fatal'
+require 'dotenv'
+Dotenv.load('.env', '../.env')
 
 require 'simplecov'
 require 'bundler/setup'
