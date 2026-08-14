@@ -9,7 +9,3 @@
     gem 'activesupport', "~> #{version}"
   end
 end
-
-appraise 'activesupport-latest' do
-  gem 'activesupport'
-end

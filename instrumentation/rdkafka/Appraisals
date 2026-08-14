@@ -9,7 +9,3 @@
     gem 'rdkafka', "~> #{version}"
   end
 end
-
-appraise 'rdkafka-latest' do
-  gem 'rdkafka'
-end
