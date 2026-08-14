@@ -29,7 +29,7 @@ ARG PACKAGES="\
     libxml2-dev \
     libxslt-dev \
     mariadb-dev \
-    node \
+    nodejs \
     npm \
     sqlite-dev \
     openssl \

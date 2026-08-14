@@ -5,10 +5,12 @@ on:
     branches:
       - main
     paths:
+      - "Dockerfile"
       - "package.json"
       - "package-lock.json"
       - "Gemfile"
       - "Gemfile.lock"
+      - ".devcontainer/**"
       - ".github/workflows/ci-checks-local.yml"
   merge_group:
 
