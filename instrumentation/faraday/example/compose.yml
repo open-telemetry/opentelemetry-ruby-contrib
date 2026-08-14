@@ -1,0 +1,6 @@
+services:
+  ex-instrumentation-faraday:
+    extends:
+      service: base
+      file: ./../../../docker-base.yml
+    working_dir: /app/instrumentation/faraday/example

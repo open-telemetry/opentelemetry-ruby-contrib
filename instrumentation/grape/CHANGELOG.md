@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-grape
 
+## v0.7.1 / 2026-07-14
+
+- FIXED: Detect code namespace for API instance endpoints (#2407)
+
 ## v0.7.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
