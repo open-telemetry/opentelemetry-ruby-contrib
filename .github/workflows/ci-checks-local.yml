@@ -83,6 +83,5 @@ jobs:
             BUNDLE_PATH=/app/vendor/bundle
           runCmd: |
             npm ci --ignore-scripts
-            npx puppeteer browsers install chrome
             bundle install
             npm run check
