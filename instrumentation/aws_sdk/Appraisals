@@ -4,29 +4,40 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'aws-sdk-3' do
-  gem 'aws-sdk-core', '~> 3'
-  gem 'aws-sdk-lambda', '~> 1'
-  gem 'aws-sdk-dynamodb', '~> 1'
-  gem 'aws-sdk-sns', '~> 1'
-  gem 'aws-sdk-sqs', '~> 1'
-end
+# To facilitate database semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/
 
-# pre-Observability support in V3 SDK
-appraise 'aws-sdk-3.202' do
-  gem 'aws-sdk-core', '~> 3.202'
-  gem 'aws-sdk-lambda', '~> 1.127'
-  gem 'aws-sdk-dynamodb', '~> 1.118'
-  gem 'aws-sdk-sns', '~> 1.82'
-  gem 'aws-sdk-sqs', '~> 1.80'
+semconv_modes = %w[old stable dup]
+
+semconv_modes.each do |mode|
+  appraise "aws-sdk-3-#{mode}" do
+    gem 'aws-sdk-core', '~> 3'
+    gem 'aws-sdk-lambda', '~> 1'
+    gem 'aws-sdk-dynamodb', '~> 1'
+    gem 'aws-sdk-sns', '~> 1'
+    gem 'aws-sdk-sqs', '~> 1'
+  end
+
+  # pre-Observability support in V3 SDK
+  appraise "aws-sdk-3.202-#{mode}" do
+    gem 'aws-sdk-core', '~> 3.202'
+    gem 'aws-sdk-lambda', '~> 1.127'
+    gem 'aws-sdk-dynamodb', '~> 1.118'
+    gem 'aws-sdk-sns', '~> 1.82'
+    gem 'aws-sdk-sqs', '~> 1.80'
+  end
 end
 
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
-  appraise 'aws-sdk-2.11' do
-    gem 'aws-sdk', '~> 2.11'
-  end
+  semconv_modes.each do |mode|
+    appraise "aws-sdk-2.11-#{mode}" do
+      gem 'aws-sdk', '~> 2.11'
+    end
 
-  appraise 'aws-sdk-2.0' do
-    gem 'aws-sdk', '~> 2.0'
+    appraise "aws-sdk-2.0-#{mode}" do
+      gem 'aws-sdk', '~> 2.0'
+    end
   end
 end

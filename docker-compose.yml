@@ -18,16 +18,10 @@ services:
     working_dir: /app
     environment:
       - MEMCACHED_URL=memcached:11211
-      - TEST_MYSQL_USER=root
-      - TEST_MYSQL_ROOT_PASSWORD=root
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - TEST_MYSQL_HOST=mysql
-      - TEST_MYSQL_PORT=3306
-      - TEST_MYSQ_DB=mysql
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
       - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
+      - TEST_RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
     depends_on:
       - kafka
       - jaeger
