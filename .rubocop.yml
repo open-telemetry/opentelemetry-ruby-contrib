@@ -1,8 +1,7 @@
 plugins:
   - rubocop-minitest
-  - rubocop-rspec
-  - rubocop-rake
   - rubocop-performance
+  - rubocop-rake
 
 AllCops:
   TargetRubyVersion: 3.3
