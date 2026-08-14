@@ -1,11 +1,22 @@
 # frozen_string_literal: true
 
+# To facilitate database semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/
+
+semconv_stability = %w[old stable dup]
+
 %w[1.6.0].each do |version|
-  appraise "pg-#{version}" do
-    gem 'pg', "~> #{version}"
+  semconv_stability.each do |stability|
+    appraise "pg-#{version.tr('.', '_')}-#{stability}" do
+      gem 'pg', "~> #{version}"
+    end
   end
 end
 
-appraise 'pg-latest' do
-  gem 'pg'
+semconv_stability.each do |stability|
+  appraise "pg-latest-#{stability}" do
+    gem 'pg'
+  end
 end

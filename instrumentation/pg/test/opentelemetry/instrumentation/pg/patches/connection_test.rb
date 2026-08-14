@@ -8,8 +8,9 @@ require 'test_helper'
 require 'pg'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/pg'
-require_relative '../../../../../lib/opentelemetry/instrumentation/pg/patches/connection'
 
+# This test verifies basic patch functionality regardless of semconv mode.
+# It only runs with the 'old' appraisal to avoid duplicating tests across modes.
 describe OpenTelemetry::Instrumentation::PG::Patches do
   let(:instrumentation) { OpenTelemetry::Instrumentation::PG::Instrumentation.instance }
   let(:config) { {} }
@@ -21,6 +22,7 @@ describe OpenTelemetry::Instrumentation::PG::Patches do
   let(:client) { PG::Connection.open(host: host, port: port, user: user, dbname: dbname, password: password) }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE'].include?('old')
     instrumentation.install(config)
   end
 

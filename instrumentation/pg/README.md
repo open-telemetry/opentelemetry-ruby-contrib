@@ -74,6 +74,23 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+## Semantic Conventions
+
+This instrumentation generally uses [Database semantic conventions](https://opentelemetry.io/docs/specs/semconv/database/database-spans/). See the [Database semantic convention stability](#database-semantic-convention-stability) section for how to switch between stable and old conventions.
+
+| Stable Attribute Name | Old Attribute Name | Type | Notes |
+| - | - | - | - |
+| `db.namespace` | `db.name` | String | Database name from connection_options |
+| `db.query.text` | `db.statement` | String | The database query being executed; set according to the `db_statement` config option |
+| `db.response.status_code` | — | String | The PostgreSQL [SQLSTATE](https://www.postgresql.org/docs/current/errcodes-appendix.html) code, set when the error originates from the database and exposes a result |
+| `db.system.name` | `db.system` | String | DBMS product identifier; always `postgresql` |
+| `error.type` | — | String | Set when the operation fails, for any error. Populated with the canonical class name of the raised exception (e.g. `PG::UniqueViolation`) |
+| `server.address` | `net.peer.name` | String | Database host from connection_options |
+| `server.port` | — | Integer | Database port from connection_options |
+| — | `db.instance.id` | String | Connected host, e.g. result of `SELECT @@hostname` |
+| — | `db.user` | String | Database username from connection_options |
+| — | `peer.service` | String | Configured via the `peer_service` config option |
+
 ## Examples
 
 An example of usage can be seen in [`example/pg.rb`](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/pg/example/pg.rb).
@@ -87,6 +104,22 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special int
 ## License
 
 The `opentelemetry-instrumentation-pg` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
+
+## Database semantic convention stability
+
+In the OpenTelemetry ecosystem, database semantic conventions have now reached a stable state. However, the initial PG instrumentation was introduced before this stability was achieved, which resulted in database attributes being based on an older version of the semantic conventions.
+
+To facilitate the migration to stable semantic conventions, you can use the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable. This variable allows you to opt-in to the new stable conventions, ensuring compatibility and future-proofing your instrumentation.
+
+When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
+
+- `database` - Emits the stable database and networking conventions and ceases emitting the old conventions previously emitted by the instrumentation.
+- `database/dup` - Emits both the old and stable database and networking conventions, enabling a phased rollout of the stable semantic conventions.
+- Default behavior (in the absence of either value) is to continue emitting the old database and networking conventions the instrumentation previously emitted.
+
+During the transition from old to stable conventions, PG instrumentation code comes in three patch versions: `dup`, `old`, and `stable`. These versions are identical except for the attributes they send. Any changes to PG instrumentation should consider all three patches.
+
+For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/).
 
 [pg-home]: https://github.com/ged/ruby-pg
 [bundler-home]: https://bundler.io
