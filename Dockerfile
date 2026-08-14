@@ -22,8 +22,10 @@ ARG PACKAGES="\
     coreutils  \
     execline \
     findutils \
+    freetype \
     git \
     grep \
+    harfbuzz \
     less \
     libstdc++ \
     libtool \
@@ -32,6 +34,7 @@ ARG PACKAGES="\
     mariadb-dev \
     nodejs \
     npm \
+    nss \
     sqlite-dev \
     openssl \
     postgresql-dev \
