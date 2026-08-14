@@ -18,6 +18,7 @@ ARG PACKAGES="\
     bash \
     binutils \
     build-base \
+    chromium \
     coreutils  \
     execline \
     findutils \
@@ -53,6 +54,9 @@ ENV BUNDLE_APP_CONFIG="${BUNDLE_PATH}" \
     BUNDLE_BIN="${BUNDLE_PATH}/bin" \
     BUNDLE_GEMFILE=Gemfile
 ENV PATH "${APP_DIR}/bin:${BUNDLE_BIN}:${PATH}"
+
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Upgrade RubyGems and install required Bundler version
 RUN gem update --system && \
