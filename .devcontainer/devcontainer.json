@@ -2,6 +2,7 @@
   "name": "otel-ruby-contrib-devcontainer",
   "dockerComposeFile": ["../docker-compose.yml"],
   "service": "devcontainer",
+  "remoteUser": "app",
 
   "workspaceFolder": "/app",
 
