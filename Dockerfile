@@ -67,8 +67,11 @@ RUN addgroup -S -g "${APP_GID}" "${APP_GROUP}" && \
 RUN mkdir -p "${APP_DIR}" \
     "${APP_DIR}/tmp" && \
     chown -R "${APP_USER}":"${APP_GROUP}" "${APP_DIR}" \
-    "${APP_DIR}/tmp" \
-    "${BUNDLE_PATH}/"
+    "${APP_DIR}/tmp"
+
+RUN mkdir -p "/${BUNDLE_PATH}/ruby" && \
+    chmod -R 775 "${BUNDLE_PATH}" && \
+    chown -R "${APP_USER}":"${APP_GROUP}" "${BUNDLE_PATH}/"
 
 USER "${APP_USER}"
 
