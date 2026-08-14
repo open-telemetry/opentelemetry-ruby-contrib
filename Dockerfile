@@ -69,7 +69,7 @@ RUN mkdir -p "${APP_DIR}" \
     chown -R "${APP_USER}":"${APP_GROUP}" "${APP_DIR}" \
     "${APP_DIR}/tmp"
 
-RUN mkdir -p "/${BUNDLE_PATH}/ruby" && \
+RUN mkdir -p "${BUNDLE_PATH}/ruby" && \
     chmod -R 775 "${BUNDLE_PATH}" && \
     chown -R "${APP_USER}":"${APP_GROUP}" "${BUNDLE_PATH}/"
 
