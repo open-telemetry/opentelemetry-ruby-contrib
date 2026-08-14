@@ -69,9 +69,15 @@ RUN mkdir -p "${APP_DIR}" \
     chown -R "${APP_USER}":"${APP_GROUP}" "${APP_DIR}" \
     "${APP_DIR}/tmp"
 
+# Create directory for bundle
 RUN mkdir -p "${BUNDLE_PATH}/ruby" && \
     chmod -R 775 "${BUNDLE_PATH}" && \
     chown -R "${APP_USER}":"${APP_GROUP}" "${BUNDLE_PATH}/"
+
+# Create directory for node modules
+RUN mkdir -p "${APP_DIR}/node_modules" && \
+    chmod -R 775 "${APP_DIR}/node_modules" && \
+    chown -R "${APP_USER}":"${APP_GROUP}" "${APP_DIR}/node_modules/"
 
 USER "${APP_USER}"
 
