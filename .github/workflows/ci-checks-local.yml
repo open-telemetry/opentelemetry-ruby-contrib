@@ -83,6 +83,6 @@ jobs:
           runCmd: |
             npm ci --ignore-scripts
             npx puppeteer browsers install chrome
-            bundle config --local set path '/app/vendor/bundle'
+            bundle config set --local path '/app/vendor/bundle'
             bundle install
             npm run check
