@@ -67,6 +67,21 @@ module OpenTelemetry
           end
         end
 
+        # Returns the semconv mode based on OTEL_SEMCONV_STABILITY_OPT_IN env var
+        # @return [Symbol] :old, :stable, or :dup
+        def semconv_mode
+          @semconv_mode ||= begin
+            opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+            if opt_in.include?('database/dup')
+              :dup
+            elsif opt_in.include?('database')
+              :stable
+            else
+              :old
+            end
+          end
+        end
+
         private
 
         def resolve_config(config)
