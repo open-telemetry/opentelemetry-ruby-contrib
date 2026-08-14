@@ -6,16 +6,16 @@
 
 %w[1.17.0].each do |version|
   appraise "anthropic-#{version}" do
-    gem 'anthropic', "~> #{version}", platform: :mri
+    gem 'anthropic', "~> #{version}"
   end
 end
 
 appraise 'anthropic-latest' do
-  gem 'anthropic', platform: :mri
+  gem 'anthropic'
 end
 
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
   appraise 'anthropic-1.9.0' do
-    gem 'anthropic', '~> 1.9.0', platform: :mri
+    gem 'anthropic', '~> 1.9.0'
   end
 end
