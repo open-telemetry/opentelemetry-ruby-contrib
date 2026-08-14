@@ -81,5 +81,7 @@ jobs:
           env: |
             lsconfig="-c .github/.linkspector-local_check.yml"
           runCmd: |
-            npm ci --ignore-scripts && npx puppeteer browsers install chrome && bundle install
+            npm ci --ignore-scripts
+            npx puppeteer browsers install chrome
+            bundle install --path /app/vendor/bundle
             npm run check
