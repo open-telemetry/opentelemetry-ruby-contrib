@@ -12,4 +12,3 @@ services:
     user: "1000:1000"
     volumes:
       - .:/app:cached
-      - ./bundle:/bundle:cached

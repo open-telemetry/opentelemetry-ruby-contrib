@@ -32,6 +32,9 @@ services:
       - postgres
       - rabbitmq
       - redis
+    volumes:
+      - .:/app:cached
+      - bundle:/bundle
   devcontainer:
     extends:
       service: base
