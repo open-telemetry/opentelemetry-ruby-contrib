@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  automated-checks:
+  runner-checks:
     strategy:
       fail-fast: false
       matrix:
@@ -62,3 +62,22 @@ jobs:
           npm run check
         env:
           lsconfig: "-c .github/.linkspector-local_check.yml"
+
+  devcontainer-checks:
+    strategy:
+      fail-fast: false
+    name: All / DevContainer
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+  
+      - name: Build and run dev container task
+        uses: devcontainers/ci@513af61f4de4f75d37e4438f184ba4358f0fc1ca # v0.3.1900000450
+        with:
+          env: |
+            lsconfig="-c .github/.linkspector-local_check.yml"
+          runCmd: |
+            npm ci --ignore-scripts && npx puppeteer browsers install chrome && bundle install
+            npm run check
