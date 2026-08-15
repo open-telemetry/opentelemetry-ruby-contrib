@@ -10,7 +10,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'appraisal', '~> 2.5.0'
+  gem 'appraisal2', '~> 3.2.2'
   gem 'google-protobuf', '~> 4.36.0'
   gem 'grpc-tools', '~> 1.83.0'
   gem 'minitest', '~> 6.0.0'

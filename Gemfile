@@ -6,6 +6,7 @@
 
 source 'https://rubygems.org'
 
+gem 'appraisal2', '~> 3.2.2'
 gem 'rake', '>= 13'
 gem 'rubocop', '~> 1.90.0'
 gem 'rubocop-minitest', '~> 0.40.0'
