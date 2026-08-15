@@ -270,19 +270,19 @@ jobs:
 
 If your gem is incompatible with `JRuby`, you can exclude it from JRuby by doing the following.
 
-Adding the below to the gemspec
+Add the below to the gemspec:
 
 ```ruby
 spec.platform    = Gem::Platform::RUBY
 ```
 
-Adding `platform: :mri` next to any dependency in your appraisal which is not supported on jruby ie:
+Add `platform: :mri` next to any dependency in your appraisal which is not supported on JRuby, i.e.:
 
 ```ruby
 gem 'grpc', '~> 1.76.0', platform: :mri
 ```
 
-Lastly so that the ci passes, at the very top of your test helper, add the below to cause the tests to be skipped.
+Lastly, at the very top of your test helper, add the condition below to skip the tests:
 
 ```ruby
 if RUBY_ENGINE == 'jruby'
