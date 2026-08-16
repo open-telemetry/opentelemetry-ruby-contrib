@@ -108,14 +108,17 @@ module OpenTelemetry
             # @param [Rack::Request] The current HTTP request
             # @param [Rack::Response] The current HTTP response
             def on_finish(request, response)
-              span = OpenTelemetry::Instrumentation::Rack.current_span
+              request_context = context_for_request(request)
+              return unless request_context
+
+              _, _, span = request_context
               return unless span.recording?
 
               add_response_attributes(span, response) if response
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             ensure
-              detach_context(request)
+              detach_context(request_context)
             end
 
             private
@@ -198,11 +201,15 @@ module OpenTelemetry
               attributes
             end
 
-            def detach_context(request)
+            def context_for_request(request)
               contexts = request.env[OTEL_CONTEXT_INFO]
               return unless contexts
 
-              request_context = contexts.delete(request)
+              contexts.delete(request)
+            end
+
+            def detach_context(request_context)
+              return unless request_context
 
               original_fiber, token, span = request_context
               span.finish
