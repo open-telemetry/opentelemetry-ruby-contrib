@@ -80,7 +80,7 @@ Gems are encouraged to leverage projects tools (ie rake) and docker services, ra
 ### Local Machine
 
 When developing directly on a local machine,
-you are required to ensure that any necessary dependent servuce is running.
+you are required to ensure that any necessary dependent service is running.
 
 These services when required are defined via, a compose.yml in the test directory.
 As such they can be started by running the below from the gem folder:
@@ -100,6 +100,7 @@ compose build
 ```
 
 This makes the image available locally.
+
 2. Launch the development service via
 
 ```shell
@@ -112,7 +113,7 @@ Once launched you will have a shell to perform development & testing. For testin
 
 ### Tests
 
-To test `opentelemetry-instrumentation-action_pack` you would:
+For example, to test `opentelemetry-instrumentation-action_pack` you would:
 
 1. Change directory to `instrumentation/action_pack`
 2. Install the bundle with `bundle install`
