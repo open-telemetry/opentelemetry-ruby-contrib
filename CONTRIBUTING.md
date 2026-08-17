@@ -61,7 +61,7 @@ git remote add upstream https://github.com/open-telemetry/opentelemetry-ruby-con
 For more detailed information on this workflow read the
 [GitHub Workflow][otel-github-workflow].
 
-### Run the tests
+### Project structure
 
 _Setting up a running Ruby environment is outside the scope of this document._
 
@@ -72,9 +72,47 @@ This repository contains multiple Ruby gems:
 - Various propagation gems located in the subdirectories of `propagator`
 - `opentelemetry-sampler-xray` located in the `sampler/xray` directory
 
-Each of these gems has its configuration and tests.
+Each of these gems has its own configuration and tests with the goal being to ensure each gem is self-contained.
+Gems are encouraged to leverage projects tools (ie rake) and docker services, rather than define their own.
 
-For example, to test `opentelemetry-instrumentation-action_pack` you would:
+## Development Environments
+
+### Local Machine
+
+When developing directly on a local machine,
+you are required to ensure that any necessary dependent servuce is running.
+
+These services when required are defined via, a compose.yml in the test directory.
+As such they can be started by running the below from the gem folder:
+
+```shell
+docker compose -f test/compose.yml up --wait
+```
+
+You will now be able to run the tests as described below.
+
+### Docker container
+
+1. Build the `opentelemetry/opentelemetry-ruby-contrib` image using the below command in the project directory.
+
+```shell
+compose build
+```
+
+This makes the image available locally.
+2. Launch the development service via
+
+```shell
+compose up app --wait
+```
+
+Once launched you will have a shell to perform development & testing. For testing instructions see below.
+
+## Running Checks
+
+### Tests
+
+To test `opentelemetry-instrumentation-action_pack` you would:
 
 1. Change directory to `instrumentation/action_pack`
 2. Install the bundle with `bundle install`
@@ -87,31 +125,6 @@ For example, to test `opentelemetry-instrumentation-action_pack` you would:
 > 1. Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
 > 2. Install the bundle with `bundle exec appraisal install`
 > 3. Run the tests with `bundle exec appraisal rake test`
-
-### Docker setup
-
-We use Docker Compose to configure and build services used in development and
-testing. This makes it easier to test against libraries that have dependencies,
-such as the MySQL instrumentation gem. See `docker-compose.yml` for specific
-configuration details.
-
-The services provided include:
-
-- `app` - main container environment scoped to the `/app` directory. Used
-  primarily to build and tag the `opentelemetry/opentelemetry-ruby-contrib:latest` image.
-- `x-instrumentation-<library_name>` - container environment scoped to a specific instrumentation library. See `docker-compose.yml` for available services.
-
-To test using Docker:
-
-1. Install Docker and Docker Compose for your operating system
-2. Get the latest code for the project
-3. Build the `opentelemetry/opentelemetry-ruby-contrib` image
-   - `docker-compose build`
-   - This makes the image available locally
-4. Install dependencies for the service you want to interact with
-   - `docker-compose run <service-name> bundle install`
-5. Run the tests
-   - `docker-compose run <service-name> bundle exec rake test`
 
 ## Processing and visualizing traces locally
 
