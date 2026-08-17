@@ -12,7 +12,7 @@
   end
 end
 
-if RUBY_ENGINE == 'ruby'
+if RUBY_ENGINE == 'ruby' && !ENV['APPRAISAL_SKIP'].to_s.include?('graphql-c_parser')
   appraise 'graphql-c_parser-1.0.x' do
     gem 'graphql', '< 2.3.1'
     gem 'graphql-c_parser', '~> 1.0.0'

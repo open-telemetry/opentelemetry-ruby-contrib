@@ -8,7 +8,7 @@ namespace :each do
   task :appraisal, [:subtask] do |t, args|
     subtask = args[:subtask] || "version"
     if "#{subtask}" == "test"
-      foreach_gem('bundle exec appraisal rake test')
+      foreach_gem(['bundle exec appraisal rake test'])
     else
       foreach_gem("bundle exec appraisal #{subtask}")
     end
@@ -64,7 +64,7 @@ task yard: ['each:yard']
 
 task default: [:each]
 
-EXCLUDED_DIRS = %w[vendor]
+EXCLUDED_DIRS = %w[vendor ruby_kafka]
 
 def foreach_gem(cmds)
   cmds = Array(cmds)  # string → ["string"], array stays array
