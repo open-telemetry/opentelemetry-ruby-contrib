@@ -7,15 +7,16 @@
 require 'test_helper'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/redis'
-require_relative '../../../../../lib/opentelemetry/instrumentation/redis/patches/redis_v4_client'
+require_relative '../../../../../lib/opentelemetry/instrumentation/redis/patches/old/redis_v4_client'
 
-describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
+# Tests for old semantic convention attributes (db.system, net.peer.name, net.peer.port, db.statement)
+describe OpenTelemetry::Instrumentation::Redis::Patches::Old::RedisV4Client do
   # NOTE: These tests should be run for redis v4 and redis v5, even though the patches won't be installed on v5.
   # Perhaps these tests should live in a different file?
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:password) { 'passw0rd' }
-  let(:redis_host) { ENV['TEST_REDIS_HOST'] }
+  let(:redis_host) { ENV.fetch('TEST_REDIS_HOST', nil) }
   let(:redis_port) { ENV['TEST_REDIS_PORT'].to_i }
   let(:last_span) { exporter.finished_spans.last }
 
@@ -42,6 +43,8 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
   end
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('old')
+
     # ensure obfuscation is off if it was previously set in a different test
     config = { db_statement: :include }
     instrumentation.install(config)
