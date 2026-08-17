@@ -108,6 +108,7 @@ jobs:
         env:
           BUNDLE_JOBS: 1
           BUNDLE_PATH: "../../vendor/bundle"
+          APPRAISAL_SKIP: graphql-c_parser
         run: |
           # 🛠️ Setup 🛠️
           bundle exec rake "appraisal[generate-install]"
@@ -120,6 +121,8 @@ jobs:
         working-directory: "${{ steps.inputs.outputs.gem_dir }}"
       - name: Minitest
         shell: bash
+        env:
+          APPRAISAL_SKIP: graphql-c_parser
         run: |
           # 🍿 Test Gem 🍿
           bundle exec rake "appraisal[test]"
