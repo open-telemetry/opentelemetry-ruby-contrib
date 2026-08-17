@@ -74,19 +74,16 @@ This repository contains multiple Ruby gems:
 
 Each of these gems has its configuration and tests.
 
-For example, to test `opentelemetry-instrumentation-action_pack` you would:
-
-1. Change directory to `instrumentation/action_pack`
-2. Install the bundle with `bundle install`
-3. Run the tests with `bundle exec rake`
-
 > [!Note]
 >
-> Some test suites make use of [Appraisal](https://github.com/thoughtbot/appraisal), a library for testing against different versions of dependencies. To run tests in suites that use Appraisal:
->
-> 1. Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
-> 2. Install the bundle with `bundle exec appraisal install`
-> 3. Run the tests with `bundle exec appraisal rake test`
+> All gems must make use of [Appraisal](https://github.com/thoughtbot/appraisal), a library for testing against different versions of dependencies.
+> In cases of a gem having no dependencies an appraisal file containing just an empty appraisal should be created.
+
+The process to test a gem using appraisals is as follows:
+
+1. Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
+2. Install the bundle with `bundle exec appraisal install`
+3. Run the tests with `bundle exec appraisal rake test`
 
 ### Docker setup
 
