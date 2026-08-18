@@ -10,7 +10,7 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 ## How does this gem fit in?
 
-The `opentelemetry-resource-detector-os` gem provides a means of retrieving a resource for supported environments following the resource semantic conventions. This detector automatically identifies and populates resource attributes with relevant metadata from the environment.
+The `opentelemetry-resource-detector-os` gem provides a means of retrieving a resource for supported environments following [the operating system resource semantic conventions](https://opentelemetry.io/docs/specs/semconv/resource/os/). This detector automatically identifies and populates resource attributes with relevant metadata from the environment.
 
 ## Installation
 
