@@ -134,7 +134,7 @@ runs:
       shell: bash
       # This starts a new simplecov run which tracks nothing of its own,
       # but merges with the existing coverage reports generated during testing.
-      if: !(startsWith(inputs.ruby, 'jruby'))
+      if: "${{ !(startsWith(inputs.ruby, 'jruby')) }}"
       env:
         MINIMUM_COVERAGE: ${{ inputs.minimum_coverage || 85 }}
       run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
@@ -144,7 +144,7 @@ runs:
       shell: bash
       # This starts a new simplecov run which tracks nothing of its own,
       # but merges with the existing coverage reports generated during testing.
-      if: startsWith(inputs.ruby, 'jruby')
+      if: "${{ startsWith(inputs.ruby, 'jruby') }}"
       env:
         MINIMUM_COVERAGE: ${{ inputs.minimum_coverage || 85 }}
       run: 'bundle exec jruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
