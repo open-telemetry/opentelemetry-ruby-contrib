@@ -53,14 +53,15 @@ module OpenTelemetry
             # @param [Rack::Response] This is nil in practice
             # @return [void]
             def on_start(request, _)
-              parent_context = if untraced_request?(request.env)
-                                 extract_remote_context(request, OpenTelemetry::Common::Utilities.untraced)
-                               else
-                                 extract_remote_context(request)
-                               end
+              span_opts = create_span_opts(request)
+              span = tracer.start_span(
+                create_request_span_name(request),
+                **span_opts
+              )
+              request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
+              span.add_event('http.proxy.request.started', timestamp: request_start_time) unless request_start_time.nil?
 
-              span = create_span(parent_context, request)
-              span_ctx = OpenTelemetry::Trace.context_with_span(span, parent_context: parent_context)
+              span_ctx = OpenTelemetry::Trace.context_with_span(span, parent_context: span_opts[:with_parent])
               rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: span_ctx)
               request.env[OTEL_TOKEN_AND_SPAN] = [OpenTelemetry::Context.attach(rack_ctx), span]
             rescue StandardError => e
@@ -246,6 +247,10 @@ module OpenTelemetry
               config[:response_propagators]
             end
 
+            def public_request?(env)
+              config[:public_request]&.call(env) || false
+            end
+
             def allowed_request_headers
               config[:allowed_rack_request_headers]
             end
@@ -262,16 +267,27 @@ module OpenTelemetry
               OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.config
             end
 
-            def create_span(parent_context, request)
-              span = tracer.start_span(
-                create_request_span_name(request),
+            def create_span_opts(request)
+              public_request = public_request?(request.env)
+              remote_context = if untraced_request?(request.env)
+                                 extract_remote_context(request, OpenTelemetry::Common::Utilities.untraced)
+                               else
+                                 extract_remote_context(request)
+                               end
+              parent_context = remote_context
+              links = []
+              if public_request
+                parent_context = Context.current # create a new root span
+                span_context = OpenTelemetry::Trace.current_span(remote_context).context
+                links << OpenTelemetry::Trace::Link.new(span_context) if span_context.valid? && span_context.remote?
+              end
+
+              {
                 with_parent: parent_context,
                 kind: :server,
-                attributes: request_span_attributes(request.env)
-              )
-              request_start_time = OpenTelemetry::Instrumentation::Rack::Util::QueueTime.get_request_start(request.env)
-              span.add_event('http.proxy.request.started', timestamp: request_start_time) unless request_start_time.nil?
-              span
+                attributes: request_span_attributes(request.env),
+                links: links
+              }
             end
           end
         end
