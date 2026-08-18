@@ -2,7 +2,7 @@
 
 ## v0.13.0 / 2026-08-18
 
-- ADDED: Aws-sdk-dynamodb semantic stability (#2135)
+- ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable support for aws-sdk-dynamodb (#2135)
 
 ## v0.12.0 / 2026-04-14
 
