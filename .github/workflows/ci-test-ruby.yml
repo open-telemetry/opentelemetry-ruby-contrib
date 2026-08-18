@@ -108,6 +108,7 @@ jobs:
         env:
           BUNDLE_JOBS: 1
           BUNDLE_PATH: "../../vendor/bundle"
+          BUNDLE_WITHOUT: "development"
           APPRAISAL_SKIP: graphql-c_parser
         run: |
           # 🛠️ Setup 🛠️
