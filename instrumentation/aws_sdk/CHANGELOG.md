@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+## v0.13.0 / 2026-08-18
+
+- ADDED: Aws-sdk-dynamodb semantic stability (#2135)
+
 ## v0.12.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
