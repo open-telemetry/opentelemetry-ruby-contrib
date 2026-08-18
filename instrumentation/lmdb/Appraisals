@@ -5,5 +5,5 @@
 # SPDX-License-Identifier: Apache-2.0
 
 appraise 'lmdb-latest' do
-  gem 'lmdb'
+  gem 'lmdb', platform: :mri
 end

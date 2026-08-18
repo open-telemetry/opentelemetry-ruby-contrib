@@ -4,6 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+if RUBY_ENGINE == 'jruby'
+  warn 'Skipping tests on JRuby: MRI-only instrumentation'
+  exit 0
+end
+
 require 'simplecov'
 require 'opentelemetry/sdk'
 require 'minitest/autorun'
