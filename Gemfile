@@ -6,13 +6,18 @@
 
 source 'https://rubygems.org'
 
-gem 'appraisal2', '~> 3.2.2'
-gem 'minitest', '~> 6.0.0'
-gem 'rake', '~> 13.4.0'
-gem 'rubocop', '~> 1.89.0'
-gem 'rubocop-minitest', '~> 0.40.0'
-gem 'rubocop-performance', '~> 1.27.0'
-gem 'rubocop-rake', '~> 0.7.1'
-gem 'rubocop-rspec', '~> 3.10.0'
-gem 'simplecov', '~> 1.1.0'
-gem 'yard', '~> 0.9.0'
+group :development do
+  gem 'appraisal2', '~> 3.2.2'
+  gem 'rake', '~> 13.4.0'
+  gem 'rubocop', '~> 1.89.0'
+  gem 'rubocop-minitest', '~> 0.40.0'
+  gem 'rubocop-performance', '~> 1.27.0'
+  gem 'rubocop-rake', '~> 0.7.1'
+  gem 'rubocop-rspec', '~> 3.10.0'
+  gem 'yard', '~> 0.9.0'
+end
+
+group :test do
+  gem 'minitest', '~> 6.0.0'
+  gem 'simplecov', '~> 1.1.0'
+end
