@@ -86,4 +86,4 @@ jobs:
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
           ruby: "jruby-10.0"
-          minimum_coverage: ${{ matrix.os == 'windows-2025' && 0 || 85 }}
+          minimum_coverage: "${{ matrix.os == 'windows-2025' ? 0 : 85 }}"
