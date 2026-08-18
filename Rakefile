@@ -64,7 +64,7 @@ task yard: ['each:yard']
 
 task default: [:each]
 
-EXCLUDED_DIRS = %w[vendor ruby_kafka]
+EXCLUDED_DIRS = %w[vendor ruby_kafka que]
 
 def foreach_gem(cmds)
   cmds = Array(cmds)  # string → ["string"], array stays array
