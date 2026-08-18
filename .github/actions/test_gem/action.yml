@@ -137,7 +137,7 @@ runs:
       if: "${{ !(startsWith(inputs.ruby, 'jruby')) }}"
       env:
         MINIMUM_COVERAGE: ${{ inputs.minimum_coverage || 85 }}
-      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i); SimpleCov.collate Dir["coverage/\*\*/.resultset.json"];'''
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i); SimpleCov.collate Dir[File.join("coverage", "**", "*.resultset.json")];'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Coverage jruby
@@ -147,7 +147,7 @@ runs:
       if: "${{ startsWith(inputs.ruby, 'jruby') }}"
       env:
         MINIMUM_COVERAGE: ${{ inputs.minimum_coverage || 85 }}
-      run: 'bundle exec jruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i); SimpleCov.collate Dir["coverage/\*\*/.resultset.json"];'''
+      run: 'bundle exec jruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i); SimpleCov.collate Dir[File.join("coverage", "**", "*.resultset.json")];'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Cleanup coverage artifacts
