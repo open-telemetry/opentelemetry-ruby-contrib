@@ -6,10 +6,13 @@
 
 source 'https://rubygems.org'
 
+group :default do
+  gem 'rake', '~> 13.4.0'
+end
+
 group :development do
   gem 'appraisal2', '~> 3.2.2'
-  gem 'rake', '~> 13.4.0'
-  gem 'rubocop', '~> 1.90.0'
+  gem 'rubocop', '~> 1.89.0'
   gem 'rubocop-minitest', '~> 0.40.0'
   gem 'rubocop-performance', '~> 1.27.0'
   gem 'rubocop-rake', '~> 0.7.1'
