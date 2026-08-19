@@ -17,12 +17,16 @@ describe OpenTelemetry::Instrumentation::Rake::Patches::Task do
   let(:task_name) { :test_rake_instrumentation }
   let(:task) { Rake::Task[task_name] }
 
-  let(:invoke_span) { spans.find { |s| s.name == 'rake.invoke' } }
-  let(:execute_span) { spans.find { |s| s.name == 'rake.execute' && s.attributes['rake.task'] == task_name.to_s } }
+  let(:invoke_span) { spans.find { |s| s.name.start_with?('rake.invoke') } }
+  let(:execute_span) { spans.find { |s| s.name.start_with?('rake.execute') && s.attributes['rake.task'] == task_name.to_s } }
+  let(:rake_span) { spans.find { |s| s.attributes.key?('rake.task') } }
+  let(:config) { {} }
 
   before do
     exporter.reset
-    instrumentation.install
+    # simulate a fresh install:
+    instrumentation.instance_variable_set(:@installed, false)
+    instrumentation.install(config)
 
     Rake::Task.define_task(task_name)
     task.reenable
@@ -37,6 +41,22 @@ describe OpenTelemetry::Instrumentation::Rake::Patches::Task do
       _(execute_span.kind).must_equal :internal
       _(execute_span.name).must_equal 'rake.execute'
       _(execute_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
+      _(execute_span.attributes['rake.execution.type']).must_equal 'execute'
+    end
+
+    describe 'with execution_type_and_task_name span_name' do
+      let(:config) { { span_name: :execution_type_and_task_name } }
+
+      it 'creates a properly named span' do
+        task.execute
+
+        _(spans.size).must_equal 1
+
+        _(rake_span.kind).must_equal :internal
+        _(rake_span.name).must_equal 'rake.execute test_rake_instrumentation'
+        _(rake_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
+        _(rake_span.attributes['rake.execution.type']).must_equal 'execute'
+      end
     end
   end
 
@@ -54,6 +74,42 @@ describe OpenTelemetry::Instrumentation::Rake::Patches::Task do
       _(execute_span.name).must_equal 'rake.execute'
       _(execute_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
       _(execute_span.parent_span_id).must_equal(invoke_span.span_id)
+    end
+
+    describe 'with execution_type_and_task_name span_name' do
+      let(:config) { { span_name: :execution_type_and_task_name } }
+
+      it 'create properly named spans' do
+        task.invoke
+
+        _(spans.size).must_equal 2
+
+        _(invoke_span.kind).must_equal :internal
+        _(invoke_span.name).must_equal 'rake.invoke test_rake_instrumentation'
+        _(invoke_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
+        _(invoke_span.attributes['rake.execution.type']).must_equal 'invoke'
+
+        _(execute_span.kind).must_equal :internal
+        _(execute_span.name).must_equal 'rake.execute test_rake_instrumentation'
+        _(execute_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
+        _(execute_span.attributes['rake.execution.type']).must_equal 'execute'
+        _(execute_span.parent_span_id).must_equal(invoke_span.span_id)
+      end
+    end
+
+    describe 'with execution_type_and_task_name span_name' do
+      let(:config) { { span_name: :execution_type_and_task_name } }
+
+      it 'creates a properly named span' do
+        task.execute
+
+        _(spans.size).must_equal 1
+
+        _(rake_span.kind).must_equal :internal
+        _(rake_span.name).must_equal 'rake.execute test_rake_instrumentation'
+        _(rake_span.attributes['rake.task']).must_equal 'test_rake_instrumentation'
+        _(rake_span.attributes['rake.execution.type']).must_equal 'execute'
+      end
     end
 
     describe 'with a task argument' do
