@@ -68,7 +68,13 @@ jobs:
         shell: bash
         working-directory: ${{ steps.setup.outputs.gem_dir }}
         run: |
-          files=$(find . -name "Gemfile" | sort)
+          files=$( \
+            find . -name "Gemfile" \
+            -o -name "Appraisals" \
+            -o -path "./gemfiles/*.gemfile" \
+            -o -path "./gemfiles/*.gemfile.lock" \
+            | sort \
+          )
           if [[ -n "$files" ]]; then
             hash=$(sha256sum $files | sha256sum | cut -d ' ' -f1)
             echo "hash=$hash" >> $GITHUB_OUTPUT
@@ -80,12 +86,10 @@ jobs:
         with:
           path: |
             vendor/bundle
-            .bundle
-            ${{ steps.setup.outputs.gem_dir }}/vendor/bundle
-            ${{ steps.setup.outputs.gem_dir }}/.bundle
-          key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ steps.lockhash.outputs.hash }}
+          key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-${{ steps.lockhash.outputs.hash }}
           restore-keys: |
             bundler-${{ runner.os }}-${{ matrix.gem }}-
+            bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-
       - name: Install Ubuntu packages (if apt-packages.txt exists)
         shell: bash
         run: |
