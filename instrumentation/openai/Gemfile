@@ -13,7 +13,6 @@ group :test do
   gem 'appraisal', '~> 2.5.0'
   gem 'bundler', '~> 4.0.13'
   gem 'minitest', '~> 6.0.6'
-  gem 'openai', '~> 0.66.1'
   gem 'opentelemetry-sdk', '~> 1.12.0'
   gem 'opentelemetry-logs-sdk', '~> 0.6.0'
   gem 'opentelemetry-test-helpers', '~> 0.9.0'
