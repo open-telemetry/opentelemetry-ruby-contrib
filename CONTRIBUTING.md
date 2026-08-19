@@ -95,19 +95,19 @@ You will now be able to run the tests as described below.
 
 1. Build the `opentelemetry/opentelemetry-ruby-contrib` image using the below command in the project directory.
 
-```shell
-compose build
-```
+   ```shell
+   docker compose build
+   ```
 
-This makes the image available locally.
+   This makes the image available locally.
 
 2. Launch the development service via
 
-```shell
-compose up app --wait
-```
+   ```shell
+   docker compose up app --wait
+   ```
 
-Once launched you will have a shell to perform development & testing. For testing instructions see below.
+   Once launched you will have a shell to perform development & testing. For testing instructions see below.
 
 ## Running Checks
 
