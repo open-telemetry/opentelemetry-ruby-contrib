@@ -65,6 +65,7 @@ task yard: ['each:yard']
 task default: [:each]
 
 EXCLUDED_DIRS = %w[vendor ruby_kafka que]
+NON_PARRALLEL_INSTALL = %w[instrumentation/trilogy]
 
 def foreach_gem(cmds)
   cmds = Array(cmds)  # string → ["string"], array stays array
@@ -82,6 +83,20 @@ def foreach_gem(cmds)
     dir = File.dirname(gemspec)
     puts "::group:: ****#{dir}****"
     Dir.chdir(dir) do
+      if NON_PARRALLEL_INSTALL.include?(dir) && cmds.include?('bundle exec appraisal generate-install')
+        puts "appraisal generate"
+        result = IO.popen(["appraisal", "generate"], &:read)
+        puts "appraisal list"
+        appraisals_output = IO.popen(["appraisal", "list"], &:read)
+        appraisals = appraisals_output.split("\n").map(&:strip).reject(&:empty?)
+        
+        pre_cmds = []
+        appraisals.each do |app|
+          pre_cmds << "bundle exec appraisal #{app} install"
+        end
+        cmds = pre_cmds + cmds
+      end
+
       if defined?(Bundler)
         Bundler.with_unbundled_env do
           cmds.each { |cmd| sh(cmd) }
