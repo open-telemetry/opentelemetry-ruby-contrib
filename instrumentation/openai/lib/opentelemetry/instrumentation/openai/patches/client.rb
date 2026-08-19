@@ -36,7 +36,12 @@ module OpenTelemetry
               log_request_content(span, req)
 
               start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-              response = super
+              begin
+                response = super
+              rescue StandardError => e
+                handle_span_exception(span, e)
+                raise
+              end
               return StreamWrapper.new(response, span, config[:capture_content], start_time)
             end
 

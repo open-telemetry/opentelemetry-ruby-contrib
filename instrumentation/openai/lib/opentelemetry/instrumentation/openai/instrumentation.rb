@@ -53,8 +53,8 @@ module OpenTelemetry
         end
 
         def determine_the_content_mode
-          should_capture_content = ENV['OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT'].to_s.downcase == 'true'
-          config[:capture_content] = should_capture_content
+          env_value = ENV['OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT'].to_s
+          config[:capture_content] = env_value.downcase == 'true' unless env_value.empty?
         end
 
         def require_dependencies
