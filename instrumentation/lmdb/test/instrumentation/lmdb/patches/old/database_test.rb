@@ -6,19 +6,20 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/lmdb'
-require_relative '../../../../lib/opentelemetry/instrumentation/lmdb/patches/database'
+require_relative '../../../../../lib/opentelemetry/instrumentation/lmdb'
+require_relative '../../../../../lib/opentelemetry/instrumentation/lmdb/patches/old/database'
 
-describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
+describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Old::Database' do
   let(:instrumentation) { OpenTelemetry::Instrumentation::LMDB::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
   let(:last_span) { exporter.finished_spans.last }
   let(:config) { {} }
-  let(:db_path) { File.join(File.dirname(__FILE__), '..', 'tmp', 'test') }
+  let(:db_path) { File.join(File.dirname(__FILE__), '..', '..', 'tmp', 'test') }
   let(:lmdb) { LMDB.new(db_path) }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('old')
     exporter.reset
     instrumentation.install(config)
     FileUtils.rm_rf(db_path)
