@@ -84,17 +84,18 @@ def foreach_gem(cmds)
     puts "::group:: ****#{dir}****"
     Dir.chdir(dir) do
       if NON_PARRALLEL_INSTALL.include?(dir) && cmds.include?('bundle exec appraisal generate-install')
+        puts "bundle install"
+        result = IO.popen(["bundle", "install"], &:read)
         puts "appraisal generate"
         result = IO.popen(["appraisal", "generate"], &:read)
         puts "appraisal list"
         appraisals_output = IO.popen(["appraisal", "list"], &:read)
         appraisals = appraisals_output.split("\n").map(&:strip).reject(&:empty?)
-        
-        pre_cmds = []
+
         appraisals.each do |app|
-          pre_cmds << "bundle exec appraisal #{app} install"
+          out = IO.popen(["bundle", "exec", "appraisal", "#{app}", "install"])
         end
-        cmds = pre_cmds + cmds
+        puts "appraisal complete"
       end
 
       if defined?(Bundler)
