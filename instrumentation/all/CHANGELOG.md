@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+## v0.96.0 / 2026-08-18
+
+- ADDED: Upgrade opentelemetry-instrumentation-aws_sdk to 0.13.0
+
 ## v0.95.0 / 2026-08-05
 
 - ADDED: Upgrade opentelemetry-instrumentation-pg to 0.37.0
