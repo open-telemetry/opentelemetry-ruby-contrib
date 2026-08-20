@@ -104,7 +104,7 @@ You will now be able to run the tests as described below.
 2. Launch the development service via
 
    ```shell
-   docker compose up app --wait
+   docker compose run app
    ```
 
    Once launched you will have a shell to perform development & testing. For testing instructions see below.
