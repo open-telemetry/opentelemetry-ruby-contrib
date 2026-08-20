@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-%w[7.3.0 8.0.0 8.1.6].each do |version|
+%w[7.3.0 8.0.0 8.1.7].each do |version|
   appraise "sidekiq-#{version}" do
     gem 'sidekiq', "~> #{version}"
   end
