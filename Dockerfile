@@ -29,6 +29,8 @@ ARG PACKAGES="\
     libxml2-dev \
     libxslt-dev \
     mariadb-dev \
+    nodejs \
+    npm \
     sqlite-dev \
     openssl \
     postgresql-dev \

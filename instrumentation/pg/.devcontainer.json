@@ -1,0 +1,9 @@
+{
+  "name": "otel-ruby-pg-devcontainer",
+  "dockerComposeFile": ["../../docker-compose.yml"],
+  "service": "devcontainer",
+  "remoteUser": "app",
+
+  "workspaceFolder": "/app/instrumentation/pg",
+  "runServices": ["postgres"]
+}
