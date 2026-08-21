@@ -41,6 +41,8 @@ components:
     - xuan-cao-swi
   resources/container:
     - scbjans
+  resources/os:
+    - yhara
   sampler/xray:
     - jterapin
     - alextwoods
