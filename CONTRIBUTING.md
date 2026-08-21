@@ -110,8 +110,23 @@ To test using Docker:
    - This makes the image available locally
 4. Install dependencies for the service you want to interact with
    - `docker-compose run <service-name> bundle install`
-5. Run the tests
-   - `docker-compose run <service-name> bundle exec rake test`
+5. If the instrumentation has an `Appraisals` file (most do), generate and install
+   the appraisal gemfiles
+   - `docker-compose run <service-name> bundle exec appraisal generate`
+   - `docker-compose run <service-name> env BUNDLE_GEMFILE=gemfiles/<appraisal-name>.gemfile bundle install`
+6. Run the tests
+   - If there's no `Appraisals` file: `docker-compose run <service-name> bundle exec rake test`
+   - If there is one: `docker-compose run <service-name> env BUNDLE_GEMFILE=gemfiles/<appraisal-name>.gemfile bundle exec rake test`
+
+For example, for `opentelemetry-instrumentation-mysql2` (service `ex-instrumentation-mysql2-test`,
+appraisal name `mysql2-latest` → gemfile `gemfiles/mysql2_latest.gemfile`):
+
+```bash
+docker-compose run ex-instrumentation-mysql2-test bundle install
+docker-compose run ex-instrumentation-mysql2-test bundle exec appraisal generate
+docker-compose run ex-instrumentation-mysql2-test env BUNDLE_GEMFILE=gemfiles/mysql2_latest.gemfile bundle install
+docker-compose run ex-instrumentation-mysql2-test env BUNDLE_GEMFILE=gemfiles/mysql2_latest.gemfile bundle exec rake test
+```
 
 ## Processing and visualizing traces locally
 
