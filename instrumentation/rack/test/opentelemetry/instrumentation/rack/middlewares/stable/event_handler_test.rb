@@ -487,7 +487,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
 
       request = Rack::MockRequest.env_for('/')
       rack_request = Rack::Request.new(request)
-      response = Rack::Response.new
+      response = Rack::Response.new([], 201, {})
 
       fiber1 = Fiber.new do
         handler.on_start(rack_request, nil)
@@ -502,6 +502,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
 
       _(finished_spans.size).must_equal 1
       _(rack_span.name).must_equal 'GET'
+      _(rack_span.attributes['http.response.status_code']).must_equal 201
     end
 
     it 'detaches context normally when same fiber' do
