@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.25.0'
   spec.add_dependency 'opentelemetry-instrumentation-anthropic', '~> 0.5.0'
   spec.add_dependency 'opentelemetry-instrumentation-aws_lambda', '~> 0.7.0'
-  spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.12.0'
+  spec.add_dependency 'opentelemetry-instrumentation-aws_sdk', '~> 0.13.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.25.0'
   spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.25.0'
   spec.add_dependency 'opentelemetry-instrumentation-dalli', '~> 0.30.0'

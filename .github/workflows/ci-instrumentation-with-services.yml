@@ -75,16 +75,6 @@ jobs:
         run: |
           dir=$(find . -iname 'opentelemetry-instrumentation-${{ matrix.gem }}.gemspec' -exec dirname {} \;)
           echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
-
-          FILE="${dir}/.github-ci.yml"
-
-          if [[ -f "$FILE" ]]; then
-            echo "Loading env from $FILE"
-            # Convert YAML to key=value and export to GITHUB_ENV
-            yq '.env // {} | to_entries | .[] | "\(.key)=\(.value)"' "$FILE" >> "$GITHUB_ENV"
-          else
-            echo "No github ci file found in ($dir). Skipping."
-          fi
       - name: Start Docker Service/s
         run: docker compose -f test/compose.yml up -d --wait
         working-directory: "${{ steps.inputs.outputs.gem_dir }}"
@@ -93,13 +83,11 @@ jobs:
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "4.0"
-          minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
-          minimum_coverage: ${{ env.minimum_coverage }}
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -107,4 +95,3 @@ jobs:
           ruby: "3.3"
           yard: true
           build: true
-          minimum_coverage: ${{ env.minimum_coverage }}
