@@ -39,6 +39,9 @@ Metrics/PerceivedComplexity:
 Naming/FileName:
   Exclude:
     - "**/opentelemetry-*"
+Performance/CollectionLiteralInLoop:
+  Exclude:
+    - "**/Appraisals"
 Style/Documentation:
   Exclude:
     - "**/test/**/*"
