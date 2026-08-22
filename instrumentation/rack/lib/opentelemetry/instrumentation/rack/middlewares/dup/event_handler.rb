@@ -43,7 +43,7 @@ module OpenTelemetry
           class EventHandler
             include ::Rack::Events::Abstract
 
-            OTEL_TOKEN_AND_SPAN = 'otel.rack.token_and_span'
+            OTEL_CONTEXT_INFO = 'otel.context_info'
             EMPTY_HASH = {}.freeze
 
             # Creates a server span for this current request using the incoming parent context
@@ -62,7 +62,8 @@ module OpenTelemetry
               span = create_span(parent_context, request)
               span_ctx = OpenTelemetry::Trace.context_with_span(span, parent_context: parent_context)
               rack_ctx = OpenTelemetry::Instrumentation::Rack.context_with_span(span, parent_context: span_ctx)
-              request.env[OTEL_TOKEN_AND_SPAN] = [OpenTelemetry::Context.attach(rack_ctx), span]
+              token = OpenTelemetry::Context.attach(rack_ctx)
+              (request.env[OTEL_CONTEXT_INFO] ||= {})[request] = [Fiber.current, token, span]
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end
@@ -107,14 +108,17 @@ module OpenTelemetry
             # @param [Rack::Request] The current HTTP request
             # @param [Rack::Response] The current HTTP response
             def on_finish(request, response)
-              span = OpenTelemetry::Instrumentation::Rack.current_span
+              request_context = context_for_request(request)
+              return unless request_context
+
+              _, _, span = request_context
               return unless span.recording?
 
               add_response_attributes(span, response) if response
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             ensure
-              detach_context(request)
+              detach_context(request_context)
             end
 
             private
@@ -208,12 +212,24 @@ module OpenTelemetry
               attributes
             end
 
-            def detach_context(request)
-              return nil unless request.env[OTEL_TOKEN_AND_SPAN]
+            def context_for_request(request)
+              contexts = request.env[OTEL_CONTEXT_INFO]
+              return unless contexts
 
-              token, span = request.env[OTEL_TOKEN_AND_SPAN]
+              contexts.delete(request)
+            end
+
+            def detach_context(request_context)
+              return unless request_context
+
+              original_fiber, token, span = request_context
               span.finish
-              OpenTelemetry::Context.detach(token)
+
+              if Fiber.current.equal?(original_fiber)
+                OpenTelemetry::Context.detach(token)
+              else
+                OpenTelemetry.logger.debug { '[OpenTelemetry::Instrumentation::Rack] Skipping context detach: response processed in different fiber than request.' }
+              end
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e)
             end
