@@ -58,8 +58,7 @@ jobs:
           yard: true
           build: true
       - name: "Test JRuby"
-        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-10.0.2.0"
+          ruby: "jruby-10.0"
