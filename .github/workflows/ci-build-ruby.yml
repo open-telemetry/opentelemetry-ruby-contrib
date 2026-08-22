@@ -1,0 +1,143 @@
+name: Build / Ruby
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths: &path_filters
+      - ".yardopts"
+      - "GEMFILE"
+      - "RAKEFILE"
+      - ".github/workflows/ci-build-ruby.yml"
+  pull_request:
+    branches:
+      - main
+    paths: *path_filters
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }} # Ensure that only one instance of this workflow is running per event type and ref
+  cancel-in-progress: true # Cancel any previous runs of this workflow for the same event type and ref
+
+jobs:
+  analyze:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    runs-on: ubuntu-24.04
+    outputs:
+      gems: ${{steps.select_gem.outputs.gems}}
+    steps:
+      - name: Select Gems
+        id: select_gem
+        shell: bash
+        run: |
+          {
+            echo "gems<<EOF"
+            echo '["everything"]'
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+  build:
+    runs-on: ${{matrix.os}}
+    needs: analyze
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && needs.analyze.outputs.gems != '[]' }}
+    strategy:
+      matrix:
+        gem: ${{ fromJson(needs.analyze.outputs.gems) }}
+        os:
+          - ubuntu-24.04
+      fail-fast: false
+    name: "${{ matrix.gem }} / ${{matrix.os}}"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          ruby-version: "ruby-3.3.11"
+      - name: Compute Gemfile hash
+        id: lockhash
+        shell: bash
+        working-directory: ${{ steps.setup.outputs.gem_dir }}
+        run: |
+          files=$( \
+            find . -name "Gemfile" \
+            -o -name "Appraisals" \
+            -o -path "./gemfiles/*.gemfile" \
+            -o -path "./gemfiles/*.gemfile.lock" \
+            | sort \
+          )
+          if [[ -n "$files" ]]; then
+            hash=$(sha256sum $files | sha256sum | cut -d ' ' -f1)
+            echo "hash=$hash" >> $GITHUB_OUTPUT
+          else
+            echo "hash=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+          fi
+      - name: Cache Bundler
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 #v5.0.4
+        with:
+          path: |
+            vendor/bundle
+          key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-${{ steps.lockhash.outputs.hash }}
+          restore-keys: |
+            bundler-${{ runner.os }}-${{ matrix.gem }}-
+            bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-
+      - name: Install Tools & Gem Deps
+        run: |
+          # ⚙️ Install ⚙️
+          echo "::group:: Root"
+          bundle config set path vendor/bundle
+          bundle config set clean false
+          bundle install --jobs 4 --retry 3
+          echo "::endgroup::"
+
+          bundle exec rake install
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
+      - name: YARD
+        shell: bash
+        run: |
+          # 📄 Yard Docs 📄
+          bundle exec rake yard
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
+      - name: Build Gem
+        shell: bash
+        run: |
+          # 📦 Build Gem 📦
+          bundle exec rake build
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
+  verify:
+    runs-on: ubuntu-24.04
+    needs:
+      - analyze
+      - build
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && always() }} # Always run so we can detect failures/skips
+    steps:
+      - name: Count builds
+        env:
+          TARGET_GEMS: ${{ needs.analyze.outputs.gems}}
+        run: |
+          if [ "$TARGET_GEMS" = "[]" ]; then
+            echo "::error:: ❌ No gems selected — build matrix was empty."
+            exit 1
+          fi
+          gems="$TARGET_GEMS"
+          count=$(echo "$gems" | jq 'length')
+          echo "ℹ️ Build count: $count"
+
+      - name: Check build results
+        env:
+          TARGET_RESULT: ${{ needs.build.result }}
+        run: |
+          if [ "$TARGET_RESULT" = "skipped" ]; then
+            echo "::error:: Build job was skipped — no builds executed."
+            exit 1
+          fi
+          if [ "$TARGET_RESULT" != "success" ]; then
+            echo "::error:: ❌ One or more builds failed."
+            exit 1
+          fi
+          echo "::notice:: ✅ All builds ran and passed."

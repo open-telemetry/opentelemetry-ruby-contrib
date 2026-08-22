@@ -5,6 +5,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 namespace :each do
+  task :appraisal, [:subtask] do |t, args|
+    subtask = args[:subtask] || "version"
+    if "#{subtask}" == "test"
+      foreach_gem(['bundle exec appraisal rake test'])
+    else
+      foreach_gem("bundle exec appraisal #{subtask}")
+    end
+  end
+
   task :bundle_install do
     foreach_gem('bundle install')
   end
@@ -43,6 +52,10 @@ namespace :each do
   end
 end
 
+task :appraisal, [:subtask] do |t, args|
+  Rake::Task["each:appraisal"].invoke(args[:subtask])
+end
+
 task each: 'each:default'
 
 task build: ['each:build']
@@ -51,7 +64,8 @@ task yard: ['each:yard']
 
 task default: [:each]
 
-EXCLUDED_DIRS = %w[vendor]
+EXCLUDED_DIRS = %w[vendor ruby_kafka que]
+NON_PARRALLEL_INSTALL = %w[instrumentation/trilogy]
 
 def foreach_gem(cmds)
   cmds = Array(cmds)  # string → ["string"], array stays array
@@ -67,8 +81,23 @@ def foreach_gem(cmds)
   gemspecs.each do |gemspec|
     name = File.basename(gemspec, ".gemspec")
     dir = File.dirname(gemspec)
-    puts "**** Entering #{dir}"
+    puts "::group:: ****#{dir}****"
     Dir.chdir(dir) do
+      if NON_PARRALLEL_INSTALL.include?(dir) && cmds.include?('bundle exec appraisal generate-install')
+        puts "bundle install"
+        result = IO.popen(["bundle", "install"], &:read)
+        puts "appraisal generate"
+        result = IO.popen(["appraisal", "generate"], &:read)
+        puts "appraisal list"
+        appraisals_output = IO.popen(["appraisal", "list"], &:read)
+        appraisals = appraisals_output.split("\n").map(&:strip).reject(&:empty?)
+
+        appraisals.each do |app|
+          out = IO.popen(["bundle", "exec", "appraisal", "#{app}", "install"])
+        end
+        puts "appraisal complete"
+      end
+
       if defined?(Bundler)
         Bundler.with_unbundled_env do
           cmds.each { |cmd| sh(cmd) }
@@ -77,5 +106,6 @@ def foreach_gem(cmds)
         cmds.each { |cmd| sh(cmd) }
       end
     end
+    puts "::endgroup::"
   end
 end
