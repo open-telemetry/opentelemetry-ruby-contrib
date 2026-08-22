@@ -11,7 +11,12 @@ module OpenTelemetry
         # The Consumer module contains the instrumentation patch for the Consumer class
         module Consumer
           def call(delivery_info, properties, payload)
-            OpenTelemetry::Instrumentation::Bunny::PatchHelpers.with_process_span(queue.channel, tracer, delivery_info, properties) do
+            # `queue` may be a `Bunny::Queue` or a `String` (e.g. when a consumer is
+            # registered via `Bunny::Channel#basic_consume(queue_name, ...)` — the pattern
+            # used by Hutch and other Bunny wrappers). Use the consumer's `channel`
+            # attribute directly to avoid `NoMethodError: undefined method 'channel'
+            # for an instance of String`.
+            OpenTelemetry::Instrumentation::Bunny::PatchHelpers.with_process_span(channel, tracer, delivery_info, properties) do
               super
             end
           end
