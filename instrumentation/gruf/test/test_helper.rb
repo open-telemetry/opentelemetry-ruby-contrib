@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 if RUBY_ENGINE == 'jruby'
-  warn 'Skipping tests on JRuby: MRI-only instrumentation'
+  warn 'Skipping tests on JRuby: Runtime not supported'
   exit 0
 end
 
