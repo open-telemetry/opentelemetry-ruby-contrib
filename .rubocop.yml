@@ -1,4 +1,8 @@
-plugins: rubocop-performance
+plugins:
+  - rubocop-minitest
+  - rubocop-rspec
+  - rubocop-rake
+  - rubocop-performance
 
 AllCops:
   TargetRubyVersion: 3.3
@@ -10,11 +14,6 @@ AllCops:
     - "bin/instrumentation_generator"
     - "**/**/vendor/bundle/**/*"
     - "**/proto/**"
-    - "helpers/sql-obfuscation/**"
-    - "instrumentation/dalli/**"
-    - "instrumentation/mongo/**"
-    - "instrumentation/restclient/**"
-    - "instrumentation/ruby_kafka/**"
 Bundler/OrderedGems:
   Enabled: false
 Lint/ConstantDefinitionInBlock:
@@ -40,7 +39,16 @@ Metrics/PerceivedComplexity:
 Naming/FileName:
   Exclude:
     - "**/opentelemetry-*"
+Performance/CollectionLiteralInLoop:
+  Exclude:
+    - "**/Appraisals"
 Style/Documentation:
+  Exclude:
+    - "**/test/**/*"
+    - "**/*test*"
+Style/DocumentationMethod:
+  Enabled: true
+  Severity: info
   Exclude:
     - "**/test/**/*"
     - "**/*test*"
@@ -72,3 +80,11 @@ Layout/LineLength:
   Max: 250
 Layout/EndOfLine:
   EnforcedStyle: lf
+
+# we need to review the below
+Minitest/LiteralAsActualArgument:
+  Enabled: false
+Minitest/EmptyLineBeforeAssertionMethods:
+  Enabled: false
+Rake/DuplicateTask:
+  Enabled: false

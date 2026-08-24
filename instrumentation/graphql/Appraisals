@@ -6,25 +6,21 @@
 
 # Max compatible version of 2.0.x
 
-(0..4).each do |minor_version|
-  appraise "graphql-2.#{minor_version}.x" do
-    gem 'graphql', "~> 2.#{minor_version}.0"
+%w[2.0.0 2.1.0 2.2.0 2.3.0 2.4.0 2.5.0 2.6.0 2.6.7].each do |version|
+  appraise "graphql-#{version}" do
+    gem 'graphql', "~> #{version}"
   end
 end
 
-appraise 'graphql-c_parser-1.0.x' do
-  gem 'graphql', '< 2.3.1'
-  gem 'graphql-c_parser', '~> 1.0.0'
-end
+if RUBY_ENGINE == 'ruby'
+  appraise 'graphql-c_parser-1.0.x' do
+    gem 'graphql', '< 2.3.1'
+    gem 'graphql-c_parser', '~> 1.0.0'
+  end
 
-appraise 'graphql-c_parser-1.x' do
-  gem 'graphql-c_parser', '~> 1.1'
-end
-
-appraise 'graphql-c_parser-latest' do
-  gem 'graphql-c_parser'
-end
-
-appraise 'graphql-latest' do
-  gem 'graphql'
+  %w[1.1.0 1.1.4].each do |version|
+    appraise "graphql-c_parser-#{version}" do
+      gem 'graphql-c_parser', "~> #{version}"
+    end
+  end
 end

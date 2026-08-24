@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'dotenv'
+Dotenv.load('.env', '../.env')
+
 require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
@@ -32,11 +35,10 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor span_processor
 end
 
-# Sidekiq redis configuration
-ENV['TEST_REDIS_HOST'] ||= '127.0.0.1'
-ENV['TEST_REDIS_PORT'] ||= '16379'
+host = ENV.fetch('TEST_REDIS_HOST', '127.0.0.1')
+port = ENV.fetch('TEST_REDIS_PORT', '6379')
 
-redis_url = "redis://#{ENV['TEST_REDIS_HOST']}:#{ENV['TEST_REDIS_PORT']}/0"
+redis_url = "redis://#{host}:#{port}/0"
 
 Sidekiq.configure_server do |config|
   config.redis = { password: 'passw0rd', url: redis_url }

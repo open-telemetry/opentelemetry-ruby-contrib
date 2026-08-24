@@ -1,4 +1,5 @@
 include:
+  - ./.docker/volume/bundler.yml
   - ./.docker/infra/kafka/docker-compose.yml
   - ./.docker/infra/memcached/docker-compose.yml
   - ./.docker/infra/mongo/docker-compose.yml
@@ -7,37 +8,20 @@ include:
   - ./.docker/infra/rabbitmq/docker-compose.yml
   - ./.docker/infra/redis/docker-compose.yml
 
-x-shared-config:
-  base: &base
-    command: /bin/bash
-    image: opentelemetry/opentelemetry-ruby-contrib
-    stdin_open: true
-    tmpfs:
-      - /tmp
-    tty: true
-    user: "1000:1000"
-    volumes:
-      - .:/app:cached
-      - bundle:/bundle
-
 services:
   app:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     build:
       context: .
     working_dir: /app
     environment:
       - MEMCACHED_URL=memcached:11211
-      - TEST_MYSQL_USER=root
-      - TEST_MYSQL_ROOT_PASSWORD=root
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - TEST_MYSQL_HOST=mysql
-      - TEST_MYSQL_PORT=3306
-      - TEST_MYSQ_DB=mysql
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
       - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
+      - TEST_RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
     depends_on:
       - kafka
       - jaeger
@@ -49,143 +33,44 @@ services:
       - rabbitmq
       - redis
 
-  ex-instrumentation-bunny:
-    <<: *base
-    depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
-    working_dir: /app/instrumentation/bunny/example
-
-  ex-instrumentation-concurrent-ruby:
-    <<: *base
-    working_dir: /app/instrumentation/concurrent_ruby/example
-
-  ex-instrumentation-delayed_job:
-    <<: *base
-    working_dir: /app/instrumentation/delayed_job/example
-
-  ex-instrumentation-ethon:
-    <<: *base
-    working_dir: /app/instrumentation/ethon/example
-
-  ex-instrumentation-excon:
-    <<: *base
-    working_dir: /app/instrumentation/excon/example
-
-  ex-instrumentation-faraday:
-    <<: *base
-    working_dir: /app/instrumentation/faraday/example
-
-  ex-instrumentation-mysql2:
-    <<: *base
-    environment:
-      - TEST_MYSQL_USER=root
-      - TEST_MYSQL_ROOT_PASSWORD=root
-      - TEST_MYSQL_HOST=mysql
-      - TEST_MYSQL_PORT=3306
-      - TEST_MYSQ_DB=mysql
-    depends_on:
-      - mysql
-    working_dir: /app/instrumentation/mysql2/example
-
   ex-instrumentation-mysql2-test:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
-      - TEST_MYSQL_USER=root
-      - TEST_MYSQL_ROOT_PASSWORD=root
       - TEST_MYSQL_HOST=mysql
-      - TEST_MYSQL_PORT=3306
-      - TEST_MYSQ_DB=mysql
     depends_on:
       - mysql
     working_dir: /app/instrumentation/mysql2/
 
-  ex-instrumentation-pg:
-    <<: *base
-    environment:
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
-      - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
-      - OTEL_TRACES_EXPORTER=console
-    depends_on:
-      - postgres
-    working_dir: /app/instrumentation/pg/example
-
   ex-instrumentation-pg-test:
-    <<: *base
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
       - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
     depends_on:
       - postgres
-    tmpfs: []
+    tmpfs: !reset []
     working_dir: /app/instrumentation/pg/
-    volumes:
-      - .:/app:cached
-      - bundle:/bundle
-      - postgres_socket:/tmp
-      - postgres_socket:/var/run/postgresql
 
-  ex-instrumentation-net-http:
-    <<: *base
-    working_dir: /app/instrumentation/net_http/example
-
-  ex-instrumentation-net-ldap:
-    <<: *base
-    working_dir: /app/instrumentation/net_ldap/example
-
-  ex-instrumentation-que:
-    <<: *base
+  ex-instrumentation-que-test:
+    extends:
+      service: base
+      file: ./docker-base.yml
     environment:
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
       - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
     depends_on:
       - postgres
     working_dir: /app/instrumentation/que
 
-  ex-instrumentation-rack:
-    <<: *base
-    working_dir: /app/instrumentation/rack/example
-
-  ex-instrumentation-dalli:
-    <<: *base
-    environment:
-      - MEMCACHED_URL=memcached:11211
-    depends_on:
-      - memcached
-    working_dir: /app/instrumentation/dalli/example
-
-  ex-instrumentation-restclient:
-    <<: *base
-    working_dir: /app/instrumentation/restclient/example
-
-  ex-instrumentation-sinatra:
-    <<: *base
-    command: ./start_server.sh
-    working_dir: /app/instrumentation/sinatra/example
-
-  processor-baggage-test:
-    <<: *base
-    working_dir: /app/processor/baggage
-    command: |
-      bash -c "bundle install && rake"
-
   jaeger:
-    image: jaegertracing/jaeger:2.17.0@sha256:6266573208d665ce5c17483bce0a75d0806480d92c84766d288d0aee885ce708
+    image: jaegertracing/jaeger:2.20.0@sha256:46a886260e04002d8f45e213fc39063fa11a50446048fdaa64786fc0840cb9f8
     ports:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.149.0@sha256:dd56aed607fd02f8ac01dddb27a859c0c2cc750539abce927803778fafc736ae
+    image: otel/opentelemetry-collector:0.159.0@sha256:7725a7a10c87d8853208bdd4bb3439ad3c0d7b32b4292b9300ac07c8daba14a2
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml
@@ -194,8 +79,3 @@ services:
       - "4318:4318"
     depends_on:
       - jaeger
-
-volumes:
-  bundle:
-  redis_data:
-  postgres_socket:
