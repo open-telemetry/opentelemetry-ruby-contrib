@@ -9,6 +9,7 @@
     gem 'sqlite3', '~> 1.4', platform: :mri
     gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby
     gem 'image_processing', '= 2.0.3'
+    gem 'mini_magick', '= 5.3.3'
     gem 'rails', "~> #{version}"
   end
 end
@@ -19,6 +20,7 @@ if RUBY_ENGINE == 'ruby'
       gem 'rails', "~> #{version}"
       gem 'sqlite3', '= 2.9.6'
       gem 'image_processing', '= 2.0.3'
+      gem 'mini_magick', '= 5.3.3'
     end
   end
 end
@@ -28,6 +30,7 @@ if RUBY_ENGINE == 'jruby'
     appraise "jruby_activestorage-#{version}" do
       gem 'activerecord-jdbcsqlite3-adapter', "~> #{version}"
       gem 'image_processing', '= 2.0.3'
+      gem 'mini_magick', '= 5.3.3'
       gem 'rails', '~> 8.0.0'
     end
   end
