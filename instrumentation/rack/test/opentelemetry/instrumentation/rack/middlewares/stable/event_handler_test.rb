@@ -523,7 +523,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
 
   # This might happen if one Sinatra app is called by another
   # See: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/2425
-  describe 'when nested inside another instance of this EventHandler on the same env' do
+  describe 'when nested inside another EventHandler in the same fiber' do
     let(:inner_handler) { OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler.new }
     let(:inner_app) do
       Rack::Builder.new.tap do |builder|
@@ -557,7 +557,7 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
   end
 
   # Combines the fiber bug reported in #2130 with the multi-app Sinatra fix in #2476
-  describe 'when nested inside another instance of this EventHandler on the same env' do
+  describe 'when nested inside another EventHandler across a fiber boundary' do
     let(:inner_handler) { OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandler.new }
     let(:inner_app) do
       Rack::Builder.new.tap do |builder|
