@@ -43,7 +43,7 @@ module OpenTelemetry
           class EventHandler
             include ::Rack::Events::Abstract
 
-            OTEL_CONTEXT_INFO = 'otel.context_info'
+            OTEL_CONTEXT_INFO = 'otel.rack.context_info'
             EMPTY_HASH = {}.freeze
 
             # Creates a server span for this current request using the incoming parent context
