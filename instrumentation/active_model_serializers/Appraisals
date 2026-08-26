@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[0.10.1 0.10.16].each do |version|
+%w[0.10.10 0.10.16].each do |version|
   appraise "active_model_serializers-#{version}" do
     gem 'active_model_serializers', "= #{version}"
   end
