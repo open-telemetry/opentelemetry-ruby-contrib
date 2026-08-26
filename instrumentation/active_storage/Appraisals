@@ -10,6 +10,7 @@
     gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby
     gem 'image_processing', '= 2.0.3'
     gem 'mini_magick', '= 5.3.3'
+    gem 'benchmark', '= 0.5.0'
     gem 'rails', "= #{version}"
   end
 end

@@ -9,6 +9,7 @@ if RUBY_ENGINE == 'ruby'
     appraise "activerecord-#{version}" do
       gem 'sqlite3', '~> 1.4'
       gem 'activerecord', "= #{version}"
+      gem 'benchmark', '= 0.5.0'
     end
   end
 
@@ -24,6 +25,7 @@ if RUBY_ENGINE == 'jruby'
   %w[71.0 72.0 80.0.pre1].each do |version|
     appraise "jruby_activerecord-#{version}" do
       gem 'activerecord-jdbcsqlite3-adapter', "= #{version}"
+      gem 'benchmark', '= 0.5.0'
     end
   end
 end
