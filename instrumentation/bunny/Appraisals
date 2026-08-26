@@ -6,6 +6,6 @@
 
 %w[2.22.0 2.24.0 3.0.0 3.2.0].each do |version|
   appraise "bunny-#{version}" do
-    gem 'bunny', "~> #{version}"
+    gem 'bunny', "= #{version}"
   end
 end

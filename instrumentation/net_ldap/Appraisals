@@ -3,7 +3,7 @@
 # frozen set of Appraisals for net-ldap instrumentation
 %w[0.17.1 0.18.0 0.19.0].each do |version|
   appraise "net-ldap-#{version}" do
-    gem 'net-ldap', "~> #{version}"
+    gem 'net-ldap', "= #{version}"
     # ostruct is not part of the standard library from Ruby4+
     # from net-ldap 0.20+ it is defined as a gem dependency
     gem 'ostruct' if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('4')
@@ -12,6 +12,6 @@ end
 
 %w[0.20.0 0.20.0].each do |version|
   appraise "net-ldap-#{version}" do
-    gem 'net-ldap', "~> #{version}"
+    gem 'net-ldap', "= #{version}"
   end
 end

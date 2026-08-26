@@ -6,6 +6,6 @@
 
 %w[0.18.0 0.29.0].each do |version|
   appraise "rdkafka-#{version}" do
-    gem 'rdkafka', "~> #{version}"
+    gem 'rdkafka', "= #{version}"
   end
 end

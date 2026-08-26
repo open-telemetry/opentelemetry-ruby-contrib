@@ -6,6 +6,6 @@
 
 %w[0.10.1 0.10.16].each do |version|
   appraise "active_model_serializers-#{version}" do
-    gem 'active_model_serializers', "~> #{version}"
+    gem 'active_model_serializers', "= #{version}"
   end
 end

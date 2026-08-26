@@ -19,13 +19,13 @@ gem_versions << '2.2.0' if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4'
 semconv_stability.each do |mode|
   %w[3.1.0 3.2.0].each do |version|
     appraise "rack-#{version}-#{mode}" do
-      gem 'rack', "~> #{version}"
+      gem 'rack', "= #{version}"
     end
   end
 
   gem_versions.each do |version|
     appraise "rack-#{version}-#{mode}" do
-      gem 'rack', "~> #{version}"
+      gem 'rack', "= #{version}"
     end
   end
 end

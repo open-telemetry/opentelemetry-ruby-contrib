@@ -8,7 +8,7 @@
 
 %w[2.0.0 2.1.0 2.2.0 2.3.0 2.4.0 2.5.0 2.6.0 2.6.9].each do |version|
   appraise "graphql-#{version}" do
-    gem 'graphql', "~> #{version}"
+    gem 'graphql', "= #{version}"
   end
 end
 
@@ -20,7 +20,7 @@ if RUBY_ENGINE == 'ruby'
 
   %w[1.1.0 1.1.4].each do |version|
     appraise "graphql-c_parser-#{version}" do
-      gem 'graphql-c_parser', "~> #{version}"
+      gem 'graphql-c_parser', "= #{version}"
     end
   end
 end
