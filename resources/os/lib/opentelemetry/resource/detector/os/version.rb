@@ -4,8 +4,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[2.22.0 2.24.0 3.0.0 3.2.0].each do |version|
-  appraise "bunny-#{version}" do
-    gem 'bunny', "~> #{version}"
+module OpenTelemetry
+  module Resource
+    module Detector
+      module OS
+        VERSION = '0.0.0'
+      end
+    end
   end
 end
