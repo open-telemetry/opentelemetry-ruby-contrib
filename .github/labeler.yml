@@ -282,6 +282,10 @@ resource-detector-google_cloud_platform:
   - changed-files:
       - any-glob-to-any-file:
           - "resources/google_cloud_platform/**"
+resource-detector-os:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "resources/os/**"
 
 sampler-xray:
   - changed-files:
