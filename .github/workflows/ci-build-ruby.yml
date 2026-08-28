@@ -89,9 +89,7 @@ jobs:
         run: |
           # ⚙️ Install ⚙️
           echo "::group:: Root"
-          bundle config set path vendor/bundle
-          bundle config set clean false
-          bundle install --jobs 4 --retry 3
+          bundle install
           echo "::endgroup::"
 
           bundle exec rake install
@@ -109,29 +107,23 @@ jobs:
           bundle exec rake build
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
-  verify:
+  review:
     runs-on: ubuntu-24.04
     needs:
       - analyze
       - build
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && always() }} # Always run so we can detect failures/skips
     steps:
-      - name: Count builds
+      - name: Check Results
         env:
-          TARGET_GEMS: ${{ needs.analyze.outputs.gems}}
+          TARGET_GEMS: ${{ needs.analyze.outputs.gems }}
+          TARGET_RESULT: ${{ needs.build.result }}
         run: |
           if [ "$TARGET_GEMS" = "[]" ]; then
             echo "::error:: ❌ No gems selected — build matrix was empty."
             exit 1
           fi
-          gems="$TARGET_GEMS"
-          count=$(echo "$gems" | jq 'length')
-          echo "ℹ️ Build count: $count"
 
-      - name: Check build results
-        env:
-          TARGET_RESULT: ${{ needs.build.result }}
-        run: |
           if [ "$TARGET_RESULT" = "skipped" ]; then
             echo "::error:: Build job was skipped — no builds executed."
             exit 1

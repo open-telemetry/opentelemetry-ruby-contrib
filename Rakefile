@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require "open3"
+
 namespace :each do
   task :appraisal, [:subtask] do |t, args|
     subtask = args[:subtask] || "version"
@@ -43,12 +45,7 @@ namespace :each do
   end
 
   task :install do
-    path = File.join(Dir.pwd, "vendor", "bundle")
-    foreach_gem([
-      "bundle config set path #{path}",
-      "bundle config set clean false",
-      "bundle install --jobs 4 --retry 3"
-    ])
+    foreach_gem('bundle install')
   end
 end
 
@@ -84,17 +81,16 @@ def foreach_gem(cmds)
     puts "::group:: ****#{dir}****"
     Dir.chdir(dir) do
       if NON_PARRALLEL_INSTALL.include?(dir) && cmds.include?('bundle exec appraisal generate-install')
-        puts "appraisal generate"
-        result = IO.popen(["appraisal", "generate"], &:read)
-        puts "appraisal list"
-        appraisals_output = IO.popen(["appraisal", "list"], &:read)
+        puts "bundle install"
+        result = IO.popen(["bundle", "install"], &:read)
+        result = run_appraisalCmd("generate")
+        appraisals_output = run_appraisalCmd("list")
         appraisals = appraisals_output.split("\n").map(&:strip).reject(&:empty?)
-        
-        pre_cmds = []
+
         appraisals.each do |app|
-          pre_cmds << "bundle exec appraisal #{app} install"
+          out = run_appraisalCmd(app, "install")
         end
-        cmds = pre_cmds + cmds
+        puts "appraisal pre-install complete"
       end
 
       if defined?(Bundler)
@@ -106,5 +102,14 @@ def foreach_gem(cmds)
       end
     end
     puts "::endgroup::"
+  end
+end
+
+def run_appraisalCmd(*args)
+  Bundler.with_unbundled_env do
+    stdout, stderr, status = Open3.capture3("bundle", "exec", "appraisal", *args)
+    raise "appraisal #{args.join(' ')} failed:\n#{stderr}" unless status.success?
+    puts "appraisal #{args.join(' ')} output:\n#{stdout}"
+    stdout
   end
 end
