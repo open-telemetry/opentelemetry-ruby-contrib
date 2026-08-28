@@ -175,6 +175,10 @@ instrumentation-net_ldap:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/net_ldap/**"
+instrumentation-openai:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/openai/**"
 instrumentation-pg:
   - changed-files:
       - any-glob-to-any-file:
