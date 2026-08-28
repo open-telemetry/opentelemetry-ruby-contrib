@@ -27,7 +27,7 @@ end
 if RUBY_ENGINE == 'jruby'
   %w[71.0 72.0 80.0.pre1].each do |version|
     appraise "jruby_activestorage-#{version}" do
-      gem 'activerecord-jdbcsqlite3-adapter', "~> #{version}"
+      gem 'activerecord-jdbcsqlite3-adapter', "= #{version}"
       gem 'image_processing', '= 2.0.3'
       gem 'mini_magick', '= 5.3.3'
       gem 'rails'
