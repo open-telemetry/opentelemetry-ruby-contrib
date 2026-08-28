@@ -1,51 +1,26 @@
-name: Test / Ruby
+name: Test
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths: &path_filters
-      - ".yardopts"
-      - "GEMFILE"
-      - "RAKEFILE"
-      - ".github/workflows/ci-test-ruby.yml"
-  pull_request:
-    branches:
-      - main
-    paths: *path_filters
-  merge_group:
+  workflow_call:
+    inputs:
+      gems:
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }} # Ensure that only one instance of this workflow is running per event type and ref
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}-test # Ensure that only one instance of this workflow is running per event type and ref
   cancel-in-progress: true # Cancel any previous runs of this workflow for the same event type and ref
 
 jobs:
-  analyze:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    runs-on: ubuntu-24.04
-    outputs:
-      gems: ${{steps.select_gem.outputs.gems}}
-    steps:
-      - name: Select Gems
-        id: select_gem
-        shell: bash
-        run: |
-          {
-            echo "gems<<EOF"
-            echo '["everything"]'
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
   build:
     runs-on: ${{ matrix.os }}
-    needs: analyze
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && needs.analyze.outputs.gems != '[]' }}
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && inputs.gems != '[]' }}
     strategy:
       matrix:
-        gem: ${{ fromJson(needs.analyze.outputs.gems) }}
+        gem: ${{ fromJson(inputs.gems) }}
         os:
           - ubuntu-24.04
         ruby:
@@ -128,30 +103,3 @@ jobs:
           # 🍿 Test Gem 🍿
           bundle exec rake "appraisal[test]"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-
-  review:
-    runs-on: ubuntu-24.04
-    needs:
-      - analyze
-      - build
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && always() }} # Always run so we can detect failures/skips
-    steps:
-      - name: Check Results
-        env:
-          TARGET_GEMS: ${{ needs.analyze.outputs.gems }}
-          TARGET_RESULT: ${{ needs.build.result }}
-        run: |
-          if [ "$TARGET_GEMS" = "[]" ]; then
-            echo "::error:: ❌ No gems selected — build matrix was empty."
-            exit 1
-          fi
-
-          if [ "$TARGET_RESULT" = "skipped" ]; then
-            echo "::error:: Build job was skipped — no tests executed."
-            exit 1
-          fi
-          if [ "$TARGET_RESULT" != "success" ]; then
-            echo "::error:: ❌ One or more tests failed."
-            exit 1
-          fi
-          echo "::notice:: ✅ All tests ran and passed."

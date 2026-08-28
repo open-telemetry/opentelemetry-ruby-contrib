@@ -1,0 +1,69 @@
+name: CI Ruby
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths: &path_filters
+      - ".yardopts"
+      - "GEMFILE"
+      - "RAKEFILE"
+      - ".github/workflows/ci-analyze.yml"
+      - ".github/workflows/ci-ruby*.yml"
+  pull_request:
+    branches:
+      - main
+    paths: *path_filters
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    uses: ./.github/workflows/ci-analyze.yml
+
+  build:
+    needs: analyze
+    uses: ./.github/workflows/ci-ruby-build.yml
+    with:
+      gems: ${{ needs.analyze.outputs.gems }}
+
+  test:
+    needs: analyze
+    uses: ./.github/workflows/ci-ruby-test.yml
+    with:
+      gems: ${{ needs.analyze.outputs.gems }}
+
+  review:
+    runs-on: ubuntu-24.04
+    needs:
+      - build
+      - test
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && always() }} # Always run so we can detect failures/skips
+    steps:
+      - name: Check Results
+        env:
+          BUILD_RESULT: ${{ needs.build.result }}
+          TEST_RESULT: ${{ needs.test.result }}
+        run: |
+          if [ "$BUILD_RESULT" = "skipped" ]; then
+            echo "::error:: One or more Build jobs were skipped."
+            exit 1
+          fi
+          if [ "$BUILD_RESULT" != "success" ]; then
+            echo "::error:: ❌ One or more build jobs failed."
+            exit 1
+          fi
+
+          if [ "$TEST_RESULT" = "skipped" ]; then
+            echo "::error:: One or more test jobs were skipped."
+            exit 1
+          fi
+          if [ "$TEST_RESULT" != "success" ]; then
+            echo "::error:: ❌ One or more test jobs failed."
+            exit 1
+          fi
+
+          echo "::notice:: ✅ All builds & tests ran and passed."
