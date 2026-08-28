@@ -166,7 +166,6 @@ gems:
 
   - name: opentelemetry-instrumentation-openai
     directory: instrumentation/openai
-    version_constant: [OpenTelemetry, Instrumentation, OpenAI, VERSION]
 
   - name: opentelemetry-instrumentation-pg
     directory: instrumentation/pg
