@@ -51,14 +51,6 @@ runs:
         # of the benefits of bundler caching.
         rm -f "${dir}/Gemfile.lock"
 
-        echo "appraisals=false" >> $GITHUB_OUTPUT
-
-        if [[ "$LATEST_INPUT" != "true" ]]; then
-          if [[ -f "${dir}/Appraisals" ]]; then
-            echo "appraisals=true" >> $GITHUB_OUTPUT
-          fi
-        fi
-
         if [[ -f "${dir}/test/apt-packages.txt" ]]; then
           echo "apt=true" >> $GITHUB_OUTPUT
         fi
@@ -71,26 +63,13 @@ runs:
         xargs -a test/apt-packages.txt sudo apt-get install -y
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
-    # Install ruby and bundle dependencies and cache!
-    # ...but not for appraisals, sadly.
-    - name: Install Ruby ${{ inputs.ruby }} with dependencies
-      if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
-      with:
-        ruby-version: "${{ inputs.ruby }}"
-        working-directory: "${{ steps.setup.outputs.gem_dir }}"
-        bundler-cache: true
-        cache-version: "${{ inputs.ruby }}"
-
-    # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
-      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
     - name: Install dependencies and generate appraisals
-      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
       run: |
         # 💎 Install dependencies and generate appraisals 💎
@@ -103,17 +82,13 @@ runs:
       shell: bash
       run: |
         # 🍿 Test Gem 🍿
-        if [[ -f "Appraisals" ]]; then
-          for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
-            echo "::group::🔎 Appraising ${i}"
-            SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
-            SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
-            SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test || exit
-            echo "::endgroup::"
-          done
-        else
-          bundle exec rake test
-        fi
+        for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
+          echo "::group::🔎 Appraising ${i}"
+          SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
+          SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
+          SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test || exit
+          echo "::endgroup::"
+        done
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: YARD
