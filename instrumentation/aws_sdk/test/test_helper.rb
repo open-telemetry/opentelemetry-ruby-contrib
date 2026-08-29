@@ -73,7 +73,7 @@ class TestHelper
     end
 
     def target_service?(service)
-      ENV.fetch('BUNDLE_GEMFILE', '').include?("aws_sdk_#{service}")
+      ENV.fetch('BUNDLE_GEMFILE', '').downcase.include?("aws_sdk_#{service}".downcase)
     end
   end
 end
