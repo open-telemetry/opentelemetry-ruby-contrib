@@ -9,7 +9,7 @@ Dotenv.load('.env', '../.env')
 
 require 'simplecov'
 require 'bundler/setup'
-Bundler.require(:default, :test)
+Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'

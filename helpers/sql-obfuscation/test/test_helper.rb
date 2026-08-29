@@ -6,7 +6,7 @@
 
 require 'simplecov'
 require 'bundler/setup'
-Bundler.require(:default, :test)
+Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
 require 'opentelemetry-helpers-sql-obfuscation'
