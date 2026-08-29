@@ -9,3 +9,4 @@ patterns:
   - "!package-lock.json"
   - "!**/node_modules"
   - "!sampler/xray/test/data/*.json"
+  - "!**/coverage/**"

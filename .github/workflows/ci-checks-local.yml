@@ -59,6 +59,6 @@ jobs:
 
       - name: Run All Checks
         run: |
-          npm run check
+          CHECK_PATH=$PWD/ npm run check
         env:
           lsconfig: "-c .github/.linkspector-local_check.yml"
