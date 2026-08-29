@@ -1,16 +1,11 @@
-name: Local CLI Checks
+name: Checks
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "package.json"
-      - "package-lock.json"
-      - "Gemfile"
-      - "Gemfile.lock"
-      - ".github/workflows/ci-checks-local.yml"
-  merge_group:
+  workflow_call:
+    inputs:
+      gems:
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -20,11 +15,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        gem: ${{ fromJson(inputs.gems) }}
         os:
           - ubuntu-24.04
           - macos-26
           - windows-2025
-    name: All / ${{ matrix.os }}
+    name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

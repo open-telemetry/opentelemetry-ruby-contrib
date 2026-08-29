@@ -10,6 +10,7 @@ on:
       - "GEMFILE"
       - "RAKEFILE"
       - ".github/workflows/ci-analyze.yml"
+      - ".github/workflows/ci-checks-local.yml"
       - ".github/workflows/ci-ruby*.yml"
   pull_request:
     branches:
@@ -23,6 +24,12 @@ permissions:
 jobs:
   analyze:
     uses: ./.github/workflows/ci-analyze.yml
+
+  check:
+    needs: analyze
+    uses: ./.github/workflows/ci-checks-local.yml
+    with:
+      gems: ${{ needs.analyze.outputs.gems }}
 
   build:
     needs: analyze
@@ -40,12 +47,14 @@ jobs:
     runs-on: ubuntu-24.04
     needs:
       - build
+      - check
       - test
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && always() }} # Always run so we can detect failures/skips
     steps:
       - name: Check Results
         env:
           BUILD_RESULT: ${{ needs.build.result }}
+          CHECK_RESULT: ${{ needs.check.result }}
           TEST_RESULT: ${{ needs.test.result }}
         run: |
           if [ "$BUILD_RESULT" = "skipped" ]; then
@@ -62,6 +71,15 @@ jobs:
             exit 1
           fi
           if [ "$TEST_RESULT" != "success" ]; then
+            echo "::error:: ❌ One or more test jobs failed."
+            exit 1
+          fi
+
+          if [ "$CHECK_RESULT" = "skipped" ]; then
+            echo "::error:: One or more test jobs were skipped."
+            exit 1
+          fi
+          if [ "$CHECK_RESULT" != "success" ]; then
             echo "::error:: ❌ One or more test jobs failed."
             exit 1
           fi
