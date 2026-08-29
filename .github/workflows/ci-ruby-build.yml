@@ -17,7 +17,6 @@ concurrency:
 jobs:
   build:
     runs-on: ${{matrix.os}}
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && inputs.gems != '[]' }}
     strategy:
       matrix:
         gem: ${{ fromJson(inputs.gems) }}
@@ -32,6 +31,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
         with:
+          bundler-cache: true
           ruby-version: "ruby-3.3.11"
       - name: Compute Gemfile hash
         id: lockhash
@@ -56,21 +56,14 @@ jobs:
       - name: Install Tools & Gem Deps
         run: |
           # ⚙️ Install ⚙️
-          echo "::group:: Root"
-          bundle install
-          echo "::endgroup::"
-
           bundle exec rake install
-        working-directory: "${{ steps.setup.outputs.gem_dir }}"
       - name: YARD
         shell: bash
         run: |
           # 📄 Yard Docs 📄
           bundle exec rake yard
-        working-directory: "${{ steps.setup.outputs.gem_dir }}"
       - name: Build Gem
         shell: bash
         run: |
           # 📦 Build Gem 📦
           bundle exec rake build
-        working-directory: "${{ steps.setup.outputs.gem_dir }}"

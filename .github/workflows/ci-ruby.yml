@@ -24,32 +24,28 @@ permissions:
 jobs:
   analyze:
     uses: ./.github/workflows/ci-analyze.yml
-
   check:
     needs: analyze
     uses: ./.github/workflows/ci-checks-local.yml
     with:
       gems: ${{ needs.analyze.outputs.gems }}
-
   build:
     needs: analyze
     uses: ./.github/workflows/ci-ruby-build.yml
     with:
       gems: ${{ needs.analyze.outputs.gems }}
-
   test:
     needs: analyze
     uses: ./.github/workflows/ci-ruby-test.yml
     with:
       gems: ${{ needs.analyze.outputs.gems }}
-
   review:
     runs-on: ubuntu-24.04
     needs:
       - build
       - check
       - test
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' && always() }} # Always run so we can detect failures/skips
+    if: ${{ always() }} # Always run so we can detect failures/skips
     steps:
       - name: Check Results
         env:
