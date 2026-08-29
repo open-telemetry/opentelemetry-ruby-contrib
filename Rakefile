@@ -62,7 +62,7 @@ task yard: ['each:yard']
 task default: [:each]
 
 EXCLUDED_DIRS = %w[vendor ruby_kafka que]
-NON_PARRALLEL_INSTALL = %w[instrumentation/trilogy]
+NON_PARRALLEL_INSTALL = %w[instrumentation/http instrumentation/trilogy]
 
 def foreach_gem(cmds)
   cmds = Array(cmds)  # string → ["string"], array stays array

@@ -63,7 +63,6 @@ jobs:
             vendor/bundle
           key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-${{ steps.lockhash.outputs.hash }}
           restore-keys: |
-            bundler-${{ runner.os }}-${{ matrix.gem }}-
             bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-
       - name: Install Ubuntu packages (if apt-packages.txt exists)
         shell: bash
