@@ -88,6 +88,15 @@ For example, to test `opentelemetry-instrumentation-action_pack` you would:
 > 2. Install the bundle with `bundle exec appraisal install`
 > 3. Run the tests with `bundle exec appraisal rake test`
 
+### DevContainer
+
+The DevContainer provides a ready to go dev environment containing all the tools needed for development.
+If you opt to use a minimal devcontainer, you will need to manually start/provide db/messaging servers.
+This is no different to the local development option.
+
+Once the devcontainer is running, you can, make changes & run tests just like you are developing locally.
+This process to run tests is described below.
+
 ### Docker setup
 
 We use Docker Compose to configure and build services used in development and

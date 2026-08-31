@@ -1,0 +1,3 @@
+include:
+  - ../../.docker/devcontainer/alpine/compose.yml
+  - test/compose.yml

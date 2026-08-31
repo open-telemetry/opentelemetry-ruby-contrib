@@ -1,0 +1,8 @@
+{
+  "name": "otel-ruby-contrib-devcontainer-alpine-minimal",
+  "dockerComposeFile": ["../../docker-compose.yml"],
+  "service": "devcontainer-alpine",
+  "remoteUser": "app",
+
+  "workspaceFolder": "/app"
+}

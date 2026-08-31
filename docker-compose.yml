@@ -1,5 +1,6 @@
 include:
   - ./.docker/volume/bundler.yml
+  - ./.docker/devcontainer/alpine/compose.yml
   - ./.docker/infra/kafka/docker-compose.yml
   - ./.docker/infra/memcached/docker-compose.yml
   - ./.docker/infra/mongo/docker-compose.yml
@@ -11,17 +12,8 @@ include:
 services:
   app:
     extends:
-      service: base
-      file: ./docker-base.yml
-    build:
-      context: .
-    working_dir: /app
-    environment:
-      - MEMCACHED_URL=memcached:11211
-      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
-      - TEST_MYSQL_HOST=mysql
-      - TEST_POSTGRES_HOST=postgres
-      - TEST_RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      service: devcontainer-alpine
+      file: .docker/devcontainer/alpine/compose.yml
     depends_on:
       - kafka
       - jaeger
@@ -32,19 +24,6 @@ services:
       - postgres
       - rabbitmq
       - redis
-  devcontainer:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    build:
-      context: .
-    working_dir: /app
-    environment:
-      - MEMCACHED_URL=memcached:11211
-      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
-      - TEST_MYSQL_HOST=mysql
-      - TEST_POSTGRES_HOST=postgres
-      - TEST_RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
 
   jaeger:
     image: jaegertracing/jaeger:2.20.0@sha256:46a886260e04002d8f45e213fc39063fa11a50446048fdaa64786fc0840cb9f8

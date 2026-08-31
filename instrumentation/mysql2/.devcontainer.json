@@ -1,7 +1,7 @@
 {
   "name": "otel-ruby-mysql2-devcontainer",
-  "dockerComposeFile": ["../../docker-compose.yml"],
-  "service": "devcontainer",
+  "dockerComposeFile": ["compose.yml"],
+  "service": "devcontainer-alpine",
   "remoteUser": "app",
 
   "workspaceFolder": "/app/instrumentation/mysql2",
