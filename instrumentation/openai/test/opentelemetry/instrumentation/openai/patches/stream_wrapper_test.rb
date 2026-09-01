@@ -397,11 +397,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
         before { skip if defined?(OpenTelemetry::SDK::Logs) }
 
         it 'does not find log records when streaming' do
-          # No Logs SDK means the instrumentation's logger stays nil, which is
-          # what makes log_structured_event a no-op (see Utils#log_structured_event).
-          # LOG_EXPORTER itself is a stub in this configuration that always
-          # returns [] (see test_helper.rb), so the logger check above is the
-          # assertion that actually exercises this code path.
           _(instrumentation.logger).must_be_nil
 
           span = tracer.start_root_span('test_span', kind: :client)

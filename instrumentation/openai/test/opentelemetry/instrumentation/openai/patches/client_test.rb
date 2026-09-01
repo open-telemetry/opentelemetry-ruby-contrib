@@ -126,8 +126,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
           instrumentation.install
           instrumentation.config[:capture_content] = true
 
-          # No Logs SDK means the instrumentation's logger stays nil, which is
-          # what makes log_structured_event a no-op (see Utils#log_structured_event).
           _(instrumentation.logger).must_be_nil
 
           client = OpenAI::Client.new(api_key: 'test-token')

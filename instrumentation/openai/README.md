@@ -59,6 +59,16 @@ environment variable:
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 ```
 
+## Emitting log events
+
+[GenAI semantic conventions define events to emit with instrumentation][genai-semconv-events]. Events are emitted using the Logs signal. The `opentelemetry-instrumentation-openai` gem does not depend on the `opentelemetry-logs-api` gem because it has not reached stability. However, if you have the Logs API and Logs SDK gems installed in your Gemfile, it will emit Log Records for the GenAI events.
+
+To enable the instrumentation to emit logs, add the following to your Gemfile:
+```
+gem 'opentelemetry-logs-api'
+gem 'opentelemetry-logs-sdk'
+```
+
 ## Examples
 
 See [example/trace_demonstration.rb][example-github] for a runnable example that instruments chat completion, streaming, and embeddings requests and prints spans and log records to the console. Set the `OPENAI_API_KEY` environment variable before running it.
@@ -87,3 +97,4 @@ The `opentelemetry-instrumentation-openai` gem is distributed under the Apache 2
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [semconv-genai]: https://github.com/open-telemetry/semantic-conventions-genai
 [example-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/openai/example/trace_demonstration.rb
+[genai-semconv-events]: https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/gen-ai-events.md
