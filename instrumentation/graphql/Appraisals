@@ -6,7 +6,7 @@
 
 # Max compatible version of 2.0.x
 
-%w[2.0.0 2.1.0 2.2.0 2.3.0 2.4.0 2.5.0 2.6.0 2.6.9].each do |version|
+%w[2.0.0 2.1.0 2.2.0 2.3.0 2.4.0 2.5.0 2.6.0 2.6.10].each do |version|
   appraise "graphql-#{version}" do
     gem 'graphql', "~> #{version}"
   end
