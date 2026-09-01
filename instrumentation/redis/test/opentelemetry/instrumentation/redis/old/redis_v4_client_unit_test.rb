@@ -7,13 +7,13 @@
 require 'test_helper'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/redis'
-require_relative '../../../../../lib/opentelemetry/instrumentation/redis/patches/redis_v4_client'
+require_relative '../../../../../lib/opentelemetry/instrumentation/redis/patches/old/redis_v4_client'
 
 # Unit-tests RedisV4Client#process against a fake client. The patch is only
 # prepended when redis < 5, so the redis-5.x/redis-latest appraisals (and Ruby
 # 4.0, where redis-4.x is not generated) never cover it via client_test.rb.
 # Prepending the module onto a stub keeps it covered in every appraisal.
-describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
+describe OpenTelemetry::Instrumentation::Redis::Patches::Old::RedisV4Client do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:last_span) { exporter.finished_spans.last }
@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
         @reply
       end
 
-      prepend OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client
+      prepend OpenTelemetry::Instrumentation::Redis::Patches::Old::RedisV4Client
     end
   end
 
@@ -44,6 +44,13 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::RedisV4Client do
   end
 
   before do
+    # Installing registers a RedisClient middleware for the ambient semconv mode,
+    # and RedisClient.register accumulates modules for the life of the process.
+    # Running under the stable/dup appraisals would leave the Old middleware
+    # registered alongside theirs and double every subsequent span, so keep this
+    # file to the old appraisals - they already span redis 4.x, 5.x and latest.
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('old')
+
     instrumentation.instance_variable_set(:@installed, false)
     instrumentation.install(db_statement: :include)
     exporter.reset
