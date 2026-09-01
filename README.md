@@ -48,7 +48,7 @@ For more information about the approver role, see the [community repository](htt
 ### Emeritus
 
 - [Andrew Hayworth](https://github.com/ahayworth), Maintainer
-- [Ariel Valentin](https://github.com/arielvalentin), GitHub
+- [Ariel Valentin](https://github.com/arielvalentin), Maintainer
 - [Eric Mustin](https://github.com/ericmustin), Maintainer
 - [Francis Bogsanyi](https://github.com/fbogsany), Maintainer
 - [Matthew Wear](https://github.com/mwear), Maintainer
