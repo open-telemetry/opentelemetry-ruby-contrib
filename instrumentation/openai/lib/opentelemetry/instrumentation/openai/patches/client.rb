@@ -13,7 +13,7 @@ module OpenTelemetry
     module OpenAI
       module Patches
         # OpenAIClient Patch
-        # rubocop:disable Metrics/ModuleLength
+        # rubocop:disable-next Metrics/ModuleLength
         module Client
           include OperationName
           include Utils
@@ -258,7 +258,6 @@ module OpenTelemetry
             span.finish
           end
         end
-        # rubocop:enable Metrics/ModuleLength
       end
     end
   end
