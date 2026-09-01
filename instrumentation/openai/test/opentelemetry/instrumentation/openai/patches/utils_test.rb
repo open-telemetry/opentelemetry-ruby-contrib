@@ -302,7 +302,17 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Utils do
   end
 
   describe '#log_structured_event' do
-    describe 'without logs gems installed' do
+    let(:instrumentation) { OpenTelemetry::Instrumentation::OpenAI::Instrumentation.instance }
+
+    before do
+      instrumentation.install
+    end
+
+    after do
+      instrumentation.instance_variable_set(:@installed, false)
+    end
+
+    describe 'without logs gems installed (default)' do
       before do
         skip if defined?(OpenTelemetry::Logs)
       end
@@ -318,7 +328,7 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Utils do
       end
     end
 
-    describe 'with logs gems installed (default)' do
+    describe 'with logs gems installed' do
       before do
         skip unless defined?(OpenTelemetry::Logs) && defined?(OpenTelemetry::SDK::Logs)
         LOG_EXPORTER.reset
