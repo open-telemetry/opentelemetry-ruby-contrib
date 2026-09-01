@@ -227,5 +227,8 @@ gems:
   - name: opentelemetry-resource-detector-google_cloud_platform
     directory: resources/google_cloud_platform
 
+  - name: opentelemetry-resource-detector-os
+    directory: resources/os
+
   - name: opentelemetry-sampler-xray
     directory: sampler/xray
