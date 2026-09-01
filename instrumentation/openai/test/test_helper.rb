@@ -22,6 +22,7 @@ if defined?(OpenTelemetry::SDK::Logs)
 else
   LogExporter = Struct.new do
     def reset; end
+
     def emitted_log_records
       []
     end

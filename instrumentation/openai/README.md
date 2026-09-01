@@ -64,7 +64,8 @@ export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 [GenAI semantic conventions define events to emit with instrumentation][genai-semconv-events]. Events are emitted using the Logs signal. The `opentelemetry-instrumentation-openai` gem does not depend on the `opentelemetry-logs-api` gem because it has not reached stability. However, if you have the Logs API and Logs SDK gems installed in your Gemfile, it will emit Log Records for the GenAI events.
 
 To enable the instrumentation to emit logs, add the following to your Gemfile:
-```
+
+```ruby
 gem 'opentelemetry-logs-api'
 gem 'opentelemetry-logs-sdk'
 ```
