@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+## v0.97.0 / 2026-09-01
+
+- ADDED: Add instrumentation for openai gem (#1797)
+
 ## v0.96.0 / 2026-08-18
 
 - ADDED: Upgrade opentelemetry-instrumentation-aws_sdk to 0.13.0
