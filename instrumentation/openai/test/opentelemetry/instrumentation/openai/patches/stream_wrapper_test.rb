@@ -218,61 +218,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
       _(span.attributes['openai.response.service_tier']).must_equal 'default'
     end
 
-    it 'accumulates streaming content correctly' do
-      span = tracer.start_root_span('test_span', kind: :client)
-
-      chunks = [
-        Struct.new(:id, :model, :choices).new(
-          'chatcmpl-123',
-          'gpt-4',
-          [
-            Struct.new(:index, :delta, :finish_reason).new(
-              0,
-              Struct.new(:content, :role).new('Hello', :assistant),
-              nil
-            )
-          ]
-        ),
-        Struct.new(:id, :model, :choices).new(
-          'chatcmpl-123',
-          'gpt-4',
-          [
-            Struct.new(:index, :delta, :finish_reason).new(
-              0,
-              Struct.new(:content).new(' world'),
-              nil
-            )
-          ]
-        ),
-        Struct.new(:id, :model, :choices).new(
-          'chatcmpl-123',
-          'gpt-4',
-          [
-            Struct.new(:index, :delta, :finish_reason).new(
-              0,
-              Struct.new(:content).new('!'),
-              :stop
-            )
-          ]
-        )
-      ]
-
-      stream = chunks.each
-      wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
-        stream,
-        span,
-        true
-      )
-
-      wrapper.each { |_chunk| }
-
-      choice = LOG_EXPORTER.emitted_log_records.find { |r| r.event_name == 'gen_ai.choice' }
-      _(choice).wont_be_nil
-      _(choice.attributes['gen_ai.provider.name']).must_equal 'openai'
-      _(choice.body[:finish_reason]).must_equal 'stop'
-      _(choice.body[:message][:content]).must_equal 'Hello world!'
-    end
-
     it 'handles streaming with usage information including token details' do
       span = tracer.start_root_span('test_span', kind: :client)
 
@@ -361,135 +306,6 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
       _(span_without_start.attributes).wont_include 'gen_ai.response.time_to_first_chunk'
     end
 
-    it 'handles streaming with tool calls' do
-      span = tracer.start_root_span('test_span', kind: :client)
-
-      chunks = [
-        Struct.new(:id, :model, :choices).new(
-          'chatcmpl-123',
-          'gpt-4',
-          [
-            Struct.new(:index, :delta, :finish_reason).new(
-              0,
-              Struct.new(:role, :tool_calls).new(
-                :assistant,
-                [
-                  Struct.new(:index, :id, :function).new(
-                    0,
-                    'call_123',
-                    Struct.new(:name, :arguments).new('get_weather', '{"loc')
-                  )
-                ]
-              ),
-              nil
-            )
-          ]
-        ),
-        Struct.new(:id, :model, :choices).new(
-          'chatcmpl-123',
-          'gpt-4',
-          [
-            Struct.new(:index, :delta, :finish_reason).new(
-              0,
-              Struct.new(:tool_calls).new(
-                [
-                  Struct.new(:index, :function).new(
-                    0,
-                    Struct.new(:arguments).new('ation":"NYC"}')
-                  )
-                ]
-              ),
-              nil
-            )
-          ]
-        ),
-        Struct.new(:id, :model, :choices).new(
-          'chatcmpl-123',
-          'gpt-4',
-          [
-            Struct.new(:index, :delta, :finish_reason).new(
-              0,
-              Struct.new(:content).new(nil),
-              :tool_calls
-            )
-          ]
-        )
-      ]
-
-      stream = chunks.each
-      wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
-        stream,
-        span,
-        true
-      )
-
-      wrapper.each { |_chunk| }
-
-      choice = LOG_EXPORTER.emitted_log_records.find { |r| r.event_name == 'gen_ai.choice' }
-      _(choice).wont_be_nil
-      tool_calls = choice.body[:message][:tool_calls]
-      _(tool_calls).wont_be_nil
-      _(tool_calls.first[:function][:name]).must_equal 'get_weather'
-      _(tool_calls.first[:function][:arguments]).must_include 'location'
-      _(tool_calls.first[:function][:arguments]).must_include 'NYC'
-    end
-
-    it 'handles multiple choices in streaming' do
-      span = tracer.start_root_span('test_span', kind: :client)
-
-      chunks = [
-        Struct.new(:id, :model, :choices).new(
-          'chatcmpl-123',
-          'gpt-4',
-          [
-            Struct.new(:index, :delta, :finish_reason).new(
-              0,
-              Struct.new(:content, :role).new('Choice 1', :assistant),
-              nil
-            ),
-            Struct.new(:index, :delta, :finish_reason).new(
-              1,
-              Struct.new(:content, :role).new('Choice 2', :assistant),
-              nil
-            )
-          ]
-        ),
-        Struct.new(:id, :model, :choices).new(
-          'chatcmpl-123',
-          'gpt-4',
-          [
-            Struct.new(:index, :delta, :finish_reason).new(
-              0,
-              Struct.new(:content).new(nil),
-              :stop
-            ),
-            Struct.new(:index, :delta, :finish_reason).new(
-              1,
-              Struct.new(:content).new(nil),
-              :stop
-            )
-          ]
-        )
-      ]
-
-      stream = chunks.each
-      wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
-        stream,
-        span,
-        true
-      )
-
-      wrapper.each { |_chunk| }
-
-      _(span.attributes['gen_ai.response.finish_reasons']).must_equal %w[stop stop]
-
-      choice_contents = LOG_EXPORTER.emitted_log_records
-                                    .select { |r| r.event_name == 'gen_ai.choice' }
-                                    .map { |r| r.body[:message][:content] }
-      _(choice_contents).must_include 'Choice 1'
-      _(choice_contents).must_include 'Choice 2'
-    end
-
     it 'handles errors during streaming' do
       span = tracer.start_root_span('test_span', kind: :client)
 
@@ -574,6 +390,440 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
       wrapper.each { |_chunk| }
 
       _(LOG_EXPORTER.emitted_log_records).must_be_empty
+    end
+
+    describe 'log records' do
+      describe 'without logs installed (default)' do
+        before { skip if defined?(OpenTelemetry::SDK::Logs) }
+
+        it 'does not find log records when streaming' do
+          # No Logs SDK means the instrumentation's logger stays nil, which is
+          # what makes log_structured_event a no-op (see Utils#log_structured_event).
+          # LOG_EXPORTER itself is a stub in this configuration that always
+          # returns [] (see test_helper.rb), so the logger check above is the
+          # assertion that actually exercises this code path.
+          _(instrumentation.logger).must_be_nil
+
+          span = tracer.start_root_span('test_span', kind: :client)
+
+          chunks = [
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content, :role).new('Hello', :assistant),
+                  nil
+                )
+              ]
+            ),
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content).new(' world'),
+                  nil
+                )
+              ]
+            ),
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content).new('!'),
+                  :stop
+                )
+              ]
+            )
+          ]
+
+          stream = chunks.each
+          wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
+            stream,
+            span,
+            true
+          )
+
+          wrapper.each { |_chunk| }
+
+          _(span.attributes['gen_ai.response.finish_reasons']).must_equal ['stop']
+          _(LOG_EXPORTER.emitted_log_records).must_be_empty
+        end
+
+        it 'handles multiple choices in streaming' do
+          span = tracer.start_root_span('test_span', kind: :client)
+
+          chunks = [
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content, :role).new('Choice 1', :assistant),
+                  nil
+                ),
+                Struct.new(:index, :delta, :finish_reason).new(
+                  1,
+                  Struct.new(:content, :role).new('Choice 2', :assistant),
+                  nil
+                )
+              ]
+            ),
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content).new(nil),
+                  :stop
+                ),
+                Struct.new(:index, :delta, :finish_reason).new(
+                  1,
+                  Struct.new(:content).new(nil),
+                  :stop
+                )
+              ]
+            )
+          ]
+
+          stream = chunks.each
+          wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
+            stream,
+            span,
+            true
+          )
+
+          wrapper.each { |_chunk| }
+
+          _(span.attributes['gen_ai.response.finish_reasons']).must_equal %w[stop stop]
+        end
+
+        it 'does not log content when capture_content is false' do
+          _(instrumentation.logger).must_be_nil
+
+          span = tracer.start_root_span('test_span', kind: :client)
+
+          chunks = [
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content, :role).new('Secret content', :assistant),
+                  :stop
+                )
+              ]
+            )
+          ]
+
+          stream = chunks.each
+          wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
+            stream,
+            span,
+            false # capture_content disabled
+          )
+
+          wrapper.each { |_chunk| }
+
+          _(span.attributes['gen_ai.response.finish_reasons']).must_equal ['stop']
+          _(LOG_EXPORTER.emitted_log_records).must_be_empty
+        end
+
+        it 'handles streaming with tool calls without raising and without emitting logs' do
+          _(instrumentation.logger).must_be_nil
+
+          span = tracer.start_root_span('test_span', kind: :client)
+
+          chunks = [
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:role, :tool_calls).new(
+                    :assistant,
+                    [
+                      Struct.new(:index, :id, :function).new(
+                        0,
+                        'call_123',
+                        Struct.new(:name, :arguments).new('get_weather', '{"loc')
+                      )
+                    ]
+                  ),
+                  nil
+                )
+              ]
+            ),
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:tool_calls).new(
+                    [
+                      Struct.new(:index, :function).new(
+                        0,
+                        Struct.new(:arguments).new('ation":"NYC"}')
+                      )
+                    ]
+                  ),
+                  nil
+                )
+              ]
+            ),
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content).new(nil),
+                  :tool_calls
+                )
+              ]
+            )
+          ]
+
+          stream = chunks.each
+          wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
+            stream,
+            span,
+            true
+          )
+
+          wrapper.each { |_chunk| }
+
+          _(span.attributes['gen_ai.response.finish_reasons']).must_equal ['tool_calls']
+          _(LOG_EXPORTER.emitted_log_records).must_be_empty
+        end
+      end
+
+      describe 'with logs installed' do
+        before { skip unless defined?(OpenTelemetry::SDK::Logs) }
+
+        it 'accumulates streaming content correctly' do
+          span = tracer.start_root_span('test_span', kind: :client)
+
+          chunks = [
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content, :role).new('Hello', :assistant),
+                  nil
+                )
+              ]
+            ),
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content).new(' world'),
+                  nil
+                )
+              ]
+            ),
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content).new('!'),
+                  :stop
+                )
+              ]
+            )
+          ]
+
+          stream = chunks.each
+          wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
+            stream,
+            span,
+            true
+          )
+
+          wrapper.each { |_chunk| }
+
+          choice = LOG_EXPORTER.emitted_log_records.find { |r| r.event_name == 'gen_ai.choice' }
+          _(choice).wont_be_nil
+          _(choice.attributes['gen_ai.provider.name']).must_equal 'openai'
+          _(choice.body[:finish_reason]).must_equal 'stop'
+          _(choice.body[:message][:content]).must_equal 'Hello world!'
+        end
+
+        it 'handles multiple choices in streaming' do
+          span = tracer.start_root_span('test_span', kind: :client)
+
+          chunks = [
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content, :role).new('Choice 1', :assistant),
+                  nil
+                ),
+                Struct.new(:index, :delta, :finish_reason).new(
+                  1,
+                  Struct.new(:content, :role).new('Choice 2', :assistant),
+                  nil
+                )
+              ]
+            ),
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content).new(nil),
+                  :stop
+                ),
+                Struct.new(:index, :delta, :finish_reason).new(
+                  1,
+                  Struct.new(:content).new(nil),
+                  :stop
+                )
+              ]
+            )
+          ]
+
+          stream = chunks.each
+          wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
+            stream,
+            span,
+            true
+          )
+
+          wrapper.each { |_chunk| }
+
+          _(span.attributes['gen_ai.response.finish_reasons']).must_equal %w[stop stop]
+
+          choice_contents = LOG_EXPORTER.emitted_log_records
+                                        .select { |r| r.event_name == 'gen_ai.choice' }
+                                        .map { |r| r.body[:message][:content] }
+          _(choice_contents).must_include 'Choice 1'
+          _(choice_contents).must_include 'Choice 2'
+        end
+
+        it 'does not log content when capture_content is false' do
+          span = tracer.start_root_span('test_span', kind: :client)
+
+          chunks = [
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content, :role).new('Secret content', :assistant),
+                  :stop
+                )
+              ]
+            )
+          ]
+
+          stream = chunks.each
+          wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
+            stream,
+            span,
+            false # capture_content disabled
+          )
+
+          wrapper.each { |_chunk| }
+
+          _(LOG_EXPORTER.emitted_log_records).must_be_empty
+        end
+
+        it 'handles streaming with tool calls' do
+          span = tracer.start_root_span('test_span', kind: :client)
+
+          chunks = [
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:role, :tool_calls).new(
+                    :assistant,
+                    [
+                      Struct.new(:index, :id, :function).new(
+                        0,
+                        'call_123',
+                        Struct.new(:name, :arguments).new('get_weather', '{"loc')
+                      )
+                    ]
+                  ),
+                  nil
+                )
+              ]
+            ),
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:tool_calls).new(
+                    [
+                      Struct.new(:index, :function).new(
+                        0,
+                        Struct.new(:arguments).new('ation":"NYC"}')
+                      )
+                    ]
+                  ),
+                  nil
+                )
+              ]
+            ),
+            Struct.new(:id, :model, :choices).new(
+              'chatcmpl-123',
+              'gpt-4',
+              [
+                Struct.new(:index, :delta, :finish_reason).new(
+                  0,
+                  Struct.new(:content).new(nil),
+                  :tool_calls
+                )
+              ]
+            )
+          ]
+
+          stream = chunks.each
+          wrapper = OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper.new(
+            stream,
+            span,
+            true
+          )
+
+          wrapper.each { |_chunk| }
+
+          choice = LOG_EXPORTER.emitted_log_records.find { |r| r.event_name == 'gen_ai.choice' }
+          _(choice).wont_be_nil
+          tool_calls = choice.body[:message][:tool_calls]
+          _(tool_calls).wont_be_nil
+          _(tool_calls.first[:function][:name]).must_equal 'get_weather'
+          _(tool_calls.first[:function][:arguments]).must_include 'location'
+          _(tool_calls.first[:function][:arguments]).must_include 'NYC'
+        end
+      end
     end
   end
 end

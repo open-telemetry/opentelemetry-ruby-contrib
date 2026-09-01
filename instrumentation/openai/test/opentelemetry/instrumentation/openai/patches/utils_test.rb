@@ -302,43 +302,62 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Utils do
   end
 
   describe '#log_structured_event' do
-    before do
-      LOG_EXPORTER.reset
+    describe 'without logs gems installed' do
+      before do
+        skip if defined?(OpenTelemetry::Logs)
+      end
+
+      it 'returns nil' do
+        event = {
+          event_name: 'gen_ai.user.message',
+          attributes: { 'gen_ai.provider.name' => 'openai' },
+          body: { content: 'Hello' }
+        }
+
+        assert_nil utils_class.log_structured_event(event)
+      end
     end
 
-    it 'emits the event as a log record through the Logs API' do
-      event = {
-        event_name: 'gen_ai.user.message',
-        attributes: { 'gen_ai.provider.name' => 'openai' },
-        body: { content: 'Hello' }
-      }
+    describe 'with logs gems installed (default)' do
+      before do
+        skip unless defined?(OpenTelemetry::Logs) && defined?(OpenTelemetry::SDK::Logs)
+        LOG_EXPORTER.reset
+      end
 
-      utils_class.log_structured_event(event)
+      it 'emits the event as a log record through the Logs API' do
+        event = {
+          event_name: 'gen_ai.user.message',
+          attributes: { 'gen_ai.provider.name' => 'openai' },
+          body: { content: 'Hello' }
+        }
 
-      log_records = LOG_EXPORTER.emitted_log_records
-      _(log_records.size).must_equal 1
+        utils_class.log_structured_event(event)
 
-      log_record = log_records.first
-      _(log_record.event_name).must_equal 'gen_ai.user.message'
-      _(log_record.attributes['gen_ai.provider.name']).must_equal 'openai'
-      _(log_record.body[:content]).must_equal 'Hello'
-    end
+        log_records = LOG_EXPORTER.emitted_log_records
+        _(log_records.size).must_equal 1
 
-    it 'handles events with nil body' do
-      event = {
-        event_name: 'gen_ai.user.message',
-        attributes: { 'gen_ai.provider.name' => 'openai' },
-        body: nil
-      }
+        log_record = log_records.first
+        _(log_record.event_name).must_equal 'gen_ai.user.message'
+        _(log_record.attributes['gen_ai.provider.name']).must_equal 'openai'
+        _(log_record.body[:content]).must_equal 'Hello'
+      end
 
-      utils_class.log_structured_event(event)
+      it 'handles events with nil body' do
+        event = {
+          event_name: 'gen_ai.user.message',
+          attributes: { 'gen_ai.provider.name' => 'openai' },
+          body: nil
+        }
 
-      log_records = LOG_EXPORTER.emitted_log_records
-      _(log_records.size).must_equal 1
+        utils_class.log_structured_event(event)
 
-      log_record = log_records.first
-      _(log_record.event_name).must_equal 'gen_ai.user.message'
-      _(log_record.body).must_be_nil
+        log_records = LOG_EXPORTER.emitted_log_records
+        _(log_records.size).must_equal 1
+
+        log_record = log_records.first
+        _(log_record.event_name).must_equal 'gen_ai.user.message'
+        _(log_record.body).must_be_nil
+      end
     end
   end
 end

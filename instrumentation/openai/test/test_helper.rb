@@ -16,8 +16,20 @@ EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
 
 # global opentelemetry-logs-sdk setup:
-LOG_EXPORTER = OpenTelemetry::SDK::Logs::Export::InMemoryLogRecordExporter.new
-log_record_processor = OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor.new(LOG_EXPORTER)
+if defined?(OpenTelemetry::SDK::Logs)
+  LOG_EXPORTER = OpenTelemetry::SDK::Logs::Export::InMemoryLogRecordExporter.new
+  log_record_processor = OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor.new(LOG_EXPORTER)
+else
+  LogExporter = Struct.new do
+    def reset; end
+    def emitted_log_records
+      []
+    end
+  end
+
+  LOG_EXPORTER = LogExporter.new
+  log_record_processor = nil
+end
 
 OpenTelemetry::SDK.configure do |c|
   c.error_handler = ->(exception:, message:) { raise(exception || message) }

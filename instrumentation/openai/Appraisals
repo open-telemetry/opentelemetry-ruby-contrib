@@ -8,4 +8,13 @@
   appraise "openai-#{version}" do
     gem 'openai', "~> #{version}"
   end
+
+  # Logs support is opt-in, based on the presence of the
+  # opentelemetry-logs-api and opentelemetry-logs-sdk gems.
+  # Run some tests with these gems present.
+  appraise "openai-#{version}-logs" do
+    gem 'openai', "~> #{version}"
+    gem 'opentelemetry-logs-api', '= 0.4.1'
+    gem 'opentelemetry-logs-sdk', '= 0.6.1'
+  end
 end

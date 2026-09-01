@@ -117,34 +117,66 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       _(client_span.attributes['gen_ai.request.reasoning.level']).must_equal 'high'
     end
 
-    it 'captures message content when enabled' do
-      # Content capture is emitted as log records through the Logs API,
-      # not as span events.
-      instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install
-      instrumentation.config[:capture_content] = true
+    describe 'capturing message content' do
+      describe 'without logs installed' do
+        before { skip if defined?(OpenTelemetry::SDK::Logs) }
 
-      client = OpenAI::Client.new(api_key: 'test-token')
-      client.chat.completions.create(
-        model: model,
-        messages: messages
-      )
+        it 'does not capture message content when enabled' do
+          instrumentation.instance_variable_set(:@installed, false)
+          instrumentation.install
+          instrumentation.config[:capture_content] = true
 
-      _(client_span).wont_be_nil
+          # No Logs SDK means the instrumentation's logger stays nil, which is
+          # what makes log_structured_event a no-op (see Utils#log_structured_event).
+          _(instrumentation.logger).must_be_nil
 
-      log_records = LOG_EXPORTER.emitted_log_records
-      event_names = log_records.map(&:event_name)
-      _(event_names).must_include 'gen_ai.user.message'
-      _(event_names).must_include 'gen_ai.choice'
+          client = OpenAI::Client.new(api_key: 'test-token')
+          client.chat.completions.create(
+            model: model,
+            messages: messages
+          )
 
-      user_message = log_records.find { |r| r.event_name == 'gen_ai.user.message' }
-      _(user_message.attributes['gen_ai.provider.name']).must_equal 'openai'
-      _(user_message.body[:content]).must_equal 'Hello!'
+          _(client_span).wont_be_nil
+          _(client_span.attributes['gen_ai.operation.name']).must_equal 'chat'
+          _(client_span.attributes['gen_ai.response.finish_reasons']).must_equal ['stop']
 
-      choice = log_records.find { |r| r.event_name == 'gen_ai.choice' }
-      _(choice.attributes['gen_ai.provider.name']).must_equal 'openai'
-      _(choice.body[:message][:content]).must_equal 'Hello! How can I assist you today?'
-      _(choice.body[:finish_reason]).must_equal 'stop'
+          _(LOG_EXPORTER.emitted_log_records).must_be_empty
+        end
+      end
+
+      describe 'with logs installed' do
+        before { skip unless defined?(OpenTelemetry::SDK::Logs) }
+
+        it 'captures message content when enabled' do
+          # Content capture is emitted as log records through the Logs API,
+          # not as span events.
+          instrumentation.instance_variable_set(:@installed, false)
+          instrumentation.install
+          instrumentation.config[:capture_content] = true
+
+          client = OpenAI::Client.new(api_key: 'test-token')
+          client.chat.completions.create(
+            model: model,
+            messages: messages
+          )
+
+          _(client_span).wont_be_nil
+
+          log_records = LOG_EXPORTER.emitted_log_records
+          event_names = log_records.map(&:event_name)
+          _(event_names).must_include 'gen_ai.user.message'
+          _(event_names).must_include 'gen_ai.choice'
+
+          user_message = log_records.find { |r| r.event_name == 'gen_ai.user.message' }
+          _(user_message.attributes['gen_ai.provider.name']).must_equal 'openai'
+          _(user_message.body[:content]).must_equal 'Hello!'
+
+          choice = log_records.find { |r| r.event_name == 'gen_ai.choice' }
+          _(choice.attributes['gen_ai.provider.name']).must_equal 'openai'
+          _(choice.body[:message][:content]).must_equal 'Hello! How can I assist you today?'
+          _(choice.body[:finish_reason]).must_equal 'stop'
+        end
+      end
     end
   end
 

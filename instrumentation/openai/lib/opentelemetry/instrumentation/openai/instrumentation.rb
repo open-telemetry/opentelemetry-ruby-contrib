@@ -62,7 +62,16 @@ module OpenTelemetry
         end
 
         def create_logger
-          @logger = OpenTelemetry.logger_provider.logger(name: NAME, version: VERSION)
+          # Users must install the OpenTelemetry Logs API and SDK gems to
+          # create log events. The Logs API is still unstable, unlike the
+          # Traces API, so we require users to isntall it themselves.
+          if defined?(OpenTelemetry::Logs) && defined?(OpenTelemetry::SDK::Logs)
+            @logger = OpenTelemetry.logger_provider.logger(name: NAME, version: VERSION)
+          elsif defined?(OpenTelemetry::Logs)
+            # If there is no Logs SDK, we can still have a NOOP_LOGGER running
+            # if the API is present.
+            @logger = OpenTelemetry::Logs::LoggerProvider::NOOP_LOGGER
+          end
         end
 
         def patch_client
