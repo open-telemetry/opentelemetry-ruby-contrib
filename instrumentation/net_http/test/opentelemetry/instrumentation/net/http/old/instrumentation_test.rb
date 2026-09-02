@@ -335,5 +335,18 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     ensure
       WebMock.disable_net_connect!
     end
+
+    it 'does not record a nil net.peer.name' do
+      fake_socket = Object.new
+      def fake_socket.setsockopt(*args); end
+      def fake_socket.close; end
+
+      # Replace the TCP socket creation with our fake socket
+      allow(TCPSocket).to receive(:open).and_return(fake_socket)
+      Net::HTTP.new(nil, 80).send(:connect)
+
+      _(span.name).must_equal 'connect'
+      _(span.attributes['net.peer.name']).must_be_nil
+    end
   end
 end
