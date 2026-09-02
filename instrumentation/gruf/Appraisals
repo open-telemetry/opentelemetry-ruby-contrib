@@ -14,7 +14,7 @@ if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.4') && RUBY_ENGINE == 'r
   end
 end
 
-if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.5') && && RUBY_ENGINE == 'ruby'
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.5') && RUBY_ENGINE == 'ruby'
   appraise 'gruf-2.21.x' do
     gem 'gruf', '< 2.22.0'
   end
