@@ -10,7 +10,6 @@ module OpenTelemetry
     module ActiveSupport
       LEGACY_NAME_FORMATTER = ->(name) { name.split('.')[0..1].reverse.join(' ') }
 
-      # rubocop:disable Metrics/ParameterLists
       # The SpanSubscriber is a special ActiveSupport::Notification subscription
       # handler which turns notifications into generic spans, taking care to handle
       # context appropriately.
@@ -29,6 +28,7 @@ module OpenTelemetry
       # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber
       # gets invoked first
       # Rails 6+ https://github.com/rails/rails/blob/0f0ec9908e25af36df2d937dc431f626a4102b3d/activesupport/lib/active_support/notifications/fanout.rb#L51
+      # rubocop:disable-next Metrics/ParameterLists
       def self.subscribe(
         tracer,
         pattern,
@@ -70,11 +70,10 @@ module OpenTelemetry
         subscriber_object
       end
 
-      # rubocop:enable Metrics/ParameterLists
       class SpanSubscriber
         ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
-        # rubocop:disable Metrics/ParameterLists
+        # rubocop:disable-next Metrics/ParameterLists
         def initialize(pattern:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: nil, kind: nil, span_name_formatter: nil)
           @pattern = pattern
           @tracer = tracer
@@ -83,7 +82,6 @@ module OpenTelemetry
           @kind = kind || :internal
           @span_name_formatter = span_name_formatter
         end
-        # rubocop:enable Metrics/ParameterLists
 
         def start(name, id, payload)
           span = @tracer.start_span(safe_span_name_for(name), kind: @kind)

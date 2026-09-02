@@ -2,7 +2,6 @@ ci:
   - changed-files:
       - any-glob-to-any-file:
           - ".github/**"
-          - "**/.github-ci.yml"
 
 deprecated:
   - changed-files:
@@ -12,6 +11,12 @@ deprecated:
           - "instrumentation/mongo/**"
           - "instrumentation/restclient/**"
           - "instrumentation/ruby_kafka/**"
+everything:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".simplecov"
+          - "Gemfile"
+          - "Rakefile"
 
 helpers-mysql:
   - changed-files:
@@ -221,7 +226,7 @@ instrumentation-restclient:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/restclient/**"
-instrumentation-respec:
+instrumentation-rspec:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/rspec/**"
