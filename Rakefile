@@ -167,10 +167,10 @@ def installeach_gem()
 end
 
 def run_appraisalCmd(*args)
-#  Bundler.with_unbundled_env do
+  Bundler.with_unbundled_env do
     stdout, stderr, status = Open3.capture3("bundle", "exec", "appraisal", *args)
     raise "appraisal #{args.join(' ')} failed:\n#{stderr}" unless status.success?
     puts "appraisal #{args.join(' ')} output:\n#{stdout}"
     stdout
-#  end
+  end
 end

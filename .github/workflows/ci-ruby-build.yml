@@ -42,9 +42,9 @@ jobs:
           path: |
             vendor
             !vendor/bundle/cache
-          key: bundler-${{ runner.os }}-${{ matrix.ruby }}-randomString
+          key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-randomString
           restore-keys: |
-            bundler-${{ runner.os }}-${{ matrix.ruby }}-
+            bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-
       - name: Install Tools & Gem Deps
         run: |
           # ⚙️ Install ⚙️
