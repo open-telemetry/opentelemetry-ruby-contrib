@@ -62,7 +62,7 @@ task yard: ['each:yard']
 task default: [:each]
 
 EXCLUDED_DIRS = %w[vendor ruby_kafka que]
-NON_PARRALLEL_INSTALL = %w[instrumentation/http instrumentation/mysql2 instrumentation/trilogy]
+NON_PARRALLEL_INSTALL = %w[instrumentation/http instrumentation/trilogy]
 
 def discover_gems
   gemspecs =
