@@ -36,6 +36,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
         with:
+          bundler: latest
           bundler-cache: true
           ruby-version: ${{ matrix.ruby }}
       - name: Compute Gemfile hash
@@ -55,11 +56,12 @@ jobs:
           else
             echo "hash=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
           fi
-      - name: Cache Bundler
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 #v5.0.4
+      - name: Restore Bundler Cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
         with:
           path: |
-            vendor/bundle
+            vendor
+            !vendor/bundle/cache
           key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-${{ steps.lockhash.outputs.hash }}
           restore-keys: |
             bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-
@@ -80,6 +82,13 @@ jobs:
         run: |
           # 🛠️ Setup 🛠️
           bundle exec rake "appraisal[generate-install]"
+      - name: Save Bundler Cache
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
+        with:
+          path: |
+            vendor
+            !vendor/bundle/cache
+          key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-${{ steps.lockhash.outputs.hash }}
       - name: Start Docker Service/s
         shell: bash
         run: |

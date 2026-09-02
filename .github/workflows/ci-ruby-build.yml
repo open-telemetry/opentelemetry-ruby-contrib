@@ -22,8 +22,10 @@ jobs:
         gem: ${{ fromJson(inputs.gems) }}
         os:
           - ubuntu-24.04
+        ruby:
+          - ruby-3.3
       fail-fast: false
-    name: "${{ matrix.gem }} / ${{matrix.os}}"
+    name: "${{ matrix.gem }} / ${{matrix.os}} [${{ matrix.ruby }}]"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -31,28 +33,18 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
         with:
+          bundler: latest
           bundler-cache: true
-          ruby-version: "ruby-3.3.11"
-      - name: Compute Gemfile hash
-        id: lockhash
-        shell: bash
-        working-directory: ${{ steps.setup.outputs.gem_dir }}
-        run: |
-          files=$( find . -name "Gemfile" | sort )
-          if [[ -n "$files" ]]; then
-            hash=$(sha256sum $files | sha256sum | cut -d ' ' -f1)
-            echo "hash=$hash" >> $GITHUB_OUTPUT
-          else
-            echo "hash=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
-          fi
-      - name: Cache Bundler
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 #v5.0.4
+          ruby-version: ${{ matrix.ruby }}
+      - name: Restore Bundler Cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
         with:
           path: |
-            vendor/bundle
-          key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-${{ steps.lockhash.outputs.hash }}
+            vendor
+            !vendor/bundle/cache
+          key: bundler-${{ runner.os }}-${{ matrix.ruby }}-randomString
           restore-keys: |
-            bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-
+            bundler-${{ runner.os }}-${{ matrix.ruby }}-
       - name: Install Tools & Gem Deps
         run: |
           # ⚙️ Install ⚙️
