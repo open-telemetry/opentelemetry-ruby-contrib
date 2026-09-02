@@ -62,7 +62,7 @@ task yard: ['each:yard']
 task default: [:each]
 
 EXCLUDED_DIRS = %w[vendor ruby_kafka que]
-NON_PARRALLEL_INSTALL = %w[instrumentation/http instrumentation/trilogy]
+NON_PARRALLEL_INSTALL = %w[instrumentation/http instrumentation/mysql2 instrumentation/trilogy]
 
 def discover_gems
   gemspecs =
@@ -98,10 +98,6 @@ def foreach_gem(cmds)
         Bundler.with_unbundled_env do
           cmds.each { |cmd| sh(cmd) }
         end
-        #cmds.each { |cmd|
-        #  output = IO.popen(cmd, &:read)
-        #  puts "#{output}"
-        #}
       else
         cmds.each { |cmd| sh(cmd) }
       end
@@ -110,46 +106,7 @@ def foreach_gem(cmds)
   end
 end
 
-def testeach_gem(max_procs: 4)
-  discover_gems.each do |dir|
-    puts "::group:: ****#{dir}****"
-
-    gemfiles = Dir.glob(File.join(dir, "gemfiles", "*.gemfile")).sort
-    running = []
-
-    # Force Bundler to use root-level vendor path
-    system("bundle config set --local path ../../vendor/bundle", chdir: dir)
-
-    gemfiles.each do |gemfile|
-      name = File.basename(gemfile, ".gemfile")
-      rel_gemfile = File.join("gemfiles", "#{name}.gemfile")
-      puts "Running tests for appraisal: #{name}"
-
-      # Spawn a process for this appraisal
-      cmd = "BUNDLE_GEMFILE=#{rel_gemfile} bundle exec rake test"
-
-      pid = Process.spawn("/bin/bash", "-c", cmd, chdir: dir)
-      running << pid
-
-      # If pool is full, wait for one to finish
-      if running.size >= max_procs
-        finished = Process.wait
-        running.delete(finished)
-        raise "Tests failed for #{dir} (#{name})" unless $?.exitstatus == 0
-      end
-    end
-
-    # Wait for remaining processes
-    running.each do |pid|
-      Process.wait(pid)
-      raise "Tests failed for #{dir}" unless $?.exitstatus == 0
-    end
-    puts "::endgroup::"
-  end
-end
-
 def installeach_gem()
-  sh("echo $GEM_HOME")
   sh("cp -r vendor $GEM_HOME  || true")
   discover_gems.each do |dir|
     puts "::group:: ****#{dir}****"
