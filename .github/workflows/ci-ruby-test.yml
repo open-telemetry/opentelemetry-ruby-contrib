@@ -28,6 +28,8 @@ jobs:
           - ruby-4.0
           - jruby-10.0
       fail-fast: false
+    env:
+      JRUBY_OPTS: "--dev -J-Xmx1G -J-XX:+UseG1GC"
     name: "${{ matrix.gem }} / ${{ matrix.os }} [${{ matrix.ruby }}]"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -62,6 +64,8 @@ jobs:
           path: |
             vendor
             !vendor/bundle/cache
+            ~/.jruby
+            ~/.gem
           key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-${{ steps.lockhash.outputs.hash }}
           restore-keys: |
             bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-
@@ -88,6 +92,8 @@ jobs:
           path: |
             vendor
             !vendor/bundle/cache
+            ~/.gem
+            ~/.jruby
           key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-${{ steps.lockhash.outputs.hash }}
       - name: Start Docker Service/s
         shell: bash
