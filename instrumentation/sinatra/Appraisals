@@ -16,13 +16,13 @@ sinatra_versions.push('3.2.0', '2.2.0') if Gem::Version.new(RUBY_VERSION) < Gem:
 semconv_stability.each do |mode|
   %w[4.0.0 4.1.0 4.2.0].each do |version|
     appraise "sinatra-#{version}-#{mode}" do
-      gem 'sinatra', "~> #{version}"
+      gem 'sinatra', "= #{version}"
     end
   end
 
   sinatra_versions.each do |version|
     appraise "sinatra-#{version}-#{mode}" do
-      gem 'sinatra', "~> #{version}"
+      gem 'sinatra', "= #{version}"
     end
   end
 end

@@ -2,7 +2,7 @@
 
 %w[2.7.0 3.2.0 4.1.0].each do |version|
   appraise "dalli-#{version}" do
-    gem 'dalli', "~> #{version}"
+    gem 'dalli', "= #{version}"
   end
 end
 

@@ -6,6 +6,6 @@
 
 %w[0.66.0 0.80.0].each do |version|
   appraise "openai-#{version}" do
-    gem 'openai', "~> #{version}"
+    gem 'openai', "= #{version}"
   end
 end

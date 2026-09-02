@@ -6,6 +6,6 @@
 
 %w[0.6.1 0.8.1].each do |version|
   appraise "lmdb-#{version}" do
-    gem 'lmdb', "~> #{version}", platform: :mri
+    gem 'lmdb', "= #{version}", platform: :mri
   end
 end
