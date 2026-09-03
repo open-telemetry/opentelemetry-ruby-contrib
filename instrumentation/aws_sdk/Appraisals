@@ -4,29 +4,59 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'aws-sdk-3' do
-  gem 'aws-sdk-core', '~> 3'
-  gem 'aws-sdk-lambda', '~> 1'
-  gem 'aws-sdk-dynamodb', '~> 1'
-  gem 'aws-sdk-sns', '~> 1'
-  gem 'aws-sdk-sqs', '~> 1'
+# To facilitate database semantic convention stability migration, we are using
+# appraisal to test the different semantic convention modes along with different
+# gem versions. For more information on the semantic convention modes, see:
+# https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/
+
+semconv_modes = %w[old stable dup]
+
+%w[3.202.0 3.254.1].each do |version|
+  appraise "aws-sdk-core-#{version}" do
+    gem 'aws-sdk-core', "~> #{version}"
+    gem 'aws-sdk-lambda'
+    gem 'aws-sdk-dynamodb'
+    gem 'aws-sdk-sns'
+    gem 'aws-sdk-sqs'
+  end
 end
 
-# pre-Observability support in V3 SDK
-appraise 'aws-sdk-3.202' do
-  gem 'aws-sdk-core', '~> 3.202'
-  gem 'aws-sdk-lambda', '~> 1.127'
-  gem 'aws-sdk-dynamodb', '~> 1.118'
-  gem 'aws-sdk-sns', '~> 1.82'
-  gem 'aws-sdk-sqs', '~> 1.80'
+%w[1.127.0 1.193.0].each do |version|
+  appraise "aws-sdk-lambda-#{version}" do
+    gem 'aws-sdk-lambda', "~> #{version}"
+  end
+end
+
+semconv_modes.each do |mode|
+  %w[1.118.0 1.172.0].each do |version|
+    appraise "aws-sdk-dynamodb-#{version}-#{mode}" do
+      gem 'aws-sdk-dynamodb', "~> #{version}"
+    end
+  end
+  
+  appraise "aws-sdk-dynamodb-1.118.x-with-core-3.202.x-#{mode}" do
+    gem 'aws-sdk-core', '< 3.203.0'
+    gem 'aws-sdk-dynamodb', '< 1.119.0'
+  end
+end
+
+%w[1.82.0 1.118.0].each do |version|
+  appraise "aws-sdk-sns-#{version}" do
+    gem 'aws-sdk-sns', "~> #{version}"
+  end
+end
+
+%w[1.80.0 1.117.0].each do |version|
+  appraise "aws-sdk-sqs-#{version}" do
+    gem 'aws-sdk-sqs', "~> #{version}"
+    gem 'aws-sdk-core'
+  end
 end
 
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
-  appraise 'aws-sdk-2.11' do
-    gem 'aws-sdk', '~> 2.11'
-  end
-
-  appraise 'aws-sdk-2.0' do
-    gem 'aws-sdk', '~> 2.0'
+  semconv_modes.each do |mode|
+    appraise "aws-sdk-2.11.x-#{mode}" do
+      gem 'aws-sdk', '< 2.12.0'
+    end
   end
 end

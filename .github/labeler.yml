@@ -2,7 +2,6 @@ ci:
   - changed-files:
       - any-glob-to-any-file:
           - ".github/**"
-          - "**/.github-ci.yml"
 
 deprecated:
   - changed-files:
@@ -12,6 +11,12 @@ deprecated:
           - "instrumentation/mongo/**"
           - "instrumentation/restclient/**"
           - "instrumentation/ruby_kafka/**"
+everything:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".simplecov"
+          - "Gemfile"
+          - "Rakefile"
 
 helpers-mysql:
   - changed-files:
@@ -175,6 +180,10 @@ instrumentation-net_ldap:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/net_ldap/**"
+instrumentation-openai:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/openai/**"
 instrumentation-pg:
   - changed-files:
       - any-glob-to-any-file:
@@ -217,7 +226,7 @@ instrumentation-restclient:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/restclient/**"
-instrumentation-respec:
+instrumentation-rspec:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/rspec/**"
@@ -278,6 +287,10 @@ resource-detector-google_cloud_platform:
   - changed-files:
       - any-glob-to-any-file:
           - "resources/google_cloud_platform/**"
+resource-detector-os:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "resources/os/**"
 
 sampler-xray:
   - changed-files:

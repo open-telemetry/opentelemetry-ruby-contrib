@@ -313,14 +313,13 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       uri = URI.parse('http://localhost')
       proxy_uri = URI.parse('https://localhost')
 
-      # rubocop:disable Lint/SuppressedException
+      # rubocop:disable-next Lint/SuppressedException
       begin
         Net::HTTP.start(uri.host, uri.port, proxy_uri.host, proxy_uri.port, 'proxy_user', 'proxy_pass', use_ssl: true) do |http|
           http.get('/')
         end
       rescue StandardError
       end
-      # rubocop:enable Lint/SuppressedException
 
       _(exporter.finished_spans.size).must_equal(2)
       _(span.name).must_equal 'CONNECT'
@@ -337,14 +336,13 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       uri = URI.parse('http://localhost')
       proxy_uri = URI.parse('https://localhost')
 
-      # rubocop:disable Lint/SuppressedException
+      # rubocop:disable-next Lint/SuppressedException
       begin
         Net::HTTP.start(uri.host, uri.port, proxy_uri.host, proxy_uri.port, 'proxy_user', 'proxy_pass', use_ssl: false) do |http|
           http.get('/')
         end
       rescue StandardError
       end
-      # rubocop:enable Lint/SuppressedException
 
       _(exporter.finished_spans.size).must_equal(2)
       _(span.name).must_equal 'connect'

@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'default' do
+  # create a default appraisal with no additional gems
+  # this enables the ci to use consistent approach across gems.
+end

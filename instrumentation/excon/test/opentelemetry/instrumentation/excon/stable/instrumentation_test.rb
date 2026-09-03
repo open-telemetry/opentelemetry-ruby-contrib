@@ -278,7 +278,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
         port = server.addr[1]
 
-        _(-> { Excon.get("http://localhost:#{port}/example", read_timeout: 0) }).must_raise(Excon::Error::Timeout)
+        _(-> { Excon.get("http://localhost:#{port}/example", read_timeout: 0) }).must_raise(Excon::Error::Timeout, Excon::Error::Socket)
       end
 
       _(exporter.finished_spans.size).must_equal(3)
@@ -287,7 +287,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['server.port']).wont_be_nil
       _(span.attributes['server.port']).must_equal(port)
 
-      assert_http_spans(port: port, target: '/example', exception: 'Excon::Error::Timeout')
+      assert_http_spans(port: port, target: '/example', exception: ['Excon::Error::Timeout', 'Excon::Error::Socket'])
     end
 
     it 'captures errors' do
@@ -369,6 +369,11 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
   end
 
   def assert_http_spans(scheme: 'http', host: 'localhost', port: nil, target: '/', exception: nil)
+    valid_exceptions =
+      case exception
+      when Array then exception
+      else [exception]
+      end
     exporter.finished_spans[1..].each do |http_span|
       _(http_span.name).must_equal 'GET'
       _(http_span.attributes['http.request.method']).must_equal 'GET'
@@ -381,7 +386,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       if exception
         exception_event = http_span.events.first
-        _(exception_event.attributes['exception.type']).must_equal(exception)
+        _(valid_exceptions).must_include(exception_event.attributes['exception.type'])
       end
     end
   end

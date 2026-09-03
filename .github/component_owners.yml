@@ -32,6 +32,8 @@ components:
     - indrekj
   instrumentation/sidekiq:
     - dmathieu
+  instrumentation/openai:
+    - xuan-cao-swi
   processor/baggage:
     - robbkidd
     - mikegoldsmith
@@ -41,6 +43,8 @@ components:
     - xuan-cao-swi
   resources/container:
     - scbjans
+  resources/os:
+    - yhara
   sampler/xray:
     - jterapin
     - alextwoods

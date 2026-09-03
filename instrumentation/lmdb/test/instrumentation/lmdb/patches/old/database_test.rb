@@ -15,7 +15,8 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Old::Database' do
   let(:span) { exporter.finished_spans.first }
   let(:last_span) { exporter.finished_spans.last }
   let(:config) { {} }
-  let(:db_path) { File.join(File.dirname(__FILE__), '..', '..', 'tmp', 'test') }
+  let(:appraisal_name) { File.basename(Bundler.default_gemfile.to_s, '.gemfile') }
+  let(:db_path) { File.join(File.dirname(__FILE__), '..', 'tmp', appraisal_name) }
   let(:lmdb) { LMDB.new(db_path) }
 
   before do
