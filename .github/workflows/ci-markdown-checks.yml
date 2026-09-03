@@ -191,4 +191,4 @@ jobs:
         run: npm run write:format
 
       - name: validate files
-        run: git diff --check --exit-code ':*.*' || (echo 'Files are out of date, please run "npm run write:format" and commit the changes in this PR.' && exit 1)
+        run: git diff --exit-code . || (echo 'Files are out of date, please run "npm run write:format" and commit the changes in this PR.' && exit 1)
