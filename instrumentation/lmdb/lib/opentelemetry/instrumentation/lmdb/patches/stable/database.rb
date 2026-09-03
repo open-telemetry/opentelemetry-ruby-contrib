@@ -24,7 +24,7 @@ module OpenTelemetry
               }
               attributes['db.query.text'] = statement if config[:db_statement] == :include
 
-              tracer.in_span("GET #{key}", attributes: attributes, kind: :client) do |span|
+              tracer.in_span("GET #{key}", attributes: attributes, kind: :internal) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)
@@ -41,7 +41,7 @@ module OpenTelemetry
               }
               attributes['db.query.text'] = statement if config[:db_statement] == :include
 
-              tracer.in_span("DELETE #{key}", attributes: attributes, kind: :client) do |span|
+              tracer.in_span("DELETE #{key}", attributes: attributes, kind: :internal) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)
@@ -58,7 +58,7 @@ module OpenTelemetry
               }
               attributes['db.query.text'] = statement if config[:db_statement] == :include
 
-              tracer.in_span("PUT #{key}", attributes: attributes, kind: :client) do |span|
+              tracer.in_span("PUT #{key}", attributes: attributes, kind: :internal) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)
@@ -74,7 +74,7 @@ module OpenTelemetry
               }
               attributes['db.query.text'] = 'CLEAR' if config[:db_statement] == :include
 
-              tracer.in_span('CLEAR', attributes: attributes, kind: :client) do |span|
+              tracer.in_span('CLEAR', attributes: attributes, kind: :internal) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)

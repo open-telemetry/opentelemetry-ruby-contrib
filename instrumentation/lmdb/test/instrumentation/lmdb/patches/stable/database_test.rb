@@ -16,7 +16,8 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
   let(:last_span) { exporter.finished_spans.last }
   let(:config) { {} }
   let(:appraisal_name) { File.basename(Bundler.default_gemfile.to_s, '.gemfile') }
-  let(:db_path) { File.join(File.dirname(__FILE__), '..', 'tmp', appraisal_name) }  let(:lmdb) { LMDB.new(db_path) }
+  let(:db_path) { File.join(File.dirname(__FILE__), '..', 'tmp', appraisal_name) }
+  let(:lmdb) { LMDB.new(db_path) }
 
   before do
     skip unless ENV['BUNDLE_GEMFILE']&.include?('stable')
@@ -36,7 +37,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
     it 'traces with stable attributes' do
       lmdb.database.clear
       _(span.name).must_equal('CLEAR')
-      _(span.kind).must_equal(:client)
+      _(span.kind).must_equal(:internal)
       _(span.attributes['db.system.name']).must_equal('lmdb')
       _(span.attributes['db.operation.name']).must_equal('CLEAR')
       _(span.attributes['db.namespace']).must_equal(lmdb.path)
@@ -49,7 +50,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
 
       lmdb.database.clear
 
-      _(span.kind).must_equal(:client)
+      _(span.kind).must_equal(:internal)
       _(span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.query.text')
     end
@@ -59,7 +60,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
     it 'traces with stable attributes' do
       lmdb.database['foo'] = 'bar'
       _(span.name).must_equal('PUT foo')
-      _(span.kind).must_equal(:client)
+      _(span.kind).must_equal(:internal)
       _(span.attributes['db.system.name']).must_equal('lmdb')
       _(span.attributes['db.operation.name']).must_equal('PUT')
       _(span.attributes['db.namespace']).must_equal(lmdb.path)
@@ -69,7 +70,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
     it 'truncates long statements' do
       lmdb.database['foo'] = 'bar' * 200
       _(span.name).must_equal('PUT foo')
-      _(span.kind).must_equal(:client)
+      _(span.kind).must_equal(:internal)
       _(span.attributes['db.system.name']).must_equal('lmdb')
       _(span.attributes['db.query.text'].size).must_equal(500)
     end
@@ -80,7 +81,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       it 'does not add peer.service attribute in stable mode' do
         lmdb.database['foo'] = 'bar'
         _(span.name).must_equal('PUT foo')
-        _(span.kind).must_equal(:client)
+        _(span.kind).must_equal(:internal)
         _(span.attributes['db.system.name']).must_equal('lmdb')
         _(span.attributes['db.query.text']).must_equal('PUT foo bar')
         _(span.attributes).wont_include('peer.service')
@@ -95,7 +96,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database['foo']
 
       _(span.name).must_equal('PUT foo')
-      _(span.kind).must_equal(:client)
+      _(span.kind).must_equal(:internal)
       _(span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.query.text')
     end
@@ -107,7 +108,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database['foo']
 
       _(last_span.name).must_equal('GET foo')
-      _(last_span.kind).must_equal(:client)
+      _(last_span.kind).must_equal(:internal)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes['db.operation.name']).must_equal('GET')
       _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
@@ -124,7 +125,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database['foo']
 
       _(last_span.name).must_equal('GET foo')
-      _(last_span.kind).must_equal(:client)
+      _(last_span.kind).must_equal(:internal)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.query.text')
     end
@@ -136,7 +137,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database.delete('foo')
 
       _(last_span.name).must_equal('DELETE foo')
-      _(last_span.kind).must_equal(:client)
+      _(last_span.kind).must_equal(:internal)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes['db.operation.name']).must_equal('DELETE')
       _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
@@ -150,7 +151,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database.delete('foo', 'bar')
 
       _(last_span.name).must_equal('DELETE foo')
-      _(last_span.kind).must_equal(:client)
+      _(last_span.kind).must_equal(:internal)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes['db.query.text']).must_equal('DELETE foo bar')
     end
@@ -163,7 +164,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database.delete('foo')
 
       _(last_span.name).must_equal('DELETE foo')
-      _(last_span.kind).must_equal(:client)
+      _(last_span.kind).must_equal(:internal)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.query.text')
     end
