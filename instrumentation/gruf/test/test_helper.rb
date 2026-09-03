@@ -10,6 +10,9 @@ if RUBY_ENGINE == 'jruby'
 end
 
 require 'simplecov'
+require 'bundler/setup'
+Bundler.require(:default, :test)
+
 require 'opentelemetry/sdk'
 require 'minitest/autorun'
 require 'webmock/minitest'
