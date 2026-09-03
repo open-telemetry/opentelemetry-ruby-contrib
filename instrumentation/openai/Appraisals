@@ -6,14 +6,16 @@
 
 %w[0.66.0 0.80.0].each do |version|
   appraise "openai-#{version}" do
-    gem 'openai', "~> #{version}"
+    # JRuby and TruffleRuby support is best effort for the openai gem
+    # as of 2026-09-02. This may change in the future and we can test it.
+    gem 'openai', "~> #{version}", platform: :mri
   end
 
   # Logs support is opt-in, based on the presence of the
   # opentelemetry-logs-api and opentelemetry-logs-sdk gems.
   # This Appraisal tests behavior with them present.
   appraise "openai-#{version}-logs" do
-    gem 'openai', "~> #{version}"
+    gem 'openai', "~> #{version}", platform: :mri
     gem 'opentelemetry-logs-api', '= 0.4.1'
     gem 'opentelemetry-logs-sdk', '= 0.6.1'
   end
