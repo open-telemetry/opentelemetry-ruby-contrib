@@ -21,7 +21,7 @@ semconv_modes = %w[old stable dup]
   end
 end
 
-%w[1.127.0 1.193.0].each do |version|
+%w[1.127.0 1.194.0].each do |version|
   appraise "aws-sdk-lambda-#{version}" do
     gem 'aws-sdk-lambda', "~> #{version}"
   end

@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[0.66.0 0.80.0].each do |version|
+%w[0.66.0 0.85.0].each do |version|
   appraise "openai-#{version}" do
     gem 'openai', "~> #{version}"
   end
