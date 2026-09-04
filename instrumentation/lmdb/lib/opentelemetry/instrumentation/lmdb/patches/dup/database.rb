@@ -16,7 +16,7 @@ module OpenTelemetry
             STATEMENT_MAX_LENGTH = 500
 
             def get(key)
-                attributes = {
+              attributes = {
                 'db.system' => 'lmdb',
                 'db.system.name' => 'lmdb',
                 'db.operation.name' => 'GET',
