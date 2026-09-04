@@ -198,5 +198,20 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Dup::Client do
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
+
+    it 'omits nil attributes' do
+      stub_request(:get, 'http://success/').to_return(status: 200)
+      HTTPClient.new.get('/success')
+
+      _(span.name).must_equal 'GET'
+      _(span.attributes['http.target']).must_equal '/success'
+      _(span.attributes['url.path']).must_equal '/success'
+      _(span.attributes.key?('http.scheme')).must_equal false
+      _(span.attributes.key?('net.peer.name')).must_equal false
+      _(span.attributes.key?('net.peer.port')).must_equal false
+      _(span.attributes.key?('url.scheme')).must_equal false
+      _(span.attributes.key?('server.address')).must_equal false
+      _(span.attributes.key?('server.port')).must_equal false
+    end
   end
 end

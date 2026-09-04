@@ -36,9 +36,17 @@ end
 class TestHelper
   class << self
     def telemetry_plugin?(service)
-      m = ::Aws.const_get(service).const_get(:Client)
+      return false unless Aws.const_defined?(service)
+
+      svc = ::Aws.const_get(service)
+      return false unless svc.const_defined?(:Client)
+
+      m = svc.const_get(:Client)
+
       Aws.const_defined?('Plugins::Telemetry') &&
         m.plugins.include?(Aws::Plugins::Telemetry)
+    rescue NameError
+      false
     end
 
     def match_span_attrs(expected_attrs, span, expect)
@@ -58,6 +66,14 @@ class TestHelper
 
     def semconv_dup?
       ENV.fetch('BUNDLE_GEMFILE', '').include?('dup')
+    end
+
+    def testing_service?(service)
+      target_service?(service) || target_service?('core') || target_service?('2')
+    end
+
+    def target_service?(service)
+      ENV.fetch('BUNDLE_GEMFILE', '').downcase.include?("aws_sdk_#{service}".downcase)
     end
   end
 end
