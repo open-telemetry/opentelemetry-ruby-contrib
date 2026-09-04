@@ -59,17 +59,29 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
   describe '#put' do
     it 'traces with stable attributes' do
       lmdb.database['foo'] = 'bar'
-      _(span.name).must_equal('PUT foo')
+      _(span.name).must_equal('PUT')
       _(span.kind).must_equal(:internal)
       _(span.attributes['db.system.name']).must_equal('lmdb')
       _(span.attributes['db.operation.name']).must_equal('PUT')
       _(span.attributes['db.namespace']).must_equal(lmdb.path)
+      _(span.attributes['db.query.text']).must_equal('PUT ? ?')
+    end
+
+    it 'includes the key and value when db_statement is :include' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(db_statement: :include)
+
+      lmdb.database['foo'] = 'bar'
+
       _(span.attributes['db.query.text']).must_equal('PUT foo bar')
     end
 
-    it 'truncates long statements' do
+    it 'truncates long statements when db_statement is :include' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(db_statement: :include)
+
       lmdb.database['foo'] = 'bar' * 200
-      _(span.name).must_equal('PUT foo')
+      _(span.name).must_equal('PUT')
       _(span.kind).must_equal(:internal)
       _(span.attributes['db.system.name']).must_equal('lmdb')
       _(span.attributes['db.query.text'].size).must_equal(500)
@@ -80,10 +92,10 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
 
       it 'does not add peer.service attribute in stable mode' do
         lmdb.database['foo'] = 'bar'
-        _(span.name).must_equal('PUT foo')
+        _(span.name).must_equal('PUT')
         _(span.kind).must_equal(:internal)
         _(span.attributes['db.system.name']).must_equal('lmdb')
-        _(span.attributes['db.query.text']).must_equal('PUT foo bar')
+        _(span.attributes['db.query.text']).must_equal('PUT ? ?')
         _(span.attributes).wont_include('peer.service')
       end
     end
@@ -95,7 +107,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database['foo'] = 'bar'
       lmdb.database['foo']
 
-      _(span.name).must_equal('PUT foo')
+      _(span.name).must_equal('PUT')
       _(span.kind).must_equal(:internal)
       _(span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.query.text')
@@ -107,14 +119,24 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database['foo'] = 'bar'
       lmdb.database['foo']
 
-      _(last_span.name).must_equal('GET foo')
+      _(last_span.name).must_equal('GET')
       _(last_span.kind).must_equal(:internal)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes['db.operation.name']).must_equal('GET')
       _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
-      _(last_span.attributes['db.query.text']).must_equal('GET foo')
+      _(last_span.attributes['db.query.text']).must_equal('GET ?')
       _(last_span.attributes).wont_include('db.system')
       _(last_span.attributes).wont_include('db.statement')
+    end
+
+    it 'includes the key when db_statement is :include' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(db_statement: :include)
+
+      lmdb.database['foo'] = 'bar'
+      lmdb.database['foo']
+
+      _(last_span.attributes['db.query.text']).must_equal('GET foo')
     end
 
     it 'omits db.query.text attribute' do
@@ -124,7 +146,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database['foo'] = 'bar'
       lmdb.database['foo']
 
-      _(last_span.name).must_equal('GET foo')
+      _(last_span.name).must_equal('GET')
       _(last_span.kind).must_equal(:internal)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.query.text')
@@ -136,12 +158,12 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database['foo'] = 'bar'
       lmdb.database.delete('foo')
 
-      _(last_span.name).must_equal('DELETE foo')
+      _(last_span.name).must_equal('DELETE')
       _(last_span.kind).must_equal(:internal)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes['db.operation.name']).must_equal('DELETE')
       _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
-      _(last_span.attributes['db.query.text']).must_equal('DELETE foo')
+      _(last_span.attributes['db.query.text']).must_equal('DELETE ?')
       _(last_span.attributes).wont_include('db.system')
       _(last_span.attributes).wont_include('db.statement')
     end
@@ -150,9 +172,19 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database['foo'] = 'bar'
       lmdb.database.delete('foo', 'bar')
 
-      _(last_span.name).must_equal('DELETE foo')
+      _(last_span.name).must_equal('DELETE')
       _(last_span.kind).must_equal(:internal)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.query.text']).must_equal('DELETE ? ?')
+    end
+
+    it 'includes the key and value when db_statement is :include' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(db_statement: :include)
+
+      lmdb.database['foo'] = 'bar'
+      lmdb.database.delete('foo', 'bar')
+
       _(last_span.attributes['db.query.text']).must_equal('DELETE foo bar')
     end
 
@@ -163,7 +195,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       lmdb.database['foo'] = 'bar'
       lmdb.database.delete('foo')
 
-      _(last_span.name).must_equal('DELETE foo')
+      _(last_span.name).must_equal('DELETE')
       _(last_span.kind).must_equal(:internal)
       _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.query.text')
@@ -174,7 +206,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
         lmdb.database.delete('missing-key')
       end
 
-      _(last_span.name).must_equal('DELETE missing-key')
+      _(last_span.name).must_equal('DELETE')
       _(last_span.attributes['error.type']).must_equal('LMDB::Error::NOTFOUND')
       _(last_span.status.code).must_equal(OpenTelemetry::Trace::Status::ERROR)
     end

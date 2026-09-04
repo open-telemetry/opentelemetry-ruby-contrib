@@ -16,16 +16,15 @@ module OpenTelemetry
             STATEMENT_MAX_LENGTH = 500
 
             def get(key)
-              statement = formatted_statement('GET', "GET #{key}")
-              attributes = {
+                attributes = {
                 'db.system' => 'lmdb',
                 'db.system.name' => 'lmdb',
                 'db.operation.name' => 'GET',
                 'db.namespace' => env.path
               }
-              if config[:db_statement] == :include
-                attributes['db.statement'] = statement
-                attributes['db.query.text'] = statement
+              unless config[:db_statement] == :omit
+                attributes['db.statement'] = raw_statement('GET', key)
+                attributes['db.query.text'] = formatted_statement('GET', key)
               end
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
@@ -38,16 +37,15 @@ module OpenTelemetry
             end
 
             def delete(key, value = nil)
-              statement = formatted_statement('DELETE', "DELETE #{key} #{value}".strip)
               attributes = {
                 'db.system' => 'lmdb',
                 'db.system.name' => 'lmdb',
                 'db.operation.name' => 'DELETE',
                 'db.namespace' => env.path
               }
-              if config[:db_statement] == :include
-                attributes['db.statement'] = statement
-                attributes['db.query.text'] = statement
+              unless config[:db_statement] == :omit
+                attributes['db.statement'] = raw_statement('DELETE', key, value)
+                attributes['db.query.text'] = formatted_statement('DELETE', key, value)
               end
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
@@ -60,16 +58,15 @@ module OpenTelemetry
             end
 
             def put(key, value)
-              statement = formatted_statement('PUT', "PUT #{key} #{value}")
               attributes = {
                 'db.system' => 'lmdb',
                 'db.system.name' => 'lmdb',
                 'db.operation.name' => 'PUT',
                 'db.namespace' => env.path
               }
-              if config[:db_statement] == :include
-                attributes['db.statement'] = statement
-                attributes['db.query.text'] = statement
+              unless config[:db_statement] == :omit
+                attributes['db.statement'] = raw_statement('PUT', key, value)
+                attributes['db.query.text'] = formatted_statement('PUT', key, value)
               end
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
@@ -88,9 +85,9 @@ module OpenTelemetry
                 'db.operation.name' => 'CLEAR',
                 'db.namespace' => env.path
               }
-              if config[:db_statement] == :include
-                attributes['db.statement'] = 'CLEAR'
-                attributes['db.query.text'] = 'CLEAR'
+              unless config[:db_statement] == :omit
+                attributes['db.statement'] = raw_statement('CLEAR')
+                attributes['db.query.text'] = formatted_statement('CLEAR')
               end
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
@@ -104,11 +101,27 @@ module OpenTelemetry
 
             private
 
-            def formatted_statement(operation, statement)
+            # The old conventions never sanitized db.statement, so it keeps carrying the
+            # key and any value verbatim regardless of :obfuscate. Users only get
+            # sanitized query text once they move from database/dup to database.
+            def raw_statement(operation, *args)
+              truncate_and_encode([operation, *args.compact].join(' '), operation)
+            end
+
+            def formatted_statement(operation, *args)
+              case config[:db_statement]
+              when :obfuscate
+                truncate_and_encode(operation + (' ?' * args.compact.length), operation)
+              when :include
+                raw_statement(operation, *args)
+              end
+            end
+
+            def truncate_and_encode(statement, operation)
               statement = OpenTelemetry::Common::Utilities.truncate(statement, STATEMENT_MAX_LENGTH)
-              OpenTelemetry::Common::Utilities.utf8_encode(statement)
+              OpenTelemetry::Common::Utilities.utf8_encode(statement, binary: true)
             rescue StandardError => e
-              OpenTelemetry.logger.debug("non formattable LMDB statement #{statement}: #{e}")
+              OpenTelemetry.logger.debug("non formattable LMDB statement for #{operation}: #{e}")
               "#{operation} BLOB (OMITTED)"
             end
 

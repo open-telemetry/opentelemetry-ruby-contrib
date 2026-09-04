@@ -44,7 +44,7 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Dup::Environment' do
       _(span.attributes['db.statement']).must_equal('PUT foo bar')
       # Stable attributes
       _(span.attributes['db.system.name']).must_equal('lmdb')
-      _(span.attributes['db.query.text']).must_equal('PUT foo bar')
+      _(span.attributes['db.query.text']).must_equal('PUT ? ?')
 
       _(last_span.name).must_equal('TRANSACTION')
       # Old attributes

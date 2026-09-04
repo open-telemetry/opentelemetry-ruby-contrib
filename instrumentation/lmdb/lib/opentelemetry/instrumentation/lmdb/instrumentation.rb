@@ -21,7 +21,7 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
-        option :db_statement, default: :include, validate: %I[omit include]
+        option :db_statement, default: :obfuscate, validate: %I[omit include obfuscate]
 
         attr_reader :semconv
 

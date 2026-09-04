@@ -16,15 +16,14 @@ module OpenTelemetry
             STATEMENT_MAX_LENGTH = 500
 
             def get(key)
-              statement = formatted_statement('GET', "GET #{key}")
               attributes = {
                 'db.system.name' => 'lmdb',
                 'db.operation.name' => 'GET',
                 'db.namespace' => env.path
               }
-              attributes['db.query.text'] = statement if config[:db_statement] == :include
+              attributes['db.query.text'] = formatted_statement('GET', key) unless config[:db_statement] == :omit
 
-              tracer.in_span("GET #{key}", attributes: attributes, kind: :internal) do |span|
+              tracer.in_span('GET', attributes: attributes, kind: :internal) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)
@@ -33,15 +32,14 @@ module OpenTelemetry
             end
 
             def delete(key, value = nil)
-              statement = formatted_statement('DELETE', "DELETE #{key} #{value}".strip)
               attributes = {
                 'db.system.name' => 'lmdb',
                 'db.operation.name' => 'DELETE',
                 'db.namespace' => env.path
               }
-              attributes['db.query.text'] = statement if config[:db_statement] == :include
+              attributes['db.query.text'] = formatted_statement('DELETE', key, value) unless config[:db_statement] == :omit
 
-              tracer.in_span("DELETE #{key}", attributes: attributes, kind: :internal) do |span|
+              tracer.in_span('DELETE', attributes: attributes, kind: :internal) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)
@@ -50,15 +48,14 @@ module OpenTelemetry
             end
 
             def put(key, value)
-              statement = formatted_statement('PUT', "PUT #{key} #{value}")
               attributes = {
                 'db.system.name' => 'lmdb',
                 'db.operation.name' => 'PUT',
                 'db.namespace' => env.path
               }
-              attributes['db.query.text'] = statement if config[:db_statement] == :include
+              attributes['db.query.text'] = formatted_statement('PUT', key, value) unless config[:db_statement] == :omit
 
-              tracer.in_span("PUT #{key}", attributes: attributes, kind: :internal) do |span|
+              tracer.in_span('PUT', attributes: attributes, kind: :internal) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)
@@ -72,7 +69,7 @@ module OpenTelemetry
                 'db.operation.name' => 'CLEAR',
                 'db.namespace' => env.path
               }
-              attributes['db.query.text'] = 'CLEAR' if config[:db_statement] == :include
+              attributes['db.query.text'] = formatted_statement('CLEAR') unless config[:db_statement] == :omit
 
               tracer.in_span('CLEAR', attributes: attributes, kind: :internal) do |span|
                 super
@@ -84,11 +81,19 @@ module OpenTelemetry
 
             private
 
-            def formatted_statement(operation, statement)
+            def formatted_statement(operation, *args)
+              statement = case config[:db_statement]
+                          when :obfuscate
+                            operation + (' ?' * args.compact.length)
+                          when :include
+                            [operation, *args.compact].join(' ')
+                          end
+              return unless statement
+
               statement = OpenTelemetry::Common::Utilities.truncate(statement, STATEMENT_MAX_LENGTH)
-              OpenTelemetry::Common::Utilities.utf8_encode(statement)
+              OpenTelemetry::Common::Utilities.utf8_encode(statement, binary: true)
             rescue StandardError => e
-              OpenTelemetry.logger.debug("non formattable LMDB statement #{statement}: #{e}")
+              OpenTelemetry.logger.debug("non formattable LMDB statement for #{operation}: #{e}")
               "#{operation} BLOB (OMITTED)"
             end
 

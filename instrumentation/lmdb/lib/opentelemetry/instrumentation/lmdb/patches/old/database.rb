@@ -20,7 +20,7 @@ module OpenTelemetry
               attributes = {
                 'db.system' => 'lmdb'
               }
-              attributes['db.statement'] = statement if config[:db_statement] == :include
+              attributes['db.statement'] = statement unless config[:db_statement] == :omit
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
               tracer.in_span("GET #{key}", attributes: attributes, kind: :client) do
@@ -33,7 +33,7 @@ module OpenTelemetry
               attributes = {
                 'db.system' => 'lmdb'
               }
-              attributes['db.statement'] = statement if config[:db_statement] == :include
+              attributes['db.statement'] = statement unless config[:db_statement] == :omit
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
               tracer.in_span("DELETE #{key}", attributes: attributes, kind: :client) do
@@ -46,7 +46,7 @@ module OpenTelemetry
               attributes = {
                 'db.system' => 'lmdb'
               }
-              attributes['db.statement'] = statement if config[:db_statement] == :include
+              attributes['db.statement'] = statement unless config[:db_statement] == :omit
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
               tracer.in_span("PUT #{key}", attributes: attributes, kind: :client) do
@@ -58,7 +58,7 @@ module OpenTelemetry
               attributes = {
                 'db.system' => 'lmdb'
               }
-              attributes['db.statement'] = 'CLEAR' if config[:db_statement] == :include
+              attributes['db.statement'] = 'CLEAR' unless config[:db_statement] == :omit
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
               tracer.in_span('CLEAR', attributes: attributes, kind: :client) do

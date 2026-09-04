@@ -38,10 +38,10 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Environment' do
         lmdb.database['foo'] = 'bar'
       end
 
-      _(span.name).must_equal('PUT foo')
+      _(span.name).must_equal('PUT')
       _(span.kind).must_equal(:internal)
       _(span.attributes['db.system.name']).must_equal('lmdb')
-      _(span.attributes['db.query.text']).must_equal('PUT foo bar')
+      _(span.attributes['db.query.text']).must_equal('PUT ? ?')
 
       _(last_span.name).must_equal('TRANSACTION')
       _(last_span.kind).must_equal(:internal)
