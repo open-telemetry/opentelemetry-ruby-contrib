@@ -69,10 +69,6 @@ module OpenTelemetry
           # will be nil.
           if defined?(OpenTelemetry::Logs) && defined?(OpenTelemetry::SDK::Logs)
             @logger = OpenTelemetry.logger_provider.logger(name: NAME, version: VERSION)
-          elsif defined?(OpenTelemetry::Logs)
-            # If the Logs SDK is missing, we can still run a NOOP_LOGGER
-            # if the API is present.
-            @logger = OpenTelemetry::Logs::LoggerProvider::NOOP_LOGGER
           end
         end
 
