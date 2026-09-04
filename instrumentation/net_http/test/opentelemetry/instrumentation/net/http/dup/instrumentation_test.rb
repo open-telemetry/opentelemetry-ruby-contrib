@@ -389,6 +389,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       allow(TCPSocket).to receive(:open).and_return(fake_socket)
       Net::HTTP.new(nil, 80).send(:connect)
 
+      _(span.name).must_equal 'connect'
       _(span.attributes.key?('net.peer.name')).must_equal false
       _(span.attributes.key?('server.address')).must_equal false
     end
