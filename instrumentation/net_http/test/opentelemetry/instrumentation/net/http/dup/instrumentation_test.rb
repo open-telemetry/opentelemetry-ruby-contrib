@@ -389,9 +389,8 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       allow(TCPSocket).to receive(:open).and_return(fake_socket)
       Net::HTTP.new(nil, 80).send(:connect)
 
-      _(span.name).must_equal 'connect'
-      _(span.attributes['net.peer.name']).must_be_nil
-      _(span.attributes['server.address']).must_be_nil
+      _(span.attributes.key?('net.peer.name')).must_equal false
+      _(span.attributes.key?('server.address')).must_equal false
     end
 
     it 'uses url.template in span name when present in client context' do

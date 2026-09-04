@@ -363,7 +363,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       Net::HTTP.new(nil, 80).send(:connect)
 
       _(span.name).must_equal 'connect'
-      _(span.attributes['server.address']).must_be_nil
+      _(span.attributes.key?('server.address')).must_equal false
     end
 
     it 'uses url.template in span name when present in client context' do

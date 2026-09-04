@@ -346,7 +346,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       Net::HTTP.new(nil, 80).send(:connect)
 
       _(span.name).must_equal 'connect'
-      _(span.attributes['net.peer.name']).must_be_nil
+      _(span.attributes.key?('net.peer.name')).must_equal false
     end
   end
 end
