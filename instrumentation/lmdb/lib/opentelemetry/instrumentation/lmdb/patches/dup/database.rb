@@ -12,7 +12,7 @@ module OpenTelemetry
       module Patches
         module Dup
           # Module to prepend to LMDB::Database for instrumentation
-          module Database
+          module Database # rubocop:disable Metrics/ModuleLength
             STATEMENT_MAX_LENGTH = 500
 
             def get(key)
