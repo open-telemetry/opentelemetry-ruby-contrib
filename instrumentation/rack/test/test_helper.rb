@@ -23,3 +23,23 @@ OpenTelemetry::SDK.configure do |c|
   c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
   c.add_span_processor span_processor
 end
+
+# Simulates a request in a separate Fiber, similar to how Rage behaves
+# We explicitly pass along the parent context because frameworks
+# should do this in their own instrumentation to correctly
+# propagate context.
+#
+# See: https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/2130
+class WrapInFiber
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    parent_context = OpenTelemetry::Context.current
+    Fiber.new do
+      OpenTelemetry::Context.attach(parent_context)
+      @app.call(env)
+    end.resume
+  end
+end
