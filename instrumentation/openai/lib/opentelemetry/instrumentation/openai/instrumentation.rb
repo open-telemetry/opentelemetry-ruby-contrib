@@ -67,9 +67,9 @@ module OpenTelemetry
           # Traces API, so we require users to install it themselves.
           # If the libraries are not detected, Instrumentation.instance.logger
           # will be nil.
-          if defined?(OpenTelemetry::Logs) && defined?(OpenTelemetry::SDK::Logs)
-            @logger = OpenTelemetry.logger_provider.logger(name: NAME, version: VERSION)
-          end
+          return unless defined?(OpenTelemetry::Logs) && defined?(OpenTelemetry::SDK::Logs)
+
+          @logger = OpenTelemetry.logger_provider.logger(name: NAME, version: VERSION)
         end
 
         def patch_client
