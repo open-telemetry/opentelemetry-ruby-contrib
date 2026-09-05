@@ -33,7 +33,6 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 - [Daniel Azuma](https://github.com/dazuma), Google
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
-- [Robb Kidd](https://github.com/robbkidd), Honeycomb
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
@@ -48,11 +47,12 @@ For more information about the approver role, see the [community repository](htt
 
 ### Emeritus
 
-- [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Andrew Hayworth](https://github.com/ahayworth), Maintainer
+- [Ariel Valentin](https://github.com/arielvalentin), Maintainer
 - [Eric Mustin](https://github.com/ericmustin), Maintainer
 - [Francis Bogsanyi](https://github.com/fbogsany), Maintainer
 - [Matthew Wear](https://github.com/mwear), Maintainer
+- [Robb Kidd](https://github.com/robbkidd), Maintainer
 - [Robert Laurin](https://github.com/robertlaurin), Maintainer
 - [Sam Handler](https://github.com/plantfansam), Maintainer
 
