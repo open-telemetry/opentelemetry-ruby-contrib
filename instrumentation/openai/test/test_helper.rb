@@ -4,8 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+if RUBY_ENGINE == 'jruby'
+  warn 'Skipping tests on JRuby: Runtime not supported'
+  exit 0
+end
+
 require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+Bundler.require(:default, :test)
 
 require 'minitest/autorun'
 require 'webmock/minitest'
