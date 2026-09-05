@@ -4,17 +4,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[7.1.0 7.2.0].each do |version|
-  appraise "activestorage-#{version}" do
-    gem 'sqlite3', '~> 1.4', platform: :mri
-    gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby
-    gem 'image_processing', '= 2.0.3'
-    gem 'mini_magick', '= 5.3.3'
-    gem 'rails', "~> #{version}"
-  end
-end
-
 if RUBY_ENGINE == 'ruby'
+  %w[7.1.0 7.2.0].each do |version|
+    appraise "activestorage-#{version}" do
+      gem 'sqlite3', '< 2.0.0'
+      gem 'image_processing', '= 2.0.3'
+      gem 'mini_magick', '= 5.3.3'
+      gem 'rails', "~> #{version}"
+    end
+  end
+
   %w[8.0.0 8.1.0].each do |version|
     appraise "activestorage-#{version}" do
       gem 'rails', "~> #{version}"
@@ -26,12 +25,12 @@ if RUBY_ENGINE == 'ruby'
 end
 
 if RUBY_ENGINE == 'jruby'
-  %w[80.0.pre1].each do |version|
+  %w[71.0 72.0 80.0.pre1].each do |version|
     appraise "jruby_activestorage-#{version}" do
-      gem 'activerecord-jdbcsqlite3-adapter', "~> #{version}"
+      gem 'activerecord-jdbcsqlite3-adapter', "= #{version}"
       gem 'image_processing', '= 2.0.3'
       gem 'mini_magick', '= 5.3.3'
-      gem 'rails', '~> 8.0.0'
+      gem 'rails'
     end
   end
 end
