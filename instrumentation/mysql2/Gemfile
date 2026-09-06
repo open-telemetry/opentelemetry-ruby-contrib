@@ -16,7 +16,6 @@ group :local do
 end
 
 group :test do
-  gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'appraisal', '~> 2.5.0'
   gem 'dotenv', '~> 3.2.0'
   gem 'minitest', '~> 6.0.0'
