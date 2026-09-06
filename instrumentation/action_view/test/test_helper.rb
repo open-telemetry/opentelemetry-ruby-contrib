@@ -7,7 +7,7 @@
 require 'simplecov'
 require 'logger'
 require 'bundler/setup'
-Bundler.require(:default, :test)
+Bundler.require(:default, :local, :test)
 
 require 'active_support'
 require 'active_support/railtie'

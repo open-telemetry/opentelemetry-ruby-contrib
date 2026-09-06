@@ -6,7 +6,7 @@
 
 require 'logger'
 require 'bundler/setup'
-Bundler.require(:default, :test)
+Bundler.require(:default, :local, :test)
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'

@@ -8,6 +8,10 @@ source 'https://rubygems.org'
 
 gemspec
 
+group :local do
+  gem 'opentelemetry-instrumentation-base', path: '../base'
+end
+
 group :test do
   gem 'appraisal', '~> 2.5.0'
   gem 'minitest', '~> 6.0.0'
@@ -21,7 +25,6 @@ group :test do
   gem 'rspec-mocks', '~> 3.13.7'
   gem 'sqlite3', '~> 2.9.0', platform: :mri
   gem 'jdbc-sqlite3', platform: :jruby
-  gem 'opentelemetry-instrumentation-base', path: '../base'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'mutex_m'

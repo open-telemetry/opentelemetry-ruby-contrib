@@ -6,7 +6,7 @@
 
 require 'simplecov'
 require 'bundler/setup'
-Bundler.require(:default, :test)
+Bundler.require(:default, :local, :test)
 require 'graphql'
 
 require 'minitest/autorun'

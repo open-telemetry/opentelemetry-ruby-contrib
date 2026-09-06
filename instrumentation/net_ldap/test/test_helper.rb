@@ -6,7 +6,7 @@
 
 require 'net/ldap'
 require 'bundler/setup'
-Bundler.require(:default, :test)
+Bundler.require(:default, :local, :test)
 
 require 'minitest/autorun'
 require 'webmock/minitest'

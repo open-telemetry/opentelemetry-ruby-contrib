@@ -6,7 +6,7 @@
 
 require 'simplecov'
 require 'bundler/setup'
-Bundler.require(:default, :test)
+Bundler.require(:default, :local, :test)
 
 require 'opentelemetry-instrumentation-aws_lambda'
 

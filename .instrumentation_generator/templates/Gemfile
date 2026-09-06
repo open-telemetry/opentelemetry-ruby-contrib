@@ -8,8 +8,11 @@ source 'https://rubygems.org'
 
 gemspec
 
-group :test do
+group :local do
   gem 'opentelemetry-instrumentation-base', path: '../base'
+end
+
+group :test do
   gem 'appraisal', '~> 2.5.0'
   gem 'minitest', '~> 6.0.0'
   gem 'opentelemetry-sdk', '~> 1.13.0'
