@@ -2,9 +2,6 @@ name: File Checks
 
 on:
   workflow_call:
-    secrets:
-      abc:
-        required: true
 
 permissions:
   contents: read
