@@ -6,6 +6,9 @@
 
 source 'https://rubygems.org'
 
-gem 'rake', '~> 13.0'
-gem 'rubocop', '~> 1.69.1'
-gem 'rubocop-performance', '~> 1.23.0'
+gem 'rake', '>= 13'
+gem 'rubocop', '~> 1.90.0'
+gem 'rubocop-minitest', '~> 0.40.0'
+gem 'rubocop-performance', '~> 1.27.0'
+gem 'rubocop-rake', '~> 0.7.1'
+gem 'rubocop-rspec', '~> 3.10.0'

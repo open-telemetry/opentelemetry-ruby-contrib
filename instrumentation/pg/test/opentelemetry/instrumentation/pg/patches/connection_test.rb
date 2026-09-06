@@ -30,7 +30,7 @@ describe OpenTelemetry::Instrumentation::PG::Patches do
   end
 
   describe 'patched PG::Connection' do
-    %i[exec query sync_exec async_exec].each do |method|
+    PG_QUERY_METHODS.each do |method|
       describe "method #{method}" do
         it 'responds with expected values when called with a block' do
           values = client.send(method, 'SELECT 1') { |result| result.column_values(0) }

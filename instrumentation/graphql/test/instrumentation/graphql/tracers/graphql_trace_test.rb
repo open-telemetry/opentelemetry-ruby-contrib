@@ -221,6 +221,28 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
         end
       end
 
+      describe 'when platform_resolve_type is disabled' do
+        let(:config) { { enable_platform_resolve_type: false } }
+
+        it 'does not trace .resolve_type' do
+          skip unless supports_authorized_and_resolved_types?
+          SomeGraphQLAppSchema.execute('{ vehicle { __typename } }')
+
+          parent = spans.find { |s| s.name == 'graphql.execute_query' }
+          span = spans.find { |s| s.parent_span_id == parent.span_id }
+          _(span).must_be_nil
+        end
+
+        it 'does not traces .resolve_type_lazy' do
+          skip unless supports_authorized_and_resolved_types?
+          SomeGraphQLAppSchema.execute('{ vehicle { __typename } }', context: { lazy_type_resolve: true })
+
+          parent = spans.find { |s| s.name == 'graphql.execute_query_lazy' }
+          span = spans.find { |s| s.parent_span_id == parent.span_id }
+          _(span).must_be_nil
+        end
+      end
+
       describe 'when platform_resolve_type is enabled with legacy naming' do
         let(:config) { { enable_platform_resolve_type: true, legacy_platform_span_names: true } }
 
@@ -282,11 +304,10 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
         )
         span = spans.find { |s| s.name == 'graphql.validate' }
         event = span.events.find { |e| e.name == 'graphql.validation.error' }
-        # rubocop:disable Layout/LineLength
+        # rubocop:disable-next Layout/LineLength
         _(event.attributes['exception.message']).must_equal(
           "[{\"message\":\"Field 'nonExistentField' doesn't exist on type 'Query'\",\"locations\":[{\"line\":2,\"column\":15}],\"path\":[\"query\",\"nonExistentField\"],\"extensions\":{\"code\":\"undefinedField\",\"typeName\":\"Query\",\"fieldName\":\"nonExistentField\"}}]"
         )
-        # rubocop:enable Layout/LineLength
       end
     end
 
@@ -302,32 +323,32 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTrace do
             super
           end
 
-          def platform_execute_field(platform_key, &block)
+          def platform_execute_field(platform_key, &)
             @events << platform_key
             yield
           end
 
-          def platform_execute_field_lazy(platform_key, &block)
+          def platform_execute_field_lazy(platform_key, &)
             @events << platform_key
             yield
           end
 
-          def platform_authorized(platform_key, &block)
+          def platform_authorized(platform_key, &)
             @events << platform_key
             yield
           end
 
-          def platform_authorized_lazy(platform_key, &block)
+          def platform_authorized_lazy(platform_key, &)
             @events << platform_key
             yield
           end
 
-          def platform_resolve_type(platform_key, &block)
+          def platform_resolve_type(platform_key, &)
             @events << platform_key
             yield
           end
 
-          def platform_resolve_type_lazy(platform_key, &block)
+          def platform_resolve_type_lazy(platform_key, &)
             @events << platform_key
             yield
           end

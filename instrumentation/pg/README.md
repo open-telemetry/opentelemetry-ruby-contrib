@@ -50,10 +50,26 @@ OpenTelemetry::SDK.configure do |c|
     # will be included on all spans from this instrumentation:
     peer_service: 'postgres:readonly',
 
-    # By default, this instrumentation obfuscate/sanitize the executed SQL as the `db.statement`
+    # By default, this instrumentation obfuscates/sanitizes the executed SQL as the `db.statement`
     # semantic attribute. Optionally, you may disable the inclusion of this attribute entirely by
-    # setting this option to :omit or disbale sanitization the attribute by setting to :include
+    # setting this option to :omit or disable sanitization of the attribute by setting it to :include
     db_statement: :include,
+
+    # When `db_statement` is enabled, this instrumentation obfuscates SQL queries. By default, it
+    # obfuscates queries up to 2000 characters. You can override the default with a different
+    # `obfuscation_limit`, but higher values may impact performance.
+    obfuscation_limit: 2000,
+
+    # By default, this instrumentation does not emit the opt-in
+    # `db.response.returned_rows` semantic attribute. Set this option to true
+    # to include the number of rows returned by the database operation when
+    # available from PG::Result.
+    db_response_returned_rows: true,
+
+    # By default, this instrumentation does not emit the `db.response.affected_rows`
+    # attribute. Set this option to true to include the number of rows affected
+    # by mutation operations when available from PG::Result.
+    db_response_affected_rows: true
   }
 end
 ```
@@ -80,4 +96,3 @@ The `opentelemetry-instrumentation-pg` gem is distributed under the Apache 2.0 l
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
-

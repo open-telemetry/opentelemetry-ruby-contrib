@@ -29,11 +29,11 @@ describe OpenTelemetry::Instrumentation::Rails do
     _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
     _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
 
-    _(span.attributes['http.method']).must_equal 'GET'
-    _(span.attributes['http.host']).must_equal 'example.org'
-    _(span.attributes['http.scheme']).must_equal 'http'
-    _(span.attributes['http.target']).must_equal '/ok'
-    _(span.attributes['http.status_code']).must_equal 200
+    _(span.attributes['http.request.method']).must_equal 'GET'
+    _(span.attributes['server.address']).must_equal 'example.org'
+    _(span.attributes['url.scheme']).must_equal 'http'
+    _(span.attributes['url.path']).must_equal '/ok'
+    _(span.attributes['http.response.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
     _(span.attributes['code.namespace']).must_equal 'ExampleController'
     _(span.attributes['code.function']).must_equal 'ok'

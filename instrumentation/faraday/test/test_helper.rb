@@ -4,10 +4,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
 require 'opentelemetry-instrumentation-faraday'

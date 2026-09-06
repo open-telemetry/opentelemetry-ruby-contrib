@@ -75,6 +75,7 @@ describe OpenTelemetry::Instrumentation::ConcurrentRuby::Instrumentation do
 
       worker = Class.new do
         include Concurrent::Async
+
         def initialize(tracer)
           @tracer = tracer
         end

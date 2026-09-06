@@ -60,8 +60,103 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       instrumentation.install(config)
     end
 
+    def create_temp_table
+      client.exec('CREATE TEMP TABLE otel_affected_rows (id int)')
+    end
+
     it 'before request' do
       _(exporter.finished_spans.size).must_equal 0
+    end
+
+    describe 'connection initialization' do
+      it 'creates a connect span when establishing a connection' do
+        conn = PG::Connection.open(
+          host: host,
+          port: port,
+          user: user,
+          dbname: dbname,
+          password: password
+        )
+        conn.close
+
+        _(exporter.finished_spans.size).must_equal 1
+        connect_span = exporter.finished_spans.first
+        _(connect_span.name).must_equal 'connect'
+        _(connect_span.kind).must_equal :client
+        _(connect_span.attributes['db.system']).must_equal 'postgresql'
+        _(connect_span.attributes['db.name']).must_equal dbname
+        _(connect_span.attributes['db.user']).must_equal user
+        _(connect_span.attributes['net.peer.name']).must_equal host
+        _(connect_span.attributes['net.transport']).must_equal 'ip_tcp'
+      end
+
+      it 'creates a connect span using PG::Connection.new' do
+        conn = PG::Connection.new(
+          host: host,
+          port: port,
+          user: user,
+          dbname: dbname,
+          password: password
+        )
+        conn.close
+
+        connect_span = exporter.finished_spans.first
+        _(connect_span.name).must_equal 'connect'
+        _(connect_span.kind).must_equal :client
+        _(connect_span.attributes['db.system']).must_equal 'postgresql'
+        _(connect_span.attributes['db.name']).must_equal dbname
+      end
+
+      it 'creates a connect span using PG.connect' do
+        conn = PG.connect(
+          host: host,
+          port: port,
+          user: user,
+          dbname: dbname,
+          password: password
+        )
+        conn.close
+
+        connect_span = exporter.finished_spans.first
+        _(connect_span.name).must_equal 'connect'
+        _(connect_span.kind).must_equal :client
+        _(connect_span.attributes['db.system']).must_equal 'postgresql'
+      end
+
+      it 'accepts peer service name from config for connection' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(peer_service: 'readonly:postgres')
+
+        conn = PG::Connection.open(
+          host: host,
+          port: port,
+          user: user,
+          dbname: dbname,
+          password: password
+        )
+        conn.close
+
+        connect_span = exporter.finished_spans.first
+        _(connect_span.attributes['peer.service']).must_equal 'readonly:postgres'
+      end
+
+      it 'records connection errors' do
+        expect do
+          PG::Connection.open(
+            host: host,
+            port: port,
+            user: 'invalid_user',
+            dbname: dbname,
+            password: 'wrong_password'
+          )
+        end.must_raise PG::ConnectionBad
+
+        connect_span = exporter.finished_spans.first
+        _(connect_span.name).must_equal 'connect'
+        _(connect_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(connect_span.events.first.name).must_equal 'exception'
+        _(connect_span.events.first.attributes['exception.type']).must_equal 'PG::ConnectionBad'
+      end
     end
 
     it 'accepts peer service name from config' do
@@ -69,7 +164,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       instrumentation.install(peer_service: 'readonly:postgres')
       client.query('SELECT 1')
 
-      _(span.attributes['peer.service']).must_equal 'readonly:postgres'
+      _(last_span.attributes['peer.service']).must_equal 'readonly:postgres'
     end
 
     describe '.attributes' do
@@ -100,26 +195,138 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
           client.prepare('foo', 'SELECT 1')
         end
 
-        _(span.attributes['db.name']).must_equal 'pg'
-        _(span.attributes['db.statement']).must_equal 'foobar'
-        _(span.attributes['db.operation']).must_equal 'PREPARE FOR SELECT 1'
-        _(span.attributes['db.postgresql.prepared_statement_name']).must_equal 'bar'
-        _(span.attributes['net.peer.ip']).must_equal '192.168.0.1'
-        _(span.attributes['peer.service']).must_equal 'example:custom'
+        _(last_span.attributes['db.name']).must_equal 'pg'
+        _(last_span.attributes['db.statement']).must_equal 'foobar'
+        _(last_span.attributes['db.operation']).must_equal 'PREPARE FOR SELECT 1'
+        _(last_span.attributes['db.postgresql.prepared_statement_name']).must_equal 'bar'
+        _(last_span.attributes['net.peer.ip']).must_equal '192.168.0.1'
+        _(last_span.attributes['peer.service']).must_equal 'example:custom'
       end
     end
 
-    %i[exec query sync_exec async_exec].each do |method|
+    PG_QUERY_METHODS.each do |method|
       it "after request (with method: #{method})" do
         client.send(method, 'SELECT 1')
 
-        _(span.name).must_equal 'SELECT postgres'
-        _(span.attributes['db.system']).must_equal 'postgresql'
-        _(span.attributes['db.name']).must_equal 'postgres'
-        _(span.attributes['db.statement']).must_equal 'SELECT 1'
-        _(span.attributes['db.operation']).must_equal 'SELECT'
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_i
+        _(last_span.name).must_equal 'SELECT postgres'
+        _(last_span.attributes['db.system']).must_equal 'postgresql'
+        _(last_span.attributes['db.name']).must_equal 'postgres'
+        _(last_span.attributes['db.statement']).must_equal 'SELECT 1'
+        _(last_span.attributes['db.operation']).must_equal 'SELECT'
+        _(last_span.attributes['net.peer.name']).must_equal host.to_s
+        _(last_span.attributes['net.peer.port']).must_equal port.to_i
+      end
+    end
+
+    it 'does not include db.response.returned_rows by default' do
+      client.exec('SELECT * FROM (VALUES (1), (2)) AS t(id)')
+
+      _(last_span.attributes['db.response.returned_rows']).must_be_nil
+    end
+
+    it 'does not include db.response.affected_rows by default' do
+      create_temp_table
+      client.exec('INSERT INTO otel_affected_rows (id) VALUES (1), (2), (3)')
+
+      _(last_span.attributes['db.response.affected_rows']).must_be_nil
+    end
+
+    describe 'when db_response_returned_rows is enabled' do
+      let(:config) { { db_statement: :include, db_response_returned_rows: true } }
+
+      PG_QUERY_METHODS.each do |method|
+        it "sets db.response.returned_rows after request (with method: #{method})" do
+          client.send(method, 'SELECT * FROM (VALUES (1), (2)) AS t(id)')
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 2
+        end
+      end
+
+      %i[exec_params async_exec_params sync_exec_params].each do |method|
+        it "sets db.response.returned_rows after request (with method: #{method})" do
+          client.send(method, 'SELECT * FROM (VALUES ($1), ($2)) AS t(id)', [1, 2])
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 2
+        end
+      end
+
+      %i[prepare async_prepare sync_prepare].each do |method|
+        it "sets db.response.returned_rows after preparing a statement (with method: #{method})" do
+          client.send(method, 'foo', 'SELECT $1 AS a')
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 0
+        end
+      end
+
+      %i[exec_prepared async_exec_prepared sync_exec_prepared].each do |method|
+        it "sets db.response.returned_rows after executing prepared statement (with method: #{method})" do
+          client.prepare('foo', 'SELECT * FROM (VALUES ($1), ($2)) AS t(id)')
+          client.send(method, 'foo', [1, 2])
+
+          _(last_span.attributes['db.response.returned_rows']).must_equal 2
+        end
+      end
+
+      it 'does not overwrite db.response.returned_rows from with_attributes' do
+        OpenTelemetry::Instrumentation::PG.with_attributes('db.response.returned_rows' => 99) do
+          client.exec('SELECT * FROM (VALUES (1), (2)) AS t(id)')
+        end
+
+        _(last_span.attributes['db.response.returned_rows']).must_equal 99
+      end
+    end
+
+    describe 'when db_response_affected_rows is enabled' do
+      let(:config) { { db_statement: :include, db_response_affected_rows: true } }
+
+      it 'does not set db.response.affected_rows for SELECT statements' do
+        client.exec('SELECT * FROM (VALUES (1), (2)) AS t(id)')
+
+        _(last_span.attributes['db.response.affected_rows']).must_be_nil
+      end
+
+      PG_QUERY_METHODS.each do |method|
+        it "sets db.response.affected_rows after request (with method: #{method})" do
+          create_temp_table
+          client.send(method, 'INSERT INTO otel_affected_rows (id) VALUES (1), (2), (3)')
+
+          _(last_span.attributes['db.response.affected_rows']).must_equal 3
+        end
+      end
+
+      %i[exec_params async_exec_params sync_exec_params].each do |method|
+        it "sets db.response.affected_rows after request (with method: #{method})" do
+          create_temp_table
+          client.send(method, 'INSERT INTO otel_affected_rows (id) VALUES ($1), ($2), ($3)', [1, 2, 3])
+
+          _(last_span.attributes['db.response.affected_rows']).must_equal 3
+        end
+      end
+
+      it 'sets db.response.affected_rows for mutations that affect zero rows' do
+        create_temp_table
+        client.exec('UPDATE otel_affected_rows SET id = id WHERE id < 0')
+
+        _(last_span.attributes['db.response.affected_rows']).must_equal 0
+      end
+
+      %i[exec_prepared async_exec_prepared sync_exec_prepared].each do |method|
+        it "sets db.response.affected_rows after executing prepared statement (with method: #{method})" do
+          create_temp_table
+          client.prepare('foo', 'INSERT INTO otel_affected_rows (id) VALUES ($1), ($2), ($3)')
+          client.send(method, 'foo', [1, 2, 3])
+
+          _(last_span.attributes['db.response.affected_rows']).must_equal 3
+        end
+      end
+
+      it 'does not overwrite db.response.affected_rows from with_attributes' do
+        create_temp_table
+        OpenTelemetry::Instrumentation::PG.with_attributes('db.response.affected_rows' => 99) do
+          client.exec('INSERT INTO otel_affected_rows (id) VALUES (1), (2), (3)')
+        end
+
+        _(last_span.attributes['db.response.affected_rows']).must_equal 99
       end
     end
 
@@ -127,13 +334,13 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       it "after request (with method: #{method}) " do
         client.send(method, 'SELECT $1 AS a', [1])
 
-        _(span.name).must_equal 'SELECT postgres'
-        _(span.attributes['db.system']).must_equal 'postgresql'
-        _(span.attributes['db.name']).must_equal 'postgres'
-        _(span.attributes['db.statement']).must_equal 'SELECT $1 AS a'
-        _(span.attributes['db.operation']).must_equal 'SELECT'
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_i
+        _(last_span.name).must_equal 'SELECT postgres'
+        _(last_span.attributes['db.system']).must_equal 'postgresql'
+        _(last_span.attributes['db.name']).must_equal 'postgres'
+        _(last_span.attributes['db.statement']).must_equal 'SELECT $1 AS a'
+        _(last_span.attributes['db.operation']).must_equal 'SELECT'
+        _(last_span.attributes['net.peer.name']).must_equal host.to_s
+        _(last_span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -141,14 +348,14 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       it "after preparing a statement (with method: #{method})" do
         client.send(method, 'foo', 'SELECT $1 AS a')
 
-        _(span.name).must_equal 'PREPARE postgres'
-        _(span.attributes['db.system']).must_equal 'postgresql'
-        _(span.attributes['db.name']).must_equal 'postgres'
-        _(span.attributes['db.statement']).must_equal 'SELECT $1 AS a'
-        _(span.attributes['db.operation']).must_equal 'PREPARE'
-        _(span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo'
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_i
+        _(last_span.name).must_equal 'PREPARE postgres'
+        _(last_span.attributes['db.system']).must_equal 'postgresql'
+        _(last_span.attributes['db.name']).must_equal 'postgres'
+        _(last_span.attributes['db.statement']).must_equal 'SELECT $1 AS a'
+        _(last_span.attributes['db.operation']).must_equal 'PREPARE'
+        _(last_span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo'
+        _(last_span.attributes['net.peer.name']).must_equal host.to_s
+        _(last_span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
@@ -168,30 +375,30 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    %i[exec query sync_exec async_exec].each do |method|
+    PG_QUERY_METHODS.each do |method|
       it "after request using Arel (with method: #{method})" do
         client.send(method, Arel.sql('SELECT 1'))
 
-        _(span.name).must_equal 'SELECT postgres'
-        _(span.attributes['db.system']).must_equal 'postgresql'
-        _(span.attributes['db.name']).must_equal 'postgres'
-        _(span.attributes['db.statement']).must_equal 'SELECT 1'
-        _(span.attributes['db.operation']).must_equal 'SELECT'
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_i
+        _(last_span.name).must_equal 'SELECT postgres'
+        _(last_span.attributes['db.system']).must_equal 'postgresql'
+        _(last_span.attributes['db.name']).must_equal 'postgres'
+        _(last_span.attributes['db.statement']).must_equal 'SELECT 1'
+        _(last_span.attributes['db.operation']).must_equal 'SELECT'
+        _(last_span.attributes['net.peer.name']).must_equal host.to_s
+        _(last_span.attributes['net.peer.port']).must_equal port.to_i
       end
     end
 
     it 'ignores prepend comment to extract operation' do
       client.query('/* comment */ SELECT 1')
 
-      _(span.name).must_equal 'SELECT postgres'
-      _(span.attributes['db.system']).must_equal 'postgresql'
-      _(span.attributes['db.name']).must_equal 'postgres'
-      _(span.attributes['db.statement']).must_equal '/* comment */ SELECT 1'
-      _(span.attributes['db.operation']).must_equal 'SELECT'
-      _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_i
+      _(last_span.name).must_equal 'SELECT postgres'
+      _(last_span.attributes['db.system']).must_equal 'postgresql'
+      _(last_span.attributes['db.name']).must_equal 'postgres'
+      _(last_span.attributes['db.statement']).must_equal '/* comment */ SELECT 1'
+      _(last_span.attributes['db.operation']).must_equal 'SELECT'
+      _(last_span.attributes['net.peer.name']).must_equal host.to_s
+      _(last_span.attributes['net.peer.port']).must_equal port.to_i
     end
 
     it 'only caches 50 prepared statement names' do
@@ -214,21 +421,21 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         client.exec('SELECT INVALID')
       end.must_raise PG::UndefinedColumn
 
-      _(span.name).must_equal 'SELECT postgres'
-      _(span.attributes['db.system']).must_equal 'postgresql'
-      _(span.attributes['db.name']).must_equal 'postgres'
-      _(span.attributes['db.statement']).must_equal 'SELECT INVALID'
-      _(span.attributes['db.operation']).must_equal 'SELECT'
-      _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_i
+      _(last_span.name).must_equal 'SELECT postgres'
+      _(last_span.attributes['db.system']).must_equal 'postgresql'
+      _(last_span.attributes['db.name']).must_equal 'postgres'
+      _(last_span.attributes['db.statement']).must_equal 'SELECT INVALID'
+      _(last_span.attributes['db.operation']).must_equal 'SELECT'
+      _(last_span.attributes['net.peer.name']).must_equal host.to_s
+      _(last_span.attributes['net.peer.port']).must_equal port.to_i
 
-      _(span.status.code).must_equal(
+      _(last_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
-      _(span.events.first.name).must_equal 'exception'
-      _(span.events.first.attributes['exception.type']).must_equal 'PG::UndefinedColumn'
-      assert(!span.events.first.attributes['exception.message'].nil?)
-      assert(!span.events.first.attributes['exception.stacktrace'].nil?)
+      _(last_span.events.first.name).must_equal 'exception'
+      _(last_span.events.first.attributes['exception.type']).must_equal 'PG::UndefinedColumn'
+      refute_nil(last_span.events.first.attributes['exception.message'])
+      refute_nil(last_span.events.first.attributes['exception.stacktrace'])
     end
 
     it 'extracts statement type that begins the query' do
@@ -237,13 +444,13 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       explain_sql = "#{explain} #{base_sql}"
       client.exec(explain_sql)
 
-      _(span.name).must_equal 'EXPLAIN postgres'
-      _(span.attributes['db.system']).must_equal 'postgresql'
-      _(span.attributes['db.name']).must_equal 'postgres'
-      _(span.attributes['db.statement']).must_equal explain_sql
-      _(span.attributes['db.operation']).must_equal 'EXPLAIN'
-      _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_i
+      _(last_span.name).must_equal 'EXPLAIN postgres'
+      _(last_span.attributes['db.system']).must_equal 'postgresql'
+      _(last_span.attributes['db.name']).must_equal 'postgres'
+      _(last_span.attributes['db.statement']).must_equal explain_sql
+      _(last_span.attributes['db.operation']).must_equal 'EXPLAIN'
+      _(last_span.attributes['net.peer.name']).must_equal host.to_s
+      _(last_span.attributes['net.peer.port']).must_equal port.to_i
     end
 
     it 'uses database name as span.name fallback with invalid sql' do
@@ -251,28 +458,70 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         client.exec('DESELECT 1')
       end.must_raise PG::SyntaxError
 
-      _(span.name).must_equal 'postgres'
-      _(span.attributes['db.system']).must_equal 'postgresql'
-      _(span.attributes['db.name']).must_equal 'postgres'
-      _(span.attributes['db.statement']).must_equal 'DESELECT 1'
-      _(span.attributes['db.operation']).must_be_nil
-      _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_i
+      _(last_span.name).must_equal 'postgres'
+      _(last_span.attributes['db.system']).must_equal 'postgresql'
+      _(last_span.attributes['db.name']).must_equal 'postgres'
+      _(last_span.attributes['db.statement']).must_equal 'DESELECT 1'
+      _(last_span.attributes['db.operation']).must_be_nil
+      _(last_span.attributes['net.peer.name']).must_equal host.to_s
+      _(last_span.attributes['net.peer.port']).must_equal port.to_i
 
-      _(span.status.code).must_equal(
+      _(last_span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
-      _(span.events.first.name).must_equal 'exception'
-      _(span.events.first.attributes['exception.type']).must_equal 'PG::SyntaxError'
-      assert(!span.events.first.attributes['exception.message'].nil?)
-      assert(!span.events.first.attributes['exception.stacktrace'].nil?)
+      _(last_span.events.first.name).must_equal 'exception'
+      _(last_span.events.first.attributes['exception.type']).must_equal 'PG::SyntaxError'
+      refute_nil(last_span.events.first.attributes['exception.message'])
+      refute_nil(last_span.events.first.attributes['exception.stacktrace'])
     end
 
     it 'extracts table name' do
       client.query('CREATE TABLE test_table (personid int, name VARCHAR(50))')
 
-      _(span.attributes['db.collection.name']).must_equal 'test_table'
+      _(last_span.attributes['db.collection.name']).must_equal 'test_table'
       client.query('DROP TABLE test_table') # Drop table to avoid conflicts
+    end
+
+    describe 'when propagator is set to tracecontext' do
+      let(:config) { { propagator: 'tracecontext' } }
+
+      it 'injects context into SQL query' do
+        sql = +'SELECT * from users where users.id = 1'
+
+        expect do
+          client.exec(sql)
+        end.must_raise PG::UndefinedTable
+
+        # Verify the SQL was modified with trace context
+        _(sql).must_match(%r{/\*traceparent='00-#{last_span.hex_trace_id}-#{last_span.hex_span_id}-01'\*/})
+      end
+
+      it 'does not modify frozen strings' do
+        sql = 'SELECT * from users where users.id = 1'
+        _(sql).must_be :frozen?
+
+        expect do
+          client.exec(sql)
+        end.must_raise PG::UndefinedTable
+
+        # Frozen strings should not be modified
+        _(sql).wont_match(%r{/\*traceparent=})
+      end
+    end
+
+    describe 'when propagator is set to none' do
+      let(:config) { { propagator: 'none' } }
+
+      it 'does not inject context' do
+        sql = +'SELECT * from users where users.id = 1'
+        original_sql = sql.dup
+
+        expect do
+          client.exec(sql)
+        end.must_raise PG::UndefinedTable
+
+        _(sql).must_equal original_sql
+      end
     end
 
     describe 'when db_statement is obfuscate' do
@@ -285,13 +534,13 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
           client.exec(sql)
         end.must_raise PG::UndefinedTable
 
-        _(span.attributes['db.system']).must_equal 'postgresql'
-        _(span.attributes['db.name']).must_equal 'postgres'
-        _(span.name).must_equal 'SELECT postgres'
-        _(span.attributes['db.statement']).must_equal obfuscated_sql
-        _(span.attributes['db.operation']).must_equal 'SELECT'
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_i
+        _(last_span.attributes['db.system']).must_equal 'postgresql'
+        _(last_span.attributes['db.name']).must_equal 'postgres'
+        _(last_span.name).must_equal 'SELECT postgres'
+        _(last_span.attributes['db.statement']).must_equal obfuscated_sql
+        _(last_span.attributes['db.operation']).must_equal 'SELECT'
+        _(last_span.attributes['net.peer.name']).must_equal host.to_s
+        _(last_span.attributes['net.peer.port']).must_equal port.to_i
       end
 
       describe 'with obfuscation_limit' do
@@ -304,7 +553,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
             client.exec(sql)
           end.must_raise PG::UndefinedTable
 
-          _(span.attributes['db.statement']).must_equal obfuscated_sql
+          _(last_span.attributes['db.statement']).must_equal obfuscated_sql
         end
       end
     end
@@ -318,14 +567,14 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
           client.exec(sql)
         end.must_raise PG::UndefinedTable
 
-        _(span.attributes['db.system']).must_equal 'postgresql'
-        _(span.attributes['db.name']).must_equal 'postgres'
-        _(span.name).must_equal 'SELECT postgres'
-        _(span.attributes['db.operation']).must_equal 'SELECT'
-        _(span.attributes['net.peer.name']).must_equal host.to_s
-        _(span.attributes['net.peer.port']).must_equal port.to_i
+        _(last_span.attributes['db.system']).must_equal 'postgresql'
+        _(last_span.attributes['db.name']).must_equal 'postgres'
+        _(last_span.name).must_equal 'SELECT postgres'
+        _(last_span.attributes['db.operation']).must_equal 'SELECT'
+        _(last_span.attributes['net.peer.name']).must_equal host.to_s
+        _(last_span.attributes['net.peer.port']).must_equal port.to_i
 
-        _(span.attributes['db.statement']).must_be_nil
+        _(last_span.attributes['db.statement']).must_be_nil
       end
     end
 
@@ -336,9 +585,19 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       it 'sets attributes for the socket directory and family' do
         client.query('SELECT 1')
 
-        _(span.attributes['net.peer.name']).must_match %r{^/}
-        _(span.attributes['net.peer.port']).must_be_nil
-        _(span.attributes['net.sock.family']).must_equal 'unix'
+        _(last_span.attributes['net.peer.name']).must_match %r{^/}
+        _(last_span.attributes['net.peer.port']).must_be_nil
+        _(last_span.attributes['net.sock.family']).must_equal 'unix'
+      end
+
+      it 'sets attributes for the connect span' do
+        client.query('SELECT 1')
+
+        connect_span = exporter.finished_spans.first
+        _(connect_span.name).must_equal 'connect'
+        _(connect_span.attributes['db.system']).must_equal 'postgresql'
+        _(connect_span.attributes['net.sock.family']).must_equal 'unix'
+        _(connect_span.attributes['net.peer.name']).must_match %r{^/}
       end
     end
 
@@ -358,8 +617,8 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       it 'sets attributes of the active connection' do
         client.query('SELECT 1')
 
-        _(span.attributes['net.peer.name']).must_equal host
-        _(span.attributes['net.peer.port']).must_equal port.to_i if PG.const_defined?(:DEF_PORT)
+        _(last_span.attributes['net.peer.name']).must_equal host
+        _(last_span.attributes['net.peer.port']).must_equal port.to_i if PG.const_defined?(:DEF_PORT)
       end
     end
 

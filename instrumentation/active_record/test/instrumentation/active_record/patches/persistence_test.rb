@@ -140,7 +140,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
 
   describe '#increment!' do
     it 'traces' do
-      User.new.increment!(:counter)
+      User.create.increment!(:counter)
       increment_span = spans.find { |s| s.name == 'User#increment!' }
       _(increment_span).wont_be_nil
     end
@@ -156,7 +156,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
 
   describe '#decrement!' do
     it 'traces' do
-      User.new.decrement!(:counter)
+      User.create.decrement!(:counter)
       decrement_span = spans.find { |s| s.name == 'User#decrement!' }
       _(decrement_span).wont_be_nil
     end

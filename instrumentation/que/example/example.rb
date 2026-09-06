@@ -6,6 +6,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'dotenv'
+Dotenv.load('.env', '../.env')
+
 require 'rubygems'
 require 'bundler/setup'
 
@@ -30,7 +33,6 @@ class TestJob < Que::Job
   end
 end
 
-ENV['OTEL_TRACES_EXPORTER'] = 'console'
 require 'opentelemetry-instrumentation-que'
 require 'opentelemetry/sdk'
 OpenTelemetry::SDK.configure do |c|

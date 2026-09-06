@@ -16,5 +16,6 @@ module OpenTelemetry
   end
 end
 
+require_relative 'faraday/http_helper'
 require_relative 'faraday/instrumentation'
 require_relative 'faraday/version'

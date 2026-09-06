@@ -380,7 +380,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
       _(span.events[0].name).must_equal 'exception'
       _(span.events[0].timestamp).must_be_kind_of Integer
       _(span.events[0].attributes['exception.type']).must_equal 'CommandFailed'
-      _(span.events[0].attributes['exception.message']).must_equal 'ns not found (26)'
+      _(span.events[0].attributes['exception.message']).must_equal '[26:NamespaceNotFound]: ns not found'
     end
 
     describe 'that triggers #failed before #started' do
@@ -402,7 +402,8 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
         database: TestHelper.database,
         auth_mech: :plain,
         user: 'plain_user',
-        password: 'plain_pass'
+        password: 'plain_pass',
+        auth_source: '$external'
       }
     end
 

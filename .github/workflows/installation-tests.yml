@@ -5,29 +5,58 @@ name: Installation Tests
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths: &path_filters
+      - ".github/workflows/installation-tests.yml"
+      - "releases/**"
+  pull_request:
+    branches:
+      - main
+    paths: *path_filters
   schedule:
     # Everyday at 2 PM UTC
     - cron: "0 14 * * *"
 
+permissions:
+  contents: read
+
 jobs:
   installation-tests:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     strategy:
       fail-fast: false
       matrix:
         ruby-version:
+          - 4.0
           - 3.4
           - 3.3
-          - 3.2
-          - 3.1
     name: ${{ matrix.ruby-version }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-        # ATTENTION: Dependabot does not know how to update shared actions file.
-        # If you see it update setup-ruby here also update it as part of actions/test_gem/action.yml
-      - uses: ruby/setup-ruby@v1.207.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
       - name: "Install Latest Gem Versions on ${{ matrix.ruby-version }}"
+        working-directory: releases
+        run: ./run.sh
+  installation-latest-tests:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    strategy:
+      fail-fast: false
+    name: Latest
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          ruby-version: "4.0.6"
+      - name: "Install Latest Gem Versions on Latest Ruby"
         working-directory: releases
         run: ./run.sh

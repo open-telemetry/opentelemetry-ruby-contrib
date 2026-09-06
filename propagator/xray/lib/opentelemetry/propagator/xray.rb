@@ -12,6 +12,7 @@
 # See the documentation for the `opentelemetry-api` gem for details.
 
 require_relative 'xray/text_map_propagator'
+require_relative 'xray/lambda_text_map_propagator'
 
 module OpenTelemetry
   # Namespace for OpenTelemetry propagator extension libraries
@@ -22,7 +23,8 @@ module OpenTelemetry
 
       DEBUG_CONTEXT_KEY = Context.create_key('xray-debug-key')
       TEXT_MAP_PROPAGATOR = TextMapPropagator.new
-      private_constant :DEBUG_CONTEXT_KEY, :TEXT_MAP_PROPAGATOR
+      LAMBDA_TEXT_MAP_PROPAGATOR = LambdaTextMapPropagator.new
+      private_constant :DEBUG_CONTEXT_KEY, :TEXT_MAP_PROPAGATOR, :LAMBDA_TEXT_MAP_PROPAGATOR
 
       # @api private
       # Returns a new context with the xray debug flag enabled
@@ -40,6 +42,12 @@ module OpenTelemetry
       # format.
       def text_map_propagator
         TEXT_MAP_PROPAGATOR
+      end
+
+      # Returns a text map propagator that propagates context in the XRay
+      # format with special handling for Lambda environment.
+      def lambda_text_map_propagator
+        LAMBDA_TEXT_MAP_PROPAGATOR
       end
     end
   end

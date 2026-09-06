@@ -4,23 +4,26 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-%w[6.1.0 7.0.0 7.1.0].each do |version|
-  appraise "activerecord-#{version}" do
-    gem 'sqlite3', '~> 1.4'
-    gem 'activerecord', "~> #{version}"
-  end
-end
-
-if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.1.0')
-  %w[7.2.0].each do |version|
+if RUBY_ENGINE == 'ruby'
+  %w[7.1.0 7.2.0].each do |version|
     appraise "activerecord-#{version}" do
       gem 'sqlite3', '~> 1.4'
       gem 'activerecord', "~> #{version}"
     end
   end
 
-  appraise 'activerecord-latest' do
-    gem 'sqlite3', '>= 2.1'
-    gem 'activerecord'
+  %w[8.0.0 8.1.0].each do |version|
+    appraise "activerecord-#{version}" do
+      gem 'activerecord', "~> #{version}"
+      gem 'sqlite3', '= 2.9.6'
+    end
+  end
+end
+
+if RUBY_ENGINE == 'jruby'
+  %w[71.0 72.0 80.0.pre1].each do |version|
+    appraise "jruby_activerecord-#{version}" do
+      gem 'activerecord-jdbcsqlite3-adapter', "~> #{version}"
+    end
   end
 end

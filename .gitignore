@@ -28,3 +28,5 @@ instrumentation/active_record/db
 
 tags
 !**/*/.gitkeep
+
+node_modules

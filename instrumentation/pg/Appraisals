@@ -1,13 +1,7 @@
 # frozen_string_literal: true
 
-appraise 'pg-1.3' do
-  gem 'pg', '~> 1.3.5'
-end
-
-appraise 'pg-1.4' do
-  gem 'pg', '~> 1.4.5'
-end
-
-appraise 'pg-latest' do
-  gem 'pg'
+%w[1.5.0 1.6.3].each do |version|
+  appraise "pg-#{version}" do
+    gem 'pg', "~> #{version}", platform: :mri
+  end
 end

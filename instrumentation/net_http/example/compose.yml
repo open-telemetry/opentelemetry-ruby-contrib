@@ -1,0 +1,6 @@
+services:
+  ex-instrumentation-net-http:
+    extends:
+      service: base
+      file: ./../../../docker-base.yml
+    working_dir: /app/instrumentation/net_http/example

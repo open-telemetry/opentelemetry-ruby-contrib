@@ -2,6 +2,15 @@
 
 The OpenTelemetry Dalli gem is a community maintained instrumentation for the [Dalli][dalli-home] Memcache client.
 
+## Dalli 4.2.0+ Native Integration
+
+Dalli 4.2.0+ includes native OpenTelemetry instrumentation. For the best experience and continued support, we recommend:
+
+- **Dalli < 4.2.0**: Use `opentelemetry-instrumentation-dalli` gem
+- **Dalli ≥ 4.2.0**: Use Dalli's built-in OpenTelemetry support (remove `opentelemetry-instrumentation-dalli` gem)
+
+Community instrumentation is compatible with Dalli versions up to 4.1.x. Development of this gem is frozen for newer Dalli versions in favor of the native integration.
+
 ## How do I get started?
 
 Install the gem using:

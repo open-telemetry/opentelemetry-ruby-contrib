@@ -1,62 +1,85 @@
 # Release History: opentelemetry-instrumentation-lmdb
 
-### v0.22.3 / 2024-07-23
+## v0.26.0 / 2026-04-14
 
-* DOCS: Add cspell to CI
+- BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
+- ADDED: Min Ruby Version 3.3 (#2125)
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.22.2 / 2024-04-30
+## v0.25.0 / 2025-10-22
 
-* FIXED: Bundler conflict warnings
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
 
-### v0.22.1 / 2023-06-05
+## v0.24.1 / 2025-09-30
 
-* FIXED: Base config options 
+- FIXED: Min OTel Ruby API 1.7
 
-### v0.22.0 / 2023-04-17
+## v0.24.0 / 2025-09-30
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+- ADDED: Bump minimum API Version to 1.7
 
-* ADDED: Drop support for EoL Ruby 2.7 
+## v0.23.0 / 2025-01-16
 
-### v0.21.1 / 2023-01-14
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+## v0.22.3 / 2024-07-23
 
-### v0.21.0 / 2022-06-09
+- DOCS: Add cspell to CI
 
-* Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+## v0.22.2 / 2024-04-30
 
-### v0.20.0 / 2022-05-02
+- FIXED: Bundler conflict warnings
 
-* ADDED: Validate Using Enums 
+## v0.22.1 / 2023-06-05
 
-### v0.19.2 / 2021-12-02
+- FIXED: Base config options
 
-* (No significant changes)
+## v0.22.0 / 2023-04-17
 
-### v0.19.1 / 2021-09-29
+- BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- ADDED: Drop support for EoL Ruby 2.7
 
-* (No significant changes)
+## v0.21.1 / 2023-01-14
 
-### v0.19.0 / 2021-08-12
+- DOCS: Fix gem homepage
+- DOCS: More gem documentation fixes
 
-* ADDED: Configure db.statement toggle 
-* DOCS: Update docs to rely more on environment variable configuration 
+## v0.21.0 / 2022-06-09
 
-### v0.18.1 / 2021-06-23
+- Upgrading Base dependency version
+- FIXED: Broken test file requirements
 
-* (No significant changes)
+## v0.20.0 / 2022-05-02
 
-### v0.18.0 / 2021-05-21
+- ADDED: Validate Using Enums
 
-* ADDED: Updated API dependency for 1.0.0.rc1
+## v0.19.2 / 2021-12-02
 
-### v0.17.0 / 2021-04-22
+- (No significant changes)
 
-* (No significant changes)
+## v0.19.1 / 2021-09-29
 
-### v0.16.0 / 2021-03-17
+- (No significant changes)
 
-* Initial release.
+## v0.19.0 / 2021-08-12
+
+- ADDED: Configure db.statement toggle
+- DOCS: Update docs to rely more on environment variable configuration
+
+## v0.18.1 / 2021-06-23
+
+- (No significant changes)
+
+## v0.18.0 / 2021-05-21
+
+- ADDED: Updated API dependency for 1.0.0.rc1
+
+## v0.17.0 / 2021-04-22
+
+- (No significant changes)
+
+## v0.16.0 / 2021-03-17
+
+- Initial release.

@@ -1,6 +1,6 @@
 # OpenTelemetry Instrumentation Helpers: MySQL
 
-This Ruby gem contains logic shared among MySQL adapter libraries, such as mysql2 and trilogy. It's intended for use by by gem authors instrumenting MySQL adapter libraries.
+This Ruby gem contains logic shared among MySQL adapter libraries, such as mysql2 and trilogy. It's intended for use by gem authors instrumenting MySQL adapter libraries.
 
 ## Usage
 
@@ -16,7 +16,7 @@ Add the gem to your instrumentation's Gemfile:
 ```ruby
 # Gemfile
 
-group :test, :development do
+group :test do
   gem 'opentelemetry-helpers-mysql', path: '../../helpers/mysql'
 end
 ```

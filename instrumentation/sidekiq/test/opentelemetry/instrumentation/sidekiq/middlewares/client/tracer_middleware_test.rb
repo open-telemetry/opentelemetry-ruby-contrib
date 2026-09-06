@@ -44,7 +44,10 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Client::TracerMid
       _(enqueue_span.attributes['messaging.destination']).must_equal 'default'
       _(enqueue_span.attributes['messaging.destination_kind']).must_equal 'queue'
       _(enqueue_span.events.size).must_equal(1)
-      _(enqueue_span.events[0].name).must_equal('created_at')
+
+      created_event = enqueue_span.events[0]
+      _(created_event.name).must_equal('created_at')
+      _(created_event.timestamp.digits.count).must_equal(19)
     end
 
     it 'traces when enqueued with Active Job' do

@@ -71,7 +71,7 @@ This is how the rails controller instrumentation is able to rename the span name
 
 ### High cardinality example
 
-You can pass in an url quantization lambda that simply uses the URL path, the result is you will end up with high cardinality span names, however this may be acceptable in your deployment and is easy configurable using the following example.
+You can pass in a url quantization lambda that simply uses the URL path; the result is you will end up with high cardinality span names. However, this may be acceptable in your deployment and is easily configurable using the following example.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
@@ -81,7 +81,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/rack/example/trace_demonstration.rb)
+Example usage can be seen in the [`./example/trace_demonstration.rb` file](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/rack/example/trace_demonstration.rb)
 
 ## How can I get involved?
 
@@ -101,3 +101,15 @@ The `opentelemetry-instrumentation-rack` gem is distributed under the Apache 2.0
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+
+## HTTP semantic convention stability
+
+This instrumentation by default emits the stable HTTP semantic conventions. The `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable can be used to opt-in to the old or duplicate (both old and stable) semantic conventions.
+
+When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
+
+- `http` - Emits the stable HTTP and networking conventions.
+- `http/dup` - **DEPRECATED: Will be removed on April 15, 2026.** Emits both the old and stable HTTP and networking conventions.
+- `old` - **DEPRECATED: Will be removed on April 15, 2026.** Emits the old HTTP and networking conventions.
+
+For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/).

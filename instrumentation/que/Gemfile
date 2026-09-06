@@ -9,9 +9,23 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'activerecord', '< 7.2.0', '> 6.1.0'
-  gem 'pg'
-  gem 'opentelemetry-helpers-sql-obfuscation', path: '../../helpers/sql-obfuscation'
+  gem 'appraisal', '~> 2.5.0'
+  gem 'dotenv', '~> 3.2.0'
+  gem 'minitest', '~> 6.0.0'
+  gem 'opentelemetry-sdk', '~> 1.13.0'
+  gem 'opentelemetry-test-helpers', '~> 0.9.0'
+  gem 'rake', '>= 13'
+  gem 'rubocop', '~> 1.90.0'
+  gem 'rubocop-performance', '~> 1.27.0'
+  gem 'simplecov', '~> 1.1.0'
+  gem 'yard', '~> 0.9.0'
+  gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
+  gem 'opentelemetry-helpers-sql-processor', path: '../../helpers/sql-processor'
   gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'opentelemetry-instrumentation-pg', path: '../pg'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'mutex_m'
+    gem 'logger'
+  end
 end

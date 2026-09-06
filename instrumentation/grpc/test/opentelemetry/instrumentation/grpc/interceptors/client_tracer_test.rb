@@ -6,6 +6,7 @@
 
 require_relative '../../../../test_helper'
 require_relative '../../../../support/grpc_server_runner'
+require_relative '../../../../../lib/opentelemetry/instrumentation/grpc/interceptors/client_tracer'
 
 describe OpenTelemetry::Instrumentation::Grpc::Interceptors::ClientTracer do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Grpc::Instrumentation.instance }

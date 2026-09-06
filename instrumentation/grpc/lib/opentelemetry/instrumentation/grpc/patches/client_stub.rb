@@ -13,9 +13,7 @@ module OpenTelemetry
         module ClientStub
           def initialize(host, creds, **args)
             interceptors = args[:interceptors] || []
-            interceptors.unshift(Interceptors::ClientTracer.new) unless interceptors.any? do |interceptor|
-              interceptor.is_a?(Interceptors::ClientTracer)
-            end
+            interceptors.unshift(Interceptors::ClientTracer.new) unless interceptors.any?(Interceptors::ClientTracer)
             args[:interceptors] = interceptors
 
             super

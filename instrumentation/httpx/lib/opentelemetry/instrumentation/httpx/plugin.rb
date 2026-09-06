@@ -7,86 +7,40 @@
 module OpenTelemetry
   module Instrumentation
     module HTTPX
+      # Base Plugin
       module Plugin
-        # Instruments around HTTPX's request/response lifecycle in order to generate
-        # an OTEL trace.
-        class RequestTracer
-          # Constant for the HTTP status range
-          HTTP_STATUS_SUCCESS_RANGE = (100..399)
-
-          def initialize(request)
-            @request = request
-          end
-
-          def call
-            @request.on(:response, &method(:finish)) # rubocop:disable Performance/MethodObjectAsBlock
-
-            uri = @request.uri
-            request_method = @request.verb
-            span_name = "HTTP #{request_method}"
-
-            attributes = {
-              OpenTelemetry::SemanticConventions::Trace::HTTP_HOST => uri.host,
-              OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => request_method,
-              OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => uri.scheme,
-              OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => uri.path,
-              OpenTelemetry::SemanticConventions::Trace::HTTP_URL => "#{uri.scheme}://#{uri.host}",
-              OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => uri.host,
-              OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => uri.port
-            }
-            config = HTTPX::Instrumentation.instance.config
-            attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] if config[:peer_service]
-            attributes.merge!(
-              OpenTelemetry::Common::HTTP::ClientContext.attributes
-            )
-
-            @span = tracer.start_span(span_name, attributes: attributes, kind: :client)
-            trace_ctx = OpenTelemetry::Trace.context_with_span(@span)
-            @trace_token = OpenTelemetry::Context.attach(trace_ctx)
-
-            OpenTelemetry.propagation.inject(@request.headers)
-          rescue StandardError => e
-            OpenTelemetry.handle_error(exception: e)
-          end
-
-          def finish(response)
-            return unless @span
-
-            if response.is_a?(::HTTPX::ErrorResponse)
-              @span.record_exception(response.error)
-              @span.status = Trace::Status.error("Unhandled exception of type: #{response.error.class}")
-            else
-              @span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, response.status)
-              @span.status = Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(response.status)
-            end
-
-            OpenTelemetry::Context.detach(@trace_token) if @trace_token
-            @span.finish
-          end
-
-          private
-
-          def tracer
-            HTTPX::Instrumentation.instance.tracer
-          end
+        # loads httpx tracing plugin
+        def self.load_dependencies(klass)
+          klass.plugin(:tracing)
         end
 
-        # HTTPX::Request overrides
+        # Request patch to initiate the trace on initialization.
         module RequestMethods
-          def __otel_enable_trace!
-            return if @__otel_enable_trace
-
-            RequestTracer.new(self).call
-            @__otel_enable_trace = true
-          end
+          attr_accessor :otel_span
         end
 
-        # HTTPX::Connection overrides
-        module ConnectionMethods
-          def send(request)
-            request.__otel_enable_trace!
+        # base request tracer
+        module RequestTracer
+          # whether tracing is enabled
+          def enabled?(request)
+            true
+          end
 
-            super
+          # on request started callback
+          def start(request)
+            request.otel_span = initialize_span(request)
+          end
+
+          # on request reset callback
+          def reset(request)
+            request.otel_span = nil
+          end
+
+          # on request finished callback
+          def finish(request, response)
+            request.otel_span ||= initialize_span(request, request.init_time) if request.init_time
+
+            finish_span(response, request.otel_span)
           end
         end
       end

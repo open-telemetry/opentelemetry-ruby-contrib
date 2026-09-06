@@ -34,28 +34,28 @@ end
 
 This will populate the following resource attributes for compute running on Google Cloud Platform:
 
-* Compute Engine:
-* * `cloud.provider`
-* * `cloud.account.id`
-* * `cloud.region`
-* * `cloud.availability_zone`
-* * `host.id`
-* * `host.name`
+- Compute Engine:
+  - `cloud.provider`
+  - `cloud.account.id`
+  - `cloud.region`
+  - `cloud.availability_zone`
+  - `host.id`
+  - `host.name`
 
-* Google Kubernetes Engine:
-* * `k8s.cluster.name`
-* * `k8s.namespace.name`
-* * `k8s.pod.name`
-* * `k8s.node.name`
-* * `container.name`
+- Google Kubernetes Engine:
+  - `k8s.cluster.name`
+  - `k8s.namespace.name`
+  - `k8s.pod.name`
+  - `k8s.node.name`
+  - `container.name`
 
-* Google Cloud Run:
-* * `cloud.provider`
-* * `cloud.account.id`
-* * `cloud.region`
-* * `cloud.availability_zone`
-* * `faas.name`
-* * `faas.version`
+- Google Cloud Run:
+  - `cloud.provider`
+  - `cloud.account.id`
+  - `cloud.region`
+  - `cloud.availability_zone`
+  - `faas.name`
+  - `faas.version`
 
 ## How can I get involved?
 

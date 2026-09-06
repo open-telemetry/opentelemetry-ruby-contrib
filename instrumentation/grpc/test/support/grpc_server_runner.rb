@@ -6,7 +6,7 @@
 
 # inspired by https://github.com/grpc/grpc/blob/master/src/ruby/spec/support/helpers.rb
 
-require_relative './ping_server_impl'
+require_relative 'ping_server_impl'
 
 module Support
   class GrpcServerRunner

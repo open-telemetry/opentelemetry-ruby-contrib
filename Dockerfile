@@ -1,8 +1,4 @@
-# Configuration for Ruby base image
-ARG ALPINE_VERSION=3.17
-ARG RUBY_VERSION=3.2
-
-FROM ruby:"${RUBY_VERSION}-alpine${ALPINE_VERSION}" as ruby
+FROM ruby:3.3.12-alpine3.23@sha256:11da101dfad607c6193a921abc815c989bc9f19b43f5f686bbcc7d424298d596 as ruby
 
 # Metadata
 LABEL maintainer="open-telemetry/opentelemetry-ruby-contrib"
@@ -38,6 +34,7 @@ ARG PACKAGES="\
     postgresql-dev \
     tzdata \
     util-linux \
+    imagemagick \
     "
 # Install packages
 RUN apk update && \

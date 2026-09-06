@@ -1,0 +1,194 @@
+name: File Checks
+
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  markdown-lint-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: Markdown Lint Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # equivalent cli: markdownlint-cli2  "**/*.md" "!**/CHANGELOG.md"  --config .markdownlint-cli2.yaml
+      - name: "Markdown Lint Check"
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
+        with:
+          config: .markdownlint-cli2.yaml
+          fix: false
+          globs: |
+            **/*.md
+
+  markdown-link-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: Markdown Link Check
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write # required for posting PR review comments
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # equivalent cli: linkspector check
+      - name: Run linkspector
+        uses: umbrelladocs/action-linkspector@568ec8d29fa92b31fd9ea5381e155c51e922af83 # v1.5.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-annotations
+          fail_on_error: true
+
+  json-lint-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: JSON Lint Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: install dependencies
+        run: npm ci --ignore-scripts
+
+      # equivalent cli: jsonlint --config ./.jsonlintrc.yml
+      - name: "JSON Lint Check"
+        run: npm run check:lint:json
+
+  renovate-config-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: Renovate Config Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: install dependencies
+        run: npm ci --ignore-scripts
+
+      # equivalent cli: renovate-config-validator
+      - name: "Renovate Lint Check"
+        run: npm run check:lint:renovate
+
+  ruby-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: RuboCop Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          ruby-version: "3.3.12"
+
+      - name: Install Tools
+        run: npm ci --ignore-scripts && bundle install
+
+      - name: "Lint all ruby files"
+        run: |
+          set -e # forces exit code to propagate
+          npm run check:lint:ruby -- --format github
+
+      - name: "Check all ruby source files"
+        run: |
+          set -e # forces exit code to propagate
+          npm run check:source:ruby -- --format github
+
+  yaml-lint-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: YAML Lint Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # equivalent cli: yamllint .
+      - name: "YAML Lint Check"
+        uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c #v3.1.1
+        with:
+          config_file: .yamllint
+
+  dotenv-linter:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: env / dotenv-linter
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Lint
+        uses: dotenv-linter/action-dotenv-linter@afde61cfda2ecffe7bea35837b6f20b956c88689 # v3.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dotenv_linter_flags: --recursive
+          fail_level: warning
+
+  spelling-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: Spelling Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: streetsidesoftware/cspell-action@e0668cf020899e887ee8ad4d173c31738a79eae8 # v9.0.1
+        with:
+          config: .cspell.yml
+          suggestions: true
+          treat_flagged_words_as_errors: true
+          incremental_files_only: false
+
+  format-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    name: File Format Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          cache: "npm"
+          node-version: "24"
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          ruby-version: "3.3.12"
+
+      - name: Install Tools
+        run: npm ci --ignore-scripts && bundle install
+
+      - name: "Format all document Check"
+        run: npm run write:format
+
+      - name: validate files
+        run: git diff --exit-code ':*.*' || (echo 'Files are out of date, please run "npm run write:format" and commit the changes in this PR.' && exit 1)

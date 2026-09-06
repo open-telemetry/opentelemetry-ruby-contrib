@@ -1,134 +1,160 @@
 # Release History: opentelemetry-instrumentation-restclient
 
-### v0.22.8 / 2024-11-26
+## v0.28.0 / 2026-04-14
 
-* CHANGED: Performance Freeze all range objects #1222
+- ADDED: Add release tag into source code url of gem metadata (#1984)
 
-### v0.22.7 / 2024-07-23
+## v0.27.0 / 2026-03-17
 
-* DOCS: Add cspell to CI
+- BREAKING CHANGE: Default to stable HTTP semantic conventions (#2051)
+- ADDED: Default to stable HTTP semantic conventions (#2051)
 
-### v0.22.6 / 2024-06-18
+## v0.26.0 / 2025-10-22
 
-* FIXED: Relax otel common gem constraints
+- BREAKING CHANGE: Min Ruby Version 3.2
+- ADDED: Min Ruby Version 3.2
 
-### v0.22.5 / 2024-05-09
+## v0.25.1 / 2025-09-30
 
-* FIXED: Untrace entire request
+- FIXED: Min OTel Ruby API 1.7
 
-### v0.22.4 / 2024-04-30
+## v0.25.0 / 2025-09-30
 
-* FIXED: Bundler conflict warnings
+- ADDED: Bump minimum API Version to 1.7
 
-### v0.22.3 / 2023-11-23
+## v0.24.0 / 2025-08-13
 
-* CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
+- ADDED: Add REST Client `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable [#1568](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/1568)
 
-### v0.22.2 / 2023-07-21
+## v0.23.0 / 2025-01-16
 
-* ADDED: Update `opentelemetry-common` from [0.19.3 to 0.20.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/537)
+- BREAKING CHANGE: Set minimum supported version to Ruby 3.1
+- ADDED: Set minimum supported version to Ruby 3.1
 
-### v0.22.1 / 2023-06-05
+## v0.22.8 / 2024-11-26
 
-* FIXED: Base config options 
+- CHANGED: Performance Freeze all range objects #1222
 
-### v0.22.0 / 2023-04-17
+## v0.22.7 / 2024-07-23
 
-* BREAKING CHANGE: Drop support for EoL Ruby 2.7 
+- DOCS: Add cspell to CI
 
-* ADDED: Drop support for EoL Ruby 2.7 
+## v0.22.6 / 2024-06-18
 
-### v0.21.0 / 2023-01-14
+- FIXED: Relax otel common gem constraints
 
-* ADDED: Add request/response hooks to more http clients 
-* DOCS: Fix gem homepage 
-* DOCS: More gem documentation fixes 
+## v0.22.5 / 2024-05-09
 
-### v0.20.0 / 2022-06-09
+- FIXED: Untrace entire request
 
-* Upgrading Base dependency version
-* FIXED: Broken test file requirements 
+## v0.22.4 / 2024-04-30
 
-### v0.19.4 / 2022-05-02
+- FIXED: Bundler conflict warnings
 
-* FIXED: Restclient invalid span attribute type Symbol 
+## v0.22.3 / 2023-11-23
 
-### v0.19.3 / 2021-12-02
+- CHANGED: Applied Rubocop Performance Recommendations [#727](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/727)
 
-* (No significant changes)
+## v0.22.2 / 2023-07-21
 
-### v0.19.2 / 2021-09-29
+- ADDED: Update `opentelemetry-common` from [0.19.3 to 0.20.0](https://github.com/open-telemetry/opentelemetry-ruby-contrib/pull/537)
 
-* (No significant changes)
+## v0.22.1 / 2023-06-05
 
-### v0.19.1 / 2021-08-12
+- FIXED: Base config options
 
-* DOCS: Update docs to rely more on environment variable configuration 
+## v0.22.0 / 2023-04-17
 
-### v0.19.0 / 2021-06-23
+- BREAKING CHANGE: Drop support for EoL Ruby 2.7
+- ADDED: Drop support for EoL Ruby 2.7
 
-* BREAKING CHANGE: Total order constraint on span.status= 
+## v0.21.0 / 2023-01-14
 
-* FIXED: Total order constraint on span.status= 
+- ADDED: Add request/response hooks to more http clients
+- DOCS: Fix gem homepage
+- DOCS: More gem documentation fixes
 
-### v0.18.0 / 2021-05-21
+## v0.20.0 / 2022-06-09
 
-* ADDED: Updated API dependency for 1.0.0.rc1
-* FIXED: Removed http.status_text attribute #750
+- Upgrading Base dependency version
+- FIXED: Broken test file requirements
 
-### v0.17.0 / 2021-04-22
+## v0.19.4 / 2022-05-02
 
-* ADDED: RestClient instrumentation accepts peer service config attribute.
-* FIXED: Refactor propagators to add #fields
+- FIXED: Restclient invalid span attribute type Symbol
 
-### v0.16.0 / 2021-03-17
+## v0.19.3 / 2021-12-02
 
-* FIXED: Remove passwords from http.url
-* FIXED: Example scripts now reference local common lib
-* DOCS: Replace Gitter with GitHub Discussions
+- (No significant changes)
 
-### v0.15.0 / 2021-02-18
+## v0.19.2 / 2021-09-29
 
-* (No significant changes)
+- (No significant changes)
 
-### v0.14.0 / 2021-02-03
+## v0.19.1 / 2021-08-12
 
-* BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
+- DOCS: Update docs to rely more on environment variable configuration
 
-* ADDED: Replace getter and setter callables and remove rack specific propagators
+## v0.19.0 / 2021-06-23
 
-### v0.13.0 / 2021-01-29
+- BREAKING CHANGE: Total order constraint on span.status=
+- FIXED: Total order constraint on span.status=
 
-* (No significant changes)
+## v0.18.0 / 2021-05-21
 
-### v0.12.0 / 2020-12-24
+- ADDED: Updated API dependency for 1.0.0.rc1
+- FIXED: Removed http.status_text attribute #750
 
-* (No significant changes)
+## v0.17.0 / 2021-04-22
 
-### v0.11.0 / 2020-12-11
+- ADDED: RestClient instrumentation accepts peer service config attribute.
+- FIXED: Refactor propagators to add #fields
 
-* FIXED: Copyright comments to not reference year
+## v0.16.0 / 2021-03-17
 
-### v0.10.0 / 2020-12-03
+- FIXED: Remove passwords from http.url
+- FIXED: Example scripts now reference local common lib
+- DOCS: Replace Gitter with GitHub Discussions
 
-* (No significant changes)
+## v0.15.0 / 2021-02-18
 
-### v0.9.0 / 2020-11-27
+- (No significant changes)
 
-* BREAKING CHANGE: Add timeout for force_flush and shutdown
+## v0.14.0 / 2021-02-03
 
-* ADDED: Add timeout for force_flush and shutdown
+- BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
+- ADDED: Replace getter and setter callables and remove rack specific propagators
 
-### v0.8.0 / 2020-10-27
+## v0.13.0 / 2021-01-29
 
-* BREAKING CHANGE: Move context/span methods to Trace module
+- (No significant changes)
 
-* FIXED: Move context/span methods to Trace module
+## v0.12.0 / 2020-12-24
 
-### v0.7.0 / 2020-10-07
+- (No significant changes)
 
-* DOCS: Standardize top-level docs structure and readme
+## v0.11.0 / 2020-12-11
 
-### v0.6.0 / 2020-09-10
+- FIXED: Copyright comments to not reference year
 
-* (No significant changes)
+## v0.10.0 / 2020-12-03
+
+- (No significant changes)
+
+## v0.9.0 / 2020-11-27
+
+- BREAKING CHANGE: Add timeout for force_flush and shutdown
+- ADDED: Add timeout for force_flush and shutdown
+
+## v0.8.0 / 2020-10-27
+
+- BREAKING CHANGE: Move context/span methods to Trace module
+- FIXED: Move context/span methods to Trace module
+
+## v0.7.0 / 2020-10-07
+
+- DOCS: Standardize top-level docs structure and readme
+
+## v0.6.0 / 2020-09-10
+
+- (No significant changes)

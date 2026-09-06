@@ -20,7 +20,7 @@ To install the instrumentation, call `use` with the name of the instrumentation.
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::AwsSdk', {
     inject_messaging_context: true,
-    suppress_internal_instrumentation: true
+    enable_internal_instrumentation: true
   }
 end
 ```
@@ -32,20 +32,27 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+
 ### Configuration options
-This instrumentation offers the following configuration options: 
-* `:inject_messaging_context` (default: `false`): When set to `true`, adds context key/value 
- to Message Attributes for SQS/SNS messages.
-* `suppress_internal_instrumentation` (default: `false`): When set to `true`, any spans with 
- span kind of `internal` are suppressed from traces.
+
+This instrumentation offers the following configuration options:
+
+- `:inject_messaging_context` (default: `false`): When set to `true`, adds context key/value
+  to Message Attributes for SQS/SNS messages.
+- `:enable_internal_instrumentation` (default: `false`): When set to `true`, any spans with
+  span kind of `internal` are traced.
+- `:suppress_internal_instrumentation`: **Deprecated**. This configuration has been
+  deprecated in favor of `:enable_internal_instrumentation`
 
 ## Integration with SDK V3's Telemetry support
-AWS SDK for Ruby V3 added support for Observability which includes a new configuration, 
-`telemetry_provider` and an OpenTelemetry-based telemetry provider. Only applies to
-AWS service gems released after 2024-09-03. 
 
-Using later versions of these gems will give more details on the internal spans. 
+AWS SDK for Ruby V3 added support for Observability which includes a new configuration,
+`telemetry_provider` and an OpenTelemetry-based telemetry provider. Only applies to
+AWS service gems released after 2024-09-03.
+
+Using later versions of these gems will give more details on the internal spans.
 See below for example usage:
+
 ```ruby
 # configures the OpenTelemetry SDK with instrumentation defaults
 OpenTelemetry::SDK.configure do |c|
@@ -62,10 +69,10 @@ client = Aws::S3::Client.new(telemetry_provider: otel_provider)
 To run the example:
 
 1. `cd` to the examples directory and install gems
-	* `cd example`
-	* `bundle install`
+   - `cd example`
+   - `bundle install`
 2. Run the sample client script
-	* `ruby trace_demonstration.rb`
+   - `ruby trace_demonstration.rb`
 
 This will run SNS publish command, printing OpenTelemetry traces to the console as it goes.
 
@@ -74,6 +81,20 @@ This will run SNS publish command, printing OpenTelemetry traces to the console 
 The `opentelemetry-instrumentation-aws_sdk` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+
+## Database semantic convention stability
+
+In the OpenTelemetry ecosystem, database semantic conventions have now reached a stable state. However, the initial aws-sdk instrumentation was introduced before this stability was achieved, which resulted in database attributes being based on an older version of the semantic conventions.
+
+To facilitate the migration to stable semantic conventions, you can use the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable. This variable allows you to opt-in to the new stable conventions, ensuring compatibility and future-proofing your instrumentation.
+
+When setting the value for `OTEL_SEMCONV_STABILITY_OPT_IN`, you can specify which conventions you wish to adopt:
+
+- `database` - Emits the stable database and networking conventions and ceases emitting the old conventions previously emitted by the instrumentation.
+- `database/dup` - Emits both the old and stable database and networking conventions, enabling a phased rollout of the stable semantic conventions.
+- Default behavior (in the absence of either value) is to continue emitting the old database and networking conventions the instrumentation previously emitted.
+
+For additional information on migration, please refer to our [documentation](https://opentelemetry.io/docs/specs/semconv/non-normative/db-migration/).
 
 ## License
 

@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+%w[1.17.0 1.65.0].each do |version|
+  appraise "anthropic-#{version}" do
+    gem 'anthropic', "~> #{version}"
+  end
+end
+
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
+  appraise 'anthropic-1.9.0' do
+    gem 'anthropic', '~> 1.9.0'
+  end
+end

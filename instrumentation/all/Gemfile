@@ -9,13 +9,26 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
+  gem 'appraisal', '~> 2.5.0'
+  gem 'minitest', '~> 6.0.0'
+  gem 'rake', '>= 13'
+  gem 'rubocop', '~> 1.90.0'
+  gem 'rubocop-performance', '~> 1.27.0'
+  gem 'simplecov', '~> 1.1.0'
+  gem 'yard', '~> 0.9.0'
+  if RUBY_VERSION >= '3.4'
+    gem 'base64'
+    gem 'logger'
+    gem 'mutex_m'
+  end
+
   Dir.entries('../../helpers')
      .select { |entry| File.directory?(File.join('../../helpers', entry)) }
      .reject { |entry| %w[. ..].include?(entry) } # rubocop:disable Performance/CollectionLiteralInLoop
      .sort
      .each { |dir| gem "opentelemetry-helpers-#{dir}", path: "../../helpers/#{dir}" }
 
-  excluded_instrumentations = %w[. .. all grpc]
+  excluded_instrumentations = %w[. .. all logger]
   Dir.entries('../')
      .select { |entry| File.directory?(File.join('../', entry)) }
      .reject { |entry| excluded_instrumentations.include?(entry) }

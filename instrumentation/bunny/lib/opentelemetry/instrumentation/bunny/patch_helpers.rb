@@ -12,11 +12,11 @@ module OpenTelemetry
       # For additional details around trace messaging semantics
       # See https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#messaging-attributes
       module PatchHelpers
-        def self.with_send_span(channel, tracer, exchange, routing_key, &block)
+        def self.with_send_span(channel, tracer, exchange, routing_key, &)
           attributes = basic_attributes(channel, channel.connection, exchange, routing_key)
           destination = destination_name(exchange, routing_key)
 
-          tracer.in_span("#{destination} publish", attributes: attributes, kind: :producer, &block)
+          tracer.in_span("#{destination} publish", attributes: attributes, kind: :producer, &)
         end
 
         def self.with_process_span(channel, tracer, delivery_info, properties, &block)

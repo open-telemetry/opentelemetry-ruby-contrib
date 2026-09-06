@@ -42,7 +42,7 @@ module OpenTelemetry
     # The instrumentation name and version will be inferred from the namespace of the
     # class. In this example, they'd be 'OpenTelemetry::Instrumentation::Sinatra' and
     # OpenTelemetry::Instrumentation::Sinatra::VERSION, but can be explicitly set using
-    # the +instrumentation_name+ and +instrumetation_version+ methods if necessary.
+    # the +instrumentation_name+ and +instrumentation_version+ methods if necessary.
     #
     # All subclasses of OpenTelemetry::Instrumentation::Base are automatically
     # registered with OpenTelemetry.instrumentation_registry which is used by
@@ -53,7 +53,7 @@ module OpenTelemetry
     #
     # OpenTelemetry::Instrumentation::Sinatra.instance.tracer
     #
-    # The instrumention class establishes a convention for disabling an instrumentation
+    # The instrumentation class establishes a convention for disabling an instrumentation
     # by environment variable and local configuration. An instrumentation disabled
     # by environment variable will take precedence over local config. The
     # convention for environment variable name is the library name, upcased with
@@ -193,7 +193,7 @@ module OpenTelemetry
 
       alias installed? installed
 
-      # rubocop:disable Metrics/ParameterLists
+      # rubocop:disable-next Metrics/ParameterLists
       def initialize(name, version, install_blk, present_blk,
                      compatible_blk, options)
         @name = name
@@ -201,12 +201,13 @@ module OpenTelemetry
         @install_blk = install_blk
         @present_blk = present_blk
         @compatible_blk = compatible_blk
-        @config = {}
-        @installed = false
         @options = options
+        # Empty hash that falls back to option defaults for missing keys
+        defaults = (@options || []).to_h { |opt| [opt[:name], opt[:default]] }
+        @config = Hash.new { |_, k| defaults[k] }
+        @installed = false
         @tracer = OpenTelemetry::Trace::Tracer.new
       end
-      # rubocop:enable Metrics/ParameterLists
 
       # Install instrumentation with the given config. The present? and compatible?
       # will be run first, and install will return false if either fail. Will
@@ -278,7 +279,7 @@ module OpenTelemetry
           config_value = user_config[option_name]
           config_override = coerce_env_var(config_overrides[option_name], option[:validation_type]) if config_overrides[option_name]
 
-          # rubocop:disable Lint/DuplicateBranch
+          # rubocop:disable-next Lint/DuplicateBranch
           value = if config_value.nil? && config_override.nil?
                     option[:default]
                   elsif option[:validator].respond_to?(:include?) && option[:validator].include?(config_override)
@@ -296,7 +297,6 @@ module OpenTelemetry
                     )
                     option[:default]
                   end
-          # rubocop:enable Lint/DuplicateBranch
 
           h[option_name] = value
         rescue StandardError => e
@@ -328,7 +328,7 @@ module OpenTelemetry
 
       # Checks to see if the user has passed any environment variables that set options
       # for instrumentation. By convention, the environment variable will be the name
-      # of the instrumentation, uppercased, with '::' replaced by underscores,
+      # of the instrumentation, upper-cased, with '::' replaced by underscores,
       # OPENTELEMETRY shortened to OTEL_{LANG}, and _CONFIG_OPTS appended.
       # For example, the environment variable name for OpenTelemetry::Instrumentation::Faraday
       # will be OTEL_RUBY_INSTRUMENTATION_FARADAY_CONFIG_OPTS. A value of 'peer_service=new_service;'

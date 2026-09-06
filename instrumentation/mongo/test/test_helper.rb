@@ -4,6 +4,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+if RUBY_ENGINE == 'jruby'
+  warn 'Skipping tests on JRuby: Runtime not supported'
+  exit 0
+end
+
+require 'dotenv'
+Dotenv.load('.env', '../.env')
+
+require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 

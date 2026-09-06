@@ -1,6 +1,6 @@
 # OpenTelemetry Instrumentation Base
 
-The `opentelemetry-instrumentation-base` gem contains the instrumentation base class, and the instrumentation registry.  These modules provide a common interface to support the installation of auto instrumentation libraries.  The instrumentation base is responsible for adding itself to the instrumentation registry as well as providing convenience hooks for the installation process.  The instrumentation registry contains all the instrumentation to be installed during the SDK configuration process.
+The `opentelemetry-instrumentation-base` gem contains the instrumentation base class, and the instrumentation registry. These modules provide a common interface to support the installation of auto instrumentation libraries. The instrumentation base is responsible for adding itself to the instrumentation registry as well as providing convenience hooks for the installation process. The instrumentation registry contains all the instrumentation to be installed during the SDK configuration process.
 
 ## How do I get started?
 
@@ -14,7 +14,7 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-b
 
 ### For SDK Authors
 
-The following is a simplified demonstration of how the `OpenTelemetry::Instrumentation.registry` can be used by an SDK to install auto-instrumentation gems as part of its configuration.  This should not be used as an example of how to implement an SDK as there are large omissions.  For an example of a complete implementation see the `opentelemetry-sdk` gem.
+The following is a simplified demonstration of how the `OpenTelemetry::Instrumentation.registry` can be used by an SDK to install auto-instrumentation gems as part of its configuration. This should not be used as an example of how to implement an SDK as there are large omissions. For an example of a complete implementation see the `opentelemetry-sdk` gem.
 
 ```ruby
 require 'bundler/inline'

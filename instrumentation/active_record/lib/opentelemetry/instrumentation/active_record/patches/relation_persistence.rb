@@ -10,13 +10,13 @@ module OpenTelemetry
       module Patches
         # Module to prepend to ActiveRecord::Relation for instrumentation
         module RelationPersistence
-          def update_all(*)
+          def update_all(...)
             tracer.in_span("#{model.name}.update_all") do
               super
             end
           end
 
-          def delete_all(*)
+          def delete_all(...)
             tracer.in_span("#{model.name}.delete_all") do
               super
             end

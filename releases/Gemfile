@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'mutex_m' if Gem::Requirement.new('>= 3.4').satisfied_by?(Gem::Version.new(RUBY_VERSION))
 
+gem 'anthropic'
 gem 'aws_sdk'
 gem 'bunny'
 gem 'concurrent-ruby'
@@ -11,6 +12,7 @@ gem 'dalli'
 gem 'delayed_job'
 gem 'ethon'
 gem 'excon'
+gem 'factory_bot'
 gem 'faraday'
 gem 'grape'
 gem 'graphql'

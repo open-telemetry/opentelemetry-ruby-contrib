@@ -4,10 +4,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'dotenv'
+Dotenv.load('.env', '../.env')
+
+require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

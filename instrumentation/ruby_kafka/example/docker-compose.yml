@@ -2,20 +2,20 @@ version: "3.5"
 
 services:
   app:
-    image: ruby:3.1-slim
+    image: ruby:3.4.8-slim@sha256:ff7780d9fc05a54690c722ee0621bae2aa818331be88ebbeb0f5e7bd7cdb7f37
     volumes:
       - ../.:/app
     working_dir: /app/example
-    command: [ "bash", "-c", "sleep infinity" ]
+    command: ["bash", "-c", "sleep infinity"]
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:latest@sha256:7610a50b13e7e9f6dc0dd00585ffdcb0bbed27392bef6b45791ef4087b2a746c
     ports:
       - 2181:2181
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.9.6@sha256:9e178783dba8cf44cd8b1d260f548a587a21235921957edd4ed7aa7d060b0852
     ports:
       - "9092:9092"
       - "29092:29092"
@@ -29,7 +29,7 @@ services:
     depends_on:
       - zookeeper
   jaeger:
-    image: jaegertracing/all-in-one
+    image: jaegertracing/jaeger:2.16.0@sha256:bf7f805da4c2bc8d58a6c81ee650fdb6b8e4287698f95fbe231c09c865bc397f
     ports:
       - "16686:16686"
       - "4318:4318"

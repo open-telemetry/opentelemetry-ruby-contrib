@@ -47,7 +47,7 @@ RSpec.configure do |config|
 end
 ```
 
-If you need to test trace behaviour in your specs then you should be able to use a custom tracer provider and the instrumentation's output should not interfere with your specs.
+If you need to test trace behavior in your specs then you should be able to use a custom tracer provider and the instrumentation's output should not interfere with your specs.
 
 ### Sampling
 
@@ -55,7 +55,7 @@ To avoid spans from being dropped, which will mean you lose insight into your sp
 
 ## Examples
 
-Example usage can be seen in the `/example` directory [here](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/rspec/example)
+Example usage can be seen in the [`/example` directory](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/rspec/example)
 
 ## How can I get involved?
 

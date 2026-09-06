@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
@@ -11,6 +12,7 @@ require 'active_record'
 require 'opentelemetry-instrumentation-active_record'
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
 # Global opentelemetry-sdk setup:
@@ -31,7 +33,7 @@ ActiveRecord::Migration.verbose = false
 
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',
-  database: 'db/development.sqlite3'
+  database: ':memory:'
 )
 
 # Create ActiveRecord models

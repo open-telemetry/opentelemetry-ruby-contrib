@@ -1,6 +1,6 @@
 # OpenTelemetry::Resource::Detector::Azure
 
-The `opentelemetry-resource-detector-azure` gem provides a Azure resource detector for OpenTelemetry.
+The `opentelemetry-resource-detector-azure` gem provides an Azure resource detector for OpenTelemetry.
 
 ## What is OpenTelemetry?
 
@@ -34,15 +34,15 @@ end
 
 This will populate the following resource attributes for compute running on Azure:
 
-* `cloud.provider`
-* `cloud.account.id`
-* `cloud.platform`
-* `cloud.region`
-* `cloud.availability_zone`
-* `host.id`
-* `host.image.id`
-* `host.name`
-* `host.type`
+- `cloud.provider`
+- `cloud.account.id`
+- `cloud.platform`
+- `cloud.region`
+- `cloud.availability_zone`
+- `host.id`
+- `host.image.id`
+- `host.name`
+- `host.type`
 
 ## How can I get involved?
 

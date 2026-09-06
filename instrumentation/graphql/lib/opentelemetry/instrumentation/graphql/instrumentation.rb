@@ -27,6 +27,8 @@ module OpenTelemetry
             require_relative 'tracers/graphql_trace'
             install_new_tracer(config)
           end
+
+          patch
         end
 
         present do
@@ -39,6 +41,10 @@ module OpenTelemetry
 
         def supports_new_tracer?
           Gem::Requirement.new('>= 2.0.19').satisfied_by?(gem_version)
+        end
+
+        def dataloader_has_spawn_fiber?
+          Gem::Requirement.new('>= 2.1.8').satisfied_by?(gem_version)
         end
 
         ## Supported configuration keys for the install config hash:
@@ -59,7 +65,7 @@ module OpenTelemetry
         #
         # The schemas key expects an array of Schemas, and is used to specify
         # which schemas are to be instrumented. If this value is not supplied
-        # the default behaviour is to instrument all schemas.
+        # the default behavior is to instrument all schemas.
         option :schemas,                      default: [],    validate: :array
         option :enable_platform_field,        default: false, validate: :boolean
         option :enable_platform_authorized,   default: false, validate: :boolean
@@ -95,6 +101,13 @@ module OpenTelemetry
               OpenTelemetry.logger.error("Unable to patch schema #{schema}: #{e.message}")
             end
           end
+        end
+
+        def patch
+          return unless dataloader_has_spawn_fiber?
+
+          require_relative 'patches/dataloader'
+          ::GraphQL::Dataloader.prepend(Patches::Dataloader)
         end
       end
     end

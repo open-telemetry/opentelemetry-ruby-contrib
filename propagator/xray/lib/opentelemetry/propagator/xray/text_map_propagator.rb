@@ -18,11 +18,23 @@ module OpenTelemetry
       # Propagates context in carriers in the xray single header format
       class TextMapPropagator
         XRAY_CONTEXT_KEY = 'X-Amzn-Trace-Id'
-        XRAY_CONTEXT_REGEX = /\ARoot=(?<trace_id>([a-z0-9\-]{35}))(?:;Parent=(?<span_id>([a-z0-9]{16})))?(?:;Sampled=(?<sampling_state>[01d](?![0-9a-f])))?(?:;(?<trace_state>.*))?\Z/ # rubocop:disable Lint/MixedRegexpCaptureTypes
         SAMPLED_VALUES = %w[1 d].freeze
         FIELDS = [XRAY_CONTEXT_KEY].freeze
 
-        private_constant :XRAY_CONTEXT_KEY, :XRAY_CONTEXT_REGEX, :SAMPLED_VALUES, :FIELDS
+        # Header parsing constants
+        KV_PAIR_DELIMITER = ';'
+        KEY_AND_VALUE_DELIMITER = '='
+        TRACE_ID_KEY = 'Root'
+        PARENT_ID_KEY = 'Parent'
+        SAMPLED_FLAG_KEY = 'Sampled'
+        TRACE_ID_LENGTH = 35
+        SPAN_ID_LENGTH = 16
+        VALID_SAMPLED_VALUES = %w[0 1 d].freeze
+
+        private_constant :XRAY_CONTEXT_KEY, :SAMPLED_VALUES, :FIELDS,
+                         :KV_PAIR_DELIMITER, :KEY_AND_VALUE_DELIMITER,
+                         :TRACE_ID_KEY, :PARENT_ID_KEY, :SAMPLED_FLAG_KEY,
+                         :TRACE_ID_LENGTH, :SPAN_ID_LENGTH, :VALID_SAMPLED_VALUES
 
         # Extract trace context from the supplied carrier.
         # If extraction fails, the original context will be returned
@@ -90,11 +102,56 @@ module OpenTelemetry
         private
 
         def parse_header(header)
-          return nil unless (match = header.match(XRAY_CONTEXT_REGEX))
-          return nil unless match['trace_id']
-          return nil unless match['span_id']
+          trace_id = nil
+          span_id = nil
+          sampling_state = nil
+          trace_state_parts = []
 
-          match
+          header.split(KV_PAIR_DELIMITER).each do |pair|
+            # Split only on first '=' to handle values that might contain '='
+            key, value = pair.split(KEY_AND_VALUE_DELIMITER, 2)
+            next unless key && value
+
+            case key
+            when TRACE_ID_KEY
+              trace_id = value if valid_trace_id?(value)
+            when PARENT_ID_KEY
+              span_id = value if valid_span_id?(value)
+            when SAMPLED_FLAG_KEY
+              sampling_state = value if valid_sampling_state?(value)
+            when 'Self'
+              # Ignore Self field added by load balancers
+              next
+            else
+              # Collect other fields as potential tracestate
+              trace_state_parts << pair
+            end
+          end
+
+          return nil unless trace_id && span_id
+
+          {
+            'trace_id' => trace_id,
+            'span_id' => span_id,
+            'sampling_state' => sampling_state,
+            'trace_state' => trace_state_parts.empty? ? nil : trace_state_parts.join(KV_PAIR_DELIMITER)
+          }
+        end
+
+        def valid_trace_id?(value)
+          return false unless value.length == TRACE_ID_LENGTH
+          return false unless value.start_with?('1-')
+          return false unless value[10] == '-'
+
+          true
+        end
+
+        def valid_span_id?(value)
+          value.length == SPAN_ID_LENGTH && value.match?(/\A[a-f0-9]+\z/)
+        end
+
+        def valid_sampling_state?(value)
+          VALID_SAMPLED_VALUES.include?(value)
         end
 
         # Convert an id from a hex encoded string to byte array. Assumes the input id has already been

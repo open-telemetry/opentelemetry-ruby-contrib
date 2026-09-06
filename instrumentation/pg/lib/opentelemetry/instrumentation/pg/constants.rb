@@ -94,6 +94,12 @@ module OpenTelemetry
           async_exec_prepared
           sync_exec_prepared
         ].freeze
+
+        CONNECTION_METHODS = %i[
+          connect
+          open
+          async_connect
+        ].freeze
       end
     end
   end

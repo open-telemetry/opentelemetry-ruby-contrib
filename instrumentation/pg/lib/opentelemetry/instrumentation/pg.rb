@@ -6,40 +6,13 @@
 
 require 'opentelemetry'
 require 'opentelemetry-instrumentation-base'
+require 'opentelemetry-helpers-sql'
 
 module OpenTelemetry
   module Instrumentation
     # Contains the OpenTelemetry instrumentation for the Pg gem
     module PG
-      extend self
-
-      CURRENT_ATTRIBUTES_KEY = Context.create_key('pg-attributes-hash')
-
-      private_constant :CURRENT_ATTRIBUTES_KEY
-
-      # Returns the attributes hash representing the postgres client context found
-      # in the optional context or the current context if none is provided.
-      #
-      # @param [optional Context] context The context to lookup the current
-      #   attributes hash. Defaults to Context.current
-      def attributes(context = nil)
-        context ||= Context.current
-        context.value(CURRENT_ATTRIBUTES_KEY) || {}
-      end
-
-      # Activates/deactivates the merged attributes hash within the current Context,
-      # which makes the "current attributes hash" available implicitly.
-      #
-      # On exit, the attributes hash that was active before calling this method
-      # will be reactivated.
-      #
-      # @param [Span] span the span to activate
-      # @yield [Hash, Context] yields attributes hash and a context containing the
-      #   attributes hash to the block.
-      def with_attributes(attributes_hash)
-        attributes_hash = attributes.merge(attributes_hash)
-        Context.with_value(CURRENT_ATTRIBUTES_KEY, attributes_hash) { |c, h| yield h, c }
-      end
+      extend ::OpenTelemetry::Helpers::Sql
     end
   end
 end
