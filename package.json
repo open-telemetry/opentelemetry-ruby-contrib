@@ -1,7 +1,7 @@
 {
   "scripts": {
     "check": "npm run check:lint && npm run check:format && npm run check:filesystem && npm run check:github && npm run check:links && npm run check:spelling && npm run check:source && npm run check:toys",
-    "check:filesystem": "node_modules/.bin/ls-lint",
+    "check:filesystem": "ls-lint",
     "check:format": "npm run check:format:ruby && prettier . --check",
     "check:format:json": "prettier **/*.json --check",
     "check:format:markdown": "prettier **/*.md --check",
