@@ -1,8 +1,10 @@
 name: File Checks
 
 on:
-  pull_request:
-  merge_group:
+  workflow_call:
+    secrets:
+      abc:
+        required: true
 
 permissions:
   contents: read
@@ -30,9 +32,6 @@ jobs:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Markdown Link Check
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      pull-requests: write # required for posting PR review comments
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -42,7 +41,6 @@ jobs:
       - name: Run linkspector
         uses: umbrelladocs/action-linkspector@568ec8d29fa92b31fd9ea5381e155c51e922af83 # v1.5.5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-annotations
           fail_on_error: true
 
@@ -146,7 +144,6 @@ jobs:
       - name: Lint
         uses: dotenv-linter/action-dotenv-linter@afde61cfda2ecffe7bea35837b6f20b956c88689 # v3.0.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           dotenv_linter_flags: --recursive
           fail_level: warning
 
