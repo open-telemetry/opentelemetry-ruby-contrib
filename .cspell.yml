@@ -90,6 +90,7 @@ words:
   - traceparent
   - traceresponse
   - tracestate
+  - truffleruby
   - zizmor
 
   - linkspector
