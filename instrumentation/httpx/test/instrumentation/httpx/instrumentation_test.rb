@@ -11,6 +11,24 @@ require_relative '../../../lib/opentelemetry/instrumentation/httpx'
 describe OpenTelemetry::Instrumentation::HTTPX do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTPX::Instrumentation.instance }
 
+  before do
+    @semconv_stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', nil)
+
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] =
+      case ENV.fetch('BUNDLE_GEMFILE', nil)
+      when /old/
+        'old'
+      when /dup/
+        'http/dup'
+      else
+        'stable'
+      end
+  end
+
+  after do
+    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = @semconv_stability_opt_in
+  end
+
   it 'has #name' do
     _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::HTTPX'
   end

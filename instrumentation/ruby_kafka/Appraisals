@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'ruby-kafka-latest' do
-  gem 'ruby-kafka'
+%w[1.4.0 1.5.0].each do |version|
+  appraise "ruby-kafka-#{version}" do
+    gem 'ruby-kafka', "~> #{version}"
+  end
 end

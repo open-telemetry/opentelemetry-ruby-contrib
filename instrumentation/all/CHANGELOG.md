@@ -1,5 +1,21 @@
 # Release History: opentelemetry-instrumentation-all
 
+## v0.96.0 / 2026-08-18
+
+- ADDED: Upgrade opentelemetry-instrumentation-aws_sdk to 0.13.0
+
+## v0.95.0 / 2026-08-05
+
+- ADDED: Upgrade opentelemetry-instrumentation-pg to 0.37.0
+
+## v0.94.0 / 2026-05-21
+
+- ADDED: Upgrade opentelemetry-instrumentation-trilogy to 0.69.0
+
+## v0.93.0 / 2026-04-28
+
+- ADDED: Upgrade opentelemetry-instrumentation-rails to 0.42.0
+
 ## v0.92.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)

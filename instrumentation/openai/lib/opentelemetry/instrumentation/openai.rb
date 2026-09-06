@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'opentelemetry'
+require 'opentelemetry-instrumentation-base'
+require 'opentelemetry-logs-api'
+
+module OpenTelemetry
+  module Instrumentation
+    # Contains the OpenTelemetry instrumentation for the openai gem
+    module OpenAI
+      NAME = 'opentelemetry-instrumentation-openai'
+    end
+  end
+end
+
+require_relative 'openai/instrumentation'
+require_relative 'openai/version'

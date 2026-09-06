@@ -24,7 +24,7 @@ module OpenTelemetry
               query_span_name = "#{self} query"
               OpenTelemetry::Context.with_value(QUERY_SPAN_NAME_KEY, query_span_name) do
                 tracer.in_span(kwargs[:async] ? "schedule #{query_span_name}" : query_span_name) do
-                  super(*args, **kwargs, &block)
+                  super
                 end
               end
             end

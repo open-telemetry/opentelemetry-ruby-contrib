@@ -1,6 +1,20 @@
 # OpenTelemetry Gruf Instrumentation
 
-Todo: Add a description.
+The OpenTelemetry Gruf Ruby gem is a community-maintained instrumentation for Gruf, a gRPC framework for Ruby. It enables automatic tracing of RPC requests handled by Gruf services.
+
+## Overview
+
+This instrumentation integrates OpenTelemetry with Gruf to create spans for incoming gRPC requests. It helps in observing request flow, latency and errors in distributed systems.
+
+## How it works
+
+The Gruf instrumentation hooks into the request lifecycle of Gruf-based gRPC services and automatically creates spans for each incoming RPC request.
+
+It captures useful metadata such as:
+
+- RPC method name
+- Request lifecycle events
+- Errors, if any
 
 ## How do I get started?
 

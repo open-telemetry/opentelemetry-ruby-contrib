@@ -6,10 +6,8 @@
 
 ## TODO: Include the supported version to be tested here.
 ## Example:
-# appraise 'rack-2.1' do
-#   gem 'rack', '~> 2.1.2'
-# end
-
-# appraise 'rack-2.0' do
-#   gem 'rack', '2.0.8'
+# %w[2.0.0 2.1.2].each do |version|
+#   appraise "rack-#{version}" do
+#     gem 'rack', "~> #{version}"
+#   end
 # end

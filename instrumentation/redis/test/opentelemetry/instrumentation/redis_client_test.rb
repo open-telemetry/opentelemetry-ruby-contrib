@@ -299,8 +299,8 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::RedisClientInstrume
 
       it 'omits db.statement attribute' do
         redis = redis_with_auth
-        _(redis.call('set', 'K', 'xyz')).must_equal 'OK'
-        _(redis.call('get', 'K')).must_equal 'xyz'
+        _(redis.call('set', 'SG', 'xyz')).must_equal 'OK'
+        _(redis.call('get', 'SG')).must_equal 'xyz'
         _(exporter.finished_spans.size).must_equal 3
 
         set_span = exporter.finished_spans[0]
@@ -328,8 +328,8 @@ describe OpenTelemetry::Instrumentation::Redis::Middlewares::RedisClientInstrume
 
       it 'obfuscates arguments in db.statement' do
         redis = redis_with_auth
-        _(redis.call('set', 'K', 'xyz')).must_equal 'OK'
-        _(redis.call('get', 'K')).must_equal 'xyz'
+        _(redis.call('set', 'SG', 'xyz')).must_equal 'OK'
+        _(redis.call('get', 'SG')).must_equal 'xyz'
         _(exporter.finished_spans.size).must_equal 3
 
         set_span = exporter.finished_spans[0]

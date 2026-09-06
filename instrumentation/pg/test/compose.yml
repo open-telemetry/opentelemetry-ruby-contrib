@@ -1,0 +1,2 @@
+include:
+  - ../../../.docker/infra/postgres/docker-compose.yml

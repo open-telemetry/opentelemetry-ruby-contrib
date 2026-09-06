@@ -10,6 +10,7 @@ require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
 require 'active_job'
+require 'active_support/core_ext/object/with'
 require 'opentelemetry-instrumentation-active_job'
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
@@ -87,6 +88,38 @@ class RescueFromJob < ActiveJob::Base
 
   def perform
     raise RescueFromError, 'I was handled by rescue_from'
+  end
+end
+
+if defined?(ActiveJob::Continuable)
+  class ContinuableJob < ActiveJob::Base
+    include ActiveJob::Continuable
+
+    self.resume_options = { wait: 0 }
+
+    def perform
+      step :first_step do
+        # no-op
+      end
+
+      step :second_step do
+        # no-op
+      end
+    end
+  end
+
+  class ContinuableWithCursorJob < ActiveJob::Base
+    include ActiveJob::Continuable
+
+    self.resume_options = { wait: 0 }
+
+    def perform
+      step(:process_items, start: 0) do |step|
+        (step.cursor..2).each do |i|
+          step.set! i + 1
+        end
+      end
+    end
   end
 end
 

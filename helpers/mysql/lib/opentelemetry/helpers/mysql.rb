@@ -2,7 +2,8 @@
 
 # Copyright The OpenTelemetry Authors
 #
-# SPDX-License-Identifier: Apache-2.0module OpenTelemetry
+# SPDX-License-Identifier: Apache-2.0
+
 require 'opentelemetry-common'
 
 module OpenTelemetry

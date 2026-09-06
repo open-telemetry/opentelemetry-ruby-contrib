@@ -27,6 +27,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
     describe 'Lambda' do
       let(:service_name) { 'Lambda' }
+      before { check_target_service(service_name) }
       let(:service_uri) do
         'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions'
       end
@@ -48,7 +49,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       end
 
       it 'create a client span with all the supplied parameters' do
-        skip unless TestHelper.telemetry_plugin?(service_name)
         client.list_functions
 
         _(client_span.name).must_equal('Lambda.ListFunctions')
@@ -57,7 +57,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       end
 
       it 'should have correct span attributes when error' do
-        skip unless TestHelper.telemetry_plugin?(service_name)
         stub_request(:get, 'foo').to_return(status: 400)
 
         begin
@@ -69,7 +68,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       end
 
       it 'creates internal spans when enabled' do
-        skip unless TestHelper.telemetry_plugin?(service_name)
         stub_request(:get, 'https://lambda.us-east-1.amazonaws.com/2015-03-31/functions')
         client = Aws::Lambda::Client.new(
           telemetry_provider: otel_provider,
@@ -101,6 +99,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
     describe 'SNS' do
       let(:service_name) { 'SNS' }
+      before { check_target_service(service_name) }
       let(:client) { Aws::SNS::Client.new(telemetry_provider: otel_provider, stub_responses: true) }
       let(:client_span) { spans.find { |s| s.name.include?('SNS.Publish') } }
 
@@ -116,8 +115,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       end
 
       it 'creates spans with appropriate messaging attributes' do
-        skip unless TestHelper.telemetry_plugin?(service_name)
-
         client.publish(message: 'msg', topic_arn: 'arn:aws:sns:fake:123:TopicName')
 
         _(client_span.name).must_equal('SNS.Publish.TopicName.Publish')
@@ -128,7 +125,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       it 'creates a span that includes a phone number' do
         # skip if using aws-sdk version before phone_number supported (v2.3.18)
         skip if Gem::Version.new('2.3.18') > instrumentation_instance.gem_version
-        skip unless TestHelper.telemetry_plugin?(service_name)
 
         client.publish(message: 'msg', phone_number: '123456')
 
@@ -139,6 +135,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
     describe 'SQS' do
       let(:service_name) { 'SQS' }
+      before { check_target_service(service_name) }
       let(:client) { Aws::SQS::Client.new(telemetry_provider: otel_provider, stub_responses: true) }
       let(:queue_url) { 'https://sqs.us-east-1.amazonaws.com/1/QueueName' }
       let(:expected_client_base_attrs) do
@@ -160,8 +157,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         end
 
         it 'creates spans with appropriate messaging attributes' do
-          skip unless TestHelper.telemetry_plugin?(service_name)
-
           client.send_message(message_body: 'msg', queue_url: queue_url)
 
           _(client_span.name).must_equal('SQS.SendMessage.QueueName.Publish')
@@ -179,8 +174,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         end
 
         it 'creates spans with appropriate messaging attributes' do
-          skip unless TestHelper.telemetry_plugin?(service_name)
-
           client.send_message_batch(
             queue_url: queue_url,
             entries: [{ id: 'Message1', message_body: 'Body1' }]
@@ -202,8 +195,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         end
 
         it 'creates spans with appropriate messaging attributes' do
-          skip unless TestHelper.telemetry_plugin?(service_name)
-
           client.receive_message(queue_url: queue_url)
 
           _(client_span.name).must_equal('SQS.ReceiveMessage.QueueName.Receive')
@@ -216,8 +207,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         let(:client_span) { spans.find { |s| s.name.include?('SQS.GetQueueUrl') } }
 
         it 'creates a span with appropriate messaging attributes' do
-          skip unless TestHelper.telemetry_plugin?(service_name)
-
           client.get_queue_url(queue_name: 'queue-name')
 
           _(client_span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('unknown')
@@ -227,16 +216,77 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
     end
 
     describe 'DynamoDB' do
+      let(:service_name) { 'DynamoDB' }
+      before { check_target_service(service_name) }
       let(:client) { Aws::DynamoDB::Client.new(telemetry_provider: otel_provider, stub_responses: true) }
       let(:client_span) { spans.find { |s| s.name == 'DynamoDB.ListTables' } }
+      let(:describe_table_span) { spans.find { |s| s.name == 'DynamoDB.DescribeTable' } }
 
-      it 'creates a span with dynamodb-specific attribute' do
-        skip unless TestHelper.telemetry_plugin?('DynamoDB')
+      describe 'old semconv' do
+        before do
+          skip unless TestHelper.semconv_old?
+        end
 
-        client.list_tables
+        it 'creates a span with old dynamodb-specific attributes' do
+          client.list_tables
 
-        _(client_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
+          _(client_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
+          _(client_span.attributes).wont_include('db.system.name')
+          _(client_span.attributes).wont_include('db.operation.name')
+          _(client_span.attributes).wont_include('db.collection.name')
+        end
       end
+
+      describe 'stable semconv' do
+        before do
+          skip unless TestHelper.semconv_stable?
+        end
+
+        it 'creates a span with stable dynamodb-specific attributes' do
+          client.list_tables
+
+          _(client_span.attributes['db.system.name']).must_equal('aws.dynamodb')
+          _(client_span.attributes['db.operation.name']).must_equal('ListTables')
+          _(client_span.attributes).wont_include(otel_semantic::DB_SYSTEM)
+          _(client_span.attributes).wont_include('db.collection.name')
+        end
+
+        it 'includes db.collection.name when table_name is present' do
+          client.describe_table(table_name: 'TestTable')
+
+          _(describe_table_span.attributes['db.system.name']).must_equal('aws.dynamodb')
+          _(describe_table_span.attributes['db.operation.name']).must_equal('DescribeTable')
+          _(describe_table_span.attributes['db.collection.name']).must_equal('TestTable')
+        end
+      end
+
+      describe 'dup semconv' do
+        before do
+          skip unless TestHelper.semconv_dup?
+        end
+
+        it 'creates a span with both old and stable dynamodb-specific attributes' do
+          client.list_tables
+
+          _(client_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
+          _(client_span.attributes['db.system.name']).must_equal('aws.dynamodb')
+          _(client_span.attributes['db.operation.name']).must_equal('ListTables')
+          _(client_span.attributes).wont_include('db.collection.name')
+        end
+
+        it 'includes db.collection.name when table_name is present' do
+          client.describe_table(table_name: 'TestTable')
+
+          _(describe_table_span.attributes[otel_semantic::DB_SYSTEM]).must_equal('dynamodb')
+          _(describe_table_span.attributes['db.system.name']).must_equal('aws.dynamodb')
+          _(describe_table_span.attributes['db.operation.name']).must_equal('DescribeTable')
+          _(describe_table_span.attributes['db.collection.name']).must_equal('TestTable')
+        end
+      end
+    end
+
+    def check_target_service(service_name)
+      skip unless TestHelper.telemetry_plugin?(service_name) && TestHelper.testing_service?(service_name)
     end
   end
 end

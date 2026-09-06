@@ -14,11 +14,6 @@ AllCops:
     - "bin/instrumentation_generator"
     - "**/**/vendor/bundle/**/*"
     - "**/proto/**"
-    - "helpers/sql-obfuscation/**"
-    - "instrumentation/dalli/**"
-    - "instrumentation/mongo/**"
-    - "instrumentation/restclient/**"
-    - "instrumentation/ruby_kafka/**"
 Bundler/OrderedGems:
   Enabled: false
 Lint/ConstantDefinitionInBlock:
@@ -44,7 +39,16 @@ Metrics/PerceivedComplexity:
 Naming/FileName:
   Exclude:
     - "**/opentelemetry-*"
+Performance/CollectionLiteralInLoop:
+  Exclude:
+    - "**/Appraisals"
 Style/Documentation:
+  Exclude:
+    - "**/test/**/*"
+    - "**/*test*"
+Style/DocumentationMethod:
+  Enabled: true
+  Severity: info
   Exclude:
     - "**/test/**/*"
     - "**/*test*"

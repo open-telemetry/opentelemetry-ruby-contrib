@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
   spec.description = 'gRPC instrumentation for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
+  spec.platform    = Gem::Platform::RUBY
 
   spec.required_ruby_version = '>= 3.3'
 
@@ -38,9 +39,9 @@ Gem::Specification.new do |spec|
   # guide at: https://bundler.io/guides/creating_gem.html
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-grpc/v#{OpenTelemetry::Instrumentation::Grpc::VERSION}/file.CHANGELOG.html"
+    spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
     spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/#{spec.name}/v#{spec.version}/instrumentation/grpc"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby-contrib/opentelemetry-instrumentation-grpc/v#{OpenTelemetry::Instrumentation::Grpc::VERSION}"
+    spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
 end

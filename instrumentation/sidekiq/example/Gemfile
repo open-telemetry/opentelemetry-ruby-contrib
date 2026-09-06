@@ -8,4 +8,5 @@ gem 'opentelemetry-instrumentation-base'
 gem 'opentelemetry-instrumentation-sidekiq'
 gem 'opentelemetry-sdk'
 
+gem 'dotenv'
 gem 'sidekiq'

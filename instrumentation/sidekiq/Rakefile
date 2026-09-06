@@ -10,6 +10,7 @@ require 'yard'
 require 'rubocop/rake_task'
 
 RuboCop::RakeTask.new
+YARD::Rake::YardocTask.new
 
 desc 'Start Redis'
 task :start_redis do
@@ -25,10 +26,6 @@ Rake::TestTask.new test: :start_redis do |t|
   at_exit do
     Process.kill('USR1', @redis_pid) if @redis_pid
   end
-end
-
-YARD::Rake::YardocTask.new do |t|
-  t.stats_options = ['--list-undoc']
 end
 
 if RUBY_ENGINE == 'truffleruby'

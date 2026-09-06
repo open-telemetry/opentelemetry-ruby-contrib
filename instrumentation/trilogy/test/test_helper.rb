@@ -4,7 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-ENV['OTEL_LOG_LEVEL'] ||= 'fatal'
+if RUBY_ENGINE == 'jruby'
+  warn 'Skipping tests on JRuby: Runtime not supported'
+  exit 0
+end
+
+require 'dotenv'
+Dotenv.load('.env', '../.env')
 
 require 'simplecov'
 require 'bundler/setup'

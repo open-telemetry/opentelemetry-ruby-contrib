@@ -4,54 +4,36 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../plugin'
+
 module OpenTelemetry
   module Instrumentation
     module HTTPX
       module Old
         # Old Plugin
         module Plugin
-          def self.load_dependencies(klass)
-            require_relative '../plugin'
-            klass.plugin(HTTPX::Plugin)
+          class << self
+            # session start dependencies
+            def load_dependencies(klass)
+              klass.plugin(HTTPX::Plugin)
+            end
 
-            HTTPX::Plugin.const_set(:RequestTracer, RequestTracer)
+            # session extra options
+            def extra_options(options)
+              options.merge(tracer: Old::RequestTracer)
+            end
           end
         end
 
         # Instruments around HTTPX's request/response lifecycle in order to generate
         # an OTEL trace.
         module RequestTracer
+          extend HTTPX::Plugin::RequestTracer
           extend self
-
-          # initializes tracing on the +request+.
-          def call(request)
-            span = nil
-
-            # request objects are reused, when already buffered requests get rerouted to a different
-            # connection due to connection issues, or when they already got a response, but need to
-            # be retried. In such situations, the original span needs to be extended for the former,
-            # while a new is required for the latter.
-            request.on(:idle) do
-              span = nil
-            end
-            # the span is initialized when the request is buffered in the parser, which is the closest
-            # one gets to actually sending the request.
-            request.on(:headers) do
-              next if span
-
-              span = initialize_span(request)
-            end
-
-            request.on(:response) do |response|
-              span = initialize_span(request, request.init_time) if !span && request.init_time
-
-              finish(response, span)
-            end
-          end
 
           private
 
-          def finish(response, span)
+          def finish_span(response, span)
             if response.is_a?(::HTTPX::ErrorResponse)
               span.record_exception(response.error)
               span.status = Trace::Status.error(response.error.to_s)

@@ -75,6 +75,27 @@ describe OpenTelemetry::Instrumentation::Grape do
       end
     end
 
+    describe 'when a Grape::API::Instance endpoint receives a request' do
+      class InstanceAPI < Grape::API::Instance
+        format :json
+        get :hello do
+          { message: 'Hello, world!' }
+        end
+      end
+
+      let(:app) { build_rack_app(InstanceAPI) }
+      let(:request_path) { '/hello' }
+      let(:expected_span_name) { 'GET /hello' }
+
+      before { app.get request_path }
+
+      it 'sets code.namespace from the endpoint class name' do
+        _(span.name).must_equal expected_span_name
+        _(span.attributes['code.namespace']).must_equal 'InstanceAPI'
+        _(span.attributes['http.route']).must_equal '/hello'
+      end
+    end
+
     describe 'when an API endpoint with a route param receives a request' do
       class RouteParamAPI < Grape::API
         format :json

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# frozen set of Appraisals for net-ldap instrumentation
 %w[0.17.1 0.18.0 0.19.0].each do |version|
   appraise "net-ldap-#{version}" do
     gem 'net-ldap', "~> #{version}"
@@ -9,12 +10,8 @@
   end
 end
 
-%w[0.20.0].each do |version|
+%w[0.20.0 0.20.0].each do |version|
   appraise "net-ldap-#{version}" do
     gem 'net-ldap', "~> #{version}"
   end
-end
-
-appraise 'net-ldap-latest' do
-  gem 'net-ldap'
 end

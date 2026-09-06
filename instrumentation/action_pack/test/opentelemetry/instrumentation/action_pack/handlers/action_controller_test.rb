@@ -64,6 +64,32 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     _(span.attributes['http.route']).must_equal '/items/:id'
   end
 
+  describe 'when mounted as a Rails engine' do
+    before { get '/engine/items/1234' }
+
+    it 'prepends the engine mount path to http.route' do
+      _(span.attributes['http.route']).must_equal '/engine/items/:id'
+    end
+
+    it 'includes the engine mount path in the semconv span name' do
+      _(span.name).must_equal 'GET /engine/items/:id'
+    end
+
+    it 'sets the controller and action attributes' do
+      _(span.attributes['code.namespace']).must_equal 'ExampleEngine::ItemsController'
+      _(span.attributes['code.function']).must_equal 'show'
+    end
+
+    describe 'when using class span_naming' do
+      let(:config) { { span_naming: :class } }
+
+      it 'sets http.route with the engine mount path but keeps class-based span name' do
+        _(span.name).must_equal 'ExampleEngine::ItemsController#show'
+        _(span.attributes['http.route']).must_equal '/engine/items/:id'
+      end
+    end
+  end
+
   it 'does not memoize data across requests' do
     get '/ok'
     get '/items/new'

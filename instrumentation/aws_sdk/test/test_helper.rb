@@ -8,6 +8,14 @@ require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
+# Set OTEL_SEMCONV_STABILITY_OPT_IN based on appraisal name
+gemfile = ENV.fetch('BUNDLE_GEMFILE', '')
+if gemfile.include?('stable')
+  ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database'
+elsif gemfile.include?('dup')
+  ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database/dup'
+end
+
 require 'opentelemetry-instrumentation-aws_sdk'
 
 require 'minitest/autorun'
@@ -28,15 +36,44 @@ end
 class TestHelper
   class << self
     def telemetry_plugin?(service)
-      m = ::Aws.const_get(service).const_get(:Client)
+      return false unless Aws.const_defined?(service)
+
+      svc = ::Aws.const_get(service)
+      return false unless svc.const_defined?(:Client)
+
+      m = svc.const_get(:Client)
+
       Aws.const_defined?('Plugins::Telemetry') &&
         m.plugins.include?(Aws::Plugins::Telemetry)
+    rescue NameError
+      false
     end
 
     def match_span_attrs(expected_attrs, span, expect)
       expected_attrs.each do |key, value|
         expect._(span.attributes[key]).must_equal(value)
       end
+    end
+
+    def semconv_old?
+      gemfile = ENV.fetch('BUNDLE_GEMFILE', '')
+      gemfile.include?('old') || (!gemfile.include?('stable') && !gemfile.include?('dup'))
+    end
+
+    def semconv_stable?
+      ENV.fetch('BUNDLE_GEMFILE', '').include?('stable')
+    end
+
+    def semconv_dup?
+      ENV.fetch('BUNDLE_GEMFILE', '').include?('dup')
+    end
+
+    def testing_service?(service)
+      target_service?(service) || target_service?('core') || target_service?('2')
+    end
+
+    def target_service?(service)
+      ENV.fetch('BUNDLE_GEMFILE', '').downcase.include?("aws_sdk_#{service}".downcase)
     end
   end
 end

@@ -35,7 +35,7 @@ ActiveRecord.async_query_executor = :global_thread_pool
 
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',
-  database: 'db/development.sqlite3'
+  database: ':memory:'
 )
 
 # Create ActiveRecord models

@@ -32,7 +32,8 @@ module OpenTelemetry
               'ldap.auth.username' => auth[:username].to_s,
               'ldap.operation.type' => operation_type,
               'ldap.request.message' => begin
-                payload.to_json
+                raw = payload.to_json
+                raw.scrub == raw ? raw : nil
               rescue JSON::GeneratorError
                 nil
               end,

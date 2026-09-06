@@ -1,0 +1,6 @@
+services:
+  ex-instrumentation-net-ldap:
+    extends:
+      service: base
+      file: ./../../../docker-base.yml
+    working_dir: /app/instrumentation/net_ldap/example

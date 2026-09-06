@@ -32,6 +32,8 @@ module OpenTelemetry
             # https://github.com/rails/rails/blob/747f85f200e7bb2c1a31b4e26e5a5655e2dc0cdc/actionpack/lib/action_dispatch/http/request.rb#L160
             http_route = request.route_uri_pattern&.chomp('(.:format)') if request.respond_to?(:route_uri_pattern)
 
+            http_route = "#{request.script_name}#{http_route}" if http_route && !request.script_name.empty?
+
             attributes = {
               OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => String(payload[:controller]),
               OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(payload[:action])

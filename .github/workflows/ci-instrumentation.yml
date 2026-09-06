@@ -37,7 +37,9 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: "Test Ruby 4.0"
         uses: ./.github/actions/test_gem
         with:
@@ -56,8 +58,7 @@ jobs:
           yard: true
           build: true
       - name: "Test JRuby"
-        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
-          ruby: "jruby-10.0.2.0"
+          ruby: "jruby-10.0"

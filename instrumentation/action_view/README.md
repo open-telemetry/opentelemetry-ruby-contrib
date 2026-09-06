@@ -69,7 +69,9 @@ The following attributes may be recorded depending on the event type:
 | `count` | Integer | `render_collection.action_view` | Number of items in the collection |
 | `cache_hits` | Integer | `render_collection.action_view` | Number of partials fetched from cache (only included when `cached: true`) |
 
-> **Note:** The `locals` hash from the event payloads is not collected as an attribute because complex types like hashes are not supported by the OpenTelemetry specification v1.10.0. Only primitive types (String, Boolean, Numeric) and arrays of primitives are valid attribute values.
+> [!NOTE]
+>
+> The `locals` hash from the event payloads is not collected as an attribute because complex types like hashes are not supported by the OpenTelemetry specification v1.10.0. Only primitive types (String, Boolean, Numeric) and arrays of primitives are valid attribute values.
 
 ## Examples
 

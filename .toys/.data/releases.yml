@@ -164,6 +164,9 @@ gems:
     directory: instrumentation/net_ldap
     version_rb_path: lib/opentelemetry/instrumentation/net/ldap/version.rb
 
+  - name: opentelemetry-instrumentation-openai
+    directory: instrumentation/openai
+
   - name: opentelemetry-instrumentation-pg
     directory: instrumentation/pg
 
@@ -223,6 +226,9 @@ gems:
 
   - name: opentelemetry-resource-detector-google_cloud_platform
     directory: resources/google_cloud_platform
+
+  - name: opentelemetry-resource-detector-os
+    directory: resources/os
 
   - name: opentelemetry-sampler-xray
     directory: sampler/xray

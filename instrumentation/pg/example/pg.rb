@@ -1,21 +1,23 @@
 # frozen_string_literal: true
 
+require 'dotenv'
+Dotenv.load('.env', '../.env')
+
 require 'rubygems'
 require 'bundler/setup'
 
 Bundler.require
 
-ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::PG'
 end
 
 conn = PG::Connection.open(
-  host: ENV.fetch('TEST_POSTGRES_HOST') { '127.0.0.1' },
-  port: ENV.fetch('TEST_POSTGRES_PORT') { '5432' },
-  user: ENV.fetch('TEST_POSTGRES_USER') { 'postgres' },
-  dbname: ENV.fetch('TEST_POSTGRES_DB') { 'postgres' },
-  password: ENV.fetch('TEST_POSTGRES_PASSWORD') { 'postgres' }
+  host: ENV.fetch('TEST_POSTGRES_HOST', '127.0.0.1'),
+  port: ENV.fetch('TEST_POSTGRES_PORT', '5432'),
+  user: ENV.fetch('TEST_POSTGRES_USER', 'postgres'),
+  dbname: ENV.fetch('TEST_POSTGRES_DB', 'postgres'),
+  password: ENV.fetch('TEST_POSTGRES_PASSWORD', 'postgres')
 )
 
 # Create a table

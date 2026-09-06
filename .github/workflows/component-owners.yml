@@ -1,6 +1,6 @@
 name: "Component Owners"
 on:
-  pull_request_target:
+  pull_request_target: # zizmor: ignore[dangerous-triggers] Assigns reviewers from base-branch config; no PR code is executed.
 
 permissions:
   contents: read

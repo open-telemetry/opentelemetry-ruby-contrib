@@ -1,5 +1,9 @@
 # Release History: opentelemetry-resource-detector-aws
 
+## v0.7.0 / 2026-05-21
+
+- ADDED: Read cloud.account.id from symlink in Lambda detector (#1995)
+
 ## v0.6.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
