@@ -7,9 +7,9 @@
 require 'test_helper'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/http'
-require_relative '../../../../../lib/opentelemetry/instrumentation/http/patches/stable/client'
+require_relative '../../../../../lib/opentelemetry/instrumentation/http/patches/client'
 
-describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Client do
+describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
@@ -21,8 +21,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Client do
   let(:span_name_formatter) { nil }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
-
     exporter.reset
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator

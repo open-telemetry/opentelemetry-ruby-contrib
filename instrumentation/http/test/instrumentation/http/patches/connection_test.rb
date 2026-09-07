@@ -7,16 +7,14 @@
 require 'test_helper'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/http'
-require_relative '../../../../../lib/opentelemetry/instrumentation/http/patches/stable/connection'
+require_relative '../../../../../lib/opentelemetry/instrumentation/http/patches/connection'
 
-describe OpenTelemetry::Instrumentation::HTTP::Patches::Stable::Connection do
+describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('stable')
-
     exporter.reset
     instrumentation.install({})
   end
