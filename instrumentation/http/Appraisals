@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 %w[5.0.0 6.0.4].each do |version|
-  appraise "http-#{mode}-#{version}" do
+  appraise "http-#{version}" do
     gem 'http', "~> #{version}"
   end
 end
