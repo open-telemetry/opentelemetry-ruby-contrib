@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-require_relative '../../../../../lib/opentelemetry/instrumentation/http'
-require_relative '../../../../../lib/opentelemetry/instrumentation/http/patches/connection'
+require_relative '../../../../lib/opentelemetry/instrumentation/http'
+require_relative '../../../../lib/opentelemetry/instrumentation/http/patches/connection'
 
 describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }

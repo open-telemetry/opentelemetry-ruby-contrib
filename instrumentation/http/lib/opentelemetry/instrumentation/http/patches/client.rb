@@ -20,10 +20,10 @@ module OpenTelemetry
             span_name = create_span_name(span_data, uri.path)
 
             attributes = { 'url.scheme' => uri.scheme,
-                            'url.path' => uri.path,
-                            'url.full' => "#{uri.scheme}://#{uri.host}",
-                            'server.address' => uri.host,
-                            'server.port' => uri.port }
+                           'url.path' => uri.path,
+                           'url.full' => "#{uri.scheme}://#{uri.host}",
+                           'server.address' => uri.host,
+                           'server.port' => uri.port }
             attributes['url.query'] = uri.query unless uri.query.nil?
             attributes.merge!(span_data.attributes)
 
