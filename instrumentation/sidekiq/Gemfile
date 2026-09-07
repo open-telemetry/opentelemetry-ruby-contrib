@@ -8,9 +8,16 @@ source 'https://rubygems.org'
 
 gemspec
 
-group :local do
-  gem 'opentelemetry-instrumentation-base', path: '../base'
-  gem 'opentelemetry-instrumentation-redis', path: '../redis'
+if ENV['OTEL_GEM_CACHE_DIR']
+  source "file://#{ENV['OTEL_GEM_CACHE_DIR']}" do
+    gem 'opentelemetry-instrumentation-base'
+    gem 'opentelemetry-instrumentation-redis'
+  end
+elsif ENV['USE_PUBLISHED_GEMS'] != 'true'
+  group :local do
+    gem 'opentelemetry-instrumentation-base', path: '../base'
+    gem 'opentelemetry-instrumentation-redis', path: '../redis'
+  end
 end
 
 group :test do

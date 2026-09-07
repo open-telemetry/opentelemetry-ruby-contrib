@@ -8,12 +8,22 @@ source 'https://rubygems.org'
 
 gemspec
 
-group :local do
-  gem 'opentelemetry-helpers-mysql', path: '../../helpers/mysql'
-  gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
-  gem 'opentelemetry-helpers-sql-processor', path: '../../helpers/sql-processor'
-  gem 'opentelemetry-instrumentation-base', path: '../base'
-  gem 'opentelemetry-propagator-vitess', path: '../../propagator/vitess'
+if ENV['OTEL_GEM_CACHE_DIR']
+  source "file://#{ENV['OTEL_GEM_CACHE_DIR']}" do
+    gem 'opentelemetry-helpers-mysql'
+    gem 'opentelemetry-helpers-sql'
+    gem 'opentelemetry-helpers-sql-processor'
+    gem 'opentelemetry-instrumentation-base'
+    gem 'opentelemetry-propagator-vitess'
+  end
+elsif ENV['USE_PUBLISHED_GEMS'] != 'true'
+  group :local do
+    gem 'opentelemetry-helpers-mysql', path: '../../helpers/mysql'
+    gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
+    gem 'opentelemetry-helpers-sql-processor', path: '../../helpers/sql-processor'
+    gem 'opentelemetry-instrumentation-base', path: '../base'
+    gem 'opentelemetry-propagator-vitess', path: '../../propagator/vitess'
+  end
 end
 
 group :test do
