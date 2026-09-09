@@ -29,7 +29,7 @@ module OpenTelemetry
                 'http.url' => url,
                 'net.peer.name' => uri.host,
                 'net.peer.port' => uri.port
-              }.merge!(span_data.attributes)
+              }.compact.merge!(span_data.attributes)
 
               tracer.in_span(span_data.span_name, attributes: attributes, kind: :client) do |span|
                 OpenTelemetry.propagation.inject(req.header)
