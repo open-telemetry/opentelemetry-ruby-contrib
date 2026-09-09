@@ -229,10 +229,11 @@ module OpenTelemetry
         @config = config_options(config)
         return false unless installable?(config)
 
-        instance_exec(@config, &@install_blk)
         @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
         @meter = OpenTelemetry::Internal.meter_provider.meter(name, version: version)
         @logger = OpenTelemetry::Internal.logger_provider.logger(name: name, version: version)
+
+        instance_exec(@config, &@install_blk)
         @installed = true
       end
 

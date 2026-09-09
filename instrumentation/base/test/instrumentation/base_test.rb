@@ -509,6 +509,36 @@ describe OpenTelemetry::Instrumentation::Base do
     end
   end
 
+  describe 'provider resolution' do
+    let(:captures_providers) do
+      captured = @captured = {}
+
+      Class.new(OpenTelemetry::Instrumentation::Base) do
+        instrumentation_name 'captures_providers'
+        instrumentation_version '0.2.0'
+
+        present { true }
+
+        install do |_config|
+          captured[:tracer] = tracer
+          captured[:meter] = meter
+          captured[:logger] = logger
+          true
+        end
+      end
+    end
+
+    it 'resolves the tracer, meter and logger before running the install block' do
+      instance = captures_providers.instance
+
+      instance.install
+
+      _(@captured[:tracer]).must_be_same_as(instance.tracer)
+      _(@captured[:meter]).must_be_same_as(instance.meter)
+      _(@captured[:logger]).must_be_same_as(instance.logger)
+    end
+  end
+
   describe 'the unstable APIs' do
     it 'does not expose the top-level provider accessors to users' do
       refute_respond_to(OpenTelemetry, :meter_provider)
