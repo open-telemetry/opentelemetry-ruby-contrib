@@ -60,7 +60,10 @@ module OpenTelemetry
           end
 
           OpenTelemetry.tracer_provider.force_flush(timeout: flush_timeout)
-          OpenTelemetry.meter_provider.force_flush(timeout: flush_timeout) if OpenTelemetry.respond_to?(:meter_provider)
+
+          # Only the metrics SDK supplies a meter provider that can be flushed.
+          meter_provider = OpenTelemetry.meter_provider if OpenTelemetry.respond_to?(:meter_provider)
+          meter_provider.force_flush(timeout: flush_timeout) if meter_provider.respond_to?(:force_flush)
 
           raise original_handler_error if original_handler_error
 
