@@ -439,6 +439,83 @@ describe OpenTelemetry::Instrumentation::Base do
     end
   end
 
+  describe '#meter' do
+    # Records the instrumentation scope it was asked for, so the scope Base
+    # passes through can be asserted without a real Metrics SDK.
+    let(:recording_meter_provider) do
+      Class.new(OpenTelemetry::Metrics::MeterProvider) do
+        attr_reader :requested
+
+        def meter(name, version: nil, attributes: nil)
+          @requested = { name: name, version: version }
+          super
+        end
+      end.new
+    end
+
+    after { OpenTelemetry::Internal.instance_variable_set(:@meter_provider, OpenTelemetry::Internal::ProxyMeterProvider.new) }
+
+    it 'returns a noop api meter if not installed' do
+      _(instrumentation_with_callbacks.instance.meter).must_be_kind_of(OpenTelemetry::Metrics::Meter)
+    end
+
+    it 'returns a meter from the internal provider if installed' do
+      instance = instrumentation_with_callbacks.instance
+      instance.install
+      _(instance.meter).must_be_kind_of(OpenTelemetry::Metrics::Meter)
+    end
+
+    it 'requests the meter using the instrumentation name and version' do
+      OpenTelemetry::Internal.instance_variable_set(:@meter_provider, recording_meter_provider)
+      instance = instrumentation_with_callbacks.instance
+
+      instance.install
+
+      _(recording_meter_provider.requested).must_equal(name: 'test_instrumentation', version: '0.1.1')
+    end
+  end
+
+  describe '#logger' do
+    let(:recording_logger_provider) do
+      Class.new(OpenTelemetry::Logs::LoggerProvider) do
+        attr_reader :requested
+
+        def logger(name:, version: nil)
+          @requested = { name: name, version: version }
+          super
+        end
+      end.new
+    end
+
+    after { OpenTelemetry::Internal.instance_variable_set(:@logger_provider, OpenTelemetry::Internal::ProxyLoggerProvider.new) }
+
+    it 'returns a noop api logger if not installed' do
+      _(instrumentation_with_callbacks.instance.logger).must_be_kind_of(OpenTelemetry::Logs::Logger)
+    end
+
+    it 'returns a logger from the internal provider if installed' do
+      instance = instrumentation_with_callbacks.instance
+      instance.install
+      _(instance.logger).must_be_kind_of(OpenTelemetry::Logs::Logger)
+    end
+
+    it 'requests the logger using the instrumentation name and version' do
+      OpenTelemetry::Internal.instance_variable_set(:@logger_provider, recording_logger_provider)
+      instance = instrumentation_with_callbacks.instance
+
+      instance.install
+
+      _(recording_logger_provider.requested).must_equal(name: 'test_instrumentation', version: '0.1.1')
+    end
+  end
+
+  describe 'the unstable APIs' do
+    it 'does not expose the top-level provider accessors to users' do
+      refute_respond_to(OpenTelemetry, :meter_provider)
+      refute_respond_to(OpenTelemetry, :logger_provider)
+    end
+  end
+
   describe 'namespaced instrumentation' do
     before do
       define_instrumentation_subclass('OTel::Instrumentation::Sinatra::Instrumentation', '2.1.0')

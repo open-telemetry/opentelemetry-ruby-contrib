@@ -27,6 +27,9 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.7'
   spec.add_dependency 'opentelemetry-common', '~> 0.21'
+  # TODO: The logs and metrics api version numbers are aniticipated. Confirm when released.
+  spec.add_dependency 'opentelemetry-logs-api', '~> 0.5'
+  spec.add_dependency 'opentelemetry-metrics-api', '~> 0.8'
   spec.add_dependency 'opentelemetry-registry', '~> 0.1'
 
   if spec.respond_to?(:metadata)
