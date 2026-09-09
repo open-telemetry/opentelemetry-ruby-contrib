@@ -1,6 +1,6 @@
 # Release History: opentelemetry-instrumentation-grpc
 
-## v0.5.3 / 2026-09-08
+## v0.5.3 / 2026-09-09
 
 - FIXED: Limiting gem & tests to mri (#2429)
 

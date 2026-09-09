@@ -1,6 +1,6 @@
 # Release History: opentelemetry-instrumentation-http_client
 
-## v0.29.1 / 2026-09-08
+## v0.29.1 / 2026-09-09
 
 - FIXED: Omit nil attributes on spans (#2561)
 

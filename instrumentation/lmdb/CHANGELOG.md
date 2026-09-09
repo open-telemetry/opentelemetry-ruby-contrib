@@ -1,6 +1,6 @@
 # Release History: opentelemetry-instrumentation-lmdb
 
-## v0.26.1 / 2026-09-08
+## v0.26.1 / 2026-09-09
 
 - FIXED: Limiting gem & tests to mri (#2429)
 
