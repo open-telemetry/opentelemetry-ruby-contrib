@@ -28,7 +28,7 @@ module OpenTelemetry
                 attributes = { OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
                                OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
                                OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
-                               OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port }.merge!(span_data.attributes)
+                               OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port }.compact.merge!(span_data.attributes)
 
                 tracer.in_span(
                   span_data.span_name,
@@ -59,7 +59,7 @@ module OpenTelemetry
                 attributes = {
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => conn_address,
                   OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port
-                }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+                }.compact.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
                 if use_ssl? && proxy?
                   span_name = 'HTTP CONNECT'
