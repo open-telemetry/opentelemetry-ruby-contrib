@@ -252,4 +252,40 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       end
     end
   end
+
+  # See: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/2425
+  describe 'when a Sinatra app uses another Sinatra app as middleware' do
+    let(:inner_app) do
+      Class.new(Sinatra::Base) do
+        set :raise_errors, false
+        get '/nested' do
+          'inner'
+        end
+      end
+    end
+
+    let(:app) do
+      inner = inner_app
+      Class.new(Sinatra::Base) do
+        set :raise_errors, false
+        use inner
+      end
+    end
+
+    it 'does not raise attach/detach errors and produces a correctly nested trace' do
+      get '/nested'
+
+      _(last_response.status).must_equal 200
+      _(last_response.body).must_equal 'inner'
+
+      _(exporter.finished_spans.size).must_equal 2
+
+      outer_span = exporter.finished_spans.find { |s| s.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID }
+      inner_span = exporter.finished_spans.find { |s| s.parent_span_id != OpenTelemetry::Trace::INVALID_SPAN_ID }
+
+      _(outer_span).wont_be_nil
+      _(inner_span).wont_be_nil
+      _(inner_span.parent_span_id).must_equal outer_span.span_id
+    end
+  end
 end
