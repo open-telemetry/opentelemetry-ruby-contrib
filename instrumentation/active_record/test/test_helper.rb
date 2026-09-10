@@ -6,7 +6,7 @@
 
 require 'simplecov'
 require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+Bundler.require(:default, :test)
 
 require 'active_record'
 require 'opentelemetry-instrumentation-active_record'

@@ -7,7 +7,7 @@
 require 'simplecov'
 require 'logger'
 require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+Bundler.require(:default, :test)
 
 # These are dependencies that delayed job assumes are already loaded
 # We are compensating for that here in this test... that is a smell

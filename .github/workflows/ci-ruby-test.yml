@@ -1,0 +1,109 @@
+name: Test
+
+on:
+  workflow_call:
+    inputs:
+      gems:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}-test # Ensure that only one instance of this workflow is running per event type and ref
+  cancel-in-progress: true # Cancel any previous runs of this workflow for the same event type and ref
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        gem: ${{ fromJson(inputs.gems) }}
+        os:
+          - ubuntu-24.04
+        ruby:
+          - ruby-3.3
+          - ruby-3.4
+          - ruby-4.0
+          - jruby-10.0
+      fail-fast: false
+    env:
+      JRUBY_OPTS: "--dev -J-Xmx1G -J-XX:+UseG1GC"
+    name: "${{ matrix.gem }} / ${{ matrix.os }} [${{ matrix.ruby }}]"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          bundler: latest
+          bundler-cache: true
+          ruby-version: ${{ matrix.ruby }}
+      - name: Compute Gemfile hash
+        id: lockhash
+        shell: bash
+        run: |
+          files=$( \
+            find . -name "Gemfile" \
+            -o -name "Appraisals" \
+            -o -path "./gemfiles/*.gemfile" \
+            -o -path "./gemfiles/*.gemfile.lock" \
+            | sort \
+          )
+          if [[ -n "$files" ]]; then
+            hash=$(sha256sum $files | sha256sum | cut -d ' ' -f1)
+            echo "hash=$hash" >> $GITHUB_OUTPUT
+          else
+            echo "hash=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+          fi
+      - name: Restore Bundler Cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
+        with:
+          path: |
+            vendor
+            !vendor/bundle/cache
+            ~/.jruby
+            ~/.gem
+          key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-${{ steps.lockhash.outputs.hash }}
+          restore-keys: |
+            bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-
+      - name: Install Ubuntu packages (if apt-packages.txt exists)
+        shell: bash
+        run: |
+          sudo apt-get update
+          xargs -a apt-packages.txt sudo apt-get install -y
+      - name: Install Tools & Gem Deps
+        run: |
+          # ⚙️ Install ⚙️
+          bundle exec rake install
+      - name: Generate Appraisals
+        shell: bash
+        env:
+          BUNDLE_WITHOUT: "development"
+          APPRAISAL_SKIP: graphql-c_parser
+        run: |
+          # 🛠️ Setup 🛠️
+          bundle exec rake "appraisal[generate-install]"
+      - name: Save Bundler Cache
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
+        with:
+          path: |
+            vendor
+            !vendor/bundle/cache
+            ~/.gem
+            ~/.jruby
+          key: bundler-${{ runner.os }}-${{ matrix.gem }}-${{ matrix.ruby }}-${{ steps.lockhash.outputs.hash }}
+      - name: Start Docker Service/s
+        shell: bash
+        run: |
+          # 🐳 Start Docker 🐳
+          docker compose -f docker-compose.yml up -d --wait
+      - name: Minitest
+        shell: bash
+        env:
+          APPRAISAL_SKIP: graphql-c_parser
+        run: |
+          # 🍿 Test Gem 🍿
+          bundle exec rake "appraisal[test]"

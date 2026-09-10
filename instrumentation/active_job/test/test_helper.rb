@@ -7,7 +7,7 @@ ENV['OTEL_LOG_LEVEL'] ||= 'fatal'
 
 require 'simplecov'
 require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+Bundler.require(:default, :test)
 
 require 'active_job'
 require 'active_support/core_ext/object/with'

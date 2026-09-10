@@ -6,7 +6,7 @@
 
 require 'simplecov'
 require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+Bundler.require(:default, :test)
 
 # Set OTEL_SEMCONV_STABILITY_OPT_IN based on appraisal name
 gemfile = ENV.fetch('BUNDLE_GEMFILE', '')
