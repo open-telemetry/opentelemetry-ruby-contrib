@@ -37,6 +37,7 @@ on:
       - "instrumentation/logger/**"
       - "instrumentation/net_http/**"
       - "instrumentation/net_ldap/**"
+      - "instrumentation/openai/**"
       - "instrumentation/rack/**"
       - "instrumentation/rails/**"
       - "instrumentation/rake/**"
@@ -104,6 +105,7 @@ jobs:
           - logger
           - net_http
           - net_ldap
+          - openai
           - rack
           - rails
           - rake
