@@ -49,9 +49,16 @@ module OpenTelemetry
     # SDKs for instrumentation discovery and installation.
     #
     # Instrumentation libraries can use the instrumentation subclass to easily gain
-    # a reference to its named tracer. For example:
+    # a reference to its named tracer, meter, and logger. For example:
     #
     # OpenTelemetry::Instrumentation::Sinatra.instance.tracer
+    # OpenTelemetry::Instrumentation::Sinatra.instance.meter
+    # OpenTelemetry::Instrumentation::Sinatra.instance.logger
+    #
+    # The meter and logger emit no telemetry unless the user has opted into the
+    # Metrics or Logs SDK. Both APIs are unstable, so the top-level
+    # OpenTelemetry.meter_provider and OpenTelemetry.logger_provider accessors
+    # are not available to users who have only installed instrumentation.
     #
     # The instrumentation class establishes a convention for disabling an instrumentation
     # by environment variable and local configuration. An instrumentation disabled
@@ -189,7 +196,7 @@ module OpenTelemetry
         end
       end
 
-      attr_reader :name, :version, :config, :installed, :tracer
+      attr_reader :name, :version, :config, :installed, :tracer, :meter, :logger
 
       alias installed? installed
 
@@ -207,6 +214,8 @@ module OpenTelemetry
         @config = Hash.new { |_, k| defaults[k] }
         @installed = false
         @tracer = OpenTelemetry::Trace::Tracer.new
+        @meter = OpenTelemetry::Metrics::Meter.new
+        @logger = OpenTelemetry::Logs::Logger.new
       end
 
       # Install instrumentation with the given config. The present? and compatible?
@@ -220,8 +229,11 @@ module OpenTelemetry
         @config = config_options(config)
         return false unless installable?(config)
 
-        instance_exec(@config, &@install_blk)
         @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
+        @meter = OpenTelemetry::Internal.meter_provider.meter(name, version: version)
+        @logger = OpenTelemetry::Internal.logger_provider.logger(name: name, version: version)
+
+        instance_exec(@config, &@install_blk)
         @installed = true
       end
 
