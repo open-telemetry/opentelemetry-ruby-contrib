@@ -1,0 +1,9 @@
+{
+  "name": "otel-ruby-que-devcontainer",
+  "dockerComposeFile": ["compose.yml"],
+  "service": "devcontainer-alpine",
+  "remoteUser": "app",
+
+  "workspaceFolder": "/app/instrumentation/que",
+  "runServices": ["postgres"]
+}
