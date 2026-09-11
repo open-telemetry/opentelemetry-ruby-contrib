@@ -1,5 +1,5 @@
 [tools]
-ruby = '3.3.12'
+ruby = { version = "3.3.12", all_compile = false }
 
 [settings]
 lockfile = true

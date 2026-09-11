@@ -127,33 +127,8 @@
       matchFileNames: ["**/*.gemspec"],
       dependencyDashboardApproval: true,
     },
-    {
-      description: "Disable digest for ruby base image",
-      matchDepNames: ["Ruby"],
-      matchFileNames: ["Dockerfile"],
-      matchManagers: ["dockerfile"],
-      matchUpdateTypes: ["digest"],
-      enabled: false,
-    },
   ],
   customManagers: [
-    {
-      customType: "regex",
-      description: "Update os version in Dockerfiles",
-      managerFilePatterns: [
-        "/(^|/|\\.)Dockerfile$/",
-        "/(^|/)Dockerfile\\.[^/]*$/",
-      ],
-      matchStrings: [
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
-        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
-      ],
-      datasourceTemplate: "docker",
-      versioningTemplate: "docker",
-      currentValueTemplate: "{{alpineVersion}}",
-      extractVersionTemplate: "^{{depVersion}}-alpine(?<version>[0-9.]+)$",
-      depNameTemplate: "{{packageName}}-alpine",
-    },
     {
       customType: "regex",
       description: "Update dependencies in Appraisals",
