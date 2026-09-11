@@ -12,6 +12,7 @@ if RUBY_ENGINE == 'ruby'
       gem 'mini_magick', '= 5.3.3'
       gem 'benchmark', '= 0.5.0'
       gem 'rails', "= #{version}"
+      gem 'json', '< 3'
     end
   end
 
@@ -19,8 +20,9 @@ if RUBY_ENGINE == 'ruby'
     appraise "activestorage-#{version}" do
       gem 'rails', "= #{version}"
       gem 'sqlite3', '= 2.9.6'
-      gem 'image_processing', '= 2.0.3'
-      gem 'mini_magick', '= 5.3.3'
+      gem 'image_processing', '= 2.1.0'
+      gem 'mini_magick', '= 5.4.0'
+      gem 'json', '< 3'
     end
   end
 end
@@ -32,6 +34,7 @@ if RUBY_ENGINE == 'jruby'
       gem 'image_processing', '= 2.0.3'
       gem 'mini_magick', '= 5.3.3'
       gem 'rails'
+      gem 'json', '< 3'
     end
   end
 end
