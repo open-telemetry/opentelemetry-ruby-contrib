@@ -9,6 +9,8 @@ on:
       - "package-lock.json"
       - "Gemfile"
       - "Gemfile.lock"
+      - "mise.lock"
+      - "mise.toml"
       - ".github/workflows/ci-checks-local.yml"
   merge_group:
 
