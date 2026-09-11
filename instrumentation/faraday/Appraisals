@@ -18,13 +18,13 @@ gem_versions << '1.10.0' if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4
 semconv_stability.each do |mode|
   %w[2.14.0 2.14.3].each do |version|
     appraise "faraday-#{version}-#{mode}" do
-      gem 'faraday', "~> #{version}"
+      gem 'faraday', "= #{version}"
     end
   end
 
   gem_versions.each do |version|
     appraise "faraday-#{version}-#{mode}" do
-      gem 'faraday', "~> #{version}"
+      gem 'faraday', "= #{version}"
     end
   end
 end

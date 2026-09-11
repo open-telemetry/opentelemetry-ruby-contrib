@@ -8,6 +8,6 @@
 ## Example:
 # %w[2.0.0 2.1.2].each do |version|
 #   appraise "rack-#{version}" do
-#     gem 'rack', "~> #{version}"
+#     gem 'rack', "= #{version}"
 #   end
 # end
