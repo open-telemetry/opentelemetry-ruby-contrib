@@ -94,9 +94,15 @@ module OpenTelemetry
             route = endpoint.routes&.first
             return route.request_method.to_s.upcase if route.respond_to?(:request_method) && route.request_method
 
-            config = endpoint.instance_variable_get(:@config) if endpoint.instance_variable_defined?(:@config)
-            http_methods = config&.http_methods if config.respond_to?(:http_methods)
-            http_methods&.first&.to_s&.upcase
+            return unless endpoint.instance_variable_defined?(:@config)
+
+            config = endpoint.instance_variable_get(:@config)
+            return unless config.respond_to?(:http_methods)
+
+            http_methods = config.http_methods
+            return if http_methods.nil? || http_methods.empty?
+
+            http_methods.first.to_s.upcase
           end
 
           def code_namespace(endpoint)
