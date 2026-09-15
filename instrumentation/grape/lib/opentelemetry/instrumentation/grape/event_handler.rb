@@ -88,11 +88,16 @@ module OpenTelemetry
           end
 
           def request_method(endpoint)
-            method = endpoint.options[:method]&.first if endpoint.options.is_a?(Hash)
-            return method if method
+            if endpoint.respond_to?(:options)
+              opts = endpoint.options
+              method = opts[:method]&.first if opts.is_a?(Hash)
+              return method if method
+            end
 
-            route = endpoint.routes&.first
-            return route.request_method if route.respond_to?(:request_method) && route.request_method
+            if endpoint.respond_to?(:routes)
+              route = endpoint.routes&.first
+              return route.request_method if route.respond_to?(:request_method) && route.request_method
+            end
 
             return unless endpoint.instance_variable_defined?(:@config)
 
@@ -103,7 +108,10 @@ module OpenTelemetry
           end
 
           def code_namespace(endpoint)
-            owner = endpoint.options[:for] if endpoint.options.is_a?(Hash)
+            if endpoint.respond_to?(:options)
+              opts = endpoint.options
+              owner = opts[:for] if opts.is_a?(Hash)
+            end
             owner ||= endpoint.api if endpoint.respond_to?(:api)
             if owner.nil? && endpoint.instance_variable_defined?(:@config)
               config = endpoint.instance_variable_get(:@config)
@@ -117,6 +125,8 @@ module OpenTelemetry
           end
 
           def path(endpoint)
+            return '' unless endpoint.respond_to?(:routes)
+
             routes = endpoint.routes
             return '' unless routes && !routes.empty?
 
@@ -133,8 +143,10 @@ module OpenTelemetry
           end
 
           def raw_endpoint_path(endpoint)
-            opts = endpoint.options
-            return Array(opts[:path]) if opts.is_a?(Hash) && opts[:path]
+            if endpoint.respond_to?(:options)
+              opts = endpoint.options
+              return Array(opts[:path]) if opts.is_a?(Hash) && opts[:path]
+            end
 
             if endpoint.instance_variable_defined?(:@config)
               config = endpoint.instance_variable_get(:@config)
