@@ -158,19 +158,27 @@ module OpenTelemetry
           def route_namespace(route)
             ns = route.namespace if route.respond_to?(:namespace)
             return ns if ns && !ns.to_s.empty?
+            return unless route.respond_to?(:options)
 
-            route.options[:namespace] if route.options.is_a?(Hash)
+            opts = route.options
+            opts[:namespace] if opts.is_a?(Hash)
           end
 
           def route_version(route)
             version = route.version if route.respond_to?(:version)
-            version = route.options[:version] if version.nil? && route.options.is_a?(Hash)
+            if version.nil? && route.respond_to?(:options)
+              opts = route.options
+              version = opts[:version] if opts.is_a?(Hash)
+            end
             version.is_a?(Array) ? version.first&.to_s : version&.to_s
           end
 
           def route_prefix(route)
             prefix = route.prefix if route.respond_to?(:prefix)
-            prefix = route.options[:prefix] if prefix.nil? && route.options.is_a?(Hash)
+            if prefix.nil? && route.respond_to?(:options)
+              opts = route.options
+              prefix = opts[:prefix] if opts.is_a?(Hash)
+            end
             prefix&.to_s
           end
 
