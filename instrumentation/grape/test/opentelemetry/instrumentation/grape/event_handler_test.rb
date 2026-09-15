@@ -7,6 +7,7 @@
 require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/grape'
+require_relative '../../../../lib/opentelemetry/instrumentation/grape/event_handler'
 
 describe OpenTelemetry::Instrumentation::Grape::EventHandler do
   let(:handler) { OpenTelemetry::Instrumentation::Grape::EventHandler }
