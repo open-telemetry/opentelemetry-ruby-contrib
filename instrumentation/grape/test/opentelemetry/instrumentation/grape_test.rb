@@ -96,6 +96,28 @@ describe OpenTelemetry::Instrumentation::Grape do
       end
     end
 
+    describe 'when a POST API endpoint receives a request' do
+      class PostAPI < Grape::API
+        format :json
+        post :items do
+          { message: 'created' }
+        end
+      end
+
+      let(:app) { build_rack_app(PostAPI) }
+      let(:request_path) { '/items' }
+      let(:expected_span_name) { 'POST /items' }
+
+      before { app.post request_path }
+
+      it 'produces a Rack span with the expected name and attributes' do
+        _(spans.length).must_equal 1
+        _(span.name).must_equal expected_span_name
+        _(span.attributes['code.namespace']).must_equal 'PostAPI'
+        _(span.attributes['http.route']).must_equal '/items'
+      end
+    end
+
     describe 'when an API endpoint with a route param receives a request' do
       class RouteParamAPI < Grape::API
         format :json
@@ -161,6 +183,30 @@ describe OpenTelemetry::Instrumentation::Grape do
       it 'sets the correct span name and adds the correct path attribute to the Rack span' do
         _(span.name).must_equal expected_span_name
         _(span.attributes['http.route']).must_equal '/internal/users'
+      end
+    end
+
+    describe 'when an API endpoint with versioning and resource route receives a request' do
+      class ResourceAPI < Grape::API
+        version 'v2', using: :path
+        prefix 'api'
+        resource :posts do
+          get ':post_id' do
+            { post_id: params[:post_id] }
+          end
+        end
+      end
+
+      let(:app) { build_rack_app(ResourceAPI) }
+      let(:request_path) { '/api/v2/posts/42' }
+      let(:expected_span_name) { 'GET /api/v2/posts/:post_id' }
+
+      before { app.get request_path }
+
+      it 'sets the correct span name and adds the correct path attribute to the Rack span' do
+        _(span.name).must_equal expected_span_name
+        _(span.attributes['code.namespace']).must_equal 'ResourceAPI'
+        _(span.attributes['http.route']).must_equal '/api/v2/posts/:post_id'
       end
     end
 

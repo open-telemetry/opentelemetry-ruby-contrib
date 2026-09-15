@@ -89,20 +89,17 @@ module OpenTelemetry
 
           def request_method(endpoint)
             method = endpoint.options[:method]&.first if endpoint.options.is_a?(Hash)
-            return method.to_s.upcase if method
+            return method if method
 
             route = endpoint.routes&.first
-            return route.request_method.to_s.upcase if route.respond_to?(:request_method) && route.request_method
+            return route.request_method if route.respond_to?(:request_method) && route.request_method
 
             return unless endpoint.instance_variable_defined?(:@config)
 
             config = endpoint.instance_variable_get(:@config)
             return unless config.respond_to?(:http_methods)
 
-            http_methods = config.http_methods
-            return if http_methods.nil? || http_methods.empty?
-
-            http_methods.first.to_s.upcase
+            config.http_methods&.first
           end
 
           def code_namespace(endpoint)
@@ -152,9 +149,9 @@ module OpenTelemetry
             origin ||= route.path if route.respond_to?(:path) && route.path
             return '' unless origin
 
-            result = origin.dup.to_s.split('(').first
+            result = origin.to_s.split('(').first || ''
             version = route_version(route)
-            result.gsub!(':version', version) if version && !version.empty? && result.include?(':version')
+            result = result.gsub(':version', version) if version && !version.empty? && result.include?(':version')
             result.start_with?('/') ? result : "/#{result}"
           end
 
