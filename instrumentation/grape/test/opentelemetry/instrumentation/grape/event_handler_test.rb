@@ -50,19 +50,31 @@ describe OpenTelemetry::Instrumentation::Grape::EventHandler do
 
   describe '#code_namespace' do
     it 'returns owner name from endpoint options when options is a Hash' do
-      api_class = Class.new { def self.name; 'MyAPI'; end }
+      api_class = Class.new do
+        def self.name
+          'MyAPI'
+        end
+      end
       endpoint = Struct.new(:options).new({ for: api_class })
       _(handler.send(:code_namespace, endpoint)).must_equal 'MyAPI'
     end
 
     it 'falls back to endpoint api reader' do
-      api_class = Class.new { def self.name; 'MyAPI'; end }
+      api_class = Class.new do
+        def self.name
+          'MyAPI'
+        end
+      end
       endpoint = Struct.new(:options, :api).new(nil, api_class)
       _(handler.send(:code_namespace, endpoint)).must_equal 'MyAPI'
     end
 
     it 'falls back to config api reader' do
-      api_class = Class.new { def self.name; 'ConfigAPI'; end }
+      api_class = Class.new do
+        def self.name
+          'ConfigAPI'
+        end
+      end
       config = Struct.new(:api).new(api_class)
       endpoint_class = Class.new do
         def initialize(config)
@@ -78,7 +90,11 @@ describe OpenTelemetry::Instrumentation::Grape::EventHandler do
     end
 
     it 'falls back to config for reader' do
-      api_class = Class.new { def self.name; 'ForAPI'; end }
+      api_class = Class.new do
+        def self.name
+          'ForAPI'
+        end
+      end
       config = Struct.new(:for).new(api_class)
       endpoint_class = Class.new do
         def initialize(config)
@@ -94,7 +110,11 @@ describe OpenTelemetry::Instrumentation::Grape::EventHandler do
     end
 
     it 'uses base when owner name is nil' do
-      base_class = Class.new { def self.to_s; 'BaseAPI'; end }
+      base_class = Class.new do
+        def self.to_s
+          'BaseAPI'
+        end
+      end
       owner = Class.new
       owner.instance_variable_set(:@base, base_class)
       endpoint = Struct.new(:options, :api).new(nil, owner)
