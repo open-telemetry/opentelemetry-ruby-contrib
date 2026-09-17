@@ -7,7 +7,7 @@ if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
   end
 end
 
-%w[5.0.0 5.4.1].each do |version|
+%w[5.0.0 6.0.0].each do |version|
   appraise "redis-#{version}" do
     gem 'redis', "~> #{version}"
   end
