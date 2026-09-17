@@ -1,0 +1,3 @@
+ruby 4.0.5
+jruby 10.0.0.0
+truffleruby graal-34.0.0
