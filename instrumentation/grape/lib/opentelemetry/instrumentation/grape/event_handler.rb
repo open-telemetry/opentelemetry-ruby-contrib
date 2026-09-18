@@ -88,25 +88,110 @@ module OpenTelemetry
           end
 
           def request_method(endpoint)
-            endpoint.options[:method]&.first
+            if endpoint.respond_to?(:options)
+              opts = endpoint.options
+              method = opts[:method]&.first if opts.is_a?(Hash)
+              return method if method
+            end
+
+            if endpoint.respond_to?(:routes)
+              route = endpoint.routes&.first
+              return route.request_method if route.respond_to?(:request_method) && route.request_method
+            end
+
+            return unless endpoint.instance_variable_defined?(:@config)
+
+            config = endpoint.instance_variable_get(:@config)
+            return unless config.respond_to?(:http_methods)
+
+            config.http_methods&.first
           end
 
           def code_namespace(endpoint)
-            owner = endpoint.options[:for]
+            if endpoint.respond_to?(:options)
+              opts = endpoint.options
+              owner = opts[:for] if opts.is_a?(Hash)
+            end
+            owner ||= endpoint.api if endpoint.respond_to?(:api)
+            if owner.nil? && endpoint.instance_variable_defined?(:@config)
+              config = endpoint.instance_variable_get(:@config)
+              owner = config.api if config.respond_to?(:api)
+              owner ||= config.for if config.respond_to?(:for)
+            end
             return unless owner
 
-            base = owner.instance_variable_get(:@base)
+            base = owner.instance_variable_get(:@base) if owner.instance_variable_defined?(:@base)
             [owner.name, base&.to_s, owner.to_s].find { |value| value && !value.empty? }
           end
 
           def path(endpoint)
-            return '' unless endpoint.routes
+            return '' unless endpoint.respond_to?(:routes)
 
-            namespace = endpoint.routes.first.namespace
-            version = endpoint.routes.first.options[:version]&.to_s
-            prefix = endpoint.routes.first.options[:prefix]&.to_s
-            parts = [prefix, version] + namespace.split('/') + endpoint.options[:path]
-            parts.reject { |p| p.nil? || p.empty? || p.eql?('/') }.join('/').prepend('/')
+            routes = endpoint.routes
+            return '' unless routes && !routes.empty?
+
+            route = routes.first
+
+            endpoint_path = raw_endpoint_path(endpoint)
+            return fallback_path_from_route(route) if endpoint_path.nil? || endpoint_path.empty?
+
+            namespace = route_namespace(route)
+            version = route_version(route)
+            prefix = route_prefix(route)
+            parts = [prefix, version] + namespace.to_s.split('/') + Array(endpoint_path)
+            parts.reject { |p| p.nil? || p.to_s.empty? || p.to_s.eql?('/') }.join('/').prepend('/')
+          end
+
+          def raw_endpoint_path(endpoint)
+            if endpoint.respond_to?(:options)
+              opts = endpoint.options
+              return Array(opts[:path]) if opts.is_a?(Hash) && opts[:path]
+            end
+
+            if endpoint.instance_variable_defined?(:@config)
+              config = endpoint.instance_variable_get(:@config)
+              return Array(config.path) if config.respond_to?(:path) && config.path
+            end
+
+            nil
+          end
+
+          def fallback_path_from_route(route)
+            origin = route.origin if route.respond_to?(:origin) && route.origin
+            origin ||= route.path if route.respond_to?(:path) && route.path
+            return '' unless origin
+
+            result = origin.to_s.split('(').first || ''
+            version = route_version(route)
+            result = result.gsub(':version', version) if version && !version.empty? && result.include?(':version')
+            result.start_with?('/') ? result : "/#{result}"
+          end
+
+          def route_namespace(route)
+            ns = route.namespace if route.respond_to?(:namespace)
+            return ns if ns && !ns.to_s.empty?
+            return unless route.respond_to?(:options)
+
+            opts = route.options
+            opts[:namespace] if opts.is_a?(Hash)
+          end
+
+          def route_version(route)
+            version = route.version if route.respond_to?(:version)
+            if version.nil? && route.respond_to?(:options)
+              opts = route.options
+              version = opts[:version] if opts.is_a?(Hash)
+            end
+            version.is_a?(Array) ? version.first&.to_s : version&.to_s
+          end
+
+          def route_prefix(route)
+            prefix = route.prefix if route.respond_to?(:prefix)
+            if prefix.nil? && route.respond_to?(:options)
+              opts = route.options
+              prefix = opts[:prefix] if opts.is_a?(Hash)
+            end
+            prefix&.to_s
           end
 
           def formatter_type(formatter)
