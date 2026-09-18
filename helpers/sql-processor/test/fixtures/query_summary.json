@@ -1,0 +1,1385 @@
+[
+  {
+      "name": "numeric_literal_integers",
+      "input": {
+          "query": "SELECT 12, -12, +12"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "caching_query_summaries",
+      "input": {
+          "query": "SELECT 12, -12, +12"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "nil_input",
+      "input": {
+          "query": null 
+      },
+      "expected": {
+          "db.query.summary": null
+      }
+  },
+  {
+      "name": "deeply_nested_subqueries",
+      "input": {
+          "query": "SELECT * FROM (SELECT * FROM (SELECT * FROM my_table))"
+      },
+      "expected": {
+          "db.query.summary": "SELECT SELECT SELECT my_table"
+      }
+  },
+  {
+      "name": "numeric_literal_with_decimal_point",
+      "input": {
+          "query": "SELECT 12.34, -12.34, +12.34, .01, -.01"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "numeric_literal_exponential",
+      "input": {
+          "query": "SELECT 12.34e56, -12.34e56, +12.34e56"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "numeric_literal_negative_exponential",
+      "input": {
+          "query": "SELECT 12.34e-56, -12.34e-56, +12.34e-56"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "arithmetic_on_numeric_literals",
+      "input": {
+          "query": "SELECT 99+100"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "hex_literal",
+      "input": {
+          "query": "SELECT 0xDEADBEEF, 0XdeadBEEF"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "string_literal",
+      "input": {
+          "query": "SELECT 'hello'"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "string_literal_escaped_single_quote",
+      "input": {
+          "query": "SELECT 'My name''s not important'"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "string_with_embedded_newline",
+      "input": {
+          "query": "SELECT 'My name is \n not important'"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "numbers_in_identifiers",
+      "input": {
+          "query": "SELECT c3po, r2d2 FROM covid19 WHERE n1h1=1234"
+      },
+      "expected": {
+          "db.query.summary": "SELECT covid19"
+      }
+  },
+  {
+      "name": "periods_in_identifiers",
+      "input": {
+          "query": "SELECT a FROM dbo.Table JOIN dbo.AnotherTable"
+      },
+      "expected": {
+          "db.query.summary": "SELECT dbo.Table dbo.AnotherTable"
+      }
+  },
+  {
+      "name": "insert_into",
+      "input": {
+          "query": "INSERT INTO X VALUES(1, 23456, 123.456, 99+100)"
+      },
+      "expected": {
+          "db.query.summary": "INSERT X"
+      }
+  },
+  {
+      "name": "uuid",
+      "input": {
+          "query": "SELECT { guid '01234567-89ab-cdef-0123-456789abcdef' }"
+      },
+      "expected": {
+          "db.query.summary": "SELECT"
+      }
+  },
+  {
+      "name": "in_clause",
+      "input": {
+          "query": "SELECT * FROM table WHERE value IN (123, 456, 'abc')"
+      },
+      "expected": {
+          "db.query.summary": "SELECT table"
+      }
+  },
+  {
+      "name": "comments",
+      "input": {
+          "query": "SELECT column -- end of line comment\nFROM /* block \n comment */ table"
+      },
+      "expected": {
+          "db.query.summary": "SELECT table"
+      }
+  },
+  {
+      "name": "insert_into_select",
+      "input": {
+          "query": "INSERT INTO shipping_details\n(order_id,\naddress)\nSELECT order_id,\naddress\nFROM   orders\nWHERE  order_id = 1"
+      },
+      "expected": {
+          "db.query.summary": "INSERT shipping_details SELECT orders"
+      }
+  },
+  {
+      "name": "select_nested_query",
+      "input": {
+          "query": "SELECT order_date\nFROM   (SELECT *\nFROM   orders o\nJOIN customers c\nON o.customer_id = c.customer_id)"
+      },
+      "expected": {
+          "db.query.summary": "SELECT SELECT orders customers"
+      }
+  },
+  {
+      "name": "select_nested_query_case_preserved",
+      "input": {
+          "query": "SELEcT order_date\nFROM   (sELECT *\nFROM   orders o\nJOIN customers c\nON o.customer_id = c.customer_id)"
+      },
+      "expected": {
+          "db.query.summary": "SELEcT sELECT orders customers"
+      }
+  },
+  {
+      "name": "case_preserved",
+      "input": {
+          "query": "SELEcT order_date\nFROM ORders"
+      },
+      "expected": {
+          "db.query.summary": "SELEcT ORders"
+      }
+  },
+  {
+      "name": "cross_join",
+      "input": {
+          "query": "SELECT * FROM Orders o CROSS JOIN OrderDetails od"
+      },
+      "expected": {
+          "db.query.summary": "SELECT Orders OrderDetails"
+      }
+  },
+  {
+      "name": "cross_join_comma_separated_syntax",
+      "input": {
+          "query": "SELECT * FROM Orders o, OrderDetails od"
+      },
+      "expected": {
+          "db.query.summary": "SELECT Orders OrderDetails"
+      }
+  },
+  {
+      "name": "left_outer_join",
+      "input": {
+          "query": "SELECT c.name, o.id FROM customers c LEFT JOIN orders o ON c.id = o.customer_id"
+      },
+      "expected": {
+          "db.query.summary": "SELECT customers orders"
+      }
+  },
+  {
+      "name": "create_table",
+      "input": {
+          "query": "CREATE  TABLE MyTable (\n    ID NOT NULL IDENTITY(1,1) PRIMARY KEY\n)"
+      },
+      "expected": {
+          "db.query.summary": "CREATE TABLE MyTable"
+      }
+  },
+  {
+      "name": "alter_table",
+      "input": {
+          "query": "ALTER  TABLE MyTable ADD Name varchar(255)"
+      },
+      "expected": {
+          "db.query.summary": "ALTER TABLE MyTable"
+      }
+  },
+  {
+      "name": "drop_table",
+      "input": {
+          "query": "DROP  TABLE MyTable"
+      },
+      "expected": {
+          "db.query.summary": "DROP TABLE MyTable"
+      }
+  },
+  {
+      "name": "query_that_performs_multiple_operations",
+      "input": {
+          "query": "INSERT INTO shipping_details(order_id, address) SELECT order_id, address FROM orders WHERE  order_id = ?"
+      },
+      "expected": {
+          "db.query.summary": "INSERT shipping_details SELECT orders"
+      }
+  },
+  {
+      "name": "query_that_performs_an_operation_thats_applied_to_multiple_collections",
+      "input": {
+          "db.system.name": "other_sql",
+          "query": "SELECT * FROM   songs, artists WHERE songs.artist_id == artists.id"
+      },
+      "expected": {
+          "db.query.summary": "SELECT songs artists"
+      }
+  },
+  {
+      "name": "query_that_performs_operation_on_multiple_collections_with_double-quotes_or_other_punctuation",
+      "input": {
+          "query": "SELECT * FROM   \"song list\", 'artists'"
+      },
+      "expected": {
+          "db.query.summary": "SELECT \"song list\" 'artists'"
+      }
+  },
+  {
+      "name": "update_statement",
+      "input": {
+          "query": "UPDATE Customers SET ContactName = 'Alfred Schmidt', City= 'Frankfurt' WHERE CustomerID = 1"
+      },
+      "expected": {
+          "db.query.summary": "UPDATE Customers"
+      }
+  },
+  {
+      "name": "delete_statement",
+      "input": {
+          "query": "DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste'"
+      },
+      "expected": {
+          "db.query.summary": "DELETE Customers"
+      }
+  },
+  {
+      "name": "truncate_table_statement",
+      "input": {
+          "query": "TRUNCATE TABLE Customers"
+      },
+      "expected": {
+          "db.query.summary": "TRUNCATE TABLE Customers"
+      }
+  },
+  {
+      "name": "with_clause_cte",
+      "input": {
+          "query": "WITH regional_sales AS (SELECT region, SUM(amount) AS total_sales FROM orders GROUP BY region) SELECT region, total_sales FROM regional_sales WHERE total_sales > 1000"
+      },
+      "expected": {
+          "db.query.summary": "WITH regional_sales SELECT orders SELECT regional_sales"
+      }
+  },
+  {
+      "name": "union_statement",
+      "input": {
+          "query": "SELECT City FROM Customers UNION ALL SELECT City FROM Suppliers ORDER BY City"
+      },
+      "expected": {
+          "db.query.summary": "SELECT Customers UNION ALL SELECT Suppliers"
+      }
+  },
+  {
+      "name": "group_by_and_having_clauses",
+      "input": {
+          "query": "SELECT COUNT(CustomerID), Country FROM Customers WHERE Country != 'USA' GROUP BY Country HAVING COUNT(CustomerID) > 5"
+      },
+      "expected": {
+          "db.query.summary": "SELECT Customers"
+      }
+  },
+  {
+      "name": "boolean_and_null_literals",
+      "input": {
+          "query": "SELECT * FROM my_table WHERE a IS NOT NULL AND b = TRUE AND c = FALSE"
+      },
+      "expected": {
+          "db.query.summary": "SELECT my_table"
+      }
+  },
+  {
+      "name": "multiple_joins_and_aliases",
+      "input": {
+          "query": "SELECT o.OrderID, c.CustomerName, s.ShipperName FROM ((Orders AS o INNER JOIN Customers AS c ON o.CustomerID = c.CustomerID) INNER JOIN Shippers AS s ON o.ShipperID = s.ShipperID)"
+      },
+      "expected": {
+          "db.query.summary": "SELECT Orders Customers Shippers"
+      }
+  },
+  {
+      "name": "window_function_over_partition",
+      "input": {
+          "query": "SELECT name, salary, ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) as rank FROM employees"
+      },
+      "expected": {
+          "db.query.summary": "SELECT employees"
+      }
+  },
+  {
+      "name": "case_statement",
+      "input": {
+          "query": "SELECT OrderID, Quantity, CASE WHEN Quantity > 30 THEN 'Large' WHEN Quantity > 10 THEN 'Medium' ELSE 'Small' END AS QuantityText FROM OrderDetails"
+      },
+      "expected": {
+          "db.query.summary": "SELECT OrderDetails"
+      }
+  },
+  {
+      "name": "like_predicate",
+      "input": {
+          "query": "SELECT * FROM products WHERE product_name LIKE 'Chai%'"
+      },
+      "expected": {
+          "db.query.summary": "SELECT products"
+      }
+  },
+  {
+      "name": "between_predicate",
+      "input": {
+          "query": "SELECT * FROM products WHERE price BETWEEN 10 AND 20"
+      },
+      "expected": {
+          "db.query.summary": "SELECT products"
+      }
+  },
+  {
+    "name": "create_index",
+    "input": {
+        "query": "CREATE INDEX idx_name ON MyTable (column1)"
+    },
+    "expected": {
+        "db.query.summary": "CREATE INDEX idx_name"
+    }
+  },
+  {
+    "name": "create_database",
+    "input": {
+      "query": "CREATE DATABASE my_db"
+    },
+    "expected": {
+        "db.query.summary": "CREATE DATABASE my_db"
+    }
+  },
+  {
+    "name": "create_procedure",
+    "input": {
+      "query": "CREATE PROCEDURE my_proc AS BEGIN SELECT * FROM MyTable END"
+    },
+    "expected": {
+      "db.query.summary": "CREATE PROCEDURE my_proc SELECT MyTable"
+    }
+  },
+  {
+    "name": "oracle_angle_quote",
+    "input": {
+        "query": "select * from foo where bar=q'<baz's>' and x=5"
+    },
+    "expected": {
+        "db.query.summary": "select foo"
+    }
+  },
+  {
+    "name": "cassandra_blobs",
+    "input" : {
+      "query": "select * from foo where bar=0xabcdef123 and x=5"
+    },
+    "expected": {
+        "db.query.summary": "select foo"
+    }
+  },
+  {
+    "name": "keyword_prefix_for_target",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT * FROM SelectedData"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT * FROM SelectedData"
+      ],
+      "db.query.summary": "SELECT SelectedData"
+    }
+  },
+  {
+    "name": "summary_truncated",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT * FROM Vecnzotjejucwitzgrfifscuevittljlnrlpbruvkezeptqciyvbjhsytmbucbhwttidayecnthaztxbyppbyztcqccedeirgkxzrfezjxfwbtuqxeusroqgbvulgmsvnelovkxqsaqmlogomkhtjuirzhaocxlrmerihnmwaelullionarkmxwdamhduwrbooknqsnilurutgyerxphokeqnnoumbpcfjtmqrbpukjllofiwaltyoawkp o, OrderDetails od"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT * FROM Vecnzotjejucwitzgrfifscuevittljlnrlpbruvkezeptqciyvbjhsytmbucbhwttidayecnthaztxbyppbyztcqccedeirgkxzrfezjxfwbtuqxeusroqgbvulgmsvnelovkxqsaqmlogomkhtjuirzhaocxlrmerihnmwaelullionarkmxwdamhduwrbooknqsnilurutgyerxphokeqnnoumbpcfjtmqrbpukjllofiwaltyoawkp o, OrderDetails od"
+      ],
+      "db.query.summary": "SELECT Vecnzotjejucwitzgrfifscuevittljlnrlpbruvkezeptqciyvbjhsytmbucbhwttidayecnthaztxbyppbyztcqccedeirgkxzrfezjxfwbtuqxeusroqgbvulgmsvnelovkxqsaqmlogomkhtjuirzhaocxlrmerihnmwaelullionarkmxwdamhduwrbooknqsnilurutgyerxphokeqnnoumbpcfjtmqrbpukjllofiwaltyoaw"
+    }
+  },
+  {
+    "name": "create_unique_clustered_index",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE UNIQUE CLUSTERED INDEX IX_Employee_Email ON Employees (Email);"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE UNIQUE CLUSTERED INDEX IX_Employee_Email ON Employees (Email);"
+      ],
+      "db.query.summary": "CREATE INDEX IX_Employee_Email"
+    }
+  },
+  {
+    "name": "create_unique_index",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE UNIQUE INDEX IX_Employee_Email ON Employees (Email);"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE UNIQUE INDEX IX_Employee_Email ON Employees (Email);"
+      ],
+      "db.query.summary": "CREATE INDEX IX_Employee_Email"
+    }
+  },
+  {
+    "name": "select_distinct",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT DISTINCT Country FROM Countries"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT DISTINCT Country FROM Countries"
+      ],
+      "db.query.summary": "SELECT Countries"
+    }
+  },
+  {
+    "name": "select_distinct_with_join",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT DISTINCT o.Id FROM Orders o JOIN Customers c ON o.CustomerId = c.Id"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT DISTINCT o.Id FROM Orders o JOIN Customers c ON o.CustomerId = c.Id"
+      ],
+      "db.query.summary": "SELECT Orders Customers"
+    }
+  },
+  {
+    "name": "create_table_with_if_not_exists",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE TABLE IF NOT EXISTS Users (Id INT PRIMARY KEY, Name NVARCHAR(100));"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE TABLE IF NOT EXISTS Users (Id INT PRIMARY KEY, Name NVARCHAR(?));",
+        "CREATE TABLE IF NOT EXISTS Users (Id INT PRIMARY KEY, Name NVARCHAR(100));"
+      ],
+      "db.query.summary": "CREATE TABLE Users"
+    }
+  },
+  {
+    "name": "create_view_with_select",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE VIEW ActiveUsers AS SELECT * FROM Users WHERE IsActive = 1;"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE VIEW ActiveUsers AS SELECT * FROM Users WHERE IsActive = ?;"
+      ],
+      "db.query.summary": "CREATE VIEW ActiveUsers"
+    }
+  },
+  {
+    "name": "alter_table_add_column",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER TABLE Orders ADD COLUMN OrderStatus NVARCHAR(50);"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER TABLE Orders ADD COLUMN OrderStatus NVARCHAR(?);",
+        "ALTER TABLE Orders ADD COLUMN OrderStatus NVARCHAR(50);"
+      ],
+      "db.query.summary": "ALTER TABLE Orders"
+    }
+  },
+  {
+    "name": "alter_table_rename_column",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER TABLE Orders RENAME COLUMN OldName TO NewName;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER TABLE Orders RENAME COLUMN OldName TO NewName;"
+      ],
+      "db.query.summary": "ALTER TABLE Orders"
+    }
+  },
+  {
+    "name": "create_procedure_with_params",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE PROCEDURE GetUserById @UserId INT AS SELECT * FROM Users WHERE Id = @UserId;"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE PROCEDURE GetUserById @UserId INT AS SELECT * FROM Users WHERE Id = @UserId;"
+      ],
+      "db.query.summary": "CREATE PROCEDURE GetUserById"
+    }
+  },
+  {
+    "name": "alter_view_as_select",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER VIEW ActiveUsers AS SELECT * FROM Users WHERE IsActive = 1;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER VIEW ActiveUsers AS SELECT * FROM Users WHERE IsActive = ?;"
+      ],
+      "db.query.summary": "ALTER VIEW ActiveUsers"
+    }
+  },
+  {
+    "name": "create_trigger_on_table",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE TRIGGER trg_UpdateTimestamp ON Orders AFTER UPDATE AS BEGIN UPDATE Orders SET UpdatedAt = GETDATE() WHERE Id IN (SELECT Id FROM inserted); END;"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE TRIGGER trg_UpdateTimestamp ON Orders AFTER UPDATE AS BEGIN UPDATE Orders SET UpdatedAt = GETDATE() WHERE Id IN (SELECT Id FROM inserted); END;"
+      ],
+      "db.query.summary": "CREATE TRIGGER trg_UpdateTimestamp"
+    }
+  },
+  {
+    "name": "alter_procedure_with_params",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER PROCEDURE UpdateUserEmail @UserId INT, @Email NVARCHAR(100) AS UPDATE Users SET Email = @Email WHERE Id = @UserId;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER PROCEDURE UpdateUserEmail @UserId INT, @Email NVARCHAR(?) AS UPDATE Users SET Email = @Email WHERE Id = @UserId;",
+        "ALTER PROCEDURE UpdateUserEmail @UserId INT, @Email NVARCHAR(100) AS UPDATE Users SET Email = @Email WHERE Id = @UserId;"
+      ],
+      "db.query.summary": "ALTER PROCEDURE UpdateUserEmail"
+    }
+  },
+  {
+    "name": "create_index_with_include",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE INDEX IX_Orders_CustomerId ON Orders (CustomerId) INCLUDE (OrderDate, TotalAmount);"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE INDEX IX_Orders_CustomerId ON Orders (CustomerId) INCLUDE (OrderDate, TotalAmount);"
+      ],
+      "db.query.summary": "CREATE INDEX IX_Orders_CustomerId"
+    }
+  },
+  {
+    "name": "alter_table_drop_column",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER TABLE Orders DROP COLUMN TempColumn;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER TABLE Orders DROP COLUMN TempColumn;"
+      ],
+      "db.query.summary": "ALTER TABLE Orders"
+    }
+  },
+  {
+    "name": "drop_trigger",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "DROP TRIGGER IF EXISTS trg_AfterInsert;"
+    },
+    "expected": {
+      "db.query.text": [
+        "DROP TRIGGER IF EXISTS trg_AfterInsert;"
+      ],
+      "db.query.summary": "DROP TRIGGER trg_AfterInsert"
+    }
+  },
+  {
+    "name": "alter_trigger",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER TRIGGER trg_AfterInsert ON Employees AFTER INSERT AS BEGIN INSERT INTO AuditLog (EmployeeId, Action) SELECT Id, 'INSERT' FROM inserted; END;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER TRIGGER trg_AfterInsert ON Employees AFTER INSERT AS BEGIN INSERT INTO AuditLog (EmployeeId, Action) SELECT Id, ? FROM inserted; END;"
+      ],
+      "db.query.summary": "ALTER TRIGGER trg_AfterInsert"
+    }
+  },
+  {
+    "name": "create_procedure_with_multiple_params",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE PROCEDURE AddEmployee @Name NVARCHAR(100), @Email NVARCHAR(100) AS INSERT INTO Employees (Name, Email) VALUES (@Name, @Email);"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE PROCEDURE AddEmployee @Name NVARCHAR(?), @Email NVARCHAR(?) AS INSERT INTO Employees (Name, Email) VALUES (@Name, @Email);",
+        "CREATE PROCEDURE AddEmployee @Name NVARCHAR(100), @Email NVARCHAR(100) AS INSERT INTO Employees (Name, Email) VALUES (@Name, @Email);"
+      ],
+      "db.query.summary": "CREATE PROCEDURE AddEmployee"
+    }
+  },
+  {
+    "name": "drop_procedure",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "DROP PROCEDURE IF EXISTS RemoveEmployee;"
+    },
+    "expected": {
+      "db.query.text": [
+        "DROP PROCEDURE IF EXISTS RemoveEmployee;"
+      ],
+      "db.query.summary": "DROP PROCEDURE RemoveEmployee"
+    }
+  },
+  {
+    "name": "alter_procedure_add_param",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER PROCEDURE UpdateEmployeeEmail @EmployeeId INT, @Email NVARCHAR(100) AS UPDATE Employees SET Email = @Email WHERE Id = @EmployeeId;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER PROCEDURE UpdateEmployeeEmail @EmployeeId INT, @Email NVARCHAR(?) AS UPDATE Employees SET Email = @Email WHERE Id = @EmployeeId;",
+        "ALTER PROCEDURE UpdateEmployeeEmail @EmployeeId INT, @Email NVARCHAR(100) AS UPDATE Employees SET Email = @Email WHERE Id = @EmployeeId;"
+      ],
+      "db.query.summary": "ALTER PROCEDURE UpdateEmployeeEmail"
+    }
+  },
+  {
+    "name": "select_with_multiple_joins_and_group_by",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT o.Id, c.Name, SUM(oi.Quantity) FROM Orders o JOIN Customers c ON o.CustomerId = c.Id JOIN OrderItems oi ON o.Id = oi.OrderId GROUP BY o.Id, c.Name;"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT o.Id, c.Name, SUM(oi.Quantity) FROM Orders o JOIN Customers c ON o.CustomerId = c.Id JOIN OrderItems oi ON o.Id = oi.OrderId GROUP BY o.Id, c.Name;"
+      ],
+      "db.query.summary": "SELECT Orders Customers OrderItems"
+    }
+  },
+  {
+    "name": "select_with_distinct_and_window_function",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT DISTINCT Department, COUNT(*) OVER (PARTITION BY Department) AS DeptCount FROM Employees;"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT DISTINCT Department, COUNT(*) OVER (PARTITION BY Department) AS DeptCount FROM Employees;"
+      ],
+      "db.query.summary": "SELECT Employees"
+    }
+  },
+  {
+    "name": "select_with_union_and_order_by",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT Id, Name FROM Customers UNION SELECT Id, Name FROM Suppliers ORDER BY Name;"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT Id, Name FROM Customers UNION SELECT Id, Name FROM Suppliers ORDER BY Name;"
+      ],
+      "db.query.summary": "SELECT Customers Suppliers"
+    }
+  },
+  {
+    "name": "create_database",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE DATABASE TestDb;"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE DATABASE TestDb;"
+      ],
+      "db.query.summary": "CREATE DATABASE TestDb"
+    }
+  },
+  {
+    "name": "alter_database",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER DATABASE TestDb MODIFY NAME = NewTestDb;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER DATABASE TestDb MODIFY NAME = NewTestDb;"
+      ],
+      "db.query.summary": "ALTER DATABASE TestDb"
+    }
+  },
+  {
+    "name": "drop_database",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "DROP DATABASE IF EXISTS TestDb;"
+    },
+    "expected": {
+      "db.query.text": [
+        "DROP DATABASE IF EXISTS TestDb;"
+      ],
+      "db.query.summary": "DROP DATABASE TestDb"
+    }
+  },
+  {
+    "name": "create_schema",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE SCHEMA Reporting;"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE SCHEMA Reporting;"
+      ],
+      "db.query.summary": "CREATE SCHEMA Reporting"
+    }
+  },
+  {
+    "name": "alter_schema",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER SCHEMA Reporting TRANSFER dbo.OldTable;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER SCHEMA Reporting TRANSFER dbo.OldTable;"
+      ],
+      "db.query.summary": "ALTER SCHEMA Reporting"
+    }
+  },
+  {
+    "name": "drop_schema",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "DROP SCHEMA IF EXISTS Reporting;"
+    },
+    "expected": {
+      "db.query.text": [
+        "DROP SCHEMA IF EXISTS Reporting;"
+      ],
+      "db.query.summary": "DROP SCHEMA Reporting"
+    }
+  },
+  {
+    "name": "create_sequence",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE SEQUENCE SalesSeq START WITH 1 INCREMENT BY 1;"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE SEQUENCE SalesSeq START WITH ? INCREMENT BY ?;"
+      ],
+      "db.query.summary": "CREATE SEQUENCE SalesSeq"
+    }
+  },
+  {
+    "name": "alter_sequence",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER SEQUENCE SalesSeq RESTART WITH 100;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER SEQUENCE SalesSeq RESTART WITH ?;"
+      ],
+      "db.query.summary": "ALTER SEQUENCE SalesSeq"
+    }
+  },
+  {
+    "name": "drop_sequence",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "DROP SEQUENCE SalesSeq;"
+    },
+    "expected": {
+      "db.query.text": [
+        "DROP SEQUENCE SalesSeq;"
+      ],
+      "db.query.summary": "DROP SEQUENCE SalesSeq"
+    }
+  },
+  {
+    "name": "create_function_tsql",
+    "input": {
+      "db.system.name": "microsoft.sql_server",
+      "query": "CREATE FUNCTION dbo.GetTotal(@a INT, @b INT) RETURNS INT AS BEGIN RETURN @a + @b; END;"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE FUNCTION dbo.GetTotal(@a INT, @b INT) RETURNS INT AS BEGIN RETURN @a + @b; END;"
+      ],
+      "db.query.summary": "CREATE FUNCTION dbo.GetTotal"
+    }
+  },
+  {
+    "name": "alter_function_tsql",
+    "input": {
+      "db.system.name": "microsoft.sql_server",
+      "query": "ALTER FUNCTION dbo.GetTotal(@a INT, @b INT) RETURNS INT AS BEGIN RETURN @a * @b; END;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER FUNCTION dbo.GetTotal(@a INT, @b INT) RETURNS INT AS BEGIN RETURN @a * @b; END;"
+      ],
+      "db.query.summary": "ALTER FUNCTION dbo.GetTotal"
+    }
+  },
+  {
+    "name": "drop_function_tsql",
+    "input": {
+      "db.system.name": "microsoft.sql_server",
+      "query": "DROP FUNCTION dbo.GetTotal;"
+    },
+    "expected": {
+      "db.query.text": [
+        "DROP FUNCTION dbo.GetTotal;"
+      ],
+      "db.query.summary": "DROP FUNCTION dbo.GetTotal"
+    }
+  },
+  {
+    "name": "create_user",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE USER johndoe WITH PASSWORD = 'password';"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE USER johndoe WITH PASSWORD = ?;"
+      ],
+      "db.query.summary": "CREATE USER johndoe"
+    }
+  },
+  {
+    "name": "alter_user",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER USER johndoe WITH PASSWORD = 'newpassword';"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER USER johndoe WITH PASSWORD = ?;"
+      ],
+      "db.query.summary": "ALTER USER johndoe"
+    }
+  },
+  {
+    "name": "drop_user",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "DROP USER IF EXISTS johndoe;"
+    },
+    "expected": {
+      "db.query.text": [
+        "DROP USER IF EXISTS johndoe;"
+      ],
+      "db.query.summary": "DROP USER johndoe"
+    }
+  },
+  {
+    "name": "create_role",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE ROLE app_admin;"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE ROLE app_admin;"
+      ],
+      "db.query.summary": "CREATE ROLE app_admin"
+    }
+  },
+  {
+    "name": "alter_role",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER ROLE app_admin ADD MEMBER johndoe;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER ROLE app_admin ADD MEMBER johndoe;"
+      ],
+      "db.query.summary": "ALTER ROLE app_admin"
+    }
+  },
+  {
+    "name": "drop_role",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "DROP ROLE IF EXISTS app_admin;"
+    },
+    "expected": {
+      "db.query.text": [
+        "DROP ROLE IF EXISTS app_admin;"
+      ],
+      "db.query.summary": "DROP ROLE app_admin"
+    }
+  },
+  {
+    "name": "alter_index",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER INDEX IX_Employee_Email ON Employees REBUILD;"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER INDEX IX_Employee_Email ON Employees REBUILD;"
+      ],
+      "db.query.summary": "ALTER INDEX IX_Employee_Email"
+    }
+  },
+  {
+    "name": "exec_sp_rename_table_tsql",
+    "input": {
+      "db.system.name": "microsoft.sql_server",
+      "query": "EXEC sp_rename 'OldTable', 'NewTable';"
+    },
+    "expected": {
+      "db.query.text": [
+        "EXEC sp_rename ?, ?;"
+      ],
+      "db.query.summary": "EXEC sp_rename"
+    }
+  },
+  {
+    "name": "exec_stored_procedure_no_params",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "EXEC GetAllEmployees;"
+    },
+    "expected": {
+      "db.query.text": [
+        "EXEC GetAllEmployees;"
+      ],
+      "db.query.summary": "EXEC GetAllEmployees"
+    }
+  },
+  {
+    "name": "exec_stored_procedure_with_params",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "EXEC GetEmployeeById @EmployeeId = 42;"
+    },
+    "expected": {
+      "db.query.text": [
+        "EXEC GetEmployeeById @EmployeeId = ?;"
+      ],
+      "db.query.summary": "EXEC GetEmployeeById"
+    }
+  },
+  {
+    "name": "insert_values_parenthesized_number",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "INSERT INTO T (A) VALUES (123)"
+    },
+    "expected": {
+      "db.query.text": [
+        "INSERT INTO T (A) VALUES (?)"
+      ],
+      "db.query.summary": "INSERT T"
+    }
+  },
+  {
+    "name": "parenthesized_constant_select",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT (123) AS C;"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT (?) AS C;"
+      ],
+      "db.query.summary": "SELECT"
+    }
+  },
+  {
+    "name": "update_set_parenthesized_constant",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "UPDATE T SET A = (999);"
+    },
+    "expected": {
+      "db.query.text": [
+        "UPDATE T SET A = (?);"
+      ],
+      "db.query.summary": "UPDATE"
+    }
+  },
+  {
+    "name": "create_table_default_parenthesized_constant",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE TABLE T (A INT DEFAULT (123));"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE TABLE T (A INT DEFAULT (?));"
+      ],
+      "db.query.summary": "CREATE TABLE T"
+    }
+  },
+  {
+    "name": "nested_parentheses_constant_select",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT ((123)) AS C;"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT ((?)) AS C;"
+      ],
+      "db.query.summary": "SELECT"
+    }
+  },
+  {
+    "name": "function_arg_parenthesized_constant",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT ABS((123));"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT ABS((?));"
+      ],
+      "db.query.summary": "SELECT"
+    }
+  },
+  {
+    "name": "between_parenthesized_constants",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT * FROM T WHERE Amount BETWEEN (10) AND (20);"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT * FROM T WHERE Amount BETWEEN (?) AND (?);"
+      ],
+      "db.query.summary": "SELECT T"
+    }
+  },
+  {
+    "name": "coalesce_first_arg_parenthesized_constant",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT * FROM T WHERE Id = COALESCE((123), 0);"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT * FROM T WHERE Id = COALESCE((?), ?);"
+      ],
+      "db.query.summary": "SELECT T"
+    }
+  },
+  {
+    "name": "cast_parenthesized_constant",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT CAST((123) AS INT);"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT CAST((?) AS INT);"
+      ],
+      "db.query.summary": "SELECT"
+    }
+  },
+  {
+    "name": "valid_type_length_specifiers_varchar_char",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CREATE TABLE Table (Name VARCHAR(255), Code CHAR(10));"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE TABLE Table (Name VARCHAR(?), Code CHAR(?));",
+        "CREATE TABLE Table (Name VARCHAR(255), Code CHAR(10));"
+      ],
+      "db.query.summary": "CREATE TABLE Table"
+    }
+  },
+  {
+    "name": "valid_type_length_specifiers_varbinary_datetime2_time",
+    "input": {
+      "db.system.name": "microsoft.sql_server",
+      "query": "CREATE TABLE Table (Payload VARBINARY(16), EventTime DATETIME2(7), Duration TIME(7));"
+    },
+    "expected": {
+      "db.query.text": [
+        "CREATE TABLE Table (Payload VARBINARY(?), EventTime DATETIME2(?), Duration TIME(?));",
+        "CREATE TABLE Table (Payload VARBINARY(16), EventTime DATETIME2(7), Duration TIME(7));"
+      ],
+      "db.query.summary": "CREATE TABLE Table"
+    }
+  },
+  {
+    "name": "valid_top_with_parentheses",
+    "input": {
+      "db.system.name": "microsoft.sql_server",
+      "query": "SELECT TOP (10) * FROM Employees"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT TOP (?) * FROM Employees",
+        "SELECT TOP (10) * FROM Employees"
+      ],
+      "db.query.summary": "SELECT Employees"
+    }
+  },
+  {
+    "name": "sanitized_top_without_parentheses",
+    "input": {
+      "db.system.name": "microsoft.sql_server",
+      "query": "SELECT TOP 10 * FROM Employees"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT TOP ? * FROM Employees",
+        "SELECT TOP 10 * FROM Employees"
+      ],
+      "db.query.summary": "SELECT Employees"
+    }
+  },
+  {
+    "name": "in_clause_starting_with_negative_literal",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT * FROM table WHERE value IN (-123, .456, 'abc', 0.12, 1e10)"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT * FROM table WHERE value IN (?)",
+        "SELECT * FROM table WHERE value IN (?, ?, ?, ?, ?)"
+      ],
+      "db.query.summary": "SELECT table"
+    }
+  },
+  {
+    "name": "in_clause_starting_with_hex_literal",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT * FROM table WHERE value IN (0xAB, .456, 'abc', 0.12, 1e10)"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT * FROM table WHERE value IN (?)",
+        "SELECT * FROM table WHERE value IN (?, ?, ?, ?, ?)"
+      ],
+      "db.query.summary": "SELECT table"
+    }
+  },
+  {
+    "name": "in_clause_starting_with_string_literal",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT * FROM table WHERE value IN ('abc', 0xAB, .456, 0.12, 1e10)"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT * FROM table WHERE value IN (?)",
+        "SELECT * FROM table WHERE value IN (?, ?, ?, ?, ?)"
+      ],
+      "db.query.summary": "SELECT table"
+    }
+  },
+  {
+    "name": "malformed_in_clause",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT * FROM table WHERE value IN ('abc', 0xAB, .456,"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT * FROM table WHERE value IN (?, ?, ?,"
+      ],
+      "db.query.summary": "SELECT table"
+    }
+  },
+  {
+    "name": "malformed_alter_table_example_one",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER  TABLE MyTable ADD Name varchar(255) 'mypassword' 1234"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER  TABLE MyTable ADD Name varchar(255) ? ?",
+        "ALTER  TABLE MyTable ADD Name varchar(?) ? ?"
+      ],
+      "db.query.summary": "ALTER TABLE MyTable"
+    }
+  },
+  {
+    "name": "malformed_alter_table_example_two",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "ALTER  TABLE MyTable 'mypassword' ADD 123 Name varchar(255)"
+    },
+    "expected": {
+      "db.query.text": [
+        "ALTER  TABLE MyTable ? ADD ? Name varchar(255)",
+        "ALTER  TABLE MyTable ? ADD ? Name varchar(?)"
+      ],
+      "db.query.summary": "ALTER TABLE MyTable"
+    }
+  },
+  {
+    "name": "query_with_diacritic_characters",
+    "input": {
+      "db.system.name": "microsoft.sql_server",
+      "query": "DECLARE @__geräteIds_0 nvarchar(4000) = N'[1,2,3]';\n\nSELECT [t].[Id]\nFROM [Tests] AS [t]\nWHERE [t].[Id] IN (\n\tSELECT [g].[value]\n\tFROM OPENJSON(@__geräteIds_0) WITH ([value] bigint '$') AS [g]\n)"
+    },
+    "expected": {
+      "db.query.text": [
+        "DECLARE @__geräteIds_0 nvarchar(?) = N?;\n\nSELECT [t].[Id]\nFROM [Tests] AS [t]\nWHERE [t].[Id] IN (\n\tSELECT [g].[value]\n\tFROM OPENJSON(@__geräteIds_0) WITH ([value] bigint ?) AS [g]\n)"
+      ],
+      "db.query.summary": "SELECT Tests"
+    }
+  },
+  {
+    "name": "cross_join_comma_separated_syntax_followed_by_composite_group_by",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "SELECT a, b FROM TableA, TableB GROUP BY a, b"
+    },
+    "expected": {
+      "db.query.text": [
+        "SELECT a, b FROM TableA, TableB GROUP BY a, b"
+      ],
+      "db.query.summary": "SELECT TableA TableB"
+    }
+  },
+  {
+    "name": "call_stored_procedure_no_params",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CALL GetAllUsers"
+    },
+    "expected": {
+      "db.query.text": [
+        "CALL GetAllUsers"
+      ],
+      "db.query.summary": "CALL GetAllUsers"
+    }
+  },
+  {
+    "name": "call_stored_procedure_with_params",
+    "input": {
+      "db.system.name": "postgresql",
+      "query": "CALL update_user_profile(123, 'john@example.com', 'John Doe')"
+    },
+    "expected": {
+      "db.query.text": [
+        "CALL update_user_profile(?, ?, ?)"
+      ],
+      "db.query.summary": "CALL update_user_profile"
+    }
+  },
+  {
+    "name": "call_schema_qualified_procedure",
+    "input": {
+      "db.system.name": "mysql",
+      "query": "CALL myschema.calculate_statistics(@start_date, @end_date)"
+    },
+    "expected": {
+      "db.query.text": [
+        "CALL myschema.calculate_statistics(?, ?)"
+      ],
+      "db.query.summary": "CALL myschema.calculate_statistics"
+    }
+  },
+  {
+    "name": "call_lowercase_with_semicolon",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "call process_orders();"
+    },
+    "expected": {
+      "db.query.text": [
+        "call process_orders();"
+      ],
+      "db.query.summary": "call process_orders"
+    }
+  },
+  {
+    "name": "call_procedure_only_keyword",
+    "input": {
+      "db.system.name": "other_sql",
+      "query": "CALL"
+    },
+    "expected": {
+      "db.query.text": [
+        "CALL"
+      ],
+      "db.query.summary": "CALL"
+    }
+  }
+]
