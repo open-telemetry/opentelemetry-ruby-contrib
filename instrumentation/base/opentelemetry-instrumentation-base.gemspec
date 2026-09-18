@@ -27,6 +27,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.7'
   spec.add_dependency 'opentelemetry-common', '~> 0.21'
+  spec.add_dependency 'opentelemetry-logs-api', '~> 0.6'
+  spec.add_dependency 'opentelemetry-metrics-api', '~> 0.8'
   spec.add_dependency 'opentelemetry-registry', '~> 0.1'
 
   if spec.respond_to?(:metadata)
