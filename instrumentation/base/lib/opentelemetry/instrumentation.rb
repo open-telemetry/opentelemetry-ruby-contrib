@@ -6,6 +6,8 @@
 
 require 'opentelemetry'
 require 'opentelemetry-registry'
+require 'opentelemetry-logs-api'
+require 'opentelemetry-metrics-api'
 require 'opentelemetry/instrumentation/base'
 
 module OpenTelemetry
