@@ -24,6 +24,16 @@ module OpenTelemetry
             end
           end
 
+          def has?(key, value = nil)
+            attributes = { 'db.system' => 'lmdb' }
+            attributes['db.statement'] = formatted_statement('HAS', "HAS #{key} #{value}".strip) if config[:db_statement] == :include
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+            tracer.in_span("HAS #{key}", attributes: attributes, kind: :client) do
+              super
+            end
+          end
+
           def delete(key, value = nil)
             attributes = { 'db.system' => 'lmdb' }
             attributes['db.statement'] = formatted_statement('DELETE', "DELETE #{key} #{value}".strip) if config[:db_statement] == :include
@@ -50,6 +60,16 @@ module OpenTelemetry
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
             tracer.in_span('CLEAR', attributes: attributes, kind: :client) do
+              super
+            end
+          end
+
+          def drop
+            attributes = { 'db.system' => 'lmdb' }
+            attributes['db.statement'] = 'DROP' if config[:db_statement] == :include
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+            tracer.in_span('DROP', attributes: attributes, kind: :client) do
               super
             end
           end
