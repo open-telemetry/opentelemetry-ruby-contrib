@@ -32,7 +32,7 @@
     "cspell": "10.2.2",
     "@prantlf/jsonlint": "17.0.1",
     "markdownlint-cli2": "0.23.2",
-    "prettier": "3.9.6",
+    "prettier": "3.9.7",
     "renovate": "44.68.3"
   }
 }
