@@ -87,26 +87,33 @@ module OpenTelemetry
             span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{exception.class}")
           end
 
-          def request_method(endpoint)
-            endpoint.options[:method]&.first
-          end
-
-          def code_namespace(endpoint)
-            owner = endpoint.options[:for]
-            return unless owner
-
-            base = owner.instance_variable_get(:@base)
-            [owner.name, base&.to_s, owner.to_s].find { |value| value && !value.empty? }
-          end
-
           def path(endpoint)
-            return '' unless endpoint.routes
+            return '' unless endpoint.respond_to?(:routes)
 
-            namespace = endpoint.routes.first.namespace
-            version = endpoint.routes.first.options[:version]&.to_s
-            prefix = endpoint.routes.first.options[:prefix]&.to_s
-            parts = [prefix, version] + namespace.split('/') + endpoint.options[:path]
-            parts.reject { |p| p.nil? || p.empty? || p.eql?('/') }.join('/').prepend('/')
+            routes = endpoint.routes
+            return '' unless routes && !routes.empty?
+
+            route = routes.first
+
+            endpoint_path = raw_endpoint_path(endpoint)
+            return fallback_path_from_route(route) if endpoint_path.nil? || endpoint_path.empty?
+
+            namespace = route_namespace(route)
+            version = route_version(route)
+            prefix = route_prefix(route)
+            parts = [prefix, version] + namespace.to_s.split('/') + Array(endpoint_path)
+            parts.reject { |p| p.nil? || p.to_s.empty? || p.to_s.eql?('/') }.join('/').prepend('/')
+          end
+
+          def fallback_path_from_route(route)
+            origin = route.origin if route.respond_to?(:origin) && route.origin
+            origin ||= route.path if route.respond_to?(:path) && route.path
+            return '' unless origin
+
+            result = origin.to_s.split('(').first || ''
+            version = route_version(route)
+            result = result.gsub(':version', version) if version && !version.empty? && result.include?(':version')
+            result.start_with?('/') ? result : "/#{result}"
           end
 
           def formatter_type(formatter)
@@ -119,6 +126,39 @@ module OpenTelemetry
 
           def built_in_grape_formatter?(formatter)
             formatter.respond_to?(:name) && formatter.name.include?('Grape::Formatter')
+          end
+
+          # Delegation fallbacks if EventHandler is called directly
+          def request_method(endpoint)
+            target_handler.send(:request_method, endpoint)
+          end
+
+          def code_namespace(endpoint)
+            target_handler.send(:code_namespace, endpoint)
+          end
+
+          def raw_endpoint_path(endpoint)
+            target_handler.send(:raw_endpoint_path, endpoint)
+          end
+
+          def route_namespace(route)
+            target_handler.send(:route_namespace, route)
+          end
+
+          def route_version(route)
+            target_handler.send(:route_version, route)
+          end
+
+          def route_prefix(route)
+            target_handler.send(:route_prefix, route)
+          end
+
+          def target_handler
+            if defined?(::Grape::VERSION) && Gem::Version.new(::Grape::VERSION) >= Gem::Version.new('4.0.0')
+              V4::EventHandler
+            else
+              V3::EventHandler
+            end
           end
         end
       end
