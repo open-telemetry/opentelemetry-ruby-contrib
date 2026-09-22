@@ -4,5 +4,7 @@
   "service": "devcontainer-alpine",
   "remoteUser": "app",
 
-  "workspaceFolder": "/app"
+  "workspaceFolder": "/app",
+
+  "runServices": []
 }

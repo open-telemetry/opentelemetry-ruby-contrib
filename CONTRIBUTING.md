@@ -97,7 +97,7 @@ The DevContainer provides a ready to go dev environment containing all the tools
 If you opt to use a minimal devcontainer, you will need to manually start/provide db/messaging servers.
 This is no different to the local development option.
 
-Once the devcontainer is running, you can, make changes & run tests just like you are developing locally.
+Once the devcontainer is running, you can make changes & run tests just like you are developing locally.
 This process to run tests is described below.
 
 ### Docker container
