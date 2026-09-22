@@ -108,9 +108,14 @@ module OpenTelemetry
               end
 
               def split_path_and_query(path)
+                path = request_path(path)
                 path_and_query = path.split('?')
 
                 [path_and_query[0], path_and_query[1]]
+              end
+
+              def request_path(path)
+                path.respond_to?(:request_uri) ? path.request_uri : path
               end
             end
           end

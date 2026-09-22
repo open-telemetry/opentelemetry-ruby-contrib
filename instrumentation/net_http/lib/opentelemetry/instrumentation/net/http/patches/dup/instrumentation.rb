@@ -26,7 +26,7 @@ module OpenTelemetry
                 span_data = HttpHelper.span_attrs_for_dup(req.method)
 
                 attributes = { OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
-                               OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
+                               OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => request_path(req.path),
                                OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
                                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port, 'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
                                'server.address' => @address,
@@ -114,9 +114,14 @@ module OpenTelemetry
               end
 
               def split_path_and_query(path)
+                path = request_path(path)
                 path_and_query = path.split('?')
 
                 [path_and_query[0], path_and_query[1]]
+              end
+
+              def request_path(path)
+                path.respond_to?(:request_uri) ? path.request_uri : path
               end
             end
           end
