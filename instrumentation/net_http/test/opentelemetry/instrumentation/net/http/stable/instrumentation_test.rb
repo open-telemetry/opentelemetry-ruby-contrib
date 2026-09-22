@@ -165,6 +165,17 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
+
+    it 'handles URI-like request paths' do
+      path = Class.new do
+        def empty? = false
+        def request_uri = '/success?hello=there'
+      end.new
+      request = Net::HTTP::Get.new(path)
+      http = Net::HTTP.new('example.com')
+
+      _(http.send(:split_path_and_query, request.path)).must_equal ['/success', 'hello=there']
+    end
   end
 
   describe 'untraced?' do
