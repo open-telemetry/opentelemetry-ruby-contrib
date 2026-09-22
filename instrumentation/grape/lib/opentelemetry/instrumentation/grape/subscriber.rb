@@ -15,9 +15,10 @@ module OpenTelemetry
           # Subscribe to all notifications (except those specified in the :ignored_events configs)
           def subscribe
             subscriptions = filter_ignored_events(SUBSCRIPTIONS)
+            handler = event_handler
             subscriptions.each do |subscriber_method, event|
               ::ActiveSupport::Notifications.subscribe(event) do |*args|
-                EventHandler.send(subscriber_method, *args)
+                handler.send(subscriber_method, *args)
               end
             end
           end
@@ -34,6 +35,16 @@ module OpenTelemetry
           private_constant :SUBSCRIPTIONS
 
           private
+
+          def event_handler
+            if defined?(V4::EventHandler)
+              V4::EventHandler
+            elsif defined?(V3::EventHandler)
+              V3::EventHandler
+            else
+              EventHandler
+            end
+          end
 
           def filter_ignored_events(subscriptions)
             # Do not ignore 'endpoint_run' event
