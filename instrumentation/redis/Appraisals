@@ -9,6 +9,6 @@ end
 
 %w[5.0.0 5.4.1].each do |version|
   appraise "redis-#{version}" do
-    gem 'redis', "~> #{version}"
+    gem 'redis', "= #{version}"
   end
 end
