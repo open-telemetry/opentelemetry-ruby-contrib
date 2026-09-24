@@ -15,7 +15,7 @@ end
 if RUBY_ENGINE == 'ruby'
   appraise 'graphql-c_parser-1.0.x' do
     gem 'graphql', '< 2.3.1'
-    gem 'graphql-c_parser', '~> 1.0.0'
+    gem 'graphql-c_parser', '< 1.1.0'
   end
 
   %w[1.1.0 1.1.4].each do |version|
