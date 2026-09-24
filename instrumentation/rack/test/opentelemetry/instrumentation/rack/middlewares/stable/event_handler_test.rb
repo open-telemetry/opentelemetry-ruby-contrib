@@ -479,4 +479,102 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Stable::EventHandle
       _(proxy_event).must_be_nil
     end
   end
+
+  describe 'config[:public_request]' do
+    let(:remote_span_context) { OpenTelemetry::Trace::SpanContext.new(trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED, remote: true) }
+    let(:remote_span) { OpenTelemetry::Trace.non_recording_span(remote_span_context) }
+    let(:remote_context) { OpenTelemetry::Trace.context_with_span(remote_span, parent_context: OpenTelemetry::Context.empty) }
+
+    describe 'public_request not set' do
+      it 'attaches a remote context' do
+        remote_headers = {}
+        OpenTelemetry.propagation.inject(remote_headers, context: remote_context)
+        get '/endpoint', {}, remote_headers
+
+        _(rack_span.parent_span_id).must_equal remote_span_context.span_id
+        _(rack_span.parent_span_is_remote).must_equal true
+      end
+    end
+
+    describe 'public_request returns false' do
+      let(:config) { { public_request: ->(_env) { false } } }
+      it 'attaches a remote context' do
+        remote_headers = {}
+        OpenTelemetry.propagation.inject(remote_headers, context: remote_context)
+        get '/endpoint', {}, remote_headers
+
+        _(rack_span.parent_span_id).must_equal remote_span_context.span_id
+        _(rack_span.parent_span_is_remote).must_equal true
+      end
+    end
+
+    describe 'public_request returns true' do
+      let(:config) { { public_request: ->(_env) { true } } }
+
+      it 'creates a new root span with the incoming context as a link' do
+        remote_headers = {}
+        OpenTelemetry.propagation.inject(remote_headers, context: remote_context)
+        get '/', {}, remote_headers
+
+        _(rack_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+        _(rack_span.links.size).must_equal 1
+        _(rack_span.links.first.span_context.span_id).must_equal remote_span_context.span_id
+        _(rack_span.links.first.span_context.trace_id).must_equal remote_span_context.trace_id
+      end
+    end
+
+    describe 'public_request with config on headers and path' do
+      let(:public_request_example) do
+        lambda { |env|
+          return false if env['HTTP_X_APP_CLIENT_ID'] == 'known-id'
+          return true if env['PATH_INFO'] == '/public-path'
+
+          false
+        }
+      end
+      let(:config) { { public_request: public_request_example } }
+
+      it 'creates a new root span on request to public path without custom header' do
+        remote_headers = {}
+        OpenTelemetry.propagation.inject(remote_headers, context: remote_context)
+        get '/public-path', {}, remote_headers
+
+        _(rack_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+        _(rack_span.links.size).must_equal 1
+        _(rack_span.links.first.span_context.span_id).must_equal remote_span_context.span_id
+        _(rack_span.links.first.span_context.trace_id).must_equal remote_span_context.trace_id
+      end
+
+      it 'attaches a remote context on request to public path when custom header and value is set' do
+        remote_headers = {}
+        OpenTelemetry.propagation.inject(remote_headers, context: remote_context)
+        remote_headers['HTTP_X_APP_CLIENT_ID'] = 'known-id'
+        get '/public-path', {}, remote_headers
+
+        _(rack_span.parent_span_id).must_equal remote_span_context.span_id
+        _(rack_span.parent_span_is_remote).must_equal true
+      end
+
+      it 'creates a new root span on request to public path when custom header value is unknown' do
+        remote_headers = {}
+        OpenTelemetry.propagation.inject(remote_headers, context: remote_context)
+        remote_headers['HTTP_X_APP_CLIENT_ID'] = 'unknown-id'
+        get '/public-path', {}, remote_headers
+
+        _(rack_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+        _(rack_span.links.size).must_equal 1
+        _(rack_span.links.first.span_context.span_id).must_equal remote_span_context.span_id
+        _(rack_span.links.first.span_context.trace_id).must_equal remote_span_context.trace_id
+      end
+
+      it 'attaches a remote context on request to other path' do
+        remote_headers = {}
+        OpenTelemetry.propagation.inject(remote_headers, context: remote_context)
+        get '/other-path', {}, remote_headers
+
+        _(rack_span.parent_span_id).must_equal remote_span_context.span_id
+        _(rack_span.parent_span_is_remote).must_equal true
+      end
+    end
+  end
 end

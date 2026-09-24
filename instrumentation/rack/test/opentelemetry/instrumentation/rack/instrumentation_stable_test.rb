@@ -35,6 +35,7 @@ describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
       _(instrumentation.config[:untraced_requests]).must_be_nil
       _(instrumentation.config[:response_propagators]).must_be_empty
       _(instrumentation.config[:use_rack_events]).must_equal true
+      _(instrumentation.config[:public_request]).must_be_nil
     end
   end
 

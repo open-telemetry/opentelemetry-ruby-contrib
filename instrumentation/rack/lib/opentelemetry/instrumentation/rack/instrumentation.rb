@@ -31,6 +31,14 @@ module OpenTelemetry
         option :response_propagators,     default: [],    validate: :array
         # This option is only valid for applications using Rack 2.0 or greater
         option :use_rack_events,          default: true, validate: :boolean
+        # public_request runs with every request, and allows conditionally configuring
+        # to link the span with an incoming span context. If this option is not provided or returns
+        # false, then the association is a child association instead of a link. The callable's signature is
+        # as follows:
+        #
+        # @param [Rack::Request::Env] The incoming HTTP request environment
+        # @return [Boolean]
+        option :public_request, default: nil, validate: :callable
 
         def middleware_args
           patch_type = determine_semconv
