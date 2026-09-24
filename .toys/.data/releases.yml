@@ -49,6 +49,10 @@ gems:
   - name: opentelemetry-helpers-mysql
     directory: helpers/mysql
 
+  - name: opentelemetry-helpers-sql-obfuscation
+    directory: helpers/sql-obfuscation
+    version_rb_path: lib/opentelemetry/helpers/sql_obfuscation/version.rb
+
   - name: opentelemetry-helpers-sql-processor
     directory: helpers/sql-processor
     version_rb_path: lib/opentelemetry/helpers/sql_processor/version.rb
