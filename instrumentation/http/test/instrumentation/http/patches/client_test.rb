@@ -6,10 +6,10 @@
 
 require 'test_helper'
 
-require_relative '../../../../../lib/opentelemetry/instrumentation/http'
-require_relative '../../../../../lib/opentelemetry/instrumentation/http/patches/dup/client'
+require_relative '../../../../lib/opentelemetry/instrumentation/http'
+require_relative '../../../../lib/opentelemetry/instrumentation/http/patches/client'
 
-describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
+describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
   let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
@@ -21,9 +21,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
   let(:span_name_formatter) { nil }
 
   before do
-    skip unless ENV['BUNDLE_GEMFILE'].include?('dup')
-
-    ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'http/dup'
     exporter.reset
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
@@ -39,9 +36,9 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
   end
 
   after do
-    ENV.delete('OTEL_SEMCONV_STABILITY_OPT_IN')
     # Force re-install of instrumentation
     instrumentation.instance_variable_set(:@installed, false)
+
     OpenTelemetry.propagation = @orig_propagation
   end
 
@@ -50,14 +47,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       HTTP.get('http://example.com/success')
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'GET'
-      # Old semantic conventions
-      _(span.attributes['http.method']).must_equal 'GET'
-      _(span.attributes['http.scheme']).must_equal 'http'
-      _(span.attributes['http.status_code']).must_equal 200
-      _(span.attributes['http.target']).must_equal '/success'
-      _(span.attributes['net.peer.name']).must_equal 'example.com'
-      _(span.attributes['net.peer.port']).must_equal 80
-      # Stable semantic conventions
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.scheme']).must_equal 'http'
       _(span.attributes['http.response.status_code']).must_equal 200
@@ -66,7 +55,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
       _(span.attributes['url.full']).must_equal 'http://example.com'
       _(span.attributes['server.port']).must_equal 80
       _(span.attributes['url.query']).must_be_nil
-
       assert_requested(
         :get,
         'http://example.com/success',
@@ -79,14 +67,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'POST'
-      # Old semantic conventions
-      _(span.attributes['http.method']).must_equal 'POST'
-      _(span.attributes['http.scheme']).must_equal 'http'
-      _(span.attributes['http.status_code']).must_equal 500
-      _(span.attributes['http.target']).must_equal '/failure'
-      _(span.attributes['net.peer.name']).must_equal 'example.com'
-      _(span.attributes['net.peer.port']).must_equal 80
-      # Stable semantic conventions
       _(span.attributes['http.request.method']).must_equal 'POST'
       _(span.attributes['url.scheme']).must_equal 'http'
       _(span.attributes['http.response.status_code']).must_equal 500
@@ -109,14 +89,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'
-      # Old semantic conventions
-      _(span.attributes['http.method']).must_equal 'GET'
-      _(span.attributes['http.scheme']).must_equal 'https'
-      _(span.attributes['http.status_code']).must_be_nil
-      _(span.attributes['http.target']).must_equal '/timeout'
-      _(span.attributes['net.peer.name']).must_equal 'example.com'
-      _(span.attributes['net.peer.port']).must_equal 443
-      # Stable semantic conventions
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.scheme']).must_equal 'https'
       _(span.attributes['http.response.status_code']).must_be_nil
@@ -145,15 +117,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET'
-      # Old semantic conventions
-      _(span.attributes['http.method']).must_equal 'GET'
-      _(span.attributes['http.scheme']).must_equal 'http'
-      _(span.attributes['http.status_code']).must_equal 200
-      _(span.attributes['http.target']).must_equal '/success'
-      _(span.attributes['net.peer.name']).must_equal 'example.com'
-      _(span.attributes['net.peer.port']).must_equal 80
-      _(span.attributes['peer.service']).must_equal 'foo'
-      # Stable semantic conventions
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.scheme']).must_equal 'http'
       _(span.attributes['http.response.status_code']).must_equal 200
@@ -184,15 +147,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
 
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'GET /success miniswan'
-        # Old semantic conventions
-        _(span.attributes['http.method']).must_equal 'GET'
-        _(span.attributes['http.scheme']).must_equal 'http'
-        _(span.attributes['http.status_code']).must_equal 200
-        _(span.attributes['http.target']).must_equal '/success'
-        _(span.attributes['net.peer.name']).must_equal 'example.com'
-        _(span.attributes['net.peer.port']).must_equal 80
-        _(span.attributes['peer.service']).must_equal 'foo'
-        # Stable semantic conventions
         _(span.attributes['http.request.method']).must_equal 'GET'
         _(span.attributes['url.scheme']).must_equal 'http'
         _(span.attributes['http.response.status_code']).must_equal 200
@@ -223,15 +177,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
 
         _(exporter.finished_spans.size).must_equal 1
         _(span.name).must_equal 'GET'
-        # Old semantic conventions
-        _(span.attributes['http.method']).must_equal 'GET'
-        _(span.attributes['http.scheme']).must_equal 'http'
-        _(span.attributes['http.status_code']).must_equal 200
-        _(span.attributes['http.target']).must_equal '/success'
-        _(span.attributes['net.peer.name']).must_equal 'example.com'
-        _(span.attributes['net.peer.port']).must_equal 80
-        _(span.attributes['peer.service']).must_equal 'foo'
-        # Stable semantic conventions
         _(span.attributes['http.request.method']).must_equal 'GET'
         _(span.attributes['url.scheme']).must_equal 'http'
         _(span.attributes['http.response.status_code']).must_equal 200
@@ -254,13 +199,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP'
-      # Old semantic conventions
-      _(span.attributes['http.method']).must_equal '_OTHER'
-      _(span.attributes['http.status_code']).must_equal 200
-      _(span.attributes['http.scheme']).must_equal 'http'
-      _(span.attributes['net.peer.name']).must_equal 'example.com'
-      _(span.attributes['http.target']).must_equal '/query'
-      # Stable semantic conventions
       _(span.attributes['http.request.method']).must_equal '_OTHER'
       _(span.attributes['http.request.method_original']).must_equal 'search'
       _(span.attributes['http.response.status_code']).must_equal 200
@@ -282,7 +220,6 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Dup::Client do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'GET /users/{id}'
-      _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.request.method']).must_equal 'GET'
       _(span.attributes['url.template']).must_equal '/users/{id}'
       assert_requested(
