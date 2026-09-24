@@ -7,7 +7,6 @@
 require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/redis'
-require_relative '../../../../lib/opentelemetry/instrumentation/redis/patches/redis_v4_client'
 
 describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
@@ -22,6 +21,10 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
   end
 
   describe '#install' do
+    before do
+      skip unless ENV['BUNDLE_GEMFILE']&.include?('old')
+    end
+
     it 'accepts argument' do
       _(instrumentation.install({})).must_equal(true)
       instrumentation.instance_variable_set(:@installed, false)

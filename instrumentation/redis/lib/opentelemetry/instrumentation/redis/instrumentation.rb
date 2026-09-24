@@ -11,8 +11,9 @@ module OpenTelemetry
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
-          require_dependencies
-          patch_client
+          patch_type = determine_semconv
+          send(:"require_dependencies_#{patch_type}")
+          send(:"patch_client_#{patch_type}")
         end
 
         present do
@@ -25,14 +26,47 @@ module OpenTelemetry
 
         private
 
-        def require_dependencies
-          require_relative 'patches/redis_v4_client' if defined?(::Redis) && ::Redis::VERSION < '5'
-          require_relative 'middlewares/redis_client' if defined?(::RedisClient)
+        def determine_semconv
+          stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
+          values = stability_opt_in.split(',').map(&:strip)
+
+          if values.include?('database/dup')
+            'dup'
+          elsif values.include?('database')
+            'stable'
+          else
+            'old'
+          end
         end
 
-        def patch_client
-          ::RedisClient.register(Middlewares::RedisClientInstrumentation) if defined?(::RedisClient)
-          ::Redis::Client.prepend(Patches::RedisV4Client) if defined?(::Redis) && ::Redis::VERSION < '5'
+        def require_dependencies_old
+          require_relative 'patches/old/redis_v4_client' if defined?(::Redis) && ::Redis::VERSION < '5'
+          require_relative 'middlewares/old/redis_client' if defined?(::RedisClient)
+        end
+
+        def require_dependencies_stable
+          require_relative 'patches/stable/redis_v4_client' if defined?(::Redis) && ::Redis::VERSION < '5'
+          require_relative 'middlewares/stable/redis_client' if defined?(::RedisClient)
+        end
+
+        def require_dependencies_dup
+          require_relative 'patches/dup/redis_v4_client' if defined?(::Redis) && ::Redis::VERSION < '5'
+          require_relative 'middlewares/dup/redis_client' if defined?(::RedisClient)
+        end
+
+        def patch_client_old
+          ::RedisClient.register(Middlewares::Old::RedisClientInstrumentation) if defined?(::RedisClient)
+          ::Redis::Client.prepend(Patches::Old::RedisV4Client) if defined?(::Redis) && ::Redis::VERSION < '5'
+        end
+
+        def patch_client_stable
+          ::RedisClient.register(Middlewares::Stable::RedisClientInstrumentation) if defined?(::RedisClient)
+          ::Redis::Client.prepend(Patches::Stable::RedisV4Client) if defined?(::Redis) && ::Redis::VERSION < '5'
+        end
+
+        def patch_client_dup
+          ::RedisClient.register(Middlewares::Dup::RedisClientInstrumentation) if defined?(::RedisClient)
+          ::Redis::Client.prepend(Patches::Dup::RedisV4Client) if defined?(::Redis) && ::Redis::VERSION < '5'
         end
       end
     end
