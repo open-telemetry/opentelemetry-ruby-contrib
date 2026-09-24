@@ -6,10 +6,10 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/lmdb'
-require_relative '../../../../lib/opentelemetry/instrumentation/lmdb/patches/database'
+require_relative '../../../../../lib/opentelemetry/instrumentation/lmdb'
+require_relative '../../../../../lib/opentelemetry/instrumentation/lmdb/patches/dup/database'
 
-describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
+describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Dup::Database' do
   let(:instrumentation) { OpenTelemetry::Instrumentation::LMDB::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
@@ -20,10 +20,12 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
   let(:lmdb) { LMDB.new(db_path) }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('dup')
     exporter.reset
-    instrumentation.install(config)
     FileUtils.rm_rf(db_path)
     FileUtils.mkdir_p(db_path)
+    instrumentation.instance_variable_set(:@installed, false)
+    instrumentation.install(config)
   end
 
   after do
@@ -33,15 +35,21 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
   end
 
   describe '#clear' do
-    it 'traces' do
+    it 'traces with both old and stable attributes' do
       lmdb.database.clear
       _(span.name).must_equal('CLEAR')
       _(span.kind).must_equal(:client)
+      # Old attributes
       _(span.attributes['db.system']).must_equal('lmdb')
       _(span.attributes['db.statement']).must_equal('CLEAR')
+      # Stable attributes
+      _(span.attributes['db.system.name']).must_equal('lmdb')
+      _(span.attributes['db.operation.name']).must_equal('CLEAR')
+      _(span.attributes['db.namespace']).must_equal(lmdb.path)
+      _(span.attributes['db.query.text']).must_equal('CLEAR')
     end
 
-    it 'omits db.statement attribute' do
+    it 'omits db.statement and db.query.text attributes' do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(db_statement: :omit)
 
@@ -49,41 +57,63 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
 
       _(span.kind).must_equal(:client)
       _(span.attributes['db.system']).must_equal('lmdb')
+      _(span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.statement')
+      _(last_span.attributes).wont_include('db.query.text')
     end
   end
 
   describe '#put' do
-    it 'traces' do
+    it 'traces with both old and stable attributes' do
       lmdb.database['foo'] = 'bar'
       _(span.name).must_equal('PUT foo')
       _(span.kind).must_equal(:client)
+      # Old attributes
       _(span.attributes['db.system']).must_equal('lmdb')
       _(span.attributes['db.statement']).must_equal('PUT foo bar')
+      # Stable attributes
+      _(span.attributes['db.system.name']).must_equal('lmdb')
+      _(span.attributes['db.operation.name']).must_equal('PUT')
+      _(span.attributes['db.namespace']).must_equal(lmdb.path)
+      _(span.attributes['db.query.text']).must_equal('PUT ? ?')
     end
 
-    it 'truncates long statements' do
+    it 'includes the key and value in both attributes when db_statement is :include' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(db_statement: :include)
+
+      lmdb.database['foo'] = 'bar'
+
+      _(span.attributes['db.statement']).must_equal('PUT foo bar')
+      _(span.attributes['db.query.text']).must_equal('PUT foo bar')
+    end
+
+    it 'truncates the old statement but obfuscates the stable query text' do
       lmdb.database['foo'] = 'bar' * 200
       _(span.name).must_equal('PUT foo')
       _(span.kind).must_equal(:client)
       _(span.attributes['db.system']).must_equal('lmdb')
       _(span.attributes['db.statement'].size).must_equal(500)
+      _(span.attributes['db.system.name']).must_equal('lmdb')
+      _(span.attributes['db.query.text']).must_equal('PUT ? ?')
     end
 
     describe 'when peer_service config is set' do
       let(:config) { { peer_service: 'otel:lmdb' } }
 
-      it 'adds peer.service attribute' do
+      it 'adds peer.service attribute in dup mode' do
         lmdb.database['foo'] = 'bar'
         _(span.name).must_equal('PUT foo')
         _(span.kind).must_equal(:client)
         _(span.attributes['db.system']).must_equal('lmdb')
         _(span.attributes['db.statement']).must_equal('PUT foo bar')
+        _(span.attributes['db.system.name']).must_equal('lmdb')
+        _(span.attributes['db.query.text']).must_equal('PUT ? ?')
         _(span.attributes['peer.service']).must_equal('otel:lmdb')
       end
     end
 
-    it 'omits db.statement attribute' do
+    it 'omits db.statement and db.query.text attributes' do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(db_statement: :omit)
 
@@ -93,22 +123,30 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
       _(span.name).must_equal('PUT foo')
       _(span.kind).must_equal(:client)
       _(span.attributes['db.system']).must_equal('lmdb')
+      _(span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.statement')
+      _(last_span.attributes).wont_include('db.query.text')
     end
   end
 
   describe '#get' do
-    it 'traces' do
+    it 'traces with both old and stable attributes' do
       lmdb.database['foo'] = 'bar'
       lmdb.database['foo']
 
       _(last_span.name).must_equal('GET foo')
       _(last_span.kind).must_equal(:client)
+      # Old attributes
       _(last_span.attributes['db.system']).must_equal('lmdb')
       _(last_span.attributes['db.statement']).must_equal('GET foo')
+      # Stable attributes
+      _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.operation.name']).must_equal('GET')
+      _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
+      _(last_span.attributes['db.query.text']).must_equal('GET ?')
     end
 
-    it 'omits db.statement attribute' do
+    it 'omits db.statement and db.query.text attributes' do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(db_statement: :omit)
 
@@ -118,19 +156,27 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
       _(last_span.name).must_equal('GET foo')
       _(last_span.kind).must_equal(:client)
       _(last_span.attributes['db.system']).must_equal('lmdb')
+      _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.statement')
+      _(last_span.attributes).wont_include('db.query.text')
     end
   end
 
   describe '#delete' do
-    it 'traces' do
+    it 'traces with both old and stable attributes' do
       lmdb.database['foo'] = 'bar'
       lmdb.database.delete('foo')
 
       _(last_span.name).must_equal('DELETE foo')
       _(last_span.kind).must_equal(:client)
+      # Old attributes
       _(last_span.attributes['db.system']).must_equal('lmdb')
       _(last_span.attributes['db.statement']).must_equal('DELETE foo')
+      # Stable attributes
+      _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.operation.name']).must_equal('DELETE')
+      _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
+      _(last_span.attributes['db.query.text']).must_equal('DELETE ?')
     end
 
     it 'traces with value supplied' do
@@ -139,11 +185,15 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
 
       _(last_span.name).must_equal('DELETE foo')
       _(last_span.kind).must_equal(:client)
+      # Old attributes
       _(last_span.attributes['db.system']).must_equal('lmdb')
       _(last_span.attributes['db.statement']).must_equal('DELETE foo bar')
+      # Stable attributes
+      _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.query.text']).must_equal('DELETE ? ?')
     end
 
-    it 'omits db.statement attribute' do
+    it 'omits db.statement and db.query.text attributes' do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(db_statement: :omit)
 
@@ -153,7 +203,19 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
       _(last_span.name).must_equal('DELETE foo')
       _(last_span.kind).must_equal(:client)
       _(last_span.attributes['db.system']).must_equal('lmdb')
+      _(last_span.attributes['db.system.name']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.statement')
+      _(last_span.attributes).wont_include('db.query.text')
+    end
+
+    it 'records error.type when the operation fails' do
+      assert_raises(LMDB::Error::NOTFOUND) do
+        lmdb.database.delete('missing-key')
+      end
+
+      _(last_span.name).must_equal('DELETE missing-key')
+      _(last_span.attributes['error.type']).must_equal('LMDB::Error::NOTFOUND')
+      _(last_span.status.code).must_equal(OpenTelemetry::Trace::Status::ERROR)
     end
   end
 end
