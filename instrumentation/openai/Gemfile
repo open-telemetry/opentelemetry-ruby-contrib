@@ -8,8 +8,17 @@ source 'https://rubygems.org'
 
 gemspec
 
+if ENV['OTEL_GEM_CACHE_DIR']
+  source "file://#{ENV['OTEL_GEM_CACHE_DIR']}" do
+    gem 'opentelemetry-instrumentation-base'
+  end
+elsif ENV['USE_PUBLISHED_GEMS'] != 'true'
+  group :local do
+    gem 'opentelemetry-instrumentation-base', path: '../base'
+  end
+end
+
 group :test do
-  gem 'opentelemetry-instrumentation-base', path: '../base'
   gem 'appraisal', '~> 2.5.0'
   gem 'bundler', '~> 4.0.13'
   gem 'minitest', '~> 6.0.6'
