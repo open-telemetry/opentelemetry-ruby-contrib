@@ -1,2 +1,5 @@
 # Normalize all text files to LF in the repo, convert to OS-specific on checkout
 * text=auto eol=lf
+
+# Ensure Gemfile.lock are classed as system generated
+**/Gemfile.lock linguist-generated=true
