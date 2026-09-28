@@ -508,4 +508,120 @@ describe 'OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler' 
       _(proxy_event).must_be_nil
     end
   end
+
+  describe 'cross-fiber context detachment' do
+    it 'finishes span without error when on_finish is called from different fiber' do
+      # No "calls to detach should match corresponding calls to attach" errors
+      expect(OpenTelemetry).not_to receive(:handle_error)
+
+      request = Rack::MockRequest.env_for('/')
+      rack_request = Rack::Request.new(request)
+      response = Rack::Response.new([], 201, {})
+
+      fiber1 = Fiber.new do
+        handler.on_start(rack_request, nil)
+        Fiber.yield
+      end
+      fiber1.resume
+
+      fiber2 = Fiber.new do
+        handler.on_finish(rack_request, response)
+      end
+      fiber2.resume
+
+      _(finished_spans.size).must_equal 1
+      _(rack_span.name).must_equal 'GET'
+      _(rack_span.attributes['http.status_code']).must_equal 201
+      _(rack_span.attributes['http.response.status_code']).must_equal 201
+    end
+
+    it 'detaches context normally when same fiber' do
+      # No "calls to detach should match corresponding calls to attach" errors
+      expect(OpenTelemetry).not_to receive(:handle_error)
+
+      request = Rack::MockRequest.env_for('/')
+      rack_request = Rack::Request.new(request)
+      response = Rack::Response.new
+
+      handler.on_start(rack_request, nil)
+      handler.on_finish(rack_request, response)
+
+      _(finished_spans.size).must_equal 1
+      _(rack_span.name).must_equal 'GET'
+    end
+  end
+
+  # This might happen if one Sinatra app is called by another
+  # See: https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/2425
+  describe 'when nested inside another EventHandler in the same fiber' do
+    let(:inner_handler) { OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler.new }
+    let(:inner_app) do
+      Rack::Builder.new.tap do |builder|
+        builder.use Rack::Events, [inner_handler]
+        builder.run service
+      end
+    end
+    let(:app) do
+      inner = inner_app
+      Rack::Builder.new.tap do |builder|
+        builder.use Rack::Events, [handler]
+        builder.run inner
+      end
+    end
+
+    it 'does not raise attach/detach errors and produces two correctly nested spans' do
+      # No "calls to detach should match corresponding calls to attach" errors
+      expect(OpenTelemetry).not_to receive(:handle_error)
+
+      get uri, {}, headers
+
+      _(finished_spans.size).must_equal 2
+
+      outer_span = finished_spans.find { |s| s.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID }
+      inner_span = finished_spans.find { |s| s.parent_span_id != OpenTelemetry::Trace::INVALID_SPAN_ID }
+
+      _(outer_span).wont_be_nil
+      _(inner_span).wont_be_nil
+      _(inner_span.parent_span_id).must_equal outer_span.span_id
+    end
+  end
+
+  # Combines the fiber bug reported in #2130 with the multi-app Sinatra fix in #2476
+  describe 'when nested inside another EventHandler across a fiber boundary' do
+    let(:inner_handler) { OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::EventHandler.new }
+    let(:inner_app) do
+      Rack::Builder.new.tap do |builder|
+        builder.use Rack::Events, [inner_handler]
+        builder.run service
+      end
+    end
+    let(:app) do
+      inner = inner_app
+      Rack::Builder.new.tap do |builder|
+        builder.use Rack::Events, [handler]
+        builder.use WrapInFiber
+        builder.run inner
+      end
+    end
+
+    it 'does not raise attach/detach errors and produces two correctly nested spans' do
+      # No "calls to detach should match corresponding calls to attach" errors
+      expect(OpenTelemetry).not_to receive(:handle_error)
+
+      get uri, {}, headers
+
+      _(finished_spans.size).must_equal 2
+
+      outer_span = finished_spans.find { |s| s.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID }
+      inner_span = finished_spans.find { |s| s.parent_span_id != OpenTelemetry::Trace::INVALID_SPAN_ID }
+
+      _(outer_span).wont_be_nil
+      _(inner_span).wont_be_nil
+      _(inner_span.parent_span_id).must_equal outer_span.span_id
+
+      # The context attach/detach should still be balanced, so after these
+      # spans finish, we should go back to a bare ROOT context
+      _(OpenTelemetry::Context.current).must_equal OpenTelemetry::Context::ROOT
+    end
+  end
 end
