@@ -27,7 +27,7 @@ module OpenTelemetry
 
                 attributes = { 'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
                                'server.address' => @address,
-                               'server.port' => @port }
+                               'server.port' => @port }.compact
                 path, query = split_path_and_query(req.path)
                 attributes['url.path'] = path
                 attributes['url.query'] = query if query
@@ -63,7 +63,7 @@ module OpenTelemetry
                 attributes = {
                   'server.address' => conn_address,
                   'server.port' => conn_port
-                }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+                }.compact.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
                 if use_ssl? && proxy?
                   span_name = 'CONNECT'

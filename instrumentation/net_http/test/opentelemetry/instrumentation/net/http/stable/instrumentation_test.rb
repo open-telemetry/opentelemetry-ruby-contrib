@@ -353,6 +353,19 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       WebMock.disable_net_connect!
     end
 
+    it 'does not record a nil server.address' do
+      fake_socket = Object.new
+      def fake_socket.setsockopt(*args); end
+      def fake_socket.close; end
+
+      # Replace the TCP socket creation with our fake socket
+      allow(TCPSocket).to receive(:open).and_return(fake_socket)
+      Net::HTTP.new(nil, 80).send(:connect)
+
+      _(span.name).must_equal 'connect'
+      _(span.attributes.key?('server.address')).must_equal false
+    end
+
     it 'uses url.template in span name when present in client context' do
       client_context_attrs = { 'url.template' => '/users/{id}' }
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
