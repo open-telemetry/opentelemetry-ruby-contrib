@@ -360,14 +360,13 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       uri = URI.parse('http://localhost')
       proxy_uri = URI.parse('https://localhost')
 
-      # rubocop:disable Lint/SuppressedException
+      # rubocop:disable-next Lint/SuppressedException
       begin
         Net::HTTP.start(uri.host, uri.port, proxy_uri.host, proxy_uri.port, 'proxy_user', 'proxy_pass', use_ssl: true) do |http|
           http.get('/')
         end
       rescue StandardError
       end
-      # rubocop:enable Lint/SuppressedException
 
       _(exporter.finished_spans.size).must_equal(2)
       _(span.name).must_equal 'CONNECT'
@@ -379,6 +378,20 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.attributes['server.port']).must_equal(443)
     ensure
       WebMock.disable_net_connect!
+    end
+
+    it 'does not record a nil net.peer.name and server.address' do
+      fake_socket = Object.new
+      def fake_socket.setsockopt(*args); end
+      def fake_socket.close; end
+
+      # Replace the TCP socket creation with our fake socket
+      allow(TCPSocket).to receive(:open).and_return(fake_socket)
+      Net::HTTP.new(nil, 80).send(:connect)
+
+      _(span.name).must_equal 'connect'
+      _(span.attributes.key?('net.peer.name')).must_equal false
+      _(span.attributes.key?('server.address')).must_equal false
     end
 
     it 'uses url.template in span name when present in client context' do
@@ -405,14 +418,13 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       uri = URI.parse('http://localhost')
       proxy_uri = URI.parse('https://localhost')
 
-      # rubocop:disable Lint/SuppressedException
+      # rubocop:disable-next Lint/SuppressedException
       begin
         Net::HTTP.start(uri.host, uri.port, proxy_uri.host, proxy_uri.port, 'proxy_user', 'proxy_pass', use_ssl: false) do |http|
           http.get('/')
         end
       rescue StandardError
       end
-      # rubocop:enable Lint/SuppressedException
 
       _(exporter.finished_spans.size).must_equal(2)
       _(span.name).must_equal 'connect'

@@ -6,5 +6,6 @@
 %w[3.7.0 3.7.0].each do |version|
   appraise "koala-#{version}" do
     gem 'koala', "~> #{version}"
+    gem 'json', '< 3'
   end
 end
