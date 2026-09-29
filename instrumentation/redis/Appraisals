@@ -2,8 +2,8 @@
 
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4')
   appraise 'redis-4.x' do
-    gem 'redis-client', '~> 0.22'
-    gem 'redis', '~> 4.8'
+    gem 'redis-client', '= 0.22.0'
+    gem 'redis', '< 5.0.0'
   end
 end
 
