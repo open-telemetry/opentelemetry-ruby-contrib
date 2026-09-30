@@ -37,8 +37,8 @@ module OpenTelemetry
           private
 
           def event_handler
-            if defined?(V4::EventHandler)
-              V4::EventHandler
+            if defined?(::Grape::VERSION) && Gem::Version.new(::Grape::VERSION) >= Gem::Version.new('4.0.0')
+              defined?(V4::EventHandler) ? V4::EventHandler : EventHandler
             elsif defined?(V3::EventHandler)
               V3::EventHandler
             else

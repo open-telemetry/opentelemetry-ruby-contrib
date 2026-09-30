@@ -170,6 +170,11 @@ describe OpenTelemetry::Instrumentation::Grape::V4::EventHandler do
       _(handler.send(:request_method, endpoint)).must_equal 'PATCH'
     end
 
+    it 'falls back to endpoint options when config is absent' do
+      endpoint = Struct.new(:options).new({ method: ['DELETE'] })
+      _(handler.send(:request_method, endpoint)).must_equal 'DELETE'
+    end
+
     it 'returns nil when request method cannot be determined' do
       endpoint = Struct.new(:routes).new(nil)
       _(handler.send(:request_method, endpoint)).must_be_nil
@@ -209,6 +214,16 @@ describe OpenTelemetry::Instrumentation::Grape::V4::EventHandler do
       _(handler.send(:code_namespace, endpoint)).must_equal 'ForAPI'
     end
 
+    it 'falls back to endpoint options when config is absent' do
+      api_class = Class.new do
+        def self.name
+          'FallbackAPI'
+        end
+      end
+      endpoint = Struct.new(:options).new({ for: api_class })
+      _(handler.send(:code_namespace, endpoint)).must_equal 'FallbackAPI'
+    end
+
     it 'returns nil when no owner is resolved' do
       endpoint = Class.new.new
       _(handler.send(:code_namespace, endpoint)).must_be_nil
@@ -227,6 +242,11 @@ describe OpenTelemetry::Instrumentation::Grape::V4::EventHandler do
       _(handler.send(:raw_endpoint_path, endpoint)).must_equal ['items']
     end
 
+    it 'falls back to endpoint options when config is absent' do
+      endpoint = Struct.new(:options).new({ path: ['fallback_path'] })
+      _(handler.send(:raw_endpoint_path, endpoint)).must_equal ['fallback_path']
+    end
+
     it 'returns nil when config is absent' do
       endpoint = Class.new.new
       _(handler.send(:raw_endpoint_path, endpoint)).must_be_nil
@@ -237,6 +257,11 @@ describe OpenTelemetry::Instrumentation::Grape::V4::EventHandler do
     it 'returns route namespace when present' do
       route = Struct.new(:namespace).new('v4/users')
       _(handler.send(:route_namespace, route)).must_equal 'v4/users'
+    end
+
+    it 'falls back to route options when route namespace is absent' do
+      route = Struct.new(:options).new({ namespace: 'fallback_ns' })
+      _(handler.send(:route_namespace, route)).must_equal 'fallback_ns'
     end
 
     it 'returns nil when route does not have namespace' do
@@ -256,6 +281,11 @@ describe OpenTelemetry::Instrumentation::Grape::V4::EventHandler do
       _(handler.send(:route_version, route)).must_equal 'v4'
     end
 
+    it 'falls back to route options when route version is absent' do
+      route = Struct.new(:options).new({ version: 'v1' })
+      _(handler.send(:route_version, route)).must_equal 'v1'
+    end
+
     it 'returns nil when version is not present' do
       route = Class.new.new
       _(handler.send(:route_version, route)).must_be_nil
@@ -266,6 +296,11 @@ describe OpenTelemetry::Instrumentation::Grape::V4::EventHandler do
     it 'returns route prefix string' do
       route = Struct.new(:prefix).new('api')
       _(handler.send(:route_prefix, route)).must_equal 'api'
+    end
+
+    it 'falls back to route options when route prefix is absent' do
+      route = Struct.new(:options).new({ prefix: 'fallback_prefix' })
+      _(handler.send(:route_prefix, route)).must_equal 'fallback_prefix'
     end
 
     it 'returns nil when prefix is not present' do
@@ -324,6 +359,21 @@ describe OpenTelemetry::Instrumentation::Grape::EventHandler do
       route = Struct.new(:origin, :version).new('/api/v2/items/:item_id(.:format)', nil)
       endpoint = Struct.new(:routes, :options).new([route], nil)
       _(handler.send(:path, endpoint)).must_equal '/api/v2/items/:item_id'
+    end
+
+    it 'delegates request_method safely' do
+      endpoint = Struct.new(:options).new({ method: ['GET'] })
+      _(handler.send(:request_method, endpoint)).must_equal 'GET'
+    end
+
+    it 'delegates code_namespace safely' do
+      api_class = Class.new do
+        def self.name
+          'DirectAPI'
+        end
+      end
+      endpoint = Struct.new(:options).new({ for: api_class })
+      _(handler.send(:code_namespace, endpoint)).must_equal 'DirectAPI'
     end
   end
 end

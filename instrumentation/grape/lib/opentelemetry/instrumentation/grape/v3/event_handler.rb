@@ -11,7 +11,7 @@ module OpenTelemetry
     module Grape
       module V3
         # Event handler implementation for Grape < 4.0
-        class EventHandler < Grape::EventHandler
+        class EventHandler < OpenTelemetry::Instrumentation::Grape::EventHandler
           class << self
             private
 

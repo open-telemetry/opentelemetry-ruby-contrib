@@ -130,35 +130,135 @@ module OpenTelemetry
 
           # Delegation fallbacks if EventHandler is called directly
           def request_method(endpoint)
-            target_handler.send(:request_method, endpoint)
+            handler = target_handler
+            return default_request_method(endpoint) if handler == self
+
+            handler.send(:request_method, endpoint)
           end
 
           def code_namespace(endpoint)
-            target_handler.send(:code_namespace, endpoint)
+            handler = target_handler
+            return default_code_namespace(endpoint) if handler == self
+
+            handler.send(:code_namespace, endpoint)
           end
 
           def raw_endpoint_path(endpoint)
-            target_handler.send(:raw_endpoint_path, endpoint)
+            handler = target_handler
+            return default_raw_endpoint_path(endpoint) if handler == self
+
+            handler.send(:raw_endpoint_path, endpoint)
           end
 
           def route_namespace(route)
-            target_handler.send(:route_namespace, route)
+            handler = target_handler
+            return default_route_namespace(route) if handler == self
+
+            handler.send(:route_namespace, route)
           end
 
           def route_version(route)
-            target_handler.send(:route_version, route)
+            handler = target_handler
+            return default_route_version(route) if handler == self
+
+            handler.send(:route_version, route)
           end
 
           def route_prefix(route)
-            target_handler.send(:route_prefix, route)
+            handler = target_handler
+            return default_route_prefix(route) if handler == self
+
+            handler.send(:route_prefix, route)
           end
 
           def target_handler
             if defined?(::Grape::VERSION) && Gem::Version.new(::Grape::VERSION) >= Gem::Version.new('4.0.0')
+              defined?(V4::EventHandler) ? V4::EventHandler : self
+            elsif defined?(V3::EventHandler)
+              V3::EventHandler
+            elsif defined?(V4::EventHandler)
               V4::EventHandler
             else
-              V3::EventHandler
+              self
             end
+          end
+
+          def default_request_method(endpoint)
+            if endpoint.instance_variable_defined?(:@config)
+              config = endpoint.instance_variable_get(:@config)
+              return config.http_methods&.first if config.respond_to?(:http_methods)
+            end
+
+            if endpoint.respond_to?(:options)
+              opts = endpoint.options
+              method = opts[:method]&.first if opts.is_a?(Hash)
+              return method if method
+            end
+
+            if endpoint.respond_to?(:routes)
+              route = endpoint.routes&.first
+              return route.request_method if route.respond_to?(:request_method) && route.request_method
+            end
+
+            nil
+          end
+
+          def default_code_namespace(endpoint)
+            if endpoint.instance_variable_defined?(:@config)
+              config = endpoint.instance_variable_get(:@config)
+              owner = config.api if config.respond_to?(:api)
+              owner ||= config.for if config.respond_to?(:for)
+            end
+            if owner.nil? && endpoint.respond_to?(:options)
+              opts = endpoint.options
+              owner = opts[:for] if opts.is_a?(Hash)
+            end
+            owner ||= endpoint.api if endpoint.respond_to?(:api)
+            return unless owner
+
+            base = owner.instance_variable_get(:@base) if owner.instance_variable_defined?(:@base)
+            [owner.name, base&.to_s, owner.to_s].find { |value| value && !value.empty? }
+          end
+
+          def default_raw_endpoint_path(endpoint)
+            if endpoint.instance_variable_defined?(:@config)
+              config = endpoint.instance_variable_get(:@config)
+              return Array(config.path) if config.respond_to?(:path) && config.path
+            end
+
+            if endpoint.respond_to?(:options)
+              opts = endpoint.options
+              return Array(opts[:path]) if opts.is_a?(Hash) && opts[:path]
+            end
+
+            nil
+          end
+
+          def default_route_namespace(route)
+            ns = route.namespace if route.respond_to?(:namespace)
+            return ns if ns && !ns.to_s.empty?
+            return unless route.respond_to?(:options)
+
+            opts = route.options
+            opts[:namespace] if opts.is_a?(Hash)
+          end
+
+          def default_route_version(route)
+            version = route.version if route.respond_to?(:version)
+            if version.nil? && route.respond_to?(:options)
+              opts = route.options
+              version = opts[:version] if opts.is_a?(Hash)
+            end
+            version.is_a?(Array) ? version.first&.to_s : version&.to_s
+          end
+
+          def default_route_prefix(route)
+            prefix = route.prefix if route.respond_to?(:prefix)
+            if prefix.nil? && route.respond_to?(:options)
+              opts = route.options
+              prefix = opts[:prefix] if opts.is_a?(Hash)
+            end
+            prefix&.to_s
           end
         end
       end
