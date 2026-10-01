@@ -71,4 +71,31 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Consumer do
     _(linked_span_context.trace_id).must_equal(publish_span.trace_id)
     _(linked_span_context.span_id).must_equal(publish_span.span_id)
   end
+
+  # Regression test for https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues/<TBD>
+  #
+  # `Bunny::Consumer#queue` accepts either a `Bunny::Queue` instance or a `String`
+  # (queue name) — see `Bunny::Consumer#initialize`. Wrappers like Hutch register
+  # consumers via `Bunny::Channel#basic_consume(queue_name, ...)`, which leaves
+  # `consumer.queue` as a String. Before the fix, the patch dereferenced
+  # `queue.channel` and raised `NoMethodError: undefined method 'channel' for an
+  # instance of String`, which Bunny then swallowed as "Uncaught exception from
+  # consumer" — leaving the channel registered with the broker but never
+  # processing or acking messages.
+  it 'traces consuming when consumer subscribes via queue name (String, e.g. Hutch)' do
+    queue = channel.queue('', exclusive: true).bind(exchange, routing_key: 'ruby.#')
+
+    consumer = channel.basic_consume(queue.name) { |_delivery_info, _properties, _payload| }
+
+    exchange.publish('San Diego update', routing_key: 'ruby.news')
+
+    # Wait until the publish message reached the consumer
+    sleep 1.0
+
+    channel.basic_cancel(consumer.consumer_tag)
+
+    process_span = spans.find { |span| span.name == "#{topic}.ruby.news process" }
+    _(process_span).wont_be_nil
+    _(process_span.kind).must_equal(:consumer)
+  end
 end unless ENV['OMIT_SERVICES']
