@@ -65,7 +65,7 @@ concurrency:
 jobs:
   check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - run: echo "Repository check passed"
   instrumentation:
@@ -111,7 +111,7 @@ jobs:
           - rspec
           - sinatra
         os:
-          - ubuntu-24.04
+          - ubuntu-26.04
 
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
