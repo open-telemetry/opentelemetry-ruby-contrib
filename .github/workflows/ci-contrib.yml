@@ -52,7 +52,7 @@ jobs:
           - resource-detector-os
           - sampler-xray
         os:
-          - ubuntu-24.04
+          - ubuntu-26.04
         include:
           - gem: resource-detector-os
             os: windows-2025
