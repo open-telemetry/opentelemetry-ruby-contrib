@@ -1,4 +1,4 @@
-FROM ruby:3.3.12-alpine3.23@sha256:11da101dfad607c6193a921abc815c989bc9f19b43f5f686bbcc7d424298d596 as ruby
+FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b as alpine
 
 # Metadata
 LABEL maintainer="open-telemetry/opentelemetry-ruby-contrib"
@@ -16,6 +16,7 @@ ARG PACKAGES="\
     autoconf \
     automake \
     bash \
+    curl \
     binutils \
     build-base \
     coreutils  \
@@ -24,6 +25,7 @@ ARG PACKAGES="\
     git \
     grep \
     less \
+    libffi-dev \
     libstdc++ \
     libtool \
     libxml2-dev \
@@ -35,6 +37,7 @@ ARG PACKAGES="\
     tzdata \
     util-linux \
     imagemagick \
+    yaml-dev \
     "
 # Install packages
 RUN apk update && \
@@ -52,25 +55,34 @@ ENV BUNDLE_APP_CONFIG="${BUNDLE_PATH}" \
     BUNDLE_GEMFILE=Gemfile
 ENV PATH "${APP_DIR}/bin:${BUNDLE_BIN}:${PATH}"
 
-# Upgrade RubyGems and install required Bundler version
-RUN gem update --system && \
-    gem update bundler && \
-    gem cleanup
+ENV TMPDIR=/var/tmp
 
 # Add custom app User and Group
 RUN addgroup -S -g "${APP_GID}" "${APP_GROUP}" && \
     adduser -S -g "${APP_GROUP}" -u "${APP_UID}" "${APP_USER}"
 
-# Create directories for the app code
-RUN mkdir -p "${APP_DIR}" \
-    "${APP_DIR}/tmp" && \
-    chown -R "${APP_USER}":"${APP_GROUP}" "${APP_DIR}" \
-    "${APP_DIR}/tmp" \
-    "${BUNDLE_PATH}/"
+RUN mkdir -p "${HOME}/.local/bin"
 
-USER "${APP_USER}"
+RUN curl -fsSL https://mise.run  | sh
+
+RUN chmod 755 /root/.local/bin/mise
+
+# Ensure mise is available in PATH during build
+ENV PATH="/root/.local/bin:${PATH}"
+
+# Ensure mise loads its environment
+RUN echo 'eval "$(mise activate bash)"' >> /root/.bashrc
+RUN echo 'eval "$(mise activate sh)"' >> /root/.profile
+
+COPY mise.toml /app/mise.toml
+
+RUN mise trust "${APP_DIR}/mise.toml"
 
 WORKDIR "${APP_DIR}"
+
+RUN mise install
+
+USER "${APP_USER}"
 
 # Commands will be supplied via `docker-compose`
 CMD []
