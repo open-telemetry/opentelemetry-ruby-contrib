@@ -207,10 +207,18 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         def request_uri = '/success?hello=there'
       end.new
       request = Net::HTTP::Get.new(path)
-      http = Net::HTTP.new('example.com')
 
-      _(http.send(:request_path, request.path)).must_equal '/success?hello=there'
-      _(http.send(:split_path_and_query, request.path)).must_equal ['/success', 'hello=there']
+      _(OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper.request_path(request.path)).must_equal '/success?hello=there'
+      _(OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper.split_path_and_query(request.path)).must_equal ['/success', 'hello=there']
+    end
+
+    it 'handles URI-like paths without an HTTP request URI' do
+      path = Class.new do
+        def empty? = false
+        def request_uri = nil
+      end.new
+      request = Net::HTTP::Get.new(path)
+      _(OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper.split_path_and_query(request.path)).must_equal [nil, nil]
     end
   end
 
