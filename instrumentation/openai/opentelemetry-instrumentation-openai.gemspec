@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.description = 'OpenAI instrumentation for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
+  spec.platform    = Gem::Platform::RUBY
 
   spec.files = Dir.glob('lib/**/*.rb') +
                Dir.glob('*.md') +
@@ -26,7 +27,6 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.3'
 
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.25'
-  spec.add_dependency 'opentelemetry-logs-api', '~> 0.4.1'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
