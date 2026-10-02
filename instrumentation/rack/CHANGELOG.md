@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+## v0.31.2 / 2026-09-29
+
+- FIXED: Fiber-safe context detachment in `EventHandler` (#2130)
+
 ## v0.31.1 / 2026-05-21
 
 - FIXED: Handle missing config in middleware when OTEL_SDK_DISABLED=true (#2231)
