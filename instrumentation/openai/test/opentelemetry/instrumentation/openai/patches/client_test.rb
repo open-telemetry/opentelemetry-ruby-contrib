@@ -145,6 +145,23 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
       describe 'with logs installed' do
         before { skip unless defined?(OpenTelemetry::SDK::Logs) }
 
+        it 'has the same instrumentation scope for spans and logs' do
+          instrumentation.instance_variable_set(:@installed, false)
+          instrumentation.install
+          instrumentation.config[:capture_content] = true
+
+          client = OpenAI::Client.new(api_key: 'test-token')
+          client.chat.completions.create(
+            model: model,
+            messages: messages
+          )
+
+          log_record = LOG_EXPORTER.emitted_log_records[0]
+
+          assert_equal log_record.instrumentation_scope.name, 'OpenTelemetry::Instrumentation::OpenAI'
+          assert_equal client_span.instrumentation_scope.name, log_record.instrumentation_scope.name
+        end
+
         it 'captures message content when enabled' do
           # Content capture is emitted as log records through the Logs API,
           # not as span events.
