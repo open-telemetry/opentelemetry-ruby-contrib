@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+## v0.30.1 / 2026-09-29
+
+- FIXED: Fiber-safe context detachment in `EventHandler` (#2130)
+
 ## v0.30.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
