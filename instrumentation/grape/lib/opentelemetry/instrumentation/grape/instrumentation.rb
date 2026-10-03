@@ -53,6 +53,11 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'subscriber'
+          if gem_version >= Gem::Version.new('4.0.0')
+            require_relative 'v4/event_handler'
+          else
+            require_relative 'v3/event_handler'
+          end
         end
 
         def subscribe
