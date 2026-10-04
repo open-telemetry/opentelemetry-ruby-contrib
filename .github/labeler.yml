@@ -207,6 +207,10 @@ instrumentation-rails:
   - changed-files:
       - any-glob-to-any-file:
           - "instrumentation/rails/**"
+instrumentation-rake:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "instrumentation/rake/**"
 instrumentation-rdkafka:
   - changed-files:
       - any-glob-to-any-file:
