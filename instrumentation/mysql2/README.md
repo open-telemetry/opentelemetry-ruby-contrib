@@ -57,6 +57,12 @@ end
 
 An example of usage can be seen in [`example/mysql2.rb`](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/mysql2/example/mysql2.rb).
 
+## Known issues running the test suite
+
+Currently Alpine Linux's MariaDB Connector/C 3.4.x requires SSL unconditionally, which causes the test suite to fail.
+
+Because of this the Dev Container/Docker harness has been moved to a minimal Ubuntu image.
+
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-mysql2` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
