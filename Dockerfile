@@ -128,12 +128,10 @@ RUN usermod -l "${APP_USER}" -d "/home/${APP_USER}" -m "ubuntu" && \
 
 # Import shared app folder and mise config
 COPY --from=base-setup --chown="${APP_USER}:${APP_GROUP}" "${APP_DIR}" "${APP_DIR}"
-COPY --chown="${APP_USER}:${APP_GROUP}" mise.toml mise.lock /app/
+COPY --chown="${APP_USER}:${APP_GROUP}" mise.toml /app/
 
 # Prime our BUNDLE_PATH permissions for use later
 RUN mkdir -p /bundle && chown -R "${APP_USER}:${APP_GROUP}" /bundle
-
-RUN apt-get update ; apt-get install -y 
 
 USER "${APP_USER}"
 
