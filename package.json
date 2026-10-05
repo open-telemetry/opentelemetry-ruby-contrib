@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@umbrelladocs/linkspector": "0.5.6",
-    "cspell": "10.3.5",
+    "cspell": "10.3.6",
     "@prantlf/jsonlint": "17.0.1",
     "markdownlint-cli2": "0.23.3",
     "prettier": "3.9.9",
