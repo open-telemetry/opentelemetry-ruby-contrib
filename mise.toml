@@ -1,0 +1,5 @@
+[tools]
+ruby = '3.3.12'
+
+[settings]
+lockfile = true
