@@ -302,43 +302,72 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Utils do
   end
 
   describe '#log_structured_event' do
+    let(:instrumentation) { OpenTelemetry::Instrumentation::OpenAI::Instrumentation.instance }
+
     before do
-      LOG_EXPORTER.reset
+      instrumentation.install
     end
 
-    it 'emits the event as a log record through the Logs API' do
-      event = {
-        event_name: 'gen_ai.user.message',
-        attributes: { 'gen_ai.provider.name' => 'openai' },
-        body: { content: 'Hello' }
-      }
-
-      utils_class.log_structured_event(event)
-
-      log_records = LOG_EXPORTER.emitted_log_records
-      _(log_records.size).must_equal 1
-
-      log_record = log_records.first
-      _(log_record.event_name).must_equal 'gen_ai.user.message'
-      _(log_record.attributes['gen_ai.provider.name']).must_equal 'openai'
-      _(log_record.body[:content]).must_equal 'Hello'
+    after do
+      instrumentation.instance_variable_set(:@installed, false)
     end
 
-    it 'handles events with nil body' do
-      event = {
-        event_name: 'gen_ai.user.message',
-        attributes: { 'gen_ai.provider.name' => 'openai' },
-        body: nil
-      }
+    describe 'without logs gems installed (default)' do
+      before do
+        skip if defined?(OpenTelemetry::Logs)
+      end
 
-      utils_class.log_structured_event(event)
+      it 'returns nil' do
+        event = {
+          event_name: 'gen_ai.user.message',
+          attributes: { 'gen_ai.provider.name' => 'openai' },
+          body: { content: 'Hello' }
+        }
 
-      log_records = LOG_EXPORTER.emitted_log_records
-      _(log_records.size).must_equal 1
+        assert_nil utils_class.log_structured_event(event)
+      end
+    end
 
-      log_record = log_records.first
-      _(log_record.event_name).must_equal 'gen_ai.user.message'
-      _(log_record.body).must_be_nil
+    describe 'with logs gems installed' do
+      before do
+        skip unless defined?(OpenTelemetry::Logs) && defined?(OpenTelemetry::SDK::Logs)
+        LOG_EXPORTER.reset
+      end
+
+      it 'emits the event as a log record through the Logs API' do
+        event = {
+          event_name: 'gen_ai.user.message',
+          attributes: { 'gen_ai.provider.name' => 'openai' },
+          body: { content: 'Hello' }
+        }
+
+        utils_class.log_structured_event(event)
+
+        log_records = LOG_EXPORTER.emitted_log_records
+        _(log_records.size).must_equal 1
+
+        log_record = log_records.first
+        _(log_record.event_name).must_equal 'gen_ai.user.message'
+        _(log_record.attributes['gen_ai.provider.name']).must_equal 'openai'
+        _(log_record.body[:content]).must_equal 'Hello'
+      end
+
+      it 'handles events with nil body' do
+        event = {
+          event_name: 'gen_ai.user.message',
+          attributes: { 'gen_ai.provider.name' => 'openai' },
+          body: nil
+        }
+
+        utils_class.log_structured_event(event)
+
+        log_records = LOG_EXPORTER.emitted_log_records
+        _(log_records.size).must_equal 1
+
+        log_record = log_records.first
+        _(log_record.event_name).must_equal 'gen_ai.user.message'
+        _(log_record.body).must_be_nil
+      end
     end
   end
 end
