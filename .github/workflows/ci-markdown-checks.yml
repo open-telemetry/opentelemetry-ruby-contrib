@@ -45,9 +45,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-annotations
           fail_on_error: true
-          # just to test the headers with the CNCF link
-          # DO NOT MERGE
-          filter_mode: nofilter
 
   json-lint-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
