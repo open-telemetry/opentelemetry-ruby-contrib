@@ -1,5 +1,5 @@
 include:
-  - ../../.docker/devcontainer/alpine/compose.yml
+  - ../../.docker/devcontainer/ubuntu/compose.yml
   - ../../.docker/volume/bundler.yml
   - example/compose.yml
   - test/compose.yml
