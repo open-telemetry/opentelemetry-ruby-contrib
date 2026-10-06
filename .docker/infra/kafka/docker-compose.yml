@@ -1,6 +1,9 @@
 services:
   kafka:
-    image: confluentinc/cp-kafka:8.1.6@sha256:8293182e4b673f2c23af6f84ab9a506633fa7ba993ca7c12f8432a5efeb39e74
+    # Note: confluentinc/cp-kafka:8.x drops support for legacy V0 and V1 api requests.
+    #       which makes it incompatible with even the newest version of ruby-kafka.
+    # image: confluentinc/cp-kafka:8.1.6@sha256:8293182e4b673f2c23af6f84ab9a506633fa7ba993ca7c12f8432a5efeb39e74
+    image: confluentinc/cp-kafka:7.9.10@sha256:07c3d60362e67c296f7f34b690b1240e5ecdcde4a84f5e73cab320fb4041f58c
     ports:
       - "9093:9093"
       - "29092:29092"

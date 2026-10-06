@@ -16,7 +16,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
   let(:tracer) { OpenTelemetry.tracer_provider.tracer('test-tracer') }
 
   let(:host) { ENV.fetch('TEST_KAFKA_HOST', '127.0.0.1') }
-  let(:port) { ENV.fetch('TEST_KAFKA_PORT', 29_092) }
+  let(:port) { ENV.fetch('TEST_KAFKA_PORT', 29092) }
 
   let(:kafka) { Kafka.new(["#{host}:#{port}"], client_id: 'opentelemetry-kafka-test') }
   let(:topic) { "topic-#{SecureRandom.uuid}" }
