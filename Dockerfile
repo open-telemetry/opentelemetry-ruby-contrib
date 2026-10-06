@@ -112,7 +112,6 @@ ARG PACKAGES="\
     libmysqlclient-dev \
     libpq-dev \
     imagemagick \
-    ruby-dev \
     tzdata \
 "
 
