@@ -20,7 +20,6 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.3'
 
   spec.files = Dir.glob('lib/**/*.rb') +
-               Dir.glob('example/**/*.rb') +
                Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
