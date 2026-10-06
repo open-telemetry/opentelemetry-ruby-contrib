@@ -11,7 +11,7 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 host = ENV.fetch('TEST_KAFKA_HOST', '127.0.0.1')
-port = ENV.fetch('TEST_KAFKA_PORT', 29_092)
+port = ENV.fetch('TEST_KAFKA_PORT', 29092)
 config = { "bootstrap.servers": "#{host}:#{port}" }
 producer = Rdkafka::Config.new(config).producer
 delivery_handles = []
