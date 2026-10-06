@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-24.04
+          - ubuntu-26.04
           - macos-26
           - windows-2025
     name: All / ${{ matrix.os }}
