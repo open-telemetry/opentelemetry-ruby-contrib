@@ -113,6 +113,7 @@ ARG PACKAGES="\
     libmysqlclient-dev \
     libpq-dev \
     nodejs \
+    npm \
     tzdata \
 "
 
