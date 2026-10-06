@@ -29,10 +29,7 @@ module OpenTelemetry
 
             Thread.current[IN_OTEL_EMIT_KEY] = true
             begin
-              OpenTelemetry.logger_provider.logger(
-                name: OpenTelemetry::Instrumentation::Logger::NAME,
-                version: OpenTelemetry::Instrumentation::Logger::VERSION
-              ).on_emit(
+              OpenTelemetry::Instrumentation::Logger::Instrumentation.instance.logger.on_emit(
                 severity_text: severity,
                 severity_number: severity_number(severity),
                 timestamp: datetime,
