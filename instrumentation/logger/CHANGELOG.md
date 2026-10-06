@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-logger
 
+## v0.5.0 / 2026-10-06
+
+- BREAKING CHANGE: Emit log records through the instrumentation-base logger (#2610)
+- ADDED: Emit log records through the instrumentation-base logger (#2610)
+
 ## v0.4.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
