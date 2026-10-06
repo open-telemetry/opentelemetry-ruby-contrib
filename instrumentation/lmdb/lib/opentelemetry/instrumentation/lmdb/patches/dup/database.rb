@@ -36,6 +36,27 @@ module OpenTelemetry
               end
             end
 
+            def has?(key, value = nil)
+              attributes = {
+                'db.system' => 'lmdb',
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'HAS',
+                'db.namespace' => env.path
+              }
+              unless config[:db_statement] == :omit
+                attributes['db.statement'] = raw_statement('HAS', key, value)
+                attributes['db.query.text'] = formatted_statement('HAS', key, value)
+              end
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+              tracer.in_span("HAS #{key}", attributes: attributes, kind: :client) do |span|
+                super
+              rescue StandardError => e
+                set_error_attributes(span, e)
+                raise
+              end
+            end
+
             def delete(key, value = nil)
               attributes = {
                 'db.system' => 'lmdb',
@@ -92,6 +113,27 @@ module OpenTelemetry
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
               tracer.in_span('CLEAR', attributes: attributes, kind: :client) do |span|
+                super
+              rescue StandardError => e
+                set_error_attributes(span, e)
+                raise
+              end
+            end
+
+            def drop
+              attributes = {
+                'db.system' => 'lmdb',
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'DROP',
+                'db.namespace' => env.path
+              }
+              unless config[:db_statement] == :omit
+                attributes['db.statement'] = raw_statement('DROP')
+                attributes['db.query.text'] = formatted_statement('DROP')
+              end
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+              tracer.in_span('DROP', attributes: attributes, kind: :client) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)

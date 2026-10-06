@@ -162,6 +162,24 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Dup::Database' do
     end
   end
 
+  describe '#has?' do
+    it 'traces with both old and stable attributes' do
+      lmdb.database['foo'] = 'bar'
+      lmdb.database.has?('foo', 'bar')
+
+      _(last_span.name).must_equal('HAS foo')
+      _(last_span.kind).must_equal(:client)
+      # Old attributes
+      _(last_span.attributes['db.system']).must_equal('lmdb')
+      _(last_span.attributes['db.statement']).must_equal('HAS foo bar')
+      # Stable attributes
+      _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.operation.name']).must_equal('HAS')
+      _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
+      _(last_span.attributes['db.query.text']).must_equal('HAS ? ?')
+    end
+  end
+
   describe '#delete' do
     it 'traces with both old and stable attributes' do
       lmdb.database['foo'] = 'bar'
@@ -216,6 +234,24 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Dup::Database' do
       _(last_span.name).must_equal('DELETE missing-key')
       _(last_span.attributes['error.type']).must_equal('LMDB::Error::NOTFOUND')
       _(last_span.status.code).must_equal(OpenTelemetry::Trace::Status::ERROR)
+    end
+  end
+
+  describe '#drop' do
+    it 'traces with both old and stable attributes' do
+      lmdb.database['foo'] = 'bar'
+      lmdb.database.drop
+
+      _(last_span.name).must_equal('DROP')
+      _(last_span.kind).must_equal(:client)
+      # Old attributes
+      _(last_span.attributes['db.system']).must_equal('lmdb')
+      _(last_span.attributes['db.statement']).must_equal('DROP')
+      # Stable attributes
+      _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.operation.name']).must_equal('DROP')
+      _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
+      _(last_span.attributes['db.query.text']).must_equal('DROP')
     end
   end
 end

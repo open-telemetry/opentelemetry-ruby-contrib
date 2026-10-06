@@ -12,7 +12,7 @@ module OpenTelemetry
       module Patches
         module Stable
           # Module to prepend to LMDB::Database for instrumentation
-          module Database
+          module Database # rubocop:disable Metrics/ModuleLength
             STATEMENT_MAX_LENGTH = 500
 
             def get(key)
@@ -24,6 +24,22 @@ module OpenTelemetry
               attributes['db.query.text'] = formatted_statement('GET', key) unless config[:db_statement] == :omit
 
               tracer.in_span('GET', attributes: attributes, kind: :internal) do |span|
+                super
+              rescue StandardError => e
+                set_error_attributes(span, e)
+                raise
+              end
+            end
+
+            def has?(key, value = nil)
+              attributes = {
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'HAS',
+                'db.namespace' => env.path
+              }
+              attributes['db.query.text'] = formatted_statement('HAS', key, value) unless config[:db_statement] == :omit
+
+              tracer.in_span('HAS', attributes: attributes, kind: :internal) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)
@@ -72,6 +88,22 @@ module OpenTelemetry
               attributes['db.query.text'] = formatted_statement('CLEAR') unless config[:db_statement] == :omit
 
               tracer.in_span('CLEAR', attributes: attributes, kind: :internal) do |span|
+                super
+              rescue StandardError => e
+                set_error_attributes(span, e)
+                raise
+              end
+            end
+
+            def drop
+              attributes = {
+                'db.system.name' => 'lmdb',
+                'db.operation.name' => 'DROP',
+                'db.namespace' => env.path
+              }
+              attributes['db.query.text'] = formatted_statement('DROP') unless config[:db_statement] == :omit
+
+              tracer.in_span('DROP', attributes: attributes, kind: :internal) do |span|
                 super
               rescue StandardError => e
                 set_error_attributes(span, e)

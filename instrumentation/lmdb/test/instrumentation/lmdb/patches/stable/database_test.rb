@@ -153,6 +153,32 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
     end
   end
 
+  describe '#has?' do
+    it 'traces with stable attributes' do
+      lmdb.database['foo'] = 'bar'
+      lmdb.database.has?('foo', 'bar')
+
+      _(last_span.name).must_equal('HAS')
+      _(last_span.kind).must_equal(:internal)
+      _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.operation.name']).must_equal('HAS')
+      _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
+      _(last_span.attributes['db.query.text']).must_equal('HAS ? ?')
+      _(last_span.attributes).wont_include('db.system')
+      _(last_span.attributes).wont_include('db.statement')
+    end
+
+    it 'includes the key and value when db_statement is :include' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(db_statement: :include)
+
+      lmdb.database['foo'] = 'bar'
+      lmdb.database.has?('foo', 'bar')
+
+      _(last_span.attributes['db.query.text']).must_equal('HAS foo bar')
+    end
+  end
+
   describe '#delete' do
     it 'traces with stable attributes' do
       lmdb.database['foo'] = 'bar'
@@ -209,6 +235,21 @@ describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Stable::Database' do
       _(last_span.name).must_equal('DELETE')
       _(last_span.attributes['error.type']).must_equal('LMDB::Error::NOTFOUND')
       _(last_span.status.code).must_equal(OpenTelemetry::Trace::Status::ERROR)
+    end
+  end
+
+  describe '#drop' do
+    it 'traces with stable attributes' do
+      lmdb.database['foo'] = 'bar'
+      lmdb.database.drop
+
+      _(last_span.name).must_equal('DROP')
+      _(last_span.kind).must_equal(:internal)
+      _(last_span.attributes['db.system.name']).must_equal('lmdb')
+      _(last_span.attributes['db.operation.name']).must_equal('DROP')
+      _(last_span.attributes['db.namespace']).must_equal(lmdb.path)
+      _(last_span.attributes['db.query.text']).must_equal('DROP')
+      _(last_span.attributes).wont_include('db.system')
     end
   end
 end

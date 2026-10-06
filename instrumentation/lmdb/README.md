@@ -84,7 +84,7 @@ During the transition from old to stable conventions, LMDB instrumentation code 
 `database/dup` emits both sets of attributes on a single span, so old- and stable-convention consumers can both be served during a phased rollout. Two things cannot be duplicated, because a span has exactly one of each. In both cases `dup` keeps the old behavior, so consumers reading the old conventions are not broken mid-migration:
 
 - **Span kind.** Under `database`, database operations are `INTERNAL`, because LMDB is an embedded store mapped into the current process with no remote server. Under `database/dup` and under the default they remain `CLIENT`.
-- **Span name.** Under `database`, span names are `GET`, `PUT`, `DELETE`, and `CLEAR`. Under `database/dup` and under the default they also carry the key, for example `GET mykey`.
+- **Span name.** Under `database`, span names are `GET`, `PUT`, `HAS`, `DELETE`, `CLEAR`, and `DROP`. Under `database/dup` and under the default they also carry the key, for example `GET mykey`.
 
 In addition, **`db.statement` is never obfuscated.** The old conventions did not sanitize it, so under `database/dup` it carries the key and value verbatim whenever `db_statement` is not `:omit` — including under the `:obfuscate` default. Only `db.query.text` is obfuscated.
 
