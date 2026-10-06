@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+## v0.29.2 / 2026-10-06
+
+- FIXED: Normalize URI-like request paths on `Net::HTTP` instrumentation (#2591)
+
+## v0.29.1 / 2026-09-15
+
+- FIXED: Omit nil attributes on spans (#2558)
+
 ## v0.29.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)

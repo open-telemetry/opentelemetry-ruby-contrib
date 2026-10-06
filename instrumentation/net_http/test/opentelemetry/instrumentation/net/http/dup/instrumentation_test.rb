@@ -200,6 +200,26 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
+
+    it 'handles URI-like request paths' do
+      path = Class.new do
+        def empty? = false
+        def request_uri = '/success?hello=there'
+      end.new
+      request = Net::HTTP::Get.new(path)
+
+      _(OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper.request_path(request.path)).must_equal '/success?hello=there'
+      _(OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper.split_path_and_query(request.path)).must_equal ['/success', 'hello=there']
+    end
+
+    it 'handles URI-like paths without an HTTP request URI' do
+      path = Class.new do
+        def empty? = false
+        def request_uri = nil
+      end.new
+      request = Net::HTTP::Get.new(path)
+      _(OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper.split_path_and_query(request.path)).must_equal [nil, nil]
+    end
   end
 
   describe 'untraced?' do
@@ -378,6 +398,20 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.attributes['server.port']).must_equal(443)
     ensure
       WebMock.disable_net_connect!
+    end
+
+    it 'does not record a nil net.peer.name and server.address' do
+      fake_socket = Object.new
+      def fake_socket.setsockopt(*args); end
+      def fake_socket.close; end
+
+      # Replace the TCP socket creation with our fake socket
+      allow(TCPSocket).to receive(:open).and_return(fake_socket)
+      Net::HTTP.new(nil, 80).send(:connect)
+
+      _(span.name).must_equal 'connect'
+      _(span.attributes.key?('net.peer.name')).must_equal false
+      _(span.attributes.key?('server.address')).must_equal false
     end
 
     it 'uses url.template in span name when present in client context' do

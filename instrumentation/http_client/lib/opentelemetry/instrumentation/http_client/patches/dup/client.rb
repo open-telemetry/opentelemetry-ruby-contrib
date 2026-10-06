@@ -34,7 +34,7 @@ module OpenTelemetry
                 'url.full' => url,
                 'server.address' => uri.host,
                 'server.port' => uri.port
-              }.merge!(span_data.attributes)
+              }.compact.merge!(span_data.attributes)
 
               attributes['url.query'] = uri.query unless uri.query.nil?
 
