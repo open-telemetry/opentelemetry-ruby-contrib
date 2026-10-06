@@ -109,9 +109,10 @@ ARG APP_DIR
 ARG PACKAGES="\
     build-essential \
     curl \
+    imagemagick \
     libmysqlclient-dev \
     libpq-dev \
-    imagemagick \
+    nodejs \
     tzdata \
 "
 
