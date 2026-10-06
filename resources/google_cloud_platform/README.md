@@ -61,13 +61,10 @@ This will populate the following resource attributes for compute running on Goog
 
 The `opentelemetry-resource-detector-google_cloud_platform` gem source is on GitHub, along with related gems.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [the CNCF \#otel-ruby Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby Special Interest Group (SIG). You can find details on our weekly meeting times, GitHub Discussions, and CNCF Slack channels on the [Ruby SDK SIG page][ruby-sig].
 
 ## License
 
 The `opentelemetry-resource-detector-google_cloud_platform` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
 
-[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
-[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[ruby-sig]: https://github.com/open-telemetry/community/blob/main/sigs.md#ruby-sdk

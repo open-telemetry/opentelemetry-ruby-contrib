@@ -69,9 +69,9 @@ Example usage can be seen in the [`./example/trace_demonstration.rb` file](https
 
 ## How can I get involved?
 
-The `opentelemetry-instrumentation-active_support` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
+The `opentelemetry-instrumentation-active_support` gem source is [on github][repo-github], along with related gems.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [the CNCF \#otel-ruby Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby Special Interest Group (SIG). You can find details on our weekly meeting times, GitHub Discussions, and CNCF Slack channels on the [Ruby SDK SIG page][ruby-sig].
 
 ## License
 
@@ -79,9 +79,6 @@ The `opentelemetry-instrumentation-active_support` gem is distributed under the 
 
 [rails-home]: https://rubyonrails.org
 [bundler-home]: https://bundler.io
-[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
+[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
-[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
-[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[ruby-sig]: https://github.com/open-telemetry/community/blob/main/sigs.md#ruby-sdk

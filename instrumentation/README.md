@@ -51,14 +51,11 @@ The source for all OpenTelemetry Ruby instrumentation gems is [on github](https:
 
 If you are interested in helping out with an instrumentation, check out [instrumentations that have been requested but are not currently in-progress](https://github.com/open-telemetry/opentelemetry-ruby-contrib/issues?q=is%3Aopen+label%3Ainstrumentation+label%3A%22help+wanted%22).
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [the CNCF \#otel-ruby Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby Special Interest Group (SIG). You can find details on our weekly meeting times, GitHub Discussions, and CNCF Slack channels on the [Ruby SDK SIG page][ruby-sig].
 
 ## License
 
 All OpenTelemetry Ruby instrumentation gems are distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
-[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
-[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[ruby-sig]: https://github.com/open-telemetry/community/blob/main/sigs.md#ruby-sdk
