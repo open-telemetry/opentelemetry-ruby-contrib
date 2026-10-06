@@ -3,7 +3,6 @@
 ## v0.98.0 / 2026-10-06
 
 - ADDED: Add opentelemetry-instrumentation-openai to all (#2618)
-- ADDED: Add openai to instrumentation-all
 
 ## v0.97.0 / 2026-09-29
 
