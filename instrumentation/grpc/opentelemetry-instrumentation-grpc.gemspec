@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
   spec.description = 'gRPC instrumentation for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
+  spec.platform    = Gem::Platform::RUBY
 
   spec.required_ruby_version = '>= 3.3'
 
