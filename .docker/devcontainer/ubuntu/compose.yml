@@ -6,7 +6,5 @@ services:
     build:
       context: ../../../
       target: ubuntu
-      args:
-        RUBY_VERSION: ${RUBY_VERSION:-3.3.12}
     working_dir: /app
     env_file: ../../environment/dev/.env
