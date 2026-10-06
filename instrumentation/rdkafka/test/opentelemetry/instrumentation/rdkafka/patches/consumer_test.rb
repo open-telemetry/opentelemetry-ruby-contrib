@@ -17,7 +17,7 @@ unless ENV['OMIT_SERVICES']
     let(:spans) { exporter.finished_spans }
 
     let(:host) { ENV.fetch('TEST_KAFKA_HOST', '127.0.0.1') }
-    let(:port) { ENV.fetch('TEST_KAFKA_PORT', 29_092) }
+    let(:port) { ENV.fetch('TEST_KAFKA_PORT', 29092) }
 
     before do
       # Clear spans
