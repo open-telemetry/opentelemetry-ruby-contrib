@@ -33,20 +33,6 @@ services:
       - postgres
       - rabbitmq
       - redis
-  "app-ubuntu":
-    extends:
-      service: devcontainer-ubuntu
-      file: .docker/devcontainer/ubuntu/compose.yml
-    depends_on:
-      - kafka
-      - jaeger
-      - mysql
-      - mongo
-      - memcached
-      - otelcol
-      - postgres
-      - rabbitmq
-      - redis
 
   ex-instrumentation-mysql2-test:
     extends:
