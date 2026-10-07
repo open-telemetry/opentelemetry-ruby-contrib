@@ -19,23 +19,30 @@ ARG PACKAGES="\
     binutils \
     build-base \
     coreutils  \
+    curl \
     execline \
     findutils \
     git \
     grep \
+    imagemagick \
     less \
+    libffi-dev \
     libstdc++ \
     libtool \
     libxml2-dev \
     libxslt-dev \
     mariadb-dev \
+    nodejs \
+    npm \
     sqlite-dev \
     openssl \
     postgresql-dev \
     tzdata \
     util-linux \
     imagemagick \
+    yaml-dev \
     "
+
 # Install packages
 RUN apk update && \
     apk upgrade && \
@@ -50,22 +57,22 @@ ENV BUNDLE_PATH $GEM_HOME
 ENV BUNDLE_APP_CONFIG="${BUNDLE_PATH}" \
     BUNDLE_BIN="${BUNDLE_PATH}/bin" \
     BUNDLE_GEMFILE=Gemfile
-ENV PATH "${APP_DIR}/bin:${BUNDLE_BIN}:${PATH}"
-
+ENV PATH "/usr/local/bin:/opt/mise/shims:${APP_DIR}/bin:${BUNDLE_BIN}:${PATH}"
+ENV MISE_DATA_DIR=/opt/mise
+ENV MISE_CACHE_DIR=/var/cache/mise
 ENV TMPDIR=/var/tmp
 
 # Add custom app User and Group
 RUN addgroup -S -g "${APP_GID}" "${APP_GROUP}" && \
-    adduser -S -g "${APP_GROUP}" -u "${APP_UID}" "${APP_USER}"
+    adduser -S -G "${APP_GROUP}" -u "${APP_UID}" "${APP_USER}"
 
 RUN mkdir -p "${HOME}/.local/bin"
 
 RUN curl -fsSL https://mise.run  | sh
 
-RUN chmod 755 /root/.local/bin/mise
+RUN mv /root/.local/bin/mise /usr/local/bin/mise
+RUN chmod 755 /usr/local/bin/mise
 
-# Ensure mise is available in PATH during build
-ENV PATH="/root/.local/bin:${PATH}"
 
 # Ensure mise loads its environment
 RUN echo 'eval "$(mise activate bash)"' >> /root/.bashrc
@@ -79,7 +86,12 @@ WORKDIR "${APP_DIR}"
 
 RUN mise install
 
+RUN chown -R root:app /opt/mise && \
+  chmod -R g+w /opt/mise
+
 USER "${APP_USER}"
+
+RUN mise trust "${APP_DIR}/mise.toml"
 
 # Commands will be supplied via `docker-compose`
 CMD []
