@@ -114,8 +114,6 @@ module OpenTelemetry
 
           # Emits a structured log record through the OpenTelemetry Logs API.
           def log_structured_event(event)
-            return unless Instrumentation.instance.logger
-
             Instrumentation.instance.logger.on_emit(
               timestamp: Time.now,
               severity_text: 'INFO',
