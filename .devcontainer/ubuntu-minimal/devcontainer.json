@@ -1,0 +1,10 @@
+{
+  "name": "otel-ruby-contrib-devcontainer-ubuntu-minimal",
+  "dockerComposeFile": ["../../docker-compose.yml"],
+  "service": "devcontainer-ubuntu",
+  "remoteUser": "app",
+
+  "workspaceFolder": "/app",
+
+  "runServices": []
+}
