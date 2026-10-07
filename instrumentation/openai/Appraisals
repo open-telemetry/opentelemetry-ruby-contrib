@@ -11,12 +11,10 @@
     gem 'openai', "~> #{version}", platform: :mri
   end
 
-  # Logs support is opt-in, based on the presence of the
-  # opentelemetry-logs-api and opentelemetry-logs-sdk gems.
-  # This Appraisal tests behavior with them present.
+  # Log records are exported only when opentelemetry-logs-sdk is installed.
+  # This Appraisal tests behavior with it present.
   appraise "openai-#{version}-logs" do
     gem 'openai', "~> #{version}", platform: :mri
-    gem 'opentelemetry-logs-api', '= 0.4.1'
-    gem 'opentelemetry-logs-sdk', '= 0.6.1'
+    gem 'opentelemetry-logs-sdk', '= 0.8.0'
   end
 end

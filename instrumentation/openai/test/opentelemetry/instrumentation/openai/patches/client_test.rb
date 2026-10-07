@@ -126,7 +126,7 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::Client do
           instrumentation.install
           instrumentation.config[:capture_content] = true
 
-          _(instrumentation.logger).must_be_nil
+          _(instrumentation.logger).must_be_kind_of(OpenTelemetry::Logs::Logger)
 
           client = OpenAI::Client.new(api_key: 'test-token')
           client.chat.completions.create(
