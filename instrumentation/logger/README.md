@@ -58,8 +58,8 @@ The `opentelemetry-instrumentation-logger` gem is distributed under the Apache 2
 [appraisal]: https://github.com/thoughtbot/appraisal
 [bundler-home]: https://bundler.io
 [logger-home]: https://github.com/ruby/logger
-[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
+[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
-[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
+[ruby-sig]: https://github.com/open-telemetry/community/blob/main/sigs.md#ruby-sdk
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
