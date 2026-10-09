@@ -5,23 +5,25 @@
 # SPDX-License-Identifier: Apache-2.0
 
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.4') && RUBY_ENGINE == 'ruby'
-  appraise 'gruf-2.19' do
-    gem 'gruf', '~> 2.19.0'
+  appraise 'gruf-2.19.x' do
+    gem 'gruf', '< 2.20.0'
   end
 
-  appraise 'gruf-2.20' do
-    gem 'gruf', '~> 2.20.0'
+  appraise 'gruf-2.20.x' do
+    gem 'gruf', '< 2.21.0'
   end
 end
 
 if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.5') && RUBY_ENGINE == 'ruby'
-  appraise 'gruf-2.21' do
-    gem 'gruf', '~> 2.21.0'
+  appraise 'gruf-2.21.x' do
+    gem 'gruf', '< 2.22.0'
   end
 end
 
-if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('5')
-  appraise 'gruf-latest' do
-    gem 'gruf', platform: :mri
+# needs to be updated like above when ruby v5 is released
+
+%w[2.22.0 2.22.0].each do |version|
+  appraise "gruf-#{version}" do
+    gem 'gruf', "~> #{version}", platform: :mri
   end
 end

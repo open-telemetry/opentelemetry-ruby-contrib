@@ -12,7 +12,7 @@ group :default do
 end
 
 group :development do
-  gem 'rubocop', '~> 1.90.0'
+  gem 'rubocop', '~> 1.91.0'
   gem 'rubocop-minitest', '~> 0.40.0'
   gem 'rubocop-performance', '~> 1.27.0'
   gem 'rubocop-rake', '~> 0.7.1'
@@ -22,5 +22,5 @@ end
 
 group :test do
   gem 'minitest', '~> 6.0.0'
-  gem 'simplecov', '~> 1.1.0'
+  gem 'simplecov', '~> 1.3.0'
 end
