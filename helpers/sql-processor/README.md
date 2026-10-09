@@ -51,16 +51,13 @@ OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: confi
 
 The `opentelemetry-helpers-sql-processor` gem source is [on github][repo-github], along with related gems including `opentelemetry-instrumentation-pg` and `opentelemetry-instrumentation-trilogy`.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby Special Interest Group (SIG). You can find details on our weekly meeting times, GitHub Discussions, and CNCF Slack channels on the [Ruby SDK SIG page][ruby-sig].
 
 ## License
 
 The `opentelemetry-helpers-sql-processor` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
 [new-relic-obfuscation-helpers]: https://github.com/newrelic/newrelic-ruby-agent/blob/96e7aca22c1c873c0f5fe704a2b3bb19652db68e/lib/new_relic/agent/database/obfuscation_helpers.rb
-[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
+[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
-[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
-[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[ruby-sig]: https://github.com/open-telemetry/community/blob/main/sigs.md#ruby-sdk

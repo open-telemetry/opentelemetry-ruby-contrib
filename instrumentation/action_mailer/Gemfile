@@ -28,12 +28,12 @@ group :test do
   gem 'rake', '>= 13'
   gem 'rubocop', '~> 1.91.0'
   gem 'rubocop-performance', '~> 1.27.0'
-  gem 'simplecov', '~> 1.2.0'
+  gem 'simplecov', '~> 1.3.0'
   gem 'webmock', '~> 3.26.0'
   gem 'yard', '~> 0.9.0'
   # Add jar-dependencies gem only if the Ruby runtime is JRuby
   # https://github.com/jruby/jruby/issues/7262
-  gem 'jar-dependencies', '0.5.7', platforms: :jruby
+  gem 'jar-dependencies', '0.6.1', platforms: :jruby
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'mutex_m'
