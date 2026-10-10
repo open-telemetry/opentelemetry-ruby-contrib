@@ -79,8 +79,10 @@ jobs:
           persist-credentials: false
       - name: Build and run dev container task
         uses: devcontainers/ci@513af61f4de4f75d37e4438f184ba4358f0fc1ca # v0.3.1900000450
+        env:
+          BUILDX_BAKE_ENTITLEMENTS_FS: 0
         with:
-          configFile: .devcontainer/${{ matrix.devcontainer }}/devcontainer.json
+          configFile: .devcontainer/${{ matrix.devcontainer }}-minimal/devcontainer.json
           env: |
             lsconfig="-c .github/.linkspector-local_check.yml"
             BUNDLE_PATH=/app/vendor/bundle

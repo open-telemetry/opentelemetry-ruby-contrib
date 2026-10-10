@@ -1,4 +1,0 @@
-include:
-  - ../../.docker/devcontainer/alpine/compose.yml
-  - ../../.docker/volume/bundler.yml
-  - test/compose.yml
