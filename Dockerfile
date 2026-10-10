@@ -39,7 +39,6 @@ ARG PACKAGES="\
     postgresql-dev \
     tzdata \
     util-linux \
-    imagemagick \
     yaml-dev \
     "
 
@@ -84,7 +83,7 @@ RUN mise trust "${APP_DIR}/mise.toml"
 
 WORKDIR "${APP_DIR}"
 
-RUN mise install
+RUN mise run install-all
 
 RUN chown -R root:app /opt/mise && \
   chmod -R g+w /opt/mise
