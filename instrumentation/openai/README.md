@@ -61,12 +61,9 @@ export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 
 ## Emitting log events
 
-[GenAI semantic conventions define events to emit with instrumentation][genai-semconv-events]. Events are emitted using the Logs signal. The `opentelemetry-instrumentation-openai` gem does not depend on the `opentelemetry-logs-api` gem because it has not reached stability. However, if you have the Logs API and Logs SDK gems installed in your Gemfile, it will emit Log Records for the GenAI events.
-
-To enable the instrumentation to emit logs, add the following to your Gemfile:
+[GenAI semantic conventions define events to emit with instrumentation][genai-semconv-events]. Events are emitted using the Logs signal. Without a Logs SDK, log records go to a no-op logger. To export them, add the Logs SDK to your Gemfile:
 
 ```ruby
-gem 'opentelemetry-logs-api'
 gem 'opentelemetry-logs-sdk'
 ```
 
@@ -80,9 +77,9 @@ OPENAI_API_KEY=<openai_api_key> ruby trace_demonstration.rb
 
 ## How can I get involved?
 
-The `opentelemetry-instrumentation-openai` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
+The `opentelemetry-instrumentation-openai` gem source is [on github][repo-github], along with related gems.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby Special Interest Group (SIG). You can find details on our weekly meeting times, GitHub Discussions, and CNCF Slack channels on the [Ruby SDK SIG page][ruby-sig].
 
 ## License
 
@@ -90,12 +87,9 @@ The `opentelemetry-instrumentation-openai` gem is distributed under the Apache 2
 
 [openai-home]: https://github.com/openai/openai-ruby
 [bundler-home]: https://bundler.io
-[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
+[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
-[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
-[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[ruby-sig]: https://github.com/open-telemetry/community/blob/main/sigs.md#ruby-sdk
 [semconv-genai]: https://github.com/open-telemetry/semantic-conventions-genai
 [example-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/openai/example/trace_demonstration.rb
 [genai-semconv-events]: https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/gen-ai-events.md

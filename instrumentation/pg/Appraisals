@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-%w[1.5.0 1.6.3].each do |version|
+%w[1.5.0 1.7.0].each do |version|
   appraise "pg-#{version}" do
     gem 'pg', "= #{version}", platform: :mri
   end

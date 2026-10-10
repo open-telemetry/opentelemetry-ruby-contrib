@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_lambda
 
+## v0.7.1 / 2026-10-06
+
+- FIXED: Only flush a meter provider that can be flushed (#2568)
+
 ## v0.7.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
