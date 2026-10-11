@@ -104,8 +104,6 @@ jobs:
 
       - name: Install Ruby
         uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
-        with:
-          ruby-version: "3.3.12"
 
       - name: Install Tools
         run: npm ci --ignore-scripts && bundle install
@@ -181,8 +179,6 @@ jobs:
 
       - name: Install Ruby
         uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
-        with:
-          ruby-version: "3.3.12"
 
       - name: Install Tools
         run: npm ci --ignore-scripts && bundle install
