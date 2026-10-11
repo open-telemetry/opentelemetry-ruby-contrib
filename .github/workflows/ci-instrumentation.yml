@@ -41,24 +41,24 @@ jobs:
         with:
           persist-credentials: false
       - name: "Test Ruby 4.0"
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "4.0"
       - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "3.3"
           yard: true
           build: true
       - name: "Test JRuby"
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "opentelemetry-instrumentation-${{ matrix.gem }}"
           ruby: "jruby-10.0"

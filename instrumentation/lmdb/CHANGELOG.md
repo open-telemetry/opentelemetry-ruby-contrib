@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-lmdb
 
+## v0.27.0 / 2026-09-29
+
+- ADDED: Trace has and drop operations (#2572)
+
 ## v0.26.1 / 2026-09-09
 
 - FIXED: Limiting gem & tests to mri (#2429)

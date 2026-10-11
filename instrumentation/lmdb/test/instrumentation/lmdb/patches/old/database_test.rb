@@ -6,10 +6,10 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/lmdb'
-require_relative '../../../../lib/opentelemetry/instrumentation/lmdb/patches/database'
+require_relative '../../../../../lib/opentelemetry/instrumentation/lmdb'
+require_relative '../../../../../lib/opentelemetry/instrumentation/lmdb/patches/old/database'
 
-describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
+describe 'OpenTelemetry::Instrumentation::LMDB::Patches::Old::Database' do
   let(:instrumentation) { OpenTelemetry::Instrumentation::LMDB::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
@@ -20,6 +20,7 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
   let(:lmdb) { LMDB.new(db_path) }
 
   before do
+    skip unless ENV['BUNDLE_GEMFILE']&.include?('old')
     exporter.reset
     instrumentation.install(config)
     FileUtils.rm_rf(db_path)
@@ -122,6 +123,18 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
     end
   end
 
+  describe '#has?' do
+    it 'traces' do
+      lmdb.database['foo'] = 'bar'
+      lmdb.database.has?('foo', 'bar')
+
+      _(last_span.name).must_equal('HAS foo')
+      _(last_span.kind).must_equal(:client)
+      _(last_span.attributes['db.system']).must_equal('lmdb')
+      _(last_span.attributes['db.statement']).must_equal('HAS foo bar')
+    end
+  end
+
   describe '#delete' do
     it 'traces' do
       lmdb.database['foo'] = 'bar'
@@ -154,6 +167,18 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
       _(last_span.kind).must_equal(:client)
       _(last_span.attributes['db.system']).must_equal('lmdb')
       _(last_span.attributes).wont_include('db.statement')
+    end
+  end
+
+  describe '#drop' do
+    it 'traces' do
+      lmdb.database['foo'] = 'bar'
+      lmdb.database.drop
+
+      _(last_span.name).must_equal('DROP')
+      _(last_span.kind).must_equal(:client)
+      _(last_span.attributes['db.system']).must_equal('lmdb')
+      _(last_span.attributes['db.statement']).must_equal('DROP')
     end
   end
 end

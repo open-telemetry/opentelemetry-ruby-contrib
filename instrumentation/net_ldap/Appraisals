@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # frozen set of Appraisals for net-ldap instrumentation
-%w[0.17.1 0.18.0 0.19.0].each do |version|
+%w[0.17.1 0.18.0 0.20.0].each do |version|
   appraise "net-ldap-#{version}" do
     gem 'net-ldap', "~> #{version}"
     # ostruct is not part of the standard library from Ruby4+
