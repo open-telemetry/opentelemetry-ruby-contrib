@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-lmdb
 
+## v0.28.0 / 2026-10-13
+
+- ADDED: LMDB semantic stability (#2131)
+
 ## v0.27.0 / 2026-09-29
 
 - ADDED: Trace has and drop operations (#2572)
