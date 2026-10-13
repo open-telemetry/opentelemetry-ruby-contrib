@@ -23,7 +23,7 @@ end
 group :test do
   gem 'minitest', '~> 6.0.0'
   gem 'rspec-mocks', '~> 3.13.7'
-  gem 'webmock', '~> 3.26.0'
+  gem 'webmock', '~> 3.30.0'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'logger'
