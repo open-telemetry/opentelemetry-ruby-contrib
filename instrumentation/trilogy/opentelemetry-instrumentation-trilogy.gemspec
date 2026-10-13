@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-helpers-mysql'
   spec.add_dependency 'opentelemetry-helpers-sql'
-  spec.add_dependency 'opentelemetry-helpers-sql-processor'
+  spec.add_dependency 'opentelemetry-helpers-sql-processor', '>= 0.5.1', '< 1.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.25'
   spec.add_dependency 'opentelemetry-semantic_conventions', '>= 1.8.0'
 
