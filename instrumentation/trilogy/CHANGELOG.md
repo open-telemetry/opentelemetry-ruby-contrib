@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+## v0.69.1 / 2026-10-13
+
+- FIXED: Apply SQL commenter fix to dependent gems (#2638)
+
 ## v0.69.0 / 2026-05-21
 
 - ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable support for span attributes (#2095)

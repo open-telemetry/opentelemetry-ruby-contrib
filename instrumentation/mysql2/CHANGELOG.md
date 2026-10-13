@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+## v0.34.1 / 2026-10-13
+
+- FIXED: Apply SQL commenter fix to dependent gems (#2638)
+
 ## v0.34.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
