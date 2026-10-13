@@ -15,7 +15,6 @@ module OpenTelemetry
         install do |_config|
           require_dependencies
           determine_the_content_mode
-          create_logger
           patch_client
         end
 
@@ -44,8 +43,6 @@ module OpenTelemetry
         # embeddings), the operations currently implemented and tested.
         option :allowed_operations, default: ALLOWED_OPERATIONS, validate: :array
 
-        attr_reader :logger
-
         private
 
         def gem_version
@@ -59,17 +56,6 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'patches/client'
-        end
-
-        def create_logger
-          # Users must install the OpenTelemetry Logs API and SDK gems to
-          # create log events. The Logs API is still unstable, unlike the
-          # Traces API, so we require users to install it themselves.
-          # If the libraries are not detected, Instrumentation.instance.logger
-          # will be nil.
-          return unless defined?(OpenTelemetry::Logs) && defined?(OpenTelemetry::SDK::Logs)
-
-          @logger = OpenTelemetry.logger_provider.logger(name: NAME, version: VERSION)
         end
 
         def patch_client

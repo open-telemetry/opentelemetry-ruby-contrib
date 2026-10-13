@@ -397,7 +397,7 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
         before { skip if defined?(OpenTelemetry::SDK::Logs) }
 
         it 'does not find log records when streaming' do
-          _(instrumentation.logger).must_be_nil
+          _(instrumentation.logger).must_be_kind_of(OpenTelemetry::Logs::Logger)
 
           span = tracer.start_root_span('test_span', kind: :client)
 
@@ -501,7 +501,7 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
         end
 
         it 'does not log content when capture_content is false' do
-          _(instrumentation.logger).must_be_nil
+          _(instrumentation.logger).must_be_kind_of(OpenTelemetry::Logs::Logger)
 
           span = tracer.start_root_span('test_span', kind: :client)
 
@@ -533,7 +533,7 @@ describe OpenTelemetry::Instrumentation::OpenAI::Patches::StreamWrapper do
         end
 
         it 'handles streaming with tool calls without raising and without emitting logs' do
-          _(instrumentation.logger).must_be_nil
+          _(instrumentation.logger).must_be_kind_of(OpenTelemetry::Logs::Logger)
 
           span = tracer.start_root_span('test_span', kind: :client)
 

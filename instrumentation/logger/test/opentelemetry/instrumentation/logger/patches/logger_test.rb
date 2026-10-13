@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::Logger::Patches::Logger do
 
     it 'sets the OTel logger instrumentation name and version (default case)' do
       ruby_logger.debug(msg)
-      assert_equal(OpenTelemetry::Instrumentation::Logger::NAME, log_record.instrumentation_scope.name)
+      assert_equal('OpenTelemetry::Instrumentation::Logger', log_record.instrumentation_scope.name)
       assert_equal(OpenTelemetry::Instrumentation::Logger::VERSION, log_record.instrumentation_scope.version)
     end
 
