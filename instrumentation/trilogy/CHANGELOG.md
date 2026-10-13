@@ -2,7 +2,7 @@
 
 ## v0.69.1 / 2026-10-13
 
-- FIXED: Apply SQL commenter fix to dependent gems (#2638)
+- FIXED: Encode SQL commenter propagation keys (#2634, #2638)
 
 ## v0.69.0 / 2026-05-21
 
