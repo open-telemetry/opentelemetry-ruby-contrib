@@ -23,7 +23,7 @@ module OpenTelemetry
         # and appending them to SQL queries according to the SQL Commenter specification.
         #
         # Format: /*key='value',key2='value2'*/
-        # Values are URL-encoded per the SQL Commenter spec
+        # Keys and values are URL-encoded per the SQL Commenter spec
         module SqlQuerySetter
           extend self
 
@@ -38,9 +38,10 @@ module OpenTelemetry
             # Convert headers hash to SQL commenter format
             # Format: /*key1='value1',key2='value2'*/
             comment_parts = headers.map do |key, value|
-              # URL encode values as per SQL Commenter spec (using URI component encoding)
+              # URL encode keys and values so they cannot terminate the SQL comment.
+              encoded_key = CGI.escapeURIComponent(key.to_s)
               encoded_value = CGI.escapeURIComponent(value.to_s)
-              "#{key}='#{encoded_value}'"
+              "#{encoded_key}='#{encoded_value}'"
             end
 
             # Append to end of query (spec recommendation)
