@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+## v0.99.0 / 2026-10-13
+
+- ADDED: Upgrade opentelemetry-instrumentation-lmdb to 0.28.0
+
 ## v0.98.0 / 2026-10-06
 
 - ADDED: Add opentelemetry-instrumentation-openai to all (#2618)
