@@ -6,7 +6,7 @@
 
 %w[7.1.0 7.2.0 8.1.4].each do |version|
   appraise "activejob-#{version}" do
-    gem 'activejob', "~> #{version}"
+    gem 'activejob', "= #{version}"
     gem 'delayed_job', '= 4.2.0'
   end
 end

@@ -10,14 +10,15 @@ if RUBY_ENGINE == 'ruby'
       gem 'sqlite3', '< 2.0.0'
       gem 'image_processing', '= 2.2.0'
       gem 'mini_magick', '= 5.4.0'
-      gem 'rails', "~> #{version}"
+      gem 'benchmark', '= 0.5.0'
+      gem 'rails', "= #{version}"
       gem 'json', '< 3'
     end
   end
 
   %w[8.0.0 8.1.4].each do |version|
     appraise "activestorage-#{version}" do
-      gem 'rails', "~> #{version}"
+      gem 'rails', "= #{version}"
       gem 'sqlite3', '= 2.9.6'
       gem 'image_processing', '= 2.2.0'
       gem 'mini_magick', '= 5.4.0'

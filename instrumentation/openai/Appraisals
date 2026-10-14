@@ -8,13 +8,13 @@
   appraise "openai-#{version}" do
     # JRuby and TruffleRuby support is best effort for the openai gem
     # as of 2026-09-02. This may change in the future and we can test it.
-    gem 'openai', "~> #{version}", platform: :mri
+    gem 'openai', "= #{version}", platform: :mri
   end
 
   # Log records are exported only when opentelemetry-logs-sdk is installed.
   # This Appraisal tests behavior with it present.
   appraise "openai-#{version}-logs" do
-    gem 'openai', "~> #{version}", platform: :mri
+    gem 'openai', "= #{version}", platform: :mri
     gem 'opentelemetry-logs-sdk', '= 0.8.0'
   end
 end
