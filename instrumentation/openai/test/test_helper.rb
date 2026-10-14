@@ -10,7 +10,7 @@ if RUBY_ENGINE == 'jruby'
 end
 
 require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+Bundler.require(:default, :local, :test)
 
 require 'minitest/autorun'
 require 'webmock/minitest'
