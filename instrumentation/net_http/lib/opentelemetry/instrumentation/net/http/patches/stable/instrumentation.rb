@@ -14,7 +14,7 @@ module OpenTelemetry
             module Instrumentation
               USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
-              # Constant for the HTTP status range
+              # Constant for the HTTP status range. Deprecated. Use HttpHelper::HTTP_STATUS_SUCCESS_RANGE
               HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
               def request(req, body = nil, &)
@@ -39,10 +39,21 @@ module OpenTelemetry
                   attributes: attributes,
                   kind: :client
                 ) do |span|
-                  OpenTelemetry.propagation.inject(req)
+                  start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+                  response = nil
+                  error_type = nil
 
-                  super.tap do |response|
+                  begin
+                    OpenTelemetry.propagation.inject(req)
+
+                    response = super
                     annotate_span_with_response!(span, response)
+                    response
+                  rescue StandardError => e
+                    error_type = e.class.name
+                    raise
+                  ensure
+                    record_duration_metric(start_time, attributes['http.request.method'], response, error_type)
                   end
                 end
               end
@@ -84,11 +95,23 @@ module OpenTelemetry
                 status_code = response.code.to_i
 
                 span.set_attribute('http.response.status_code', status_code)
-                span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
+                span.status = OpenTelemetry::Trace::Status.error unless HttpHelper::HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
+              end
+
+              def record_duration_metric(start_time, method, response, error_type)
+                duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time
+                histogram = client_request_duration_histogram
+                return unless histogram
+
+                histogram.record(duration, attributes: HttpHelper.metric_attrs(method, @address, @port, response, error_type))
               end
 
               def tracer
                 Net::HTTP::Instrumentation.instance.tracer
+              end
+
+              def client_request_duration_histogram
+                Net::HTTP::Instrumentation.instance.client_request_duration_histogram
               end
 
               def untraced?

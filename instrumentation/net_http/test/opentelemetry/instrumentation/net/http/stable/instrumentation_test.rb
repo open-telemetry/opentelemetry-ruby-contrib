@@ -402,4 +402,131 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       )
     end
   end
+
+  describe 'http.client.request.duration' do
+    describe 'without metrics SDK installed' do
+      before { skip if defined?(OpenTelemetry::SDK::Metrics) }
+
+      it 'completes the request and records the span without recording metrics' do
+        Net::HTTP.get('example.com', '/success')
+
+        _(instrumentation.client_request_duration_histogram.enabled?).must_equal false
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.attributes['http.response.status_code']).must_equal 200
+      end
+    end
+
+    describe 'with metrics SDK installed' do
+      let(:metric_exporter) { METRIC_EXPORTER }
+
+      before do
+        skip unless defined?(OpenTelemetry::SDK::Metrics)
+
+        metric_exporter.pull
+        metric_exporter.reset
+      end
+
+      def duration_metric
+        metric_exporter.pull
+        metric_exporter.metric_snapshots.find { |m| m.name == 'http.client.request.duration' }
+      end
+
+      def duration_data_points
+        duration_metric&.data_points || []
+      end
+
+      it 'records a successful request' do
+        Net::HTTP.get('example.com', '/success')
+
+        metric = duration_metric
+        _(metric.unit).must_equal 's'
+        _(metric.description).must_equal 'Duration of HTTP client requests.'
+        _(metric.instrument_kind).must_equal :histogram
+        _(metric.data_points.size).must_equal 1
+
+        data_point = metric.data_points.first
+        _(data_point.count).must_equal 1
+        _(data_point.attributes).must_equal(
+          'http.request.method' => 'GET',
+          'server.address' => 'example.com',
+          'server.port' => 80,
+          'http.response.status_code' => 200,
+          'network.protocol.version' => '1.0'
+        )
+      end
+
+      it 'records a duration no longer than the span duration' do
+        Net::HTTP.get('example.com', '/success')
+
+        span_duration = (span.end_timestamp - span.start_timestamp) / 1_000_000_000.0
+        data_point = duration_data_points.first
+        _(data_point.sum).must_be :>, 0
+        _(data_point.sum).must_be :<=, span_duration
+      end
+
+      it 'records error.type for an error status code' do
+        Net::HTTP.post(URI('http://example.com/failure'), 'q' => 'ruby')
+
+        attributes = duration_data_points.first.attributes
+        _(attributes['http.request.method']).must_equal 'POST'
+        _(attributes['http.response.status_code']).must_equal 500
+        _(attributes['error.type']).must_equal '500'
+      end
+
+      it 'records error.type for an exception' do
+        expect do
+          Net::HTTP.get(URI('https://example.com/timeout'))
+        end.must_raise Net::OpenTimeout
+
+        _(duration_data_points.first.attributes).must_equal(
+          'http.request.method' => 'GET',
+          'server.address' => 'example.com',
+          'server.port' => 443,
+          'error.type' => 'Net::OpenTimeout'
+        )
+      end
+
+      it 'records _OTHER for an unknown http method' do
+        stub_request(:purge, 'http://example.com/purge').to_return(status: 200)
+
+        uri = URI('http://example.com/purge')
+        Net::HTTP.start(uri.hostname, uri.port) do |http|
+          http.request(Net::HTTP::Purge.new(uri))
+        end
+
+        attributes = duration_data_points.first.attributes
+        _(attributes['http.request.method']).must_equal '_OTHER'
+        _(attributes.key?('http.request.method_original')).must_equal false
+      end
+
+      it 'does not record span-only or client context attributes' do
+        client_context_attrs = { 'peer.service' => 'foo', 'url.template' => '/users/{id}' }
+        OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+          Net::HTTP.get('example.com', '/success?hello=there')
+        end
+
+        _(duration_data_points.first.attributes.keys).must_equal(
+          %w[http.request.method server.address server.port http.response.status_code network.protocol.version]
+        )
+      end
+
+      it 'does not record an untraced host' do
+        stub_request(:get, 'http://foobar.com/body').to_return(status: 200)
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(untraced_hosts: ['foobar.com'])
+
+        Net::HTTP.get('foobar.com', '/body')
+
+        _(duration_data_points).must_be_empty
+      end
+
+      it 'does not record in an untraced context' do
+        OpenTelemetry::Common::Utilities.untraced do
+          Net::HTTP.get('example.com', '/success')
+        end
+
+        _(duration_data_points).must_be_empty
+      end
+    end
+  end
 end
