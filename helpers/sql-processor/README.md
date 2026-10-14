@@ -47,6 +47,17 @@ To obfuscate sql in your library:
 OpenTelemetry::Helpers::SqlProcessor.obfuscate_sql(sql, obfuscation_limit: config[:obfuscation_limit], adapter: :postgres)
 ```
 
+## SQL comment propagation
+
+`SqlCommenter` appends the headers produced by `OpenTelemetry.propagation` to SQL queries as a comment. Both header keys and values are URL-encoded before insertion so they cannot terminate the comment.
+
+```ruby
+sql = +'SELECT * FROM users'
+OpenTelemetry::Helpers::SqlProcessor::SqlCommenter.sql_query_propagator.inject(sql)
+```
+
+Queries remain unchanged when frozen or when the current context produces no headers.
+
 ## How can I get involved?
 
 The `opentelemetry-helpers-sql-processor` gem source is [on github][repo-github], along with related gems including `opentelemetry-instrumentation-pg` and `opentelemetry-instrumentation-trilogy`.
