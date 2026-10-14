@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-grape
 
+## v0.7.2 / 2026-10-14
+
+- FIXED: Support grape 4 (#2582)
+
 ## v0.7.1 / 2026-07-14
 
 - FIXED: Detect code namespace for API instance endpoints (#2407)
