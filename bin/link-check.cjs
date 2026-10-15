@@ -2,11 +2,17 @@
 // npm scripts in a cross platform manner.
 
 const os = require("node:os");
+const fs = require("node:fs");
 
 // Detect Windows and exit immediately
 // Workaround for https://github.com/nodejs/node/issues/56645
 if (os.platform() === "win32") {
   console.log("Skipping linkspector on Windows to avoid runner teardown bug");
+  process.exit(0);
+}
+
+if (fs.existsSync("/etc/alpine-release")) {
+  console.log("Skipping linkspector on Alpine (Chromium sandbox unsupported)");
   process.exit(0);
 }
 
