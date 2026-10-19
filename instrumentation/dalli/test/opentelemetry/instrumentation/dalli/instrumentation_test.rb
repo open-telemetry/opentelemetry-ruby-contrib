@@ -88,14 +88,18 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
         dalli.set('foo', 'bar')
         exporter.reset
 
-        allow(dalli.instance_variable_get(:@ring).servers.first).to receive(:write) { |_bytes| raise Dalli::NetworkError }
+        server = dalli.instance_variable_get(:@ring).servers.first
+        original_write = server.method(:write)
+        failures = 0
+        allow(server).to receive(:write) do |bytes|
+          failures += 1
+          raise Dalli::NetworkError if failures == 1
+
+          original_write.call(bytes)
+        end
         dalli.get_multi('foo', 'bar')
 
-        if supports_retry_on_network_errors?
-          _(exporter.finished_spans.size).must_equal 2
-        else
-          _(exporter.finished_spans.size).must_equal 1
-        end
+        _(exporter.finished_spans.size).must_equal 1
 
         _(span.name).must_equal 'getkq'
         _(span.attributes['db.system']).must_equal 'memcached'
@@ -158,11 +162,5 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
         _(span.attributes['net.peer.name']).must_equal '/tmp/memcached.sock'
       end
     end
-  end
-
-  # Dalli 3.x has different behavior than 2.x versions and attempts to retry on network errors
-  # https://github.com/petergoldstein/dalli/pull/754
-  def supports_retry_on_network_errors?
-    Gem.loaded_specs['dalli'].version >= Gem::Version.new('3.0.0')
   end
 end unless ENV['OMIT_SERVICES']
