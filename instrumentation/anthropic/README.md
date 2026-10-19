@@ -2,6 +2,17 @@
 
 The Anthropic instrumentation is a community-maintained instrumentation for the [Anthropic][anthropic-home] gem.
 
+## Anthropic 0.39.0+ Native Integration
+
+Anthropic 0.39.0+ includes native OpenTelemetry instrumentation. For the best experience and continued support, we recommend:
+
+- **Anthropic < 0.39.0**: Use `opentelemetry-instrumentation-anthropic` gem
+- **Anthropic ≥ 0.39.0**: Use Anthropic's built-in OpenTelemetry support (remove `opentelemetry-instrumentation-anthropic` gem)
+
+Community instrumentation is compatible with Anthropic versions up to 0.38.x. Development of this gem is frozen for newer Anthropic versions in favor of the native integration.
+
+Learn more in the [anthropic documentation](https://platform.claude.com/docs/en/manage-claude/opentelemetry/sdk).
+
 ## How do I get started?
 
 Install the gem using:

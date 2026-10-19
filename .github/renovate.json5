@@ -243,6 +243,7 @@
     ".docker/infra/memcached/**",
     ".docker/infra/mongo/**",
     "helpers/sql-obfuscation/**",
+    "instrumentation/anthropic/**",
     "instrumentation/dalli/**",
     "instrumentation/mongo/**",
     "instrumentation/restclient/**",

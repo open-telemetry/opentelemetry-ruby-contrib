@@ -31,6 +31,10 @@ module OpenTelemetry
 
         private
 
+        def gem_version
+          Gem::Version.new(::Anthropic::VERSION)
+        end
+
         def patch
           ::Anthropic::Internal::Transport::PooledNetRequester.prepend(Patches::PooledNetRequester)
         end
