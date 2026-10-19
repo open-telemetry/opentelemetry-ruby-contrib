@@ -9,7 +9,7 @@ module OpenTelemetry
     module Anthropic
       # The Instrumentation class contains logic to detect and install the Anthropic instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MAX_VERSION = Gem::Version.new('0.38.0') # Anthropic 0.39.0+ has native OpenTelemetry instrumentation
+        MAX_VERSION = Gem::Version.new('1.78.0') # Anthropic 0.39.0+ has native OpenTelemetry instrumentation
 
         install do |_config|
           require_dependencies
