@@ -66,24 +66,28 @@ client = Aws::S3::Client.new(telemetry_provider: otel_provider)
 
 ## SNS attributes
 
-An `SNS.Publish` span carries `aws.sns.topic.arn` when the selected destination
-is a topic ARN. `TopicArn` is used when it holds a value and `TargetArn`
-otherwise, and that one selected value backs both `aws.sns.topic.arn` and
-`messaging.destination`, so the two never describe different destinations.
+An `SNS.Publish` span carries `aws.sns.topic.arn` when the `TopicArn` request
+parameter holds a topic ARN. `aws.sns.topic.arn` names an SNS topic
+specifically, so it is read only from `TopicArn`. `TargetArn` names a platform
+application or endpoint rather than a topic, so it never backs this attribute,
+even when its value happens to be shaped like a topic ARN. `messaging.destination`
+still names the selected destination, which is `TopicArn` when it holds a value
+and `TargetArn` otherwise, so that behavior is unchanged.
 
 The attribute holds the ARN unchanged, so it includes the AWS account ID and the
 Region. Nothing needs to be configured: it is emitted by default whenever a
-valid topic ARN is selected. This registry attribute currently has development
-stability.
+valid topic ARN is supplied through `TopicArn`. This registry attribute
+currently has development stability.
 
-A selected destination that is not a topic is left out of `aws.sns.topic.arn`.
-That covers platform application and endpoint ARNs, subscription ARNs and phone
-numbers. Those destinations are still recorded, because `messaging.destination`
-keeps the last colon separated segment of the selected value. For a platform
-endpoint or a subscription ARN that segment is the endpoint or subscription
-identifier, which is per device or per subscriber, so treat it as
-high-cardinality and potentially sensitive. That is existing behavior and this
-attribute does not change it.
+A `TopicArn` value that is not a topic ARN is left out of `aws.sns.topic.arn`.
+That covers subscription ARNs, foreign-service ARNs, malformed ARNs and phone
+numbers. `TargetArn` destinations, such as platform application and endpoint
+ARNs, are also left out of `aws.sns.topic.arn`. Those destinations are still
+recorded, because `messaging.destination` keeps the last colon separated segment
+of the selected value. For a platform endpoint or a subscription ARN that
+segment is the endpoint or subscription identifier, which is per device or per
+subscriber, so treat it as high-cardinality and potentially sensitive. That is
+existing behavior and this attribute does not change it.
 
 `messaging.destination_kind` stays `topic` on every `SNS.Publish` span, so it
 reads `topic` even when the destination is a platform endpoint or a phone

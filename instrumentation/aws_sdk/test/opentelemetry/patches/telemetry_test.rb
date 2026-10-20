@@ -144,12 +144,12 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(client_span.attributes[topic_arn_key]).must_equal('arn:aws:sns:fake:123:TopicName')
       end
 
-      it 'records a topic arn supplied through target arn' do
+      it 'does not record a target arn as a topic arn' do
         target_arn = 'arn:aws:sns:us-east-1:123456789012:TopicName'
 
         client.publish(message: 'msg', target_arn: target_arn)
 
-        _(client_span.attributes[topic_arn_key]).must_equal(target_arn)
+        _(client_span.attributes).wont_include(topic_arn_key)
       end
 
       it 'records a fifo topic arn' do
@@ -199,22 +199,22 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
           .must_equal('00000000-1111-2222-3333-444444444444')
       end
 
-      it 'uses target arn when topic arn is empty' do
+      it 'names the destination from target arn when topic arn is empty' do
         target_arn = 'arn:aws:sns:fake:123:FromTargetArn'
 
         client.publish(message: 'msg', topic_arn: '', target_arn: target_arn)
 
         _(client_span.name).must_equal('SNS.Publish.FromTargetArn.Publish')
-        _(client_span.attributes[topic_arn_key]).must_equal(target_arn)
+        _(client_span.attributes).wont_include(topic_arn_key)
         _(client_span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('FromTargetArn')
       end
 
-      it 'uses target arn when topic arn is nil' do
+      it 'names the destination from target arn when topic arn is nil' do
         target_arn = 'arn:aws:sns:fake:123:FromTargetArn'
 
         client.publish(message: 'msg', topic_arn: nil, target_arn: target_arn)
 
-        _(client_span.attributes[topic_arn_key]).must_equal(target_arn)
+        _(client_span.attributes).wont_include(topic_arn_key)
         _(client_span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('FromTargetArn')
       end
 

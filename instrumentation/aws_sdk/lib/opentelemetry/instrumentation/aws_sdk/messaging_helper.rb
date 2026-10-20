@@ -115,19 +115,23 @@ module OpenTelemetry
           end
 
           # Records the full topic ARN without changing the existing
-          # destination name. Both attributes read one selection made here, so
-          # they always describe the same destination. The span name selects
-          # separately, through `queue_name`.
+          # destination name. The destination name reads the selected
+          # destination, which is `TopicArn` or `TargetArn`, so it is unchanged
+          # from before. The topic ARN attribute reads `TopicArn` only, because
+          # it names an SNS topic specifically and a `TargetArn` names a
+          # platform endpoint or application rather than a topic. The span name
+          # selects separately, through `queue_name`.
           def apply_sns_attributes(attributes, context, client_method)
             attributes[SemanticConventions::Trace::MESSAGING_SYSTEM] = 'aws.sns'
             return unless client_method == SNS_PUBLISH
 
             params = context.params
-            arn = sns_destination_arn(params)
 
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'topic'
-            attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = destination_name(params, arn)
-            attributes[SNS_TOPIC_ARN_ATTRIBUTE] = arn if arn && SNS_TOPIC_ARN_PATTERN.match?(arn)
+            attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = destination_name(params, sns_destination_arn(params))
+
+            topic_arn = sns_topic_arn(params)
+            attributes[SNS_TOPIC_ARN_ATTRIBUTE] = topic_arn if topic_arn && SNS_TOPIC_ARN_PATTERN.match?(topic_arn)
           end
 
           # Names the destination from an already selected ARN, so a caller
@@ -165,6 +169,18 @@ module OpenTelemetry
 
             target_arn = params[:target_arn]
             return target_arn if target_arn.is_a?(String) && !target_arn.empty?
+
+            nil
+          end
+
+          # Reads the `TopicArn` parameter alone, for the topic ARN attribute.
+          # `TargetArn` is deliberately not consulted here, because it carries a
+          # platform application or endpoint rather than a topic, so it must not
+          # feed an attribute that names an SNS topic. A missing or empty value
+          # counts as absent.
+          def sns_topic_arn(params)
+            topic_arn = params[:topic_arn]
+            return topic_arn if topic_arn.is_a?(String) && !topic_arn.empty?
 
             nil
           end
