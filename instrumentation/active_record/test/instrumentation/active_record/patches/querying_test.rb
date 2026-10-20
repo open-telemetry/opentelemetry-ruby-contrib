@@ -14,6 +14,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Querying do
   let(:spans) { exporter.finished_spans }
 
   before { exporter.reset }
+
   after do
     ActiveRecord::Base.subclasses.each do |model|
       model.connection.truncate(model.table_name)
