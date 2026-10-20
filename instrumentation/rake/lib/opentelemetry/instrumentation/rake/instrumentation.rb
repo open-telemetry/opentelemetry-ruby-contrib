@@ -24,6 +24,8 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
+        option :span_name, default: :execution_type_only, validate: %I[execution_type_only execution_type_and_task_name]
+
         private
 
         def gem_version
