@@ -10,9 +10,12 @@ module OpenTelemetry
       module HTTP
         # Utility module for HTTP-related helper methods
         # @api private
-        module HttpHelper
+        module HttpHelper # rubocop:disable Metrics/ModuleLength
           # Lightweight struct to hold span creation attributes
           SpanCreationAttributes = Struct.new(:span_name, :attributes)
+
+          # Constant for the HTTP status range
+          HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
           # Returns the request path for strings and URI-like objects.
           # @param path [String, #request_uri] The request path
@@ -119,6 +122,27 @@ module OpenTelemetry
             attributes['http.request.method_original'] ||= original if original
 
             SpanCreationAttributes.new(span_name: span_name, attributes: attributes)
+          end
+
+          # Prepares `http.client.request.duration` attributes using stable semantic conventions.
+          # @param method [String] The normalized HTTP method
+          # @param address [String, nil] The server address
+          # @param port [Integer, nil] The server port
+          # @param response [Net::HTTPResponse, nil] The response, if received
+          # @param error_type [String, nil] The class name of a raised error, if any
+          # @return [Hash] the metric attributes
+          def self.metric_attrs(method, address, port, response, error_type)
+            attributes = { 'http.request.method' => method, 'server.address' => address, 'server.port' => port }
+
+            if response&.code
+              status_code = response.code.to_i
+              attributes['http.response.status_code'] = status_code
+              attributes['network.protocol.version'] = response.http_version
+              error_type ||= response.code unless HttpHelper::HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
+            end
+            attributes['error.type'] = error_type if error_type
+
+            attributes.compact
           end
 
           # Prepares span data using both old and stable semantic conventions
