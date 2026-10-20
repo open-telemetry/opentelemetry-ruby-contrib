@@ -131,6 +131,79 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(client_span.name).must_equal('SNS.Publish.phone_number.Publish')
         _(client_span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('phone_number')
       end
+
+      it 'records the full topic arn' do
+        client.publish(message: 'msg', topic_arn: 'arn:aws:sns:fake:123:TopicName')
+
+        _(client_span.attributes['aws.sns.topic.arn']).must_equal('arn:aws:sns:fake:123:TopicName')
+      end
+
+      it 'records a topic arn supplied through target arn' do
+        target_arn = 'arn:aws:sns:us-east-1:123456789012:TopicName'
+
+        client.publish(message: 'msg', target_arn: target_arn)
+
+        _(client_span.attributes['aws.sns.topic.arn']).must_equal(target_arn)
+      end
+
+      it 'does not report a platform endpoint as a topic' do
+        target_arn = 'arn:aws:sns:fake:123:endpoint/APNS/MyApp/00000000-1111-2222-3333-444444444444'
+
+        client.publish(message: 'msg', target_arn: target_arn)
+
+        _(client_span.attributes['aws.sns.topic.arn']).must_be_nil
+        _(client_span.attributes[otel_semantic::MESSAGING_DESTINATION])
+          .must_equal('endpoint/APNS/MyApp/00000000-1111-2222-3333-444444444444')
+      end
+
+      it 'does not report a subscription arn as a topic' do
+        subscription_arn = 'arn:aws:sns:fake:123:TopicName:00000000-1111-2222-3333-444444444444'
+
+        client.publish(message: 'msg', topic_arn: subscription_arn)
+
+        _(client_span.attributes['aws.sns.topic.arn']).must_be_nil
+      end
+
+      it 'does not report a subscription arn supplied through target arn as a topic' do
+        subscription_arn = 'arn:aws:sns:fake:123:TopicName:00000000-1111-2222-3333-444444444444'
+
+        client.publish(message: 'msg', target_arn: subscription_arn)
+
+        _(client_span.attributes['aws.sns.topic.arn']).must_be_nil
+      end
+
+      it 'does not report an arn from another service as a topic' do
+        client.publish(message: 'msg', topic_arn: 'arn:aws:sqs:fake:123:QueueName')
+
+        _(client_span.attributes['aws.sns.topic.arn']).must_be_nil
+      end
+
+      it 'does not report a malformed arn as a topic' do
+        client.publish(message: 'msg', topic_arn: 'arn:aws:sns:fake:123')
+
+        _(client_span.attributes['aws.sns.topic.arn']).must_be_nil
+      end
+
+      it 'does not record an arn or the phone number for a phone number publish' do
+        skip if Gem::Version.new('2.3.18') > instrumentation_instance.gem_version
+
+        client.publish(message: 'msg', phone_number: '123456')
+
+        _(client_span.attributes['aws.sns.topic.arn']).must_be_nil
+        _(client_span.attributes.values.grep(/123456/)).must_be_empty
+      end
+
+      it 'does not record a topic arn for another SNS operation' do
+        client.subscribe(
+          topic_arn: 'arn:aws:sns:fake:123:TopicName',
+          protocol: 'email',
+          endpoint: 'person@example.com'
+        )
+
+        subscribe_span = spans.find { |span| span.name.include?('SNS.Subscribe') }
+        _(subscribe_span).wont_be_nil
+        _(subscribe_span.attributes['aws.sns.topic.arn']).must_be_nil
+      end
     end
 
     describe 'SQS' do

@@ -64,6 +64,14 @@ otel_provider = Aws::Telemetry::OTelProvider.new
 client = Aws::S3::Client.new(telemetry_provider: otel_provider)
 ```
 
+## SNS attributes
+
+An `SNS.Publish` span includes `aws.sns.topic.arn` when either `TopicArn` or
+`TargetArn` holds a topic ARN. This registry attribute currently has
+development stability. Both parameters are read with the same rule, so
+subscription ARNs, platform endpoint ARNs and phone numbers are not recorded in
+this attribute.
+
 ## Example
 
 To run the example:

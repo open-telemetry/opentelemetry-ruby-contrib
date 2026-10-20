@@ -16,6 +16,12 @@ module OpenTelemetry
           SQS_RECEIVE_MESSAGE = 'SQS.ReceiveMessage'
           SNS_PUBLISH = 'SNS.Publish'
           SEND_MESSAGE_CLIENT_METHODS = [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].freeze
+          SNS_TOPIC_ARN_ATTRIBUTE = 'aws.sns.topic.arn'
+          # A topic ARN has the six ARN parts, the sns service and a bare topic
+          # name. A subscription ARN adds a seventh colon separated part, and
+          # platform application and endpoint ARNs put slashes in the resource,
+          # so neither of those is a topic.
+          SNS_TOPIC_ARN = %r{\Aarn:[^:]+:sns:[^:]+:[^:]+:[^:/]+\z}
 
           def supported_services
             SUPPORTED_SERVICES
@@ -112,12 +118,25 @@ module OpenTelemetry
             attributes[SemanticConventions::Trace::MESSAGING_OPERATION] = 'receive' if client_method == SQS_RECEIVE_MESSAGE
           end
 
+          # Records the full topic ARN without changing the existing short
+          # destination name. A platform endpoint and a phone number are not
+          # topics, so neither gets this attribute.
           def apply_sns_attributes(attributes, context, client_method)
             attributes[SemanticConventions::Trace::MESSAGING_SYSTEM] = 'aws.sns'
             return unless client_method == SNS_PUBLISH
 
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'topic'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = queue_name(context)
+
+            topic_arn = sns_topic_arn(context)
+            attributes[SNS_TOPIC_ARN_ATTRIBUTE] = topic_arn if topic_arn
+          end
+
+          # Publish takes a topic through either parameter, so both are read
+          # with the same rule. A phone number is not an ARN and never matches.
+          def sns_topic_arn(context)
+            [context.params[:topic_arn], context.params[:target_arn]]
+              .find { |arn| arn.is_a?(String) && SNS_TOPIC_ARN.match?(arn) }
           end
         end
       end
