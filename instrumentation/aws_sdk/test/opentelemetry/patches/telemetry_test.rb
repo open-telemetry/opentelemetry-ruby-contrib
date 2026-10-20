@@ -105,6 +105,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       let(:topic_arn_key) { TestHelper::SNS_TOPIC_ARN_ATTRIBUTE }
       let(:subscription_arn) { 'arn:aws:sns:fake:123:TopicName:00000000-1111-2222-3333-444444444444' }
       let(:longest_topic_name) { 'a' * 256 }
+      # A `.fifo` suffix counts towards the 256 character topic name limit, so
+      # the longest first-in-first-out name is 251 characters plus the suffix.
+      let(:longest_fifo_topic_name) { 'a' * 251 }
 
       let(:expected_client_attrs) do
         client_attrs.tap do |attrs|
@@ -159,6 +162,14 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
       it 'records a topic name at the length limit' do
         topic_arn = "arn:aws:sns:fake:123:#{longest_topic_name}"
+
+        client.publish(message: 'msg', topic_arn: topic_arn)
+
+        _(client_span.attributes[topic_arn_key]).must_equal(topic_arn)
+      end
+
+      it 'records a fifo topic name at the length limit' do
+        topic_arn = "arn:aws:sns:fake:123:#{longest_fifo_topic_name}.fifo"
 
         client.publish(message: 'msg', topic_arn: topic_arn)
 
@@ -263,6 +274,13 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(client_span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('Topic Name')
       end
 
+      it 'does not report a topic name holding a control character as a topic' do
+        client.publish(message: 'msg', topic_arn: "arn:aws:sns:fake:123:Topic\u0001Name")
+
+        _(client_span.attributes).wont_include(topic_arn_key)
+        _(client_span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal("Topic\u0001Name")
+      end
+
       it 'does not report a phone number resource as a topic' do
         client.publish(message: 'msg', topic_arn: 'arn:aws:sns:fake:123:+15551234567')
 
@@ -271,6 +289,12 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
       it 'does not report a topic name over the length limit as a topic' do
         client.publish(message: 'msg', topic_arn: "arn:aws:sns:fake:123:#{longest_topic_name}a")
+
+        _(client_span.attributes).wont_include(topic_arn_key)
+      end
+
+      it 'does not report a fifo topic name over the length limit as a topic' do
+        client.publish(message: 'msg', topic_arn: "arn:aws:sns:fake:123:#{longest_fifo_topic_name}a.fifo")
 
         _(client_span.attributes).wont_include(topic_arn_key)
       end

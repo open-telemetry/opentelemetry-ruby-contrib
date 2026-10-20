@@ -34,19 +34,8 @@ module OpenTelemetry
           end
 
           def queue_name(context)
-            arn = sns_destination_arn(context.params)
-            if arn
-              name = arn.split(':')[-1]
-              return name if name
-            end
-
-            phone_number = context.params[:phone_number]
-            return 'phone_number' if phone_number
-
-            queue_url = context.params[:queue_url]
-            return queue_url.split('/')[-1] if queue_url
-
-            'unknown'
+            params = context.params
+            destination_name(params, sns_destination_arn(params))
           end
 
           def span_name(context, client_method)
@@ -122,18 +111,37 @@ module OpenTelemetry
             attributes[SemanticConventions::Trace::MESSAGING_OPERATION] = 'receive' if client_method == SQS_RECEIVE_MESSAGE
           end
 
-          # Records the full topic ARN without changing the existing short
-          # destination name. Both attributes read one selected parameter, so
-          # they always describe the same destination.
+          # Records the full topic ARN without changing the existing
+          # destination name. One selected parameter backs both, so they always
+          # describe the same destination, and selecting it once keeps publish
+          # from classifying the same value twice.
           def apply_sns_attributes(attributes, context, client_method)
             attributes[SemanticConventions::Trace::MESSAGING_SYSTEM] = 'aws.sns'
             return unless client_method == SNS_PUBLISH
 
-            attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'topic'
-            attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = queue_name(context)
+            params = context.params
+            arn = sns_destination_arn(params)
 
-            arn = sns_destination_arn(context.params)
+            attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'topic'
+            attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = destination_name(params, arn)
             attributes[SNS_TOPIC_ARN_ATTRIBUTE] = arn if arn && SNS_TOPIC_ARN_PATTERN.match?(arn)
+          end
+
+          # Names the destination from an already selected ARN, so a caller
+          # needing both the name and the ARN selects once. An SNS destination
+          # is named by the last colon separated ARN segment.
+          def destination_name(params, arn)
+            if arn
+              name = arn.split(':')[-1]
+              return name if name
+            end
+
+            return 'phone_number' if params[:phone_number]
+
+            queue_url = params[:queue_url]
+            return queue_url.split('/')[-1] if queue_url
+
+            'unknown'
           end
 
           # Selects the one parameter that carries the publish destination.

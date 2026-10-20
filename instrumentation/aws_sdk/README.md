@@ -78,9 +78,16 @@ stability.
 
 A selected destination that is not a topic is left out of `aws.sns.topic.arn`.
 That covers platform application and endpoint ARNs, subscription ARNs and phone
-numbers. Those identifiers still appear in `messaging.destination`, which keeps
-the short name taken from the selected parameter, so the destination is still
-recorded.
+numbers. Those destinations are still recorded, because `messaging.destination`
+keeps the last colon separated segment of the selected value. For a platform
+endpoint or a subscription ARN that segment is the endpoint or subscription
+identifier, which is per device or per subscriber, so treat it as
+high-cardinality and potentially sensitive. That is existing behavior and this
+attribute does not change it.
+
+`messaging.destination_kind` stays `topic` on every `SNS.Publish` span, so it
+reads `topic` even when the destination is a platform endpoint or a phone
+number. That is also existing behavior and is left unchanged here.
 
 ## Example
 
