@@ -22,12 +22,15 @@ module OpenTelemetry
           # suffix, which counts towards that same limit. The leading bound
           # rejects a longer name, and the character set rejects a space, a
           # control character, a slash, and the `+` that starts a phone number.
-          SNS_TOPIC_NAME_PATTERN = /(?=.{1,256}\z)[A-Za-z0-9_-]+(?:\.fifo)?/
+          # Deliberately not anchored, because it is only ever interpolated
+          # into an anchored pattern; matched on its own it would find a name
+          # anywhere in the subject rather than checking the whole of it.
+          SNS_TOPIC_NAME_FRAGMENT = /(?=.{1,256}\z)[A-Za-z0-9_-]+(?:\.fifo)?/
           # A topic ARN is the six ARN parts, `sns` as the service and a bare
           # topic name as the resource. A subscription ARN adds a seventh colon
           # separated part, and platform application and endpoint ARNs put
           # slashes in the resource, so neither of those is a topic.
-          SNS_TOPIC_ARN_PATTERN = /\Aarn:[a-z0-9-]+:sns:[a-z0-9-]+:\d+:#{SNS_TOPIC_NAME_PATTERN}\z/
+          SNS_TOPIC_ARN_PATTERN = /\Aarn:[a-z0-9-]+:sns:[a-z0-9-]+:\d+:#{SNS_TOPIC_NAME_FRAGMENT}\z/
 
           def supported_services
             SUPPORTED_SERVICES
@@ -112,9 +115,9 @@ module OpenTelemetry
           end
 
           # Records the full topic ARN without changing the existing
-          # destination name. One selected parameter backs both, so they always
-          # describe the same destination, and selecting it once keeps publish
-          # from classifying the same value twice.
+          # destination name. Both attributes read one selection made here, so
+          # they always describe the same destination. The span name selects
+          # separately, through `queue_name`.
           def apply_sns_attributes(attributes, context, client_method)
             attributes[SemanticConventions::Trace::MESSAGING_SYSTEM] = 'aws.sns'
             return unless client_method == SNS_PUBLISH
@@ -129,11 +132,18 @@ module OpenTelemetry
 
           # Names the destination from an already selected ARN, so a caller
           # needing both the name and the ARN selects once. An SNS destination
-          # is named by the last colon separated ARN segment.
+          # is named by the ARN part after the last colon, read as a suffix
+          # rather than by splitting, so naming builds no array. A selected ARN
+          # always names the destination, so one whose last part is empty is
+          # `unknown` instead of falling through to an unrelated `PhoneNumber`
+          # or `QueueUrl`.
           def destination_name(params, arn)
             if arn
-              name = arn.split(':')[-1]
-              return name if name
+              separator = arn.rindex(':')
+              return arn unless separator
+
+              name = arn[(separator + 1)..]
+              return name.empty? ? 'unknown' : name
             end
 
             return 'phone_number' if params[:phone_number]
@@ -147,10 +157,8 @@ module OpenTelemetry
           # Selects the one parameter that carries the publish destination.
           # `TopicArn` wins when it holds a value, and a missing or empty
           # parameter counts as absent, so a populated `TopicArn` is never
-          # abandoned for a `TargetArn` naming somewhere else. The destination
-          # name and the topic ARN attribute both read this one selection,
-          # which is what keeps them describing the same destination. Takes no
-          # block and builds no array, because publish is a hot path.
+          # abandoned for a `TargetArn` naming somewhere else. Takes no block
+          # and builds no array, because publish is a hot path.
           def sns_destination_arn(params)
             topic_arn = params[:topic_arn]
             return topic_arn if topic_arn.is_a?(String) && !topic_arn.empty?

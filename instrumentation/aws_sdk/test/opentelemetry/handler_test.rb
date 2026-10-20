@@ -158,6 +158,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
         client.publish(message: 'msg', topic_arn: '', target_arn: target_arn)
 
+        _(span.name).must_equal('FromTargetArn publish')
         _(span.attributes[topic_arn_key]).must_equal(target_arn)
         _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('FromTargetArn')
       end
@@ -174,6 +175,18 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       it 'records an unknown destination when every destination parameter is empty' do
         client.publish(message: 'msg', topic_arn: '', target_arn: '')
 
+        _(span.name).must_equal('unknown publish')
+        _(span.attributes).wont_include(topic_arn_key)
+        _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('unknown')
+      end
+
+      it 'does not name the destination after a phone number when the selected arn holds no name' do
+        # skip if using aws-sdk version before phone_number supported (v2.3.18)
+        skip if Gem::Version.new('2.3.18') > instrumentation_gem_version
+
+        client.publish(message: 'msg', topic_arn: ':', phone_number: '123456')
+
+        _(span.name).must_equal('unknown publish')
         _(span.attributes).wont_include(topic_arn_key)
         _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('unknown')
       end
