@@ -46,7 +46,7 @@ module OpenTelemetry
       #
       # ### `:record_exception`
       #
-      # Records exceptions as span events when an error occurs. Default is `true`.
+      # Records exceptions as span events when an error occurs. Default is `true` for old semconv, otherwise `false`.
       #
       # ### `:span_name`
       #
@@ -91,7 +91,7 @@ module OpenTelemetry
         option :span_name, default: :statement_type, validate: %I[statement_type db_name db_operation_and_name]
         option :obfuscation_limit, default: 2000, validate: :integer
         option :propagator, default: 'none', validate: %w[none tracecontext vitess]
-        option :record_exception, default: true, validate: :boolean
+        option :record_exception, default: nil, validate: :boolean
 
         attr_reader :propagator, :semconv
 
@@ -99,6 +99,8 @@ module OpenTelemetry
 
         def require_dependencies
           @semconv = determine_semconv
+
+          @config[:record_exception] = (@semconv == :old) if @config[:record_exception].nil?
 
           case @semconv
           when :old
