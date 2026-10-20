@@ -66,11 +66,21 @@ client = Aws::S3::Client.new(telemetry_provider: otel_provider)
 
 ## SNS attributes
 
-An `SNS.Publish` span includes `aws.sns.topic.arn` when either `TopicArn` or
-`TargetArn` holds a topic ARN. This registry attribute currently has
-development stability. Both parameters are read with the same rule, so
-subscription ARNs, platform endpoint ARNs and phone numbers are not recorded in
-this attribute.
+An `SNS.Publish` span carries `aws.sns.topic.arn` when the selected destination
+is a topic ARN. `TopicArn` is used when it holds a value and `TargetArn`
+otherwise, and that one selected value backs both `aws.sns.topic.arn` and
+`messaging.destination`, so the two never describe different destinations.
+
+The attribute holds the ARN unchanged, so it includes the AWS account ID and the
+Region. Nothing needs to be configured: it is emitted by default whenever a
+valid topic ARN is selected. This registry attribute currently has development
+stability.
+
+A selected destination that is not a topic is left out of `aws.sns.topic.arn`.
+That covers platform application and endpoint ARNs, subscription ARNs and phone
+numbers. Those identifiers still appear in `messaging.destination`, which keeps
+the short name taken from the selected parameter, so the destination is still
+recorded.
 
 ## Example
 

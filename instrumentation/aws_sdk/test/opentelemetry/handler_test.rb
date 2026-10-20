@@ -62,6 +62,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       let(:service_name) { 'SNS' }
       before { check_target_service(service_name) }
       let(:client) { Aws::SNS::Client.new(stub_responses: true) }
+      let(:topic_arn_key) { TestHelper::SNS_TOPIC_ARN_ATTRIBUTE }
+      let(:subscription_arn) { 'arn:aws:sns:fake:123:TopicName:00000000-1111-2222-3333-444444444444' }
+      let(:longest_topic_name) { 'a' * 256 }
       let(:expected_attrs) do
         span_attrs.tap do |attrs|
           attrs[otel_semantic::RPC_METHOD] = 'Publish'
@@ -89,7 +92,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
           topic_arn: 'arn:aws:sns:fake:123:TopicName'
         )
 
-        _(span.attributes['aws.sns.topic.arn']).must_equal('arn:aws:sns:fake:123:TopicName')
+        _(span.attributes[topic_arn_key]).must_equal('arn:aws:sns:fake:123:TopicName')
       end
 
       it 'records a topic arn supplied through target arn' do
@@ -97,7 +100,71 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
         client.publish(message: 'msg', target_arn: target_arn)
 
-        _(span.attributes['aws.sns.topic.arn']).must_equal(target_arn)
+        _(span.attributes[topic_arn_key]).must_equal(target_arn)
+      end
+
+      it 'records a fifo topic arn' do
+        topic_arn = 'arn:aws:sns:fake:123:My_Topic-1.fifo'
+
+        client.publish(message: 'msg', topic_arn: topic_arn)
+
+        _(span.attributes[topic_arn_key]).must_equal(topic_arn)
+      end
+
+      it 'records a topic name at the length limit' do
+        topic_arn = "arn:aws:sns:fake:123:#{longest_topic_name}"
+
+        client.publish(message: 'msg', topic_arn: topic_arn)
+
+        _(span.attributes[topic_arn_key]).must_equal(topic_arn)
+      end
+
+      it 'prefers a populated topic arn over a target arn' do
+        client.publish(
+          message: 'msg',
+          topic_arn: 'arn:aws:sns:fake:123:FromTopicArn',
+          target_arn: 'arn:aws:sns:fake:123:FromTargetArn'
+        )
+
+        _(span.attributes[topic_arn_key]).must_equal('arn:aws:sns:fake:123:FromTopicArn')
+        _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('FromTopicArn')
+      end
+
+      it 'does not fall back to target arn when the populated topic arn is not a topic' do
+        client.publish(
+          message: 'msg',
+          topic_arn: subscription_arn,
+          target_arn: 'arn:aws:sns:fake:123:FromTargetArn'
+        )
+
+        _(span.attributes).wont_include(topic_arn_key)
+        _(span.attributes[otel_semantic::MESSAGING_DESTINATION])
+          .must_equal('00000000-1111-2222-3333-444444444444')
+      end
+
+      it 'uses target arn when topic arn is empty' do
+        target_arn = 'arn:aws:sns:fake:123:FromTargetArn'
+
+        client.publish(message: 'msg', topic_arn: '', target_arn: target_arn)
+
+        _(span.attributes[topic_arn_key]).must_equal(target_arn)
+        _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('FromTargetArn')
+      end
+
+      it 'uses target arn when topic arn is nil' do
+        target_arn = 'arn:aws:sns:fake:123:FromTargetArn'
+
+        client.publish(message: 'msg', topic_arn: nil, target_arn: target_arn)
+
+        _(span.attributes[topic_arn_key]).must_equal(target_arn)
+        _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('FromTargetArn')
+      end
+
+      it 'records an unknown destination when every destination parameter is empty' do
+        client.publish(message: 'msg', topic_arn: '', target_arn: '')
+
+        _(span.attributes).wont_include(topic_arn_key)
+        _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('unknown')
       end
 
       it 'does not report a platform endpoint as a topic' do
@@ -105,37 +172,61 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
         client.publish(message: 'msg', target_arn: target_arn)
 
-        _(span.attributes['aws.sns.topic.arn']).must_be_nil
+        _(span.attributes).wont_include(topic_arn_key)
         _(span.attributes[otel_semantic::MESSAGING_DESTINATION])
           .must_equal('endpoint/APNS/MyApp/00000000-1111-2222-3333-444444444444')
       end
 
-      it 'does not report a subscription arn as a topic' do
-        subscription_arn = 'arn:aws:sns:fake:123:TopicName:00000000-1111-2222-3333-444444444444'
+      it 'does not report a platform application as a topic' do
+        target_arn = 'arn:aws:sns:fake:123:app/APNS/MyApp'
 
+        client.publish(message: 'msg', target_arn: target_arn)
+
+        _(span.attributes).wont_include(topic_arn_key)
+        _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('app/APNS/MyApp')
+      end
+
+      it 'does not report a subscription arn as a topic' do
         client.publish(message: 'msg', topic_arn: subscription_arn)
 
-        _(span.attributes['aws.sns.topic.arn']).must_be_nil
+        _(span.attributes).wont_include(topic_arn_key)
       end
 
       it 'does not report a subscription arn supplied through target arn as a topic' do
-        subscription_arn = 'arn:aws:sns:fake:123:TopicName:00000000-1111-2222-3333-444444444444'
-
         client.publish(message: 'msg', target_arn: subscription_arn)
 
-        _(span.attributes['aws.sns.topic.arn']).must_be_nil
+        _(span.attributes).wont_include(topic_arn_key)
       end
 
       it 'does not report an arn from another service as a topic' do
         client.publish(message: 'msg', topic_arn: 'arn:aws:sqs:fake:123:QueueName')
 
-        _(span.attributes['aws.sns.topic.arn']).must_be_nil
+        _(span.attributes).wont_include(topic_arn_key)
       end
 
       it 'does not report a malformed arn as a topic' do
         client.publish(message: 'msg', topic_arn: 'arn:aws:sns:fake:123')
 
-        _(span.attributes['aws.sns.topic.arn']).must_be_nil
+        _(span.attributes).wont_include(topic_arn_key)
+      end
+
+      it 'does not report a topic name holding a space as a topic' do
+        client.publish(message: 'msg', topic_arn: 'arn:aws:sns:fake:123:Topic Name')
+
+        _(span.attributes).wont_include(topic_arn_key)
+        _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('Topic Name')
+      end
+
+      it 'does not report a phone number resource as a topic' do
+        client.publish(message: 'msg', topic_arn: 'arn:aws:sns:fake:123:+15551234567')
+
+        _(span.attributes).wont_include(topic_arn_key)
+      end
+
+      it 'does not report a topic name over the length limit as a topic' do
+        client.publish(message: 'msg', topic_arn: "arn:aws:sns:fake:123:#{longest_topic_name}a")
+
+        _(span.attributes).wont_include(topic_arn_key)
       end
 
       it 'creates a span that includes a phone number' do
@@ -153,7 +244,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
         client.publish(message: 'msg', phone_number: '123456')
 
-        _(span.attributes['aws.sns.topic.arn']).must_be_nil
+        _(span.attributes).wont_include(topic_arn_key)
         _(span.attributes.values.grep(/123456/)).must_be_empty
       end
 
@@ -164,7 +255,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
           endpoint: 'person@example.com'
         )
 
-        _(span.attributes['aws.sns.topic.arn']).must_be_nil
+        subscribe_span = exporter.finished_spans.find { |finished| finished.name == 'SNS.Subscribe' }
+        _(subscribe_span).wont_be_nil
+        _(subscribe_span.attributes).wont_include(topic_arn_key)
       end
     end
 

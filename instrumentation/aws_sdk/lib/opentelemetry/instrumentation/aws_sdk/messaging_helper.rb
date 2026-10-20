@@ -17,23 +17,27 @@ module OpenTelemetry
           SNS_PUBLISH = 'SNS.Publish'
           SEND_MESSAGE_CLIENT_METHODS = [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].freeze
           SNS_TOPIC_ARN_ATTRIBUTE = 'aws.sns.topic.arn'
-          # A topic ARN has the six ARN parts, the sns service and a bare topic
-          # name. A subscription ARN adds a seventh colon separated part, and
-          # platform application and endpoint ARNs put slashes in the resource,
-          # so neither of those is a topic.
-          SNS_TOPIC_ARN = %r{\Aarn:[^:]+:sns:[^:]+:[^:]+:[^:/]+\z}
+          # A topic name is 1 to 256 characters of letters, digits, hyphens and
+          # underscores, and a first-in-first-out topic ends in the `.fifo`
+          # suffix, which counts towards that same limit. The leading bound
+          # rejects a longer name, and the character set rejects a space, a
+          # control character, a slash, and the `+` that starts a phone number.
+          SNS_TOPIC_NAME_PATTERN = /(?=.{1,256}\z)[A-Za-z0-9_-]+(?:\.fifo)?/
+          # A topic ARN is the six ARN parts, `sns` as the service and a bare
+          # topic name as the resource. A subscription ARN adds a seventh colon
+          # separated part, and platform application and endpoint ARNs put
+          # slashes in the resource, so neither of those is a topic.
+          SNS_TOPIC_ARN_PATTERN = /\Aarn:[a-z0-9-]+:sns:[a-z0-9-]+:\d+:#{SNS_TOPIC_NAME_PATTERN}\z/
 
           def supported_services
             SUPPORTED_SERVICES
           end
 
           def queue_name(context)
-            topic_arn = context.params[:topic_arn]
-            target_arn = context.params[:target_arn]
-
-            if topic_arn || target_arn
-              arn = topic_arn || target_arn
-              return arn.split(':')[-1]
+            arn = sns_destination_arn(context.params)
+            if arn
+              name = arn.split(':')[-1]
+              return name if name
             end
 
             phone_number = context.params[:phone_number]
@@ -119,8 +123,8 @@ module OpenTelemetry
           end
 
           # Records the full topic ARN without changing the existing short
-          # destination name. A platform endpoint and a phone number are not
-          # topics, so neither gets this attribute.
+          # destination name. Both attributes read one selected parameter, so
+          # they always describe the same destination.
           def apply_sns_attributes(attributes, context, client_method)
             attributes[SemanticConventions::Trace::MESSAGING_SYSTEM] = 'aws.sns'
             return unless client_method == SNS_PUBLISH
@@ -128,15 +132,25 @@ module OpenTelemetry
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'topic'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = queue_name(context)
 
-            topic_arn = sns_topic_arn(context)
-            attributes[SNS_TOPIC_ARN_ATTRIBUTE] = topic_arn if topic_arn
+            arn = sns_destination_arn(context.params)
+            attributes[SNS_TOPIC_ARN_ATTRIBUTE] = arn if arn && SNS_TOPIC_ARN_PATTERN.match?(arn)
           end
 
-          # Publish takes a topic through either parameter, so both are read
-          # with the same rule. A phone number is not an ARN and never matches.
-          def sns_topic_arn(context)
-            [context.params[:topic_arn], context.params[:target_arn]]
-              .find { |arn| arn.is_a?(String) && SNS_TOPIC_ARN.match?(arn) }
+          # Selects the one parameter that carries the publish destination.
+          # `TopicArn` wins when it holds a value, and a missing or empty
+          # parameter counts as absent, so a populated `TopicArn` is never
+          # abandoned for a `TargetArn` naming somewhere else. The destination
+          # name and the topic ARN attribute both read this one selection,
+          # which is what keeps them describing the same destination. Takes no
+          # block and builds no array, because publish is a hot path.
+          def sns_destination_arn(params)
+            topic_arn = params[:topic_arn]
+            return topic_arn if topic_arn.is_a?(String) && !topic_arn.empty?
+
+            target_arn = params[:target_arn]
+            return target_arn if target_arn.is_a?(String) && !target_arn.empty?
+
+            nil
           end
         end
       end
