@@ -107,7 +107,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
     end
 
     describe 'with default options' do
-      it 'obfuscates sql' do
+      it 'drops sql' do
         client.query('SELECT 1')
 
         _(span.name).must_equal 'select'
@@ -304,22 +304,8 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
       end
     end
 
-    describe 'when db_statement is set to include' do
-      let(:config) { { db_statement: :include } }
-
-      it 'includes the db query statement' do
-        sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
-        expect do
-          client.query(sql)
-        end.must_raise Trilogy::Error
-
-        _(span.name).must_equal 'select'
-        _(span.attributes['db.query.text']).must_equal sql
-      end
-    end
-
-    describe 'when db_statement is set to obfuscate' do
-      let(:config) { { db_statement: :obfuscate } }
+    describe 'when exclude_dbquerytext is set to false' do
+      let(:config) { { exclude_dbquerytext: false } }
 
       it 'obfuscates SQL parameters in db.query.text' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
@@ -346,7 +332,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
       end
 
       describe 'with obfuscation_limit' do
-        let(:config) { { db_statement: :obfuscate, obfuscation_limit: 10 } }
+        let(:config) { { exclude_dbquerytext: false, obfuscation_limit: 10 } }
 
         it 'returns a message when the limit is reached' do
           sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
@@ -487,8 +473,8 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
       end
     end
 
-    describe 'when db_statement is set to omit' do
-      let(:config) { { db_statement: :omit } }
+    describe 'when exclude_dbquerytext is set to true' do
+      let(:config) { { exclude_dbquerytext: true } }
 
       it 'does not include SQL statement as db.query.text attribute' do
         sql = 'SELECT * from users where users.id = 1 and users.email = "test@test.com"'
@@ -504,7 +490,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
     describe 'when db_statement is configured via environment variable' do
       describe 'when db_statement set as omit' do
         it 'omits db.query.text attribute' do
-          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'db_statement=omit;') do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'exclude_dbquerytext=true;') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
             sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
@@ -521,7 +507,7 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
 
       describe 'when db_statement set as obfuscate' do
         it 'obfuscates SQL parameters in db.query.text' do
-          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'db_statement=obfuscate;') do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'exclude_dbquerytext=false;') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
 
@@ -539,10 +525,10 @@ describe 'OpenTelemetry::Instrumentation::Trilogy (stable semconv)' do
       end
 
       describe 'when db_statement is set differently than local config' do
-        let(:config) { { db_statement: :omit } }
+        let(:config) { { exclude_dbquerytext: true } }
 
         it 'overrides local config and obfuscates SQL parameters in db.query.text' do
-          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'db_statement=obfuscate') do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_TRILOGY_CONFIG_OPTS' => 'exclude_dbquerytext=false') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
 
