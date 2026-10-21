@@ -64,10 +64,6 @@ otel_provider = Aws::Telemetry::OTelProvider.new
 client = Aws::S3::Client.new(telemetry_provider: otel_provider)
 ```
 
-## SNS attributes
-
-`SNS.Publish` spans set `aws.sns.topic.arn` from a non-empty `TopicArn` request parameter. `TargetArn` does not populate this attribute.
-
 ## Example
 
 To run the example:
