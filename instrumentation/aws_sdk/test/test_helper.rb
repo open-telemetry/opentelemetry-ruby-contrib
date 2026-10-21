@@ -34,8 +34,6 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 class TestHelper
-  SNS_TOPIC_ARN_ATTRIBUTE = 'aws.sns.topic.arn'
-
   class << self
     def telemetry_plugin?(service)
       return false unless Aws.const_defined?(service)

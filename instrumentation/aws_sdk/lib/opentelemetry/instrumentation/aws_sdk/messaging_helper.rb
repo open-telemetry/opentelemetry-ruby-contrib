@@ -16,29 +16,27 @@ module OpenTelemetry
           SQS_RECEIVE_MESSAGE = 'SQS.ReceiveMessage'
           SNS_PUBLISH = 'SNS.Publish'
           SEND_MESSAGE_CLIENT_METHODS = [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].freeze
-          SNS_TOPIC_ARN_ATTRIBUTE = 'aws.sns.topic.arn'
-          # A topic name is 1 to 256 characters of letters, digits, hyphens and
-          # underscores, and a first-in-first-out topic ends in the `.fifo`
-          # suffix, which counts towards that same limit. The leading bound
-          # rejects a longer name, and the character set rejects a space, a
-          # control character, a slash, and the `+` that starts a phone number.
-          # Deliberately not anchored, because it is only ever interpolated
-          # into an anchored pattern; matched on its own it would find a name
-          # anywhere in the subject rather than checking the whole of it.
-          SNS_TOPIC_NAME_FRAGMENT = /(?=.{1,256}\z)[A-Za-z0-9_-]+(?:\.fifo)?/
-          # A topic ARN is the six ARN parts, `sns` as the service and a bare
-          # topic name as the resource. A subscription ARN adds a seventh colon
-          # separated part, and platform application and endpoint ARNs put
-          # slashes in the resource, so neither of those is a topic.
-          SNS_TOPIC_ARN_PATTERN = /\Aarn:[a-z0-9-]+:sns:[a-z0-9-]+:\d+:#{SNS_TOPIC_NAME_FRAGMENT}\z/
 
           def supported_services
             SUPPORTED_SERVICES
           end
 
           def queue_name(context)
-            params = context.params
-            destination_name(params, sns_destination_arn(params))
+            topic_arn = context.params[:topic_arn]
+            target_arn = context.params[:target_arn]
+
+            if topic_arn || target_arn
+              arn = topic_arn || target_arn
+              return arn.split(':')[-1]
+            end
+
+            phone_number = context.params[:phone_number]
+            return 'phone_number' if phone_number
+
+            queue_url = context.params[:queue_url]
+            return queue_url.split('/')[-1] if queue_url
+
+            'unknown'
           end
 
           def span_name(context, client_method)
@@ -114,75 +112,14 @@ module OpenTelemetry
             attributes[SemanticConventions::Trace::MESSAGING_OPERATION] = 'receive' if client_method == SQS_RECEIVE_MESSAGE
           end
 
-          # Records the full topic ARN without changing the existing
-          # destination name. The destination name reads the selected
-          # destination, which is `TopicArn` or `TargetArn`, so it is unchanged
-          # from before. The topic ARN attribute reads `TopicArn` only, because
-          # it names an SNS topic specifically and a `TargetArn` names a
-          # platform endpoint or application rather than a topic. The span name
-          # selects separately, through `queue_name`.
           def apply_sns_attributes(attributes, context, client_method)
             attributes[SemanticConventions::Trace::MESSAGING_SYSTEM] = 'aws.sns'
             return unless client_method == SNS_PUBLISH
 
-            params = context.params
-
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'topic'
-            attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = destination_name(params, sns_destination_arn(params))
-
-            topic_arn = sns_topic_arn(params)
-            attributes[SNS_TOPIC_ARN_ATTRIBUTE] = topic_arn if topic_arn && SNS_TOPIC_ARN_PATTERN.match?(topic_arn)
-          end
-
-          # Names the destination from an already selected ARN, so a caller
-          # needing both the name and the ARN selects once. An SNS destination
-          # is named by the ARN part after the last colon, read as a suffix
-          # rather than by splitting, so naming builds no array. A selected ARN
-          # always names the destination, so one whose last part is empty is
-          # `unknown` instead of falling through to an unrelated `PhoneNumber`
-          # or `QueueUrl`.
-          def destination_name(params, arn)
-            if arn
-              separator = arn.rindex(':')
-              return arn unless separator
-
-              name = arn[(separator + 1)..]
-              return name.empty? ? 'unknown' : name
-            end
-
-            return 'phone_number' if params[:phone_number]
-
-            queue_url = params[:queue_url]
-            return queue_url.split('/')[-1] if queue_url
-
-            'unknown'
-          end
-
-          # Selects the one parameter that carries the publish destination.
-          # `TopicArn` wins when it holds a value, and a missing or empty
-          # parameter counts as absent, so a populated `TopicArn` is never
-          # abandoned for a `TargetArn` naming somewhere else. Takes no block
-          # and builds no array, because publish is a hot path.
-          def sns_destination_arn(params)
-            topic_arn = params[:topic_arn]
-            return topic_arn if topic_arn.is_a?(String) && !topic_arn.empty?
-
-            target_arn = params[:target_arn]
-            return target_arn if target_arn.is_a?(String) && !target_arn.empty?
-
-            nil
-          end
-
-          # Reads the `TopicArn` parameter alone, for the topic ARN attribute.
-          # `TargetArn` is deliberately not consulted here, because it carries a
-          # platform application or endpoint rather than a topic, so it must not
-          # feed an attribute that names an SNS topic. A missing or empty value
-          # counts as absent.
-          def sns_topic_arn(params)
-            topic_arn = params[:topic_arn]
-            return topic_arn if topic_arn.is_a?(String) && !topic_arn.empty?
-
-            nil
+            attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = queue_name(context)
+            topic_arn = context.params[:topic_arn]
+            attributes['aws.sns.topic.arn'] = topic_arn if topic_arn && !topic_arn.empty?
           end
         end
       end
