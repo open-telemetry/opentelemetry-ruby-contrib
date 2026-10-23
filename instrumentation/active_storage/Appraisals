@@ -18,7 +18,7 @@ if RUBY_ENGINE == 'ruby'
   %w[8.0.0 8.1.4].each do |version|
     appraise "activestorage-#{version}" do
       gem 'rails', "~> #{version}"
-      gem 'sqlite3', '= 2.9.6'
+      gem 'sqlite3', '= 2.10.1'
       gem 'image_processing', '= 2.2.0'
       gem 'mini_magick', '= 5.4.0'
       gem 'json', '< 3'
