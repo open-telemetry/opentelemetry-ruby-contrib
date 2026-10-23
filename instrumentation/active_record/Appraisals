@@ -15,7 +15,7 @@ if RUBY_ENGINE == 'ruby'
   %w[8.0.0 8.1.4].each do |version|
     appraise "activerecord-#{version}" do
       gem 'activerecord', "~> #{version}"
-      gem 'sqlite3', '= 2.9.6'
+      gem 'sqlite3', '= 2.10.1'
     end
   end
 end
