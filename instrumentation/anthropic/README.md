@@ -4,9 +4,11 @@ The Anthropic instrumentation is a community-maintained instrumentation for the 
 
 ## Anthropic 1.79.0+ Native Integration
 
+`opentelemetry-instrumentation-anthropic` only provides context propagation; it never created spans for Anthropic API calls.
+
 Anthropic 1.79.0+ includes native OpenTelemetry instrumentation. For the best experience and continued support, we recommend:
 
-- **Anthropic < 1.79.0**: Use `opentelemetry-instrumentation-anthropic` gem
+- **Anthropic < 1.79.0**: Use `opentelemetry-instrumentation-anthropic` gem for context propagation only
 - **Anthropic ≥ 1.79.0**: Use Anthropic's built-in OpenTelemetry support (remove `opentelemetry-instrumentation-anthropic` gem)
 
 Community instrumentation is compatible with Anthropic versions up to 1.78.x. Development of this gem is frozen for newer Anthropic versions in favor of the native integration.
