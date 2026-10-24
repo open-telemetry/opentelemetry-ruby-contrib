@@ -507,6 +507,18 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         # Frozen strings should not be modified
         _(sql).wont_match(%r{/\*traceparent=})
       end
+
+      describe 'with db.statement included' do
+        let(:config) { { propagator: 'tracecontext', db_statement: :include } }
+
+        it 'does not retain preparation context in later execution spans' do
+          sql = +'SELECT $1 AS a'
+          client.prepare('foo', sql)
+          client.exec_prepared('foo', [1])
+
+          _(last_span.attributes['db.statement']).must_equal 'SELECT $1 AS a'
+        end
+      end
     end
 
     describe 'when propagator is set to none' do

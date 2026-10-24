@@ -223,7 +223,7 @@ module OpenTelemetry
 
               if kind == :prepare
                 sql = obfuscate_sql(args[1]).to_s
-                lru_cache[statement_name] = sql
+                lru_cache[statement_name] = sql.dup
                 operation = 'PREPARE'
               else
                 sql = lru_cache[statement_name]
