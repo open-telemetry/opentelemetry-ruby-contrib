@@ -115,15 +115,10 @@ module OpenTelemetry
                 # Inject propagator context into SQL if propagator is configured
                 # For prepare, the SQL is in args[1]
                 if propagator && args[1].is_a?(String)
-                  sql = args[1]
-                  if sql.frozen?
-                    sql = +sql
-                    propagator.inject(sql, context: context)
-                    sql.freeze
-                    args[1] = sql
-                  else
-                    propagator.inject(sql, context: context)
-                  end
+                  sql = args[1].dup
+                  propagator.inject(sql, context: context)
+                  sql.freeze if args[1].frozen?
+                  args[1] = sql
                 end
 
                 result = super(*args)
@@ -223,7 +218,7 @@ module OpenTelemetry
 
               if kind == :prepare
                 sql = obfuscate_sql(args[1]).to_s
-                lru_cache[statement_name] = sql.dup
+                lru_cache[statement_name] = sql.dup.freeze
                 operation = 'PREPARE'
               else
                 sql = lru_cache[statement_name]
