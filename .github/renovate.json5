@@ -85,6 +85,7 @@
       description: "Separate multiple minor updates so we gain visibility to what is in the queue",
       matchDepNames: ["confluentinc/cp-kafka"],
       separateMultipleMinor: true,
+      separateMinorPatch: true,
     },
     {
       description: "Group min ruby updates into a single update which needs to be approved via the dashboard.",
