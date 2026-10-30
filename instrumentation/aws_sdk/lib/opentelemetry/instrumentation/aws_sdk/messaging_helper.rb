@@ -118,8 +118,7 @@ module OpenTelemetry
 
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'topic'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = queue_name(context)
-            topic_arn = context.params[:topic_arn]
-            attributes['aws.sns.topic.arn'] = topic_arn if topic_arn && !topic_arn.empty?
+            attributes['aws.sns.topic.arn'] = context.params[:topic_arn] unless context.params[:topic_arn].to_s.empty?
           end
         end
       end
