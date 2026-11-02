@@ -28,8 +28,8 @@ module OpenTelemetry
                 attributes = { 'url.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
                                'server.address' => @address,
                                'server.port' => @port }.compact
-                path, query = split_path_and_query(req.path)
-                attributes['url.path'] = path
+                path, query = HttpHelper.split_path_and_query(req.path)
+                attributes['url.path'] = path if path
                 attributes['url.query'] = query if query
 
                 attributes.merge!(span_data.attributes)
@@ -105,12 +105,6 @@ module OpenTelemetry
 
               def untraced_context?
                 OpenTelemetry::Common::Utilities.untraced?
-              end
-
-              def split_path_and_query(path)
-                path_and_query = path.split('?')
-
-                [path_and_query[0], path_and_query[1]]
               end
             end
           end

@@ -26,7 +26,7 @@ module OpenTelemetry
                 span_data = HttpHelper.span_attrs_for_old(req.method)
 
                 attributes = { OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
-                               OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
+                               OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => HttpHelper.request_path(req.path),
                                OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
                                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port }.compact.merge!(span_data.attributes)
 

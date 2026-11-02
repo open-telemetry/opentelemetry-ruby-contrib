@@ -14,6 +14,25 @@ module OpenTelemetry
           # Lightweight struct to hold span creation attributes
           SpanCreationAttributes = Struct.new(:span_name, :attributes)
 
+          # Returns the request path for strings and URI-like objects.
+          # @param path [String, #request_uri] The request path
+          # @return [String, nil] The normalized request path
+          def self.request_path(path)
+            path.respond_to?(:request_uri) ? path.request_uri : path
+          end
+
+          # Splits a request path into its path and query components.
+          # @param path [String, #request_uri] The request path
+          # @return [Array<String, String, nil>] The path and query components
+          def self.split_path_and_query(path)
+            path = request_path(path)
+            return [nil, nil] unless path
+
+            path_and_query = path.split('?')
+
+            [path_and_query[0], path_and_query[1]]
+          end
+
           # Pre-computed mapping to avoid string allocations during normalization
           METHOD_CACHE = {
             'CONNECT' => 'CONNECT',

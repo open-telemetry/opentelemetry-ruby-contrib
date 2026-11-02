@@ -200,6 +200,26 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
+
+    it 'handles URI-like request paths' do
+      path = Class.new do
+        def empty? = false
+        def request_uri = '/success?hello=there'
+      end.new
+      request = Net::HTTP::Get.new(path)
+
+      _(OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper.request_path(request.path)).must_equal '/success?hello=there'
+      _(OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper.split_path_and_query(request.path)).must_equal ['/success', 'hello=there']
+    end
+
+    it 'handles URI-like paths without an HTTP request URI' do
+      path = Class.new do
+        def empty? = false
+        def request_uri = nil
+      end.new
+      request = Net::HTTP::Get.new(path)
+      _(OpenTelemetry::Instrumentation::Net::HTTP::HttpHelper.split_path_and_query(request.path)).must_equal [nil, nil]
+    end
   end
 
   describe 'untraced?' do
