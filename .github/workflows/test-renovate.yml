@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           cache: "npm"
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
 
       - name: Install Tools
         run: npm ci --ignore-scripts
