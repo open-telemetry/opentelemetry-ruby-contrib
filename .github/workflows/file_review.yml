@@ -20,5 +20,6 @@ jobs:
     uses: $/.github/workflows/file_review-ci_setup.yml
   checks:
     permissions:
+      contents: read
       pull-requests: write
     uses: $/.github/workflows/ci-markdown-checks.yml
