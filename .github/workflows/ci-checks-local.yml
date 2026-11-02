@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - ".nvmrc"
       - "package.json"
       - "package-lock.json"
       - "Gemfile"
