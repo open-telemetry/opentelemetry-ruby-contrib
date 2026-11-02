@@ -52,6 +52,36 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     _(span.attributes['code.function']).must_equal 'ok'
   end
 
+  it 'sets client.address from the remote IP' do
+    get '/ok', {}, 'REMOTE_ADDR' => '203.0.113.7'
+
+    _(span.attributes['client.address']).must_equal '203.0.113.7'
+  end
+
+  # The test app doesn't configure `trusted_proxies`, so these rely on Rails' default
+  # ActionDispatch::RemoteIp::TRUSTED_PROXIES, which trusts loopback and private ranges (e.g. 10.0.0.0/8).
+  it 'sets client.address to the originating client when behind a trusted proxy' do
+    get '/ok', {}, 'REMOTE_ADDR' => '10.0.0.1', 'HTTP_X_FORWARDED_FOR' => '203.0.113.7, 10.0.0.2'
+
+    _(span.attributes['client.address']).must_equal '203.0.113.7'
+  end
+
+  it 'ignores a spoofed X-Forwarded-For entry sent by the client' do
+    # The client sends a forged X-Forwarded-For, and the trusted proxy appends the real client IP
+    get '/ok', {}, 'REMOTE_ADDR' => '10.0.0.1', 'HTTP_X_FORWARDED_FOR' => '198.51.100.1, 203.0.113.7'
+
+    _(span.attributes['client.address']).must_equal '203.0.113.7'
+  end
+
+  it 'omits client.address and keeps the other attributes when Rails detects IP spoofing' do
+    get '/ok', {}, 'REMOTE_ADDR' => '10.0.0.1', 'HTTP_CLIENT_IP' => '198.51.100.1', 'HTTP_X_FORWARDED_FOR' => '203.0.113.7'
+
+    _(last_response.ok?).must_equal true
+    _(span.name).must_equal 'GET /ok'
+    _(span.attributes['code.function']).must_equal 'ok'
+    _(span.attributes).wont_include 'client.address'
+  end
+
   it 'handles action name as a symbol when setting code.function' do
     get 'ok-symbol'
 
