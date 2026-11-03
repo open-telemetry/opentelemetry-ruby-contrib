@@ -33,7 +33,7 @@ jobs:
           - 3.4
           - 3.3
     name: ${{ matrix.ruby-version }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -49,14 +49,14 @@ jobs:
     strategy:
       fail-fast: false
     name: Latest
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: ruby/setup-ruby@651ff0d62c5c79bed6d53ec518387aae20e72c1a # v1.329.0
         with:
-          ruby-version: "4.0.6"
+          ruby-version: "4.0.7"
       - name: "Install Latest Gem Versions on Latest Ruby"
         working-directory: releases
         run: ./run.sh
