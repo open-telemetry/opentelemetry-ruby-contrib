@@ -31,7 +31,7 @@
     "@umbrelladocs/linkspector": "0.5.6",
     "cspell": "10.4.0",
     "@prantlf/jsonlint": "17.0.1",
-    "markdownlint-cli2": "0.23.3",
+    "markdownlint-cli2": "0.24.0",
     "prettier": "3.9.10",
     "renovate": "44.165.1"
   }
