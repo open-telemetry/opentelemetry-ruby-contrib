@@ -58,7 +58,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           cache: "npm"
-          node-version: "24"
+          node-version-file: ".nvmrc"
 
       - name: install dependencies
         run: npm ci --ignore-scripts
@@ -79,7 +79,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           cache: "npm"
-          node-version: "24"
+          node-version-file: ".nvmrc"
 
       - name: install dependencies
         run: npm ci --ignore-scripts
@@ -100,7 +100,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           cache: "npm"
-          node-version: "24"
+          node-version-file: ".nvmrc"
 
       - name: Install Ruby
         uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
@@ -177,7 +177,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           cache: "npm"
-          node-version: "24"
+          node-version-file: ".nvmrc"
 
       - name: Install Ruby
         uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0

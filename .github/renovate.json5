@@ -10,7 +10,7 @@
   packageRules: [
     {
       groupName: "all [patches]",
-      matchDepNames: ["!ruby", "!renovate"],
+      matchDepNames: ["!ruby", "!renovate", "!renovatebot/github-action"],
       matchUpdateTypes: ["patch", "digest"],
       schedule: ["before 6am every weekday"],
     },
@@ -28,8 +28,8 @@
     },
     {
       groupName: "infra [minor]",
-      matchCategories: ["js"],
-      matchDepNames: ["renovate"],
+      matchCategories: ["js", "ci"],
+      matchDepNames: ["renovate", "renovatebot/github-action"],
       matchUpdateTypes: ["patch", "digest"],
       schedule: ["before 7am on Monday"],
     },
