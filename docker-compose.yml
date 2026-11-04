@@ -1,5 +1,6 @@
 include:
   - ./.docker/volume/bundler.yml
+  - ./.docker/devcontainer/ubuntu/compose.yml
   - ./.docker/infra/kafka/docker-compose.yml
   - ./.docker/infra/memcached/docker-compose.yml
   - ./.docker/infra/mongo/docker-compose.yml

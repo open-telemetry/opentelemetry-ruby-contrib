@@ -1,0 +1,10 @@
+services:
+  devcontainer-ubuntu:
+    extends:
+      service: base
+      file: ../../../docker-base.yml
+    build:
+      context: ../../../
+      target: ubuntu
+    working_dir: /app
+    env_file: ../../environment/dev/.env
