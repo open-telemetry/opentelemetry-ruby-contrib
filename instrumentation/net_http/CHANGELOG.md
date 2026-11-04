@@ -3,7 +3,6 @@
 ## v0.30.0 / 2026-11-03
 
 - ADDED: Add http.client.request.duration metric to Net::HTTP instrumentation (#2630)
-- ADDED: Add http.client.request.duration metric
 
 ## v0.29.2 / 2026-10-06
 
