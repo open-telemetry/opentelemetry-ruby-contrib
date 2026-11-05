@@ -15,6 +15,6 @@
   # This Appraisal tests behavior with it present.
   appraise "openai-#{version}-logs" do
     gem 'openai', "~> #{version}", platform: :mri
-    gem 'opentelemetry-logs-sdk', '= 0.8.0'
+    gem 'opentelemetry-logs-sdk', '= 0.8.1'
   end
 end
