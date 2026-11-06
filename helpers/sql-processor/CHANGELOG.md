@@ -1,5 +1,9 @@
 # Release History: opentelemetry-helpers-sql-processor
 
+## v0.5.1 / 2026-10-13
+
+- FIXED: Encode SQL commenter propagation keys (#2634)
+
 ## v0.5.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)

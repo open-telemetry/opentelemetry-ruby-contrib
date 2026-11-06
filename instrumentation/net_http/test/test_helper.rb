@@ -33,3 +33,12 @@ OpenTelemetry::SDK.configure do |c|
   c.logger = Logger.new($stderr, level: ENV.fetch('OTEL_LOG_LEVEL', 'fatal').to_sym)
   c.add_span_processor span_processor
 end
+
+# global opentelemetry-metrics-sdk setup, only in the metrics Appraisal:
+if defined?(OpenTelemetry::SDK::Metrics)
+  # Delta temporality allows each test to see only the metrics it recorded
+  ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] ||= 'delta'
+
+  METRIC_EXPORTER = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+  OpenTelemetry.meter_provider.add_metric_reader(METRIC_EXPORTER)
+end

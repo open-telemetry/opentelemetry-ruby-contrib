@@ -4,12 +4,25 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+if RUBY_ENGINE == 'jruby'
+  warn 'Skipping tests on JRuby: Runtime not supported'
+  exit 0
+end
+
 require 'simplecov'
 require 'bundler/setup'
 Bundler.require(:default, :development, :test)
 
 require 'minitest/autorun'
 require 'webmock/minitest'
+
+# Set OTEL_SEMCONV_STABILITY_OPT_IN based on appraisal name
+gemfile = ENV.fetch('BUNDLE_GEMFILE', '')
+if gemfile.include?('stable')
+  ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database'
+elsif gemfile.include?('dup')
+  ENV['OTEL_SEMCONV_STABILITY_OPT_IN'] = 'database/dup'
+end
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

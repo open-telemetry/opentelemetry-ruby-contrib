@@ -40,6 +40,9 @@ module OpenTelemetry
             }
             attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE] = http_route if http_route
 
+            client_address = client_address(request)
+            attributes['client.address'] = client_address if client_address
+
             if request.filtered_path != request.fullpath
               filtered_query = request.filtered_path.split('?', 2)[1]
               attributes['url.query'] = filtered_query if filtered_query
@@ -73,6 +76,17 @@ module OpenTelemetry
             span.record_exception(payload[:exception_object]) if payload[:exception_object]
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
+          end
+
+          private
+
+          # ActionDispatch::RemoteIp resolves the originating client IP through the app's trusted proxies.
+          # It raises when Client-IP and X-Forwarded-For disagree; any client can trigger that, so the
+          # attribute is omitted rather than reporting an error.
+          def client_address(request)
+            request.remote_ip
+          rescue ::ActionDispatch::RemoteIp::IpSpoofAttackError
+            nil
           end
         end
       end

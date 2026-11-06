@@ -2,6 +2,19 @@
 
 The Anthropic instrumentation is a community-maintained instrumentation for the [Anthropic][anthropic-home] gem.
 
+## Anthropic 1.79.0+ Native Integration
+
+`opentelemetry-instrumentation-anthropic` only provides context propagation; it never created spans for Anthropic API calls.
+
+Anthropic 1.79.0+ includes native OpenTelemetry instrumentation. For the best experience and continued support, we recommend:
+
+- **Anthropic < 1.79.0**: Use `opentelemetry-instrumentation-anthropic` gem for context propagation only
+- **Anthropic ≥ 1.79.0**: Use Anthropic's built-in OpenTelemetry support (remove `opentelemetry-instrumentation-anthropic` gem)
+
+Community instrumentation is compatible with Anthropic versions up to 1.78.x. Development of this gem is frozen for newer Anthropic versions in favor of the native integration.
+
+Learn more in the [anthropic documentation](https://platform.claude.com/docs/en/manage-claude/opentelemetry/sdk).
+
 ## How do I get started?
 
 Install the gem using:
@@ -32,9 +45,9 @@ end
 
 ## How can I get involved?
 
-The `opentelemetry-instrumentation-anthropic` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
+The `opentelemetry-instrumentation-anthropic` gem source is [on github][repo-github], along with related gems.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby Special Interest Group (SIG). You can find details on our weekly meeting times, GitHub Discussions, and CNCF Slack channels on the [Ruby SDK SIG page][ruby-sig].
 
 ## License
 
@@ -42,9 +55,6 @@ The `opentelemetry-instrumentation-anthropic` gem is distributed under the Apach
 
 [anthropic-home]: https://github.com/anthropics/anthropic-sdk-ruby
 [bundler-home]: https://bundler.io
-[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
+[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
-[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
-[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[ruby-sig]: https://github.com/open-telemetry/community/blob/main/sigs.md#ruby-sdk

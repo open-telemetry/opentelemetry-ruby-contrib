@@ -170,6 +170,44 @@ describe OpenTelemetry::Instrumentation::AwsLambda do
     end
   end
 
+  describe 'meter provider flushing' do
+    let(:otel_wrapper) { OpenTelemetry::Instrumentation::AwsLambda::Handler.new }
+
+    after do
+      OpenTelemetry.singleton_class.send(:remove_method, :meter_provider) if OpenTelemetry.singleton_class.method_defined?(:meter_provider, false)
+    end
+
+    it 'flushes a meter provider that can be flushed' do
+      flushed = []
+      provider = Class.new do
+        def initialize(flushed)
+          @flushed = flushed
+        end
+
+        def force_flush(timeout: nil)
+          @flushed << timeout
+        end
+      end.new(flushed)
+      OpenTelemetry.define_singleton_method(:meter_provider) { provider }
+
+      allow(otel_wrapper).to receive(:call_original_handler).and_return({})
+      otel_wrapper.call_wrapped(event: event_v1, context: context)
+
+      _(flushed).must_equal [30_000]
+    end
+
+    it 'skips a meter provider that cannot be flushed' do
+      # neither the no-op meter provider in the metrics API nor its proxy defines force_flush
+      provider = Object.new
+      OpenTelemetry.define_singleton_method(:meter_provider) { provider }
+
+      allow(otel_wrapper).to receive(:call_original_handler).and_return({})
+      otel_wrapper.call_wrapped(event: event_v1, context: context)
+
+      _(last_span.name).must_equal 'sample.test'
+    end
+  end
+
   describe 'validate_error_handling' do
     it 'handle error if original handler cause issue' do
       otel_wrapper = OpenTelemetry::Instrumentation::AwsLambda::Handler.new

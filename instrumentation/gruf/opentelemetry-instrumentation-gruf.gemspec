@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.description = 'Gruf instrumentation for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
   spec.license     = 'Apache-2.0'
+  spec.platform    = Gem::Platform::RUBY
 
   spec.files = Dir.glob('lib/**/*.rb') +
                Dir.glob('*.md') +
