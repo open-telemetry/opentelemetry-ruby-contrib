@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+## v0.37.1 / 2026-10-13
+
+- FIXED: Encode SQL commenter propagation keys (#2634, #2638)
+
 ## v0.37.0 / 2026-08-05
 
 - ADDED: Add returned and affected rows attributes (#2410)
