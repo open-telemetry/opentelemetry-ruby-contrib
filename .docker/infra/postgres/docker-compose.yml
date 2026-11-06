@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:14.24@sha256:14bfab572eec6abf65892e1db7c3ba8d41b2a2855c1b143664907d6e146eb6e1
+    image: postgres:15.19@sha256:40e8c839f86c404f9bd1c456bb83f11b205f2cd95d753b34c2d074e89ecee786
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:
