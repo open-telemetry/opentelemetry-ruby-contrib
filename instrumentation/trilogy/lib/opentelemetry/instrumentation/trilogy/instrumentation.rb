@@ -57,6 +57,10 @@ module OpenTelemetry
       # - `:db_name` - Uses the database name.
       # - `:db_operation_and_name` - Combines the operation and database name.
       #
+      # ### `:use_sqlcommenter`
+      #
+      # Defines if the global propagator should be overridden with sql commenter
+      #
       # @example An explicit default configuration
       #   OpenTelemetry::SDK.configure do |c|
       #     c.use_all({
@@ -92,6 +96,7 @@ module OpenTelemetry
         option :obfuscation_limit, default: 2000, validate: :integer
         option :propagator, default: 'none', validate: %w[none tracecontext vitess]
         option :record_exception, default: true, validate: :boolean
+        option :use_sqlcommenter, default: false, validate: :boolean
 
         attr_reader :propagator, :semconv
 
@@ -137,8 +142,17 @@ module OpenTelemetry
         end
 
         def configure_propagator(config)
-          propagator = config[:propagator]
+          propagator =
+            if config[:use_sqlcommenter]
+              'tracecontext'
+            elsif @semconv == :old
+              config[:propagator]
+            else
+              'global'
+            end
+
           @propagator = case propagator
+                        when 'global' then OpenTelemetry.propagation
                         when 'tracecontext' then OpenTelemetry::Helpers::SqlProcessor::SqlCommenter.sql_query_propagator
                         when 'vitess' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Vitess')
                         when 'none', nil then nil
