@@ -1,0 +1,6 @@
+services:
+  ex-instrumentation-delayed_job:
+    extends:
+      service: base
+      file: ./../../../docker-base.yml
+    working_dir: /app/instrumentation/delayed_job/example

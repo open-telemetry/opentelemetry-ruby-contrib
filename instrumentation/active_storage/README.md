@@ -36,6 +36,32 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+## Configuration Options
+
+The instrumentation supports the following configuration options:
+
+- **`disallowed_notification_payload_keys`:** Array of keys excluded from notification payloads before they are recorded as span attributes. Keys are matched against the payload after the `active_storage.` prefix has been applied (e.g. `active_storage.url`).
+  - Default: `[]`
+- **`notification_payload_transform`:** Custom `proc` used to extract span attributes from notification payloads. The proc receives the payload after the built-in `active_storage.` prefix transform and must return a `Hash`. Use this to rename keys, extract nested values, or perform any other custom logic.
+  - Default: `nil`
+- **`key`:** Whether to include the secure token (`active_storage.key`) as a span attribute. Valid values are `:omit` and `:include`. When set to `:omit`, the key is appended to `disallowed_notification_payload_keys`.
+  - Default: `:omit`
+- **`url`:** Whether to include the URL (`active_storage.url`) as a span attribute. Valid values are `:omit` and `:include`. When set to `:omit`, the key is appended to `disallowed_notification_payload_keys`.
+  - Default: `:omit`
+
+Example with all options set:
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::ActiveStorage', {
+    disallowed_notification_payload_keys: ['active_storage.checksum'],
+    notification_payload_transform: ->(payload) { payload },
+    key: :include,
+    url: :include,
+  }
+end
+```
+
 ## Active Support Instrumentation
 
 This instrumentation relies entirely on `ActiveSupport::Notifications` and registers a custom Subscriber that listens to relevant events to report as spans.
@@ -79,9 +105,9 @@ Example usage can be seen in the [`./example/trace_demonstration.rb` file](https
 
 ## How can I get involved?
 
-The `opentelemetry-instrumentation-active_storage` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
+The `opentelemetry-instrumentation-active_storage` gem source is [on github][repo-github], along with related gems.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby Special Interest Group (SIG). You can find details on our weekly meeting times, GitHub Discussions, and CNCF Slack channels on the [Ruby SDK SIG page][ruby-sig].
 
 ## License
 
@@ -89,9 +115,6 @@ The `opentelemetry-instrumentation-active_storage` gem is distributed under the 
 
 [rails-home]: https://github.com/rails/rails
 [bundler-home]: https://bundler.io
-[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
+[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
-[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
-[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[ruby-sig]: https://github.com/open-telemetry/community/blob/main/sigs.md#ruby-sdk

@@ -1,6 +1,6 @@
 services:
   rabbitmq:
-    image: rabbitmq:4.3.0-alpine@sha256:4f4a74fe951bb8bebae41187c8592ac0737e63d929467502f17689b22e9e9204
+    image: rabbitmq:4.4.0-alpine@sha256:1bd7237893ba7be63fd66894ba3021416abc99dfea2820c357ab6e6f40bfecc7
     ports:
       - "5672:5672"
     healthcheck:

@@ -69,6 +69,7 @@ See the table below for details of what [Rails Framework Hook Events](https://gu
 | `perform.active_job` | :white_check_mark: | Creates an ingress span with kind `consumer` |
 | `retry_stopped.active_job` | :white_check_mark: | Creates and `internal` span with an `exception` event |
 | `discard.active_job` | :white_check_mark: | Creates and `internal` span with an `exception` event |
+| `step.active_job` | :white_check_mark: | Creates an `internal` span |
 
 ## Semantic Conventions
 
@@ -87,6 +88,13 @@ Attributes that are specific to this instrumentation are recorded under `messagi
 | `messaging.active_job.adapter.name` | String | The name of the `ActiveJob` adapter implementation |
 | `messaging.active_job.message.priority` | String | Present when set by the client from `ActiveJob#priority` |
 | `messaging.active_job.message.provider_job_id` | String | Present if the underlying adapter has backend specific message ids |
+
+For jobs including the `ActiveJob::Continuable` module, the following attributes are added to spans created for a `step`:
+
+| `messaging.active_job.step.name` | String | Step name |
+| `messaging.active_job.step.state` | String | Either `started` or `resumed` |
+| `messaging.active_job.step.result` | String | Static value set to `interrupted` if the job was interrupted |
+| `messaging.active_job.step.cursor` | String | The persisted value after calling `step.set!` or `step.advance!` |
 
 ## Differences between ActiveJob versions
 
@@ -115,9 +123,9 @@ Example usage can be seen in the [`./example/active_job.rb` file](https://github
 
 ## How can I get involved?
 
-The `opentelemetry-instrumentation-active_job` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
+The `opentelemetry-instrumentation-active_job` gem source is [on github][repo-github], along with related gems.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us on our [GitHub Discussions][discussions-url], [Slack Channel][slack-channel] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby Special Interest Group (SIG). You can find details on our weekly meeting times, GitHub Discussions, and CNCF Slack channels on the [Ruby SDK SIG page][ruby-sig].
 
 ## License
 
@@ -125,9 +133,6 @@ The `opentelemetry-instrumentation-active_job` gem is distributed under the Apac
 
 [activejob-home]: https://guides.rubyonrails.org/active_job_basics.html
 [bundler-home]: https://bundler.io
-[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
+[repo-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
-[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[slack-channel]: https://cloud-native.slack.com/archives/C01NWKKMKMY
-[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[ruby-sig]: https://github.com/open-telemetry/community/blob/main/sigs.md#ruby-sdk

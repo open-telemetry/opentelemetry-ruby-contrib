@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+## v0.69.1 / 2026-10-13
+
+- FIXED: Encode SQL commenter propagation keys (#2634, #2638)
+
+## v0.69.0 / 2026-05-21
+
+- ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable support for span attributes (#2095)
+
 ## v0.68.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)

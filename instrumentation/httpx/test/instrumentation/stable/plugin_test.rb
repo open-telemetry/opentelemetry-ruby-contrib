@@ -102,8 +102,8 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
-      _(span.status.description).must_equal(
-        'Timed out'
+      _(span.status.description).must_match(
+        /\ATimed out/
       )
       assert_requested(
         :get,

@@ -29,6 +29,8 @@ module OpenTelemetry
         option :db_statement, default: :obfuscate, validate: %I[omit include obfuscate]
         option :obfuscation_limit, default: 2000, validate: :integer
         option :propagator, default: 'none', validate: %w[none tracecontext]
+        option :db_response_returned_rows, default: false, validate: :boolean
+        option :db_response_affected_rows, default: false, validate: :boolean
 
         attr_reader :propagator
 
