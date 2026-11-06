@@ -18,7 +18,7 @@ RUN mkdir -p "${APP_DIR}" "${APP_DIR}/tmp"
 RUN chown -R "${APP_UID}":"${APP_GID}" "${APP_DIR}" "${APP_DIR}/tmp"
 
 # --- Alpine stage ---
-FROM ruby:3.3.12-alpine3.23@sha256:11da101dfad607c6193a921abc815c989bc9f19b43f5f686bbcc7d424298d596 AS alpine
+FROM ruby:3.3.13-alpine3.23@sha256:f3e54b3fffb3f3acf9ea4a19687a46b0aed5abf9199aa0e051a2d25978372c62 AS alpine
 
 ARG APP_UID
 ARG APP_USER
