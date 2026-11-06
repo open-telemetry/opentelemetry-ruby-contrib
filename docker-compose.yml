@@ -1,5 +1,5 @@
 include:
-  - ./.docker/volume/compose.yml
+  - ./.docker/volume/bundler.yml
   - ./.docker/infra/kafka/docker-compose.yml
   - ./.docker/infra/memcached/docker-compose.yml
   - ./.docker/infra/mongo/docker-compose.yml
@@ -18,16 +18,10 @@ services:
     working_dir: /app
     environment:
       - MEMCACHED_URL=memcached:11211
-      - TEST_MYSQL_USER=root
-      - TEST_MYSQL_ROOT_PASSWORD=root
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - TEST_MYSQL_HOST=mysql
-      - TEST_MYSQL_PORT=3306
-      - TEST_MYSQ_DB=mysql
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
       - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
+      - TEST_RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
     depends_on:
       - kafka
       - jaeger
@@ -39,174 +33,44 @@ services:
       - rabbitmq
       - redis
 
-  ex-instrumentation-bunny:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
-    working_dir: /app/instrumentation/bunny/example
-
-  ex-instrumentation-concurrent-ruby:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/concurrent_ruby/example
-
-  ex-instrumentation-delayed_job:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/delayed_job/example
-
-  ex-instrumentation-ethon:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/ethon/example
-
-  ex-instrumentation-excon:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/excon/example
-
-  ex-instrumentation-faraday:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/faraday/example
-
-  ex-instrumentation-mysql2:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    environment:
-      - TEST_MYSQL_USER=root
-      - TEST_MYSQL_ROOT_PASSWORD=root
-      - TEST_MYSQL_HOST=mysql
-      - TEST_MYSQL_PORT=3306
-      - TEST_MYSQ_DB=mysql
-    depends_on:
-      - mysql
-    working_dir: /app/instrumentation/mysql2/example
-
   ex-instrumentation-mysql2-test:
     extends:
       service: base
       file: ./docker-base.yml
     environment:
-      - TEST_MYSQL_USER=root
-      - TEST_MYSQL_ROOT_PASSWORD=root
       - TEST_MYSQL_HOST=mysql
-      - TEST_MYSQL_PORT=3306
-      - TEST_MYSQ_DB=mysql
     depends_on:
       - mysql
     working_dir: /app/instrumentation/mysql2/
-
-  ex-instrumentation-pg:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    environment:
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
-      - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
-      - OTEL_TRACES_EXPORTER=console
-    depends_on:
-      - postgres
-    working_dir: /app/instrumentation/pg/example
 
   ex-instrumentation-pg-test:
     extends:
       service: base
       file: ./docker-base.yml
     environment:
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
       - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
     depends_on:
       - postgres
     tmpfs: !reset []
     working_dir: /app/instrumentation/pg/
 
-  ex-instrumentation-net-http:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/net_http/example
-
-  ex-instrumentation-net-ldap:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/net_ldap/example
-
-  ex-instrumentation-que:
+  ex-instrumentation-que-test:
     extends:
       service: base
       file: ./docker-base.yml
     environment:
-      - TEST_POSTGRES_PASSWORD=postgres
-      - TEST_POSTGRES_USER=postgres
       - TEST_POSTGRES_HOST=postgres
-      - TEST_POSTGRES_PORT=5432
-      - TEST_POSTGRES_DB=postgres
     depends_on:
       - postgres
     working_dir: /app/instrumentation/que
 
-  ex-instrumentation-rack:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/rack/example
-
-  ex-instrumentation-dalli:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    environment:
-      - MEMCACHED_URL=memcached:11211
-    depends_on:
-      - memcached
-    working_dir: /app/instrumentation/dalli/example
-
-  ex-instrumentation-restclient:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/instrumentation/restclient/example
-
-  ex-instrumentation-sinatra:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    command: ./start_server.sh
-    working_dir: /app/instrumentation/sinatra/example
-
-  processor-baggage-test:
-    extends:
-      service: base
-      file: ./docker-base.yml
-    working_dir: /app/processor/baggage
-    command: |
-      bash -c "bundle install && rake"
-
   jaeger:
-    image: jaegertracing/jaeger:2.17.0@sha256:6266573208d665ce5c17483bce0a75d0806480d92c84766d288d0aee885ce708
+    image: jaegertracing/jaeger:2.22.0@sha256:836b967b5abcf1f7758066aa6b348619267a2f1459f72d472840570f9bd88a17
     ports:
       - "16686:16686"
 
   otelcol:
-    image: otel/opentelemetry-collector:0.151.0@sha256:49a12827519134ed72881a64247ea43fbf4bdac50cfa41ceb495fc1c684451e2
+    image: otel/opentelemetry-collector:0.164.0@sha256:28b6d41ac51bff6b41ba5e8fe503569ffb9d6a1ea90f7a78419e86f34e44f750
     command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./otelcol-config.yml:/etc/otelcol-config.yml

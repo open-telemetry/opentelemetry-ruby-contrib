@@ -1,3 +1,0 @@
-env:
-  TEST_MONGODB_HOST: localhost
-  TEST_MONGODB_PORT: 27017

@@ -8,6 +8,7 @@ require 'action_controller/railtie'
 class Application < Rails::Application; end
 require_relative 'middlewares'
 require_relative 'controllers'
+require_relative 'engine'
 require_relative 'routes'
 
 module AppConfig

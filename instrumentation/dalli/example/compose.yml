@@ -1,0 +1,13 @@
+include:
+  - ./../../../.docker/infra/memcached/docker-compose.yml
+
+services:
+  ex-instrumentation-dalli:
+    extends:
+      service: base
+      file: ./../../../docker-base.yml
+    environment:
+      - MEMCACHED_URL=memcached:11211
+    depends_on:
+      - memcached
+    working_dir: /app/instrumentation/dalli/example

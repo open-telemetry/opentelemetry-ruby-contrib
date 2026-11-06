@@ -32,11 +32,16 @@ module OpenTelemetry
             # https://github.com/rails/rails/blob/747f85f200e7bb2c1a31b4e26e5a5655e2dc0cdc/actionpack/lib/action_dispatch/http/request.rb#L160
             http_route = request.route_uri_pattern&.chomp('(.:format)') if request.respond_to?(:route_uri_pattern)
 
+            http_route = "#{request.script_name}#{http_route}" if http_route && !request.script_name.empty?
+
             attributes = {
               OpenTelemetry::SemanticConventions::Trace::CODE_NAMESPACE => String(payload[:controller]),
               OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => String(payload[:action])
             }
             attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_ROUTE] = http_route if http_route
+
+            client_address = client_address(request)
+            attributes['client.address'] = client_address if client_address
 
             if request.filtered_path != request.fullpath
               filtered_query = request.filtered_path.split('?', 2)[1]
@@ -71,6 +76,17 @@ module OpenTelemetry
             span.record_exception(payload[:exception_object]) if payload[:exception_object]
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
+          end
+
+          private
+
+          # ActionDispatch::RemoteIp resolves the originating client IP through the app's trusted proxies.
+          # It raises when Client-IP and X-Forwarded-For disagree; any client can trigger that, so the
+          # attribute is omitted rather than reporting an error.
+          def client_address(request)
+            request.remote_ip
+          rescue ::ActionDispatch::RemoteIp::IpSpoofAttackError
+            nil
           end
         end
       end

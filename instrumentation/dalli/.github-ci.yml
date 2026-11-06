@@ -1,3 +1,0 @@
-env:
-  TEST_MEMCACHED_HOST: localhost
-  TEST_MEMCACHED_PORT: 11211

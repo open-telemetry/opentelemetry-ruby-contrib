@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+## v0.18.1 / 2026-08-18
+
+- FIXED: Prepend engine mount path to http.route for mounted Rails engines (#2499)
+
 ## v0.18.0 / 2026-04-28
 
 - BREAKING CHANGE: Min Rails 7.1 (enforced this time) (#2283)

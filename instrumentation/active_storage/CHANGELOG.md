@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_storage
 
+## v0.5.1 / 2026-06-02
+
+- DOCS: Document payload-key and payload-transform options in action_mailer and active_storage READMEs (#2363)
+
 ## v0.5.0 / 2026-04-28
 
 - BREAKING CHANGE: Min Rails 7.1 (enforced this time) (#2283)

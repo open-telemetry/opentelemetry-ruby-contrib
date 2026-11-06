@@ -12,7 +12,9 @@
 semconv_stability = %w[dup stable old]
 
 semconv_stability.each do |mode|
-  appraise "http-latest-#{mode}" do
-    gem 'http'
+  %w[5.0.0 6.0.4].each do |version|
+    appraise "http-#{mode}-#{version}" do
+      gem 'http', "~> #{version}"
+    end
   end
 end

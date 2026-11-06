@@ -10,22 +10,24 @@ gemfile(true) do
   gem 'opentelemetry-instrumentation-base'
   gem 'opentelemetry-instrumentation-rdkafka'
   gem 'opentelemetry-sdk'
+  gem 'dotenv'
   gem 'rdkafka', '0.10.0'
 end
+
+require 'dotenv'
+Dotenv.load('.env', '../.env')
 
 require 'opentelemetry-api'
 require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-rdkafka'
 require 'rdkafka'
 
-ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
-
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Rdkafka'
 end
 
-host = ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' }
-port = ENV.fetch('TEST_KAFKA_PORT') { 9092 }
+host = ENV.fetch('TEST_KAFKA_HOST', '127.0.0.1')
+port = ENV.fetch('TEST_KAFKA_PORT', 9092)
 server = "#{host}:#{port}"
 
 rand_hash = SecureRandom.hex(10)

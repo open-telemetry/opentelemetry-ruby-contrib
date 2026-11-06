@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-gruf
 
+## v0.6.3 / 2026-09-09
+
+- FIXED: Limiting gem & tests to mri (#2429)
+
+## v0.6.2 / 2026-07-07
+
+- DOCS: Improve gruf instrumentation documentation (#2207)
+
+## v0.6.1 / 2026-05-21
+
+- FIXED: Handle missing config in middleware when OTEL_SDK_DISABLED=true (#2231)
+
 ## v0.6.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
