@@ -16,6 +16,7 @@ ignorePaths:
   - "*.tt"
   - "**/my.cnf"
   - "**/.yardopts"
+  - "**/.env"
 patterns:
   - name: CodeBlock
     pattern: |
@@ -71,7 +72,9 @@ ignoreWords:
   - jsonlintrc
   - Dockerfiles
   - autodiscover
+  - renovatebot
 words:
+  - artipacked
   - AWSXRayTrace
   - AWSXRaySamplingClient
   - AWSXRayRemoteSampler
@@ -88,6 +91,7 @@ words:
   - traceparent
   - traceresponse
   - tracestate
+  - zizmor
 
   - linkspector
   - sarif

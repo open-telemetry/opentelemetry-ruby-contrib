@@ -1,0 +1,7 @@
+services:
+  ex-instrumentation-sinatra:
+    extends:
+      service: base
+      file: ./../../../docker-base.yml
+    command: ./start_server.sh
+    working_dir: /app/instrumentation/sinatra/example

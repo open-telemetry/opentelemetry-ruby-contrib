@@ -1,0 +1,6 @@
+services:
+  ex-instrumentation-excon:
+    extends:
+      service: base
+      file: ./../../../docker-base.yml
+    working_dir: /app/instrumentation/excon/example

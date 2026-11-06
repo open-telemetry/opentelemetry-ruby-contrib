@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'dotenv'
 gem 'mysql2'
 gem 'opentelemetry-api'
 gem 'opentelemetry-common'

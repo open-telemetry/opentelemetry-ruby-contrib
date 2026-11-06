@@ -29,6 +29,14 @@ module OpenTelemetry
           #   context in the request.
           option :untraced_hosts, default: [], validate: :array
 
+          # Bucket boundaries recommended by the stable HTTP semantic conventions
+          CLIENT_REQUEST_DURATION_BUCKETS = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10].freeze
+
+          # The `http.client.request.duration` histogram, only created when
+          # the stable HTTP semantic conventions are in use.
+          # @api private
+          attr_reader :client_request_duration_histogram
+
           private
 
           def determine_semconv
@@ -71,6 +79,12 @@ module OpenTelemetry
           end
 
           def patch_stable
+            @client_request_duration_histogram ||= meter.create_histogram(
+              'http.client.request.duration',
+              unit: 's',
+              description: 'Duration of HTTP client requests.',
+              advisory: { explicit_bucket_boundaries: CLIENT_REQUEST_DURATION_BUCKETS }
+            )
             ::Net::HTTP.prepend(Patches::Stable::Instrumentation)
           end
         end

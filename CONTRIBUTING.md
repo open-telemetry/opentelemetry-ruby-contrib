@@ -61,7 +61,7 @@ git remote add upstream https://github.com/open-telemetry/opentelemetry-ruby-con
 For more detailed information on this workflow read the
 [GitHub Workflow][otel-github-workflow].
 
-### Run the tests
+### Project structure
 
 _Setting up a running Ruby environment is outside the scope of this document._
 
@@ -72,46 +72,57 @@ This repository contains multiple Ruby gems:
 - Various propagation gems located in the subdirectories of `propagator`
 - `opentelemetry-sampler-xray` located in the `sampler/xray` directory
 
-Each of these gems has its configuration and tests.
+Each of these gems has its own configuration and tests with the goal being to ensure each gem is self-contained.
+Gems are encouraged to leverage projects tools (ie rake) and docker services, rather than define their own.
 
-For example, to test `opentelemetry-instrumentation-action_pack` you would:
+## Development Environments
 
-1. Change directory to `instrumentation/action_pack`
-2. Install the bundle with `bundle install`
-3. Run the tests with `bundle exec rake`
+### Local Machine
+
+When developing directly on a local machine,
+you are required to ensure that any necessary dependent service is running.
+
+These services when required are defined via, a compose.yml in the test directory.
+As such they can be started by running the below from the gem folder:
+
+```shell
+docker compose -f test/compose.yml up --wait
+```
+
+You will now be able to run the tests as described below.
+
+### Docker container
+
+1. Build the `opentelemetry/opentelemetry-ruby-contrib` image using the below command in the project directory.
+
+   ```shell
+   docker compose build
+   ```
+
+   This makes the image available locally.
+
+2. Launch the development service via
+
+   ```shell
+   docker compose run app
+   ```
+
+   Once launched you will have a shell to perform development & testing. For testing instructions see below.
+
+## Running Checks
+
+### Tests
 
 > [!Note]
 >
-> Some test suites make use of [Appraisal](https://github.com/thoughtbot/appraisal), a library for testing against different versions of dependencies. To run tests in suites that use Appraisal:
->
-> 1. Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
-> 2. Install the bundle with `bundle exec appraisal install`
-> 3. Run the tests with `bundle exec appraisal rake test`
+> All gems must make use of [Appraisal](https://github.com/thoughtbot/appraisal), a library for testing against different versions of dependencies.
+> In cases of a gem having no dependencies an appraisal file containing just an empty appraisal should be created.
 
-### Docker setup
+The process to test a gem using appraisals is as follows:
 
-We use Docker Compose to configure and build services used in development and
-testing. This makes it easier to test against libraries that have dependencies,
-such as the MySQL instrumentation gem. See `docker-compose.yml` for specific
-configuration details.
-
-The services provided include:
-
-- `app` - main container environment scoped to the `/app` directory. Used
-  primarily to build and tag the `opentelemetry/opentelemetry-ruby-contrib:latest` image.
-- `x-instrumentation-<library_name>` - container environment scoped to a specific instrumentation library. See `docker-compose.yml` for available services.
-
-To test using Docker:
-
-1. Install Docker and Docker Compose for your operating system
-2. Get the latest code for the project
-3. Build the `opentelemetry/opentelemetry-ruby-contrib` image
-   - `docker-compose build`
-   - This makes the image available locally
-4. Install dependencies for the service you want to interact with
-   - `docker-compose run <service-name> bundle install`
-5. Run the tests
-   - `docker-compose run <service-name> bundle exec rake test`
+1. Change directory to the instrumentation you'd like to test, ex: `instrumentation/action_pack`
+2. Install the bundle with `bundle exec appraisal install`
+3. Run the tests with `bundle exec appraisal rake test`
 
 ## Processing and visualizing traces locally
 
@@ -217,6 +228,20 @@ The same goes for pull requests. When we merge pull requests, we generally do
 so by squashing, so your pull request will result in a single commit in the
 repository, and in turn will correspond to exactly one entry in the changelog.
 Therefore, please scope each pull request to include a single change.
+
+### AI-assisted contributions
+
+If you use an AI tool to help author a pull request, you (the human) are still
+responsible for writing the PR description and any comments posted on the issue
+or PR. AI agents must prompt you for the content of each section in the PR
+template and use your answers verbatim rather than generating description
+content on their own. The PR template includes an authorship checkbox that you
+must check yourself before the PR is ready for review. See [AGENTS.md](AGENTS.md)
+for the full set of rules that apply to AI-assisted contributions.
+
+Using these tools is not discouraged, but maintainers may close pull requests
+that rely on AI output the author has not reviewed, per the OpenTelemetry
+[Generative AI contribution policy][otel-genai-policy].
 
 ### Sign the Contributor License Agreement (CLA)
 
@@ -492,6 +517,7 @@ After running the script:
 [github-draft]: https://github.blog/2019-02-14-introducing-draft-pull-requests/
 [kube-github-workflow-pr]: https://github.com/kubernetes/community/blob/master/contributors/guide/github-workflow.md#7-create-a-pull-request
 [otel-contributor-guide]: https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md
+[otel-genai-policy]: https://github.com/open-telemetry/community/blob/main/policies/genai.md
 [otel-github-workflow]: https://github.com/open-telemetry/community/blob/main/guides/contributor/processes.md#workflows
 [otel-lib-guidelines]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/library-guidelines.md
 [otel-specification]: https://github.com/open-telemetry/opentelemetry-specification

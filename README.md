@@ -137,7 +137,7 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [license-url]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/LICENSE
 [openssf-scorecard-image]: https://api.scorecard.dev/projects/github.com/open-telemetry/opentelemetry-ruby-contrib/badge
 [openssf-scorecard-url]: https://scorecard.dev/viewer/?uri=github.com/open-telemetry/opentelemetry-ruby-contrib
-[ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
+[ruby-sig]: https://github.com/open-telemetry/community/blob/main/sigs.md#ruby-sdk
 [slack-image]: https://img.shields.io/badge/slack-@cncf/%23otel--ruby-purple.svg
 [slack-url]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [otel-versioning]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/versioning-and-stability.md

@@ -8,16 +8,17 @@ gemfile(true) do
   gem 'opentelemetry-instrumentation-base'
   gem 'opentelemetry-instrumentation-resque'
   gem 'opentelemetry-sdk'
+  gem 'dotenv'
   gem 'resque'
 end
+
+require 'dotenv'
+Dotenv.load('.env', '../.env')
 
 require 'opentelemetry-api'
 require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-resque'
 require 'resque'
-
-# Export traces to console by default
-ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
 
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Resque'

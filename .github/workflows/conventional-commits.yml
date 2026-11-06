@@ -21,13 +21,15 @@ jobs:
   validate-commits:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Conventional Commits Validation
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       # restrict checks to pull requests to avoid issues blocking the merge queue
       - name: Validate PR Title
         if: ${{ github.event_name == 'pull_request' }}
-        uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        uses: amannn/action-semantic-pull-request@2252a14e810aa9b85c2d560bd7070c802206ecf6 # v6.1.2
         id: lint_pr_title
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -52,7 +54,7 @@ jobs:
         run: |
           echo "Title: $TITLE" > pr_title.md
       - name: Check PR Title spelling
-        uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
+        uses: streetsidesoftware/cspell-action@ce1816e4ce36532956ac6e983737392774b6e169 # v9.2.0
         with:
           config: .cspell.yml
           suggestions: true
