@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+## v0.100.0 / 2026-11-03
+
+- ADDED: Upgrade opentelemetry-instrumentation-net_http to 0.30.0
+
 ## v0.99.0 / 2026-10-14
 
 - ADDED: Upgrade opentelemetry-instrumentation-lmdb to 0.28.0

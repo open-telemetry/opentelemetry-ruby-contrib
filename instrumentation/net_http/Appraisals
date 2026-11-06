@@ -19,3 +19,9 @@ semconv_stability.each do |mode|
     # gem can be removed once semconv migration is complete.
   end
 end
+
+# Metrics are exported only when opentelemetry-metrics-sdk is installed.
+# The metric is only recorded with stable semantic conventions.
+appraise 'net-http-stable-metrics' do
+  gem 'opentelemetry-metrics-sdk', '~> 0.20.0'
+end
