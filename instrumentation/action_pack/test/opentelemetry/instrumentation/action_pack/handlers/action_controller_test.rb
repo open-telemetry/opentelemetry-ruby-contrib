@@ -73,13 +73,14 @@ describe OpenTelemetry::Instrumentation::ActionPack::Handlers::ActionController 
     _(span.attributes['client.address']).must_equal '203.0.113.7'
   end
 
-  it 'omits client.address and keeps the other attributes when Rails detects IP spoofing' do
+  # Rack ignores Client-IP, so its Rack::Request#ip value from X-Forwarded-For is kept
+  it 'keeps the Rack client.address and the other attributes when Rails detects IP spoofing' do
     get '/ok', {}, 'REMOTE_ADDR' => '10.0.0.1', 'HTTP_CLIENT_IP' => '198.51.100.1', 'HTTP_X_FORWARDED_FOR' => '203.0.113.7'
 
     _(last_response.ok?).must_equal true
     _(span.name).must_equal 'GET /ok'
     _(span.attributes['code.function']).must_equal 'ok'
-    _(span.attributes).wont_include 'client.address'
+    _(span.attributes['client.address']).must_equal '203.0.113.7'
   end
 
   it 'handles action name as a symbol when setting code.function' do
