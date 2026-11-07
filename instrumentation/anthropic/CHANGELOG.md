@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-anthropic
 
+## v0.6.0 / 2026-11-07
+
+- ADDED: Freeze anthropic appraisal to exact match (#2677)
+
 ## v0.5.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)
