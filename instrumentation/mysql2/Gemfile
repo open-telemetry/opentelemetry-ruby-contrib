@@ -8,11 +8,23 @@ source 'https://rubygems.org'
 
 gemspec
 
+if ENV['OTEL_GEM_CACHE_DIR']
+  source "file://#{ENV['OTEL_GEM_CACHE_DIR']}" do
+    gem 'opentelemetry-helpers-mysql'
+    gem 'opentelemetry-helpers-sql'
+    gem 'opentelemetry-helpers-sql-processor'
+    gem 'opentelemetry-instrumentation-base'
+  end
+elsif ENV['USE_PUBLISHED_GEMS'] != 'true'
+  group :local do
+    gem 'opentelemetry-helpers-mysql', path: '../../helpers/mysql'
+    gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
+    gem 'opentelemetry-helpers-sql-processor', path: '../../helpers/sql-processor'
+    gem 'opentelemetry-instrumentation-base', path: '../base'
+  end
+end
+
 group :test do
-  gem 'opentelemetry-instrumentation-base', path: '../base'
-  gem 'opentelemetry-helpers-sql', path: '../../helpers/sql'
-  gem 'opentelemetry-helpers-mysql', path: '../../helpers/mysql'
-  gem 'opentelemetry-helpers-sql-processor', path: '../../helpers/sql-processor'
   gem 'appraisal', '~> 2.5.0'
   gem 'dotenv', '~> 3.2.0'
   gem 'minitest', '~> 6.0.0'
