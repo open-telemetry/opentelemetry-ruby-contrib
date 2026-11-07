@@ -81,8 +81,8 @@ module OpenTelemetry
           private
 
           # ActionDispatch::RemoteIp resolves the originating client IP through the app's trusted proxies.
-          # It raises when Client-IP and X-Forwarded-For disagree; any client can trigger that, so the
-          # attribute is omitted rather than reporting an error.
+          # It raises when Client-IP and X-Forwarded-For disagree; any client can trigger that, so it isn't
+          # reported as an error and any client.address already set by the Rack instrumentation is kept.
           def client_address(request)
             request.remote_ip
           rescue ::ActionDispatch::RemoteIp::IpSpoofAttackError
