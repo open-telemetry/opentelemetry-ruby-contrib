@@ -2,7 +2,7 @@
 
 ## v0.6.0 / 2026-11-07
 
-- ADDED: Freeze anthropic appraisal to exact match (#2677)
+- ADDED: Freeze development of anthropic instrumentation due to native support added in Anthropic sdk 1.79.0 (#2648)
 
 ## v0.5.0 / 2026-04-14
 
