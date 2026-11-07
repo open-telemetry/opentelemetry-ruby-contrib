@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-anthropic
 
+## v0.6.0 / 2026-11-07
+
+- ADDED: Freeze development of anthropic instrumentation due to native support added in Anthropic sdk 1.79.0 (#2648)
+
 ## v0.5.0 / 2026-04-14
 
 - BREAKING CHANGE: Min Ruby Version 3.3 (#2125)

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+## v0.101.0 / 2026-11-07
+
+- ADDED: Upgrade opentelemetry-instrumentation-anthropic to 0.6.0
+
 ## v0.100.0 / 2026-11-03
 
 - ADDED: Upgrade opentelemetry-instrumentation-net_http to 0.30.0
