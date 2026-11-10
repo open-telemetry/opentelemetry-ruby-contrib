@@ -12,7 +12,7 @@ module OpenTelemetry
         module Stable
           # Module to prepend to HTTP::Client for instrumentation
           module Client
-            # Constant for the HTTP status range
+            # Constant for the HTTP status range. Deprecated. Use HttpHelper::HTTP_STATUS_SUCCESS_RANGE
             HTTP_STATUS_SUCCESS_RANGE = (100..399)
 
             def perform(req, options)
@@ -30,9 +30,20 @@ module OpenTelemetry
               attributes.merge!(span_data.attributes)
 
               tracer.in_span(span_name, attributes: attributes, kind: :client) do |span|
-                OpenTelemetry.propagation.inject(req.headers)
-                super.tap do |response|
+                start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+                response = nil
+                error_type = nil
+
+                begin
+                  OpenTelemetry.propagation.inject(req.headers)
+                  response = super
                   annotate_span_with_response!(span, response)
+                  response
+                rescue StandardError => e
+                  error_type = e.class.name
+                  raise
+                ensure
+                  record_duration_metric(start_time, attributes['http.request.method'], uri.host, uri.port, response, error_type)
                 end
               end
             end
@@ -48,7 +59,15 @@ module OpenTelemetry
 
               status_code = response.status.to_i
               span.set_attribute('http.response.status_code', status_code)
-              span.status = OpenTelemetry::Trace::Status.error unless HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
+              span.status = OpenTelemetry::Trace::Status.error unless HttpHelper::HTTP_STATUS_SUCCESS_RANGE.cover?(status_code)
+            end
+
+            def record_duration_metric(start_time, method, address, port, response, error_type) # rubocop:disable Metrics/ParameterLists
+              duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time
+              histogram = client_request_duration_histogram
+              return unless histogram
+
+              histogram.record(duration, attributes: HttpHelper.metric_attrs(method, address, port, response, error_type))
             end
 
             def create_span_name(span_data, request_path)
@@ -68,6 +87,10 @@ module OpenTelemetry
 
             def tracer
               HTTP::Instrumentation.instance.tracer
+            end
+
+            def client_request_duration_histogram
+              HTTP::Instrumentation.instance.client_request_duration_histogram
             end
           end
         end
