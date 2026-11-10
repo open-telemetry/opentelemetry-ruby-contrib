@@ -1,6 +1,6 @@
 # Release History: opentelemetry-instrumentation-anthropic
 
-## v0.6.0 / 2026-11-07
+## v0.6.0 / 2026-11-10
 
 - ADDED: Freeze development of anthropic instrumentation due to native support added in Anthropic sdk 1.79.0 (#2648)
 
