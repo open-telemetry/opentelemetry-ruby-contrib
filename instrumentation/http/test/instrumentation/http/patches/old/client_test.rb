@@ -64,6 +64,11 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Old::Client do
       )
     end
 
+    it 'does not create http.client.request.duration' do
+      HTTP.get('http://example.com/success')
+      _(instrumentation.client_request_duration_histogram).must_be_nil
+    end
+
     it 'after request with failure code' do
       HTTP.post('http://example.com/failure')
 
