@@ -11,17 +11,6 @@ require 'pg'
 require_relative '../../../../lib/opentelemetry/instrumentation/pg'
 require_relative '../../../../lib/opentelemetry/instrumentation/pg/patches/connection'
 
-# This test suite requires a running postgres container and dedicated test container
-# To run tests locally:
-# 1. Build the opentelemetry/opentelemetry-ruby-contrib image
-# - docker-compose build
-# 2. Bundle install
-# - docker-compose run ex-instrumentation-pg-test bundle install
-# 3. Install the dependencies for each Appraisal (https://github.com/thoughtbot/appraisal)
-# - docker-compose run ex-instrumentation-pg-test bundle exec appraisal install
-# 4. Run test suite with Appraisal
-# - docker-compose run ex-instrumentation-pg-test bundle exec appraisal rake test
-
 describe OpenTelemetry::Instrumentation::PG::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::PG::Instrumentation.instance }
   let(:exporter) { EXPORTER }

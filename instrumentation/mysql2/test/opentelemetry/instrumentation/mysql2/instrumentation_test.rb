@@ -10,14 +10,6 @@ require 'mysql2'
 require_relative '../../../../lib/opentelemetry/instrumentation/mysql2'
 require_relative '../../../../lib/opentelemetry/instrumentation/mysql2/patches/client'
 
-# This test suite requires a running mysql container and dedicated test container
-# To run tests:
-# 1. Build the opentelemetry/opentelemetry-ruby-contrib image
-# - docker-compose build
-# 2. Bundle install
-# - docker-compose run ex-instrumentation-mysql2-test bundle install
-# 3. Run test suite
-# - docker-compose run ex-instrumentation-mysql2-test bundle exec rake test
 describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Mysql2::Instrumentation.instance }
   let(:exporter) { EXPORTER }
