@@ -120,6 +120,14 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(client_span.name).must_equal('SNS.Publish.TopicName.Publish')
         _(client_span.kind).must_equal(:producer)
         TestHelper.match_span_attrs(expected_client_attrs, client_span, self)
+        _(client_span.attributes['aws.sns.topic.arn']).must_equal('arn:aws:sns:fake:123:TopicName')
+      end
+
+      it 'does not record target arn as a topic arn' do
+        client.publish(message: 'msg', target_arn: 'arn:aws:sns:fake:123:Target')
+
+        _(client_span.attributes).wont_include('aws.sns.topic.arn')
+        _(client_span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('Target')
       end
 
       it 'creates a span that includes a phone number' do

@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.3'
 
   spec.add_dependency 'opentelemetry-helpers-sql'
-  spec.add_dependency 'opentelemetry-helpers-sql-processor'
+  spec.add_dependency 'opentelemetry-helpers-sql-processor', '>= 0.5.1', '< 1.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.25'
 
   if spec.respond_to?(:metadata)

@@ -11,7 +11,7 @@ jobs:
   markdown-lint-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Markdown Lint Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -19,7 +19,7 @@ jobs:
 
       # equivalent cli: markdownlint-cli2  "**/*.md" "!**/CHANGELOG.md"  --config .markdownlint-cli2.yaml
       - name: "Markdown Lint Check"
-        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
+        uses: DavidAnson/markdownlint-cli2-action@696eb3f2509270d7b882d2aa68347bc676e7af34 # v25.0.0
         with:
           config: .markdownlint-cli2.yaml
           fix: false
@@ -29,7 +29,7 @@ jobs:
   markdown-link-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Markdown Link Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       pull-requests: write # required for posting PR review comments
@@ -49,16 +49,16 @@ jobs:
   json-lint-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: JSON Lint Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           cache: "npm"
-          node-version: "24"
+          node-version-file: ".nvmrc"
 
       - name: install dependencies
         run: npm ci --ignore-scripts
@@ -70,16 +70,16 @@ jobs:
   renovate-config-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Renovate Config Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           cache: "npm"
-          node-version: "24"
+          node-version-file: ".nvmrc"
 
       - name: install dependencies
         run: npm ci --ignore-scripts
@@ -91,19 +91,19 @@ jobs:
   ruby-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: RuboCop Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           cache: "npm"
-          node-version: "24"
+          node-version-file: ".nvmrc"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
 
       - name: Install Tools
         run: npm ci --ignore-scripts && bundle install
@@ -121,7 +121,7 @@ jobs:
   yaml-lint-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: YAML Lint Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -136,7 +136,7 @@ jobs:
   dotenv-linter:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: env / dotenv-linter
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -151,12 +151,12 @@ jobs:
   spelling-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: Spelling Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: streetsidesoftware/cspell-action@6f3c77c1406bc930f944ba97e9801a22e42caf58 # v9.1.0
+      - uses: streetsidesoftware/cspell-action@ce1816e4ce36532956ac6e983737392774b6e169 # v9.2.0
         with:
           config: .cspell.yml
           suggestions: true
@@ -166,19 +166,19 @@ jobs:
   format-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
     name: File Format Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           cache: "npm"
-          node-version: "24"
+          node-version-file: ".nvmrc"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
 
       - name: Install Tools
         run: npm ci --ignore-scripts && bundle install

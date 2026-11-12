@@ -22,25 +22,18 @@ jobs:
     strategy:
       fail-fast: false
     name: Dry-run
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Install Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          cache: "npm"
-          node-version: "24"
-
-      - name: Install Tools
-        run: npm ci --ignore-scripts
-
       - name: Run Dry-run
+        uses: renovatebot/github-action@43b963bf5dd5e57f1f95c59765a018d782870211 # v46.3.11
         env:
           LOG_LEVEL: debug
           RENOVATE_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           RENOVATE_GITHUB_COM_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        run: |
-          npm run test:renovate:dryrun
+          RENOVATE_DRY_RUN: full
+          RENOVATE_AUTODISCOVER: true
+          RENOVATE_AUTODISCOVER_FILTER: open-telemetry/opentelemetry-ruby-contrib

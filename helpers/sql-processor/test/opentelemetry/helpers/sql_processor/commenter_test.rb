@@ -75,6 +75,28 @@ describe OpenTelemetry::Helpers::SqlProcessor::SqlCommenter do
 
       _(result).must_be_nil
     end
+
+    describe 'with a custom global propagator' do
+      before do
+        @original_propagation = OpenTelemetry.propagation
+        OpenTelemetry.propagation = Class.new do
+          def inject(carrier, context:)
+            carrier['uberctx-*/;SELECT 2;--'] = 'value'
+          end
+        end.new
+      end
+
+      after do
+        OpenTelemetry.propagation = @original_propagation
+      end
+
+      it 'keeps propagation keys inside the SQL comment' do
+        sql = +'SELECT * FROM users'
+        propagator.inject(sql, context: context)
+
+        _(sql).must_equal("SELECT * FROM users /*uberctx-%2A%2F%3BSELECT%202%3B--='value'*/")
+      end
+    end
   end
 
   describe 'SqlQuerySetter.set' do
@@ -98,6 +120,33 @@ describe OpenTelemetry::Helpers::SqlProcessor::SqlCommenter do
 
       expected = "SELECT * FROM users /*key='value%20with%20spaces'*/"
       _(sql).must_equal(expected)
+    end
+
+    it 'URL encodes keys' do
+      sql = +'SELECT * FROM users'
+      headers = { "key' ,=\\%" => 'value' }
+
+      setter.set(sql, headers)
+
+      _(sql).must_equal("SELECT * FROM users /*key%27%20%2C%3D%5C%25='value'*/")
+    end
+
+    it 'encodes SQL comment delimiters in keys and values' do
+      sql = +'SELECT * FROM users'
+      headers = { '*/ SELECT 2 /*' => "'*/ SELECT 3 /*" }
+
+      setter.set(sql, headers)
+
+      _(sql).must_equal("SELECT * FROM users /*%2A%2F%20SELECT%202%20%2F%2A='%27%2A%2F%20SELECT%203%20%2F%2A'*/")
+    end
+
+    it 'converts non-string keys and values to strings' do
+      sql = +'SELECT * FROM users'
+      headers = { custom: 123 }
+
+      setter.set(sql, headers)
+
+      _(sql).must_equal("SELECT * FROM users /*custom='123'*/")
     end
 
     it 'handles empty headers' do
