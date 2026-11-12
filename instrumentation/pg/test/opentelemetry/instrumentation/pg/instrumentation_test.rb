@@ -508,6 +508,18 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(sql).wont_match(%r{/\*traceparent=})
       end
 
+      it 'sends injected context to the server for exec' do
+        executed_sql = client.exec(+'SELECT current_query()').getvalue(0, 0)
+
+        _(executed_sql).must_match(%r{/\*traceparent='00-#{last_span.hex_trace_id}-#{last_span.hex_span_id}-01'\*/})
+      end
+
+      it 'sends injected context to the server for exec with frozen strings' do
+        executed_sql = client.exec('SELECT current_query()').getvalue(0, 0)
+
+        _(executed_sql).must_match(%r{/\*traceparent='00-#{last_span.hex_trace_id}-#{last_span.hex_span_id}-01'\*/})
+      end
+
       describe 'when db.statement is included' do
         let(:config) { { propagator: 'tracecontext', db_statement: :include } }
 
