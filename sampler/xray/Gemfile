@@ -11,7 +11,7 @@ gemspec
 
 group :test do
   gem 'timecop', '~> 0.9.10'
-  gem 'webmock', '~> 3.26.0'
+  gem 'webmock', '~> 3.34.0'
   if RUBY_VERSION >= '3.4'
     gem 'base64'
     gem 'logger'

@@ -10,7 +10,7 @@
   packageRules: [
     {
       groupName: "all [patches]",
-      matchDepNames: ["!ruby", "!renovate"],
+      matchDepNames: ["!ruby", "!renovate", "!renovatebot/github-action"],
       matchUpdateTypes: ["patch", "digest"],
       schedule: ["before 6am every weekday"],
     },
@@ -28,8 +28,8 @@
     },
     {
       groupName: "infra [minor]",
-      matchCategories: ["js"],
-      matchDepNames: ["renovate"],
+      matchCategories: ["js", "ci"],
+      matchDepNames: ["renovate", "renovatebot/github-action"],
       matchUpdateTypes: ["patch", "digest"],
       schedule: ["before 7am on Monday"],
     },
@@ -85,6 +85,7 @@
       description: "Separate multiple minor updates so we gain visibility to what is in the queue",
       matchDepNames: ["confluentinc/cp-kafka"],
       separateMultipleMinor: true,
+      separateMinorPatch: true,
     },
     {
       description: "Group min ruby updates into a single update which needs to be approved via the dashboard.",
@@ -243,6 +244,7 @@
     ".docker/infra/memcached/**",
     ".docker/infra/mongo/**",
     "helpers/sql-obfuscation/**",
+    "instrumentation/anthropic/**",
     "instrumentation/dalli/**",
     "instrumentation/mongo/**",
     "instrumentation/restclient/**",
