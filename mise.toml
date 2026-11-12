@@ -1,0 +1,21 @@
+monorepo_root = true
+
+[monorepo]
+config_roots = ["instrumentation/active_storage"]
+
+[tools]
+ruby = '3.3.12'
+
+[settings]
+lockfile = true
+
+[tasks.install-all]
+run = '''
+mise install
+
+for dir in instrumentation/*; do
+  if [ -f "$dir/mise.toml" ]; then
+    (cd "$dir" && mise install)
+  fi
+done
+'''
