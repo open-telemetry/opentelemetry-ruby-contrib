@@ -6,7 +6,7 @@
 
 require 'simplecov'
 require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+Bundler.require(:default, :test)
 
 require 'active_support/core_ext/time'
 require 'active_support/core_ext/hash/indifferent_access'

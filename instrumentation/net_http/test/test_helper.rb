@@ -7,7 +7,7 @@
 require 'simplecov'
 require 'net/http'
 require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+Bundler.require(:default, :test)
 
 # Define custom HTTP method for testing unknown method handling
 module Net

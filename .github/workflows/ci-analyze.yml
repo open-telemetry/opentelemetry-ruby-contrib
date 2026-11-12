@@ -1,0 +1,27 @@
+name: Analyze
+
+on:
+  workflow_call:
+    outputs:
+      gems:
+        value: ${{ jobs.analyze.outputs.gems }}
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby-contrib' }}
+    runs-on: ubuntu-24.04
+    name: Changed gems
+    outputs:
+      gems: ${{ steps.select.outputs.gems }}
+    steps:
+      - name: Select Gems
+        id: select
+        run: |
+          {
+            echo "gems<<EOF"
+            echo '["everything"]'
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"

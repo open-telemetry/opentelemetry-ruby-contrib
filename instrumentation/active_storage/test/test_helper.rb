@@ -8,7 +8,7 @@ ENV['RAILS_ENV'] = 'test'
 
 require 'logger'
 require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+Bundler.require(:default, :test)
 
 require 'active_storage'
 require 'minitest/autorun'
