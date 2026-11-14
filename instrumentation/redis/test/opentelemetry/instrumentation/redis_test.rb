@@ -32,7 +32,7 @@ describe OpenTelemetry::Instrumentation::Redis do
   describe '#with_attributes' do
     it 'yields the passed in attributes' do
       redis.with_attributes('foo' => 'bar') do |attributes|
-        _(attributes).must_equal('foo' => 'bar')
+        _(attributes).must_equal({ 'foo' => 'bar' })
       end
     end
 
@@ -45,13 +45,13 @@ describe OpenTelemetry::Instrumentation::Redis do
 
     it 'should reactivate the attributes after the block' do
       redis.with_attributes('foo' => 'bar') do
-        _(redis.attributes).must_equal('foo' => 'bar')
+        _(redis.attributes).must_equal({ 'foo' => 'bar' })
 
         redis.with_attributes('foo' => 'baz') do
-          _(redis.attributes).must_equal('foo' => 'baz')
+          _(redis.attributes).must_equal({ 'foo' => 'baz' })
         end
 
-        _(redis.attributes).must_equal('foo' => 'bar')
+        _(redis.attributes).must_equal({ 'foo' => 'bar' })
       end
     end
 
@@ -60,26 +60,26 @@ describe OpenTelemetry::Instrumentation::Redis do
         'a' => '1',
         'c' => '2'
       ) do
-        _(redis.attributes).must_equal(
+        _(redis.attributes).must_equal({
           'a' => '1',
           'c' => '2'
-        )
+        })
 
         redis.with_attributes(
           'a' => '0',
           'b' => '1'
         ) do
-          _(redis.attributes).must_equal(
+          _(redis.attributes).must_equal({
             'a' => '0',
             'b' => '1',
             'c' => '2'
-          )
+          })
         end
 
-        _(redis.attributes).must_equal(
+        _(redis.attributes).must_equal({
           'a' => '1',
           'c' => '2'
-        )
+        })
       end
     end
   end
@@ -94,7 +94,7 @@ describe OpenTelemetry::Instrumentation::Redis do
     it 'returns a context containing attributes' do
       parent_ctx = OpenTelemetry::Context.empty.set_value('foo', 'bar')
       ctx = redis.context_with_attributes({ 'bar' => 'baz' }, parent_context: parent_ctx)
-      _(redis.attributes(ctx)).must_equal('bar' => 'baz')
+      _(redis.attributes(ctx)).must_equal({ 'bar' => 'baz' })
       _(ctx.value('foo')).must_equal('bar')
     end
   end

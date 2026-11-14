@@ -524,7 +524,7 @@ describe OpenTelemetry::Instrumentation::Grape do
 
         it 'creates a span' do
           app.get request_path
-          _(exporter.finished_spans.first.attributes).must_equal(
+          _(exporter.finished_spans.first.attributes).must_equal({
             'http.request.method' => 'GET',
             'server.address' => 'unknown',
             'url.scheme' => 'http',
@@ -532,7 +532,7 @@ describe OpenTelemetry::Instrumentation::Grape do
             'code.namespace' => 'BasicAPI',
             'http.route' => '/hello',
             'http.response.status_code' => 200
-          )
+          })
         end
       end
     end

@@ -19,7 +19,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::Base do
 
       job = TestJob.new
       job.deserialize(serialized_job)
-      _(job.__otel_headers).must_equal('foo' => 'bar')
+      _(job.__otel_headers).must_equal({ 'foo' => 'bar' })
     end
 
     it 'handles jobs queued without instrumentation' do # e.g. during a rolling deployment
