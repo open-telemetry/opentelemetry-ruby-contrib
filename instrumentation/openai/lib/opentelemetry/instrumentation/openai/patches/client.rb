@@ -59,7 +59,7 @@ module OpenTelemetry
 
               response
             rescue StandardError => e
-              handle_span_exception(span, e)
+              span.set_attribute('error.type', e.class.name)
               raise
             end
           end
