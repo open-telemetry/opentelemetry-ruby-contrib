@@ -446,13 +446,14 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
 
         data_point = metric.data_points.first
         _(data_point.count).must_equal 1
-        _(data_point.attributes).must_equal({
-          'http.request.method' => 'GET',
-          'server.address' => 'example.com',
-          'server.port' => 80,
-          'http.response.status_code' => 200,
-          'network.protocol.version' => '1.0'
-        })
+        _(data_point.attributes)
+          .must_equal({
+                        'http.request.method' => 'GET',
+                        'server.address' => 'example.com',
+                        'server.port' => 80,
+                        'http.response.status_code' => 200,
+                        'network.protocol.version' => '1.0'
+                      })
       end
 
       it 'records a duration no longer than the span duration' do
@@ -478,12 +479,13 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
           Net::HTTP.get(URI('https://example.com/timeout'))
         end.must_raise Net::OpenTimeout
 
-        _(duration_data_points.first.attributes).must_equal({
-          'http.request.method' => 'GET',
-          'server.address' => 'example.com',
-          'server.port' => 443,
-          'error.type' => 'Net::OpenTimeout'
-        })
+        _(duration_data_points.first.attributes)
+          .must_equal({
+                        'http.request.method' => 'GET',
+                        'server.address' => 'example.com',
+                        'server.port' => 443,
+                        'error.type' => 'Net::OpenTimeout'
+                      })
       end
 
       it 'records _OTHER for an unknown http method' do

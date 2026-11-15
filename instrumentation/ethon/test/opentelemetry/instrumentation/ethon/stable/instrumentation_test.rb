@@ -54,9 +54,10 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
       describe '#headers=' do
         it 'preserves HTTP headers on easy instance' do
           easy.headers = { key: 'value' }
-          _(easy.instance_eval { @otel_original_headers }).must_equal({
-            key: 'value'
-          })
+          _(easy.instance_eval { @otel_original_headers })
+            .must_equal({
+                          key: 'value'
+                        })
         end
       end
 
@@ -197,9 +198,10 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
           end
 
           it 'cleans up @otel_original_headers' do
-            _(easy.instance_eval { @otel_original_headers }).must_equal({
-              key: 'value'
-            })
+            _(easy.instance_eval { @otel_original_headers })
+              .must_equal({
+                            key: 'value'
+                          })
 
             easy.reset
 

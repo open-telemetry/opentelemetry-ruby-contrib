@@ -60,26 +60,29 @@ describe OpenTelemetry::Instrumentation::Redis do
         'a' => '1',
         'c' => '2'
       ) do
-        _(redis.attributes).must_equal({
-          'a' => '1',
-          'c' => '2'
-        })
+        _(redis.attributes)
+          .must_equal({
+                        'a' => '1',
+                        'c' => '2'
+                      })
 
         redis.with_attributes(
           'a' => '0',
           'b' => '1'
         ) do
-          _(redis.attributes).must_equal({
-            'a' => '0',
-            'b' => '1',
-            'c' => '2'
-          })
+          _(redis.attributes)
+            .must_equal({
+                          'a' => '0',
+                          'b' => '1',
+                          'c' => '2'
+                        })
         end
 
-        _(redis.attributes).must_equal({
-          'a' => '1',
-          'c' => '2'
-        })
+        _(redis.attributes)
+          .must_equal({
+                        'a' => '1',
+                        'c' => '2'
+                      })
       end
     end
   end
