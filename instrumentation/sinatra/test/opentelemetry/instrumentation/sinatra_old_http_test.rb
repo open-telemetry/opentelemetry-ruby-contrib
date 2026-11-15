@@ -107,14 +107,15 @@ describe OpenTelemetry::Instrumentation::Sinatra do
     it 'records attributes' do
       get '/one/endpoint'
 
-      _(exporter.finished_spans.first.attributes).must_equal(
-        'http.host' => 'example.org',
-        'http.method' => 'GET',
-        'http.route' => '/endpoint',
-        'http.scheme' => 'http',
-        'http.status_code' => 200,
-        'http.target' => '/endpoint'
-      )
+      _(exporter.finished_spans.first.attributes)
+        .must_equal({
+                      'http.host' => 'example.org',
+                      'http.method' => 'GET',
+                      'http.route' => '/endpoint',
+                      'http.scheme' => 'http',
+                      'http.status_code' => 200,
+                      'http.target' => '/endpoint'
+                    })
     end
 
     it 'traces templates' do
@@ -136,14 +137,15 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       get '/one//api/v1/foo/janedoe/'
 
       _(exporter.finished_spans.size).must_equal 1
-      _(exporter.finished_spans.first.attributes).must_equal(
-        'http.host' => 'example.org',
-        'http.method' => 'GET',
-        'http.target' => '/api/v1/foo/janedoe/',
-        'http.scheme' => 'http',
-        'http.status_code' => 200,
-        'http.route' => '/api/v1/foo/:myname/?'
-      )
+      _(exporter.finished_spans.first.attributes)
+        .must_equal({
+                      'http.host' => 'example.org',
+                      'http.method' => 'GET',
+                      'http.target' => '/api/v1/foo/janedoe/',
+                      'http.scheme' => 'http',
+                      'http.status_code' => 200,
+                      'http.route' => '/api/v1/foo/:myname/?'
+                    })
       _(exporter.finished_spans.map(&:name))
         .must_equal [
           'GET /api/v1/foo/:myname/?'
@@ -154,13 +156,14 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       get '/one/missing_example/not_present'
 
       _(exporter.finished_spans.first.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
-      _(exporter.finished_spans.first.attributes).must_equal(
-        'http.host' => 'example.org',
-        'http.method' => 'GET',
-        'http.scheme' => 'http',
-        'http.status_code' => 404,
-        'http.target' => '/missing_example/not_present'
-      )
+      _(exporter.finished_spans.first.attributes)
+        .must_equal({
+                      'http.host' => 'example.org',
+                      'http.method' => 'GET',
+                      'http.scheme' => 'http',
+                      'http.status_code' => 404,
+                      'http.target' => '/missing_example/not_present'
+                    })
       _(exporter.finished_spans.flat_map(&:events)).must_equal([nil])
     end
 
@@ -169,14 +172,15 @@ describe OpenTelemetry::Instrumentation::Sinatra do
 
       _(exporter.finished_spans.first.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
       _(exporter.finished_spans.first.name).must_equal('GET /error')
-      _(exporter.finished_spans.first.attributes).must_equal(
-        'http.host' => 'example.org',
-        'http.method' => 'GET',
-        'http.route' => '/error',
-        'http.scheme' => 'http',
-        'http.target' => '/error',
-        'http.status_code' => 500
-      )
+      _(exporter.finished_spans.first.attributes)
+        .must_equal({
+                      'http.host' => 'example.org',
+                      'http.method' => 'GET',
+                      'http.route' => '/error',
+                      'http.scheme' => 'http',
+                      'http.target' => '/error',
+                      'http.status_code' => 500
+                    })
       _(exporter.finished_spans.flat_map(&:events).map(&:name)).must_equal(['exception'])
     end
 
@@ -220,14 +224,15 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       it 'creates a span' do
         get '/one/endpoint'
 
-        _(exporter.finished_spans.first.attributes).must_equal(
-          'http.method' => 'GET',
-          'http.host' => 'example.org',
-          'http.scheme' => 'http',
-          'http.target' => '/one/endpoint',
-          'http.route' => '/endpoint',
-          'http.status_code' => 200
-        )
+        _(exporter.finished_spans.first.attributes)
+          .must_equal({
+                        'http.method' => 'GET',
+                        'http.host' => 'example.org',
+                        'http.scheme' => 'http',
+                        'http.target' => '/one/endpoint',
+                        'http.route' => '/endpoint',
+                        'http.status_code' => 200
+                      })
       end
     end
   end

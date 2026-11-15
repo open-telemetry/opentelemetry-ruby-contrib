@@ -15,7 +15,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       value = 'bar'
       metadata_attributes = {}
       instrumentation::MessageAttributeSetter.set(metadata_attributes, key, value)
-      _(metadata_attributes[key]).must_equal(string_value: value, data_type: 'String')
+      _(metadata_attributes[key]).must_equal({ string_value: value, data_type: 'String' })
     end
 
     it 'should keep existing attributes' do
@@ -25,9 +25,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         'existingKey' => { string_value: 'existingValue', data_type: 'String' }
       }
       instrumentation::MessageAttributeSetter.set(metadata_attributes, key, value)
-      _(metadata_attributes[key]).must_equal(string_value: value, data_type: 'String')
+      _(metadata_attributes[key]).must_equal({ string_value: value, data_type: 'String' })
       _(metadata_attributes['existingKey'])
-        .must_equal(string_value: 'existingValue', data_type: 'String')
+        .must_equal({ string_value: 'existingValue', data_type: 'String' })
     end
 
     it 'should not add if there are 10 or more existing attributes' do

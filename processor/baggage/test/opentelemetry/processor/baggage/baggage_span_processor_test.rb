@@ -136,7 +136,7 @@ describe OpenTelemetry::Processor::Baggage::BaggageSpanProcessor do
 
       _(exporter.finished_spans.size).must_equal(1)
       _(exporter.finished_spans.first.name).must_equal('integration test span')
-      _(exporter.finished_spans.first.attributes).must_equal('a_key' => 'a_value', 'b_key' => 'b_value')
+      _(exporter.finished_spans.first.attributes).must_equal({ 'a_key' => 'a_value', 'b_key' => 'b_value' })
     end
   end
 end

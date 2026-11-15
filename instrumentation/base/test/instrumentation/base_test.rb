@@ -208,42 +208,42 @@ describe OpenTelemetry::Instrumentation::Base do
         it 'installs options defined by environment variable and overrides defaults' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value') do
             instance.install
-            _(instance.config).must_equal(first: 'non_default_value', second: :no, third: 1, forth: false, fifth: true)
+            _(instance.config).must_equal({ first: 'non_default_value', second: :no, third: 1, forth: false, fifth: true })
           end
         end
 
         it 'installs boolean type options defined by environment variable and only evalutes the lowercase string "true" to be truthy' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value;forth=true;fifth=truthy') do
             instance.install
-            _(instance.config).must_equal(first: 'non_default_value', second: :no, third: 1, forth: true, fifth: false)
+            _(instance.config).must_equal({ first: 'non_default_value', second: :no, third: 1, forth: true, fifth: false })
           end
         end
 
         it 'installs only enum options defined by environment variable that accept a symbol' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'second=maybe') do
             instance.install
-            _(instance.config).must_equal(first: 'first_default', second: :maybe, third: 1, forth: false, fifth: true)
+            _(instance.config).must_equal({ first: 'first_default', second: :maybe, third: 1, forth: false, fifth: true })
           end
         end
 
         it 'installs options defined by environment variable and overrides local configuration' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value') do
             instance.install(first: 'another_default')
-            _(instance.config).must_equal(first: 'non_default_value', second: :no, third: 1, forth: false, fifth: true)
+            _(instance.config).must_equal({ first: 'non_default_value', second: :no, third: 1, forth: false, fifth: true })
           end
         end
 
         it 'installs multiple options defined by environment variable' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value;second=maybe') do
             instance.install(first: 'another_default', second: :yes)
-            _(instance.config).must_equal(first: 'non_default_value', second: :maybe, third: 1, forth: false, fifth: true)
+            _(instance.config).must_equal({ first: 'non_default_value', second: :maybe, third: 1, forth: false, fifth: true })
           end
         end
 
         it 'does not install callable options defined by environment variable' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value;second=maybe;third=5') do
             instance.install(first: 'another_default', second: :yes)
-            _(instance.config).must_equal(first: 'non_default_value', second: :maybe, third: 1, forth: false, fifth: true)
+            _(instance.config).must_equal({ first: 'non_default_value', second: :maybe, third: 1, forth: false, fifth: true })
           end
         end
       end
@@ -272,7 +272,7 @@ describe OpenTelemetry::Instrumentation::Base do
 
         it 'falls back to the default' do
           instance.install(first: 'value', second: 'user_value')
-          _(instance.config).must_equal(first: 'first_default', second: 'user_value')
+          _(instance.config).must_equal({ first: 'first_default', second: 'user_value' })
         end
       end
 
@@ -300,20 +300,20 @@ describe OpenTelemetry::Instrumentation::Base do
 
         it 'falls back to the default if user option is not an enumerable option' do
           instance.install(first: :yes, second: :perhaps)
-          _(instance.config).must_equal(first: :yes, second: :no)
+          _(instance.config).must_equal({ first: :yes, second: :no })
         end
 
         it 'installs options defined by environment variable and overrides defaults and user config' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_ENUM_CONFIG_OPTS' => 'first=yes') do
             instance.install(first: :maybe, second: :no)
-            _(instance.config).must_equal(first: :yes, second: :no)
+            _(instance.config).must_equal({ first: :yes, second: :no })
           end
         end
 
         it 'falls back to install options defined by user config when environment variable fails validation' do
           OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_ENUM_CONFIG_OPTS' => 'first=perhaps') do
             instance.install(first: :maybe, second: :no)
-            _(instance.config).must_equal(first: :maybe, second: :no)
+            _(instance.config).must_equal({ first: :maybe, second: :no })
           end
         end
       end
@@ -469,7 +469,7 @@ describe OpenTelemetry::Instrumentation::Base do
 
       instance.install
 
-      _(recording_meter_provider.requested).must_equal(name: 'test_instrumentation', version: '0.1.1')
+      _(recording_meter_provider.requested).must_equal({ name: 'test_instrumentation', version: '0.1.1' })
     end
   end
 
@@ -503,7 +503,7 @@ describe OpenTelemetry::Instrumentation::Base do
 
       instance.install
 
-      _(recording_logger_provider.requested).must_equal(name: 'test_instrumentation', version: '0.1.1')
+      _(recording_logger_provider.requested).must_equal({ name: 'test_instrumentation', version: '0.1.1' })
     end
   end
 
