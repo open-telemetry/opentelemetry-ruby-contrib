@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-grape
 
+## v0.7.3 / 2026-11-17
+
+- FIXED: Ignore Halt raised by error! in Grape 4.1 (#2675)
+
 ## v0.7.2 / 2026-10-14
 
 - FIXED: Support grape 4 (#2582)

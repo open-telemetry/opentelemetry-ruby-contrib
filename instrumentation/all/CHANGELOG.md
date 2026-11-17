@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-all
 
+## v0.102.0 / 2026-11-17
+
+- ADDED: Upgrade opentelemetry-instrumentation-aws_sdk to 0.14.0
+- ADDED: Upgrade opentelemetry-instrumentation-rack to 0.32.0
+- ADDED: Upgrade opentelemetry-instrumentation-sinatra to 0.31.0
+
 ## v0.101.0 / 2026-11-10
 
 - ADDED: Upgrade opentelemetry-instrumentation-anthropic to 0.6.0
