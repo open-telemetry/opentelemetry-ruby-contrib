@@ -1,6 +1,6 @@
 services:
   kafka:
-    image: confluentinc/cp-kafka:8.1.6@sha256:8293182e4b673f2c23af6f84ab9a506633fa7ba993ca7c12f8432a5efeb39e74
+    image: confluentinc/cp-kafka:8.2.5@sha256:870d5322c74eef8b8286155f73c05dd356c660e207e64c0e81bb3504aace0e4d
     ports:
       - "9093:9093"
       - "29092:29092"

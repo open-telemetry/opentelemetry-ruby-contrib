@@ -107,6 +107,33 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::Dup::TracerMiddlewar
       end
     end
 
+    describe 'client.address' do
+      describe 'given a direct request' do
+        let(:env) { Hash('REMOTE_ADDR' => '203.0.113.7') }
+
+        it 'sets client.address to the remote address' do
+          _(first_span.attributes['client.address']).must_equal '203.0.113.7'
+        end
+      end
+
+      describe 'given a request through a trusted proxy' do
+        # Rack::Request.ip_filter trusts loopback and private ranges (e.g. 10.0.0.0/8) by default
+        let(:env) { Hash('REMOTE_ADDR' => '10.0.0.1', 'HTTP_X_FORWARDED_FOR' => '198.51.100.1, 203.0.113.7, 10.0.0.2') }
+
+        it 'sets client.address to the rightmost untrusted forwarded address' do
+          _(first_span.attributes['client.address']).must_equal '203.0.113.7'
+        end
+      end
+
+      describe 'given a forwarded header from an untrusted peer' do
+        let(:env) { Hash('REMOTE_ADDR' => '198.51.100.1', 'HTTP_X_FORWARDED_FOR' => '203.0.113.7') }
+
+        it 'ignores the forwarded header' do
+          _(first_span.attributes['client.address']).must_equal '198.51.100.1'
+        end
+      end
+    end
+
     describe 'given request proxy headers' do
       let(:env) { Hash('HTTP_X_REQUEST_START' => '1677723466') }
 

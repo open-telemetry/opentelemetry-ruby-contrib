@@ -78,6 +78,9 @@ module OpenTelemetry
           # ActiveSupport::Notifications will attach a `:exception_object` to the payload if there was
           # an error raised during the execution of the &block associated to the Notification.
           def handle_payload_exception(span, exception)
+            # Since Grape 4.1.0 `error!` raises Halt instead of throwing, but it is still an intended response.
+            return if defined?(::Grape::Exceptions::Halt) && exception.is_a?(::Grape::Exceptions::Halt)
+
             # Only record exceptions if they were not raised (i.e. do not have a status code in Grape)
             # or do not have a 5xx status code. These exceptions are recorded by Rack.
             # See instrumentation/rack/lib/opentelemetry/instrumentation/rack/middlewares/tracer_middleware.rb#L155

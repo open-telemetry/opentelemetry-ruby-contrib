@@ -43,6 +43,12 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(exporter.finished_spans.size).must_equal 0
     end
 
+    it 'does not create http.client.request.duration' do
+      Net::HTTP.get('example.com', '/success')
+
+      _(instrumentation.client_request_duration_histogram).must_be_nil
+    end
+
     it 'after request with success code' do
       Net::HTTP.get('example.com', '/success')
 

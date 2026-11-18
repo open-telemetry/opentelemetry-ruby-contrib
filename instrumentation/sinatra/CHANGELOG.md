@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+## v0.31.0 / 2026-11-17
+
+- ADDED: Set client.address from Rack::Request#ip (#2667)
+
 ## v0.30.1 / 2026-09-29
 
 - FIXED: Fiber-safe context detachment in `EventHandler` (#2130)

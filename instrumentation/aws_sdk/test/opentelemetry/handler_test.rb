@@ -81,6 +81,28 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(span.name).must_equal('TopicName publish')
         _(span.kind).must_equal(:producer)
         TestHelper.match_span_attrs(expected_attrs, span, self)
+        _(span.attributes['aws.sns.topic.arn']).must_equal('arn:aws:sns:fake:123:TopicName')
+      end
+
+      it 'does not record target arn as a topic arn' do
+        client.publish(message: 'msg', target_arn: 'arn:aws:sns:fake:123:Target')
+
+        _(span.attributes).wont_include('aws.sns.topic.arn')
+        _(span.attributes[otel_semantic::MESSAGING_DESTINATION]).must_equal('Target')
+      end
+
+      it 'does not record an empty topic arn' do
+        context = Struct.new(:params).new({ topic_arn: '' })
+        attributes = {}
+
+        OpenTelemetry::Instrumentation::AwsSdk::MessagingHelper.apply_span_attributes(
+          context,
+          attributes,
+          'SNS.Publish',
+          'SNS'
+        )
+
+        _(attributes).wont_include('aws.sns.topic.arn')
       end
 
       it 'creates a span that includes a phone number' do

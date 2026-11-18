@@ -52,7 +52,7 @@ jobs:
           - resource-detector-os
           - sampler-xray
         os:
-          - ubuntu-24.04
+          - ubuntu-26.04
         include:
           - gem: resource-detector-os
             os: windows-2025
@@ -85,5 +85,5 @@ jobs:
         uses: $/.github/actions/test_gem
         with:
           gem: "opentelemetry-${{ matrix.gem }}"
-          ruby: "jruby-10.0.2.0"
+          ruby: "jruby-10.0.7.0"
           minimum_coverage: "${{ case(matrix.os == 'windows-2025', 0, 85) }}"

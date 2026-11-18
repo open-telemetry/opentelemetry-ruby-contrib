@@ -72,6 +72,7 @@ ignoreWords:
   - jsonlintrc
   - Dockerfiles
   - autodiscover
+  - renovatebot
 words:
   - artipacked
   - AWSXRayTrace
