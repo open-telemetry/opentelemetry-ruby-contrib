@@ -18,3 +18,13 @@ semconv_stability.each do |mode|
     end
   end
 end
+
+# Metrics are exported only when opentelemetry-metrics-sdk is installed.
+# The metric is only recorded with stable semantic conventions.
+# Only testing v6.0.0 and up because prior versions do not support the purge method.
+%w[6.0.4].each do |version|
+  appraise "http-stable-#{version}-metrics" do
+    gem 'http', "~> #{version}"
+    gem 'opentelemetry-metrics-sdk', '~> 0.20.0'
+  end
+end
