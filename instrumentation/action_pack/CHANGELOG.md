@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+## v0.19.0 / 2026-11-17
+
+- ADDED: Set client.address on the Rack span (#2666)
+- ADDED: Set client.address from Rack::Request#ip (#2667)
+
 ## v0.18.1 / 2026-08-18
 
 - FIXED: Prepend engine mount path to http.route for mounted Rails engines (#2499)
