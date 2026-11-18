@@ -30,6 +30,18 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Configuration options
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Excon', {
+    # Requests to hosts matching any String (exact match) or Regexp
+    # in this list are not traced, and trace context is not propagated.
+    untraced_hosts: ['example.com', /\.internal\z/],
+  }
+end
+```
+
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-excon` gem source is [on github][repo-github], along with related gems.
