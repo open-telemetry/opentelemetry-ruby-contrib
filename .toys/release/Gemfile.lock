@@ -1,0 +1,31 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    base64 (0.3.0)
+    logger (1.7.0)
+    toys (0.24.0)
+      toys-core (= 0.24.0)
+    toys-core (0.24.0)
+      logger
+    toys-release (0.9.1)
+      base64 (~> 0.3)
+      toys-core (~> 0.20)
+
+PLATFORMS
+  ruby
+  x86_64-linux
+
+DEPENDENCIES
+  toys (= 0.24.0)
+  toys-release (= 0.9.1)
+
+CHECKSUMS
+  base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
+  bundler (4.0.16) sha256=d6ca5dd440c24f9abce9844cf44cc8e18c6a553de65a47efb4544137af92c47d
+  logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
+  toys (0.24.0) sha256=969d59254dfb620ad08aa1c6c65f4a2f52da50acb9b044e53c229a4a13a48444
+  toys-core (0.24.0) sha256=f0b846a28c69fdac084851951a2f092250d64e52be3c81fc2700ae371fa6e4bd
+  toys-release (0.9.1) sha256=c4b9074a2cf765e12c96359b058b6ce82f31d4a96f255e25c3d8b1abb5864a28
+
+BUNDLED WITH
+  4.0.16
