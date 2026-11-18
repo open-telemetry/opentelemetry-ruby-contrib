@@ -1,4 +1,5 @@
-**/Gemfile.lock
+*/**/Gemfile.lock
+!.toys/release/Gemfile.lock
 **/.yardoc
 **/doc
 **/docs
@@ -25,6 +26,7 @@ instrumentation/active_record/db
 
 # rbenv configuration
 .ruby-version
+!.toys/.ruby-version
 
 tags
 !**/*/.gitkeep

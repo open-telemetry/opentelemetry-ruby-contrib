@@ -1,0 +1,5 @@
+[tools]
+imagemagick = "7.1.2-32"
+
+[settings]
+lockfile = true
