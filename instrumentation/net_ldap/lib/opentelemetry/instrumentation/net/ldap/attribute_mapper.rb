@@ -23,10 +23,18 @@ module OpenTelemetry
                                         'server.port'].freeze
           ALLOWED_KEYS = (LDAP_GENERAL_ATTRIBUTES + LDAP_OBJECT_ATTRIBUTES + SPAN_ATTRIBUTES).freeze
 
+          # Replaces any value with a redaction marker.
+          #
+          # @param _value [Object] the value to redact; ignored
+          # @return [String] the redaction marker
           def self.redact(_value)
             '[REDACTED]'
           end
 
+          # Redacts disallowed keys inside a JSON document.
+          #
+          # @param json_string [String] a JSON document
+          # @return [String] the redacted JSON, or the input unchanged if it is not valid JSON
           def self.map_json(json_string)
             parsed = JSON.parse(json_string)
             redacted = deep_map(parsed)
@@ -35,10 +43,18 @@ module OpenTelemetry
             json_string
           end
 
+          # Redacts values of attributes whose keys are not in {ALLOWED_KEYS}.
+          #
+          # @param attributes [Hash] span attributes
+          # @return [Hash] the attributes with disallowed values redacted
           def self.map(attributes)
             deep_map(attributes)
           end
 
+          # Recursively redacts values of keys that are not in {ALLOWED_KEYS}.
+          #
+          # @param obj [Object] a Hash, Array, String (possibly JSON) or scalar
+          # @return [Object] a redacted copy of +obj+
           def self.deep_map(obj)
             case obj
             when Hash

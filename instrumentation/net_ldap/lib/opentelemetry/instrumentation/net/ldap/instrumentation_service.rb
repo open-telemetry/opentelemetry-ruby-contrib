@@ -24,6 +24,13 @@ module OpenTelemetry
             @encryption = args[:encryption]
           end
 
+          # Wraps a Net::LDAP operation in a span and annotates it with the response.
+          # Implements the ActiveSupport::Notifications-compatible service interface that Net::LDAP expects.
+          #
+          # @param event [String] the event name, e.g. +search.net_ldap+
+          # @param payload [Hash] the event payload
+          # @yieldparam payload [Hash] the event payload
+          # @return [Object] the value returned by the block
           def instrument(event, payload)
             operation_type, span_kind = event.split('.').then { |s| [s.first, s.last == 'net_ldap_connection' ? :internal : :client] }
 
@@ -48,6 +55,11 @@ module OpenTelemetry
 
             attributes.compact!
 
+            # Top-level operations (bind, search, add, ...) return true/false/nil/results rather
+            # than a PDU. `open` returns whatever the user's block returns, so it says nothing
+            # about the outcome.
+            operation = span_kind == :client && operation_type != 'open'
+
             tracer.in_span(
               "LDAP #{operation_type}",
               attributes: AttributeMapper.map(attributes),
@@ -56,12 +68,12 @@ module OpenTelemetry
               if instrumentation_config[:enable_internal_instrumentation] == false
                 OpenTelemetry::Common::Utilities.untraced do
                   yield(payload).tap do |response|
-                    annotate_span_with_response(span, response) if response
+                    annotate_span_with_response(span, response, operation: operation)
                   end
                 end
               else
                 yield(payload).tap do |response|
-                  annotate_span_with_response(span, response) if response
+                  annotate_span_with_response(span, response, operation: operation)
                 end
               end
             end
@@ -79,19 +91,24 @@ module OpenTelemetry
             LDAP::Instrumentation.instance.config
           end
 
-          def annotate_span_with_response(span, response)
-            status_code = ::Net::LDAP::ResultCodeSuccess
+          def annotate_span_with_response(span, response, operation:)
             message = ''
             error_message = ''
 
-            if response.is_a?(::Net::LDAP::PDU)
-              status_code ||= response.result_code
-              error_message = response.error_message.to_s
-              message = ::Net::LDAP.result2string(status_code)
+            if response.respond_to?(:result_code)
+              status_code = response.result_code
+              message = ::Net::LDAP.result2string(status_code).to_s
+              error_message = response.respond_to?(:error_message) ? response.error_message.to_s : ''
+            elsif operation
+              # A falsy return means the operation failed, but the result code is not available here.
+              return span.status = OpenTelemetry::Trace::Status.error unless response
+
+              status_code = ::Net::LDAP::ResultCodeSuccess
+            else
+              return
             end
-            attributes = {
-              'ldap.response.status_code' => status_code
-            }
+
+            attributes = { 'ldap.response.status_code' => status_code }
             attributes['ldap.response.message'] = message unless message.empty?
             attributes['ldap.error.message'] = error_message unless error_message.empty?
             span.add_attributes(attributes)

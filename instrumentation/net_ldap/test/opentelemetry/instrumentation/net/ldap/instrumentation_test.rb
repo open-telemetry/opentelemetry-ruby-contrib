@@ -27,14 +27,15 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
   class FakeConnection
     Result = Struct.new(:success?, :result_code)
 
-    def initialize
+    def initialize(bind_result: nil)
+      @bind_result = bind_result
       @bind_success = Result.new(true, Net::LDAP::ResultCodeSuccess)
       @modify_success = Result.new(true, Net::LDAP::ResultCodeSuccess)
       @search_success = Result.new(true, Net::LDAP::ResultCodeSizeLimitExceeded)
     end
 
     def bind(args = {})
-      @bind_success
+      @bind_result || @bind_success
     end
 
     def search(*args)
@@ -137,6 +138,56 @@ describe OpenTelemetry::Instrumentation::Net::LDAP::Instrumentation do
         _(span.attributes['peer.service']).must_equal 'test:ldap'
         _(span.attributes['server.address']).must_equal 'test.mocked.com'
         _(span.attributes['server.port']).must_equal 636
+      end
+    end
+
+    describe 'when the operation fails' do
+      it 'sets the response status code and error status on a failed bind' do
+        failure = FakeConnection::Result.new(false, Net::LDAP::ResultCodeInvalidCredentials)
+        ldap.connection = FakeConnection.new(bind_result: failure)
+        refute ldap.bind
+
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'LDAP bind'
+        _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+
+      it 'sets the error status when the search returns nil' do
+        failure = FakeConnection::Result.new(false, Net::LDAP::ResultCodeOperationsError)
+        connection = FakeConnection.new
+        connection.define_singleton_method(:search) { |*_args| failure }
+        ldap.connection = connection
+        _(ldap.search(filter: '(uid=user1)')).must_be_nil
+
+        _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+
+      it 'leaves the status unset on success' do
+        ldap.connection = FakeConnection.new
+        assert ldap.bind
+
+        _(span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
+      end
+    end
+
+    describe 'when the response carries a result code' do
+      let(:service) { OpenTelemetry::Instrumentation::Net::LDAP::InstrumentationService.new(host: 'test.mocked.com', port: 636, auth: {}) }
+      let(:response) { Struct.new(:result_code, :error_message).new(Net::LDAP::ResultCodeInvalidCredentials, 'bad password') }
+
+      it 'records the status code, message and error status' do
+        service.instrument('bind.net_ldap_connection', {}) { response }
+
+        _(span.attributes['ldap.response.status_code']).must_equal Net::LDAP::ResultCodeInvalidCredentials
+        _(span.attributes['ldap.response.message']).must_equal Net::LDAP.result2string(Net::LDAP::ResultCodeInvalidCredentials)
+        _(span.attributes['ldap.error.message']).must_equal 'bad password'
+        _(span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+
+      it 'does not treat a falsy open block result as a failure' do
+        service.instrument('open.net_ldap', {}) { nil }
+
+        _(span.attributes).wont_include 'ldap.response.status_code'
+        _(span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
     end
 
