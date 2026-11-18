@@ -1,0 +1,10 @@
+services:
+  devcontainer-alpine:
+    extends:
+      service: base
+      file: ../../../docker-base.yml
+    build:
+      context: ../../../
+      target: alpine
+    working_dir: /app
+    env_file: ../../environment/dev/.env
