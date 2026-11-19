@@ -24,7 +24,8 @@ module OpenTelemetry
                              'url.full' => OpenTelemetry::Common::Utilities.cleanse_url(::Excon::Utils.request_uri(datum)),
                              'server.address' => datum[:hostname],
                              'server.port' => datum[:port] }
-              attributes['url.query'] = datum[:query] if datum[:query]
+              query = ::Excon::Utils.query_string(datum).delete_prefix('?')
+              attributes['url.query'] = query unless query.empty?
               peer_service = Excon::Instrumentation.instance.config[:peer_service]
               attributes[OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = peer_service if peer_service
               attributes.merge!(span_data.attributes)
