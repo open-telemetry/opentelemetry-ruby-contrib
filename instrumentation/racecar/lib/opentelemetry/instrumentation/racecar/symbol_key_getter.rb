@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Racecar
-      # The SymbolKeyGetter class provides methods for reading symbol keys
+      # The SymbolKeyGetter module provides methods for reading symbol keys
       # from a hash. It is used to extract context from message headers
       # produced by rdkafka versions older than 0.13.0.
       #
