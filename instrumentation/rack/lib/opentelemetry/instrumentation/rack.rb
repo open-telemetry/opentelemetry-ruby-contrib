@@ -48,6 +48,7 @@ module OpenTelemetry
   end
 end
 
+require_relative '../propagator/carrier/rack'
 require_relative 'rack/instrumentation'
 require_relative 'rack/util'
 require_relative 'rack/version'
