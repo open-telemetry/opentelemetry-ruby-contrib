@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+## v0.14.0 / 2026-11-17
+
+- ADDED: Record SNS topic ARN on publish spans (#2649)
+
 ## v0.13.0 / 2026-08-18
 
 - ADDED: Add `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable support for aws-sdk-dynamodb (#2135)
