@@ -32,6 +32,7 @@ module OpenTelemetry
         end
 
         def add_subscribers
+          require_relative 'symbol_key_getter'
           require_relative 'process_message_subscriber'
           subscriber = ProcessMessageSubscriber.new
           ::ActiveSupport::Notifications.subscribe('process_message.racecar', subscriber)

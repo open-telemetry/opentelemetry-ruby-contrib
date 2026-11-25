@@ -7,7 +7,7 @@ module OpenTelemetry
       GETTER = if Gem::Version.new(::Rdkafka::VERSION) >= Gem::Version.new('0.13.0')
                  Context::Propagation.text_map_getter
                else
-                 OpenTelemetry::Common::Propagation.symbol_key_getter
+                 Racecar::SymbolKeyGetter
                end
       private_constant :GETTER
 
