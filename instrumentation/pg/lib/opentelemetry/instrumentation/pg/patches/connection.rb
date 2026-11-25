@@ -20,7 +20,8 @@ module OpenTelemetry
             attributes = {
               'db.system' => 'postgresql',
               'db.name' => conn.db,
-              'db.user' => conn.user
+              'db.user' => conn.user,
+              'db.backend_pid' => conn.backend_pid
             }
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 

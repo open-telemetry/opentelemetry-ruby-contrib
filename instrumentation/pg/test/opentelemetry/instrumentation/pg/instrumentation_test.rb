@@ -77,6 +77,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
           dbname: dbname,
           password: password
         )
+        backend_pid = conn.backend_pid
         conn.close
 
         _(exporter.finished_spans.size).must_equal 1
@@ -86,6 +87,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(connect_span.attributes['db.system']).must_equal 'postgresql'
         _(connect_span.attributes['db.name']).must_equal dbname
         _(connect_span.attributes['db.user']).must_equal user
+        _(connect_span.attributes['db.backend_pid']).must_equal backend_pid
         _(connect_span.attributes['net.peer.name']).must_equal host
         _(connect_span.attributes['net.transport']).must_equal 'ip_tcp'
       end
