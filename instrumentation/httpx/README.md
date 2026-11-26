@@ -30,6 +30,27 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+## Metrics
+
+This instrumentation can record the [`http.client.request.duration`](https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpclientrequestduration) histogram.
+
+To record the metric, two things must be true:
+
+- Stable HTTP semantic conventions are in use (it is not recorded in `old` or `http/dup` modes).
+- A metrics SDK (such as `opentelemetry-metrics-sdk`) is installed and configured.
+
+One measurement is recorded for each attempt to send a request, so a request that is retried is measured once per attempt.
+
+Semantic conventions recommends using the following bucket boundaries: `[0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]`. If your metrics SDK does not apply advisory parameters, configure a view with these boundaries.
+
+| Attribute                   | Notes                                                                                             |
+| --------------------------- | ------------------------------------------------------------------------------------------------- |
+| `http.request.method`       | `_OTHER` for unknown methods                                                                      |
+| `server.address`            |                                                                                                   |
+| `server.port`               |                                                                                                   |
+| `http.response.status_code` | When a response is received                                                                       |
+| `error.type`                | The status code as a string for 4xx and 5xx responses, or the class name of the error             |
+
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-httpx` gem source is [on github][repo-github], along with related gems.

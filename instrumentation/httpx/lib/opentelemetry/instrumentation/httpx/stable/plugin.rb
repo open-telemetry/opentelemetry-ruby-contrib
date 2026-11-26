@@ -31,6 +31,23 @@ module OpenTelemetry
           extend HTTPX::Plugin::RequestTracer
           extend self
 
+          # Finishes the span, then records the request duration metric for the attempt.
+          #
+          # @param request [::HTTPX::Request] the request attempt that finished
+          # @param response [::HTTPX::Response, ::HTTPX::ErrorResponse] the response, or the error that ended the attempt
+          # @return [void]
+          def finish(request, response)
+            super
+            return if request.init_time.nil?
+
+            begin
+              normalized_verb = HttpHelper.normalized_method_name(request.verb)
+              record_duration_metric(request.init_time, normalized_verb, request.uri, response)
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e)
+            end
+          end
+
           private
 
           def finish_span(response, span)
@@ -81,8 +98,45 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e)
           end
 
+          # Records one measurement on the `http.client.request.duration` histogram.
+          # Does nothing when no histogram exists (no metrics SDK installed).
+          #
+          # @param start_time [Time] when the request attempt started
+          # @param http_method [String] the normalized HTTP method, or `_OTHER`
+          # @param uri [URI::Generic] the request URI, used for `server.address` and `server.port`
+          # @param response [::HTTPX::Response, ::HTTPX::ErrorResponse] the response, or the error that ended the attempt
+          # @return [void]
+          def record_duration_metric(start_time, http_method, uri, response)
+            histogram = client_request_duration_histogram
+            return unless histogram
+
+            duration = ::Time.now - start_time
+
+            attributes = {
+              'http.request.method' => http_method,
+              'server.address' => uri.host,
+              'server.port' => uri.port
+            }
+
+            if response.is_a?(::HTTPX::ErrorResponse)
+              attributes['error.type'] = response.error.class.name.to_s
+            else
+              attributes['http.response.status_code'] = response.status
+
+              attributes['error.type'] = response.status.to_s if response.status.between?(400, 599)
+            end
+
+            histogram.record(duration, attributes: attributes)
+          end
+
           def tracer
             HTTPX::Instrumentation.instance.tracer
+          end
+
+          # @return [OpenTelemetry::Metrics::Instrument::Histogram, nil] the request duration histogram,
+          #   or nil when it was not created
+          def client_request_duration_histogram
+            HTTPX::Instrumentation.instance.client_request_duration_histogram
           end
         end
       end
