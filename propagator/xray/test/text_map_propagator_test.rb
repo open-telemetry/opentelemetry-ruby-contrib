@@ -171,6 +171,12 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
     end
   end
 
+  describe '#fields' do
+    it 'returns the fields used for propagation' do
+      _(propagator.fields).must_equal(['X-Amzn-Trace-Id'])
+    end
+  end
+
   def create_context(trace_id:,
                      span_id:,
                      trace_flags: TraceFlags::DEFAULT,
