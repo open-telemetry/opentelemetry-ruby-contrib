@@ -10,7 +10,7 @@ semconv_stability = %w[dup stable old]
 semconv_stability.each do |mode|
   %w[2.0.0 2.1.0].each do |version|
     appraise "rest-client-#{version}_#{mode}" do
-      gem 'rest-client', "~> #{version}"
+      gem 'rest-client', "= #{version}"
     end
   end
 end
