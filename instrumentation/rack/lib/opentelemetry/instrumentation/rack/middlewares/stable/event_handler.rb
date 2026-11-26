@@ -195,6 +195,8 @@ module OpenTelemetry
               }
 
               attributes['url.query'] = env['QUERY_STRING'] unless env['QUERY_STRING'].empty?
+              client_address = ::Rack::Request.new(env).ip
+              attributes['client.address'] = client_address if client_address
               attributes['user_agent.original'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
               attributes.merge!(extract_request_headers(env))
               attributes
