@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+Bundler.require(:default, :local, :test)
 
 require 'minitest/autorun'
 require 'webmock/minitest'
