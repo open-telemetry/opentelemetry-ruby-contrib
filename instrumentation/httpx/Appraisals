@@ -10,19 +10,15 @@
 # https://opentelemetry.io/docs/specs/semconv/non-normative/http-migration/
 
 semconv_stability = %w[dup stable old]
-gem_versions = %w[1.7.4 1.9.0]
 
-semconv_stability.each do |mode|
-  gem_versions.each do |version|
+%w[1.7.4 1.9.0].each do |version|
+  semconv_stability.each do |mode|
     appraise "httpx-#{version}-#{mode}" do
       gem 'httpx', "~> #{version}"
     end
   end
-end
-
-# Metrics are exported only when opentelemetry-metrics-sdk is installed.
-# The metric is only recorded with stable semantic conventions.
-gem_versions.each do |version|
+  # Metrics are exported only when opentelemetry-metrics-sdk is installed.
+  # The metric is only recorded with stable semantic conventions.
   appraise "httpx-#{version}-stable-metrics" do
     gem 'httpx', "~> #{version}"
     gem 'opentelemetry-metrics-sdk', '~> 0.20.0'
