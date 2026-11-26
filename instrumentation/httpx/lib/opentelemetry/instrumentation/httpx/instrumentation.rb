@@ -25,6 +25,14 @@ module OpenTelemetry
 
         option :peer_service, default: nil, validate: :string
 
+        # Bucket boundaries recommended by the stable HTTP semantic conventions
+        CLIENT_REQUEST_DURATION_BUCKETS = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10].freeze
+
+        # The `http.client.request.duration` histogram, only created when
+        # the stable HTTP semantic conventions are in use.
+        # @api private
+        attr_reader :client_request_duration_histogram
+
         # :nodoc:
         def determine_semconv
           stability_opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', '')
@@ -57,6 +65,12 @@ module OpenTelemetry
         # :nodoc:
         def patch_stable
           otel_session = ::HTTPX.plugin(Stable::Plugin)
+          @client_request_duration_histogram ||= meter.create_histogram(
+            'http.client.request.duration',
+            unit: 's',
+            description: 'Duration of HTTP client requests.',
+            advisory: { explicit_bucket_boundaries: CLIENT_REQUEST_DURATION_BUCKETS }
+          )
 
           ::HTTPX.send(:remove_const, :Session)
           ::HTTPX.send(:const_set, :Session, otel_session.class)

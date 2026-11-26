@@ -36,6 +36,12 @@ describe OpenTelemetry::Instrumentation::HTTPX::Dup::Plugin do
       _(exporter.finished_spans.size).must_equal 0
     end
 
+    it 'does not create http.client.request.duration' do
+      HTTPX.get('http://example.com/success')
+
+      _(instrumentation.client_request_duration_histogram).must_be_nil
+    end
+
     it 'after request with non-standard HTTP method' do
       stub_request(:purge, 'http://example.com/cache').to_return(status: 200)
       HTTPX.request('PURGE', 'http://example.com/cache')

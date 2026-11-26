@@ -101,6 +101,21 @@ describe OpenTelemetry::Instrumentation::HTTPX::HttpHelper do
     end
   end
 
+  describe '.normalized_method_name' do
+    it 'returns the normalized name for a standard HTTP method' do
+      _(OpenTelemetry::Instrumentation::HTTPX::HttpHelper.normalized_method_name('GET')).must_equal 'GET'
+    end
+
+    it 'normalizes lowercase and symbol methods' do
+      _(OpenTelemetry::Instrumentation::HTTPX::HttpHelper.normalized_method_name('post')).must_equal 'POST'
+      _(OpenTelemetry::Instrumentation::HTTPX::HttpHelper.normalized_method_name(:put)).must_equal 'PUT'
+    end
+
+    it 'returns _OTHER for a non-standard HTTP method' do
+      _(OpenTelemetry::Instrumentation::HTTPX::HttpHelper.normalized_method_name('PURGE')).must_equal '_OTHER'
+    end
+  end
+
   describe '.span_attrs_for_dup' do
     it 'returns both old and stable attributes for standard HTTP method' do
       result = OpenTelemetry::Instrumentation::HTTPX::HttpHelper.span_attrs_for_dup('GET')

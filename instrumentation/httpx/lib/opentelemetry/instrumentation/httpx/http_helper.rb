@@ -101,6 +101,13 @@ module OpenTelemetry
           SpanCreationAttributes.new(span_name: span_name, attributes: attributes)
         end
 
+        # Returns the metric-safe name for an HTTP method
+        # @param method [String, Symbol] The HTTP method
+        # @return [String] with normalized method or _OTHER if is not in the supported list
+        def self.normalized_method_name(method)
+          METHOD_CACHE[method] || '_OTHER'
+        end
+
         # Prepares span data using both old and stable semantic conventions
         # @param method [String, Symbol] The HTTP method
         # @return [SpanCreationAttributes] struct containing span_name and attributes hash

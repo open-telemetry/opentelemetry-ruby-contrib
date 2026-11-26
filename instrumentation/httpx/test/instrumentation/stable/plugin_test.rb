@@ -173,4 +173,129 @@ describe OpenTelemetry::Instrumentation::HTTPX::Stable::Plugin do
       _(span.attributes['server.port']).must_equal 80
     end
   end
+
+  describe 'http.client.request.duration' do
+    before { instrumentation.install }
+    describe 'without metrics SDK installed' do
+      before { skip if defined?(OpenTelemetry::SDK::Metrics) }
+
+      it 'completes the request and records the span without recording metrics' do
+        HTTPX.get('http://example.com/success')
+
+        _(instrumentation.client_request_duration_histogram.enabled?).must_equal false
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.attributes['http.response.status_code']).must_equal 200
+      end
+    end
+
+    describe 'with metrics SDK installed' do
+      let(:metric_exporter) { METRIC_EXPORTER }
+
+      before do
+        skip unless defined?(OpenTelemetry::SDK::Metrics)
+
+        metric_exporter.pull
+        metric_exporter.reset
+      end
+
+      def duration_metric
+        metric_exporter.pull
+        metric_exporter.metric_snapshots.find { |m| m.name == 'http.client.request.duration' }
+      end
+
+      def duration_data_points
+        duration_metric&.data_points || []
+      end
+
+      it 'records a successful request' do
+        HTTPX.get('http://example.com/success')
+
+        metric = duration_metric
+        _(metric.unit).must_equal 's'
+        _(metric.description).must_equal 'Duration of HTTP client requests.'
+        _(metric.instrument_kind).must_equal :histogram
+        _(metric.data_points.size).must_equal 1
+
+        data_point = metric.data_points.first
+        _(data_point.count).must_equal 1
+      end
+
+      it 'records the attributes of a successful request' do
+        HTTPX.get('http://example.com/success')
+
+        data_point = duration_metric.data_points.first
+        _(data_point.attributes).must_equal(
+          'http.request.method' => 'GET',
+          'server.address' => 'example.com',
+          'server.port' => 80,
+          'http.response.status_code' => 200
+        )
+      end
+
+      it 'records a duration close to the span duration' do
+        HTTPX.get('http://example.com/success')
+
+        span_duration = (span.end_timestamp - span.start_timestamp) / 1_000_000_000.0
+        data_point = duration_data_points.first
+        _(data_point.sum).must_be :>, 0
+        _(data_point.sum).must_be_close_to span_duration, 0.01
+      end
+
+      it 'records error.type for an error status code' do
+        HTTPX.get('http://example.com/failure')
+
+        data_point = duration_data_points.first
+        _(data_point.attributes).must_equal(
+          'http.request.method' => 'GET',
+          'server.address' => 'example.com',
+          'server.port' => 80,
+          'http.response.status_code' => 500,
+          'error.type' => '500'
+        )
+      end
+
+      it 'records error.type for an exception' do
+        HTTPX.get('http://example.com/timeout')
+
+        attributes = duration_data_points.first.attributes.dup
+        # HTTPX reports a stubbed timeout as TimeoutError (1.7) or RequestTimeoutError (1.9)
+        _(%w[HTTPX::TimeoutError HTTPX::RequestTimeoutError]).must_include attributes.delete('error.type')
+        _(attributes).must_equal(
+          'http.request.method' => 'GET',
+          'server.address' => 'example.com',
+          'server.port' => 80
+        )
+      end
+
+      it 'records _OTHER for an unknown http method' do
+        stub_request(:purge, 'http://example.com/cache').to_return(status: 200)
+        HTTPX.request('PURGE', 'http://example.com/cache')
+
+        _(duration_data_points.first.attributes).must_equal(
+          'http.request.method' => '_OTHER',
+          'server.address' => 'example.com',
+          'server.port' => 80,
+          'http.response.status_code' => 200
+        )
+      end
+
+      it 'does not record span-only or client context attributes' do
+        client_context_attrs = {
+          'test.attribute' => 'test.value', 'http.request.method' => 'OVERRIDE'
+        }
+
+        OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+          HTTPX.get('http://example.com/success')
+        end
+
+        data_point = duration_metric.data_points.first
+        _(data_point.attributes).must_equal(
+          'http.request.method' => 'GET',
+          'server.address' => 'example.com',
+          'server.port' => 80,
+          'http.response.status_code' => 200
+        )
+      end
+    end
+  end
 end
