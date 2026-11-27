@@ -49,6 +49,21 @@ OpenTelemetry::SDK.configure do |c|
     # The obfuscation of SQL in the db.statement attribute is enabled by default.
     # To disable, set db_statement to :include; to omit the query completely, set db_statement to :omit
     db_statement: :include,
+
+    # When db_statement is :obfuscate, queries up to 2000 characters are obfuscated by default.
+    # Longer queries are not obfuscated: the attribute holds a message saying the query
+    # exceeded the limit. Higher values may impact performance.
+    obfuscation_limit: 2000,
+
+    # By default, trace context is not added to queries. Set this option to 'tracecontext'
+    # to append the W3C trace context to each query as a SQL comment, or to 'vitess' for
+    # Vitess-style propagation (requires the opentelemetry-propagator-vitess gem).
+    propagator: 'tracecontext',
+
+    # Spans are named after the SQL operation (for example `select`) by default.
+    # Set :db_name to use the database name, or :db_operation_and_name to combine both.
+    # Spans fall back to `mysql` when no name can be derived.
+    span_name: :db_operation_and_name,
   }
 end
 ```
