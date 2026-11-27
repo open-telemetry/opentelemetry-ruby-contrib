@@ -60,7 +60,7 @@ This gem requires Trilogy 2.11 or higher and will not work with a future Trilogy
 | Option | Default | Description |
 | ------ | ------- | ----------- |
 | `db_statement` | `:obfuscate` | Controls how SQL queries appear in spans. `:obfuscate` replaces literal values with `?`, `:include` records the raw SQL, `:omit` excludes the attribute entirely. |
-| `obfuscation_limit` | `2000` | Maximum length of the obfuscated SQL statement. Statements exceeding this limit are truncated. |
+| `obfuscation_limit` | `2000` | Maximum length, in characters, of a query that is obfuscated. Longer queries are not obfuscated; the attribute holds a message saying the query exceeded the limit. |
 | `peer_service` | `nil` | Deprecated with no replacement. Sets the `peer.service` attribute on spans (old semantic conventions only). |
 | `propagator` | `'none'` | Propagator for injecting trace context into SQL comments. `'none'` disables propagation, `'tracecontext'` uses W3C Trace Context, `'vitess'` uses Vitess-style propagation (requires `opentelemetry-propagator-vitess` gem). |
 | `record_exception` | `true` | Records exceptions as span events when an error occurs. |
