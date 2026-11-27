@@ -32,20 +32,27 @@ end
 
 ## Configuration Options
 
-| Option | Default | Description |
-| ------ | ------- | ----------- |
-| `span_naming` | `:queue` | How job spans are named. `:queue` uses the queue name and operation (for example `default process`), `:job_class` uses the job class and operation (for example `SimpleJob process`). |
-| `propagation_style` | `:link` | How the job's trace relates to the span that enqueued it. `:link` starts a new trace whose first span links to the enqueuing span, `:child` makes the job a child of the enqueuing span in the same trace, `:none` starts a new trace with no relationship. |
-| `trace_launcher_heartbeat` | `false` | Traces the `Sidekiq::Launcher` heartbeat. |
-| `trace_poller_enqueue` | `false` | Traces `Sidekiq::Scheduled::Poller#enqueue`. |
-| `trace_poller_wait` | `false` | Traces `Sidekiq::Scheduled::Poller#wait`. |
-| `trace_processor_process_one` | `false` | Traces `Sidekiq::Processor#process_one` and `Sidekiq::Processor#fetch`. |
-
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Sidekiq', {
+    # Job spans are named after the queue and operation by default (for example `default process`).
+    # Set :job_class to name them after the job class instead (for example `SimpleJob process`).
     span_naming: :job_class,
+
+    # By default (:link), a job starts a new trace whose first span links to the span that
+    # enqueued it. Set :child to make the job a child of that span in the same trace, or :none
+    # to start a new trace with no relationship.
     propagation_style: :child,
+
+    # The following options are disabled by default.
+    # Trace the Sidekiq::Launcher heartbeat.
+    trace_launcher_heartbeat: true,
+    # Trace Sidekiq::Scheduled::Poller#enqueue.
+    trace_poller_enqueue: true,
+    # Trace Sidekiq::Scheduled::Poller#wait.
+    trace_poller_wait: true,
+    # Trace Sidekiq::Processor#process_one and Sidekiq::Processor#fetch.
+    trace_processor_process_one: true,
   }
 end
 ```
