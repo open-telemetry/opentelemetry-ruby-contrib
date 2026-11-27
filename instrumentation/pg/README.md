@@ -69,7 +69,12 @@ OpenTelemetry::SDK.configure do |c|
     # By default, this instrumentation does not emit the `db.response.affected_rows`
     # attribute. Set this option to true to include the number of rows affected
     # by mutation operations when available from PG::Result.
-    db_response_affected_rows: true
+    db_response_affected_rows: true,
+
+    # By default, this instrumentation does not add trace context to queries.
+    # Set this option to 'tracecontext' to append the W3C trace context to each
+    # query as a SQL comment, for example /*traceparent='00-...'*/.
+    propagator: 'tracecontext'
   }
 end
 ```
