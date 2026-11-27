@@ -53,6 +53,13 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+| Option | Default | Description |
+| ------ | ------- | ----------- |
+| `db_statement` | `:obfuscate` | Controls how SQL queries appear in spans. `:obfuscate` replaces literal values with `?`, `:include` records the raw SQL, `:omit` excludes the attribute entirely. |
+| `obfuscation_limit` | `2000` | Maximum length, in characters, of a query that is obfuscated. Longer queries are not obfuscated; the attribute holds a message saying the query exceeded the limit. |
+| `propagator` | `'none'` | Propagator for injecting trace context into SQL comments. `'none'` disables propagation, `'tracecontext'` uses W3C Trace Context, `'vitess'` uses Vitess-style propagation (requires the `opentelemetry-propagator-vitess` gem). |
+| `span_name` | `:statement_type` | Controls span naming. `:statement_type` uses the SQL operation (e.g., `select`), `:db_name` uses the database name, `:db_operation_and_name` combines both. Falls back to `mysql` when no name can be derived. |
+
 ## Examples
 
 An example of usage can be seen in [`example/mysql2.rb`](https://github.com/open-telemetry/opentelemetry-ruby-contrib/blob/main/instrumentation/mysql2/example/mysql2.rb).
