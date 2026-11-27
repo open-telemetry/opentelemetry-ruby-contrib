@@ -51,6 +51,9 @@ OpenTelemetry::SDK.configure do |c|
     # To obfuscate, set db_statement to :obfuscate.
     # To omit the attribute, set db_statement to :omit.
     db_statement: :include,
+    # Redis commands that run without a parent span create root spans by default.
+    # To trace them only when there is an active parent span, set trace_root_spans to false.
+    trace_root_spans: false,
   }
 end
 ```
