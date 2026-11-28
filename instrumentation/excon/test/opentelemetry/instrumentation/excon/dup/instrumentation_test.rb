@@ -208,6 +208,22 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       )
     end
 
+    it 'records url query passed as a hash' do
+      Excon.get('http://example.com/success', query: { 'hello' => 'there' })
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.attributes['url.query']).must_equal 'hello=there'
+      assert_requested(:get, 'http://example.com/success?hello=there')
+    end
+
+    it 'omits url query when passed an empty hash' do
+      Excon.get('http://example.com/success', query: {})
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.attributes).wont_include('url.query')
+      assert_requested(:get, 'http://example.com/success')
+    end
+
     it 'accepts peer service name from config' do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(peer_service: 'example:faraday')
