@@ -1,0 +1,16 @@
+name: File System
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  ls-lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ls-lint/action@02e380fe8733d499cbfc9e22276de5085508a5bd # v2.3.1
