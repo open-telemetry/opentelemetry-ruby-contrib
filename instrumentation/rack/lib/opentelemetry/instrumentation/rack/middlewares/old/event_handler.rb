@@ -184,7 +184,7 @@ module OpenTelemetry
               OpenTelemetry.propagation.extract(
                 request.env,
                 context: context,
-                getter: OpenTelemetry::Common::Propagation.rack_env_getter
+                getter: OpenTelemetry::Propagator::Carrier::Rack.env_getter
               )
             end
 
